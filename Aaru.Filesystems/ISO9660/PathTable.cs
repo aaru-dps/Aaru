@@ -31,21 +31,22 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System.Collections.Generic;
 using Aaru.Helpers;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
     PathTableEntryInternal[] DecodePathTable(byte[] data)
     {
-        if(data is null || data.Length == 0)
+        if(data is null ||
+           data.Length == 0)
             return null;
 
-        List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
+        var table = new List<PathTableEntryInternal>();
 
-        int off = 0;
+        var off = 0;
 
         PathTableEntry entry =
             Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
@@ -58,8 +59,7 @@ public sealed partial class ISO9660
 
         while(off < data.Length)
         {
-            entry =
-                Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
+            entry = Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
 
             if(entry.name_len == 0)
                 break;
@@ -90,15 +90,17 @@ public sealed partial class ISO9660
         if(data is null)
             return null;
 
-        List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
+        var table = new List<PathTableEntryInternal>();
 
-        int off = 0;
+        var off = 0;
 
         while(off < data.Length)
         {
             HighSierraPathTableEntry entry =
                 Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data, off,
-                                                                                    Marshal.SizeOf<HighSierraPathTableEntry>());
+                                                                                    Marshal.
+                                                                                        SizeOf<
+                                                                                            HighSierraPathTableEntry>());
 
             if(entry.name_len == 0)
                 break;

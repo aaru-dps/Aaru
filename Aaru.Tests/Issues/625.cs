@@ -1,10 +1,10 @@
+namespace Aaru.Tests.Issues;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using Aaru.Tests.WritableImages;
-
-namespace Aaru.Tests.Issues;
 
 public class _625 : WritableOpticalMediaImageTest
 {

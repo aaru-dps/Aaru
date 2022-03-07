@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Runtime.InteropServices;
 using Aaru.Decoders.Floppy;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Cpcdsk
 {

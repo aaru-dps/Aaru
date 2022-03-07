@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace Aaru.Devices;
+
+using System;
 
 /// <inheritdoc />
 /// <summary>Exception to be returned by the device constructor</summary>

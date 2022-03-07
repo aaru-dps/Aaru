@@ -75,7 +75,8 @@ Aaru is intentionally very modular. Here's a list of them:
   functions and commands that are called by the user interface itself.
 * [Aaru.Decoders](https://github.com/aaru-dps/Aaru.Decoders) - This module contains internal disk, drive and protocol
   structures as well as code to marshal, decode and print them.
-* [Aaru.Decryption](https://github.com/aaru-dps/Aaru.Decryption) - This module contains the media decryption code, like CSS or CPRM.
+* [Aaru.Decryption](https://github.com/aaru-dps/Aaru.Decryption) - This module contains the media decryption code, like
+  CSS or CPRM.
 * [Aaru.Devices](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Devices) - This module contains code to talk with
   hardware devices in different platforms. Each platform has low-level calls in its own folder, and each device protocol
   has high-level calls in its own folder. Device commands are separated by protocol standard, or vendor name.
@@ -104,8 +105,9 @@ Aaru is intentionally very modular. Here's a list of them:
 * [Aaru.Tests](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Tests) - This module contains the unit tests for the
   rest of the modules. You should add new unit tests here but cannot run all of them because the test images they
   require amount to more than 900 GiB.
-* [Aaru.Tests.Devices](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Tests.Devices) - This module presents a menu-driven interface to send commands to devices, as a way to test the Core module, as those tests cannot be automated. It
-  can be used to debug drive responses.
+* [Aaru.Tests.Devices](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Tests.Devices) - This module presents a
+  menu-driven interface to send commands to devices, as a way to test the Core module, as those tests cannot be
+  automated. It can be used to debug drive responses.
 
 ## How Can I Contribute?
 
@@ -133,8 +135,8 @@ mag_right:.
 
 Before creating bug reports, please check [this list](#before-submitting-a-bug-report) as you might find out that you
 don't need to create one. When you are creating a bug report, please
-[include as many details as possible](#how-do-i-submit-a-good-bug-report). Fill out
-the required template, the information it asks for helps us resolve issues faster.
+[include as many details as possible](#how-do-i-submit-a-good-bug-report). Fill out the required template, the
+information it asks for helps us resolve issues faster.
 
 > **Note:** If you find a **Closed** issue that seems like it is the same thing that you're experiencing, open a new issue and include a link to the original issue in the body of your new one.
 
@@ -190,9 +192,8 @@ minor improvements to existing functionality. Following these guidelines helps m
 your suggestion :pencil: and find related suggestions :mag_right:.
 
 Before creating enhancement suggestions,
-please [include as many details as possible](#how-do-i-submit-a-good-enhancement-suggestion). Fill
-in the template, including the steps that you imagine you would take if the feature you're
-requesting existed.
+please [include as many details as possible](#how-do-i-submit-a-good-enhancement-suggestion). Fill in the template,
+including the steps that you imagine you would take if the feature you're requesting existed.
 
 #### How Do I Submit A (Good) Enhancement Suggestion?
 
@@ -226,7 +227,8 @@ Do not modify the interfaces. If you need or want to, comment in an issue how an
 discuss it. Same applies for creating new interfaces.
 
 Aaru uses C# 8 language features (inline declaration, Tuples, etc.) so it can only be compiled
-with [VisualStudio](http://www.visualstudio.com) 2019 or higher, [Visual Studio for Mac](https://www.xamarin.com/download)
+with [VisualStudio](http://www.visualstudio.com) 2019 or
+higher, [Visual Studio for Mac](https://www.xamarin.com/download)
 2019 or higher, or [JetBrains Rider](https://www.jetbrains.com/rider/) 2019.1 or higher.
 
 ### Pull Requests

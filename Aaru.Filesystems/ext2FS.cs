@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information from the Linux kernel
 /// <inheritdoc />
@@ -185,8 +185,8 @@ public sealed class ext2FS : IFilesystem
         if(sbSectorOff + partition.Start >= partition.End)
             return false;
 
-        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -197,33 +197,32 @@ public sealed class ext2FS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        byte[] sb = new byte[sbSizeInBytes];
+        var sb = new byte[sbSizeInBytes];
 
         if(sbOff + sbSizeInBytes > sbSector.Length)
             return false;
 
         Array.Copy(sbSector, sbOff, sb, 0, sbSizeInBytes);
 
-        ushort magic = BitConverter.ToUInt16(sb, 0x038);
+        var magic = BitConverter.ToUInt16(sb, 0x038);
 
         return magic == EXT2_MAGIC || magic == EXT2_MAGIC_OLD;
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
 
         var sb = new StringBuilder();
 
-        bool newExt2 = false;
-        bool ext3    = false;
-        bool ext4    = false;
+        var newExt2 = false;
+        var ext3    = false;
+        var ext4    = false;
 
-        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -237,7 +236,7 @@ public sealed class ext2FS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        byte[] sblock = new byte[sbSizeInBytes];
+        var sblock = new byte[sbSizeInBytes];
         Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
         SuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sblock);
 
@@ -251,21 +250,19 @@ public sealed class ext2FS : IFilesystem
 
                 break;
             case EXT2_MAGIC:
-                ext3 |= (supblk.ftr_compat   & EXT3_FEATURE_COMPAT_HAS_JOURNAL) == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
-                        (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_RECOVER)   == EXT3_FEATURE_INCOMPAT_RECOVER   ||
-                        (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) ==
-                        EXT3_FEATURE_INCOMPAT_JOURNAL_DEV;
+                ext3 |= (supblk.ftr_compat   & EXT3_FEATURE_COMPAT_HAS_JOURNAL)   == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
+                        (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_RECOVER)     == EXT3_FEATURE_INCOMPAT_RECOVER   ||
+                        (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) == EXT3_FEATURE_INCOMPAT_JOURNAL_DEV;
 
-                if((supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_HUGE_FILE) == EXT4_FEATURE_RO_COMPAT_HUGE_FILE ||
-                   (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_GDT_CSUM)  == EXT4_FEATURE_RO_COMPAT_GDT_CSUM  ||
-                   (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_DIR_NLINK) == EXT4_FEATURE_RO_COMPAT_DIR_NLINK ||
-                   (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE) ==
-                   EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE                                                       ||
-                   (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT)    == EXT4_FEATURE_INCOMPAT_64BIT    ||
-                   (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_MMP)      == EXT4_FEATURE_INCOMPAT_MMP      ||
-                   (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_FLEX_BG)  == EXT4_FEATURE_INCOMPAT_FLEX_BG  ||
-                   (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_EA_INODE) == EXT4_FEATURE_INCOMPAT_EA_INODE ||
-                   (supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_DIRDATA)  == EXT4_FEATURE_INCOMPAT_DIRDATA)
+                if((supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_HUGE_FILE)   == EXT4_FEATURE_RO_COMPAT_HUGE_FILE   ||
+                   (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_GDT_CSUM)    == EXT4_FEATURE_RO_COMPAT_GDT_CSUM    ||
+                   (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_DIR_NLINK)   == EXT4_FEATURE_RO_COMPAT_DIR_NLINK   ||
+                   (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE) == EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE ||
+                   (supblk.ftr_incompat  & EXT4_FEATURE_INCOMPAT_64BIT)        == EXT4_FEATURE_INCOMPAT_64BIT        ||
+                   (supblk.ftr_incompat  & EXT4_FEATURE_INCOMPAT_MMP)          == EXT4_FEATURE_INCOMPAT_MMP          ||
+                   (supblk.ftr_incompat  & EXT4_FEATURE_INCOMPAT_FLEX_BG)      == EXT4_FEATURE_INCOMPAT_FLEX_BG      ||
+                   (supblk.ftr_incompat  & EXT4_FEATURE_INCOMPAT_EA_INODE)     == EXT4_FEATURE_INCOMPAT_EA_INODE     ||
+                   (supblk.ftr_incompat  & EXT4_FEATURE_INCOMPAT_DIRDATA)      == EXT4_FEATURE_INCOMPAT_DIRDATA)
                 {
                     ext3 = false;
                     ext4 = true;
@@ -341,8 +338,8 @@ public sealed class ext2FS : IFilesystem
         else
             sb.AppendFormat("Volume was created for {0}", extOs).AppendLine();
 
-        byte[] tempBytes = new byte[8];
-        ulong  blocks, reserved, free;
+        var   tempBytes = new byte[8];
+        ulong blocks, reserved, free;
 
         if((supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT) == EXT4_FEATURE_INCOMPAT_64BIT)
         {
@@ -393,8 +390,7 @@ public sealed class ext2FS : IFilesystem
             supblk.block_size = 1024;
 
         sb.AppendFormat("Volume has {0} blocks of {1} bytes, for a total of {2} bytes", blocks,
-                        1024 << (int)supblk.block_size, blocks * (ulong)(1024 << (int)supblk.block_size)).
-           AppendLine();
+                        1024 << (int)supblk.block_size, blocks * (ulong)(1024 << (int)supblk.block_size)).AppendLine();
 
         XmlFsType.Clusters    = blocks;
         XmlFsType.ClusterSize = (uint)(1024 << (int)supblk.block_size);
@@ -414,8 +410,8 @@ public sealed class ext2FS : IFilesystem
                                 supblk.mount_c).AppendLine();
 
             if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.last_mount_dir, Encoding)))
-                sb.AppendFormat("Last mounted on: \"{0}\"",
-                                StringHandlers.CToString(supblk.last_mount_dir, Encoding)).AppendLine();
+                sb.AppendFormat("Last mounted on: \"{0}\"", StringHandlers.CToString(supblk.last_mount_dir, Encoding)).
+                   AppendLine();
 
             if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.mount_options, Encoding)))
                 sb.AppendFormat("Last used mount options were: {0}",
@@ -449,8 +445,7 @@ public sealed class ext2FS : IFilesystem
 
         if(supblk.write_t > 0)
         {
-            sb.AppendFormat("Last written on {0}", DateHandlers.UnixUnsignedToDateTime(supblk.write_t)).
-               AppendLine();
+            sb.AppendFormat("Last written on {0}", DateHandlers.UnixUnsignedToDateTime(supblk.write_t)).AppendLine();
 
             XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(supblk.write_t);
             XmlFsType.ModificationDateSpecified = true;
@@ -573,9 +568,8 @@ public sealed class ext2FS : IFilesystem
            supblk.hash_seed_2 > 0 &&
            supblk.hash_seed_3 > 0 &&
            supblk.hash_seed_4 > 0)
-            sb.AppendFormat("Hash seed: {0:X8}{1:X8}{2:X8}{3:X8}, version {4}", supblk.hash_seed_1,
-                            supblk.hash_seed_2, supblk.hash_seed_3, supblk.hash_seed_4, supblk.hash_version).
-               AppendLine();
+            sb.AppendFormat("Hash seed: {0:X8}{1:X8}{2:X8}{3:X8}, version {4}", supblk.hash_seed_1, supblk.hash_seed_2,
+                            supblk.hash_seed_3, supblk.hash_seed_4, supblk.hash_version).AppendLine();
 
         if((supblk.ftr_compat   & EXT3_FEATURE_COMPAT_HAS_JOURNAL)   == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
            (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) == EXT3_FEATURE_INCOMPAT_JOURNAL_DEV)

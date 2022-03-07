@@ -1,10 +1,13 @@
-using Aaru.Helpers;
-using FluentAssertions.Execution;
-using NUnit.Framework;
+
 
 // ReSharper disable InconsistentNaming
 
 namespace Aaru.Tests.Devices.SecureDigital;
+
+using Aaru.Decoders.SecureDigital;
+using Aaru.Helpers;
+using FluentAssertions.Execution;
+using NUnit.Framework;
 
 [TestFixture]
 public class CSD
@@ -158,15 +161,13 @@ public class CSD
     [Test]
     public void Test()
     {
-        for(int i = 0; i < cards.Length; i++)
-        {
+        for(var i = 0; i < cards.Length; i++)
             using(new AssertionScope())
-            {
                 Assert.Multiple(() =>
                 {
                     int count = Marshal.ConvertFromHexAscii(csds[i], out byte[] response);
                     Assert.AreEqual(16, count, $"Size - {cards[i]}");
-                    Decoders.SecureDigital.CSD csd = Decoders.SecureDigital.Decoders.DecodeCSD(response);
+                    Aaru.Decoders.SecureDigital.CSD csd = Decoders.DecodeCSD(response);
                     Assert.IsNotNull(csd, $"Decoded - {cards[i]}");
                     Assert.AreEqual(structure_versions[i], csd.Structure, $"Version - {cards[i]}");
                     Assert.AreEqual(taacs[i], csd.TAAC, $"TAAC - {cards[i]}");
@@ -201,8 +202,7 @@ public class CSD
 
                     Assert.AreEqual(size_multiplier[i], csd.SizeMultiplier, $"Card size multiplier - {cards[i]}");
 
-                    Assert.AreEqual(erase_block_enable[i], csd.EraseBlockEnable,
-                                    $"Erase block enable - {cards[i]}");
+                    Assert.AreEqual(erase_block_enable[i], csd.EraseBlockEnable, $"Erase block enable - {cards[i]}");
 
                     Assert.AreEqual(erase_sector_sizes[i], csd.EraseSectorSize, $"Erase sector size - {cards[i]}");
 
@@ -224,7 +224,5 @@ public class CSD
 
                     Assert.AreEqual(file_format[i], csd.FileFormat, $"File format - {cards[i]}");
                 });
-            }
-        }
     }
 }

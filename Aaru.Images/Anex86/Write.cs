@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Anex86
 {
@@ -133,7 +133,7 @@ public sealed partial class Anex86
             return false;
         }
 
-        _writingStream.Seek((long)(4096 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(4096 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -165,7 +165,7 @@ public sealed partial class Anex86
             return false;
         }
 
-        _writingStream.Seek((long)(4096 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(4096 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -229,7 +229,7 @@ public sealed partial class Anex86
             }
         }
 
-        byte[] hdr = new byte[Marshal.SizeOf<Header>()];
+        var hdr = new byte[Marshal.SizeOf<Header>()];
         MemoryMarshal.Write(hdr, ref _header);
 
         _writingStream.Seek(0, SeekOrigin.Begin);

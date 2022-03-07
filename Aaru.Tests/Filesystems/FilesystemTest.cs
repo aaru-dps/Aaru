@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,8 +8,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Filesystems;
 
 public abstract class FilesystemTest
 {
@@ -47,7 +47,7 @@ public abstract class FilesystemTest
 
                 Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
 
-                IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
+                var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
                 Assert.IsNotNull(image, $"Image format: {testFile}");
 
@@ -61,11 +61,11 @@ public abstract class FilesystemTest
 
                     Assert.Greater(partitionsList.Count, 0, $"No partitions found for {testFile}");
 
-                    bool found = false;
+                    var found = false;
 
                     foreach(Partition p in partitionsList)
                     {
-                        Core.Filesystems.Identify(image, out idPlugins, p, true);
+                        Filesystems.Identify(image, out idPlugins, p, true);
 
                         if(idPlugins.Count == 0)
                             continue;
@@ -89,7 +89,7 @@ public abstract class FilesystemTest
                         Size   = image.Info.Sectors * image.Info.SectorSize
                     };
 
-                    Core.Filesystems.Identify(image, out idPlugins, wholePart, true);
+                    Filesystems.Identify(image, out idPlugins, wholePart, true);
 
                     Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {testFile}");
 
@@ -123,7 +123,7 @@ public abstract class FilesystemTest
 
                 Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
 
-                IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
+                var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
                 Assert.IsNotNull(image, $"Image format: {testFile}");
 
@@ -146,7 +146,7 @@ public abstract class FilesystemTest
             foreach(FileSystemTest test in Tests)
             {
                 string testFile  = test.TestFile;
-                bool   found     = false;
+                var    found     = false;
                 var    partition = new Partition();
 
                 bool exists = File.Exists(testFile);
@@ -162,7 +162,7 @@ public abstract class FilesystemTest
 
                 Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
 
-                IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
+                var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
                 Assert.IsNotNull(image, $"Image format: {testFile}");
 
@@ -179,7 +179,7 @@ public abstract class FilesystemTest
                     // In reverse to skip boot partitions we're not interested in
                     for(int index = partitionsList.Count - 1; index >= 0; index--)
                     {
-                        Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
+                        Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
 
                         if(idPlugins.Count == 0)
                             continue;
@@ -202,7 +202,7 @@ public abstract class FilesystemTest
                         Size   = image.Info.Sectors * image.Info.SectorSize
                     };
 
-                    Core.Filesystems.Identify(image, out idPlugins, partition, true);
+                    Filesystems.Identify(image, out idPlugins, partition, true);
 
                     Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {testFile}");
 

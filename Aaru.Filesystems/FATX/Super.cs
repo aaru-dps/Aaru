@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -43,8 +45,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
@@ -130,7 +130,7 @@ public sealed partial class XboxFatPlugin
         AaruConsole.DebugWriteLine("Xbox FAT plugin", "stat.Type: {0}", _statfs.Type);
 
         byte[] buffer;
-        _fatStartSector = (FAT_START / imagePlugin.Info.SectorSize) + partition.Start;
+        _fatStartSector = FAT_START / imagePlugin.Info.SectorSize + partition.Start;
         uint fatSize;
 
         AaruConsole.DebugWriteLine("Xbox FAT plugin", "fatStartSector: {0}", _fatStartSector);
@@ -162,7 +162,7 @@ public sealed partial class XboxFatPlugin
             _fat32 = MemoryMarshal.Cast<byte, uint>(buffer).ToArray();
 
             if(!_littleEndian)
-                for(int i = 0; i < _fat32.Length; i++)
+                for(var i = 0; i < _fat32.Length; i++)
                     _fat32[i] = Swapping.Swap(_fat32[i]);
 
             AaruConsole.DebugWriteLine("Xbox FAT plugin", "fat32[0] == FATX32_ID = {0}", _fat32[0] == FATX32_ID);
@@ -197,7 +197,7 @@ public sealed partial class XboxFatPlugin
             _fat16 = MemoryMarshal.Cast<byte, ushort>(buffer).ToArray();
 
             if(!_littleEndian)
-                for(int i = 0; i < _fat16.Length; i++)
+                for(var i = 0; i < _fat16.Length; i++)
                     _fat16[i] = Swapping.Swap(_fat16[i]);
 
             AaruConsole.DebugWriteLine("Xbox FAT plugin", "fat16[0] == FATX16_ID = {0}", _fat16[0] == FATX16_ID);
@@ -220,15 +220,14 @@ public sealed partial class XboxFatPlugin
         if(rootDirectoryClusters is null)
             return ErrorNumber.InvalidArgument;
 
-        byte[] rootDirectoryBuffer = new byte[_bytesPerCluster * rootDirectoryClusters.Length];
+        var rootDirectoryBuffer = new byte[_bytesPerCluster * rootDirectoryClusters.Length];
 
         AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading root directory");
 
-        for(int i = 0; i < rootDirectoryClusters.Length; i++)
+        for(var i = 0; i < rootDirectoryClusters.Length; i++)
         {
-            errno =
-                imagePlugin.ReadSectors(_firstClusterSector + ((rootDirectoryClusters[i] - 1) * _sectorsPerCluster),
-                                        _sectorsPerCluster, out buffer);
+            errno = imagePlugin.ReadSectors(_firstClusterSector + (rootDirectoryClusters[i] - 1) * _sectorsPerCluster,
+                                            _sectorsPerCluster, out buffer);
 
             if(errno != ErrorNumber.NoError)
                 return errno;
@@ -238,17 +237,15 @@ public sealed partial class XboxFatPlugin
 
         _rootDirectory = new Dictionary<string, DirectoryEntry>();
 
-        int pos = 0;
+        var pos = 0;
 
         while(pos < rootDirectoryBuffer.Length)
         {
             DirectoryEntry entry = _littleEndian
-                                       ? Marshal.
-                                           ByteArrayToStructureLittleEndian<
-                                               DirectoryEntry>(rootDirectoryBuffer, pos,
-                                                               Marshal.SizeOf<DirectoryEntry>())
-                                       : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(rootDirectoryBuffer,
-                                           pos, Marshal.SizeOf<DirectoryEntry>());
+                                       ? Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectoryBuffer,
+                                           pos, Marshal.SizeOf<DirectoryEntry>())
+                                       : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(rootDirectoryBuffer, pos,
+                                           Marshal.SizeOf<DirectoryEntry>());
 
             pos += Marshal.SizeOf<DirectoryEntry>();
 

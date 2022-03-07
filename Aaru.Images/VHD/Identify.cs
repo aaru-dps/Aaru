@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Vhd
 {
@@ -43,8 +43,8 @@ public sealed partial class Vhd
     {
         Stream imageStream = imageFilter.GetDataForkStream();
 
-        byte[] headerCookieBytes = new byte[8];
-        byte[] footerCookieBytes = new byte[8];
+        var headerCookieBytes = new byte[8];
+        var footerCookieBytes = new byte[8];
 
         if(imageStream.Length % 2 == 0)
             imageStream.Seek(-512, SeekOrigin.End);
@@ -55,8 +55,8 @@ public sealed partial class Vhd
         imageStream.Seek(0, SeekOrigin.Begin);
         imageStream.Read(headerCookieBytes, 0, 8);
 
-        ulong headerCookie = BigEndianBitConverter.ToUInt64(headerCookieBytes, 0);
-        ulong footerCookie = BigEndianBitConverter.ToUInt64(footerCookieBytes, 0);
+        var headerCookie = BigEndianBitConverter.ToUInt64(headerCookieBytes, 0);
+        var footerCookie = BigEndianBitConverter.ToUInt64(footerCookieBytes, 0);
 
         return headerCookie == IMAGE_COOKIE || footerCookie == IMAGE_COOKIE;
     }

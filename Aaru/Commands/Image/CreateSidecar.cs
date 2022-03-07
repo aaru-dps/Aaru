@@ -30,8 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Image;
+
 using System;
-using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -47,9 +48,7 @@ using JetBrains.Annotations;
 using Schemas;
 using Spectre.Console;
 
-namespace Aaru.Commands.Image;
-
-internal sealed class CreateSidecarCommand : Command
+sealed class CreateSidecarCommand : Command
 {
     static ProgressTask _progressTask1;
     static ProgressTask _progressTask2;
@@ -104,7 +103,7 @@ internal sealed class CreateSidecarCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -163,7 +162,7 @@ internal sealed class CreateSidecarCommand : Command
             var     filtersList = new FiltersList();
             IFilter inputFilter = null;
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Identifying file filter...").IsIndeterminate();
                 inputFilter = filtersList.GetFilter(imagePath);
@@ -180,7 +179,7 @@ internal sealed class CreateSidecarCommand : Command
             {
                 IBaseImage imageFormat = null;
 
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Identifying image format...").IsIndeterminate();
                     imageFormat = ImageFormat.Detect(inputFilter);
@@ -203,7 +202,7 @@ internal sealed class CreateSidecarCommand : Command
                 {
                     ErrorNumber opened = ErrorNumber.NoData;
 
-                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    Spectre.ProgressSingleSpinner(ctx =>
                     {
                         ctx.AddTask("Opening image file...").IsIndeterminate();
                         opened = imageFormat.Open(inputFilter);
@@ -279,7 +278,7 @@ internal sealed class CreateSidecarCommand : Command
                                     AaruConsole.WriteLine(Markup.Escape(text));
                                 };
 
-                                System.Console.CancelKeyPress += (_, e) =>
+                                Console.CancelKeyPress += (_, e) =>
                                 {
                                     e.Cancel = true;
                                     sidecarClass.Abort();
@@ -288,7 +287,7 @@ internal sealed class CreateSidecarCommand : Command
                                 sidecar = sidecarClass.Create();
                             });
 
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Writing metadata sidecar").IsIndeterminate();
 
@@ -319,8 +318,8 @@ internal sealed class CreateSidecarCommand : Command
                 return (int)ErrorNumber.IsDirectory;
             }
 
-            string[]     contents = Directory.GetFiles(imagePath, "*", SearchOption.TopDirectoryOnly);
-            List<string> files    = contents.Where(file => new FileInfo(file).Length % blockSize == 0).ToList();
+            string[] contents = Directory.GetFiles(imagePath, "*", SearchOption.TopDirectoryOnly);
+            var      files    = contents.Where(file => new FileInfo(file).Length % blockSize == 0).ToList();
 
             files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
@@ -374,7 +373,7 @@ internal sealed class CreateSidecarCommand : Command
                                 AaruConsole.WriteLine(Markup.Escape(text));
                             };
 
-                            System.Console.CancelKeyPress += (_, e) =>
+                            Console.CancelKeyPress += (_, e) =>
                             {
                                 e.Cancel = true;
                                 sidecarClass.Abort();
@@ -383,7 +382,7 @@ internal sealed class CreateSidecarCommand : Command
                             sidecar = sidecarClass.BlockTape(Path.GetFileName(imagePath), files, blockSize);
                         });
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Writing metadata sidecar").IsIndeterminate();
 

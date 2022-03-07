@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class TeleDisk
 {
@@ -43,7 +43,7 @@ public sealed partial class TeleDisk
     public bool Identify(IFilter imageFilter)
     {
         _header = new Header();
-        byte[] headerBytes = new byte[12];
+        var    headerBytes = new byte[12];
         Stream stream      = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
@@ -65,7 +65,7 @@ public sealed partial class TeleDisk
         _header.Sides         = headerBytes[9];
         _header.Crc           = BitConverter.ToUInt16(headerBytes, 10);
 
-        byte[] headerBytesForCrc = new byte[10];
+        var headerBytesForCrc = new byte[10];
         Array.Copy(headerBytes, headerBytesForCrc, 10);
         ushort calculatedHeaderCrc = TeleDiskCrc(0x0000, headerBytesForCrc);
 

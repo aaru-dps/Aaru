@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
@@ -130,7 +130,7 @@ public sealed partial class OperaFS
         else
             fileBlockSizeRatio = entry.Entry.block_size / _image.Info.SectorSize;
 
-        ErrorNumber errno = _image.ReadSectors((ulong)(entry.Pointers[0] + (firstBlock * fileBlockSizeRatio)),
+        ErrorNumber errno = _image.ReadSectors((ulong)(entry.Pointers[0] + firstBlock * fileBlockSizeRatio),
                                                (uint)(sizeInBlocks * fileBlockSizeRatio), out byte[] buffer);
 
         if(errno != ErrorNumber.NoError)
@@ -194,7 +194,7 @@ public sealed partial class OperaFS
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;
 
-        string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
+        var parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
         if(!_directoryCache.TryGetValue(parentPath, out _))
         {

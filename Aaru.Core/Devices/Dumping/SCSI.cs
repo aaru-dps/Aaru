@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Threading;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.SCSI;
-
-namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping SCSI and ATAPI devices</summary>
 public partial class Dump
@@ -46,12 +46,12 @@ public partial class Dump
     /// <summary>Dumps a SCSI Block Commands device or a Reduced Block Commands devices</summary>
     void Scsi()
     {
-        int resets = 0;
+        var resets = 0;
 
         if(_dev.IsRemovable)
         {
             InitProgress?.Invoke();
-            deviceGotReset:
+        deviceGotReset:
             bool sense = _dev.ScsiTestUnitReady(out byte[] senseBuf, _dev.Timeout, out _);
 
             if(sense)
@@ -63,8 +63,8 @@ public partial class Dump
                     ErrorMessage?.
                         Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
 
-                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                                       decSense.Value.ASC, decSense.Value.ASCQ);
 
                     // Just retry, for 5 times
                     if(decSense.Value.ASC == 0x29)
@@ -77,7 +77,7 @@ public partial class Dump
 
                     if(decSense.Value.ASC == 0x3A)
                     {
-                        int leftRetries = 5;
+                        var leftRetries = 5;
 
                         while(leftRetries > 0)
                         {
@@ -96,8 +96,7 @@ public partial class Dump
                                     Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
 
                                 _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                                   decSense.Value.SenseKey, decSense.Value.ASC,
-                                                   decSense.Value.ASCQ);
+                                                   decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                             }
 
                             leftRetries--;
@@ -113,7 +112,7 @@ public partial class Dump
                     else if(decSense.Value.ASC  == 0x04 &&
                             decSense.Value.ASCQ == 0x01)
                     {
-                        int leftRetries = 50;
+                        var leftRetries = 50;
 
                         while(leftRetries > 0)
                         {
@@ -132,8 +131,7 @@ public partial class Dump
                                     Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
 
                                 _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                                   decSense.Value.SenseKey, decSense.Value.ASC,
-                                                   decSense.Value.ASCQ);
+                                                   decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                             }
 
                             leftRetries--;
@@ -163,7 +161,7 @@ public partial class Dump
                     // These should be trapped by the OS but seems in some cases they're not
                     else if(decSense.Value.ASC == 0x28)
                     {
-                        int leftRetries = 10;
+                        var leftRetries = 10;
 
                         while(leftRetries > 0)
                         {
@@ -182,8 +180,7 @@ public partial class Dump
                                     Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
 
                                 _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                                   decSense.Value.SenseKey, decSense.Value.ASC,
-                                                   decSense.Value.ASCQ);
+                                                   decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                             }
 
                             leftRetries--;
@@ -199,8 +196,7 @@ public partial class Dump
                     }
                     else
                     {
-                        StoppingErrorMessage?.
-                            Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+                        StoppingErrorMessage?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
 
                         return;
                     }
@@ -237,8 +233,7 @@ public partial class Dump
                 if(_outputPlugin is IWritableOpticalImage)
                     Mmc();
                 else
-                    StoppingErrorMessage?.
-                        Invoke("The specified plugin does not support storing optical disc images.");
+                    StoppingErrorMessage?.Invoke("The specified plugin does not support storing optical disc images.");
 
                 return;
             case PeripheralDeviceTypes.BridgingExpander

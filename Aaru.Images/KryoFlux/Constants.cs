@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Aaru.DiscImages;
+
+using System.Diagnostics.CodeAnalysis;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class KryoFlux

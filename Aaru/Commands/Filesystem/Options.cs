@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Filesystem;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -43,9 +45,7 @@ using Aaru.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace Aaru.Commands.Filesystem;
-
-internal sealed class ListOptionsCommand : Command
+sealed class ListOptionsCommand : Command
 {
     public ListOptionsCommand() : base("options", "Lists all options supported by read-only filesystems.") =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
@@ -58,7 +58,7 @@ internal sealed class ListOptionsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -89,7 +89,7 @@ internal sealed class ListOptionsCommand : Command
 
         foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
         {
-            List<(string name, Type type, string description)> options = kvp.Value.SupportedOptions.ToList();
+            var options = kvp.Value.SupportedOptions.ToList();
 
             if(options.Count == 0)
                 continue;

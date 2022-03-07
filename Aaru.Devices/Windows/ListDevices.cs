@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices.Windows;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -40,9 +42,7 @@ using Aaru.Helpers;
 using Microsoft.Win32.SafeHandles;
 using Marshal = System.Runtime.InteropServices.Marshal;
 
-namespace Aaru.Devices.Windows;
-
-internal static class ListDevices
+static class ListDevices
 {
     /// <summary>Converts a hex dump string to the ASCII string it represents</summary>
     /// <param name="hex">Hex dump</param>
@@ -52,8 +52,8 @@ internal static class ListDevices
         var          result   = new StringBuilder();
         const string HEXTABLE = "0123456789abcdef";
 
-        for(int i = 0; i < hex.Length / 2; i++)
-            result.Append((char)((16 * HEXTABLE.IndexOf(hex[2 * i])) + HEXTABLE.IndexOf(hex[(2 * i) + 1])));
+        for(var i = 0; i < hex.Length / 2; i++)
+            result.Append((char)(16 * HEXTABLE.IndexOf(hex[2 * i]) + HEXTABLE.IndexOf(hex[2 * i + 1])));
 
         return result.ToString();
     }
@@ -63,7 +63,7 @@ internal static class ListDevices
     [SuppressMessage("ReSharper", "RedundantCatchClause")]
     internal static DeviceInfo[] GetList()
     {
-        List<string> deviceIDs = new List<string>();
+        var deviceIDs = new List<string>();
 
         try
         {
@@ -92,7 +92,7 @@ internal static class ListDevices
         #endif
         }
 
-        List<DeviceInfo> devList = new List<DeviceInfo>();
+        var devList = new List<DeviceInfo>();
 
         foreach(string devId in deviceIDs)
         {
@@ -123,14 +123,14 @@ internal static class ListDevices
             //descriptor.RawDeviceProperties = new byte[16384];
 
             IntPtr descriptorPtr = Marshal.AllocHGlobal(1000);
-            byte[] descriptorB   = new byte[1000];
+            var    descriptorB   = new byte[1000];
 
             uint returned = 0;
-            int  error    = 0;
+            var  error    = 0;
 
-            bool hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IoctlStorageQueryProperty,
-                                                                ref query, (uint)Marshal.SizeOf(query),
-                                                                descriptorPtr, 1000, ref returned, IntPtr.Zero);
+            bool hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IoctlStorageQueryProperty, ref query,
+                                                                (uint)Marshal.SizeOf(query), descriptorPtr, 1000,
+                                                                ref returned, IntPtr.Zero);
 
             if(hasError)
                 error = Marshal.GetLastWin32Error();
@@ -163,12 +163,10 @@ internal static class ListDevices
             };
 
             if(descriptor.VendorIdOffset > 0)
-                info.Vendor =
-                    StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.VendorIdOffset);
+                info.Vendor = StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.VendorIdOffset);
 
             if(descriptor.ProductIdOffset > 0)
-                info.Model =
-                    StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.ProductIdOffset);
+                info.Model = StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.ProductIdOffset);
 
             // TODO: Get serial number of SCSI and USB devices, probably also FireWire (untested)
             if(descriptor.SerialNumberOffset > 0)

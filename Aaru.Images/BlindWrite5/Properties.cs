@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class BlindWrite5
 {
@@ -46,7 +46,7 @@ public sealed partial class BlindWrite5
     /// <inheritdoc />
     public string Name => "BlindWrite 5";
     /// <inheritdoc />
-    public Guid Id => new Guid("9CB7A381-0509-4F9F-B801-3F65434BC3EE");
+    public Guid Id => new("9CB7A381-0509-4F9F-B801-3F65434BC3EE");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

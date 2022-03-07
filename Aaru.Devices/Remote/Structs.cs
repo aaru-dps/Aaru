@@ -30,9 +30,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Runtime.InteropServices;
-using Aaru.CommonTypes.Enums;
-using Aaru.Decoders.ATA;
+
 
 // ReSharper disable MemberCanBeInternal
 // ReSharper disable MemberCanBePrivate.Global
@@ -40,6 +38,10 @@ using Aaru.Decoders.ATA;
 // ReSharper disable IdentifierTypo
 
 namespace Aaru.Devices.Remote;
+
+using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Enums;
+using Aaru.Decoders.ATA;
 
 /// <summary>Header for any Aaru remote packet</summary>
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]

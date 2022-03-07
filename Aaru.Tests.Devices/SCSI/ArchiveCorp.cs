@@ -26,20 +26,21 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices.SCSI;
+
+using System;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Aaru.Helpers;
 
-namespace Aaru.Tests.Devices.SCSI;
-
-internal static class ArchiveCorp
+static class ArchiveCorp
 {
     internal static void Menu(string devPath, Device dev)
     {
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send an Archive vendor command to the device:");
             AaruConsole.WriteLine("1.- Send REQUEST BLOCK ADDRESS command.");
@@ -47,12 +48,12 @@ internal static class ArchiveCorp
             AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = System.Console.ReadLine();
+            string strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -73,7 +74,7 @@ internal static class ArchiveCorp
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
+                    Console.ReadKey();
 
                     continue;
             }
@@ -86,11 +87,11 @@ internal static class ArchiveCorp
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for REQUEST BLOCK ADDRESS command:");
             AaruConsole.WriteLine("LBA: {0}", lba);
@@ -100,12 +101,12 @@ internal static class ArchiveCorp
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Archive vendor commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -118,13 +119,13 @@ internal static class ArchiveCorp
                     return;
                 case 1:
                     AaruConsole.Write("LBA?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         lba = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -132,13 +133,13 @@ internal static class ArchiveCorp
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, lba, dev.Timeout,
                                                         out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending REQUEST BLOCK ADDRESS to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -157,13 +158,13 @@ internal static class ArchiveCorp
         AaruConsole.WriteLine("0.- Return to Archive vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -175,7 +176,7 @@ internal static class ArchiveCorp
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("REQUEST BLOCK ADDRESS response:");
 
@@ -183,13 +184,13 @@ internal static class ArchiveCorp
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("REQUEST BLOCK ADDRESS sense:");
 
@@ -197,19 +198,19 @@ internal static class ArchiveCorp
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("REQUEST BLOCK ADDRESS decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -217,8 +218,8 @@ internal static class ArchiveCorp
             case 5: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -226,16 +227,16 @@ internal static class ArchiveCorp
 
     static void SeekBlock(string devPath, Device dev)
     {
-        bool   immediate = false;
+        var    immediate = false;
         uint   lba       = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for SEEK BLOCK command:");
             AaruConsole.WriteLine("Immediate?: {0}", immediate);
@@ -246,12 +247,12 @@ internal static class ArchiveCorp
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Archive vendor commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -264,25 +265,25 @@ internal static class ArchiveCorp
                     return;
                 case 1:
                     AaruConsole.Write("Immediate?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out immediate))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         immediate = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("LBA?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         lba = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -290,13 +291,12 @@ internal static class ArchiveCorp
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
-        bool sense =
-            dev.ArchiveCorpSeekBlock(out byte[] senseBuffer, immediate, lba, dev.Timeout, out double duration);
+        bool sense = dev.ArchiveCorpSeekBlock(out byte[] senseBuffer, immediate, lba, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SEEK BLOCK to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -313,13 +313,13 @@ internal static class ArchiveCorp
         AaruConsole.WriteLine("0.- Return to Archive vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -331,7 +331,7 @@ internal static class ArchiveCorp
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEEK BLOCK sense:");
 
@@ -339,8 +339,8 @@ internal static class ArchiveCorp
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -348,8 +348,8 @@ internal static class ArchiveCorp
             case 3: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }

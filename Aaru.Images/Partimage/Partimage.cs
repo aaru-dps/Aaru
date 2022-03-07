@@ -30,16 +30,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+#pragma warning disable 649
+
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-
-#pragma warning disable 649
-
-namespace Aaru.DiscImages;
 
 /// <summary>Implements reading partimage disk images</summary>
 public sealed partial class Partimage : IMediaImage, IVerifiableImage

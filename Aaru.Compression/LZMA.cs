@@ -26,17 +26,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Compression;
+
 using System.IO;
 using System.Runtime.InteropServices;
 using SharpCompress.Compressors.LZMA;
 
-namespace Aaru.Compression;
-
 public class LZMA
 {
-    /// <summary>
-    /// Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.
-    /// </summary>
+    /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]

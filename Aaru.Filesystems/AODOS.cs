@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information has been extracted looking at available disk images
 // This may be missing fields, or not, I don't know russian so any help is appreciated
@@ -91,8 +91,7 @@ public sealed class AODOS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         information = "";
         Encoding    = Encoding.GetEncoding("koi8-r");
@@ -123,8 +122,7 @@ public sealed class AODOS : IFilesystem
         sbInformation.AppendFormat("{0} files on volume", bb.files).AppendLine();
         sbInformation.AppendFormat("{0} used sectors on volume", bb.usedSectors).AppendLine();
 
-        sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(bb.volumeLabel, Encoding)).
-                      AppendLine();
+        sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(bb.volumeLabel, Encoding)).AppendLine();
 
         information = sbInformation.ToString();
     }

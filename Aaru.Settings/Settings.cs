@@ -31,6 +31,8 @@
 // Copyright © 2021 Rebecca Wallander
 // ****************************************************************************/
 
+namespace Aaru.Settings;
+
 using System;
 using System.IO;
 using System.Xml.Serialization;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Interop;
 using Claunia.PropertyList;
 using Microsoft.Win32;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
-
-namespace Aaru.Settings;
 
 /// <summary>Settings</summary>
 public class DicSettings
@@ -127,7 +127,7 @@ public static class Settings
         PlatformID ptId     = DetectOS.GetRealPlatformID();
         string     homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         LocalDbPath = "local.db";
-        string oldMainDbPath = "master.db";
+        var oldMainDbPath = "master.db";
         MainDbPath = "main.db";
 
         try
@@ -279,8 +279,7 @@ public static class Settings
                         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
                                      "Preferences");
 
-                    string dicPreferencesFilePath =
-                        Path.Combine(preferencesPath, "com.claunia.discimagechef.plist");
+                    string dicPreferencesFilePath = Path.Combine(preferencesPath, "com.claunia.discimagechef.plist");
 
                     string preferencesFilePath = Path.Combine(preferencesPath, "com.claunia.aaru.plist");
 
@@ -322,18 +321,17 @@ public static class Settings
                                                    ((NSNumber)obj2).ToBool(),
                                     DeviceStats = stats.TryGetValue("DeviceStats", out obj2) &&
                                                   ((NSNumber)obj2).ToBool(),
-                                    FilesystemStats =
-                                        stats.TryGetValue("FilesystemStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    FilesystemStats = stats.TryGetValue("FilesystemStats", out obj2) &&
+                                                      ((NSNumber)obj2).ToBool(),
                                     FilterStats = stats.TryGetValue("FilterStats", out obj2) &&
                                                   ((NSNumber)obj2).ToBool(),
-                                    MediaImageStats =
-                                        stats.TryGetValue("MediaImageStats", out obj2) && ((NSNumber)obj2).ToBool(),
-                                    MediaScanStats =
-                                        stats.TryGetValue("MediaScanStats", out obj2) && ((NSNumber)obj2).ToBool(),
-                                    PartitionStats =
-                                        stats.TryGetValue("PartitionStats", out obj2) && ((NSNumber)obj2).ToBool(),
-                                    MediaStats = stats.TryGetValue("MediaStats", out obj2) &&
-                                                 ((NSNumber)obj2).ToBool(),
+                                    MediaImageStats = stats.TryGetValue("MediaImageStats", out obj2) &&
+                                                      ((NSNumber)obj2).ToBool(),
+                                    MediaScanStats = stats.TryGetValue("MediaScanStats", out obj2) &&
+                                                     ((NSNumber)obj2).ToBool(),
+                                    PartitionStats = stats.TryGetValue("PartitionStats", out obj2) &&
+                                                     ((NSNumber)obj2).ToBool(),
+                                    MediaStats = stats.TryGetValue("MediaStats", out obj2) && ((NSNumber)obj2).ToBool(),
                                     VerifyStats = stats.TryGetValue("VerifyStats", out obj2) &&
                                                   ((NSNumber)obj2).ToBool()
                                 };
@@ -455,8 +453,7 @@ public static class Settings
 
                     string xdgConfigPath =
                         Path.Combine(homePath,
-                                     Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ??
-                                     XDG_CONFIG_HOME_RESOLVED);
+                                     Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ?? XDG_CONFIG_HOME_RESOLVED);
 
                     string dicSettingsPath = Path.Combine(xdgConfigPath, "DiscImageChef.xml");
                     string settingsPath    = Path.Combine(xdgConfigPath, "Aaru.xml");
@@ -640,8 +637,7 @@ public static class Settings
 
                     string xdgConfigPath =
                         Path.Combine(homePath,
-                                     Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ??
-                                     XDG_CONFIG_HOME_RESOLVED);
+                                     Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ?? XDG_CONFIG_HOME_RESOLVED);
 
                     string settingsPath = Path.Combine(xdgConfigPath, "Aaru.xml");
 

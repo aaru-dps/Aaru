@@ -24,15 +24,17 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes.Extents;
-using Aaru.CommonTypes.Interfaces;
-using Schemas;
+
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
 namespace Aaru.Core.Devices.Dumping;
+
+using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
+using Schemas;
 
 partial class Dump
 {
@@ -41,15 +43,14 @@ partial class Dump
     /// <param name="extents">Correctly dump extents</param>
     /// <param name="currentTry">Resume information</param>
     /// <param name="blankExtents">Blank extents</param>
-    void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardwareType currentTry,
-                     ExtentsULong blankExtents)
+    void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardwareType currentTry, ExtentsULong blankExtents)
     {
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
         bool    sense;
         bool    recoveredError;
         bool    blankCheck;
         byte[]  buffer;
-        bool    newBlank     = false;
+        var     newBlank     = false;
         var     outputFormat = _outputPlugin as IWritableImage;
 
         foreach(ulong badSector in tmpArray)

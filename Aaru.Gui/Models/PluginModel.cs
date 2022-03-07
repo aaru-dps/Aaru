@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace Aaru.Gui.Models;
+
+using System;
 
 public sealed class PluginModel
 {

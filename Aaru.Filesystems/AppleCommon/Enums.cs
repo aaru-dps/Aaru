@@ -30,22 +30,30 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
+
 
 // ReSharper disable InconsistentNaming
 
 namespace Aaru.Filesystems;
 
+using System;
+
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
-internal static partial class AppleCommon
+static partial class AppleCommon
 {
     [Flags]
     internal enum VolumeAttributes : ushort
     {
-        HardwareLock     = 0x80, Unmounted         = 0x100, SparedBadBlocks = 0x200,
-        DoesNotNeedCache = 0x400, BootInconsistent = 0x800, ReusedIds       = 0x1000,
-        Journaled        = 0x2000, Inconsistent    = 0x4000, SoftwareLock   = 0x8000
+        HardwareLock     = 0x80,
+        Unmounted        = 0x100,
+        SparedBadBlocks  = 0x200,
+        DoesNotNeedCache = 0x400,
+        BootInconsistent = 0x800,
+        ReusedIds        = 0x1000,
+        Journaled        = 0x2000,
+        Inconsistent     = 0x4000,
+        SoftwareLock     = 0x8000
     }
 
     [Flags]
@@ -82,7 +90,9 @@ internal static partial class AppleCommon
 
     internal enum FinderFolder : short
     {
-        fTrash = -3, fDesktop = -2, fDisk = 0
+        fTrash   = -3,
+        fDesktop = -2,
+        fDisk    = 0
     }
 
     [Flags]

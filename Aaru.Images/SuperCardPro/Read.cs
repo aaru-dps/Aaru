@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
@@ -53,7 +53,7 @@ public sealed partial class SuperCardPro
         if(_scpStream.Length < Marshal.SizeOf<ScpHeader>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
+        var hdr = new byte[Marshal.SizeOf<ScpHeader>()];
         _scpStream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
         Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
@@ -97,8 +97,8 @@ public sealed partial class SuperCardPro
 
             if(!trk.Signature.SequenceEqual(_trkSignature))
             {
-                AaruConsole.DebugWriteLine("SuperCardPro plugin",
-                                           "Track header at {0} contains incorrect signature.", Header.offsets[t]);
+                AaruConsole.DebugWriteLine("SuperCardPro plugin", "Track header at {0} contains incorrect signature.",
+                                           Header.offsets[t]);
 
                 continue;
             }
@@ -115,7 +115,7 @@ public sealed partial class SuperCardPro
 
             for(byte r = 0; r < Header.revolutions; r++)
             {
-                byte[] rev = new byte[Marshal.SizeOf<TrackEntry>()];
+                var rev = new byte[Marshal.SizeOf<TrackEntry>()];
                 _scpStream.Read(rev, 0, Marshal.SizeOf<TrackEntry>());
 
                 trk.Entries[r] = Marshal.ByteArrayToStructureLittleEndian<TrackEntry>(rev);
@@ -134,9 +134,9 @@ public sealed partial class SuperCardPro
 
             while(_scpStream.Position >= position)
             {
-                byte[] footerSig = new byte[4];
+                var footerSig = new byte[4];
                 _scpStream.Read(footerSig, 0, 4);
-                uint footerMagic = BitConverter.ToUInt32(footerSig, 0);
+                var footerMagic = BitConverter.ToUInt32(footerSig, 0);
 
                 if(footerMagic == FOOTER_SIGNATURE)
                 {
@@ -144,7 +144,7 @@ public sealed partial class SuperCardPro
 
                     AaruConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", _scpStream.Position);
 
-                    byte[] ftr = new byte[Marshal.SizeOf<Footer>()];
+                    var ftr = new byte[Marshal.SizeOf<Footer>()];
                     _scpStream.Read(ftr, 0, Marshal.SizeOf<Footer>());
 
                     Footer footer = Marshal.ByteArrayToStructureLittleEndian<Footer>(ftr);
@@ -167,8 +167,7 @@ public sealed partial class SuperCardPro
                     AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.commentsOffset = 0x{0:X8}",
                                                footer.commentsOffset);
 
-                    AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.creationTime = {0}",
-                                               footer.creationTime);
+                    AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.creationTime = {0}", footer.creationTime);
 
                     AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.modificationTime = {0}",
                                                footer.modificationTime);
@@ -265,8 +264,7 @@ public sealed partial class SuperCardPro
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>

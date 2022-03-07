@@ -55,14 +55,16 @@
  * that DDI files are easy to recognize.
  */
 
-using System.Collections.Generic;
-using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
+
 
 // ReSharper disable NotAccessedField.Local
 
 namespace Aaru.DiscImages;
+
+using System.Collections.Generic;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 
 /// <inheritdoc />
 /// <summary>Implements reading DiskDupe disk images</summary>

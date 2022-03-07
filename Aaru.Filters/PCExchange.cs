@@ -31,6 +31,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filters;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -41,8 +43,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Marshal = System.Runtime.InteropServices.Marshal;
-
-namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Decodes PCExchange files</summary>
@@ -122,24 +122,24 @@ public sealed class PcExchange : IFilter
 
         string baseFilename = System.IO.Path.GetFileName(path);
 
-        bool dataFound = false;
-        bool rsrcFound = false;
+        var dataFound = false;
+        var rsrcFound = false;
 
         var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO), FileMode.Open,
                                              FileAccess.Read);
 
         while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
         {
-            var    datEntry  = new Entry();
-            byte[] datEntryB = new byte[Marshal.SizeOf(datEntry)];
+            var datEntry  = new Entry();
+            var datEntryB = new byte[Marshal.SizeOf(datEntry)];
             finderDatStream.Read(datEntryB, 0, Marshal.SizeOf(datEntry));
             datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<Entry>(datEntryB);
 
             // TODO: Add support for encoding on filters
             string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
 
-            byte[] tmpDosNameB = new byte[8];
-            byte[] tmpDosExtB  = new byte[3];
+            var tmpDosNameB = new byte[8];
+            var tmpDosExtB  = new byte[3];
             Array.Copy(datEntry.dosName, 0, tmpDosNameB, 0, 8);
             Array.Copy(datEntry.dosName, 8, tmpDosExtB, 0, 3);
 
@@ -154,9 +154,8 @@ public sealed class PcExchange : IFilter
                 continue;
 
             dataFound |=
-                File.Exists(System.IO.Path.Combine(parentFolder,
-                                                   macName ?? throw new InvalidOperationException())) ||
-                File.Exists(System.IO.Path.Combine(parentFolder, dosName))                            ||
+                File.Exists(System.IO.Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())) ||
+                File.Exists(System.IO.Path.Combine(parentFolder, dosName))                                          ||
                 File.Exists(System.IO.Path.Combine(parentFolder, dosNameLow));
 
             rsrcFound |= File.Exists(System.IO.Path.Combine(parentFolder, RESOURCES, dosName)) ||
@@ -189,15 +188,15 @@ public sealed class PcExchange : IFilter
 
         while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
         {
-            var    datEntry  = new Entry();
-            byte[] datEntryB = new byte[Marshal.SizeOf(datEntry)];
+            var datEntry  = new Entry();
+            var datEntryB = new byte[Marshal.SizeOf(datEntry)];
             finderDatStream.Read(datEntryB, 0, Marshal.SizeOf(datEntry));
             datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<Entry>(datEntryB);
 
             string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
 
-            byte[] tmpDosNameB = new byte[8];
-            byte[] tmpDosExtB  = new byte[3];
+            var tmpDosNameB = new byte[8];
+            var tmpDosExtB  = new byte[3];
             Array.Copy(datEntry.dosName, 0, tmpDosNameB, 0, 8);
             Array.Copy(datEntry.dosName, 8, tmpDosExtB, 0, 3);
 

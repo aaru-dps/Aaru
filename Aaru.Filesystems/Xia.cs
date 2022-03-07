@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information from the Linux kernel
 /// <inheritdoc />
@@ -71,8 +71,8 @@ public sealed class Xia : IFilesystem
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -91,16 +91,15 @@ public sealed class Xia : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
 
         var sb = new StringBuilder();
 
-        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -119,14 +118,14 @@ public sealed class Xia : IFilesystem
 
         sb.AppendFormat("{0} inodes", supblk.s_ninodes).AppendLine();
 
-        sb.AppendFormat("{0} data zones ({1} bytes)", supblk.s_ndatazones,
-                        supblk.s_ndatazones * supblk.s_zone_size).AppendLine();
+        sb.AppendFormat("{0} data zones ({1} bytes)", supblk.s_ndatazones, supblk.s_ndatazones * supblk.s_zone_size).
+           AppendLine();
 
-        sb.AppendFormat("{0} imap zones ({1} bytes)", supblk.s_imap_zones,
-                        supblk.s_imap_zones * supblk.s_zone_size).AppendLine();
+        sb.AppendFormat("{0} imap zones ({1} bytes)", supblk.s_imap_zones, supblk.s_imap_zones * supblk.s_zone_size).
+           AppendLine();
 
-        sb.AppendFormat("{0} zmap zones ({1} bytes)", supblk.s_zmap_zones,
-                        supblk.s_zmap_zones * supblk.s_zone_size).AppendLine();
+        sb.AppendFormat("{0} zmap zones ({1} bytes)", supblk.s_zmap_zones, supblk.s_zmap_zones * supblk.s_zone_size).
+           AppendLine();
 
         sb.AppendFormat("First data zone: {0}", supblk.s_firstdatazone).AppendLine();
 

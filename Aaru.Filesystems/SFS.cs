@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the Smart File System</summary>
@@ -73,14 +73,13 @@ public sealed class SFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
+        var magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
         return magic == SFS_MAGIC || magic == SFS2_MAGIC;
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         information = "";
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
@@ -105,8 +104,7 @@ public sealed class SFS : IFilesystem
             AppendLine();
 
         sbInformation.AppendFormat("Volume created on {0}",
-                                   DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8)).
-                      AppendLine();
+                                   DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8)).AppendLine();
 
         sbInformation.AppendFormat("Bitmap starts in block {0}", rootBlock.bitmapbase).AppendLine();
 
@@ -116,9 +114,8 @@ public sealed class SFS : IFilesystem
         sbInformation.AppendFormat("Root object container starts in block {0}", rootBlock.rootobjectcontainer).
                       AppendLine();
 
-        sbInformation.
-            AppendFormat("Root node of the extent B-tree resides in block {0}", rootBlock.extentbnoderoot).
-            AppendLine();
+        sbInformation.AppendFormat("Root node of the extent B-tree resides in block {0}", rootBlock.extentbnoderoot).
+                      AppendLine();
 
         sbInformation.AppendFormat("Root node of the object B-tree resides in block {0}", rootBlock.objectnoderoot).
                       AppendLine();
@@ -144,7 +141,8 @@ public sealed class SFS : IFilesystem
     [Flags]
     enum Flags : byte
     {
-        RecycledFolder = 64, CaseSensitive = 128
+        RecycledFolder = 64,
+        CaseSensitive  = 128
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

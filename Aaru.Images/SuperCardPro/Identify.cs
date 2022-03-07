@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
@@ -49,7 +49,7 @@ public sealed partial class SuperCardPro
         if(stream.Length < Marshal.SizeOf<ScpHeader>())
             return false;
 
-        byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
+        var hdr = new byte[Marshal.SizeOf<ScpHeader>()];
         stream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
         Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);

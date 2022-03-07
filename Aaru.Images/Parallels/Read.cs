@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Parallels
 {
@@ -53,7 +53,7 @@ public sealed partial class Parallels
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+        var pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
@@ -74,10 +74,10 @@ public sealed partial class Parallels
 
         AaruConsole.DebugWriteLine("Parallels plugin", "Reading BAT");
         _bat = new uint[_pHdr.bat_entries];
-        byte[] batB = new byte[_pHdr.bat_entries * 4];
+        var batB = new byte[_pHdr.bat_entries * 4];
         stream.Read(batB, 0, batB.Length);
 
-        for(int i = 0; i < _bat.Length; i++)
+        for(var i = 0; i < _bat.Length; i++)
             _bat[i] = BitConverter.ToUInt32(batB, i * 4);
 
         _clusterBytes = _pHdr.cluster_size * 512;
@@ -85,7 +85,7 @@ public sealed partial class Parallels
         if(_pHdr.data_off > 0)
             _dataOffset = _pHdr.data_off * 512;
         else
-            _dataOffset = ((stream.Position / _clusterBytes) + (stream.Position % _clusterBytes)) * _clusterBytes;
+            _dataOffset = (stream.Position / _clusterBytes + stream.Position % _clusterBytes) * _clusterBytes;
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -143,7 +143,7 @@ public sealed partial class Parallels
         else
             imageOff = batOff * 512UL;
 
-        byte[] cluster = new byte[_clusterBytes];
+        var cluster = new byte[_clusterBytes];
         _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
         _imageStream.Read(cluster, 0, (int)_clusterBytes);
         buffer = new byte[512];

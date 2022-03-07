@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using System;
 using Aaru.Console;
-
-namespace Aaru.Devices;
 
 public sealed partial class Device
 {
@@ -62,7 +62,7 @@ public sealed partial class Device
                       uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
 
         cdb[0] = (byte)ScsiCommands.Read6;
         cdb[1] = (byte)((lba & 0x1F0000) >> 16);
@@ -107,11 +107,11 @@ public sealed partial class Device
     /// <param name="transferLength">How many blocks to read.</param>
     /// <param name="relAddr">If set to <c>true</c> address is relative to current position.</param>
     public bool Read10(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua, bool fuaNv,
-                       bool relAddr, uint lba, uint blockSize, byte groupNumber, ushort transferLength,
-                       uint timeout, out double duration)
+                       bool relAddr, uint lba, uint blockSize, byte groupNumber, ushort transferLength, uint timeout,
+                       out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.Read10;
         cdb[1] = (byte)((rdprotect & 0x07) << 5);
@@ -171,11 +171,11 @@ public sealed partial class Device
     /// <param name="streaming">If set to <c>true</c> the stream playback operation should be used (MMC only).</param>
     /// <param name="relAddr">If set to <c>true</c> address is relative to current position.</param>
     public bool Read12(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua, bool fuaNv,
-                       bool relAddr, uint lba, uint blockSize, byte groupNumber, uint transferLength,
-                       bool streaming, uint timeout, out double duration)
+                       bool relAddr, uint lba, uint blockSize, byte groupNumber, uint transferLength, bool streaming,
+                       uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.Read12;
         cdb[1] = (byte)((rdprotect & 0x07) << 5);
@@ -239,11 +239,11 @@ public sealed partial class Device
     /// <param name="transferLength">How many blocks to read.</param>
     /// <param name="streaming">If set to <c>true</c> the stream playback operation should be used (MMC only).</param>
     public bool Read16(out byte[] buffer, out byte[] senseBuffer, byte rdprotect, bool dpo, bool fua, bool fuaNv,
-                       ulong lba, uint blockSize, byte groupNumber, uint transferLength, bool streaming,
-                       uint timeout, out double duration)
+                       ulong lba, uint blockSize, byte groupNumber, uint transferLength, bool streaming, uint timeout,
+                       out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb      = new byte[16];
+        var    cdb      = new byte[16];
         byte[] lbaBytes = BitConverter.GetBytes(lba);
 
         cdb[0] = (byte)ScsiCommands.Read16;
@@ -304,7 +304,7 @@ public sealed partial class Device
                            ushort transferBytes, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.ReadLong;
 
@@ -349,7 +349,7 @@ public sealed partial class Device
                            uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb      = new byte[16];
+        var    cdb      = new byte[16];
         byte[] lbaBytes = BitConverter.GetBytes(lba);
 
         cdb[0]  = (byte)ScsiCommands.ServiceActionIn;
@@ -388,7 +388,7 @@ public sealed partial class Device
     public bool Seek6(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.Seek6;
@@ -414,7 +414,7 @@ public sealed partial class Device
     public bool Seek10(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[10];
+        var    cdb    = new byte[10];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.Seek10;

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -55,8 +57,6 @@ using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Marshal = System.Runtime.InteropServices.Marshal;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using VendorString = Aaru.Decoders.SecureDigital.VendorString;
-
-namespace Aaru.Devices;
 
 /// <summary>Implements a device or media containing drive</summary>
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnusedMember.Global"),
@@ -102,14 +102,13 @@ public sealed partial class Device
             LastError = errno;
         }
         else
-        {
             switch(PlatformId)
             {
                 case PlatformID.Win32NT:
                 {
                     FileHandle = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
-                                                   FileShare.Read                     | FileShare.Write, IntPtr.Zero,
-                                                   FileMode.OpenExisting, FileAttributes.Normal, IntPtr.Zero);
+                                                   FileShare.Read | FileShare.Write, IntPtr.Zero, FileMode.OpenExisting,
+                                                   FileAttributes.Normal, IntPtr.Zero);
 
                     if(((SafeFileHandle)FileHandle).IsInvalid)
                     {
@@ -141,9 +140,7 @@ public sealed partial class Device
                             }
                         }
                         else
-                        {
                             Error = true;
-                        }
 
                         LastError = Marshal.GetLastWin32Error();
                     }
@@ -152,7 +149,6 @@ public sealed partial class Device
                 }
                 default: throw new DeviceException($"Platform {PlatformId} not supported.");
             }
-        }
 
         if(Error)
             throw new DeviceException(LastError);
@@ -175,10 +171,10 @@ public sealed partial class Device
         if(Error)
             throw new DeviceException(LastError);
 
-        bool scsiSense = true;
+        var scsiSense = true;
 
         if(_remote is null)
-        {
+
             // Windows is answering SCSI INQUIRY for all device types so it needs to be detected first
             switch(PlatformId)
             {
@@ -189,16 +185,15 @@ public sealed partial class Device
                     query.AdditionalParameters = new byte[1];
 
                     IntPtr descriptorPtr = Marshal.AllocHGlobal(1000);
-                    byte[] descriptorB   = new byte[1000];
+                    var    descriptorB   = new byte[1000];
 
                     uint returned = 0;
-                    int  error    = 0;
+                    var  error    = 0;
 
                     bool hasError = !Extern.DeviceIoControlStorageQuery((SafeFileHandle)FileHandle,
                                                                         WindowsIoctl.IoctlStorageQueryProperty,
                                                                         ref query, (uint)Marshal.SizeOf(query),
-                                                                        descriptorPtr, 1000, ref returned,
-                                                                        IntPtr.Zero);
+                                                                        descriptorPtr, 1000, ref returned, IntPtr.Zero);
 
                     if(hasError)
                         error = Marshal.GetLastWin32Error();
@@ -226,8 +221,7 @@ public sealed partial class Device
 
                         descriptor.RawDeviceProperties = new byte[descriptor.RawPropertiesLength];
 
-                        Array.Copy(descriptorB, 36, descriptor.RawDeviceProperties, 0,
-                                   descriptor.RawPropertiesLength);
+                        Array.Copy(descriptorB, 36, descriptor.RawDeviceProperties, 0, descriptor.RawPropertiesLength);
 
                         switch(descriptor.BusType)
                         {
@@ -291,9 +285,7 @@ public sealed partial class Device
                                         scsiSense = ScsiInquiry(out inqBuf, out _);
                                 }
                                 else
-                                {
                                     Manufacturer = "ATA";
-                                }
 
                                 break;
                         }
@@ -303,13 +295,13 @@ public sealed partial class Device
 
                     if(Windows.Command.IsSdhci((SafeFileHandle)FileHandle))
                     {
-                        byte[] sdBuffer = new byte[16];
+                        var sdBuffer = new byte[16];
 
                         LastError = Windows.Command.SendMmcCommand((SafeFileHandle)FileHandle, MmcCommands.SendCsd,
                                                                    false, false,
                                                                    MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 |
-                                                                   MmcFlags.CommandAc, 0, 16, 1, ref sdBuffer,
-                                                                   out _, out _, out bool sense);
+                                                                   MmcFlags.CommandAc, 0, 16, 1, ref sdBuffer, out _,
+                                                                   out _, out bool sense);
 
                         if(!sense)
                         {
@@ -322,8 +314,8 @@ public sealed partial class Device
                         LastError = Windows.Command.SendMmcCommand((SafeFileHandle)FileHandle, MmcCommands.SendCid,
                                                                    false, false,
                                                                    MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 |
-                                                                   MmcFlags.CommandAc, 0, 16, 1, ref sdBuffer,
-                                                                   out _, out _, out sense);
+                                                                   MmcFlags.CommandAc, 0, 16, 1, ref sdBuffer, out _,
+                                                                   out _, out sense);
 
                         if(!sense)
                         {
@@ -334,11 +326,11 @@ public sealed partial class Device
                         sdBuffer = new byte[8];
 
                         LastError = Windows.Command.SendMmcCommand((SafeFileHandle)FileHandle,
-                                                                   (MmcCommands)SecureDigitalCommands.SendScr,
-                                                                   false, true,
+                                                                   (MmcCommands)SecureDigitalCommands.SendScr, false,
+                                                                   true,
                                                                    MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 |
-                                                                   MmcFlags.CommandAdtc, 0, 8, 1, ref sdBuffer,
-                                                                   out _, out _, out sense);
+                                                                   MmcFlags.CommandAdtc, 0, 8, 1, ref sdBuffer, out _,
+                                                                   out _, out sense);
 
                         if(!sense)
                         {
@@ -354,8 +346,8 @@ public sealed partial class Device
                                                                            SendOperatingCondition
                                                                        : MmcCommands.SendOpCond, false, true,
                                                                    MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 |
-                                                                   MmcFlags.CommandBcr, 0, 4, 1, ref sdBuffer,
-                                                                   out _, out _, out sense);
+                                                                   MmcFlags.CommandBcr, 0, 4, 1, ref sdBuffer, out _,
+                                                                   out _, out sense);
 
                         if(!sense)
                         {
@@ -370,9 +362,7 @@ public sealed partial class Device
                        devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
                        devicePath.StartsWith("/dev/st", StringComparison.Ordinal) ||
                        devicePath.StartsWith("/dev/sg", StringComparison.Ordinal))
-                    {
                         scsiSense = ScsiInquiry(out inqBuf, out _);
-                    }
 
                     // MultiMediaCard and SecureDigital go here
                     else if(devicePath.StartsWith("/dev/mmcblk", StringComparison.Ordinal))
@@ -381,8 +371,7 @@ public sealed partial class Device
 
                         if(File.Exists("/sys/block/" + devPath + "/device/csd"))
                         {
-                            int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/csd",
-                                                              out _cachedCsd);
+                            int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/csd", out _cachedCsd);
 
                             if(len == 0)
                                 _cachedCsd = null;
@@ -390,8 +379,7 @@ public sealed partial class Device
 
                         if(File.Exists("/sys/block/" + devPath + "/device/cid"))
                         {
-                            int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/cid",
-                                                              out _cachedCid);
+                            int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/cid", out _cachedCid);
 
                             if(len == 0)
                                 _cachedCid = null;
@@ -399,8 +387,7 @@ public sealed partial class Device
 
                         if(File.Exists("/sys/block/" + devPath + "/device/scr"))
                         {
-                            int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/scr",
-                                                              out _cachedScr);
+                            int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/scr", out _cachedScr);
 
                             if(len == 0)
                                 _cachedScr = null;
@@ -408,8 +395,7 @@ public sealed partial class Device
 
                         if(File.Exists("/sys/block/" + devPath + "/device/ocr"))
                         {
-                            int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/ocr",
-                                                              out _cachedOcr);
+                            int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/ocr", out _cachedOcr);
 
                             if(len == 0)
                                 _cachedOcr = null;
@@ -422,7 +408,6 @@ public sealed partial class Device
 
                     break;
             }
-        }
         else
         {
             Type = _remote.GetDeviceType();
@@ -455,24 +440,22 @@ public sealed partial class Device
             if(_cachedScr != null)
             {
                 Type = DeviceType.SecureDigital;
-                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(_cachedCid);
+                CID decoded = Decoders.DecodeCID(_cachedCid);
                 Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                 Model        = decoded.ProductName;
 
-                FirmwareRevision =
-                    $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
+                FirmwareRevision = $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
 
                 Serial = $"{decoded.ProductSerialNumber}";
             }
             else
             {
                 Type = DeviceType.MMC;
-                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(_cachedCid);
-                Manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
+                Aaru.Decoders.MMC.CID decoded = Aaru.Decoders.MMC.Decoders.DecodeCID(_cachedCid);
+                Manufacturer = Aaru.Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
                 Model        = decoded.ProductName;
 
-                FirmwareRevision =
-                    $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
+                FirmwareRevision = $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
 
                 Serial = $"{decoded.ProductSerialNumber}";
             }
@@ -483,7 +466,6 @@ public sealed partial class Device
 
         #region USB
         if(_remote is null)
-        {
             switch(PlatformId)
             {
                 case PlatformID.Linux:
@@ -510,11 +492,11 @@ public sealed partial class Device
                                        !File.Exists(resolvedLink + "/idVendor"))
                                         continue;
 
-                                    var usbFs = new FileStream(resolvedLink + "/descriptors",
-                                                               System.IO.FileMode.Open, System.IO.FileAccess.Read);
+                                    var usbFs = new FileStream(resolvedLink + "/descriptors", System.IO.FileMode.Open,
+                                                               System.IO.FileAccess.Read);
 
-                                    byte[] usbBuf   = new byte[65536];
-                                    int    usbCount = usbFs.Read(usbBuf, 0, 65536);
+                                    var usbBuf   = new byte[65536];
+                                    int usbCount = usbFs.Read(usbBuf, 0, 65536);
                                     UsbDescriptors = new byte[usbCount];
                                     Array.Copy(usbBuf, 0, UsbDescriptors, 0, usbCount);
                                     usbFs.Close();
@@ -590,8 +572,7 @@ public sealed partial class Device
                         UsbProductString      = usbDevice.Product;
 
                         UsbSerialString =
-                            usbDevice.
-                                SerialNumber; // This is incorrect filled by Windows with SCSI/ATA serial number
+                            usbDevice.SerialNumber; // This is incorrect filled by Windows with SCSI/ATA serial number
                     }
 
                     break;
@@ -600,7 +581,6 @@ public sealed partial class Device
 
                     break;
             }
-        }
         else
         {
             if(_remote.GetUsbData(out byte[] remoteUsbDescriptors, out ushort remoteUsbVendor,
@@ -702,9 +682,7 @@ public sealed partial class Device
 
             // TODO: Implement for other operating systems
             else
-            {
                 IsFireWire = false;
-            }
         }
         #endregion FireWire
 
@@ -748,8 +726,8 @@ public sealed partial class Device
                                 var cisFs = new FileStream(possibleDir + "/cis", System.IO.FileMode.Open,
                                                            System.IO.FileAccess.Read);
 
-                                byte[] cisBuf   = new byte[65536];
-                                int    cisCount = cisFs.Read(cisBuf, 0, 65536);
+                                var cisBuf   = new byte[65536];
+                                int cisCount = cisFs.Read(cisBuf, 0, 65536);
                                 Cis = new byte[cisCount];
                                 Array.Copy(cisBuf, 0, Cis, 0, cisCount);
                                 cisFs.Close();
@@ -764,9 +742,7 @@ public sealed partial class Device
 
             // TODO: Implement for other operating systems
             else
-            {
                 IsPcmcia = false;
-            }
         }
         else
         {
@@ -825,7 +801,7 @@ public sealed partial class Device
             Error     = false;
         }
 
-        if((scsiSense && !(IsUsb || IsFireWire)) ||
+        if(scsiSense && !(IsUsb || IsFireWire) ||
            Manufacturer == "ATA")
         {
             bool ataSense = AtaIdentify(out ataBuf, out _);
@@ -840,9 +816,7 @@ public sealed partial class Device
                     string[] separated = ataid.Value.Model.Split(' ');
 
                     if(separated.Length == 1)
-                    {
                         Model = separated[0];
-                    }
                     else
                     {
                         Manufacturer = separated[0];
@@ -884,7 +858,7 @@ public sealed partial class Device
                 Serial = UsbSerialString;
             else
                 foreach(char c in Serial.Where(c => !char.IsControl(c)))
-                    Serial = $"{Serial}{(uint)c:X2}";
+                    Serial = $"{Serial}{c:X2}";
         }
 
         if(IsFireWire)
@@ -899,7 +873,7 @@ public sealed partial class Device
                 Serial = $"{_firewireGuid:X16}";
             else
                 foreach(char c in Serial.Where(c => !char.IsControl(c)))
-                    Serial = $"{Serial}{(uint)c:X2}";
+                    Serial = $"{Serial}{c:X2}";
         }
 
         // Some optical drives are not getting the correct serial, and IDENTIFY PACKET DEVICE is blocked without

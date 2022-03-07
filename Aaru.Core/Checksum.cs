@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core;
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
-
-namespace Aaru.Core;
 
 /// <summary>Enabled checksums</summary>
 [Flags]
@@ -68,8 +68,7 @@ public enum EnableChecksum
     /// <summary>Enables Fletcher-32</summary>
     Fletcher32 = 4096,
     /// <summary>Enables all known checksums</summary>
-    All = Adler32 | Crc16 | Crc32 | Crc64 | Md5 | Sha1 | Sha256 | Sha384 | Sha512 | SpamSum | Fletcher16 |
-          Fletcher32
+    All = Adler32 | Crc16 | Crc32 | Crc64 | Md5 | Sha1 | Sha256 | Sha384 | Sha512 | SpamSum | Fletcher16 | Fletcher32
 }
 
 /// <summary>Checksums and hashes data, with different algorithms, multithreaded</summary>
@@ -383,7 +382,7 @@ public sealed class Checksum
     /// <returns>Returns the checksum results</returns>
     public List<ChecksumType> End()
     {
-        List<ChecksumType> chks = new List<ChecksumType>();
+        var chks = new List<ChecksumType>();
 
         ChecksumType chk;
 
@@ -719,8 +718,8 @@ public sealed class Checksum
               f16ThreadData.IsAlive     ||
               f32ThreadData.IsAlive) {}
 
-        List<ChecksumType> dataChecksums = new List<ChecksumType>();
-        ChecksumType       chk;
+        var          dataChecksums = new List<ChecksumType>();
+        ChecksumType chk;
 
         if(enabled.HasFlag(EnableChecksum.Adler32))
         {

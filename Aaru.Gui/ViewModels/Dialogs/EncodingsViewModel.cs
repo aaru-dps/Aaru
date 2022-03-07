@@ -30,7 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
+namespace Aaru.Gui.ViewModels.Dialogs;
+
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
@@ -40,8 +41,6 @@ using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
 using JetBrains.Annotations;
 using ReactiveUI;
-
-namespace Aaru.Gui.ViewModels.Dialogs;
 
 public sealed class EncodingsViewModel : ViewModelBase
 {
@@ -55,7 +54,7 @@ public sealed class EncodingsViewModel : ViewModelBase
 
         Task.Run(() =>
         {
-            List<EncodingModel> encodings = Encoding.GetEncodings().Select(info => new EncodingModel
+            var encodings = Encoding.GetEncodings().Select(info => new EncodingModel
             {
                 Name        = info.Name,
                 DisplayName = info.GetEncoding().EncodingName

@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Anex86
 {
@@ -47,7 +47,7 @@ public sealed partial class Anex86
     /// <inheritdoc />
     public string Name => "Anex86 Disk Image";
     /// <inheritdoc />
-    public Guid Id => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
+    public Guid Id => new("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />
@@ -78,10 +78,9 @@ public sealed partial class Anex86
         MediaType.ACORN_35_DS_DD, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.ACORN_35_DS_HD,
         MediaType.DOS_525_HD, MediaType.ACORN_525_DS_DD, MediaType.DOS_35_HD, MediaType.XDF_525, MediaType.DMF,
         MediaType.XDF_35, MediaType.DOS_35_ED, MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_525_HD,
-        MediaType.FDFORMAT_35_HD, MediaType.NEC_35_TD, MediaType.Unknown, MediaType.GENERIC_HDD,
-        MediaType.FlashDrive, MediaType.CompactFlash, MediaType.CompactFlashType2, MediaType.PCCardTypeI,
-        MediaType.PCCardTypeII, MediaType.PCCardTypeIII, MediaType.PCCardTypeIV, MediaType.MetaFloppy_Mod_I,
-        MediaType.MetaFloppy_Mod_II
+        MediaType.FDFORMAT_35_HD, MediaType.NEC_35_TD, MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive,
+        MediaType.CompactFlash, MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII,
+        MediaType.PCCardTypeIII, MediaType.PCCardTypeIV, MediaType.MetaFloppy_Mod_I, MediaType.MetaFloppy_Mod_II
     };
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>

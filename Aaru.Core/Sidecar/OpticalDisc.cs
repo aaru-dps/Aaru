@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,8 +50,6 @@ using DMI = Aaru.Decoders.Xbox.DMI;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Session = Aaru.CommonTypes.Structs.Session;
 using TrackType = Schemas.TrackType;
-
-namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
@@ -600,9 +600,7 @@ public sealed partial class Sidecar
             // For fast debugging, skip checksum
             //skipChecksum:
 
-            List<Partition> trkPartitions = partitions.
-                                            Where(p => p.Start >= trk.StartSector && p.End <= trk.EndSector).
-                                            ToList();
+            var trkPartitions = partitions.Where(p => p.Start >= trk.StartSector && p.End <= trk.EndSector).ToList();
 
             xmlTrk.FileSystemInformation = new PartitionType[1];
 
@@ -610,7 +608,7 @@ public sealed partial class Sidecar
             {
                 xmlTrk.FileSystemInformation = new PartitionType[trkPartitions.Count];
 
-                for(int i = 0; i < trkPartitions.Count; i++)
+                for(var i = 0; i < trkPartitions.Count; i++)
                 {
                     xmlTrk.FileSystemInformation[i] = new PartitionType
                     {
@@ -760,13 +758,11 @@ public sealed partial class Sidecar
             }
 
             if(trk.Indexes?.Count > 0)
-            {
                 xmlTrk.Indexes = trk.Indexes?.OrderBy(i => i.Key).Select(i => new TrackIndexType
                 {
                     index = i.Key,
                     Value = i.Value
                 }).ToArray();
-            }
 
             trksLst.Add(xmlTrk);
         }
@@ -780,8 +776,7 @@ public sealed partial class Sidecar
         if(dskType                             == MediaType.XGD2 &&
            sidecar.OpticalDisc[0].Track.Length == 1)
         {
-            ulong blocks = sidecar.OpticalDisc[0].Track[0].EndSector - sidecar.OpticalDisc[0].Track[0].StartSector +
-                           1;
+            ulong blocks = sidecar.OpticalDisc[0].Track[0].EndSector - sidecar.OpticalDisc[0].Track[0].StartSector + 1;
 
             if(blocks == 25063   || // Locked (or non compatible drive)
                blocks == 4229664 || // Xtreme unlock

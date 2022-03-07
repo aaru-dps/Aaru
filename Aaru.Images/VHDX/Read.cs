@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Vhdx
 {
@@ -53,7 +53,7 @@ public sealed partial class Vhdx
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
+        var vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
         stream.Read(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
         _id = Marshal.ByteArrayToStructureLittleEndian<Identifier>(vhdxIdB);
 
@@ -63,7 +63,7 @@ public sealed partial class Vhdx
         _imageInfo.Application = Encoding.Unicode.GetString(_id.creator);
 
         stream.Seek(64 * 1024, SeekOrigin.Begin);
-        byte[] vHdrB = new byte[Marshal.SizeOf<Header>()];
+        var vHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
         _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
@@ -83,7 +83,7 @@ public sealed partial class Vhdx
         }
 
         stream.Seek(192 * 1024, SeekOrigin.Begin);
-        byte[] vRegTableB = new byte[Marshal.SizeOf<RegionTableHeader>()];
+        var vRegTableB = new byte[Marshal.SizeOf<RegionTableHeader>()];
         stream.Read(vRegTableB, 0, Marshal.SizeOf<RegionTableHeader>());
         _vRegHdr = Marshal.ByteArrayToStructureLittleEndian<RegionTableHeader>(vRegTableB);
 
@@ -104,9 +104,9 @@ public sealed partial class Vhdx
 
         _vRegs = new RegionTableEntry[_vRegHdr.entries];
 
-        for(int i = 0; i < _vRegs.Length; i++)
+        for(var i = 0; i < _vRegs.Length; i++)
         {
-            byte[] vRegB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vRegs[i])];
+            var vRegB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vRegs[i])];
             stream.Read(vRegB, 0, System.Runtime.InteropServices.Marshal.SizeOf(_vRegs[i]));
             _vRegs[i] = Marshal.ByteArrayToStructureLittleEndian<RegionTableEntry>(vRegB);
 
@@ -140,15 +140,15 @@ public sealed partial class Vhdx
         uint fileParamsOff = 0, vdSizeOff = 0, p83Off = 0, logOff = 0, physOff = 0, parentOff = 0;
 
         stream.Seek(_metadataOffset, SeekOrigin.Begin);
-        byte[] metTableB = new byte[Marshal.SizeOf<MetadataTableHeader>()];
+        var metTableB = new byte[Marshal.SizeOf<MetadataTableHeader>()];
         stream.Read(metTableB, 0, Marshal.SizeOf<MetadataTableHeader>());
         _vMetHdr = Marshal.ByteArrayToStructureLittleEndian<MetadataTableHeader>(metTableB);
 
         _vMets = new MetadataTableEntry[_vMetHdr.entries];
 
-        for(int i = 0; i < _vMets.Length; i++)
+        for(var i = 0; i < _vMets.Length; i++)
         {
-            byte[] vMetB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vMets[i])];
+            var vMetB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vMets[i])];
             stream.Read(vMetB, 0, System.Runtime.InteropServices.Marshal.SizeOf(_vMets[i]));
             _vMets[i] = Marshal.ByteArrayToStructureLittleEndian<MetadataTableEntry>(vMetB);
 
@@ -248,7 +248,7 @@ public sealed partial class Vhdx
            (_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
         {
             stream.Seek(parentOff + _metadataOffset, SeekOrigin.Begin);
-            byte[] vParHdrB = new byte[Marshal.SizeOf<ParentLocatorHeader>()];
+            var vParHdrB = new byte[Marshal.SizeOf<ParentLocatorHeader>()];
             stream.Read(vParHdrB, 0, Marshal.SizeOf<ParentLocatorHeader>());
             _vParHdr = Marshal.ByteArrayToStructureLittleEndian<ParentLocatorHeader>(vParHdrB);
 
@@ -262,9 +262,9 @@ public sealed partial class Vhdx
 
             _vPars = new ParentLocatorEntry[_vParHdr.keyValueCount];
 
-            for(int i = 0; i < _vPars.Length; i++)
+            for(var i = 0; i < _vPars.Length; i++)
             {
-                byte[] vParB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vPars[i])];
+                var vParB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vPars[i])];
                 stream.Read(vParB, 0, System.Runtime.InteropServices.Marshal.SizeOf(_vPars[i]));
                 _vPars[i] = Marshal.ByteArrayToStructureLittleEndian<ParentLocatorEntry>(vParB);
             }
@@ -280,12 +280,12 @@ public sealed partial class Vhdx
            _vParHdr.locatorType                        == _parentTypeVhdxGuid)
         {
             _parentImage = new Vhdx();
-            bool parentWorks = false;
+            var parentWorks = false;
 
             foreach(ParentLocatorEntry parentEntry in _vPars)
             {
                 stream.Seek(parentEntry.keyOffset + _metadataOffset, SeekOrigin.Begin);
-                byte[] tmpKey = new byte[parentEntry.keyLength];
+                var tmpKey = new byte[parentEntry.keyLength];
                 stream.Read(tmpKey, 0, tmpKey.Length);
                 string entryType = Encoding.Unicode.GetString(tmpKey);
 
@@ -294,14 +294,13 @@ public sealed partial class Vhdx
                 if(string.Compare(entryType, RELATIVE_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     stream.Seek(parentEntry.valueOffset + _metadataOffset, SeekOrigin.Begin);
-                    byte[] tmpVal = new byte[parentEntry.valueLength];
+                    var tmpVal = new byte[parentEntry.valueLength];
                     stream.Read(tmpVal, 0, tmpVal.Length);
                     string entryValue = Encoding.Unicode.GetString(tmpVal);
 
                     try
                     {
-                        parentFilter =
-                            new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
+                        parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
                         if(parentFilter                    != null &&
                            _parentImage.Open(parentFilter) == ErrorNumber.NoError)
@@ -320,8 +319,7 @@ public sealed partial class Vhdx
 
                     try
                     {
-                        parentFilter =
-                            new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, relEntry));
+                        parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, relEntry));
 
                         if(parentFilter                    == null ||
                            _parentImage.Open(parentFilter) != ErrorNumber.NoError)
@@ -340,14 +338,13 @@ public sealed partial class Vhdx
                         string.Compare(entryType, ABSOLUTE_WIN32_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     stream.Seek(parentEntry.valueOffset + _metadataOffset, SeekOrigin.Begin);
-                    byte[] tmpVal = new byte[parentEntry.valueLength];
+                    var tmpVal = new byte[parentEntry.valueLength];
                     stream.Read(tmpVal, 0, tmpVal.Length);
                     string entryValue = Encoding.Unicode.GetString(tmpVal);
 
                     try
                     {
-                        parentFilter =
-                            new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
+                        parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
                         if(parentFilter                    == null ||
                            _parentImage.Open(parentFilter) != ErrorNumber.NoError)
@@ -394,13 +391,13 @@ public sealed partial class Vhdx
             batEntries = sectorBitmapBlocks * (_chunkRatio - 1);
         }
         else
-            batEntries = (long)(_dataBlocks + ((_dataBlocks - 1) / (ulong)_chunkRatio));
+            batEntries = (long)(_dataBlocks + (_dataBlocks - 1) / (ulong)_chunkRatio);
 
         AaruConsole.DebugWriteLine("VHDX plugin", "Reading BAT");
 
         long readChunks = 0;
         _blockAllocationTable = new ulong[_dataBlocks];
-        byte[] batB = new byte[batEntries * 8];
+        var batB = new byte[batEntries * 8];
         stream.Seek(_batOffset, SeekOrigin.Begin);
         stream.Read(batB, 0, batB.Length);
 
@@ -410,14 +407,14 @@ public sealed partial class Vhdx
             if(readChunks == _chunkRatio)
             {
                 if(_hasParent)
-                    _sectorBitmapPointers[skipSize / 8] = BitConverter.ToUInt64(batB, (int)((i * 8) + skipSize));
+                    _sectorBitmapPointers[skipSize / 8] = BitConverter.ToUInt64(batB, (int)(i * 8 + skipSize));
 
                 readChunks =  0;
                 skipSize   += 8;
             }
             else
             {
-                _blockAllocationTable[i] = BitConverter.ToUInt64(batB, (int)((i * 8) + skipSize));
+                _blockAllocationTable[i] = BitConverter.ToUInt64(batB, (int)(i * 8 + skipSize));
                 readChunks++;
             }
 
@@ -436,7 +433,7 @@ public sealed partial class Vhdx
                         break;
                     case SECTOR_BITMAP_PRESENT:
                         stream.Seek((long)((pt & BAT_FILE_OFFSET_MASK) * 1048576), SeekOrigin.Begin);
-                        byte[] bmp = new byte[1048576];
+                        var bmp = new byte[1048576];
                         stream.Read(bmp, 0, bmp.Length);
                         sectorBmpMs.Write(bmp, 0, bmp.Length);
 

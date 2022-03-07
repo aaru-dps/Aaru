@@ -30,17 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Aaru.DiscImages;
+
+using System.Diagnostics.CodeAnalysis;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Partimage
 {
     enum PCompression : uint
     {
-        None = 0, Gzip = 1, Bzip2 = 2,
-        Lzo  = 3
+        None  = 0,
+        Gzip  = 1,
+        Bzip2 = 2,
+        Lzo   = 3
     }
 
     enum PEncryption : uint

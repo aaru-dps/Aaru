@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Cpcdsk
 {
@@ -44,7 +44,7 @@ public sealed partial class Cpcdsk
     /// <inheritdoc />
     public string Name => "CPCEMU Disk-File and Extended CPC Disk-File";
     /// <inheritdoc />
-    public Guid Id => new Guid("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
+    public Guid Id => new("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
     /// <inheritdoc />
     public string Format => _extended ? "CPCEMU Extended disk image" : "CPCEMU disk image";
     /// <inheritdoc />

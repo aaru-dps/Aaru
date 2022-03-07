@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Decoders.Floppy;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class D88
 {
@@ -57,20 +57,18 @@ public sealed partial class D88
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(hdrB, 0, hdrB.Length);
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
-        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
-                                   StringHandlers.CToString(hdr.name, shiftjis));
+        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"", StringHandlers.CToString(hdr.name, shiftjis));
 
         AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
                                    hdr.reserved.SequenceEqual(_reservedEmpty));
 
         AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", hdr.write_protect);
 
-        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", hdr.disk_type,
-                                   (byte)hdr.disk_type);
+        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", hdr.disk_type, (byte)hdr.disk_type);
 
         AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", hdr.disk_size);
 
@@ -85,7 +83,7 @@ public sealed partial class D88
         if(!hdr.reserved.SequenceEqual(_reservedEmpty))
             return ErrorNumber.InvalidArgument;
 
-        int trkCounter = 0;
+        var trkCounter = 0;
 
         foreach(int t in hdr.track_table)
         {
@@ -120,10 +118,10 @@ public sealed partial class D88
 
         short             spt      = sechdr.spt;
         IBMSectorSizeCode bps      = sechdr.n;
-        bool              allEqual = true;
+        var               allEqual = true;
         _sectorsData = new List<byte[]>();
 
-        for(int i = 0; i < trkCounter; i++)
+        for(var i = 0; i < trkCounter; i++)
         {
             stream.Seek(hdr.track_table[i], SeekOrigin.Begin);
             stream.Read(hdrB, 0, hdrB.Length);
@@ -385,8 +383,7 @@ public sealed partial class D88
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -401,7 +398,7 @@ public sealed partial class D88
 
         var ms = new MemoryStream();
 
-        for(int i = 0; i < length; i++)
+        for(var i = 0; i < length; i++)
             ms.Write(_sectorsData[(int)sectorAddress + i], 0, _sectorsData[(int)sectorAddress + i].Length);
 
         buffer = ms.ToArray();

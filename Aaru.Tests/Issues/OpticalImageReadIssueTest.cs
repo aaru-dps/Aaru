@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Issues;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,8 +10,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Issues;
 
 /// <summary>This class will test an issue that happens when reading an image completely, from start to end, crashes.</summary>
 public abstract class OpticalImageReadIssueTest
@@ -31,7 +31,7 @@ public abstract class OpticalImageReadIssueTest
 
         Assert.IsNotNull(inputFilter, "Filter for test file is not detected");
 
-        IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
+        var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
         Assert.IsNotNull(image, "Image format for test file is not detected");
 
@@ -61,15 +61,14 @@ public abstract class OpticalImageReadIssueTest
 
                 if(sectors - doneSectors >= SECTORS_TO_READ)
                 {
-                    errno = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.Sequence,
-                                                     out sector);
+                    errno = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.Sequence, out sector);
 
                     doneSectors += SECTORS_TO_READ;
                 }
                 else
                 {
-                    errno = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                     currentTrack.Sequence, out sector);
+                    errno = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors), currentTrack.Sequence,
+                                                     out sector);
 
                     doneSectors += sectors - doneSectors;
                 }

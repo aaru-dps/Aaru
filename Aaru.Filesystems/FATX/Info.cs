@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
@@ -58,8 +58,7 @@ public sealed partial class XboxFatPlugin
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = Encoding.UTF8;
         information = "";
@@ -67,7 +66,7 @@ public sealed partial class XboxFatPlugin
         if(imagePlugin.Info.SectorSize < 512)
             return;
 
-        bool bigEndian = true;
+        var bigEndian = true;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
@@ -101,8 +100,7 @@ public sealed partial class XboxFatPlugin
         sb.AppendFormat("Root directory starts on cluster {0}", fatxSb.rootDirectoryCluster).AppendLine();
 
         string volumeLabel = StringHandlers.CToString(fatxSb.volumeLabel,
-                                                      bigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode,
-                                                      true);
+                                                      bigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode, true);
 
         sb.AppendFormat("Volume label: {0}", volumeLabel).AppendLine();
         sb.AppendFormat("Volume serial: {0:X8}", fatxSb.id).AppendLine();

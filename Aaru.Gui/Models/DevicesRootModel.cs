@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.ObjectModel;
-
 namespace Aaru.Gui.Models;
+
+using System.Collections.ObjectModel;
 
 public sealed class DevicesRootModel : RootModel
 {

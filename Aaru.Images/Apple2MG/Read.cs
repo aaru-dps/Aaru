@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using System.Text;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Filters;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Apple2Mg
 {
@@ -52,10 +52,10 @@ public sealed partial class Apple2Mg
 
         _imageHeader = new Header();
 
-        byte[] header = new byte[64];
+        var header = new byte[64];
         stream.Read(header, 0, 64);
-        byte[] magic   = new byte[4];
-        byte[] creator = new byte[4];
+        var magic   = new byte[4];
+        var creator = new byte[4];
 
         Array.Copy(header, 0, magic, 0, 4);
         Array.Copy(header, 4, creator, 0, 4);
@@ -70,8 +70,7 @@ public sealed partial class Apple2Mg
 
         AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creator = \"{0}\"",
-                                   Encoding.ASCII.GetString(creator));
+        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creator = \"{0}\"", Encoding.ASCII.GetString(creator));
 
         AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.headerSize = {0}", _imageHeader.HeaderSize);
         AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.version = {0}", _imageHeader.Version);
@@ -81,8 +80,7 @@ public sealed partial class Apple2Mg
         AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataOffset = 0x{0:X8}", _imageHeader.DataOffset);
         AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}", _imageHeader.DataSize);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}",
-                                   _imageHeader.CommentOffset);
+        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}", _imageHeader.CommentOffset);
 
         AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}", _imageHeader.CommentSize);
 
@@ -143,11 +141,10 @@ public sealed partial class Apple2Mg
                                   ? _interleave
                                   : _deinterleave;
 
-                for(int t = 0; t < 35; t++)
+                for(var t = 0; t < 35; t++)
                 {
-                    for(int s = 0; s < 16; s++)
-                        Array.Copy(tmp, (t * 16 * 256) + (s          * 256), _decodedImage,
-                                   (t      * 16 * 256) + (offsets[s] * 256), 256);
+                    for(var s = 0; s < 16; s++)
+                        Array.Copy(tmp, t * 16 * 256 + s * 256, _decodedImage, t * 16 * 256 + offsets[s] * 256, 256);
                 }
 
                 _imageInfo.Sectors    = 560;
@@ -161,11 +158,10 @@ public sealed partial class Apple2Mg
                 _decodedImage = new byte[_imageHeader.DataSize];
                 offsets       = _interleave;
 
-                for(int t = 0; t < 200; t++)
+                for(var t = 0; t < 200; t++)
                 {
-                    for(int s = 0; s < 16; s++)
-                        Array.Copy(tmp, (t * 16 * 256) + (s          * 256), _decodedImage,
-                                   (t      * 16 * 256) + (offsets[s] * 256), 256);
+                    for(var s = 0; s < 16; s++)
+                        Array.Copy(tmp, t * 16 * 256 + s * 256, _decodedImage, t * 16 * 256 + offsets[s] * 256, 256);
                 }
 
                 _imageInfo.Sectors    = 1600;
@@ -233,7 +229,7 @@ public sealed partial class Apple2Mg
         {
             stream.Seek(_imageHeader.CommentOffset, SeekOrigin.Begin);
 
-            byte[] comments = new byte[_imageHeader.CommentSize];
+            var comments = new byte[_imageHeader.CommentSize];
             stream.Read(comments, 0, (int)_imageHeader.CommentSize);
             _imageInfo.Comments = Encoding.ASCII.GetString(comments);
         }
@@ -306,8 +302,7 @@ public sealed partial class Apple2Mg
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -329,8 +324,7 @@ public sealed partial class Apple2Mg
         {
             Stream stream = _a2MgImageFilter.GetDataForkStream();
 
-            stream.Seek((long)(_imageHeader.DataOffset + (sectorAddress * _imageInfo.SectorSize)),
-                        SeekOrigin.Begin);
+            stream.Seek((long)(_imageHeader.DataOffset + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
             stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
         }

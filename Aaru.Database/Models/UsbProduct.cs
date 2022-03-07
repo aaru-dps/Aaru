@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Database.Models;
+
 using System;
 using System.ComponentModel.DataAnnotations;
-
-namespace Aaru.Database.Models;
 
 /// <summary>USB product</summary>
 public class UsbProduct

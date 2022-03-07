@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Not a filesystem, more like an executable header
 /// <inheritdoc />
@@ -77,8 +77,7 @@ public sealed class PCFX : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         // Always Shift-JIS
         Encoding    = Encoding.GetEncoding("shift_jis");
@@ -97,9 +96,9 @@ public sealed class PCFX : IFilesystem
         try
         {
             date = Encoding.GetString(header.date);
-            int year  = int.Parse(date.Substring(0, 4));
-            int month = int.Parse(date.Substring(4, 2));
-            int day   = int.Parse(date.Substring(6, 2));
+            var year  = int.Parse(date.Substring(0, 4));
+            var month = int.Parse(date.Substring(4, 2));
+            var day   = int.Parse(date.Substring(6, 2));
             dateTime = new DateTime(year, month, day);
         }
         catch
@@ -123,8 +122,7 @@ public sealed class PCFX : IFilesystem
 
         sb.AppendFormat("Load {0} sectors from sector {1}", header.loadCount, header.loadOffset).AppendLine();
 
-        sb.AppendFormat("Load at 0x{0:X8} and jump to 0x{1:X8}", header.loadAddress, header.entryPoint).
-           AppendLine();
+        sb.AppendFormat("Load at 0x{0:X8} and jump to 0x{1:X8}", header.loadAddress, header.entryPoint).AppendLine();
 
         information = sb.ToString();
 

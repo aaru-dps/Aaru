@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,8 +43,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class Apple2Mg
 {
     /// <inheritdoc />
@@ -51,7 +51,7 @@ public sealed partial class Apple2Mg
     {
         if(sectorSize != 512)
             if(sectorSize != 256 ||
-               (mediaType != MediaType.Apple32SS && mediaType != MediaType.Apple33SS))
+               mediaType != MediaType.Apple32SS && mediaType != MediaType.Apple33SS)
             {
                 ErrorMessage = "Unsupported sector size";
 
@@ -128,7 +128,7 @@ public sealed partial class Apple2Mg
             return false;
         }
 
-        _writingStream.Seek((long)(0x40 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0x40 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -160,7 +160,7 @@ public sealed partial class Apple2Mg
             return false;
         }
 
-        _writingStream.Seek((long)(0x40 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0x40 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -194,8 +194,8 @@ public sealed partial class Apple2Mg
             return false;
         }
 
-        _writingStream.Seek(0x40 + (17 * 16 * 256), SeekOrigin.Begin);
-        byte[] tmp = new byte[256];
+        _writingStream.Seek(0x40 + 17 * 16 * 256, SeekOrigin.Begin);
+        var tmp = new byte[256];
         _writingStream.Read(tmp, 0, tmp.Length);
 
         bool isDos = tmp[0x01] == 17 && tmp[0x02] < 16 && tmp[0x27] <= 122 && tmp[0x34] == 35 && tmp[0x35] == 16 &&
@@ -207,8 +207,8 @@ public sealed partial class Apple2Mg
             Creator    = CREATOR_AARU,
             DataOffset = 0x40,
             DataSize   = (uint)(_imageInfo.Sectors * _imageInfo.SectorSize),
-            Flags = (uint)(_imageInfo.LastMediaSequence != 0
-                               ? VALID_VOLUME_NUMBER + (_imageInfo.MediaSequence & 0xFF) : 0),
+            Flags = (uint)(_imageInfo.LastMediaSequence != 0 ? VALID_VOLUME_NUMBER + (_imageInfo.MediaSequence & 0xFF)
+                               : 0),
             HeaderSize  = 0x40,
             ImageFormat = isDos ? SectorOrder.Dos : SectorOrder.ProDos,
             Magic       = MAGIC,
@@ -225,7 +225,7 @@ public sealed partial class Apple2Mg
             _writingStream.WriteByte(0);
         }
 
-        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+        var    hdr    = new byte[Marshal.SizeOf<Header>()];
         IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(_imageHeader, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);

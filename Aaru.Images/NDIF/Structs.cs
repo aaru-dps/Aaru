@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-
-namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Ndif

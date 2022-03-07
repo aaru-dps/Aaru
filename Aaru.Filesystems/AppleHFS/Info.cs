@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Linq;
 using System.Text;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
@@ -74,8 +74,7 @@ public sealed partial class AppleHFS
                 if(drSigWord != AppleCommon.HFS_MAGIC)
                     continue;
 
-                drSigWord =
-                    BigEndianBitConverter.ToUInt16(mdbSector, offset + 0x7C); // Seek to embedded HFS+ signature
+                drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset + 0x7C); // Seek to embedded HFS+ signature
 
                 return drSigWord != AppleCommon.HFSP_MAGIC;
             }
@@ -104,8 +103,7 @@ public sealed partial class AppleHFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("macintosh");
         information = "";
@@ -117,7 +115,7 @@ public sealed partial class AppleHFS
         ushort      drSigWord;
         ErrorNumber errno;
 
-        bool apmFromHddOnCd = false;
+        var apmFromHddOnCd = false;
 
         if(imagePlugin.Info.SectorSize == 2352 ||
            imagePlugin.Info.SectorSize == 2448 ||

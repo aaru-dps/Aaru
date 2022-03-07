@@ -31,6 +31,8 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,9 +46,8 @@ using Aaru.CommonTypes.Metadata;
 using Aaru.Core.Logging;
 using Aaru.Database;
 using Aaru.Devices;
+using Aaru.Settings;
 using Schemas;
-
-namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Subchannel requested to dump</summary>
 public enum DumpSubchannel
@@ -93,7 +94,6 @@ public partial class Dump
     readonly DumpSubchannel             _subchannel;
     readonly bool                       _titleKeys;
     readonly bool                       _trim;
-    bool                                _useBufferedReads;
     bool                                _aborted;
     AaruContext                         _ctx;   // Main database context
     Database.Models.Device              _dbDev; // Device database entry
@@ -107,6 +107,7 @@ public partial class Dump
     int                                 _speed;
     int                                 _speedMultiplier;
     bool                                _supportsPlextorD8;
+    bool                                _useBufferedReads;
 
     /// <summary>Initializes dumpers</summary>
     /// <param name="doResume">Should resume?</param>
@@ -201,7 +202,7 @@ public partial class Dump
     public void Start()
     {
         // Open main database
-        _ctx = AaruContext.Create(Settings.Settings.MainDbPath);
+        _ctx = AaruContext.Create(Settings.MainDbPath);
 
         // Search for device in main database
         _dbDev = _ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model &&
@@ -225,10 +226,12 @@ public partial class Dump
 
         switch(_dev.IsUsb)
         {
-            case true when _dev.UsbVendorId == 0x054C && _dev.UsbProductId is 0x01C8 or 0x01C9 or 0x02D2: PlayStationPortable();
+            case true when _dev.UsbVendorId == 0x054C && _dev.UsbProductId is 0x01C8 or 0x01C9 or 0x02D2:
+                PlayStationPortable();
 
                 break;
-            case true when _dev.UsbVendorId ==0x0403 && _dev.UsbProductId ==0x97C1: Retrode();
+            case true when _dev.UsbVendorId == 0x0403 && _dev.UsbProductId == 0x97C1:
+                Retrode();
 
                 break;
             default:

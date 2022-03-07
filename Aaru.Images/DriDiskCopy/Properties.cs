@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class DriDiskCopy
 {
@@ -47,7 +47,7 @@ public sealed partial class DriDiskCopy
     /// <inheritdoc />
     public string Name => "Digital Research DiskCopy";
     /// <inheritdoc />
-    public Guid Id => new Guid("9F0BE551-8BAB-4038-8B5A-691F1BF5FFF3");
+    public Guid Id => new("9F0BE551-8BAB-4038-8B5A-691F1BF5FFF3");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />
@@ -69,11 +69,11 @@ public sealed partial class DriDiskCopy
     {
         MediaType.ACORN_35_DS_DD, MediaType.ACORN_35_DS_HD, MediaType.Apricot_35, MediaType.ATARI_35_DS_DD,
         MediaType.ATARI_35_DS_DD_11, MediaType.ATARI_35_SS_DD, MediaType.ATARI_35_SS_DD_11, MediaType.DMF,
-        MediaType.DMF_82, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED,
-        MediaType.DOS_35_HD, MediaType.DOS_35_SS_DD_8, MediaType.DOS_35_SS_DD_9, MediaType.DOS_525_DS_DD_8,
-        MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
-        MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD,
-        MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525, MediaType.MetaFloppy_Mod_I, MediaType.MetaFloppy_Mod_II
+        MediaType.DMF_82, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED, MediaType.DOS_35_HD,
+        MediaType.DOS_35_SS_DD_8, MediaType.DOS_35_SS_DD_9, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9,
+        MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9, MediaType.FDFORMAT_35_DD,
+        MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD, MediaType.RX50,
+        MediaType.XDF_35, MediaType.XDF_525, MediaType.MetaFloppy_Mod_I, MediaType.MetaFloppy_Mod_II
     };
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>

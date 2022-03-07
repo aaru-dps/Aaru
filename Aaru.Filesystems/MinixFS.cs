@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information from the Linux kernel
 /// <inheritdoc />
@@ -103,12 +103,12 @@ public sealed class MinixFS : IFilesystem
         // Optical media
         if(offset > 0)
         {
-            byte[] tmp = new byte[0x200];
+            var tmp = new byte[0x200];
             Array.Copy(minixSbSector, offset, tmp, 0, 0x200);
             minixSbSector = tmp;
         }
 
-        ushort magic = BitConverter.ToUInt16(minixSbSector, 0x010);
+        var magic = BitConverter.ToUInt16(minixSbSector, 0x010);
 
         if(magic == MINIX_MAGIC   ||
            magic == MINIX_MAGIC2  ||
@@ -127,8 +127,7 @@ public sealed class MinixFS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -144,7 +143,7 @@ public sealed class MinixFS : IFilesystem
             offset = 0x400;
         }
 
-        bool        minix3 = false;
+        var         minix3 = false;
         int         filenamesize;
         string      minixVersion;
         ErrorNumber errno = imagePlugin.ReadSector(sector + partition.Start, out byte[] minixSbSector);
@@ -155,12 +154,12 @@ public sealed class MinixFS : IFilesystem
         // Optical media
         if(offset > 0)
         {
-            byte[] tmp = new byte[0x200];
+            var tmp = new byte[0x200];
             Array.Copy(minixSbSector, offset, tmp, 0, 0x200);
             minixSbSector = tmp;
         }
 
-        ushort magic = BitConverter.ToUInt16(minixSbSector, 0x018);
+        var magic = BitConverter.ToUInt16(minixSbSector, 0x018);
 
         XmlFsType = new FileSystemType();
 
@@ -278,11 +277,9 @@ public sealed class MinixFS : IFilesystem
             sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
 
             if(mnxSb.s_zones > 0) // On V2
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024).
-                   AppendLine();
+                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024).AppendLine();
             else
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024).
-                   AppendLine();
+                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024).AppendLine();
 
             sb.AppendFormat("{0} bytes/block", mnxSb.s_blocksize).AppendLine();
             sb.AppendFormat("{0} inodes on volume", mnxSb.s_ninodes).AppendLine();
@@ -311,11 +308,9 @@ public sealed class MinixFS : IFilesystem
             sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
 
             if(mnxSb.s_zones > 0) // On V2
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024).
-                   AppendLine();
+                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024).AppendLine();
             else
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024).
-                   AppendLine();
+                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024).AppendLine();
 
             sb.AppendFormat("{0} inodes on volume", mnxSb.s_ninodes).AppendLine();
 

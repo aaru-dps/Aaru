@@ -26,15 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Runtime.InteropServices;
-
 namespace Aaru.Compression;
+
+using System.Runtime.InteropServices;
 
 public class LZIP
 {
-    /// <summary>
-    /// Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.
-    /// </summary>
+    /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => Native.IsSupported;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]

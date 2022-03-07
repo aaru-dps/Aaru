@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filters;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.LZMA;
-
-namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Decompress lzip files while reading</summary>
@@ -83,14 +83,13 @@ public sealed class LZip : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        byte[] buffer = new byte[5];
+        var buffer = new byte[5];
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.Read(buffer, 0, 5);
         stream.Seek(0, SeekOrigin.Begin);
 
-        return buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 && buffer[3] == 0x50 &&
-               buffer[4] == 0x01;
+        return buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 && buffer[3] == 0x50 && buffer[4] == 0x01;
     }
 
     /// <inheritdoc />
@@ -99,15 +98,14 @@ public sealed class LZip : IFilter
         if(!File.Exists(path))
             return false;
 
-        var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        byte[] buffer = new byte[5];
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        var buffer = new byte[5];
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.Read(buffer, 0, 5);
         stream.Seek(0, SeekOrigin.Begin);
 
-        return buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 && buffer[3] == 0x50 &&
-               buffer[4] == 0x01;
+        return buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 && buffer[3] == 0x50 && buffer[4] == 0x01;
     }
 
     /// <inheritdoc />
@@ -131,7 +129,7 @@ public sealed class LZip : IFilter
         BasePath      = null;
         CreationTime  = DateTime.UtcNow;
         LastWriteTime = CreationTime;
-        byte[] tmp = new byte[8];
+        var tmp = new byte[8];
         _dataStream.Seek(-16, SeekOrigin.End);
         _dataStream.Read(tmp, 0, 8);
         DataForkLength = BitConverter.ToInt64(tmp, 0);
@@ -150,7 +148,7 @@ public sealed class LZip : IFilter
         var fi = new FileInfo(path);
         CreationTime  = fi.CreationTimeUtc;
         LastWriteTime = fi.LastWriteTimeUtc;
-        byte[] tmp = new byte[8];
+        var tmp = new byte[8];
         _dataStream.Seek(-16, SeekOrigin.End);
         _dataStream.Read(tmp, 0, 8);
         DataForkLength = BitConverter.ToInt64(tmp, 0);

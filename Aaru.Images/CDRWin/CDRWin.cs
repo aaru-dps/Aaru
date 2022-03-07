@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
-
-namespace Aaru.DiscImages;
 
 // TODO: Implement track flags
 /// <summary>Implements reading and writing CDRWin cuesheet disc images</summary>

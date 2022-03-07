@@ -1,15 +1,15 @@
+namespace Aaru.Tests.WritableImages.CDRDAO;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 
-namespace Aaru.Tests.WritableImages.CDRDAO;
-
 public class FromAaru : WritableOpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
-    public override IMediaImage    InputPlugin     => new DiscImages.AaruFormat();
+    public override IMediaImage    InputPlugin     => new AaruFormat();
     public override IWritableImage OutputPlugin    => new Cdrdao();
     public override string         OutputExtension => "toc";
     public override OpticalImageTestExpected[] Tests => new[]

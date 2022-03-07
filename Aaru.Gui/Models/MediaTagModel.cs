@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.Models;
+
 using Aaru.CommonTypes.Enums;
 using JetBrains.Annotations;
-
-namespace Aaru.Gui.Models;
 
 public sealed class MediaTagModel
 {

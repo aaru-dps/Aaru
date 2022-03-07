@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Virtual98
 {
@@ -126,7 +126,7 @@ public sealed partial class Virtual98
             return false;
         }
 
-        _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0xDC + sectorAddress * 512), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -158,7 +158,7 @@ public sealed partial class Virtual98
             return false;
         }
 
-        _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0xDC + sectorAddress * 512), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -235,10 +235,9 @@ public sealed partial class Virtual98
         };
 
         if(commentsBytes != null)
-            Array.Copy(commentsBytes, 0, _v98Hdr.comment, 0,
-                       commentsBytes.Length >= 128 ? 128 : commentsBytes.Length);
+            Array.Copy(commentsBytes, 0, _v98Hdr.comment, 0, commentsBytes.Length >= 128 ? 128 : commentsBytes.Length);
 
-        byte[] hdr    = new byte[Marshal.SizeOf<Virtual98Header>()];
+        var    hdr    = new byte[Marshal.SizeOf<Virtual98Header>()];
         IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Virtual98Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(_v98Hdr, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);

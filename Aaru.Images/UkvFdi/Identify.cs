@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class UkvFdi
 {
@@ -48,7 +48,7 @@ public sealed partial class UkvFdi
         if(stream.Length < Marshal.SizeOf<Header>())
             return false;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(hdrB, 0, hdrB.Length);
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 

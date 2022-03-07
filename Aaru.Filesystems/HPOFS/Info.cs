@@ -31,6 +31,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class HPOFS
 {
@@ -66,8 +66,7 @@ public sealed partial class HPOFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("ibm850");
         information = "";
@@ -97,8 +96,7 @@ public sealed partial class HPOFS
         MediaInformationBlock  mib = Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);
         VolumeInformationBlock vib = Marshal.ByteArrayToStructureBigEndian<VolumeInformationBlock>(volInfoSector);
 
-        AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.oem_name = \"{0}\"",
-                                   StringHandlers.CToString(bpb.oem_name));
+        AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.oem_name = \"{0}\"", StringHandlers.CToString(bpb.oem_name));
 
         AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.bps = {0}", bpb.bps);
         AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.spc = {0}", bpb.spc);
@@ -196,8 +194,7 @@ public sealed partial class HPOFS
         sb.AppendFormat("Volume label: {0}", StringHandlers.SpacePaddedToString(mib.volumeLabel, Encoding)).
            AppendLine();
 
-        sb.AppendFormat("Volume comment: {0}", StringHandlers.SpacePaddedToString(mib.comment, Encoding)).
-           AppendLine();
+        sb.AppendFormat("Volume comment: {0}", StringHandlers.SpacePaddedToString(mib.comment, Encoding)).AppendLine();
 
         sb.AppendFormat("Volume owner: {0}", StringHandlers.SpacePaddedToString(vib.owner, Encoding)).AppendLine();
 

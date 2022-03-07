@@ -26,19 +26,21 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices.SecureDigital;
+
+using System;
 using Aaru.Console;
+using Aaru.Decoders.MMC;
 using Aaru.Devices;
 using Aaru.Helpers;
 
-namespace Aaru.Tests.Devices.SecureDigital;
-
-internal static class MultiMediaCard
+static class MultiMediaCard
 {
     internal static void Menu(string devPath, Device dev)
     {
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send a MultiMediaCard command to the device:");
             AaruConsole.WriteLine("1.- Send READ_MULTIPLE_BLOCK command.");
@@ -52,12 +54,12 @@ internal static class MultiMediaCard
             AaruConsole.WriteLine("0.- Return to SecureDigital/MultiMediaCard commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = System.Console.ReadLine();
+            string strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -102,7 +104,7 @@ internal static class MultiMediaCard
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
+                    Console.ReadKey();
 
                     continue;
             }
@@ -114,15 +116,15 @@ internal static class MultiMediaCard
         uint   address   = 0;
         uint   blockSize = 512;
         ushort count     = 1;
-        bool   byteAddr  = false;
+        var    byteAddr  = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ_{0}_BLOCK command:", multiple ? "MULTIPLE" : "SINGLE");
             AaruConsole.WriteLine("Read from {1}: {0}", address, byteAddr ? "byte" : "block");
@@ -137,12 +139,12 @@ internal static class MultiMediaCard
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to MultiMediaCard commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -155,25 +157,25 @@ internal static class MultiMediaCard
                     return;
                 case 1:
                     AaruConsole.Write("Use byte addressing?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out byteAddr))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         byteAddr = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Read from {0}?: ", byteAddr ? "byte" : "block");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out address))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         address = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
@@ -181,26 +183,26 @@ internal static class MultiMediaCard
                     if(multiple)
                     {
                         AaruConsole.Write("How many blocks to read?");
-                        strDev = System.Console.ReadLine();
+                        strDev = Console.ReadLine();
 
                         if(!ushort.TryParse(strDev, out count))
                         {
                             AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             count = 1;
-                            System.Console.ReadKey();
+                            Console.ReadKey();
 
                             continue;
                         }
                     }
 
                     AaruConsole.Write("How many bytes to expect in a block?");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out blockSize))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         blockSize = 512;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -208,13 +210,13 @@ internal static class MultiMediaCard
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
-        bool sense = dev.Read(out byte[] buffer, out uint[] response, address, blockSize,
-                              multiple ? count : (ushort)1, byteAddr, dev.Timeout, out double duration);
+        bool sense = dev.Read(out byte[] buffer, out uint[] response, address, blockSize, multiple ? count : (ushort)1,
+                              byteAddr, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ_{0}_BLOCK to the device:", multiple ? "MULTIPLE" : "SINGLE");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -231,13 +233,13 @@ internal static class MultiMediaCard
         AaruConsole.WriteLine("0.- Return to MultiMediaCard commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -249,7 +251,7 @@ internal static class MultiMediaCard
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ_{0}_BLOCK buffer:", multiple ? "MULTIPLE" : "SINGLE");
 
@@ -257,13 +259,13 @@ internal static class MultiMediaCard
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ_{0}_BLOCK response:", multiple ? "MULTIPLE" : "SINGLE");
 
@@ -276,8 +278,8 @@ internal static class MultiMediaCard
                 }
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -285,8 +287,8 @@ internal static class MultiMediaCard
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -294,11 +296,11 @@ internal static class MultiMediaCard
 
     static void SendOpCond(string devPath, Device dev)
     {
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.ReadOcr(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SEND_OP_COND to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -315,13 +317,13 @@ internal static class MultiMediaCard
         AaruConsole.WriteLine("0.- Return to MultiMediaCard commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = System.Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -333,7 +335,7 @@ internal static class MultiMediaCard
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_OP_COND buffer:");
 
@@ -341,27 +343,27 @@ internal static class MultiMediaCard
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_OP_COND decoded buffer:");
 
                 if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyOCR(buffer));
+                    AaruConsole.WriteLine("{0}", Decoders.PrettifyOCR(buffer));
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_OP_COND response:");
 
@@ -374,16 +376,16 @@ internal static class MultiMediaCard
                 }
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -391,11 +393,11 @@ internal static class MultiMediaCard
 
     static void Status(string devPath, Device dev)
     {
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.ReadSdStatus(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SEND_STATUS to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -411,13 +413,13 @@ internal static class MultiMediaCard
         AaruConsole.WriteLine("0.- Return to MultiMediaCard commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = System.Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -429,7 +431,7 @@ internal static class MultiMediaCard
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_STATUS buffer:");
 
@@ -437,13 +439,13 @@ internal static class MultiMediaCard
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_STATUS response:");
 
@@ -456,16 +458,16 @@ internal static class MultiMediaCard
                 }
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -473,11 +475,11 @@ internal static class MultiMediaCard
 
     static void SendCid(string devPath, Device dev)
     {
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.ReadCid(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SEND_CID to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -494,13 +496,13 @@ internal static class MultiMediaCard
         AaruConsole.WriteLine("0.- Return to MultiMediaCard commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = System.Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -512,7 +514,7 @@ internal static class MultiMediaCard
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_CID buffer:");
 
@@ -520,27 +522,27 @@ internal static class MultiMediaCard
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_CID decoded buffer:");
 
                 if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCID(buffer));
+                    AaruConsole.WriteLine("{0}", Decoders.PrettifyCID(buffer));
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_CID response:");
 
@@ -553,16 +555,16 @@ internal static class MultiMediaCard
                 }
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -570,11 +572,11 @@ internal static class MultiMediaCard
 
     static void SendCsd(string devPath, Device dev)
     {
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.ReadCsd(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SEND_CSD to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -591,13 +593,13 @@ internal static class MultiMediaCard
         AaruConsole.WriteLine("0.- Return to MultiMediaCard commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = System.Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -609,7 +611,7 @@ internal static class MultiMediaCard
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_CSD buffer:");
 
@@ -617,27 +619,27 @@ internal static class MultiMediaCard
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_CSD decoded buffer:");
 
                 if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCSD(buffer));
+                    AaruConsole.WriteLine("{0}", Decoders.PrettifyCSD(buffer));
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_CSD response:");
 
@@ -650,16 +652,16 @@ internal static class MultiMediaCard
                 }
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -667,11 +669,11 @@ internal static class MultiMediaCard
 
     static void SendExtendedCsd(string devPath, Device dev)
     {
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.ReadExtendedCsd(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SEND_EXT_CSD to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -688,13 +690,13 @@ internal static class MultiMediaCard
         AaruConsole.WriteLine("0.- Return to MultiMediaCard commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = System.Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -706,7 +708,7 @@ internal static class MultiMediaCard
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_EXT_CSD buffer:");
 
@@ -714,27 +716,27 @@ internal static class MultiMediaCard
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_EXT_CSD decoded buffer:");
 
                 if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(buffer));
+                    AaruConsole.WriteLine("{0}", Decoders.PrettifyExtendedCSD(buffer));
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEND_EXT_CSD response:");
 
@@ -747,16 +749,16 @@ internal static class MultiMediaCard
                 }
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -768,11 +770,11 @@ internal static class MultiMediaCard
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for SET_BLOCKLEN command:");
             AaruConsole.WriteLine("Set block length to: {0} bytes", blockSize);
@@ -782,12 +784,12 @@ internal static class MultiMediaCard
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to MultiMediaCard commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -800,13 +802,13 @@ internal static class MultiMediaCard
                     return;
                 case 1:
                     AaruConsole.Write("Set block length to?");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out blockSize))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         blockSize = 512;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -814,11 +816,11 @@ internal static class MultiMediaCard
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.SetBlockLength(blockSize, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SET_BLOCKLEN to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -841,13 +843,13 @@ internal static class MultiMediaCard
         AaruConsole.WriteLine("0.- Return to MultiMediaCard commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -862,8 +864,8 @@ internal static class MultiMediaCard
             case 2: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }

@@ -1,3 +1,5 @@
+namespace Aaru.DiscImages.ByteAddressable;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,9 +13,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Database;
 using Aaru.Database.Models;
+using Aaru.Settings;
 using Schemas;
-
-namespace Aaru.DiscImages.ByteAddressable;
 
 public class Nes : IByteAddressableImage
 {
@@ -62,9 +63,9 @@ public class Nes : IByteAddressableImage
             return false;
 
         stream.Position = 0;
-        byte[] magicBytes = new byte[4];
+        var magicBytes = new byte[4];
         stream.Read(magicBytes, 0, 8);
-        uint magic = BitConverter.ToUInt32(magicBytes, 0);
+        var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         return magic == 0x1A53454E;
     }
@@ -82,9 +83,9 @@ public class Nes : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 0;
-        byte[] header = new byte[16];
+        var header = new byte[16];
         stream.Read(header, 0, 8);
-        uint magic = BitConverter.ToUInt32(header, 0);
+        var magic = BitConverter.ToUInt32(header, 0);
 
         if(magic != 0x1A53454E)
             return ErrorNumber.InvalidArgument;
@@ -302,12 +303,12 @@ public class Nes : IByteAddressableImage
             return false;
         }
 
-        byte[] header = new byte[16];
+        var header = new byte[16];
 
         if(_nesHeaderInfo is null)
         {
             string    hash = Sha256Context.Data(_data, out _).ToLowerInvariant();
-            using var ctx  = AaruContext.Create(Settings.Settings.MainDbPath);
+            using var ctx  = AaruContext.Create(Settings.MainDbPath);
             _nesHeaderInfo = ctx.NesHeaders.FirstOrDefault(hdr => hdr.Sha256 == hash);
         }
 
@@ -350,11 +351,12 @@ public class Nes : IByteAddressableImage
         header[12] = (byte)_nesHeaderInfo.TimingMode;
 
         header[13] = _nesHeaderInfo.ConsoleType switch
-        {
-            NesConsoleType.Vs => (byte)(((int)_nesHeaderInfo.VsHardwareType << 4) | (int)_nesHeaderInfo.VsPpuType),
-            NesConsoleType.Extended => (byte)_nesHeaderInfo.ExtendedConsoleType,
-            _ => header[13]
-        };
+                     {
+                         NesConsoleType.Vs => (byte)(((int)_nesHeaderInfo.VsHardwareType << 4) |
+                                                     (int)_nesHeaderInfo.VsPpuType),
+                         NesConsoleType.Extended => (byte)_nesHeaderInfo.ExtendedConsoleType,
+                         _                       => header[13]
+                     };
 
         header[14] = 0;
 
@@ -662,23 +664,22 @@ public class Nes : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom       = false;
-        bool foundChrRom    = false;
-        bool foundInstRom   = false;
-        bool foundProm      = false;
-        bool foundRam       = false;
-        bool foundChrRam    = false;
-        bool foundNvram     = false;
-        bool foundChrNvram  = false;
-        bool foundMapper    = false;
-        bool foundSubMapper = false;
+        var foundRom       = false;
+        var foundChrRom    = false;
+        var foundInstRom   = false;
+        var foundProm      = false;
+        var foundRam       = false;
+        var foundChrRam    = false;
+        var foundNvram     = false;
+        var foundChrNvram  = false;
+        var foundMapper    = false;
+        var foundSubMapper = false;
 
         Regex regex;
         Match match;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
-        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -730,7 +731,6 @@ public class Nes : IByteAddressableImage
                     match = regex.Match(map.Description);
 
                     if(match.Success)
-                    {
                         if(ushort.TryParse(match.Groups["mapper"].Value, out ushort mapper))
                         {
                             if(_nesHeaderInfo is null)
@@ -740,7 +740,6 @@ public class Nes : IByteAddressableImage
 
                             foundMapper = true;
                         }
-                    }
 
                     break;
                 case LinearMemoryType.Mapper when !foundSubMapper:
@@ -748,7 +747,6 @@ public class Nes : IByteAddressableImage
                     match = regex.Match(map.Description);
 
                     if(match.Success)
-                    {
                         if(byte.TryParse(match.Groups["mapper"].Value, out byte mapper))
                         {
                             if(_nesHeaderInfo is null)
@@ -758,12 +756,10 @@ public class Nes : IByteAddressableImage
 
                             foundSubMapper = true;
                         }
-                    }
 
                     break;
                 default: return ErrorNumber.InvalidArgument;
             }
-        }
 
         return foundRom && foundMapper ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
     }

@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Decoders.ATA;
-
-namespace Aaru.Devices;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public sealed partial class Device
@@ -80,9 +80,9 @@ public sealed partial class Device
     /// </param>
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
-    public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
-                              AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
-                              uint timeout, bool transferBlocks, out double duration, out bool sense)
+    public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
+                              AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                              bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
         if(timeout == 0)
@@ -92,9 +92,8 @@ public sealed partial class Device
             return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                           timeout, transferBlocks, out duration, out sense);
 
-        return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
-                                      transferRegister, ref buffer, timeout, transferBlocks, out duration,
-                                      out sense);
+        return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
+                                      ref buffer, timeout, transferBlocks, out duration, out sense);
     }
 
     /// <summary>Sends an ATA/ATAPI command to this device using 28-bit LBA addressing</summary>
@@ -123,9 +122,8 @@ public sealed partial class Device
             return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                           timeout, transferBlocks, out duration, out sense);
 
-        return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
-                                      transferRegister, ref buffer, timeout, transferBlocks, out duration,
-                                      out sense);
+        return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
+                                      ref buffer, timeout, transferBlocks, out duration, out sense);
     }
 
     /// <summary>Sends an ATA/ATAPI command to this device using 48-bit LBA addressing</summary>
@@ -154,9 +152,8 @@ public sealed partial class Device
             return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer,
                                           timeout, transferBlocks, out duration, out sense);
 
-        return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
-                                      transferRegister, ref buffer, timeout, transferBlocks, out duration,
-                                      out sense);
+        return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
+                                      ref buffer, timeout, transferBlocks, out duration, out sense);
     }
 
     /// <summary>Sends a MMC/SD command to this device</summary>
@@ -174,8 +171,8 @@ public sealed partial class Device
     /// <param name="response">Response registers</param>
     /// <param name="blockSize">Size of block in bytes</param>
     public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags, uint argument,
-                              uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
-                              out double duration, out bool sense, uint timeout = 15)
+                              uint blockSize, uint blocks, ref byte[] buffer, out uint[] response, out double duration,
+                              out bool sense, uint timeout = 15)
     {
         // We need a timeout
         if(timeout == 0)
@@ -238,7 +235,8 @@ public sealed partial class Device
                    ? Command.SendMmcCommand(PlatformId, FileHandle, command, write, isApplication, flags, argument,
                                             blockSize, blocks, ref buffer, out response, out duration, out sense,
                                             timeout) : _remote.SendMmcCommand(command, write, isApplication, flags,
-                                                                              argument, blockSize, blocks, ref buffer, out response, out duration, out sense,
+                                                                              argument, blockSize, blocks, ref buffer,
+                                                                              out response, out duration, out sense,
                                                                               timeout);
     }
 
@@ -283,22 +281,21 @@ public sealed partial class Device
             timeout = Timeout > 0 ? Timeout : 15;
 
         if(_remote is null)
-            return Command.SendMultipleMmcCommands(PlatformId, FileHandle, commands, out duration, out sense,
-                                                   timeout);
+            return Command.SendMultipleMmcCommands(PlatformId, FileHandle, commands, out duration, out sense, timeout);
 
         if(_remote.ServerProtocolVersion >= 2)
             return _remote.SendMultipleMmcCommands(commands, out duration, out sense, timeout);
 
-        int error = 0;
+        var error = 0;
         duration = 0;
         sense    = false;
 
         foreach(MmcSingleCommand command in commands)
         {
             int singleError = _remote.SendMmcCommand(command.command, command.write, command.isApplication,
-                                                     command.flags, command.argument, command.blockSize,
-                                                     command.blocks, ref command.buffer, out command.response,
-                                                     out double cmdDuration, out bool cmdSense, timeout);
+                                                     command.flags, command.argument, command.blockSize, command.blocks,
+                                                     ref command.buffer, out command.response, out double cmdDuration,
+                                                     out bool cmdSense, timeout);
 
             if(error       == 0 &&
                singleError != 0)

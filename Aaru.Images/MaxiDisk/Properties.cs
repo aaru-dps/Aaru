@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class MaxiDisk
 {
@@ -48,7 +48,7 @@ public sealed partial class MaxiDisk
     /// <inheritdoc />
     public string Name => "MAXI Disk image";
     /// <inheritdoc />
-    public Guid Id => new Guid("D27D924A-7034-466E-ADE1-B81EF37E469E");
+    public Guid Id => new("D27D924A-7034-466E-ADE1-B81EF37E469E");
     /// <inheritdoc />
     public string Format => "MAXI Disk";
     /// <inheritdoc />

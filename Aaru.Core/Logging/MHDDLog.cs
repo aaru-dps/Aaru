@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Logging;
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -37,10 +39,8 @@ using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Devices;
 
-namespace Aaru.Core.Logging;
-
 /// <summary>Implements a log in the format used by MHDD</summary>
-internal sealed class MhddLog
+sealed class MhddLog
 {
     const    string       MHDD_VER = "VER:2 ";
     readonly string       _logFile;
@@ -53,8 +53,7 @@ internal sealed class MhddLog
     /// <param name="blockSize">Bytes per block</param>
     /// <param name="blocksToRead">How many blocks read at once</param>
     /// <param name="private">Disable saving paths or serial numbers in log</param>
-    internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead,
-                     bool @private)
+    internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead, bool @private)
     {
         if(dev == null ||
            string.IsNullOrEmpty(outputFile))
@@ -94,14 +93,13 @@ internal sealed class MhddLog
                 break;
         }
 
-        string device     = $"DEVICE: {dev.Manufacturer} {dev.Model}";
-        string fw         = $"F/W: {dev.FirmwareRevision}";
-        string sn         = $"S/N: {(@private ? "" : dev.Serial)}";
-        string sectors    = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
-        string sectorSize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
+        var device     = $"DEVICE: {dev.Manufacturer} {dev.Model}";
+        var fw         = $"F/W: {dev.FirmwareRevision}";
+        var sn         = $"S/N: {(@private ? "" : dev.Serial)}";
+        var sectors    = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
+        var sectorSize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
 
-        string scanBlockSize =
-            string.Format(new CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
+        var scanBlockSize = string.Format(new CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
 
         byte[] deviceBytes        = Encoding.ASCII.GetBytes(device);
         byte[] modeBytes          = Encoding.ASCII.GetBytes(mode);
@@ -112,12 +110,12 @@ internal sealed class MhddLog
         byte[] scanBlockSizeBytes = Encoding.ASCII.GetBytes(scanBlockSize);
         byte[] verBytes           = Encoding.ASCII.GetBytes(MHDD_VER);
 
-        uint pointer = (uint)(deviceBytes.Length  + modeBytes.Length       + fwBytes.Length + snBytes.Length +
-                              sectorsBytes.Length + sectorSizeBytes.Length + scanBlockSizeBytes.Length +
-                              verBytes.Length     + (2 * 9)                + // New lines
-                              4);                                            // Pointer
+        var pointer = (uint)(deviceBytes.Length  + modeBytes.Length       + fwBytes.Length            + snBytes.Length +
+                             sectorsBytes.Length + sectorSizeBytes.Length + scanBlockSizeBytes.Length +
+                             verBytes.Length     + 2 * 9                  + // New lines
+                             4);                                            // Pointer
 
-        byte[] newLine = new byte[2];
+        var newLine = new byte[2];
         newLine[0] = 0x0D;
         newLine[1] = 0x0A;
 

@@ -26,14 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filters;
+
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Filters;
 
 [TestFixture]
 public class LZip
@@ -56,7 +55,7 @@ public class LZip
         IFilter filter = new Aaru.Filters.LZip();
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
-        byte[] data = new byte[1048576];
+        var    data = new byte[1048576];
         str.Read(data, 0, 1048576);
         str.Close();
         str.Dispose();

@@ -30,19 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class DiscFerret
 {
     /// <inheritdoc />
     public string Name => "DiscFerret";
     /// <inheritdoc />
-    public Guid Id => new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
+    public Guid Id => new("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />

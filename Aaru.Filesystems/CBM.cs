@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,8 +43,6 @@ using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the filesystem used in 8-bit Commodore microcomputers</summary>
@@ -110,8 +110,7 @@ public sealed class CBM : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = new PETSCII();
         information = "";
@@ -157,8 +156,7 @@ public sealed class CBM : IFilesystem
 
             sbInformation.AppendFormat("Disk ID: {0}", cbmHdr.diskId).AppendLine();
 
-            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, Encoding)).
-                          AppendLine();
+            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, Encoding)).AppendLine();
 
             XmlFsType.VolumeName   = StringHandlers.CToString(cbmHdr.name, Encoding);
             XmlFsType.VolumeSerial = $"{cbmHdr.diskId}";
@@ -176,8 +174,7 @@ public sealed class CBM : IFilesystem
                                        cbmBam.directorySector).AppendLine();
 
             sbInformation.AppendFormat("Disk DOS type: {0}",
-                                       Encoding.ASCII.GetString(BitConverter.GetBytes(cbmBam.dosType))).
-                          AppendLine();
+                                       Encoding.ASCII.GetString(BitConverter.GetBytes(cbmBam.dosType))).AppendLine();
 
             sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new[]
             {
@@ -186,8 +183,7 @@ public sealed class CBM : IFilesystem
 
             sbInformation.AppendFormat("Disk ID: {0}", cbmBam.diskId).AppendLine();
 
-            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, Encoding)).
-                          AppendLine();
+            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, Encoding)).AppendLine();
 
             XmlFsType.VolumeName   = StringHandlers.CToString(cbmBam.name, Encoding);
             XmlFsType.VolumeSerial = $"{cbmBam.diskId}";

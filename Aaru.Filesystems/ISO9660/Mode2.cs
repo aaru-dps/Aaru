@@ -31,13 +31,13 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Decoders.CD;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -70,7 +70,6 @@ public sealed partial class ISO9660
                 return errno;
 
             if(_debug)
-            {
                 switch(data.Length)
                 {
                     case 2048:
@@ -79,16 +78,15 @@ public sealed partial class ISO9660
 
                         break;
                     case 2324:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 2 Form 2",
-                                                   realSector);
+                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 2 Form 2", realSector);
 
                         break;
                     case 2336:
                         AaruConsole.DebugWriteLine("ISO9660 Plugin",
                                                    "Sector {0}, Cooked, Mode 2 Form {1}, File Number {2}, Channel Number {3}, Submode {4}, Coding Information {5}",
                                                    realSector,
-                                                   ((Mode2Submode)data[2]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
-                                                   data[0], data[1], (Mode2Submode)data[2], data[3]);
+                                                   ((Mode2Submode)data[2]).HasFlag(Mode2Submode.Form2) ? 2 : 1, data[0],
+                                                   data[1], (Mode2Submode)data[2], data[3]);
 
                         break;
                     case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
@@ -98,9 +96,8 @@ public sealed partial class ISO9660
 
                         break;
                     case 2352 when data[15] != 2:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                   "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode {4}", realSector,
-                                                   data[12], data[13], data[14], data[15]);
+                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode {4}",
+                                                   realSector, data[12], data[13], data[14], data[15]);
 
                         break;
                     case 2352:
@@ -112,7 +109,6 @@ public sealed partial class ISO9660
 
                         break;
                 }
-            }
 
             if(_blockSize == 2048)
             {
@@ -121,7 +117,7 @@ public sealed partial class ISO9660
                 return ErrorNumber.NoError;
             }
 
-            byte[] tmp = new byte[_blockSize];
+            var tmp = new byte[_blockSize];
             Array.Copy(Sector.GetUserData(data, interleaved, fileNumber), (int)offset, tmp, 0, _blockSize);
 
             buffer = tmp;
@@ -145,12 +141,11 @@ public sealed partial class ISO9660
                     return errno;
 
                 if(_debug)
-                {
                     switch(data.Length)
                     {
                         case 2048:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                       "Sector {0}, Cooked, Mode 0/1 / Mode 2 Form 1", dstSector);
+                            AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 0/1 / Mode 2 Form 1",
+                                                       dstSector);
 
                             break;
                         case 2324:
@@ -174,8 +169,8 @@ public sealed partial class ISO9660
                             break;
                         case 2352 when data[15] != 2:
                             AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                       "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode {4}",
-                                                       dstSector, data[12], data[13], data[14], data[15]);
+                                                       "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode {4}", dstSector,
+                                                       data[12], data[13], data[14], data[15]);
 
                             break;
                         case 2352:
@@ -187,14 +182,13 @@ public sealed partial class ISO9660
 
                             break;
                     }
-                }
 
                 byte[] sectorData = Sector.GetUserData(data, interleaved, fileNumber);
 
                 ms.Write(sectorData, 0, sectorData.Length);
             }
 
-            byte[] tmp = new byte[_blockSize];
+            var tmp = new byte[_blockSize];
             Array.Copy(Sector.GetUserData(ms.ToArray(), interleaved, fileNumber), 0, tmp, 0, _blockSize);
             buffer = tmp;
 

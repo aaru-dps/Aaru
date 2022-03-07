@@ -26,13 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Images.HxC;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Images.HxC;
 
 [TestFixture]
 public class ImageDisk : BlockMediaImageTest

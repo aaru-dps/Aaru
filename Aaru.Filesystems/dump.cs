@@ -30,6 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using ufs_daddr_t = System.Int32;
+
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -41,9 +45,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-using ufs_daddr_t = System.Int32;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements identification of a dump(8) image (virtual filesystem on a file)</summary>
@@ -112,7 +113,7 @@ public sealed class dump : IFilesystem
         if(partition.Start != 0)
             return false;
 
-        uint sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -139,8 +140,7 @@ public sealed class dump : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -151,7 +151,7 @@ public sealed class dump : IFilesystem
         if(partition.Start != 0)
             return;
 
-        uint sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -168,8 +168,8 @@ public sealed class dump : IFilesystem
         spcl_aix aixHdr = Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
         s_spcl   newHdr = Marshal.ByteArrayToStructureLittleEndian<s_spcl>(sector);
 
-        bool useOld = false;
-        bool useAix = false;
+        var useOld = false;
+        var useAix = false;
 
         if(newHdr.c_magic == OFS_MAGIC  ||
            newHdr.c_magic == NFS_MAGIC  ||

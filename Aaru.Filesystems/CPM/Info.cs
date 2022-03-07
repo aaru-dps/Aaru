@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.IO;
 using System.Linq;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class CPM
 {
@@ -179,11 +179,11 @@ public sealed partial class CPM
 
                 if(errno == ErrorNumber.NoError)
                 {
-                    int amsSbOffset = 0;
+                    var amsSbOffset = 0;
 
-                    uint sig1 = BitConverter.ToUInt32(sector, 0x2B);
+                    var  sig1 = BitConverter.ToUInt32(sector, 0x2B);
                     uint sig2 = BitConverter.ToUInt32(sector, 0x33) & 0x00FFFFFF;
-                    uint sig3 = BitConverter.ToUInt32(sector, 0x7C);
+                    var  sig3 = BitConverter.ToUInt32(sector, 0x7C);
 
                     // PCW16 extended boot record
                     if(sig1 == 0x4D2F5043 &&
@@ -196,13 +196,13 @@ public sealed partial class CPM
                         Marshal.ByteArrayToStructureLittleEndian<AmstradSuperBlock>(sector, amsSbOffset, 16);
 
                     // Check that format byte and sidedness indicate the same number of sizes
-                    if((amsSb.format == 0 && (amsSb.sidedness & 0x02) == 0) ||
-                       (amsSb.format == 2 && (amsSb.sidedness & 0x02) == 1) ||
-                       (amsSb.format == 2 && (amsSb.sidedness & 0x02) == 2))
+                    if(amsSb.format == 0 && (amsSb.sidedness & 0x02) == 0 ||
+                       amsSb.format == 2 && (amsSb.sidedness & 0x02) == 1 ||
+                       amsSb.format == 2 && (amsSb.sidedness & 0x02) == 2)
                     {
                         // Calculate device limits
-                        ulong sides       = (ulong)(amsSb.format == 0 ? 1 : 2);
-                        ulong sectorCount = (ulong)(amsSb.tps * amsSb.spt * (byte)sides);
+                        var sides       = (ulong)(amsSb.format == 0 ? 1 : 2);
+                        var sectorCount = (ulong)(amsSb.tps * amsSb.spt * (byte)sides);
                         sectorSize = (ulong)(128 << amsSb.psh);
 
                         // Compare device limits from superblock to real limits
@@ -220,7 +220,7 @@ public sealed partial class CPM
                                 bsh = amsSb.bsh
                             };
 
-                            for(int i = 0; i < _dpb.bsh; i++)
+                            for(var i = 0; i < _dpb.bsh; i++)
                                 _dpb.blm += (byte)Math.Pow(2, i);
 
                             if(sectorCount >= 1440)
@@ -239,11 +239,11 @@ public sealed partial class CPM
                             _dpb.off = amsSb.off;
                             _dpb.psh = amsSb.psh;
 
-                            for(int i = 0; i < _dpb.psh; i++)
+                            for(var i = 0; i < _dpb.psh; i++)
                                 _dpb.phm += (byte)Math.Pow(2, i);
 
-                            _dpb.spt = (ushort)(amsSb.spt * (sectorSize              / 128));
-                            uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
+                            _dpb.spt = (ushort)(amsSb.spt * (sectorSize             / 128));
+                            var directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
 
                             errno = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
                                                             out directory);
@@ -274,7 +274,7 @@ public sealed partial class CPM
                                 }
                             };
 
-                            for(int si = 0; si < amsSb.spt; si++)
+                            for(var si = 0; si < amsSb.spt; si++)
                                 _workingDefinition.side1.sectorIds[si] = si + 1;
 
                             if(amsSb.format == 2)
@@ -301,7 +301,7 @@ public sealed partial class CPM
                                     sectorIds = new int[amsSb.spt]
                                 };
 
-                                for(int si = 0; si < amsSb.spt; si++)
+                                for(var si = 0; si < amsSb.spt; si++)
                                     _workingDefinition.side2.sectorIds[si] = si + 1;
                             }
                             else
@@ -327,7 +327,7 @@ public sealed partial class CPM
                     ushort sum = 0;
 
                     // Sum of all 16-bit words that make this sector must be 0
-                    for(int i = 0; i < sector.Length; i += 2)
+                    for(var i = 0; i < sector.Length; i += 2)
                         sum += BitConverter.ToUInt16(sector, i);
 
                     // It may happen that there is a corrupted superblock
@@ -335,15 +335,14 @@ public sealed partial class CPM
                     if(sum == 0)
                     {
                         // Read the superblock
-                        HardDiskSuperBlock hddSb =
-                            Marshal.ByteArrayToStructureLittleEndian<HardDiskSuperBlock>(sector);
+                        HardDiskSuperBlock hddSb = Marshal.ByteArrayToStructureLittleEndian<HardDiskSuperBlock>(sector);
 
                         // Calculate volume size
                         sectorSize = (ulong)(hddSb.recordsPerSector * 128);
-                        ulong sectorsInPartition = (ulong)(hddSb.cylinders * hddSb.heads * hddSb.sectorsPerTrack);
+                        var sectorsInPartition = (ulong)(hddSb.cylinders * hddSb.heads * hddSb.sectorsPerTrack);
 
-                        ulong startingSector =
-                            (ulong)(((hddSb.firstCylinder * hddSb.heads) + hddSb.heads) * hddSb.sectorsPerTrack);
+                        var startingSector =
+                            (ulong)((hddSb.firstCylinder * hddSb.heads + hddSb.heads) * hddSb.sectorsPerTrack);
 
                         // If volume size corresponds with working partition (this variant will be inside MBR partitioning)
                         if(sectorSize                           == imagePlugin.Info.SectorSize &&
@@ -374,7 +373,7 @@ public sealed partial class CPM
                                 spt = hddSb.spt
                             };
 
-                            uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
+                            var directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
 
                             errno = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
                                                             out directory);
@@ -415,10 +414,10 @@ public sealed partial class CPM
                                 sofs = 0
                             };
 
-                            for(int si = 0; si < hddSb.sectorsPerTrack; si++)
+                            for(var si = 0; si < hddSb.sectorsPerTrack; si++)
                                 _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                            for(int si = 0; si < hddSb.spt; si++)
+                            for(var si = 0; si < hddSb.spt; si++)
                                 _workingDefinition.side2.sectorIds[si] = si + 1;
                         }
                     }
@@ -505,7 +504,7 @@ public sealed partial class CPM
                                     sofs = 0
                                 };
 
-                                for(int si = 0; si < 8; si++)
+                                for(var si = 0; si < 8; si++)
                                     _workingDefinition.side1.sectorIds[si] = si + 1;
                             }
 
@@ -566,10 +565,10 @@ public sealed partial class CPM
                                     sofs = 0
                                 };
 
-                                for(int si = 0; si < 8; si++)
+                                for(var si = 0; si < 8; si++)
                                     _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                                for(int si = 0; si < 8; si++)
+                                for(var si = 0; si < 8; si++)
                                     _workingDefinition.side2.sectorIds[si] = si + 1;
                             }
 
@@ -632,10 +631,10 @@ public sealed partial class CPM
                                     sofs = 0
                                 };
 
-                                for(int si = 0; si < 9; si++)
+                                for(var si = 0; si < 9; si++)
                                     _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                                for(int si = 0; si < 9; si++)
+                                for(var si = 0; si < 9; si++)
                                     _workingDefinition.side2.sectorIds[si] = si + 1;
                             }
 
@@ -697,10 +696,10 @@ public sealed partial class CPM
                                     sofs = 0
                                 };
 
-                                for(int si = 0; si < 9; si++)
+                                for(var si = 0; si < 9; si++)
                                     _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                                for(int si = 0; si < 9; si++)
+                                for(var si = 0; si < 9; si++)
                                     _workingDefinition.side2.sectorIds[si] = si + 1;
                             }
 
@@ -761,10 +760,10 @@ public sealed partial class CPM
                                     sofs = 0
                                 };
 
-                                for(int si = 0; si < 9; si++)
+                                for(var si = 0; si < 9; si++)
                                     _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                                for(int si = 0; si < 9; si++)
+                                for(var si = 0; si < 9; si++)
                                     _workingDefinition.side2.sectorIds[si] = si + 1;
                             }
 
@@ -825,10 +824,10 @@ public sealed partial class CPM
                                     sofs = 0
                                 };
 
-                                for(int si = 0; si < 15; si++)
+                                for(var si = 0; si < 15; si++)
                                     _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                                for(int si = 0; si < 15; si++)
+                                for(var si = 0; si < 15; si++)
                                     _workingDefinition.side2.sectorIds[si] = si + 1;
                             }
 
@@ -889,10 +888,10 @@ public sealed partial class CPM
                                     sofs = 0
                                 };
 
-                                for(int si = 0; si < 18; si++)
+                                for(var si = 0; si < 18; si++)
                                     _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                                for(int si = 0; si < 18; si++)
+                                for(var si = 0; si < 18; si++)
                                     _workingDefinition.side2.sectorIds[si] = si + 1;
                             }
 
@@ -901,7 +900,7 @@ public sealed partial class CPM
 
                     if(_cpmFound)
                     {
-                        uint directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / imagePlugin.Info.SectorSize);
+                        var directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / imagePlugin.Info.SectorSize);
 
                         errno = imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength,
                                                         out directory);
@@ -956,7 +955,7 @@ public sealed partial class CPM
                         {
                             _sectorMask = new int[def.side1.sectorIds.Length];
 
-                            for(int m = 0; m < _sectorMask.Length; m++)
+                            for(var m = 0; m < _sectorMask.Length; m++)
                                 _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
                         }
                         else
@@ -966,28 +965,27 @@ public sealed partial class CPM
                             {
                                 _sectorMask = new int[def.side1.sectorIds.Length + def.side2.sectorIds.Length];
 
-                                for(int m = 0; m < def.side1.sectorIds.Length; m++)
+                                for(var m = 0; m < def.side1.sectorIds.Length; m++)
                                     _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
 
                                 // Skip first track (first side)
-                                for(int m = 0; m < def.side2.sectorIds.Length; m++)
+                                for(var m = 0; m < def.side2.sectorIds.Length; m++)
                                     _sectorMask[m + def.side1.sectorIds.Length] =
-                                        def.side2.sectorIds[m] - def.side2.sectorIds[0] +
-                                        def.side1.sectorIds.Length;
+                                        def.side2.sectorIds[m] - def.side2.sectorIds[0] + def.side1.sectorIds.Length;
                             }
 
                             // Head changes after whole side
                             else if(string.Compare(def.order, "CYLINDERS",
                                                    StringComparison.InvariantCultureIgnoreCase) == 0)
                             {
-                                for(int m = 0; m < def.side1.sectorIds.Length; m++)
+                                for(var m = 0; m < def.side1.sectorIds.Length; m++)
                                     _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
 
                                 // Skip first track (first side) and first track (second side)
-                                for(int m = 0; m < def.side1.sectorIds.Length; m++)
+                                for(var m = 0; m < def.side1.sectorIds.Length; m++)
                                     _sectorMask[m + def.side1.sectorIds.Length] =
-                                        def.side1.sectorIds[m] - def.side1.sectorIds[0] +
-                                        def.side1.sectorIds.Length                      + def.side2.sectorIds.Length;
+                                        def.side1.sectorIds[m] - def.side1.sectorIds[0] + def.side1.sectorIds.Length +
+                                        def.side2.sectorIds.Length;
                             }
 
                             // TODO: Implement COLUMBIA ordering
@@ -1001,8 +999,8 @@ public sealed partial class CPM
                             }
 
                             // TODO: Implement EAGLE ordering
-                            else if(string.Compare(def.order, "EAGLE",
-                                                   StringComparison.InvariantCultureIgnoreCase) == 0)
+                            else if(string.Compare(def.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) ==
+                                    0)
                             {
                                 AaruConsole.DebugWriteLine("CP/M Plugin",
                                                            "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
@@ -1022,11 +1020,11 @@ public sealed partial class CPM
                         // Read the directory marked by this definition
                         var ms = new MemoryStream();
 
-                        for(int p = 0; p < dirLen; p++)
+                        for(var p = 0; p < dirLen; p++)
                         {
                             errno =
                                 imagePlugin.
-                                    ReadSector((ulong)((int)offset + (int)partition.Start + (p / _sectorMask.Length * _sectorMask.Length) + _sectorMask[p % _sectorMask.Length]),
+                                    ReadSector((ulong)((int)offset + (int)partition.Start + p / _sectorMask.Length * _sectorMask.Length + _sectorMask[p % _sectorMask.Length]),
                                                out byte[] dirSector);
 
                             if(errno != ErrorNumber.NoError)
@@ -1043,7 +1041,7 @@ public sealed partial class CPM
 
                         // Complement of the directory bytes if needed
                         if(def.complement)
-                            for(int b = 0; b < directory.Length; b++)
+                            for(var b = 0; b < directory.Length; b++)
                                 directory[b] = (byte)(~directory[b] & 0xFF);
 
                         // Check the directory
@@ -1151,8 +1149,7 @@ public sealed partial class CPM
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("IBM437");
         information = "";

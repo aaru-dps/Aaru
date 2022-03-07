@@ -30,6 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
+
+namespace Aaru.Core.Media.Info;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,10 +52,7 @@ using Aaru.Decoders.Xbox;
 using Aaru.Devices;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using DMI = Aaru.Decoders.Xbox.DMI;
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
-
-namespace Aaru.Core.Media.Info;
 
 /// <summary>Retrieves information from a SCSI device</summary>
 public sealed class ScsiInfo
@@ -66,17 +67,17 @@ public sealed class ScsiInfo
 
         MediaType     = MediaType.Unknown;
         MediaInserted = false;
-        int    resets = 0;
+        var    resets = 0;
         bool   sense;
         byte[] cmdBuf;
         byte[] senseBuf;
-        bool   containsFloppyPage    = false;
-        int    sessions              = 1;
-        int    firstTrackLastSession = 1;
+        var    containsFloppyPage    = false;
+        var    sessions              = 1;
+        var    firstTrackLastSession = 1;
 
         if(dev.IsRemovable)
         {
-            deviceGotReset:
+        deviceGotReset:
             sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
 
             if(sense)
@@ -96,7 +97,7 @@ public sealed class ScsiInfo
 
                     if(decSense?.ASC == 0x3A)
                     {
-                        int leftRetries = 5;
+                        var leftRetries = 5;
 
                         while(leftRetries > 0)
                         {
@@ -120,7 +121,7 @@ public sealed class ScsiInfo
                     else if(decSense?.ASC  == 0x04 &&
                             decSense?.ASCQ == 0x01)
                     {
-                        int leftRetries = 10;
+                        var leftRetries = 10;
 
                         while(leftRetries > 0)
                         {
@@ -144,8 +145,7 @@ public sealed class ScsiInfo
                     }
                     else
                     {
-                        AaruConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
-                                                   Sense.PrettifySense(senseBuf));
+                        AaruConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Sense.PrettifySense(senseBuf));
 
                         return;
                     }
@@ -194,8 +194,7 @@ public sealed class ScsiInfo
                 {
                     ReadCapacity = cmdBuf;
 
-                    Blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) &
-                             0xFFFFFFFF;
+                    Blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) & 0xFFFFFFFF;
 
                     BlockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                 }
@@ -219,7 +218,7 @@ public sealed class ScsiInfo
 
                     if(ReadCapacity16 != null)
                     {
-                        byte[] temp = new byte[8];
+                        var temp = new byte[8];
 
                         Array.Copy(cmdBuf, 0, temp, 0, 8);
                         Array.Reverse(temp);
@@ -275,17 +274,15 @@ public sealed class ScsiInfo
             }
             */
                 break;
-            case PeripheralDeviceTypes.BridgingExpander
-                when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
-                     dev.Model.StartsWith("MDH", StringComparison.Ordinal):
+            case PeripheralDeviceTypes.BridgingExpander when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
+                                                             dev.Model.StartsWith("MDH", StringComparison.Ordinal):
                 sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
                 if(!sense)
                 {
                     ReadCapacity = cmdBuf;
 
-                    Blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) &
-                             0xFFFFFFFF;
+                    Blocks = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) & 0xFFFFFFFF;
 
                     BlockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                 }
@@ -475,8 +472,7 @@ public sealed class ScsiInfo
                                           MmcDiscStructureFormat.RecognizedFormatLayers, 0, dev.Timeout, out _);
 
             if(sense)
-                AaruConsole.DebugWriteLine("Media-Info command",
-                                           "READ DISC STRUCTURE: Recognized Format Layers\n{0}",
+                AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Recognized Format Layers\n{0}",
                                            Sense.PrettifySense(senseBuf));
             else
                 RecognizedFormatLayers = cmdBuf;
@@ -485,8 +481,7 @@ public sealed class ScsiInfo
                                           MmcDiscStructureFormat.WriteProtectionStatus, 0, dev.Timeout, out _);
 
             if(sense)
-                AaruConsole.DebugWriteLine("Media-Info command",
-                                           "READ DISC STRUCTURE: Write Protection Status\n{0}",
+                AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Write Protection Status\n{0}",
                                            Sense.PrettifySense(senseBuf));
             else
                 WriteProtectionStatus = cmdBuf;
@@ -523,10 +518,8 @@ public sealed class ScsiInfo
                                               MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out _);
 
                 if(sense)
-                {
                     AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: PFI\n{0}",
                                                Sense.PrettifySense(senseBuf));
-                }
                 else
                 {
                     DvdPfi     = cmdBuf;
@@ -553,8 +546,7 @@ public sealed class ScsiInfo
 
                                     break;
                                 case DiskCategory.DVDR:
-                                    MediaType = DecodedPfi.Value.PartVersion >= 6 ? MediaType.DVDRDL
-                                                    : MediaType.DVDR;
+                                    MediaType = DecodedPfi.Value.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
 
                                     break;
                                 case DiskCategory.DVDRAM:
@@ -603,18 +595,14 @@ public sealed class ScsiInfo
                                               out _);
 
                 if(sense)
-                {
                     AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DMI\n{0}",
                                                Sense.PrettifySense(senseBuf));
-                }
                 else
                 {
                     DvdDmi = cmdBuf;
 
                     if(DMI.IsXbox(cmdBuf))
-                    {
                         MediaType = MediaType.XGD;
-                    }
                     else if(DMI.IsXbox360(cmdBuf))
                     {
                         MediaType = MediaType.XGD2;
@@ -827,8 +815,7 @@ public sealed class ScsiInfo
                 case MediaType.DVDRWDL:
                 case MediaType.HDDVDR:
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                  MmcDiscStructureFormat.DvdrMediaIdentifier, 0, dev.Timeout,
-                                                  out _);
+                                                  MmcDiscStructureFormat.DvdrMediaIdentifier, 0, dev.Timeout, out _);
 
                     if(sense)
                         AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: DVD-R Media ID\n{0}",
@@ -902,8 +889,7 @@ public sealed class ScsiInfo
                                               MmcDiscStructureFormat.HddvdrMediumStatus, 0, dev.Timeout, out _);
 
                 if(sense)
-                    AaruConsole.DebugWriteLine("Media-Info command",
-                                               "READ DISC STRUCTURE: HD DVD-R Medium Status\n{0}",
+                    AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: HD DVD-R Medium Status\n{0}",
                                                Sense.PrettifySense(senseBuf));
                 else
                     HddvdrMediumStatus = cmdBuf;
@@ -944,8 +930,7 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.MiddleZoneStart, 0, dev.Timeout, out _);
 
                     if(sense)
-                        AaruConsole.DebugWriteLine("Media-Info command",
-                                                   "READ DISC STRUCTURE: Middle Zone Start\n{0}",
+                        AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Middle Zone Start\n{0}",
                                                    Sense.PrettifySense(senseBuf));
                     else
                         DvdrDlMiddleZoneStart = cmdBuf;
@@ -954,8 +939,7 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.JumpIntervalSize, 0, dev.Timeout, out _);
 
                     if(sense)
-                        AaruConsole.DebugWriteLine("Media-Info command",
-                                                   "READ DISC STRUCTURE: Jump Interval Size\n{0}",
+                        AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Jump Interval Size\n{0}",
                                                    Sense.PrettifySense(senseBuf));
                     else
                         DvdrDlJumpIntervalSize = cmdBuf;
@@ -975,8 +959,7 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.RemapAnchorPoint, 0, dev.Timeout, out _);
 
                     if(sense)
-                        AaruConsole.DebugWriteLine("Media-Info command",
-                                                   "READ DISC STRUCTURE: Remap Anchor Point\n{0}",
+                        AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Remap Anchor Point\n{0}",
                                                    Sense.PrettifySense(senseBuf));
                     else
                         DvdrDlRemapAnchorPoint = cmdBuf;
@@ -1048,15 +1031,13 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.CartridgeStatus, 0, dev.Timeout, out _);
 
                     if(sense)
-                        AaruConsole.DebugWriteLine("Media-Info command",
-                                                   "READ DISC STRUCTURE: Cartridge Status\n{0}",
+                        AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Cartridge Status\n{0}",
                                                    Sense.PrettifySense(senseBuf));
                     else
                         BlurayCartridgeStatus = cmdBuf;
 
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
-                                                  MmcDiscStructureFormat.BdSpareAreaInformation, 0, dev.Timeout,
-                                                  out _);
+                                                  MmcDiscStructureFormat.BdSpareAreaInformation, 0, dev.Timeout, out _);
 
                     if(sense)
                         AaruConsole.DebugWriteLine("Media-Info command",
@@ -1083,8 +1064,8 @@ public sealed class ScsiInfo
                     else
                         BlurayTrackResources = cmdBuf;
 
-                    sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf,
-                                                    MmcDiscInformationDataTypes.PowResources, dev.Timeout, out _);
+                    sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.PowResources,
+                                                    dev.Timeout, out _);
 
                     if(sense)
                         AaruConsole.DebugWriteLine("Media-Info command", "READ DISC INFORMATION 010b\n{0}",
@@ -1106,10 +1087,8 @@ public sealed class ScsiInfo
                     bool tocSense = dev.ReadTocPmaAtip(out cmdBuf, out senseBuf, false, 0, 0, dev.Timeout, out _);
 
                     if(tocSense)
-                    {
                         AaruConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: TOC\n{0}",
                                                    Sense.PrettifySense(senseBuf));
-                    }
                     else
                     {
                         Toc        = cmdBuf;
@@ -1124,10 +1103,8 @@ public sealed class ScsiInfo
                     sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
                     if(sense)
-                    {
                         AaruConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: ATIP\n{0}",
                                                    Sense.PrettifySense(senseBuf));
-                    }
                     else
                     {
                         Atip        = cmdBuf;
@@ -1147,10 +1124,8 @@ public sealed class ScsiInfo
                         sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
                         if(sense)
-                        {
                             AaruConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: Session info\n{0}",
                                                        Sense.PrettifySense(senseBuf));
-                        }
                         else if(cmdBuf.Length > 4)
                         {
                             Session        = cmdBuf;
@@ -1166,10 +1141,8 @@ public sealed class ScsiInfo
                         sense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out _);
 
                         if(sense)
-                        {
                             AaruConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: Raw TOC\n{0}",
                                                        Sense.PrettifySense(senseBuf));
-                        }
                         else if(cmdBuf.Length > 4)
                         {
                             RawToc = cmdBuf;
@@ -1188,10 +1161,8 @@ public sealed class ScsiInfo
                         sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
                         if(sense)
-                        {
                             AaruConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: CD-TEXT\n{0}",
                                                        Sense.PrettifySense(senseBuf));
-                        }
                         else if(cmdBuf.Length > 4)
                         {
                             CdTextLeadIn        = cmdBuf;
@@ -1233,10 +1204,8 @@ public sealed class ScsiInfo
                                               MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out _);
 
                 if(sense)
-                {
                     AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: PFI\n{0}",
                                                Sense.PrettifySense(senseBuf));
-                }
                 else
                 {
                     DvdPfi = cmdBuf;
@@ -1278,10 +1247,8 @@ public sealed class ScsiInfo
         sense = dev.ReadMediaSerialNumber(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
         if(sense)
-        {
             AaruConsole.DebugWriteLine("Media-Info command", "READ MEDIA SERIAL NUMBER\n{0}",
                                        Sense.PrettifySense(senseBuf));
-        }
         else
         {
             if(cmdBuf.Length >= 4)
@@ -1334,8 +1301,7 @@ public sealed class ScsiInfo
                         }
 
                         ulong totalSize =
-                            (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) &
-                            0xFFFFFFFF;
+                            (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]) & 0xFFFFFFFF;
 
                         sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                       MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
@@ -1415,15 +1381,14 @@ public sealed class ScsiInfo
                             break;
                         }
 
-                        AaruConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors",
-                                                   totalSize);
+                        AaruConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
 
                         ulong middleZone =
                             totalSize - (PFI.Decode(cmdBuf, MediaType).Value.Layer0EndPSN -
                                          PFI.Decode(cmdBuf, MediaType).Value.DataAreaStartPSN + 1) - gameSize + 1;
 
-                        totalSize = l0Video + l1Video + (middleZone * 2) + gameSize;
-                        ulong layerBreak = l0Video + middleZone + (gameSize / 2);
+                        totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
+                        ulong layerBreak = l0Video + middleZone + gameSize / 2;
 
                         XgdInfo = new XgdInfo
                         {
@@ -1458,17 +1423,15 @@ public sealed class ScsiInfo
             MediaType = MediaType.GENERIC_HDD;
 
         if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice ||
-           (dev.IsUsb && (scsiMediumType == 0x40 || scsiMediumType == 0x41 || scsiMediumType == 0x42)))
+           dev.IsUsb && (scsiMediumType == 0x40 || scsiMediumType == 0x41 || scsiMediumType == 0x42))
             return;
 
         sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,
                                         dev.Timeout, out _);
 
         if(sense)
-        {
             AaruConsole.DebugWriteLine("Media-Info command", "READ DISC INFORMATION 000b\n{0}",
                                        Sense.PrettifySense(senseBuf));
-        }
         else
         {
             DiscInformation        = cmdBuf;

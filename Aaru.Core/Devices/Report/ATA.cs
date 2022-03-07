@@ -30,15 +30,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices.Report;
+
 using System;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Devices;
-using Spectre.Console;
+using global::Spectre.Console;
 using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
-
-namespace Aaru.Core.Devices.Report;
 
 public sealed partial class DeviceReport
 {
@@ -46,7 +46,7 @@ public sealed partial class DeviceReport
     /// <returns>Media report</returns>
     public TestedMedia ReportAtaMedia()
     {
-        bool                   sense      = true;
+        var                    sense      = true;
         AtaErrorRegistersChs   errorChs   = new();
         AtaErrorRegistersLba28 errorLba   = new();
         AtaErrorRegistersLba48 errorLba48 = new();
@@ -55,9 +55,8 @@ public sealed partial class DeviceReport
 
         var mediaTest = new TestedMedia
         {
-            MediumTypeName =
-                AnsiConsole.Ask<string>("Please write a description of the media type and press enter: "),
-            Model             = AnsiConsole.Ask<string>("Please write the media model and press enter: "),
+            MediumTypeName = AnsiConsole.Ask<string>("Please write a description of the media type and press enter: "),
+            Model = AnsiConsole.Ask<string>("Please write the media model and press enter: "),
             MediaIsRecognized = true
         };
 
@@ -187,7 +186,7 @@ public sealed partial class DeviceReport
                     mediaTest.Manufacturer = ataId.MediaManufacturer;
             }
 
-            ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
+            var checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -198,9 +197,8 @@ public sealed partial class DeviceReport
             mediaTest.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                             readBuf.Length                     > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadSectorsData = readBuf;
 
@@ -213,9 +211,8 @@ public sealed partial class DeviceReport
             mediaTest.SupportsReadRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                           readBuf.Length                     > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadSectorsRetryData = readBuf;
 
@@ -228,9 +225,8 @@ public sealed partial class DeviceReport
             mediaTest.SupportsReadDma = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                         readBuf.Length                     > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadDmaData = readBuf;
 
@@ -243,9 +239,8 @@ public sealed partial class DeviceReport
             mediaTest.SupportsReadDmaRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                              readBuf.Length                     > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadDmaRetryData = readBuf;
 
@@ -269,9 +264,8 @@ public sealed partial class DeviceReport
             mediaTest.SupportsReadLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                         readBuf.Length                     > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadLbaData = readBuf;
 
@@ -284,9 +278,8 @@ public sealed partial class DeviceReport
             mediaTest.SupportsReadRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                              readBuf.Length                     > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadRetryLbaData = readBuf;
 
@@ -299,9 +292,8 @@ public sealed partial class DeviceReport
             mediaTest.SupportsReadDmaLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                            readBuf.Length                     > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadDmaLbaData = readBuf;
 
@@ -314,9 +306,8 @@ public sealed partial class DeviceReport
             mediaTest.SupportsReadDmaRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                 readBuf.Length                     > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadDmaRetryLbaData = readBuf;
 
@@ -340,9 +331,8 @@ public sealed partial class DeviceReport
             mediaTest.SupportsReadLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
                                           readBuf.Length                       > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadLba48Data = readBuf;
 
@@ -352,12 +342,11 @@ public sealed partial class DeviceReport
                 sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDmaLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 &&
-                                             errorLba48.Error                     == 0    && readBuf.Length > 0;
+            mediaTest.SupportsReadDmaLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
+                                             readBuf.Length                       > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadDmaLba48Data = readBuf;
 
@@ -390,12 +379,10 @@ public sealed partial class DeviceReport
             });
 
             mediaTest.SupportsReadLong = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                         readBuf.Length                     > 0     &&
-                                         BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
+                                         readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadLongData = readBuf;
 
@@ -411,9 +398,8 @@ public sealed partial class DeviceReport
                                               readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
                                               checkCorrectRead;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadLongRetryData = readBuf;
 
@@ -421,17 +407,15 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask("Trying READ LONG in LBA mode...").IsIndeterminate();
 
-                sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, mediaTest.LongBlockSize ?? 0,
-                                      _dev.Timeout, out _);
+                sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, mediaTest.LongBlockSize ?? 0, _dev.Timeout,
+                                      out _);
             });
 
             mediaTest.SupportsReadLongLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                            readBuf.Length                     > 0     &&
-                                            BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
+                                            readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadLongLbaData = readBuf;
 
@@ -439,17 +423,16 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask("Trying READ LONG RETRY in LBA mode...").IsIndeterminate();
 
-                sense = _dev.ReadLong(out readBuf, out errorLba, true, 0, mediaTest.LongBlockSize ?? 0,
-                                      _dev.Timeout, out _);
+                sense = _dev.ReadLong(out readBuf, out errorLba, true, 0, mediaTest.LongBlockSize ?? 0, _dev.Timeout,
+                                      out _);
             });
 
-            mediaTest.SupportsReadLongRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 &&
-                                                 errorLba.Error                     == 0    && readBuf.Length > 0 &&
-                                                 BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
+            mediaTest.SupportsReadLongRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
+                                                 readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
+                                                 checkCorrectRead;
 
-            AaruConsole.DebugWriteLine("ATA Report",
-                                       "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                       errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             mediaTest.ReadLongRetryLbaData = readBuf;
         }
@@ -462,7 +445,7 @@ public sealed partial class DeviceReport
     /// <summary>Creates a report of an ATA device</summary>
     public TestedMedia ReportAta(Identify.IdentifyDevice ataId)
     {
-        bool                   sense        = true;
+        var                    sense        = true;
         byte[]                 readBuf      = Array.Empty<byte>();
         AtaErrorRegistersChs   errorChs     = new();
         AtaErrorRegistersLba28 errorLba     = new();
@@ -500,8 +483,7 @@ public sealed partial class DeviceReport
                 Sectors   = ataId.CurrentSectorsPerTrack
             };
 
-            capabilities.Blocks =
-                (ulong)(ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack);
+            capabilities.Blocks = (ulong)(ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack);
         }
 
         if(ataId.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
@@ -790,8 +772,8 @@ public sealed partial class DeviceReport
         });
 
         capabilities.SupportsReadLongRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                             readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
-                                             checkCorrectRead;
+                                             readBuf.Length                     > 0     &&
+                                             BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
         AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                    sense, errorChs.Status, errorChs.Error, readBuf.Length);
@@ -802,13 +784,12 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask("Trying READ LONG in LBA mode...").IsIndeterminate();
 
-            sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, capabilities.LongBlockSize ?? 0,
-                                  _dev.Timeout, out _);
+            sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, capabilities.LongBlockSize ?? 0, _dev.Timeout,
+                                  out _);
         });
 
         capabilities.SupportsReadLongLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                           readBuf.Length                     > 0     &&
-                                           BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
+                                           readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
         AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                    sense, errorLba.Status, errorLba.Error, readBuf.Length);
@@ -840,7 +821,7 @@ public sealed partial class DeviceReport
     /// <returns>IDENTIFY ATA DEVICE response without the private fields</returns>
     public static byte[] ClearIdentify(byte[] buffer)
     {
-        byte[] empty = new byte[512];
+        var empty = new byte[512];
 
         Array.Copy(empty, 0, buffer, 20, 20);
         Array.Copy(empty, 0, buffer, 216, 8);

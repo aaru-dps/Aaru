@@ -31,6 +31,8 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -42,8 +44,6 @@ using Aaru.Console;
 using Aaru.Decoders.Sega;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -64,14 +64,14 @@ public sealed partial class ISO9660
         if(errno != ErrorNumber.NoError)
             return false;
 
-        int xaOff = 0;
+        var xaOff = 0;
 
         if(vdSector.Length == 2336)
             xaOff = 8;
 
-        byte   vdType  = vdSector[0 + xaOff];
-        byte[] vdMagic = new byte[5];
-        byte[] hsMagic = new byte[5];
+        byte vdType  = vdSector[0 + xaOff];
+        var  vdMagic = new byte[5];
+        var  hsMagic = new byte[5];
 
         // This indicates the end of a volume descriptor. HighSierra here would have 16 so no problem
         if(vdType == 255)
@@ -84,21 +84,19 @@ public sealed partial class ISO9660
         AaruConsole.DebugWriteLine("ISO9660 plugin", "HSMagic = {0}", Encoding.ASCII.GetString(hsMagic));
 
         return Encoding.ASCII.GetString(vdMagic) == ISO_MAGIC         ||
-               Encoding.ASCII.GetString(hsMagic) == HIGH_SIERRA_MAGIC ||
-               Encoding.ASCII.GetString(vdMagic) == CDI_MAGIC;
+               Encoding.ASCII.GetString(hsMagic) == HIGH_SIERRA_MAGIC || Encoding.ASCII.GetString(vdMagic) == CDI_MAGIC;
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.ASCII;
         information = "";
-        var    isoMetadata = new StringBuilder();
-        byte[] vdMagic     = new byte[5]; // Volume Descriptor magic "CD001"
-        byte[] hsMagic     = new byte[5]; // Volume Descriptor magic "CDROM"
+        var isoMetadata = new StringBuilder();
+        var vdMagic     = new byte[5]; // Volume Descriptor magic "CD001"
+        var hsMagic     = new byte[5]; // Volume Descriptor magic "CDROM"
 
-        string bootSpec = "";
+        var bootSpec = "";
 
         PrimaryVolumeDescriptor?           pvd      = null;
         PrimaryVolumeDescriptor?           jolietvd = null;
@@ -125,14 +123,14 @@ public sealed partial class ISO9660
         int xaOff = vdSector.Length == 2336 ? 8 : 0;
         Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
         bool highSierraInfo = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
-        int  hsOff          = 0;
+        var  hsOff          = 0;
 
         if(highSierraInfo)
             hsOff = 8;
 
-        bool cdiInfo = false;
-        bool evd     = false;
-        bool vpd     = false;
+        var cdiInfo = false;
+        var evd     = false;
+        var vpd     = false;
 
         while(true)
         {
@@ -164,8 +162,7 @@ public sealed partial class ISO9660
 
             if(Encoding.GetString(vdMagic) != ISO_MAGIC         &&
                Encoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
-               Encoding.GetString(vdMagic) !=
-               CDI_MAGIC) // Recognized, it is an ISO9660, now check for rest of data.
+               Encoding.GetString(vdMagic) != CDI_MAGIC) // Recognized, it is an ISO9660, now check for rest of data.
             {
                 if(counter == 0)
                     return;
@@ -188,8 +185,7 @@ public sealed partial class ISO9660
                         bootSpec = "El Torito";
 
                         torito =
-                            Marshal.ByteArrayToStructureLittleEndian<ElToritoBootRecord>(vdSector, hsOff,
-                                2048 - hsOff);
+                            Marshal.ByteArrayToStructureLittleEndian<ElToritoBootRecord>(vdSector, hsOff, 2048 - hsOff);
                     }
 
                     break;
@@ -198,8 +194,7 @@ public sealed partial class ISO9660
                 case 1:
                 {
                     if(highSierraInfo)
-                        hsvd = Marshal.
-                            ByteArrayToStructureLittleEndian<HighSierraPrimaryVolumeDescriptor>(vdSector);
+                        hsvd = Marshal.ByteArrayToStructureLittleEndian<HighSierraPrimaryVolumeDescriptor>(vdSector);
                     else if(cdiInfo)
                         fsvd = Marshal.ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vdSector);
                     else
@@ -293,14 +288,14 @@ public sealed partial class ISO9660
         }
 
         byte[]                 rootDir         = Array.Empty<byte>();
-        int                    rootOff         = 0;
-        bool                   xaExtensions    = false;
-        bool                   apple           = false;
-        bool                   susp            = false;
-        bool                   rrip            = false;
-        bool                   ziso            = false;
-        bool                   amiga           = false;
-        bool                   aaip            = false;
+        var                    rootOff         = 0;
+        var                    xaExtensions    = false;
+        var                    apple           = false;
+        var                    susp            = false;
+        var                    rrip            = false;
+        var                    ziso            = false;
+        var                    amiga           = false;
+        var                    aaip            = false;
         List<ContinuationArea> contareas       = new();
         List<byte[]>           refareas        = new();
         var                    suspInformation = new StringBuilder();
@@ -328,13 +323,13 @@ public sealed partial class ISO9660
             if(saLen                   > 0 &&
                rootOff + saOff + saLen <= rootDir.Length)
             {
-                byte[] sa = new byte[saLen];
+                var sa = new byte[saLen];
                 Array.Copy(rootDir, rootOff + saOff, sa, 0, saLen);
                 saOff = 0;
 
                 while(saOff < saLen)
                 {
-                    bool noneFound = true;
+                    var noneFound = true;
 
                     if(Marshal.SizeOf<CdromXa>() + saOff <= saLen)
                     {
@@ -351,7 +346,7 @@ public sealed partial class ISO9660
                     if(saOff + 2 >= saLen)
                         break;
 
-                    ushort nextSignature = BigEndianBitConverter.ToUInt16(sa, saOff);
+                    var nextSignature = BigEndianBitConverter.ToUInt16(sa, saOff);
 
                     switch(nextSignature)
                     {
@@ -414,7 +409,7 @@ public sealed partial class ISO9660
 
                                         break;
                                     case SUSP_CONTINUATION when saOff + sa[saOff + 2] <= saLen:
-                                        byte[] ce = new byte[sa[saOff + 2]];
+                                        var ce = new byte[sa[saOff + 2]];
                                         Array.Copy(sa, saOff, ce, 0, ce.Length);
 
                                         ContinuationArea ca =
@@ -424,7 +419,7 @@ public sealed partial class ISO9660
 
                                         break;
                                     case SUSP_REFERENCE when saOff + sa[saOff + 2] <= saLen:
-                                        byte[] er = new byte[sa[saOff + 2]];
+                                        var er = new byte[sa[saOff + 2]];
                                         Array.Copy(sa, saOff, er, 0, er.Length);
                                         refareas.Add(er);
 
@@ -440,8 +435,8 @@ public sealed partial class ISO9660
                                 ziso  |= nextSignature == ZISO_MAGIC;
                                 amiga |= nextSignature == AMIGA_MAGIC;
 
-                                aaip |= nextSignature == AAIP_MAGIC || (nextSignature == AAIP_MAGIC_OLD &&
-                                                                        sa[saOff + 3] == 1 && sa[saOff + 2] >= 9);
+                                aaip |= nextSignature == AAIP_MAGIC || nextSignature == AAIP_MAGIC_OLD &&
+                                        sa[saOff + 3]                                == 1 && sa[saOff + 2] >= 9;
 
                                 saOff += sa[saOff + 2];
 
@@ -477,13 +472,13 @@ public sealed partial class ISO9660
             if(errno != ErrorNumber.NoError)
                 return;
 
-            byte[] caData = new byte[ca.ca_length_be];
+            var caData = new byte[ca.ca_length_be];
             Array.Copy(caSectors, ca.offset_be, caData, 0, ca.ca_length_be);
-            int caOff = 0;
+            var caOff = 0;
 
             while(caOff < ca.ca_length_be)
             {
-                ushort nextSignature = BigEndianBitConverter.ToUInt16(caData, caOff);
+                var nextSignature = BigEndianBitConverter.ToUInt16(caData, caOff);
 
                 switch(nextSignature)
                 {
@@ -497,7 +492,7 @@ public sealed partial class ISO9660
 
                         break;
                     case SUSP_REFERENCE when caOff + caData[caOff + 2] <= ca.ca_length_be:
-                        byte[] er = new byte[caData[caOff + 2]];
+                        var er = new byte[caData[caOff + 2]];
                         Array.Copy(caData, caOff, er, 0, er.Length);
                         refareas.Add(er);
 
@@ -513,8 +508,8 @@ public sealed partial class ISO9660
                 ziso  |= nextSignature == ZISO_MAGIC;
                 amiga |= nextSignature == AMIGA_MAGIC;
 
-                aaip |= nextSignature == AAIP_MAGIC || (nextSignature == AAIP_MAGIC_OLD && caData[caOff + 3] == 1 &&
-                                                        caData[caOff                                    + 2] >= 9);
+                aaip |= nextSignature == AAIP_MAGIC || nextSignature == AAIP_MAGIC_OLD && caData[caOff + 3] == 1 &&
+                        caData[caOff                                                                   + 2] >= 9;
 
                 caOff += caData[caOff + 2];
             }
@@ -617,14 +612,11 @@ public sealed partial class ISO9660
             isoMetadata.AppendLine(Dreamcast.Prettify(dreamcast));
         }
 
-        isoMetadata.AppendFormat("{0}------------------------------", cdiInfo ? "---------------" : "").
-                    AppendLine();
+        isoMetadata.AppendFormat("{0}------------------------------", cdiInfo ? "---------------" : "").AppendLine();
 
-        isoMetadata.AppendFormat("{0}VOLUME DESCRIPTOR INFORMATION:", cdiInfo ? "FILE STRUCTURE " : "").
-                    AppendLine();
+        isoMetadata.AppendFormat("{0}VOLUME DESCRIPTOR INFORMATION:", cdiInfo ? "FILE STRUCTURE " : "").AppendLine();
 
-        isoMetadata.AppendFormat("{0}------------------------------", cdiInfo ? "---------------" : "").
-                    AppendLine();
+        isoMetadata.AppendFormat("{0}------------------------------", cdiInfo ? "---------------" : "").AppendLine();
 
         isoMetadata.AppendFormat("System identifier: {0}", decodedVd.SystemIdentifier).AppendLine();
         isoMetadata.AppendFormat("Volume identifier: {0}", decodedVd.VolumeIdentifier).AppendLine();
@@ -660,16 +652,14 @@ public sealed partial class ISO9660
             isoMetadata.AppendFormat("System identifier: {0}", decodedJolietVd.SystemIdentifier).AppendLine();
             isoMetadata.AppendFormat("Volume identifier: {0}", decodedJolietVd.VolumeIdentifier).AppendLine();
 
-            isoMetadata.AppendFormat("Volume set identifier: {0}", decodedJolietVd.VolumeSetIdentifier).
-                        AppendLine();
+            isoMetadata.AppendFormat("Volume set identifier: {0}", decodedJolietVd.VolumeSetIdentifier).AppendLine();
 
             isoMetadata.AppendFormat("Publisher identifier: {0}", decodedJolietVd.PublisherIdentifier).AppendLine();
 
             isoMetadata.AppendFormat("Data preparer identifier: {0}", decodedJolietVd.DataPreparerIdentifier).
                         AppendLine();
 
-            isoMetadata.AppendFormat("Application identifier: {0}", decodedJolietVd.ApplicationIdentifier).
-                        AppendLine();
+            isoMetadata.AppendFormat("Application identifier: {0}", decodedJolietVd.ApplicationIdentifier).AppendLine();
 
             isoMetadata.AppendFormat("Volume creation date: {0}", decodedJolietVd.CreationTime).AppendLine();
 
@@ -680,8 +670,7 @@ public sealed partial class ISO9660
                 isoMetadata.AppendFormat("Volume has not been modified.").AppendLine();
 
             if(decodedJolietVd.HasExpirationTime)
-                isoMetadata.AppendFormat("Volume expiration date: {0}", decodedJolietVd.ExpirationTime).
-                            AppendLine();
+                isoMetadata.AppendFormat("Volume expiration date: {0}", decodedJolietVd.ExpirationTime).AppendLine();
             else
                 isoMetadata.AppendFormat("Volume does not expire.").AppendLine();
 
@@ -698,7 +687,7 @@ public sealed partial class ISO9660
             if(errno != ErrorNumber.NoError)
                 return;
 
-            int toritoOff = 0;
+            var toritoOff = 0;
 
             if(vdSector[toritoOff] != 1)
                 goto exit_torito;
@@ -718,8 +707,7 @@ public sealed partial class ISO9660
 
             initialEntry.boot_type = (ElToritoEmulation)((byte)initialEntry.boot_type & 0xF);
 
-            AaruConsole.DebugWriteLine("DEBUG (ISO9660 plugin)", "initialEntry.load_rba = {0}",
-                                       initialEntry.load_rba);
+            AaruConsole.DebugWriteLine("DEBUG (ISO9660 plugin)", "initialEntry.load_rba = {0}", initialEntry.load_rba);
 
             AaruConsole.DebugWriteLine("DEBUG (ISO9660 plugin)", "initialEntry.sector_count = {0}",
                                        initialEntry.sector_count);
@@ -746,8 +734,7 @@ public sealed partial class ISO9660
 
                 if(valentry.platform_id == ElToritoPlatform.x86)
                     isoMetadata.AppendFormat("\tBootable image will be loaded at segment {0:X4}h",
-                                             initialEntry.load_seg == 0 ? 0x7C0 : initialEntry.load_seg).
-                                AppendLine();
+                                             initialEntry.load_seg == 0 ? 0x7C0 : initialEntry.load_seg).AppendLine();
                 else
                     isoMetadata.AppendFormat("\tBootable image will be loaded at 0x{0:X8}",
                                              (uint)initialEntry.load_seg * 10).AppendLine();
@@ -805,7 +792,7 @@ public sealed partial class ISO9660
                 isoMetadata.AppendFormat("\tSection ID: {0}", Encoding.GetString(sectionHeader.identifier)).
                             AppendLine();
 
-                for(int entryCounter = 1; entryCounter <= sectionHeader.entries && toritoOff < vdSector.Length;
+                for(var entryCounter = 1; entryCounter <= sectionHeader.entries && toritoOff < vdSector.Length;
                     entryCounter++)
                 {
                     ElToritoSectionEntry sectionEntry =
@@ -821,8 +808,8 @@ public sealed partial class ISO9660
                         bootImage = null;
 
                         if(sectionEntry.load_rba + partition.Start + sectionEntry.sector_count - 1 <= partition.End)
-                            imagePlugin.ReadSectors(sectionEntry.load_rba + partition.Start,
-                                                    sectionEntry.sector_count, out bootImage);
+                            imagePlugin.ReadSectors(sectionEntry.load_rba + partition.Start, sectionEntry.sector_count,
+                                                    out bootImage);
 
                         isoMetadata.AppendFormat("\t\tBootable on {0}", sectionHeader.platform_id).AppendLine();
 
@@ -868,8 +855,7 @@ public sealed partial class ISO9660
                         isoMetadata.AppendFormat("\t\tSelection criteria type: {0}",
                                                  sectionEntry.selection_criteria_type).AppendLine();
 
-                        isoMetadata.AppendFormat("\t\tSystem type: 0x{0:X2}", sectionEntry.system_type).
-                                    AppendLine();
+                        isoMetadata.AppendFormat("\t\tSystem type: 0x{0:X2}", sectionEntry.system_type).AppendLine();
 
                         if(bootImage != null)
                             isoMetadata.AppendFormat("\t\tBootable image's SHA1: {0}",
@@ -892,8 +878,8 @@ public sealed partial class ISO9660
                     while(toritoOff < vdSector.Length)
                     {
                         ElToritoSectionEntryExtension sectionExtension =
-                            Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionEntryExtension>(vdSector,
-                                toritoOff, EL_TORITO_ENTRY_SIZE);
+                            Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionEntryExtension>(vdSector, toritoOff,
+                                EL_TORITO_ENTRY_SIZE);
 
                         toritoOff += EL_TORITO_ENTRY_SIZE;
 
@@ -907,7 +893,7 @@ public sealed partial class ISO9660
             }
         }
 
-        exit_torito:
+    exit_torito:
 
         if(refareas.Count > 0)
             isoMetadata.Append(suspInformation);
@@ -943,8 +929,8 @@ public sealed partial class ISO9660
                decodedVd.DataPreparerIdentifier.Length > decodedJolietVd.DataPreparerIdentifier.Length)
                 XmlFsType.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;
             else
-                XmlFsType.DataPreparerIdentifier = string.IsNullOrEmpty(decodedJolietVd.DataPreparerIdentifier)
-                                                       ? null : decodedJolietVd.DataPreparerIdentifier;
+                XmlFsType.DataPreparerIdentifier = string.IsNullOrEmpty(decodedJolietVd.DataPreparerIdentifier) ? null
+                                                       : decodedJolietVd.DataPreparerIdentifier;
 
             if(string.IsNullOrEmpty(decodedJolietVd.ApplicationIdentifier) ||
                decodedVd.ApplicationIdentifier.Length > decodedJolietVd.ApplicationIdentifier.Length)

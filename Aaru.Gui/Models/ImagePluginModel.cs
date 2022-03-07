@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes.Interfaces;
-
 namespace Aaru.Gui.Models;
+
+using Aaru.CommonTypes.Interfaces;
 
 public sealed class ImagePluginModel
 {

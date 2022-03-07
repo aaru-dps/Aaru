@@ -1,7 +1,8 @@
+namespace Aaru.Tests.Issues;
+
 using System.IO;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Issues;
 /*
  * SilasLaspada commented on May 13, 2018
  * Trying to convert an MDF/MDS file pair that is CD-ROM XA that has 2 tracks results in the program crashing

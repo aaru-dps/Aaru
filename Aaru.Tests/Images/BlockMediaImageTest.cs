@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Images;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,8 +13,6 @@ using FluentAssertions.Execution;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Images;
 
 public abstract class BlockMediaImageTest : BaseMediaImageTest
 {
@@ -53,14 +53,12 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                     continue;
 
                 using(new AssertionScope())
-                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
                         Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
                         Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
                     });
-                }
             }
         });
     }
@@ -112,8 +110,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                     }
                     else
                     {
-                        errno = image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors),
-                                                  out sector);
+                        errno = image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors), out sector);
 
                         doneSectors += image.Info.Sectors - doneSectors;
                     }
@@ -163,10 +160,9 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 if(opened != ErrorNumber.NoError)
                     continue;
 
-                List<Partition> partitions = Core.Partitions.GetAll(image);
+                List<Partition> partitions = Partitions.GetAll(image);
 
                 if(partitions.Count == 0)
-                {
                     partitions.Add(new Partition
                     {
                         Description = "Whole device",
@@ -176,16 +172,14 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                         Sequence    = 1,
                         Start       = 0
                     });
-                }
 
                 Assert.AreEqual(test.Partitions.Length, partitions.Count,
                                 $"Expected {test.Partitions.Length} partitions in {testFile} but found {partitions.Count}");
 
                 using(new AssertionScope())
-                {
                     Assert.Multiple(() =>
                     {
-                        for(int i = 0; i < test.Partitions.Length; i++)
+                        for(var i = 0; i < test.Partitions.Length; i++)
                         {
                             BlockPartitionVolumes expectedPartition = test.Partitions[i];
                             Partition             foundPartition    = partitions[i];
@@ -212,19 +206,17 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                             var sr = new StreamReader(expectedDataFilename);
 
-                            VolumeData[] expectedData =
-                                serializer.Deserialize<VolumeData[]>(new JsonTextReader(sr));
+                            VolumeData[] expectedData = serializer.Deserialize<VolumeData[]>(new JsonTextReader(sr));
 
                             Assert.NotNull(expectedData);
 
-                            Core.Filesystems.Identify(image, out List<string> idPlugins, partitions[i]);
+                            Filesystems.Identify(image, out List<string> idPlugins, partitions[i]);
 
                             if(expectedData.Length != idPlugins.Count)
-                            {
                                 continue;
 
-                                // Uncomment to generate JSON file
-                                /*
+                            // Uncomment to generate JSON file
+                            /*
                                 expectedData = new VolumeData[idPlugins.Count];
 
                                 for(int j = 0; j < idPlugins.Count; j++)
@@ -261,7 +253,6 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                                 serializer.Serialize(sw, expectedData);
                                 sw.Close();
                                 */
-                            }
 
                             if(idPlugins.Count == 0)
                                 continue;
@@ -269,12 +260,11 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                             Assert.AreEqual(expectedData.Length, idPlugins.Count,
                                             $"Expected {expectedData.Length} filesystems identified in partition {i} but found {idPlugins.Count} in {testFile}");
 
-                            for(int j = 0; j < idPlugins.Count; j++)
+                            for(var j = 0; j < idPlugins.Count; j++)
                             {
                                 string pluginName = idPlugins[j];
 
-                                if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName,
-                                                                            out IReadOnlyFilesystem plugin))
+                                if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem plugin))
                                     continue;
 
                                 Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
@@ -283,8 +273,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                                                                      Invoke(new object[]
                                                                                 {});
 
-                                Assert.IsNotNull(fs,
-                                                 $"Could not instantiate filesystem {pluginName} in {testFile}");
+                                Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName} in {testFile}");
 
                                 ErrorNumber error = fs.Mount(image, partitions[i], null, null, null);
 
@@ -300,7 +289,6 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                             }
                         }
                     });
-                }
             }
         });
     }

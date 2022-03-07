@@ -26,13 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Checksums;
+
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
 using FluentAssertions;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Checksums;
 
 [TestFixture]
 public class Adler32
@@ -69,7 +69,7 @@ public class Adler32
     [Test]
     public void EmptyData()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
@@ -91,7 +91,7 @@ public class Adler32
     [Test]
     public void EmptyInstance()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
@@ -108,10 +108,10 @@ public class Adler32
     [Test]
     public void RandomData()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
         fs.Close();
@@ -130,10 +130,10 @@ public class Adler32
     [Test]
     public void RandomInstance()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
         fs.Close();
@@ -147,10 +147,10 @@ public class Adler32
     [Test]
     public void PartialInstanceAuto15()
     {
-        byte[] data = new byte[15];
+        var data = new byte[15];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 15);
         fs.Close();
@@ -164,10 +164,10 @@ public class Adler32
     [Test]
     public void PartialInstanceAuto31()
     {
-        byte[] data = new byte[31];
+        var data = new byte[31];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 31);
         fs.Close();
@@ -181,10 +181,10 @@ public class Adler32
     [Test]
     public void PartialInstanceAuto63()
     {
-        byte[] data = new byte[63];
+        var data = new byte[63];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 63);
         fs.Close();
@@ -198,10 +198,10 @@ public class Adler32
     [Test]
     public void PartialInstanceAuto2352()
     {
-        byte[] data = new byte[2352];
+        var data = new byte[2352];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 2352);
         fs.Close();

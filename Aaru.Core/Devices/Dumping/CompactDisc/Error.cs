@@ -30,6 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,12 +52,6 @@ using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -72,14 +74,14 @@ partial class Dump
     /// <param name="mcn">Disc media catalogue number</param>
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
-    void RetryCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry,
-                         ExtentsULong extents, int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
+    void RetryCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry, ExtentsULong extents,
+                         int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
                          MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
                          MmcSubchannel desiredSubchannel, Track[] tracks, Dictionary<byte, string> isrcs,
                          ref string mcn, HashSet<int> subchannelExtents,
                          Dictionary<byte, int> smallestPregapLbaPerTrack, bool supportsLongSectors)
     {
-        bool              sense  = true;     // Sense indicator
+        var               sense  = true;     // Sense indicator
         byte[]            cmdBuf = null;     // Data buffer
         double            cmdDuration;       // Command execution time
         const uint        sectorSize = 2352; // Full sector size
@@ -112,9 +114,9 @@ partial class Dump
            _retryPasses <= 0)
             return;
 
-        int  pass              = 1;
-        bool forward           = true;
-        bool runningPersistent = false;
+        var pass              = 1;
+        var forward           = true;
+        var runningPersistent = false;
 
         Modes.ModePage? currentModePage = null;
         byte[]          md6;
@@ -129,13 +131,12 @@ partial class Dump
 
             if(sense)
             {
-                sense = _dev.ModeSense10(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x01,
-                                         _dev.Timeout, out _);
+                sense = _dev.ModeSense10(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x01, _dev.Timeout,
+                                         out _);
 
                 if(!sense)
                 {
-                    Modes.DecodedMode? dcMode10 =
-                        Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
+                    Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
 
                     if(dcMode10?.Pages != null)
                         foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
@@ -148,8 +149,8 @@ partial class Dump
                 Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
 
                 if(dcMode6?.Pages != null)
-                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage => modePage.Page == 0x01 &&
+                                modePage.Subpage                                                           == 0x00))
                         currentModePage = modePage;
             }
 
@@ -211,17 +212,15 @@ partial class Dump
                 _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
             }
             else
-            {
                 runningPersistent = true;
-            }
         }
 
         InitProgress?.Invoke();
-        cdRepeatRetry:
-        ulong[]     tmpArray              = _resume.BadBlocks.ToArray();
-        List<ulong> sectorsNotEvenPartial = new List<ulong>();
+    cdRepeatRetry:
+        ulong[] tmpArray              = _resume.BadBlocks.ToArray();
+        var     sectorsNotEvenPartial = new List<ulong>();
 
-        for(int i = 0; i < tmpArray.Length; i++)
+        for(var i = 0; i < tmpArray.Length; i++)
         {
             ulong badSector = tmpArray[i];
 
@@ -237,20 +236,17 @@ partial class Dump
                                                 forward ? "forward" : "reverse",
                                                 runningPersistent ? "recovering partial data, " : ""));
 
-            Track track = tracks.OrderBy(t => t.StartSector).
-                                 LastOrDefault(t => badSector >= t.StartSector);
+            Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
             byte sectorsToReRead   = 1;
-            uint badSectorToReRead = (uint)badSector;
+            var  badSectorToReRead = (uint)badSector;
 
             if(_fixOffset                       &&
                audioExtents.Contains(badSector) &&
                offsetBytes != 0)
             {
                 if(offsetBytes > 0)
-                {
                     badSectorToReRead -= (uint)sectorsForOffset;
-                }
 
                 sectorsToReRead = (byte)(sectorsForOffset + 1);
             }
@@ -275,13 +271,13 @@ partial class Dump
                         DecodedSense? decSense = Sense.Decode(senseBuf);
 
                         // Try to workaround firmware
-                        if((decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05) ||
+                        if(decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05 ||
                            decSense?.ASC == 0x64)
                         {
                             sense = _dev.ReadCd(out cmdBuf, out _, badSectorToReRead, blockSize, sectorsToReRead,
-                                                MmcSectorTypes.AllTypes, false, false, true,
-                                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                                supportedSubchannel, _dev.Timeout, out double cmdDuration2);
+                                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                                true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                                out double cmdDuration2);
 
                             cmdDuration += cmdDuration2;
                         }
@@ -290,16 +286,15 @@ partial class Dump
                 else
                 {
                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToReRead, blockSize, sectorsToReRead,
-                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
-                                        true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
-                                        out cmdDuration);
+                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
+                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
                     if(sense)
                     {
                         DecodedSense? decSense = Sense.Decode(senseBuf);
 
                         // Try to workaround firmware
-                        if((decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05) ||
+                        if(decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05 ||
                            decSense?.ASC == 0x64)
                         {
                             sense = _dev.ReadCd(out cmdBuf, out _, badSectorToReRead, blockSize, sectorsToReRead,
@@ -337,8 +332,8 @@ partial class Dump
             {
                 uint blocksToRead = sectorsToReRead;
 
-                FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
-                              subSize, ref cmdBuf, blockSize, false);
+                FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead, subSize,
+                              ref cmdBuf, blockSize, false);
             }
 
             if(!sense &&
@@ -355,8 +350,8 @@ partial class Dump
 
             if(supportedSubchannel != MmcSubchannel.None)
             {
-                byte[] data = new byte[sectorSize];
-                byte[] sub  = new byte[subSize];
+                var data = new byte[sectorSize];
+                var sub  = new byte[subSize];
                 Array.Copy(cmdBuf, 0, data, 0, sectorSize);
                 Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
@@ -365,16 +360,20 @@ partial class Dump
                 else
                     outputOptical.WriteSector(Sector.GetUserData(data), badSector);
 
-                bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                                                               desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence, ref mcn,
-                                                                               tracks, subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                                                                               _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel, desiredSubchannel,
+                                                                               sub, badSector, 1, subLog, isrcs,
+                                                                               (byte)track.Sequence, ref mcn, tracks,
+                                                                               subchannelExtents,
+                                                                               _fixSubchannelPosition, outputOptical,
+                                                                               _fixSubchannel, _fixSubchannelCrc,
+                                                                               _dumpLog, UpdateStatus,
+                                                                               smallestPregapLbaPerTrack, true);
 
                 // Set tracks and go back
                 if(!indexesChanged)
                     continue;
 
-                (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
+                outputOptical.SetTracks(tracks.ToList());
                 i--;
             }
             else
@@ -448,7 +447,7 @@ partial class Dump
 
                 InitProgress?.Invoke();
 
-                for(int i = 0; i < sectorsNotEvenPartial.Count; i++)
+                for(var i = 0; i < sectorsNotEvenPartial.Count; i++)
                 {
                     ulong badSector = sectorsNotEvenPartial[i];
 
@@ -462,8 +461,7 @@ partial class Dump
 
                     PulseProgress?.Invoke($"Trying to get partial data for sector {badSector}");
 
-                    Track track = tracks.OrderBy(t => t.StartSector).
-                                         LastOrDefault(t => badSector >= t.StartSector);
+                    Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
                     if(readcd)
                     {
@@ -486,8 +484,8 @@ partial class Dump
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        byte[] data = new byte[sectorSize];
-                        byte[] sub  = new byte[subSize];
+                        var data = new byte[sectorSize];
+                        var sub  = new byte[subSize];
                         Array.Copy(cmdBuf, 0, data, 0, sectorSize);
                         Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
@@ -497,15 +495,14 @@ partial class Dump
                             outputOptical.WriteSector(Sector.GetUserData(data), badSector);
 
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                            desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence,
-                            ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, outputOptical,
-                            _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
-                            smallestPregapLbaPerTrack, true);
+                            desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence, ref mcn,
+                            tracks, subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
+                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                         // Set tracks and go back
                         if(indexesChanged)
                         {
-                            (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
+                            outputOptical.SetTracks(tracks.ToList());
                             i--;
                         }
                     }
@@ -563,7 +560,7 @@ partial class Dump
                          Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,
                          Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
-        bool              sense  = true;   // Sense indicator
+        var               sense  = true;   // Sense indicator
         byte[]            cmdBuf = null;   // Data buffer
         double            cmdDuration;     // Command execution time
         byte[]            senseBuf = null; // Sense buffer
@@ -601,12 +598,12 @@ partial class Dump
         if(_aborted)
             return;
 
-        int  pass    = 1;
-        bool forward = true;
+        var pass    = 1;
+        var forward = true;
 
         InitProgress?.Invoke();
 
-        cdRepeatRetry:
+    cdRepeatRetry:
 
         _resume.BadSubchannels = new List<int>();
         _resume.BadSubchannels.AddRange(subchannelExtents);
@@ -619,10 +616,9 @@ partial class Dump
 
         foreach(int bs in tmpArray)
         {
-            uint badSector = (uint)bs;
+            var badSector = (uint)bs;
 
-            Track track = tracks.OrderBy(t => t.StartSector).
-                                 LastOrDefault(t => badSector >= t.StartSector);
+            Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
             if(_aborted)
             {
@@ -646,9 +642,9 @@ partial class Dump
             else if(readcd)
             {
                 sense = _dev.ReadCd(out cmdBuf, out senseBuf, startSector, subSize, 5,
-                                    track.Type == TrackType.Audio ? MmcSectorTypes.Cdda
-                                        : MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, false,
-                                    false, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+                                    track.Type == TrackType.Audio ? MmcSectorTypes.Cdda : MmcSectorTypes.AllTypes,
+                                    false, false, false, MmcHeaderCodes.None, false, false, MmcErrorField.None,
+                                    supportedSubchannel, _dev.Timeout, out cmdDuration);
 
                 totalDuration += cmdDuration;
             }

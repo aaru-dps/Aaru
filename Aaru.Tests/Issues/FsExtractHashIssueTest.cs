@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Issues;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,8 +15,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
-
-namespace Aaru.Tests.Issues;
 
 /// <summary>This will extract (and discard data) all files in all filesystems detected in an image.</summary>
 public abstract class FsExtractHashIssueTest
@@ -48,13 +48,13 @@ public abstract class FsExtractHashIssueTest
 
         PluginBase plugins = GetPluginBase.Instance;
 
-        IMediaImage imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
+        var imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
         Assert.NotNull(imageFormat, "Image format not identified, not proceeding with analysis.");
 
         Assert.AreEqual(ErrorNumber.NoError, imageFormat.Open(inputFilter), "Unable to open image format");
 
-        List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
+        List<Partition> partitions = Partitions.GetAll(imageFormat);
 
         if(partitions.Count == 0)
         {
@@ -71,7 +71,7 @@ public abstract class FsExtractHashIssueTest
             });
         }
 
-        bool filesystemFound = false;
+        var filesystemFound = false;
 
         Assert.True(File.Exists($"{TestFile}.unittest.json"));
 
@@ -92,9 +92,9 @@ public abstract class FsExtractHashIssueTest
         Assert.AreEqual(expectedData.Partitions.Length, partitions.Count,
                         $"Excepted {expectedData.Partitions.Length} partitions but found {partitions.Count}");
 
-        for(int i = 0; i < partitions.Count; i++)
+        for(var i = 0; i < partitions.Count; i++)
         {
-            Core.Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
+            Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
 
             if(idPlugins.Count == 0)
             {
@@ -110,7 +110,7 @@ public abstract class FsExtractHashIssueTest
             Assert.AreEqual(expectedData.Partitions[i].Volumes.Length, idPlugins.Count,
                             $"Expected {expectedData.Partitions[i].Volumes.Length} filesystems identified in partition {i} but found {idPlugins.Count}");
 
-            for(int j = 0; j < idPlugins.Count; j++)
+            for(var j = 0; j < idPlugins.Count; j++)
             {
                 string pluginName = idPlugins[j];
 

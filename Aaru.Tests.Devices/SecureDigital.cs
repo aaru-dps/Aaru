@@ -26,19 +26,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices;
+
+using System;
 using Aaru.Console;
 using Aaru.Devices;
 using Aaru.Tests.Devices.SecureDigital;
 
-namespace Aaru.Tests.Devices;
-
-internal static partial class MainClass
+static partial class MainClass
 {
     public static void SecureDigital(string devPath, Device dev)
     {
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send an SecureDigital/MultiMediaCard command to the device:");
             AaruConsole.WriteLine("1.- Send a SecureDigital command to the device.");
@@ -46,12 +47,12 @@ internal static partial class MainClass
             AaruConsole.WriteLine("0.- Return to command class menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = System.Console.ReadLine();
+            string strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -72,7 +73,7 @@ internal static partial class MainClass
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
+                    Console.ReadKey();
 
                     continue;
             }

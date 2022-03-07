@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems.LisaFS;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,8 +39,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders;
 using Aaru.Helpers;
-
-namespace Aaru.Filesystems.LisaFS;
 
 public sealed partial class LisaFS
 {
@@ -113,7 +113,7 @@ public sealed partial class LisaFS
             if(error != ErrorNumber.NoError)
                 return error;
 
-            int                  offset    = 0;
+            var                  offset    = 0;
             List<CatalogEntryV2> catalogV2 = new();
 
             // For each entry on the catalog
@@ -258,7 +258,7 @@ public sealed partial class LisaFS
         // Foreach catalog block
         foreach(byte[] buf in catalogBlocks)
         {
-            int offset = 0;
+            var offset = 0;
 
             // Traverse all entries
             while(offset + 64 <= buf.Length)

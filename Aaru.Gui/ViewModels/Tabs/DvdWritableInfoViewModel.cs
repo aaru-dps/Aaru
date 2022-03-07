@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Tabs;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
@@ -37,8 +39,6 @@ using Aaru.CommonTypes;
 using Aaru.Decoders.DVD;
 using Avalonia.Controls;
 using ReactiveUI;
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class DvdWritableInfoViewModel
 {
@@ -64,15 +64,14 @@ public sealed class DvdWritableInfoViewModel
                                     byte[] lastBorderOutRmd, byte[] preRecordedInfo, byte[] mediaIdentifier,
                                     byte[] physicalInformation, byte[] mediumStatus, byte[] hdLastRmd,
                                     byte[] layerCapacity, byte[] middleZoneStart, byte[] jumpIntervalSize,
-                                    byte[] manualLayerJumpStartLba, byte[] remapAnchorPoint, byte[] adip,
-                                    byte[] dcb, Window view)
+                                    byte[] manualLayerJumpStartLba, byte[] remapAnchorPoint, byte[] adip, byte[] dcb,
+                                    Window view)
     {
         _view                            = view;
         SaveDvdRamDdsCommand             = ReactiveCommand.Create(ExecuteSaveDvdRamDdsCommand);
         SaveDvdRamCartridgeStatusCommand = ReactiveCommand.Create(ExecuteSaveDvdRamCartridgeStatusCommand);
 
-        SaveDvdRamSpareAreaInformationCommand =
-            ReactiveCommand.Create(ExecuteSaveDvdRamSpareAreaInformationCommand);
+        SaveDvdRamSpareAreaInformationCommand = ReactiveCommand.Create(ExecuteSaveDvdRamSpareAreaInformationCommand);
 
         SaveLastBorderOutRmdCommand        = ReactiveCommand.Create(ExecuteSaveLastBorderOutRmdCommand);
         SaveDvdPreRecordedInfoCommand      = ReactiveCommand.Create(ExecuteSaveDvdPreRecordedInfoCommand);

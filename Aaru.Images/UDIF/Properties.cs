@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Udif
 {
@@ -47,7 +47,7 @@ public sealed partial class Udif
     /// <inheritdoc />
     public string Name => "Apple Universal Disk Image Format";
     /// <inheritdoc />
-    public Guid Id => new Guid("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
+    public Guid Id => new("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

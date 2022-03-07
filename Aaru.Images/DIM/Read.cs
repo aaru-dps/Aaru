@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Dim
 {
@@ -74,8 +74,7 @@ public sealed partial class Dim
             case DiskType.Hd2:
                 if(diskSize % (2 * 8 * 1024) != 0)
                 {
-                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks",
-                                               diskSize / (2 * 8 * 1024));
+                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 8 * 1024));
 
                     return ErrorNumber.NotSupported;
                 }
@@ -107,8 +106,7 @@ public sealed partial class Dim
             case DiskType.Hc2:
                 if(diskSize % (2 * 15 * 512) != 0)
                 {
-                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks",
-                                               diskSize / (2 * 15 * 512));
+                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 15 * 512));
 
                     return ErrorNumber.NotSupported;
                 }
@@ -140,8 +138,7 @@ public sealed partial class Dim
             case DiskType.Hq2:
                 if(diskSize % (2 * 18 * 512) != 0)
                 {
-                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks",
-                                               diskSize / (2 * 18 * 512));
+                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 18 * 512));
 
                     return ErrorNumber.NotSupported;
                 }
@@ -171,8 +168,7 @@ public sealed partial class Dim
                 }
                 else
                 {
-                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks",
-                                               diskSize / (2 * 26 * 256));
+                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 26 * 256));
 
                     return ErrorNumber.NotSupported;
                 }
@@ -241,8 +237,7 @@ public sealed partial class Dim
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -259,7 +254,7 @@ public sealed partial class Dim
 
         Stream stream = _dimImageFilter.GetDataForkStream();
 
-        stream.Seek((long)(DATA_OFFSET + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Seek((long)(DATA_OFFSET + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
         stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 

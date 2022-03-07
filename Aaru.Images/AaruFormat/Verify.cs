@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
@@ -111,9 +111,8 @@ public sealed partial class AaruFormat
                     crcVerify = new Crc64Context();
                     readBytes = 0;
 
-                    AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                               "Verifying data block type {0} at position {1}", entry.dataType,
-                                               entry.offset);
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Verifying data block type {0} at position {1}",
+                                               entry.dataType, entry.offset);
 
                     while(readBytes + verifySize < blockHeader.cmpLength)
                     {
@@ -131,8 +130,7 @@ public sealed partial class AaruFormat
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != blockHeader.cmpCrc64)
                     {
-                        AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                   "Expected block CRC {0:X16} but got {1:X16}",
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected block CRC {0:X16} but got {1:X16}",
                                                    blockHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
 
                         return false;
@@ -148,8 +146,8 @@ public sealed partial class AaruFormat
                     readBytes = 0;
 
                     AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                               "Verifying deduplication table type {0} at position {1}",
-                                               entry.dataType, entry.offset);
+                                               "Verifying deduplication table type {0} at position {1}", entry.dataType,
+                                               entry.offset);
 
                     while(readBytes + verifySize < ddtHeader.cmpLength)
                     {
@@ -188,9 +186,8 @@ public sealed partial class AaruFormat
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != trkHeader.crc64)
                     {
-                        AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                   "Expected index CRC {0:X16} but got {1:X16}", trkHeader.crc64,
-                                                   BitConverter.ToUInt64(verifyCrc, 0));
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected index CRC {0:X16} but got {1:X16}",
+                                                   trkHeader.crc64, BitConverter.ToUInt64(verifyCrc, 0));
 
                         return false;
                     }
@@ -238,12 +235,12 @@ public sealed partial class AaruFormat
         if(errno != ErrorNumber.NoError)
             return null;
 
-        int    bps    = (int)(buffer.Length / length);
-        byte[] sector = new byte[bps];
+        var bps    = (int)(buffer.Length / length);
+        var sector = new byte[bps];
         failingLbas = new List<ulong>();
         unknownLbas = new List<ulong>();
 
-        for(int i = 0; i < length; i++)
+        for(var i = 0; i < length; i++)
         {
             Array.Copy(buffer, i * bps, sector, 0, bps);
             bool? sectorStatus = CdChecksums.CheckCdSector(sector);
@@ -291,10 +288,10 @@ public sealed partial class AaruFormat
         if(errno != ErrorNumber.NoError)
             return null;
 
-        int    bps    = (int)(buffer.Length / length);
-        byte[] sector = new byte[bps];
+        var bps    = (int)(buffer.Length / length);
+        var sector = new byte[bps];
 
-        for(int i = 0; i < length; i++)
+        for(var i = 0; i < length; i++)
         {
             Array.Copy(buffer, i * bps, sector, 0, bps);
             bool? sectorStatus = CdChecksums.CheckCdSector(sector);

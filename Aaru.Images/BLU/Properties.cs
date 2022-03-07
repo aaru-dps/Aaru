@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Blu
 {
@@ -46,7 +46,7 @@ public sealed partial class Blu
     /// <inheritdoc />
     public string Name => "Basic Lisa Utility";
     /// <inheritdoc />
-    public Guid Id => new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
+    public Guid Id => new("A153E2F8-4235-432D-9A7F-20807B0BCD74");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

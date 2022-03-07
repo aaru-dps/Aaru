@@ -30,6 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,18 +46,16 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
 using Aaru.Decoders.SecureDigital;
 using Schemas;
 using CSD = Aaru.Decoders.MMC.CSD;
+using Decoders = Aaru.Decoders.MMC.Decoders;
 using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-// ReSharper disable JoinDeclarationAndInitializer
-
-namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping a MultiMediaCard or SecureDigital flash card</summary>
 public partial class Dump
@@ -85,9 +89,9 @@ public partial class Dump
         byte[]       ecsd              = null;
         byte[]       scr               = null;
         uint         physicalBlockSize = 0;
-        bool         byteAddressed     = true;
+        var          byteAddressed     = true;
         uint[]       response;
-        bool         supportsCmd23 = false;
+        var          supportsCmd23 = false;
         var          outputFormat  = _outputPlugin as IWritableImage;
 
         Dictionary<MediaTagType, byte[]> mediaTags = new();
@@ -102,7 +106,7 @@ public partial class Dump
 
                 if(!sense)
                 {
-                    CSD csdDecoded = Decoders.MMC.Decoders.DecodeCSD(csd);
+                    CSD csdDecoded = Decoders.DecodeCSD(csd);
                     blocks    = (ulong)((csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2));
                     blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
 
@@ -119,7 +123,7 @@ public partial class Dump
 
                         if(!sense)
                         {
-                            ExtendedCSD ecsdDecoded = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd);
+                            ExtendedCSD ecsdDecoded = Decoders.DecodeExtendedCSD(ecsd);
                             blocks    = ecsdDecoded.SectorCount;
                             blockSize = (uint)(ecsdDecoded.SectorSize == 1 ? 4096 : 512);
 
@@ -173,7 +177,7 @@ public partial class Dump
 
                 if(!sense)
                 {
-                    Decoders.SecureDigital.CSD csdDecoded = Decoders.SecureDigital.Decoders.DecodeCSD(csd);
+                    Aaru.Decoders.SecureDigital.CSD csdDecoded = Aaru.Decoders.SecureDigital.Decoders.DecodeCSD(csd);
 
                     blocks = (ulong)(csdDecoded.Structure == 0
                                          ? (csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2)
@@ -223,8 +227,8 @@ public partial class Dump
                 }
                 else
                 {
-                    supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(scr)?.CommandSupport.
-                                             HasFlag(CommandSupport.SetBlockCount) ?? false;
+                    supportsCmd23 = Aaru.Decoders.SecureDigital.Decoders.DecodeSCR(scr)?.CommandSupport.
+                                         HasFlag(CommandSupport.SetBlockCount) ?? false;
 
                     mediaTags.Add(MediaTagType.SD_SCR, null);
                 }
@@ -271,8 +275,7 @@ public partial class Dump
 
         if(supportsCmd23 && blocksToRead > 1)
         {
-            sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, 1, byteAddressed, timeout,
-                                            out duration);
+            sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, 1, byteAddressed, timeout, out duration);
 
             if(sense || _dev.Error)
                 supportsCmd23 = false;
@@ -292,8 +295,8 @@ public partial class Dump
         {
             while(true)
             {
-                error = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed,
-                                                timeout, out duration);
+                error = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, timeout,
+                                                out duration);
 
                 if(error)
                     blocksToRead /= 2;
@@ -307,19 +310,19 @@ public partial class Dump
             {
                 _dumpLog.WriteLine("ERROR: Cannot get blocks to read, device error {0}.", _dev.LastError);
 
-                StoppingErrorMessage?.
-                    Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+                StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
 
                 return;
             }
         }
 
-        if(_useBufferedReads && blocksToRead > 1 && !supportsCmd23)
+        if(_useBufferedReads &&
+           blocksToRead > 1  &&
+           !supportsCmd23)
         {
             while(true)
             {
-                error = _dev.BufferedOsRead(out cmdBuf, 0, blockSize * blocksToRead,
-                                            out duration);
+                error = _dev.BufferedOsRead(out cmdBuf, 0, blockSize * blocksToRead, out duration);
 
                 if(error)
                     blocksToRead /= 2;
@@ -342,12 +345,14 @@ public partial class Dump
             }
         }
 
-        if(!_useBufferedReads && blocksToRead > 1 && !supportsCmd23)
+        if(!_useBufferedReads &&
+           blocksToRead > 1   &&
+           !supportsCmd23)
         {
             while(true)
             {
-                error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, 0, blockSize, blocksToRead,
-                                                     byteAddressed, timeout, out duration);
+                error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed,
+                                                     timeout, out duration);
 
                 if(error)
                     blocksToRead /= 2;
@@ -365,8 +370,7 @@ public partial class Dump
             {
                 _dumpLog.WriteLine("ERROR: Cannot get blocks to read, device error {0}.", _dev.LastError);
 
-                StoppingErrorMessage?.
-                    Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+                StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
 
                 return;
             }
@@ -374,15 +378,13 @@ public partial class Dump
 
         if(blocksToRead == 1)
         {
-            error = _dev.ReadSingleBlock(out cmdBuf, out _, 0, blockSize, byteAddressed, timeout,
-                                         out duration);
+            error = _dev.ReadSingleBlock(out cmdBuf, out _, 0, blockSize, byteAddressed, timeout, out duration);
 
             if(error)
             {
                 _dumpLog.WriteLine("ERROR: Could not read from device, device error {0}.", _dev.LastError);
 
-                StoppingErrorMessage?.
-                    Invoke($"Device error {_dev.LastError} trying to read from device.");
+                StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to read from device.");
 
                 return;
             }
@@ -421,7 +423,7 @@ public partial class Dump
             return;
         }
 
-        bool ret = true;
+        var ret = true;
 
         foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !outputFormat.SupportedMediaTags.Contains(tag)))
         {
@@ -587,7 +589,7 @@ public partial class Dump
 
         start = DateTime.UtcNow;
         double   imageWriteDuration = 0;
-        bool     newTrim            = false;
+        var      newTrim            = false;
         DateTime timeSpeedStart     = DateTime.UtcNow;
         ulong    sectorSpeedStart   = 0;
 
@@ -625,11 +627,10 @@ public partial class Dump
                 error = _dev.ReadWithBlockCount(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
                                                 timeout, out duration);
             else if(_useBufferedReads)
-                error = _dev.BufferedOsRead(out cmdBuf, (long)(i * blockSize), blockSize * blocksToRead,
-                                            out duration);
+                error = _dev.BufferedOsRead(out cmdBuf, (long)(i * blockSize), blockSize * blocksToRead, out duration);
             else
-                error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead,
-                                                     byteAddressed, timeout, out duration);
+                error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
+                                                     timeout, out duration);
 
             if(!error)
             {
@@ -754,12 +755,12 @@ public partial class Dump
            !_aborted                   &&
            _retryPasses > 0)
         {
-            int  pass              = 1;
-            bool forward           = true;
-            bool runningPersistent = false;
+            var pass              = 1;
+            var forward           = true;
+            var runningPersistent = false;
 
             InitProgress?.Invoke();
-            repeatRetryLba:
+        repeatRetryLba:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             foreach(ulong badSector in tmpArray)
@@ -820,7 +821,7 @@ public partial class Dump
         outputFormat.SetDumpHardware(_resume.Tries);
 
         // TODO: Drive info
-        var metadata = new CommonTypes.Structs.ImageInfo
+        var metadata = new ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()
@@ -857,7 +858,7 @@ public partial class Dump
             _dumpLog.WriteLine("Creating sidecar.");
             var         filters     = new FiltersList();
             IFilter     filter      = filters.GetFilter(_outputPath);
-            IMediaImage inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
+            var         inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
             ErrorNumber opened      = inputPlugin.Open(filter);
 
             if(opened != ErrorNumber.NoError)
@@ -908,8 +909,7 @@ public partial class Dump
                     case DeviceType.SecureDigital:
                         CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital);
 
-                        sidecar.BlockMedia[0].Dimensions =
-                            Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
+                        sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
 
                         break;
                 }

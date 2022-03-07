@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Windows;
+
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading;
@@ -43,8 +45,6 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using OxyPlot;
 using ReactiveUI;
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MediaScanViewModel : ViewModelBase
 {
@@ -366,8 +366,7 @@ public sealed class MediaScanViewModel : ViewModelBase
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            TotalTime =
-                $"Took a total of {results.TotalTime} seconds ({results.ProcessingTime} processing commands).";
+            TotalTime = $"Took a total of {results.TotalTime} seconds ({results.ProcessingTime} processing commands).";
 
             AvgSpeed          = $"Average speed: {results.AvgSpeed:F3} MiB/sec.";
             MaxSpeed          = $"Fastest speed burst: {results.MaxSpeed:F3} MiB/sec.";
@@ -411,7 +410,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         ChartPoints.Add(new DataPoint(sector, currentSpeed));
 
         if(currentSpeed > MaxY)
-            MaxY = currentSpeed + (currentSpeed / 10d);
+            MaxY = currentSpeed + currentSpeed / 10d;
     });
 
     async void InitBlockMap(ulong blocks, ulong blockSize, ulong blocksToRead, ushort currentProfile) =>
@@ -532,15 +531,14 @@ public sealed class MediaScanViewModel : ViewModelBase
         Progress1Visible = false;
     });
 
-    async void UpdateProgress(string text, long current, long maximum) =>
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            ProgressText          = text;
-            ProgressIndeterminate = false;
+    async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
+    {
+        ProgressText          = text;
+        ProgressIndeterminate = false;
 
-            ProgressMaxValue = maximum;
-            ProgressValue    = current;
-        });
+        ProgressMaxValue = maximum;
+        ProgressValue    = current;
+    });
 
     async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
     {

@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Decoders.SCSI.MMC;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class BlindWrite5
 {

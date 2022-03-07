@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class RayDim
 {
@@ -48,7 +48,7 @@ public sealed partial class RayDim
         if(stream.Length < Marshal.SizeOf<Header>())
             return false;
 
-        byte[] buffer = new byte[Marshal.SizeOf<Header>()];
+        var buffer = new byte[Marshal.SizeOf<Header>()];
         stream.Seek(0, SeekOrigin.Begin);
         stream.Read(buffer, 0, buffer.Length);
 
@@ -60,8 +60,7 @@ public sealed partial class RayDim
         AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.diskType = {0}", header.diskType);
         AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.heads = {0}", header.heads);
 
-        AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.cylinders = {0}",
-                                   header.cylinders);
+        AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.cylinders = {0}", header.cylinders);
 
         AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.sectorsPerTrack = {0}",
                                    header.sectorsPerTrack);
@@ -69,8 +68,7 @@ public sealed partial class RayDim
         var   sx = new Regex(REGEX_SIGNATURE);
         Match sm = sx.Match(signature);
 
-        AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.signature matches? = {0}",
-                                   sm.Success);
+        AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.signature matches? = {0}", sm.Success);
 
         return sm.Success;
     }

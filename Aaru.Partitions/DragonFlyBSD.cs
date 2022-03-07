@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of DragonFly BSD disklabels</summary>
@@ -84,8 +84,8 @@ public sealed class DragonFlyBSD : IPartition
         {
             var part = new Partition
             {
-                Start    = (entry.p_boffset / imagePlugin.Info.SectorSize) + sectorOffset,
-                Offset   = entry.p_boffset + (sectorOffset * imagePlugin.Info.SectorSize),
+                Start    = entry.p_boffset / imagePlugin.Info.SectorSize + sectorOffset,
+                Offset   = entry.p_boffset                               + sectorOffset * imagePlugin.Info.SectorSize,
                 Size     = entry.p_bsize,
                 Length   = entry.p_bsize / imagePlugin.Info.SectorSize,
                 Name     = entry.p_stor_uuid.ToString(),

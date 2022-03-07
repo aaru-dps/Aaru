@@ -26,23 +26,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems.XENIX;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.XENIX;
-
 [TestFixture]
 public class MBR : FilesystemTest
 {
     public MBR() : base("XENIX fs") {}
 
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem (MBR)");
-    public override IFilesystem Plugin     => new SysVfs();
-    public override bool        Partitions => true;
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem (MBR)");
+    public override IFilesystem Plugin => new SysVfs();
+    public override bool Partitions => true;
 
     public override FileSystemTest[] Tests => new[]
     {

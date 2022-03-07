@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using Aaru.Devices;
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -102,12 +102,12 @@ partial class Dump
         if(sense)
             return true;
 
-        cmdBuf = new byte[(2352 * blocksToRead) + (subSize * blocksToRead)];
+        cmdBuf = new byte[2352 * blocksToRead + subSize * blocksToRead];
 
-        for(int b = 0; b < blocksToRead; b++)
+        for(var b = 0; b < blocksToRead; b++)
         {
             Array.Copy(dataBuf, 2352   * b, cmdBuf, (2352 + subSize) * b, 2352);
-            Array.Copy(subBuf, subSize * b, cmdBuf, ((2352 + subSize) * b) + 2352, subSize);
+            Array.Copy(subBuf, subSize * b, cmdBuf, (2352 + subSize) * b + 2352, subSize);
         }
 
         return false;

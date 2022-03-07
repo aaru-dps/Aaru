@@ -30,15 +30,17 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes;
-using Aaru.Core.Logging;
-using Aaru.Devices;
+
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
 namespace Aaru.Core.Devices.Dumping;
+
+using Aaru.CommonTypes;
+using Aaru.Core.Logging;
+using Aaru.Devices;
 
 partial class Dump
 {
@@ -54,8 +56,8 @@ partial class Dump
         updateStatus?.Invoke("Checking if drive supports full raw subchannel reading...");
 
         return !dev.ReadCd(out _, out _, lba, 2352 + 96, 1, MmcSectorTypes.AllTypes, false, false, true,
-                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw,
-                           dev.Timeout, out _);
+                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout,
+                           out _);
     }
 
     /// <summary>Check if the drive can read RW raw subchannel</summary>
@@ -70,7 +72,7 @@ partial class Dump
         updateStatus?.Invoke("Checking if drive supports PQ subchannel reading...");
 
         return !dev.ReadCd(out _, out _, lba, 2352 + 16, 1, MmcSectorTypes.AllTypes, false, false, true,
-                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16,
-                           dev.Timeout, out _);
+                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16, dev.Timeout,
+                           out _);
     }
 }

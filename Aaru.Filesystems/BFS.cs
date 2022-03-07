@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information from Practical Filesystem Design, ISBN 1-55860-497-9
 /// <inheritdoc />
@@ -85,8 +85,8 @@ public sealed class BeFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic   = BitConverter.ToUInt32(sbSector, 0x20);
-        uint magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
+        var magic   = BitConverter.ToUInt32(sbSector, 0x20);
+        var magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
         if(magic   == BEFS_MAGIC1 ||
            magicBe == BEFS_MAGIC1)
@@ -114,8 +114,7 @@ public sealed class BeFS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -189,8 +188,7 @@ public sealed class BeFS : IFilesystem
             sb.AppendFormat("Magic 2: 0x{0:X8} (Should be 0xDD121031)", besb.magic2).AppendLine();
             sb.AppendFormat("Magic 3: 0x{0:X8} (Should be 0x15B6830E)", besb.magic3).AppendLine();
 
-            sb.AppendFormat("Filesystem endianness: 0x{0:X8} (Should be 0x42494745)", besb.fs_byte_order).
-               AppendLine();
+            sb.AppendFormat("Filesystem endianness: 0x{0:X8} (Should be 0x42494745)", besb.fs_byte_order).AppendLine();
 
             sb.AppendFormat("Root folder's i-node size: {0} blocks (Should be 1)", besb.root_dir_len).AppendLine();
             sb.AppendFormat("Indices' i-node size: {0} blocks (Should be 1)", besb.indices_len).AppendLine();
@@ -235,13 +233,12 @@ public sealed class BeFS : IFilesystem
                         besb.log_blocks_start, besb.log_blocks_ag, besb.log_blocks_len,
                         besb.log_blocks_len * besb.block_size).AppendLine();
 
-        sb.AppendFormat("Journal starts in byte {0} and ends in byte {1}", besb.log_start, besb.log_end).
-           AppendLine();
+        sb.AppendFormat("Journal starts in byte {0} and ends in byte {1}", besb.log_start, besb.log_end).AppendLine();
 
         sb.
             AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                         besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len,
-                         besb.root_dir_len * besb.block_size).AppendLine();
+                         besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len, besb.root_dir_len * besb.block_size).
+            AppendLine();
 
         sb.
             AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",

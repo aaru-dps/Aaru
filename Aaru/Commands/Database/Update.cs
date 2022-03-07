@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Database;
+
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -39,12 +41,11 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
+using Aaru.Settings;
 using Microsoft.EntityFrameworkCore;
 using Spectre.Console;
 
-namespace Aaru.Commands.Database;
-
-internal sealed class UpdateCommand : Command
+sealed class UpdateCommand : Command
 {
     readonly bool _mainDbUpdate;
 
@@ -78,7 +79,7 @@ internal sealed class UpdateCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -103,12 +104,11 @@ internal sealed class UpdateCommand : Command
         AaruConsole.DebugWriteLine("Update command", "--verbose={0}", verbose);
 
         if(clearAll)
-        {
             try
             {
-                File.Delete(Settings.Settings.LocalDbPath);
+                File.Delete(Settings.LocalDbPath);
 
-                var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+                var ctx = AaruContext.Create(Settings.LocalDbPath);
                 ctx.Database.Migrate();
                 ctx.SaveChanges();
             }
@@ -121,13 +121,11 @@ internal sealed class UpdateCommand : Command
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }
-        }
 
         if(clear || clearAll)
-        {
             try
             {
-                File.Delete(Settings.Settings.MainDbPath);
+                File.Delete(Settings.MainDbPath);
             }
             catch(Exception)
             {
@@ -138,7 +136,6 @@ internal sealed class UpdateCommand : Command
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }
-        }
 
         DoUpdate(clear || clearAll);
 

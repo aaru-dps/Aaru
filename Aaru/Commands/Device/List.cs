@@ -30,6 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Device;
+
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
@@ -40,9 +43,7 @@ using Aaru.Devices;
 using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace Aaru.Commands.Device;
-
-internal sealed class ListDevicesCommand : Command
+sealed class ListDevicesCommand : Command
 {
     public ListDevicesCommand() : base("list", "Lists all connected devices.")
     {
@@ -64,7 +65,7 @@ internal sealed class ListDevicesCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -90,23 +91,18 @@ internal sealed class ListDevicesCommand : Command
         AaruConsole.DebugWriteLine("List-Devices command", "--debug={0}", debug);
         AaruConsole.DebugWriteLine("List-Devices command", "--verbose={0}", verbose);
 
-        DeviceInfo[] devices = Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
-                                                          out string serverVersion,
-                                                          out string serverOperatingSystem,
-                                                          out string serverOperatingSystemVersion,
-                                                          out string serverArchitecture, aaruRemoteHost);
+        DeviceInfo[] devices = Device.ListDevices(out bool isRemote, out string serverApplication,
+                                                  out string serverVersion, out string serverOperatingSystem,
+                                                  out string serverOperatingSystemVersion,
+                                                  out string serverArchitecture, aaruRemoteHost);
 
         if(isRemote)
-        {
-            Statistics.AddRemote(serverApplication, serverVersion, serverOperatingSystem,
-                                 serverOperatingSystemVersion, serverArchitecture);
-        }
+            Statistics.AddRemote(serverApplication, serverVersion, serverOperatingSystem, serverOperatingSystemVersion,
+                                 serverArchitecture);
 
         if(devices        == null ||
            devices.Length == 0)
-        {
             AaruConsole.WriteLine("No known devices attached.");
-        }
         else
         {
             Table table = new();

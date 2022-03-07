@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class DiscJuggler
 {
@@ -45,16 +45,16 @@ public sealed partial class DiscJuggler
         _imageStream = imageFilter.GetDataForkStream();
 
         _imageStream.Seek(-4, SeekOrigin.End);
-        byte[] dscLenB = new byte[4];
+        var dscLenB = new byte[4];
         _imageStream.Read(dscLenB, 0, 4);
-        int dscLen = BitConverter.ToInt32(dscLenB, 0);
+        var dscLen = BitConverter.ToInt32(dscLenB, 0);
 
         AaruConsole.DebugWriteLine("DiscJuggler plugin", "dscLen = {0}", dscLen);
 
         if(dscLen >= _imageStream.Length)
             return false;
 
-        byte[] descriptor = new byte[dscLen];
+        var descriptor = new byte[dscLen];
         _imageStream.Seek(-dscLen, SeekOrigin.End);
         _imageStream.Read(descriptor, 0, dscLen);
 

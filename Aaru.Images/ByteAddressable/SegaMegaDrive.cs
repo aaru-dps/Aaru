@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages.ByteAddressable;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -43,8 +45,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.DiscImages.ByteAddressable;
 
 /// <inheritdoc />
 /// <summary>Implements support for Sega Mega Drive, 32X, Genesis and Pico cartridge dumps</summary>
@@ -90,7 +90,7 @@ public class SegaMegaDrive : IByteAddressableImage
         if(stream.Length % 512 != 0)
             return false;
 
-        byte[] buffer = new byte[4];
+        var buffer = new byte[4];
 
         stream.Position = 256;
         stream.Read(buffer, 0, 4);
@@ -106,7 +106,7 @@ public class SegaMegaDrive : IByteAddressableImage
         if(buffer[0] == 0x45 &&
            buffer[1] == 0x41)
         {
-            stream.Position = (stream.Length / 2) + 256;
+            stream.Position = stream.Length / 2 + 256;
             stream.Read(buffer, 0, 2);
 
             // SG
@@ -142,7 +142,7 @@ public class SegaMegaDrive : IByteAddressableImage
         if(stream.Length % 512 != 0)
             return ErrorNumber.InvalidArgument;
 
-        byte[] buffer = new byte[4];
+        var buffer = new byte[4];
 
         stream.Position = 256;
         stream.Read(buffer, 0, 4);
@@ -154,7 +154,7 @@ public class SegaMegaDrive : IByteAddressableImage
         if(buffer[0] == 0x45 &&
            buffer[1] == 0x41)
         {
-            stream.Position = (stream.Length / 2) + 256;
+            stream.Position = stream.Length / 2 + 256;
             stream.Read(buffer, 0, 2);
 
             // SG
@@ -195,18 +195,18 @@ public class SegaMegaDrive : IByteAddressableImage
         // Interleaves every 16KiB
         if(_smd)
         {
-            byte[] tmp     = new byte[_data.Length];
-            byte[] bankIn  = new byte[16384];
-            byte[] bankOut = new byte[16384];
+            var tmp     = new byte[_data.Length];
+            var bankIn  = new byte[16384];
+            var bankOut = new byte[16384];
 
-            for(int b = 0; b < _data.Length / 16384; b++)
+            for(var b = 0; b < _data.Length / 16384; b++)
             {
                 Array.Copy(_data, b * 16384, bankIn, 0, 16384);
 
-                for(int i = 0; i < 8192; i++)
+                for(var i = 0; i < 8192; i++)
                 {
-                    bankOut[(i * 2) + 1] = bankIn[i];
-                    bankOut[i * 2]       = bankIn[i + 8192];
+                    bankOut[i * 2 + 1] = bankIn[i];
+                    bankOut[i * 2]     = bankIn[i + 8192];
                 }
 
                 Array.Copy(bankOut, 0, tmp, b * 16384, 16384);
@@ -216,13 +216,13 @@ public class SegaMegaDrive : IByteAddressableImage
         }
         else if(_interleaved)
         {
-            byte[] tmp  = new byte[_data.Length];
-            int    half = _data.Length / 2;
+            var tmp  = new byte[_data.Length];
+            int half = _data.Length / 2;
 
-            for(int i = 0; i < half; i++)
+            for(var i = 0; i < half; i++)
             {
-                tmp[i * 2]       = _data[i];
-                tmp[(i * 2) + 1] = _data[i + half];
+                tmp[i * 2]     = _data[i];
+                tmp[i * 2 + 1] = _data[i + half];
             }
 
             _data = tmp;
@@ -330,11 +330,11 @@ public class SegaMegaDrive : IByteAddressableImage
         _imageInfo.MediaTitle           = StringHandlers.SpacePaddedToString(header.DomesticTitle, encoding);
 
         _imageInfo.MediaType = StringHandlers.SpacePaddedToString(header.SystemType, encoding) switch
-        {
-            "SEGA 32X"  => MediaType._32XCartridge,
-            "SEGA PICO" => MediaType.SegaPicoCartridge,
-            _           => MediaType.MegaDriveCartridge
-        };
+                               {
+                                   "SEGA 32X"  => MediaType._32XCartridge,
+                                   "SEGA PICO" => MediaType.SegaPicoCartridge,
+                                   _           => MediaType.MegaDriveCartridge
+                               };
 
         _imageInfo.Sectors      = (ulong)_data.Length;
         _imageInfo.XmlMediaType = XmlMediaType.LinearMedia;
@@ -390,13 +390,13 @@ public class SegaMegaDrive : IByteAddressableImage
 
         if(_interleaved)
         {
-            byte[] tmp  = new byte[_data.Length];
-            int    half = _data.Length / 2;
+            var tmp  = new byte[_data.Length];
+            int half = _data.Length / 2;
 
-            for(int i = 0; i < half; i++)
+            for(var i = 0; i < half; i++)
             {
                 tmp[i]        = _data[i * 2];
-                tmp[i + half] = _data[(i * 2) + 1];
+                tmp[i + half] = _data[i * 2 + 1];
             }
 
             _data = tmp;
@@ -418,18 +418,18 @@ public class SegaMegaDrive : IByteAddressableImage
 
             _dataStream.Write(smdHeader, 0, smdHeader.Length);
 
-            byte[] tmp     = new byte[_data.Length];
-            byte[] bankIn  = new byte[16384];
-            byte[] bankOut = new byte[16384];
+            var tmp     = new byte[_data.Length];
+            var bankIn  = new byte[16384];
+            var bankOut = new byte[16384];
 
-            for(int b = 0; b < _data.Length / 16384; b++)
+            for(var b = 0; b < _data.Length / 16384; b++)
             {
                 Array.Copy(_data, b * 16384, bankIn, 0, 16384);
 
-                for(int i = 0; i < 8192; i++)
+                for(var i = 0; i < 8192; i++)
                 {
-                    bankOut[i] = bankIn[(i * 2) + 1];
-                    bankOut[i                   + 8192] = bankIn[i * 2];
+                    bankOut[i] = bankIn[i * 2 + 1];
+                    bankOut[i                 + 8192] = bankIn[i * 2];
                 }
 
                 Array.Copy(bankOut, 0, tmp, b * 16384, 16384);
@@ -722,12 +722,11 @@ public class SegaMegaDrive : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom     = false;
-        bool foundSaveRam = false;
+        var foundRom     = false;
+        var foundSaveRam = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
-        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -740,7 +739,6 @@ public class SegaMegaDrive : IByteAddressableImage
                     break;
                 default: return ErrorNumber.InvalidArgument;
             }
-        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;

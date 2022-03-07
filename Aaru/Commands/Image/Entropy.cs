@@ -30,6 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Image;
+
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Aaru.CommonTypes;
@@ -39,9 +42,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 
-namespace Aaru.Commands.Image;
-
-internal sealed class EntropyCommand : Command
+sealed class EntropyCommand : Command
 {
     static ProgressTask _progressTask1;
     static ProgressTask _progressTask2;
@@ -85,8 +86,8 @@ internal sealed class EntropyCommand : Command
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
-    public static int Invoke(bool debug, bool verbose, bool duplicatedSectors, string imagePath,
-                             bool separatedTracks, bool wholeDisc)
+    public static int Invoke(bool debug, bool verbose, bool duplicatedSectors, string imagePath, bool separatedTracks,
+                             bool wholeDisc)
     {
         MainClass.PrintCopyright();
 
@@ -94,7 +95,7 @@ internal sealed class EntropyCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -127,7 +128,7 @@ internal sealed class EntropyCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -142,7 +143,7 @@ internal sealed class EntropyCommand : Command
 
         IBaseImage inputFormat = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             inputFormat = ImageFormat.Detect(inputFilter);
@@ -157,7 +158,7 @@ internal sealed class EntropyCommand : Command
 
         ErrorNumber opened = ErrorNumber.NoData;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
             opened = inputFormat.Open(inputFilter);
@@ -177,8 +178,7 @@ internal sealed class EntropyCommand : Command
         var entropyCalculator = new Entropy(debug, inputFormat);
 
         AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                    Start(ctx =>
+                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).Start(ctx =>
                     {
                         entropyCalculator.InitProgressEvent += () =>
                         {
@@ -245,8 +245,7 @@ internal sealed class EntropyCommand : Command
                                 if(trackEntropy.UniqueSectors != null)
                                     AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})",
                                                           trackEntropy.Track, trackEntropy.UniqueSectors,
-                                                          (double)trackEntropy.UniqueSectors /
-                                                          trackEntropy.Sectors);
+                                                          (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
                             }
                         }
 

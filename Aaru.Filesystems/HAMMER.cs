@@ -30,6 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using hammer_crc_t = System.UInt32;
+using hammer_off_t = System.UInt64;
+using hammer_tid_t = System.UInt64;
+
+#pragma warning disable 169
+
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -39,14 +47,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
-using hammer_crc_t = System.UInt32;
-using hammer_off_t = System.UInt64;
-using hammer_tid_t = System.UInt64;
 using Marshal = Aaru.Helpers.Marshal;
-
-#pragma warning disable 169
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection for the HAMMER filesystem</summary>
@@ -84,14 +85,13 @@ public sealed class HAMMER : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        ulong magic = BitConverter.ToUInt64(sbSector, 0);
+        var magic = BitConverter.ToUInt64(sbSector, 0);
 
         return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -110,7 +110,7 @@ public sealed class HAMMER : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        ulong magic = BitConverter.ToUInt64(sbSector, 0);
+        var magic = BitConverter.ToUInt64(sbSector, 0);
 
         superBlock = magic == HAMMER_FSBUF_VOLUME ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)
                          : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
@@ -145,8 +145,7 @@ public sealed class HAMMER : IFilesystem
             sb.AppendFormat("Filesystem contains {0} \"big-blocks\" ({1} bytes)", superBlock.vol0_stat_bigblocks,
                             superBlock.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
 
-            sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)",
-                            superBlock.vol0_stat_freebigblocks,
+            sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)", superBlock.vol0_stat_freebigblocks,
                             superBlock.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
 
             sb.AppendFormat("Filesystem has {0} inode used", superBlock.vol0_stat_inodes).AppendLine();

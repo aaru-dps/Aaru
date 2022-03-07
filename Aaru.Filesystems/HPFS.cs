@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information from an old unnamed document
 /// <inheritdoc />
@@ -72,15 +72,14 @@ public sealed class HPFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic1 = BitConverter.ToUInt32(hpfsSbSector, 0x000);
-        uint magic2 = BitConverter.ToUInt32(hpfsSbSector, 0x004);
+        var magic1 = BitConverter.ToUInt32(hpfsSbSector, 0x000);
+        var magic2 = BitConverter.ToUInt32(hpfsSbSector, 0x004);
 
         return magic1 == 0xF995E849 && magic2 == 0xFA53E9C5;
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("ibm850");
         information = "";

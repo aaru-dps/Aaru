@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Windows;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,8 +45,6 @@ using Aaru.Gui.Models;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageVerifyViewModel : ViewModelBase
 {
@@ -436,8 +436,7 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     }
                 });
 
-                AaruConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds",
-                                             checkTime.TotalSeconds);
+                AaruConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);
             }
         }
 
@@ -505,8 +504,8 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                             inputOptical.VerifySectors(currentSector, (uint)remainingSectors, currentTrack.Sequence,
                                                        out tempFailingLbas, out tempUnknownLbas);
                         else
-                            inputOptical.VerifySectors(currentSector, 512, currentTrack.Sequence,
-                                                       out tempFailingLbas, out tempUnknownLbas);
+                            inputOptical.VerifySectors(currentSector, 512, currentTrack.Sequence, out tempFailingLbas,
+                                                       out tempUnknownLbas);
 
                         failingLbas.AddRange(tempFailingLbas);
 
@@ -562,8 +561,8 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     List<ulong> tempUnknownLbas;
 
                     if(remainingSectors < 512)
-                        verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                             out tempFailingLbas, out tempUnknownLbas);
+                        verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors, out tempFailingLbas,
+                                                             out tempUnknownLbas);
                     else
                         verifiableSectorsImage.VerifySectors(currentSector, 512, out tempFailingLbas,
                                                              out tempUnknownLbas);

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Extents;
@@ -38,10 +40,8 @@ using Schemas;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace Aaru.Core.Devices.Dumping;
-
 /// <summary>Implements resume support</summary>
-internal static class ResumeSupport
+static class ResumeSupport
 {
     /// <summary>Process resume</summary>
     /// <param name="isLba">If drive is LBA</param>
@@ -64,9 +64,9 @@ internal static class ResumeSupport
     ///     progress dump
     /// </exception>
     internal static void Process(bool isLba, bool removable, ulong blocks, string manufacturer, string model,
-                                 string serial, PlatformID platform, ref Resume resume,
-                                 ref DumpHardwareType currentTry, ref ExtentsULong extents, string firmware,
-                                 bool @private, bool force, bool isTape = false)
+                                 string serial, PlatformID platform, ref Resume resume, ref DumpHardwareType currentTry,
+                                 ref ExtentsULong extents, string firmware, bool @private, bool force,
+                                 bool isTape = false)
     {
         if(@private)
             serial = null;

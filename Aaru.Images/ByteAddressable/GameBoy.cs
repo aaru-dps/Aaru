@@ -1,3 +1,5 @@
+namespace Aaru.DiscImages.ByteAddressable;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -11,8 +13,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.DiscImages.ByteAddressable;
 
 public class GameBoy : IByteAddressableImage
 {
@@ -48,9 +48,9 @@ public class GameBoy : IByteAddressableImage
             return false;
 
         stream.Position = 0x104;
-        byte[] magicBytes = new byte[8];
+        var magicBytes = new byte[8];
         stream.Read(magicBytes, 0, 8);
-        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
+        var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         return magic == 0x0B000DCC6666EDCE;
     }
@@ -68,9 +68,9 @@ public class GameBoy : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 0x104;
-        byte[] magicBytes = new byte[8];
+        var magicBytes = new byte[8];
         stream.Read(magicBytes, 0, 8);
-        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
+        var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic != 0x0B000DCC6666EDCE)
             return ErrorNumber.InvalidArgument;
@@ -92,7 +92,7 @@ public class GameBoy : IByteAddressableImage
 
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(_data, 0x100, Marshal.SizeOf<Header>());
 
-        byte[] name = new byte[(header.Name[^1] & 0x80) == 0x80 ? 15 : 16];
+        var name = new byte[(header.Name[^1] & 0x80) == 0x80 ? 15 : 16];
         Array.Copy(header.Name, 0, name, 0, name.Length);
 
         _imageInfo.MediaTitle = StringHandlers.CToString(name);
@@ -251,8 +251,8 @@ public class GameBoy : IByteAddressableImage
 
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(_data, 0x100, Marshal.SizeOf<Header>());
 
-        bool   hasMapper          = false;
-        bool   hasSaveRam         = false;
+        var    hasMapper          = false;
+        var    hasSaveRam         = false;
         string mapperManufacturer = null;
         string mapperName         = null;
 
@@ -472,7 +472,7 @@ public class GameBoy : IByteAddressableImage
         if(header.SramSize > 0)
             hasSaveRam = true;
 
-        int devices = 1;
+        var devices = 1;
 
         if(hasSaveRam)
             devices++;
@@ -491,7 +491,6 @@ public class GameBoy : IByteAddressableImage
         };
 
         if(hasSaveRam)
-        {
             mappings.Devices[1] = new LinearMemoryDevice
             {
                 Type = LinearMemoryType.SaveRAM,
@@ -501,17 +500,14 @@ public class GameBoy : IByteAddressableImage
                     Length = DecodeSaveRamSize(header.SramSize)
                 }
             };
-        }
 
         if(hasMapper)
-        {
             mappings.Devices[^1] = new LinearMemoryDevice
             {
                 Type         = LinearMemoryType.Mapper,
                 Manufacturer = mapperManufacturer,
                 Model        = mapperName
             };
-        }
 
         return ErrorNumber.NoError;
     }
@@ -610,13 +606,12 @@ public class GameBoy : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom     = false;
-        bool foundSaveRam = false;
-        bool foundMapper  = false;
+        var foundRom     = false;
+        var foundSaveRam = false;
+        var foundMapper  = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
-        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -633,7 +628,6 @@ public class GameBoy : IByteAddressableImage
                     break;
                 default: return ErrorNumber.InvalidArgument;
             }
-        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
@@ -958,65 +952,66 @@ public class GameBoy : IByteAddressableImage
     }
 
     static uint DecodeRomSize(byte headerRomType) => headerRomType switch
-    {
-        0    => 32768,
-        1    => 65536,
-        2    => 131072,
-        3    => 262144,
-        4    => 524288,
-        5    => 1048576,
-        6    => 2097152,
-        7    => 4194304,
-        8    => 8388608,
-        0x52 => 1179648,
-        0x53 => 1310720,
-        0x54 => 1572864,
-        _    => 0
-    };
+                                                     {
+                                                         0    => 32768,
+                                                         1    => 65536,
+                                                         2    => 131072,
+                                                         3    => 262144,
+                                                         4    => 524288,
+                                                         5    => 1048576,
+                                                         6    => 2097152,
+                                                         7    => 4194304,
+                                                         8    => 8388608,
+                                                         0x52 => 1179648,
+                                                         0x53 => 1310720,
+                                                         0x54 => 1572864,
+                                                         _    => 0
+                                                     };
 
     static uint DecodeSaveRamSize(byte headerRamType) => headerRamType switch
-    {
-        0 => 0,
-        1 => 2048,
-        2 => 8192,
-        3 => 32768,
-        4 => 131072,
-        5 => 65536,
-        _ => 0
-    };
+                                                         {
+                                                             0 => 0,
+                                                             1 => 2048,
+                                                             2 => 8192,
+                                                             3 => 32768,
+                                                             4 => 131072,
+                                                             5 => 65536,
+                                                             _ => 0
+                                                         };
 
     static string DecodeCartridgeType(byte headerRomType) => headerRomType switch
-    {
-        0x00 => "ROM only",
-        0x01 => "ROM and MBC1",
-        0x02 => "ROM, MBC1 and RAM",
-        0x03 => "ROM, MBC1, RAM and battery",
-        0x05 => "ROM and MBC2",
-        0x06 => "ROM, MBC2 and battery",
-        0x08 => "ROM and RAM",
-        0x09 => "ROM, RAM and battery",
-        0x0B => "ROM and MMM01",
-        0x0C => "ROM, MMM01 and RAM",
-        0x0D => "ROM, MMM01, RAM and battery",
-        0x0F => "ROM, MBC3, timer and battery",
-        0x10 => "ROM, MBC3, RAM, timer and battery",
-        0x11 => "ROM and MBC3",
-        0x12 => "ROM, MBC3 and RAM",
-        0x13 => "ROM, MBC3, RAM and battery",
-        0x19 => "ROM and MBC5",
-        0x1A => "ROM, MBC5 and RAM",
-        0x1B => "ROM, MBC5, RAM and battery",
-        0x1C => "ROM, MBC5 and vibration motor",
-        0x1D => "ROM, MBC5, RAM and vibration motor",
-        0x1E => "ROM, MBC5, RAM, battery and vibration motor",
-        0x20 => "ROM and MBC6",
-        0x22 => "ROM, MBC7, RAM, battery, light sensor and vibration motor",
-        0xFC => "Pocket Camera",
-        0xFD => "ROM and TAMA5",
-        0xFE => "ROM and HuC-3",
-        0xFF => "ROM and HuC-1",
-        _    => "Unknown"
-    };
+                                                             {
+                                                                 0x00 => "ROM only",
+                                                                 0x01 => "ROM and MBC1",
+                                                                 0x02 => "ROM, MBC1 and RAM",
+                                                                 0x03 => "ROM, MBC1, RAM and battery",
+                                                                 0x05 => "ROM and MBC2",
+                                                                 0x06 => "ROM, MBC2 and battery",
+                                                                 0x08 => "ROM and RAM",
+                                                                 0x09 => "ROM, RAM and battery",
+                                                                 0x0B => "ROM and MMM01",
+                                                                 0x0C => "ROM, MMM01 and RAM",
+                                                                 0x0D => "ROM, MMM01, RAM and battery",
+                                                                 0x0F => "ROM, MBC3, timer and battery",
+                                                                 0x10 => "ROM, MBC3, RAM, timer and battery",
+                                                                 0x11 => "ROM and MBC3",
+                                                                 0x12 => "ROM, MBC3 and RAM",
+                                                                 0x13 => "ROM, MBC3, RAM and battery",
+                                                                 0x19 => "ROM and MBC5",
+                                                                 0x1A => "ROM, MBC5 and RAM",
+                                                                 0x1B => "ROM, MBC5, RAM and battery",
+                                                                 0x1C => "ROM, MBC5 and vibration motor",
+                                                                 0x1D => "ROM, MBC5, RAM and vibration motor",
+                                                                 0x1E => "ROM, MBC5, RAM, battery and vibration motor",
+                                                                 0x20 => "ROM and MBC6",
+                                                                 0x22 =>
+                                                                     "ROM, MBC7, RAM, battery, light sensor and vibration motor",
+                                                                 0xFC => "Pocket Camera",
+                                                                 0xFD => "ROM and TAMA5",
+                                                                 0xFE => "ROM and HuC-3",
+                                                                 0xFF => "ROM and HuC-1",
+                                                                 _    => "Unknown"
+                                                             };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
     struct Header

@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,8 +15,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
-
-namespace Aaru.Tests.Filesystems;
 
 public abstract class ReadOnlyFilesystemTest : FilesystemTest
 {
@@ -32,7 +32,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             foreach(FileSystemTest test in Tests)
             {
                 string testFile  = test.TestFile;
-                bool   found     = false;
+                var    found     = false;
                 var    partition = new Partition();
 
                 bool exists = File.Exists(testFile);
@@ -48,7 +48,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
                 Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
 
-                IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
+                var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
                 Assert.IsNotNull(image, $"Image format: {testFile}");
 
@@ -65,7 +65,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                     // In reverse to skip boot partitions we're not interested in
                     for(int index = partitionsList.Count - 1; index >= 0; index--)
                     {
-                        Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
+                        Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
 
                         if(idPlugins.Count == 0)
                             continue;
@@ -88,7 +88,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                         Size   = image.Info.Sectors * image.Info.SectorSize
                     };
 
-                    Core.Filesystems.Identify(image, out idPlugins, partition, true);
+                    Filesystems.Identify(image, out idPlugins, partition, true);
 
                     Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {testFile}");
 
@@ -122,13 +122,10 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 serializer.Converters.Add(new StringEnumConverter());
 
                 if(test.ContentsJson != null)
-                {
                     test.Contents =
                         serializer.
                             Deserialize<
-                                Dictionary<string,
-                                    FileData>>(new JsonTextReader(new StringReader(test.ContentsJson)));
-                }
+                                Dictionary<string, FileData>>(new JsonTextReader(new StringReader(test.ContentsJson)));
                 else if(File.Exists($"{testFile}.contents.json"))
                 {
                     var sr = new StreamReader($"{testFile}.contents.json");
@@ -151,7 +148,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         foreach(FileSystemTest test in Tests)
         {
             string testFile  = test.TestFile;
-            bool   found     = false;
+            var    found     = false;
             var    partition = new Partition();
 
             bool exists = File.Exists(testFile);
@@ -163,7 +160,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
             var         filtersList = new FiltersList();
             IFilter     inputFilter = filtersList.GetFilter(testFile);
-            IMediaImage image       = ImageFormat.Detect(inputFilter) as IMediaImage;
+            var         image       = ImageFormat.Detect(inputFilter) as IMediaImage;
             ErrorNumber opened      = image.Open(inputFilter);
 
             if(opened != ErrorNumber.NoError)
@@ -178,7 +175,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 // In reverse to skip boot partitions we're not interested in
                 for(int index = partitionsList.Count - 1; index >= 0; index--)
                 {
-                    Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
+                    Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
 
                     if(idPlugins.Count == 0)
                         continue;
@@ -201,7 +198,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Core.Filesystems.Identify(image, out idPlugins, partition, true);
+                Filesystems.Identify(image, out idPlugins, partition, true);
 
                 found = idPlugins.Contains(Plugin.Id.ToString());
             }
@@ -247,7 +244,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         foreach(string child in contents)
         {
-            string childPath = $"{path}/{child}";
+            var childPath = $"{path}/{child}";
             fs.Stat(childPath, out FileEntryInfo stat);
 
             var data = new FileData
@@ -256,18 +253,14 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             };
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory))
-            {
                 data.Children = BuildDirectory(fs, childPath);
-            }
             else if(stat.Attributes.HasFlag(FileAttributes.Symlink))
             {
                 if(fs.ReadLink(childPath, out string link) == ErrorNumber.NoError)
                     data.LinkTarget = link;
             }
             else
-            {
                 data.MD5 = BuildFile(fs, childPath, stat.Length);
-            }
 
             children[child] = data;
         }
@@ -277,7 +270,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
     static string BuildFile(IReadOnlyFilesystem fs, string path, long length)
     {
-        byte[] buffer = new byte[length];
+        var buffer = new byte[length];
         fs.Read(path, 0, length, ref buffer);
 
         return Md5Context.Data(buffer, out _);
@@ -302,12 +295,12 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         foreach(KeyValuePair<string, FileData> child in children)
         {
-            string childPath = $"{path}/{child.Key}";
+            var childPath = $"{path}/{child.Key}";
             ret = fs.Stat(childPath, out FileEntryInfo stat);
 
             if(ret == ErrorNumber.NoSuchFile ||
                contents is null              ||
-               (ret == ErrorNumber.NoError && !contents.Contains(child.Key)))
+               ret == ErrorNumber.NoError && !contents.Contains(child.Key))
             {
                 expectedNotFound.Add(child.Key);
 
@@ -386,7 +379,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
     static void TestFile(IReadOnlyFilesystem fs, string path, string md5, long length, string testFile)
     {
-        byte[]      buffer = new byte[length];
+        var         buffer = new byte[length];
         ErrorNumber ret    = fs.Read(path, 0, length, ref buffer);
 
         Assert.AreEqual(ErrorNumber.NoError, ret, $"Unexpected error {ret} when reading \"{path}\" in {testFile}");
@@ -396,8 +389,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         Assert.AreEqual(md5, data, $"Got MD5 {data} for \"{path}\" in {testFile} but expected {md5}");
     }
 
-    static void TestFileXattrs(IReadOnlyFilesystem fs, string path, Dictionary<string, string> xattrs,
-                               string testFile)
+    static void TestFileXattrs(IReadOnlyFilesystem fs, string path, Dictionary<string, string> xattrs, string testFile)
     {
         // Nothing to test
         if(xattrs is null)

@@ -1,6 +1,7 @@
+namespace Aaru.Tests.Issues;
+
 using System.IO;
 
-namespace Aaru.Tests.Issues;
 /* SilasLaspada commented on Nov 16, 2020
  *
  * Aaru doesn't support specific NRG (Version 1) image

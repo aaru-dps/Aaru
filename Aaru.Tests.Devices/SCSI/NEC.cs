@@ -26,32 +26,33 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices.SCSI;
+
+using System;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Aaru.Helpers;
 
-namespace Aaru.Tests.Devices.SCSI;
-
-internal static class Nec
+static class Nec
 {
     internal static void Menu(string devPath, Device dev)
     {
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send a NEC vendor command to the device:");
             AaruConsole.WriteLine("1.- Send READ CD-DA command.");
             AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = System.Console.ReadLine();
+            string strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -68,7 +69,7 @@ internal static class Nec
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
+                    Console.ReadKey();
 
                     continue;
             }
@@ -82,11 +83,11 @@ internal static class Nec
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ CD-DA command:");
             AaruConsole.WriteLine("LBA: {0}", address);
@@ -97,12 +98,12 @@ internal static class Nec
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to NEC vendor commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -115,25 +116,25 @@ internal static class Nec
                     return;
                 case 1:
                     AaruConsole.Write("Logical Block Address?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out address))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         address = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("How many sectors to transfer?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out length))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         length = 1;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -141,13 +142,13 @@ internal static class Nec
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.NecReadCdDa(out byte[] buffer, out byte[] senseBuffer, address, length, dev.Timeout,
                                      out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ CD-DA to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -166,13 +167,13 @@ internal static class Nec
         AaruConsole.WriteLine("0.- Return to NEC vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -184,7 +185,7 @@ internal static class Nec
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CD-DA response:");
 
@@ -192,13 +193,13 @@ internal static class Nec
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CD-DA sense:");
 
@@ -206,19 +207,19 @@ internal static class Nec
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CD-DA decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -226,8 +227,8 @@ internal static class Nec
             case 5: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }

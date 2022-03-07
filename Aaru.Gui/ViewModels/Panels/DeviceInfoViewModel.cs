@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Panels;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,8 +43,6 @@ using Aaru.Gui.Views.Tabs;
 using Avalonia.Controls;
 using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
-
-namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class DeviceInfoViewModel : ViewModelBase
 {
@@ -175,31 +175,26 @@ public sealed class DeviceInfoViewModel : ViewModelBase
         }
 
         if(devInfo.IsPcmcia)
-        {
             PcmciaInfo = new PcmciaInfo
             {
                 DataContext = new PcmciaInfoViewModel(devInfo.Cis, _view)
             };
-        }
 
         if(devInfo.AtaIdentify   != null ||
            devInfo.AtapiIdentify != null)
-        {
             AtaInfo = new AtaInfo
             {
                 DataContext =
                     new AtaInfoViewModel(devInfo.AtaIdentify, devInfo.AtapiIdentify, devInfo.AtaMcptError, _view)
             };
-        }
 
         if(devInfo.ScsiInquiryData != null)
         {
             ScsiInfo = new ScsiInfo
             {
-                DataContext = new ScsiInfoViewModel(devInfo.ScsiInquiryData, devInfo.ScsiInquiry,
-                                                    devInfo.ScsiEvpdPages, devInfo.ScsiMode, devInfo.ScsiType,
-                                                    devInfo.ScsiModeSense6, devInfo.ScsiModeSense10,
-                                                    devInfo.MmcConfiguration, _view)
+                DataContext = new ScsiInfoViewModel(devInfo.ScsiInquiryData, devInfo.ScsiInquiry, devInfo.ScsiEvpdPages,
+                                                    devInfo.ScsiMode, devInfo.ScsiType, devInfo.ScsiModeSense6,
+                                                    devInfo.ScsiModeSense10, devInfo.MmcConfiguration, _view)
             };
 
             if(devInfo.PlextorFeatures != null)
@@ -238,8 +233,7 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                         {
                             PlextorPoweRecRecommendedVisible = true;
 
-                            PlextorPoweRecRecommended =
-                                $"{devInfo.PlextorFeatures.PoweRecRecommendedSpeed} Kb/sec.";
+                            PlextorPoweRecRecommended = $"{devInfo.PlextorFeatures.PoweRecRecommendedSpeed} Kb/sec.";
                         }
 
                         if(devInfo.PlextorFeatures.PoweRecSelected > 0)
@@ -298,9 +292,7 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                 PlextorSpeedRead = devInfo.PlextorFeatures.SpeedRead;
 
                 if(devInfo.PlextorFeatures.SpeedRead)
-                {
                     PlextorSpeedEnabled = devInfo.PlextorFeatures.SpeedReadEnabled;
-                }
 
                 PlextorHiding = devInfo.PlextorFeatures.Hiding;
 
@@ -340,17 +332,14 @@ public sealed class DeviceInfoViewModel : ViewModelBase
 
             if(devInfo.BlockLimits != null)
             {
-                BlockLimits.BlockLimitsData?
-                    blockLimits = Decoders.SCSI.SSC.BlockLimits.Decode(devInfo.BlockLimits);
+                BlockLimits.BlockLimitsData? blockLimits = Decoders.SCSI.SSC.BlockLimits.Decode(devInfo.BlockLimits);
 
                 if(blockLimits.HasValue)
                 {
                     Ssc = true;
 
                     if(blockLimits.Value.minBlockLen == blockLimits.Value.maxBlockLen)
-                    {
                         MinBlockSize = $"Device's block size is fixed at {blockLimits.Value.minBlockLen} bytes";
-                    }
                     else
                     {
                         MaxBlockSize = blockLimits.Value.maxBlockLen > 0
@@ -360,26 +349,20 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                         MinBlockSize = $"Device's minimum block size is {blockLimits.Value.minBlockLen} bytes";
 
                         if(blockLimits.Value.granularity > 0)
-                        {
                             BlockSizeGranularity =
                                 $"Device's needs a block size granularity of 2^{blockLimits.Value.granularity} ({Math.Pow(2, blockLimits.Value.granularity)}) bytes";
-                        }
                     }
                 }
             }
 
             if(devInfo.DensitySupport != null)
                 if(devInfo.DensitySupportHeader.HasValue)
-                {
                     Densities = DensitySupport.PrettifyDensity(devInfo.DensitySupportHeader);
-                }
 
             if(devInfo.MediumDensitySupport != null)
             {
                 if(devInfo.MediaTypeSupportHeader.HasValue)
-                {
                     MediumTypes = DensitySupport.PrettifyMediumType(devInfo.MediaTypeSupportHeader);
-                }
 
                 MediumDensity = DensitySupport.PrettifyMediumType(devInfo.MediumDensitySupport);
             }

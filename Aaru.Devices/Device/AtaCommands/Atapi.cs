@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using Aaru.Console;
 using Aaru.Decoders.ATA;
-
-namespace Aaru.Devices;
 
 public sealed partial class Device
 {
@@ -76,9 +76,8 @@ public sealed partial class Device
             Command = (byte)AtaCommands.IdentifyPacketDevice
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout, false, out duration, out bool sense);
 
         Error = LastError != 0;
 

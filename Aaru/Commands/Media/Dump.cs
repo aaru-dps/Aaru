@@ -31,6 +31,8 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
+namespace Aaru.Commands.Media;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -54,10 +56,8 @@ using Aaru.Devices;
 using Schemas;
 using Spectre.Console;
 
-namespace Aaru.Commands.Media;
-
 // TODO: Add raw dumping
-internal sealed class DumpMediaCommand : Command
+sealed class DumpMediaCommand : Command
 {
     static ProgressTask _progressTask1;
     static ProgressTask _progressTask2;
@@ -315,11 +315,11 @@ internal sealed class DumpMediaCommand : Command
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
-    public static int Invoke(bool debug, bool verbose, string cicmXml, string devicePath, bool resume,
-                             string encoding, bool firstPregap, bool fixOffset, bool force, bool metadata,
-                             bool trim, string outputPath, string options, bool persistent, ushort retryPasses,
-                             uint skip, byte speed, bool stopOnError, string format, string subchannel,
-                             bool @private, bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
+    public static int Invoke(bool debug, bool verbose, string cicmXml, string devicePath, bool resume, string encoding,
+                             bool firstPregap, bool fixOffset, bool force, bool metadata, bool trim, string outputPath,
+                             string options, bool persistent, ushort retryPasses, uint skip, byte speed,
+                             bool stopOnError, string format, string subchannel, bool @private,
+                             bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
                              bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject,
                              uint maxBlocks, bool useBufferedReads, bool storeEncrypted, bool titleKeys)
     {
@@ -329,7 +329,7 @@ internal sealed class DumpMediaCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -518,7 +518,7 @@ internal sealed class DumpMediaCommand : Command
                 AaruConsole.WriteLine("Please insert media with title {0} and press any key to continue...",
                                       responseLine);
 
-                System.Console.ReadKey();
+                Console.ReadKey();
                 Thread.Sleep(1000);
             }
 
@@ -536,14 +536,14 @@ internal sealed class DumpMediaCommand : Command
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Devices.Device dev = null;
+            Device dev = null;
 
             try
             {
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Opening device...").IsIndeterminate();
-                    dev = new Devices.Device(devicePath);
+                    dev = new Device(devicePath);
                 });
 
                 if(dev.IsRemote)
@@ -614,7 +614,6 @@ internal sealed class DumpMediaCommand : Command
 
             if(cicmXml != null)
                 if(File.Exists(cicmXml))
-                {
                     try
                     {
                         var sr = new StreamReader(cicmXml);
@@ -630,7 +629,6 @@ internal sealed class DumpMediaCommand : Command
 
                         return (int)ErrorNumber.InvalidSidecar;
                     }
-                }
                 else
                 {
                     AaruConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
@@ -648,8 +646,7 @@ internal sealed class DumpMediaCommand : Command
             if(string.IsNullOrEmpty(format))
                 candidates.AddRange(plugins.WritableImages.Values.Where(t =>
                                                                             t.KnownExtensions.
-                                                                              Contains(Path.
-                                                                                  GetExtension(outputPath))));
+                                                                              Contains(Path.GetExtension(outputPath))));
 
             // Try Id
             else if(Guid.TryParse(format, out Guid outId))
@@ -680,11 +677,10 @@ internal sealed class DumpMediaCommand : Command
 
             var dumper = new Dump(resume, dev, devicePath, outputFormat, retryPasses, force, false, persistent,
                                   stopOnError, resumeClass, dumpLog, encodingClass, outputPrefix,
-                                  outputPrefix + extension, parsedOptions, sidecar, skip, metadata, trim,
-                                  firstPregap, fixOffset, debug, wantedSubchannel, speed, @private,
-                                  fixSubchannelPosition, retrySubchannel, fixSubchannel, fixSubchannelCrc,
-                                  skipCdiReadyHole, errorLog, generateSubchannels, maxBlocks, useBufferedReads,
-                                  storeEncrypted, titleKeys);
+                                  outputPrefix + extension, parsedOptions, sidecar, skip, metadata, trim, firstPregap,
+                                  fixOffset, debug, wantedSubchannel, speed, @private, fixSubchannelPosition,
+                                  retrySubchannel, fixSubchannel, fixSubchannelCrc, skipCdiReadyHole, errorLog,
+                                  generateSubchannels, maxBlocks, useBufferedReads, storeEncrypted, titleKeys);
 
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
@@ -754,7 +750,7 @@ internal sealed class DumpMediaCommand : Command
                                 _progressTask2.MaxValue    =   maximum;
                             };
 
-                            System.Console.CancelKeyPress += (sender, e) =>
+                            Console.CancelKeyPress += (sender, e) =>
                             {
                                 e.Cancel = true;
                                 dumper.Abort();
@@ -764,8 +760,7 @@ internal sealed class DumpMediaCommand : Command
                         });
 
             if(eject && dev.IsRemovable)
-            {
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Ejecting media...").IsIndeterminate();
 
@@ -805,7 +800,6 @@ internal sealed class DumpMediaCommand : Command
                             break;
                     }
                 });
-            }
 
             dev.Close();
         }

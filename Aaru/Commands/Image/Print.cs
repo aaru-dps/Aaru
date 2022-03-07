@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Image;
+
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -41,9 +43,7 @@ using Aaru.Core;
 using Aaru.Helpers;
 using Spectre.Console;
 
-namespace Aaru.Commands.Image;
-
-internal sealed class PrintHexCommand : Command
+sealed class PrintHexCommand : Command
 {
     public PrintHexCommand() : base("print", "Prints a sector, in hexadecimal values, to the console.")
     {
@@ -102,7 +102,7 @@ internal sealed class PrintHexCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -136,7 +136,7 @@ internal sealed class PrintHexCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -151,7 +151,7 @@ internal sealed class PrintHexCommand : Command
 
         IBaseImage inputFormat = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             inputFormat = ImageFormat.Detect(inputFilter);
@@ -166,7 +166,7 @@ internal sealed class PrintHexCommand : Command
 
         ErrorNumber opened = ErrorNumber.NoData;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
             opened = inputFormat.Open(inputFilter);
@@ -186,11 +186,11 @@ internal sealed class PrintHexCommand : Command
 
             AaruConsole.WriteLine("[bold][italic]Start {0}[/][/]", start);
 
-            byte[]      data      = new byte[length];
+            var         data      = new byte[length];
             ErrorNumber errno     = ErrorNumber.NoError;
-            int         bytesRead = 0;
+            var         bytesRead = 0;
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Reading data...").IsIndeterminate();
 
@@ -201,7 +201,7 @@ internal sealed class PrintHexCommand : Command
             // TODO: Span
             if(bytesRead != (int)length)
             {
-                byte[] tmp = new byte[bytesRead];
+                var tmp = new byte[bytesRead];
                 Array.Copy(data, 0, tmp, 0, bytesRead);
                 data = tmp;
             }
@@ -239,7 +239,7 @@ internal sealed class PrintHexCommand : Command
                 byte[]      sector = Array.Empty<byte>();
                 ErrorNumber errno  = ErrorNumber.NoError;
 
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Reading sector...").IsIndeterminate();
 

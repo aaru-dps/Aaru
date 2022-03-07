@@ -30,6 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +46,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
@@ -47,10 +54,6 @@ using Aaru.Devices;
 using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-// ReSharper disable JoinDeclarationAndInitializer
-
-namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping MiniDisc Data devices</summary>
 partial class Dump
@@ -256,7 +259,7 @@ partial class Dump
 
         if(decMode?.Pages != null)
         {
-            bool setGeometry = false;
+            var setGeometry = false;
 
             foreach(Modes.ModePage page in decMode.Value.Pages)
                 if(page.Page    == 0x04 &&
@@ -322,7 +325,7 @@ partial class Dump
             _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
         }
 
-        bool     newTrim          = false;
+        var      newTrim          = false;
         DateTime timeSpeedStart   = DateTime.UtcNow;
         ulong    sectorSpeedStart = 0;
         InitProgress?.Invoke();
@@ -456,8 +459,7 @@ partial class Dump
 
                 PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-                sense = _dev.Read6(out readBuffer, out _, (uint)badSector, blockSize, 1, _dev.Timeout,
-                                   out double _);
+                sense = _dev.Read6(out readBuffer, out _, (uint)badSector, blockSize, 1, _dev.Timeout, out double _);
 
                 if(sense || _dev.Error)
                     continue;
@@ -479,9 +481,9 @@ partial class Dump
            !_aborted                   &&
            _retryPasses > 0)
         {
-            int  pass              = 1;
-            bool forward           = true;
-            bool runningPersistent = false;
+            var pass              = 1;
+            var forward           = true;
+            var runningPersistent = false;
 
             Modes.ModePage? currentModePage = null;
             byte[]          md6;
@@ -568,15 +570,14 @@ partial class Dump
 
                     AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
 
-                    _dumpLog.
-                        WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                    _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
                 }
                 else
                     runningPersistent = true;
             }
 
             InitProgress?.Invoke();
-            repeatRetry:
+        repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             foreach(ulong badSector in tmpArray)
@@ -657,7 +658,7 @@ partial class Dump
 
         outputFormat.SetDumpHardware(_resume.Tries);
 
-        var metadata = new CommonTypes.Structs.ImageInfo
+        var metadata = new ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()
@@ -694,7 +695,7 @@ partial class Dump
             _dumpLog.WriteLine("Creating sidecar.");
             var         filters     = new FiltersList();
             IFilter     filter      = filters.GetFilter(_outputPath);
-            IMediaImage inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
+            var         inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
             ErrorNumber opened      = inputPlugin.Open(filter);
 
             if(opened != ErrorNumber.NoError)
@@ -739,8 +740,7 @@ partial class Dump
 
                 if(sidecar.BlockMedia[0].FileSystemInformation != null)
                     filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
-                                         where partition.FileSystems != null
-                                         from fileSystem in partition.FileSystems
+                                         where partition.FileSystems != null from fileSystem in partition.FileSystems
                                          select (partition.StartSector, fileSystem.Type));
 
                 if(filesystems.Count > 0)

@@ -1,3 +1,5 @@
+namespace Aaru.DiscImages.ByteAddressable;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -11,8 +13,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.DiscImages.ByteAddressable;
 
 public class AtariLynx : IByteAddressableImage
 {
@@ -48,9 +48,9 @@ public class AtariLynx : IByteAddressableImage
             return false;
 
         stream.Position = 0;
-        byte[] magicBytes = new byte[4];
+        var magicBytes = new byte[4];
         stream.Read(magicBytes, 0, 4);
-        uint magic = BitConverter.ToUInt32(magicBytes, 0);
+        var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         // "LYNX"
         return magic == 0x584E594C;
@@ -69,14 +69,14 @@ public class AtariLynx : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 0x0;
-        byte[] magicBytes = new byte[4];
+        var magicBytes = new byte[4];
         stream.Read(magicBytes, 0, 4);
-        uint magic = BitConverter.ToUInt32(magicBytes, 0);
+        var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         if(magic != 0x584E594C)
             return ErrorNumber.InvalidArgument;
 
-        byte[] headerBytes = new byte[64];
+        var headerBytes = new byte[64];
         stream.Position = 0;
         stream.Read(headerBytes, 0, 64);
 
@@ -168,8 +168,8 @@ public class AtariLynx : IByteAddressableImage
 
         HandyHeader header = new()
         {
-            Bank0Length  = (short)(_data.Length > 4 * 131072 ? 4 * 131072 / 256 : _data.Length / 256),
-            Bank1Length  = (short)(_data.Length > 4 * 131072 ? (_data.Length - (4 * 131072)) / 256 : 0),
+            Bank0Length  = (short)(_data.Length > 4 * 131072 ? 4 * 131072                  / 256 : _data.Length / 256),
+            Bank1Length  = (short)(_data.Length > 4 * 131072 ? (_data.Length - 4 * 131072) / 256 : 0),
             Magic        = 0x584E594C,
             Manufacturer = new byte[16],
             Name         = new byte[32],
@@ -270,7 +270,6 @@ public class AtariLynx : IByteAddressableImage
 
         return ErrorNumber.NoError;
     }
-
 
     /// <inheritdoc />
     public ErrorNumber GetMappings(out LinearMemoryMap mappings)
@@ -397,11 +396,10 @@ public class AtariLynx : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom = false;
+        var foundRom = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
-        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -410,7 +408,6 @@ public class AtariLynx : IByteAddressableImage
                     break;
                 default: return ErrorNumber.InvalidArgument;
             }
-        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;

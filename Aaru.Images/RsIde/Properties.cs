@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -37,14 +39,12 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class RsIde
 {
     /// <inheritdoc />
     public string Name => "RS-IDE Hard Disk Image";
     /// <inheritdoc />
-    public Guid Id => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
+    public Guid Id => new("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />

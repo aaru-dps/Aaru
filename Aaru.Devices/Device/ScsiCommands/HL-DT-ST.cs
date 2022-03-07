@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.Console;
-
 namespace Aaru.Devices;
+
+using Aaru.Console;
 
 public sealed partial class Device
 {
@@ -44,11 +44,11 @@ public sealed partial class Device
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <param name="lba">Start block address.</param>
     /// <param name="transferLength">How many blocks to read.</param>
-    public bool HlDtStReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
-                                 uint timeout, out double duration)
+    public bool HlDtStReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength, uint timeout,
+                                 out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[2064 * transferLength];
 
         cdb[0]  = (byte)ScsiCommands.HlDtStVendor;

@@ -31,6 +31,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using System.Text;
@@ -41,8 +43,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class WCDiskImage
 {
     /// <inheritdoc />
@@ -52,7 +52,7 @@ public sealed partial class WCDiskImage
         Stream stream   = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        byte[] header = new byte[32];
+        var header = new byte[32];
         stream.Read(header, 0, 32);
 
         FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
@@ -79,11 +79,11 @@ public sealed partial class WCDiskImage
                                                       false));
 
         /* buffer the entire disk in memory */
-        for(int cyl = 0; cyl < _imageInfo.Cylinders; cyl++)
+        for(var cyl = 0; cyl < _imageInfo.Cylinders; cyl++)
         {
-            for(int head = 0; head < _imageInfo.Heads; head++)
+            for(var head = 0; head < _imageInfo.Heads; head++)
             {
-                var errno =ReadTrack(stream, cyl, head);
+                ErrorNumber errno = ReadTrack(stream, cyl, head);
 
                 if(errno != ErrorNumber.NoError)
                     return errno;
@@ -128,7 +128,7 @@ public sealed partial class WCDiskImage
         if(fheader.extraFlags.HasFlag(ExtraFlag.Comment))
         {
             AaruConsole.DebugWriteLine("d2f plugin", "Comment present, reading");
-            byte[] sheaderBuffer = new byte[6];
+            var sheaderBuffer = new byte[6];
             stream.Read(sheaderBuffer, 0, 6);
 
             SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
@@ -140,7 +140,7 @@ public sealed partial class WCDiskImage
                 return ErrorNumber.InvalidArgument;
             }
 
-            byte[] comm = new byte[sheader.crc];
+            var comm = new byte[sheader.crc];
             stream.Read(comm, 0, sheader.crc);
             comments += Encoding.ASCII.GetString(comm) + Environment.NewLine;
         }
@@ -148,7 +148,7 @@ public sealed partial class WCDiskImage
         if(fheader.extraFlags.HasFlag(ExtraFlag.Directory))
         {
             AaruConsole.DebugWriteLine("d2f plugin", "Directory listing present, reading");
-            byte[] sheaderBuffer = new byte[6];
+            var sheaderBuffer = new byte[6];
             stream.Read(sheaderBuffer, 0, 6);
 
             SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
@@ -160,7 +160,7 @@ public sealed partial class WCDiskImage
                 return ErrorNumber.InvalidArgument;
             }
 
-            byte[] dir = new byte[sheader.crc];
+            var dir = new byte[sheader.crc];
             stream.Read(dir, 0, sheader.crc);
             comments += Encoding.ASCII.GetString(dir);
         }
@@ -179,7 +179,7 @@ public sealed partial class WCDiskImage
     public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
     {
         int sectorNumber   = (int)(sectorAddress % _imageInfo.SectorsPerTrack) + 1;
-        int trackNumber    = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
+        var trackNumber    = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
         int headNumber     = _imageInfo.Heads > 1 ? trackNumber % 2 : 0;
         int cylinderNumber = _imageInfo.Heads > 1 ? trackNumber / 2 : trackNumber;
 
@@ -245,10 +245,10 @@ public sealed partial class WCDiskImage
         byte[] crc;
         short  calculatedCRC;
 
-        for(int sect = 1; sect < _imageInfo.SectorsPerTrack + 1; sect++)
+        for(var sect = 1; sect < _imageInfo.SectorsPerTrack + 1; sect++)
         {
             /* read the sector header */
-            byte[] sheaderBuffer = new byte[6];
+            var sheaderBuffer = new byte[6];
             stream.Read(sheaderBuffer, 0, 6);
 
             SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
@@ -299,7 +299,7 @@ public sealed partial class WCDiskImage
                     AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: RepeatByte sector, fill byte 0x{0:x2}",
                         cyl, head, sect, sheader.crc & 0xff);
                      */
-                    for(int i = 0; i < 512; i++)
+                    for(var i = 0; i < 512; i++)
                         sectorData[i] = (byte)(sheader.crc & 0xff);
 
                     _sectorCache[(cyl, head, sect)] = sectorData;

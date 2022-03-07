@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,8 +50,6 @@ using Aaru.Filters;
 using Schemas;
 using MediaType = Aaru.CommonTypes.Metadata.MediaType;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
-
-namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
@@ -189,8 +189,7 @@ public sealed partial class Sidecar
                                         sidecar.BlockMedia[0].PCMCIA.Compliance =
                                             $"{vers.MajorVersion}.{vers.MinorVersion}";
 
-                                        sidecar.BlockMedia[0].PCMCIA.AdditionalInformation =
-                                            vers.AdditionalInformation;
+                                        sidecar.BlockMedia[0].PCMCIA.AdditionalInformation = vers.AdditionalInformation;
                                     }
 
                                     break;
@@ -615,8 +614,7 @@ public sealed partial class Sidecar
 
                             if(sectors - doneSectors >= sectorsToRead)
                             {
-                                errno = image.ReadSectors(tapeFile.FirstBlock + doneSectors, sectorsToRead,
-                                                          out sector);
+                                errno = image.ReadSectors(tapeFile.FirstBlock + doneSectors, sectorsToRead, out sector);
 
                                 if(errno != ErrorNumber.NoError)
                                 {
@@ -692,7 +690,7 @@ public sealed partial class Sidecar
         {
             sidecar.BlockMedia[0].FileSystemInformation = new PartitionType[partitions.Count];
 
-            for(int i = 0; i < partitions.Count; i++)
+            for(var i = 0; i < partitions.Count; i++)
             {
                 if(_aborted)
                     return;
@@ -1001,8 +999,8 @@ public sealed partial class Sidecar
                 }
                 catch(NotImplementedException) {}
 
-                if((image.Info.Heads == 2 && scpImage.Header.heads == 0) ||
-                   (image.Info.Heads == 1 && (scpImage.Header.heads == 1 || scpImage.Header.heads == 2)))
+                if(image.Info.Heads == 2 && scpImage.Header.heads == 0 ||
+                   image.Info.Heads == 1 && (scpImage.Header.heads == 1 || scpImage.Header.heads == 2))
                     if(scpImage.Header.end + 1 >= image.Info.Cylinders)
                     {
                         List<BlockTrackType> scpBlockTrackTypes = new();
@@ -1038,9 +1036,9 @@ public sealed partial class Sidecar
 
                             if(scpImage.ScpTracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
                             {
-                                byte[] trackContents =
-                                    new byte[scpTrack.Entries.Last().dataOffset +
-                                             scpTrack.Entries.Last().trackLength - scpImage.Header.offsets[t] + 1];
+                                var trackContents =
+                                    new byte[scpTrack.Entries.Last().dataOffset + scpTrack.Entries.Last().trackLength -
+                                             scpImage.Header.offsets[t] + 1];
 
                                 scpStream.Position = scpImage.Header.offsets[t];
                                 scpStream.Read(trackContents, 0, trackContents.Length);
@@ -1069,10 +1067,9 @@ public sealed partial class Sidecar
         #region KryoFlux
         string kfFile = null;
 
-        string basename = Path.Combine(Path.GetDirectoryName(imagePath),
-                                       Path.GetFileNameWithoutExtension(imagePath));
+        string basename = Path.Combine(Path.GetDirectoryName(imagePath), Path.GetFileNameWithoutExtension(imagePath));
 
-        bool kfDir = false;
+        var kfDir = false;
 
         if(_aborted)
             return;
@@ -1147,7 +1144,7 @@ public sealed partial class Sidecar
                             }
 
                             Stream kfStream      = kvp.Value.GetDataForkStream();
-                            byte[] trackContents = new byte[kfStream.Length];
+                            var    trackContents = new byte[kfStream.Length];
                             kfStream.Position = 0;
                             kfStream.Read(trackContents, 0, trackContents.Length);
                             kfBlockTrackType.Size      = (ulong)trackContents.Length;
@@ -1233,7 +1230,7 @@ public sealed partial class Sidecar
                        dfiImage.TrackLengths.TryGetValue(t, out long length))
                     {
                         dfiBlockTrackType.Image.offset = (ulong)offset;
-                        byte[] trackContents = new byte[length];
+                        var trackContents = new byte[length];
                         dfiStream.Position = offset;
                         dfiStream.Read(trackContents, 0, trackContents.Length);
                         dfiBlockTrackType.Size      = (ulong)trackContents.Length;
@@ -1243,8 +1240,7 @@ public sealed partial class Sidecar
                     dfiBlockTrackTypes.Add(dfiBlockTrackType);
                 }
 
-                sidecar.BlockMedia[0].Track =
-                    dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
+                sidecar.BlockMedia[0].Track = dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
             }
             else
                 AaruConsole.

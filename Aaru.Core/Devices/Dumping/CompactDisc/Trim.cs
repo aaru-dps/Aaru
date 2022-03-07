@@ -30,6 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,12 +49,6 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -74,17 +76,16 @@ partial class Dump
     /// <param name="mcn">Disc media catalogue number</param>
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
-    void TrimCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry,
-                        ExtentsULong extents, bool newTrim, int offsetBytes, bool read6, bool read10, bool read12,
-                        bool read16, bool readcd, int sectorsForOffset, uint subSize,
-                        MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
-                        SubchannelLog subLog, MmcSubchannel desiredSubchannel, Track[] tracks,
+    void TrimCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry, ExtentsULong extents,
+                        bool newTrim, int offsetBytes, bool read6, bool read10, bool read12, bool read16, bool readcd,
+                        int sectorsForOffset, uint subSize, MmcSubchannel supportedSubchannel, bool supportsLongSectors,
+                        ref double totalDuration, SubchannelLog subLog, MmcSubchannel desiredSubchannel, Track[] tracks,
                         Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,
                         Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
         DateTime          start;
         DateTime          end;
-        bool              sense       = true; // Sense indicator
+        var               sense       = true; // Sense indicator
         byte[]            cmdBuf      = null; // Data buffer
         double            cmdDuration = 0;    // Command execution time
         const uint        sectorSize  = 2352; // Full sector size
@@ -123,10 +124,10 @@ partial class Dump
         _dumpLog.WriteLine("Trimming skipped sectors");
         InitProgress?.Invoke();
 
-        trimStart:
+    trimStart:
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
-        for(int b = 0; b < tmpArray.Length; b++)
+        for(var b = 0; b < tmpArray.Length; b++)
         {
             ulong badSector = tmpArray[b];
 
@@ -141,29 +142,26 @@ partial class Dump
 
             PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-            Track track = tracks.OrderBy(t => t.StartSector).
-                                 LastOrDefault(t => badSector >= t.StartSector);
+            Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
             byte sectorsToTrim   = 1;
-            uint badSectorToRead = (uint)badSector;
+            var  badSectorToRead = (uint)badSector;
 
             if(_fixOffset                       &&
                audioExtents.Contains(badSector) &&
                offsetBytes != 0)
             {
                 if(offsetBytes > 0)
-                {
                     badSectorToRead -= (uint)sectorsForOffset;
-                }
 
                 sectorsToTrim = (byte)(sectorsForOffset + 1);
             }
 
-            bool forceFixOffset = false;
+            var forceFixOffset = false;
 
             if(_supportsPlextorD8 && audioExtents.Contains(badSector))
-                sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToRead, blockSize,
-                                                  sectorsToTrim, supportedPlextorSubchannel, out cmdDuration);
+                sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
+                                                  supportedPlextorSubchannel, out cmdDuration);
             else if(readcd)
             {
                 if(audioExtents.Contains(badSector))
@@ -177,13 +175,13 @@ partial class Dump
                         DecodedSense? decSense = Sense.Decode(senseBuf);
 
                         // Try to workaround firmware
-                        if((decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05) ||
+                        if(decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05 ||
                            decSense?.ASC == 0x64)
                         {
                             sense = _dev.ReadCd(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim,
-                                                MmcSectorTypes.AllTypes, false, false, true,
-                                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                                supportedSubchannel, _dev.Timeout, out double cmdDuration2);
+                                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                                true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                                out double cmdDuration2);
 
                             cmdDuration += cmdDuration2;
                         }
@@ -192,9 +190,8 @@ partial class Dump
                 else
                 {
                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
-                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
-                                        true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
-                                        out cmdDuration);
+                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
+                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
                     if(sense)
                     {
@@ -219,14 +216,14 @@ partial class Dump
                 sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, badSectorToRead, blockSize, 0,
                                     sectorsToTrim, false, _dev.Timeout, out cmdDuration);
             else if(read12)
-                sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead,
-                                    blockSize, 0, sectorsToTrim, false, _dev.Timeout, out cmdDuration);
+                sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead, blockSize,
+                                    0, sectorsToTrim, false, _dev.Timeout, out cmdDuration);
             else if(read10)
-                sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead,
-                                    blockSize, 0, sectorsToTrim, _dev.Timeout, out cmdDuration);
+                sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead, blockSize,
+                                    0, sectorsToTrim, _dev.Timeout, out cmdDuration);
             else if(read6)
-                sense = _dev.Read6(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
-                                   _dev.Timeout, out cmdDuration);
+                sense = _dev.Read6(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim, _dev.Timeout,
+                                   out cmdDuration);
 
             totalDuration += cmdDuration;
 
@@ -251,14 +248,14 @@ partial class Dump
             {
                 uint blocksToRead = sectorsToTrim;
 
-                FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
-                              subSize, ref cmdBuf, blockSize, false);
+                FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead, subSize,
+                              ref cmdBuf, blockSize, false);
             }
 
             if(supportedSubchannel != MmcSubchannel.None)
             {
-                byte[] data = new byte[sectorSize];
-                byte[] sub  = new byte[subSize];
+                var data = new byte[sectorSize];
+                var sub  = new byte[subSize];
                 Array.Copy(cmdBuf, 0, data, 0, sectorSize);
                 Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
@@ -269,16 +266,20 @@ partial class Dump
 
                 ulong trkStartBefore = track.StartSector;
 
-                bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                                                               desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence, ref mcn,
-                                                                               tracks, subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                                                                               _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel, desiredSubchannel,
+                                                                               sub, badSector, 1, subLog, isrcs,
+                                                                               (byte)track.Sequence, ref mcn, tracks,
+                                                                               subchannelExtents,
+                                                                               _fixSubchannelPosition, outputOptical,
+                                                                               _fixSubchannel, _fixSubchannelCrc,
+                                                                               _dumpLog, UpdateStatus,
+                                                                               smallestPregapLbaPerTrack, true);
 
                 // Set tracks and go back
                 if(!indexesChanged)
                     continue;
 
-                (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
+                outputOptical.SetTracks(tracks.ToList());
 
                 if(track.StartSector != trkStartBefore &&
                    !_resume.BadBlocks.Contains(track.StartSector))

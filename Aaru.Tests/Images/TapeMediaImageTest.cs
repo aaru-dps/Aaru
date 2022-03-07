@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Images;
+
 using System;
 using System.IO;
 using Aaru.Checksums;
@@ -7,8 +9,6 @@ using Aaru.CommonTypes.Interfaces;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Images;
 
 public abstract class TapeMediaImageTest : BaseMediaImageTest
 {
@@ -52,15 +52,12 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 Assert.AreEqual(true, image.IsTape, $"Is tape?: {testFile}");
 
                 using(new AssertionScope())
-                {
                     Assert.Multiple(() =>
                     {
                         image.Files.Should().BeEquivalentTo(test.Files, $"Tape files: {testFile}");
 
-                        image.TapePartitions.Should().
-                              BeEquivalentTo(test.Partitions, $"Tape partitions: {testFile}");
+                        image.TapePartitions.Should().BeEquivalentTo(test.Partitions, $"Tape partitions: {testFile}");
                     });
-                }
             }
         });
     }
@@ -98,14 +95,12 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                     continue;
 
                 using(new AssertionScope())
-                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
                         Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
                         Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
                     });
-                }
             }
         });
     }
@@ -157,8 +152,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                     }
                     else
                     {
-                        errno = image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors),
-                                                  out sector);
+                        errno = image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors), out sector);
 
                         doneSectors += image.Info.Sectors - doneSectors;
                     }

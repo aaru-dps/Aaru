@@ -30,6 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -37,12 +45,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -83,8 +85,8 @@ partial class Dump
         _dumpLog.WriteLine("Reading Disc Information");
         UpdateStatus?.Invoke("Reading Disc Information");
 
-        sense = _dev.ReadDiscInformation(out cmdBuf, out _, MmcDiscInformationDataTypes.DiscInformation,
-                                         _dev.Timeout, out _);
+        sense = _dev.ReadDiscInformation(out cmdBuf, out _, MmcDiscInformationDataTypes.DiscInformation, _dev.Timeout,
+                                         out _);
 
         if(!sense)
         {

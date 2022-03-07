@@ -30,18 +30,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Database;
+
+using System;
 using System.CommandLine.Invocation;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Database;
 using Aaru.Database.Models;
+using Aaru.Settings;
 using Spectre.Console;
 using Command = System.CommandLine.Command;
 
-namespace Aaru.Commands.Database;
-
-internal sealed class StatisticsCommand : Command
+sealed class StatisticsCommand : Command
 {
     public StatisticsCommand() : base("stats", "Shows statistics.") =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
@@ -54,7 +56,7 @@ internal sealed class StatisticsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -75,7 +77,7 @@ internal sealed class StatisticsCommand : Command
                     AnsiConsole.Markup(format, objects);
             };
 
-        var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+        var ctx = AaruContext.Create(Settings.LocalDbPath);
 
         if(!ctx.Commands.Any()     &&
            !ctx.Filesystems.Any()  &&
@@ -90,7 +92,7 @@ internal sealed class StatisticsCommand : Command
             return (int)ErrorNumber.NothingFound;
         }
 
-        bool  thereAreStats = false;
+        var   thereAreStats = false;
         Table table;
 
         if(ctx.Commands.Any())
@@ -250,8 +252,8 @@ internal sealed class StatisticsCommand : Command
 
             foreach(string filesystem in ctx.Filesystems.Select(c => c.Name).Distinct().OrderBy(c => c))
             {
-                ulong count = ctx.Filesystems.Where(c => c.Name == filesystem && c.Synchronized).
-                                  Select(c => c.Count).FirstOrDefault();
+                ulong count = ctx.Filesystems.Where(c => c.Name == filesystem && c.Synchronized).Select(c => c.Count).
+                                  FirstOrDefault();
 
                 count += (ulong)ctx.Filesystems.LongCount(c => c.Name == filesystem && !c.Synchronized);
 
@@ -299,11 +301,10 @@ internal sealed class StatisticsCommand : Command
             table.AddColumn("Times found");
             table.Columns[1].RightAligned();
 
-            foreach(string media in ctx.Medias.Where(ms => ms.Real).Select(ms => ms.Type).Distinct().
-                                        OrderBy(ms => ms))
+            foreach(string media in ctx.Medias.Where(ms => ms.Real).Select(ms => ms.Type).Distinct().OrderBy(ms => ms))
             {
-                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real).
-                                  Select(c => c.Count).FirstOrDefault();
+                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real).Select(c => c.Count).
+                                  FirstOrDefault();
 
                 count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && c.Real);
 
@@ -330,11 +331,10 @@ internal sealed class StatisticsCommand : Command
             table.AddColumn("Times found");
             table.Columns[1].RightAligned();
 
-            foreach(string media in ctx.Medias.Where(ms => !ms.Real).Select(ms => ms.Type).Distinct().
-                                        OrderBy(ms => ms))
+            foreach(string media in ctx.Medias.Where(ms => !ms.Real).Select(ms => ms.Type).Distinct().OrderBy(ms => ms))
             {
-                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).
-                                  Select(c => c.Count).FirstOrDefault();
+                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).Select(c => c.Count).
+                                  FirstOrDefault();
 
                 count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && !c.Real);
 

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,6 +41,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Core.Devices.Report;
 using Aaru.Core.Logging;
 using Aaru.Decoders.ATA;
@@ -47,8 +50,6 @@ using Schemas;
 using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping ATA devices</summary>
 public partial class Dump
@@ -151,8 +152,8 @@ public partial class Dump
                 UpdateStatus?.Invoke($"Device reports {physicalSectorSize} bytes per physical block.");
                 _dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
 
-                _dumpLog.WriteLine("Device reports {0} cylinders {1} heads {2} sectors per track.", cylinders,
-                                   heads, sectors);
+                _dumpLog.WriteLine("Device reports {0} cylinders {1} heads {2} sectors per track.", cylinders, heads,
+                                   sectors);
 
                 _dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
                 _dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
@@ -164,9 +165,9 @@ public partial class Dump
                 DumpHardwareType currentTry = null;
                 ExtentsULong     extents    = null;
 
-                ResumeSupport.Process(ataReader.IsLba, removable, blocks, _dev.Manufacturer, _dev.Model,
-                                      _dev.Serial, _dev.PlatformId, ref _resume, ref currentTry, ref extents,
-                                      _dev.FirmwareRevision, _private, _force);
+                ResumeSupport.Process(ataReader.IsLba, removable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
+                                      _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
+                                      _private, _force);
 
                 if(currentTry == null ||
                    extents    == null)
@@ -180,7 +181,7 @@ public partial class Dump
                 IbgLog  ibgLog;
                 double  duration;
 
-                bool ret = true;
+                var ret = true;
 
                 if(_dev.IsUsb                  &&
                    _dev.UsbDescriptors != null &&
@@ -232,8 +233,8 @@ public partial class Dump
                     _dumpLog.WriteLine("Error creating output image, not continuing.");
                     _dumpLog.WriteLine(outputFormat.ErrorMessage);
 
-                    StoppingErrorMessage?.Invoke("Error creating output image, not continuing." +
-                                                 Environment.NewLine + outputFormat.ErrorMessage);
+                    StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
+                                                 outputFormat.ErrorMessage);
 
                     return;
                 }
@@ -259,7 +260,7 @@ public partial class Dump
                         _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
                     }
 
-                    bool newTrim = false;
+                    var newTrim = false;
 
                     start = DateTime.UtcNow;
                     DateTime timeSpeedStart   = DateTime.UtcNow;
@@ -288,8 +289,8 @@ public partial class Dump
                            currentSpeed > 0)
                             minSpeed = currentSpeed;
 
-                        UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)",
-                                               (long)i, (long)blocks);
+                        UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                                               (long)blocks);
 
                         bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
 
@@ -410,11 +411,11 @@ public partial class Dump
                        !_aborted                   &&
                        _retryPasses > 0)
                     {
-                        int  pass    = 1;
-                        bool forward = true;
+                        var pass    = 1;
+                        var forward = true;
 
                         InitProgress?.Invoke();
-                        repeatRetryLba:
+                    repeatRetryLba:
                         ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
                         foreach(ulong badSector in tmpArray)
@@ -520,14 +521,12 @@ public partial class Dump
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                                     DateTime writeStart = DateTime.Now;
 
-                                    outputFormat.WriteSector(cmdBuf,
-                                                             (ulong)((((cy * heads) + hd) * sectors) + (sc - 1)));
+                                    outputFormat.WriteSector(cmdBuf, (ulong)((cy * heads + hd) * sectors + (sc - 1)));
 
                                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                     extents.Add(currentBlock);
 
-                                    _dumpLog.WriteLine("Error reading cylinder {0} head {1} sector {2}.", cy, hd,
-                                                       sc);
+                                    _dumpLog.WriteLine("Error reading cylinder {0} head {1} sector {2}.", cy, hd, sc);
                                 }
                                 else
                                 {
@@ -538,7 +537,7 @@ public partial class Dump
                                     DateTime writeStart = DateTime.Now;
 
                                     outputFormat.WriteSector(new byte[blockSize],
-                                                             (ulong)((((cy * heads) + hd) * sectors) + (sc - 1)));
+                                                             (ulong)((cy * heads + hd) * sectors + (sc - 1)));
 
                                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                 }
@@ -590,7 +589,7 @@ public partial class Dump
                 outputFormat.SetDumpHardware(_resume.Tries);
 
                 // TODO: Non-removable
-                var metadata = new CommonTypes.Structs.ImageInfo
+                var metadata = new ImageInfo
                 {
                     Application        = "Aaru",
                     ApplicationVersion = Version.GetVersion()
@@ -637,7 +636,7 @@ public partial class Dump
                     UpdateStatus?.Invoke("Creating sidecar.");
                     var         filters     = new FiltersList();
                     IFilter     filter      = filters.GetFilter(_outputPath);
-                    IMediaImage inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
+                    var         inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
                     ErrorNumber opened      = inputPlugin.Open(filter);
 
                     if(opened != ErrorNumber.NoError)

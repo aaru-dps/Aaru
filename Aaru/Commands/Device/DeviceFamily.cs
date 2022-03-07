@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.CommandLine;
-
 namespace Aaru.Commands.Device;
 
-internal sealed class DeviceFamily : Command
+using System.CommandLine;
+
+sealed class DeviceFamily : Command
 {
     public DeviceFamily() : base("device", "Commands that talks to devices")
     {

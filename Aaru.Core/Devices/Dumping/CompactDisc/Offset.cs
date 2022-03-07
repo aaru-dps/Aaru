@@ -30,14 +30,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using Aaru.Devices;
+
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
 namespace Aaru.Core.Devices.Dumping;
+
+using System;
+using Aaru.Devices;
 
 partial class Dump
 {
@@ -51,27 +53,27 @@ partial class Dump
     /// <param name="cmdBuf">Data buffer</param>
     /// <param name="blockSize">Block size in bytes</param>
     /// <param name="failedCrossingLeadOut">Set if we failed to cross into the Lead-Out</param>
-    static void FixOffsetData(int offsetBytes, uint sectorSize, int sectorsForOffset,
-                              MmcSubchannel supportedSubchannel, ref uint blocksToRead, uint subSize,
-                              ref byte[] cmdBuf, uint blockSize, bool failedCrossingLeadOut)
+    static void FixOffsetData(int offsetBytes, uint sectorSize, int sectorsForOffset, MmcSubchannel supportedSubchannel,
+                              ref uint blocksToRead, uint subSize, ref byte[] cmdBuf, uint blockSize,
+                              bool failedCrossingLeadOut)
     {
         if(cmdBuf.Length == 0)
             return;
 
-        int offsetFix = offsetBytes < 0 ? (int)((sectorSize * sectorsForOffset) + offsetBytes) : offsetBytes;
+        int offsetFix = offsetBytes < 0 ? (int)(sectorSize * sectorsForOffset + offsetBytes) : offsetBytes;
 
         byte[] tmpBuf;
 
         if(supportedSubchannel != MmcSubchannel.None)
         {
             // De-interleave subchannel
-            byte[] data = new byte[sectorSize * blocksToRead];
-            byte[] sub  = new byte[subSize    * blocksToRead];
+            var data = new byte[sectorSize * blocksToRead];
+            var sub  = new byte[subSize    * blocksToRead];
 
-            for(int b = 0; b < blocksToRead; b++)
+            for(var b = 0; b < blocksToRead; b++)
             {
-                Array.Copy(cmdBuf, (int)(0          + (b * blockSize)), data, sectorSize * b, sectorSize);
-                Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize     * b, subSize);
+                Array.Copy(cmdBuf, (int)(0          + b * blockSize), data, sectorSize * b, sectorSize);
+                Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize     * b, subSize);
             }
 
             if(failedCrossingLeadOut)
@@ -95,10 +97,10 @@ partial class Dump
             // Re-interleave subchannel
             cmdBuf = new byte[blockSize * blocksToRead];
 
-            for(int b = 0; b < blocksToRead; b++)
+            for(var b = 0; b < blocksToRead; b++)
             {
-                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0          + (b * blockSize)), sectorSize);
-                Array.Copy(sub, subSize     * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
+                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0          + b * blockSize), sectorSize);
+                Array.Copy(sub, subSize     * b, cmdBuf, (int)(sectorSize + b * blockSize), subSize);
             }
         }
         else

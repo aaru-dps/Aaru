@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Filesystem;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -45,9 +47,7 @@ using Aaru.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace Aaru.Commands.Filesystem;
-
-internal sealed class LsCommand : Command
+sealed class LsCommand : Command
 {
     public LsCommand() : base("list", "Lists files in disc image.")
     {
@@ -108,7 +108,7 @@ internal sealed class LsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -139,7 +139,7 @@ internal sealed class LsCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -184,7 +184,7 @@ internal sealed class LsCommand : Command
             IMediaImage imageFormat = null;
             IBaseImage  baseImage   = null;
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Identifying image format...").IsIndeterminate();
                 baseImage   = ImageFormat.Detect(inputFilter);
@@ -214,7 +214,7 @@ internal sealed class LsCommand : Command
             {
                 ErrorNumber opened = ErrorNumber.NoData;
 
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Opening image file...").IsIndeterminate();
                     opened = imageFormat.Open(inputFilter);
@@ -252,13 +252,13 @@ internal sealed class LsCommand : Command
 
             List<Partition> partitions = null;
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Enumerating partitions...").IsIndeterminate();
-                partitions = Core.Partitions.GetAll(imageFormat);
+                partitions = Partitions.GetAll(imageFormat);
             });
 
-            Core.Partitions.AddSchemesToStats(partitions);
+            Partitions.AddSchemesToStats(partitions);
 
             if(partitions.Count == 0)
             {
@@ -277,17 +277,17 @@ internal sealed class LsCommand : Command
 
             AaruConsole.WriteLine("{0} partitions found.", partitions.Count);
 
-            for(int i = 0; i < partitions.Count; i++)
+            for(var i = 0; i < partitions.Count; i++)
             {
                 AaruConsole.WriteLine();
                 AaruConsole.WriteLine("[bold]Partition {0}:[/]", partitions[i].Sequence);
 
                 List<string> idPlugins = null;
 
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Identifying filesystems on partition...").IsIndeterminate();
-                    Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                    Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
                 });
 
                 if(idPlugins.Count == 0)
@@ -313,7 +313,7 @@ internal sealed class LsCommand : Command
                                 if(fs == null)
                                     continue;
 
-                                Core.Spectre.ProgressSingleSpinner(ctx =>
+                                Spectre.ProgressSingleSpinner(ctx =>
                                 {
                                     ctx.AddTask("Mounting filesystem...").IsIndeterminate();
 
@@ -347,7 +347,7 @@ internal sealed class LsCommand : Command
                         if(fs == null)
                             continue;
 
-                        Core.Spectre.ProgressSingleSpinner(ctx =>
+                        Spectre.ProgressSingleSpinner(ctx =>
                         {
                             ctx.AddTask("Mounting filesystem...").IsIndeterminate();
                             error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
@@ -386,7 +386,7 @@ internal sealed class LsCommand : Command
 
         AaruConsole.WriteLine(string.IsNullOrEmpty(path) ? "Root directory" : $"Directory: {Markup.Escape(path)}");
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Reading directory...").IsIndeterminate();
             error = fs.ReadDir(path, out directory);
@@ -447,11 +447,9 @@ internal sealed class LsCommand : Command
                     AaruConsole.WriteLine("{0, 47}{1}", string.Empty, Markup.Escape(entry.Key));
             }
             else
-            {
                 AaruConsole.
                     WriteLine(entry.Value?.Attributes.HasFlag(FileAttributes.Directory) == true ? "{0}/" : "{0}",
                               entry.Key);
-            }
 
         AaruConsole.WriteLine();
 

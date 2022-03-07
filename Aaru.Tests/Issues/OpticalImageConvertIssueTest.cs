@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Issues;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,8 +19,6 @@ using NUnit.Framework;
 using Schemas;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-namespace Aaru.Tests.Issues;
 
 /// <summary>
 ///     This tests the conversion of an input image (autodetected) to an output image and checks that the resulting
@@ -55,7 +55,7 @@ public abstract class OpticalImageConvertIssueTest
 
         Assert.IsFalse(File.Exists(outputPath), "Output file already exists, not continuing.");
 
-        IMediaImage inputFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
+        var inputFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
         Assert.IsNotNull(inputFormat, "Input image format not identified, not proceeding with conversion.");
 
@@ -65,9 +65,7 @@ public abstract class OpticalImageConvertIssueTest
                       "Output format does not support media type, cannot continue...");
 
         if(inputFormat.Info.ReadableSectorTags.Count == 0)
-        {
             Assert.IsFalse(UseLong, "Input image does not support long sectors.");
-        }
 
         var inputOptical  = inputFormat as IOpticalMediaImage;
         var outputOptical = OutputFormat as IWritableOpticalImage;
@@ -99,8 +97,7 @@ public abstract class OpticalImageConvertIssueTest
             MediaTitle            = inputFormat.Info.MediaTitle
         };
 
-        Assert.IsTrue(outputOptical.SetMetadata(metadata),
-                      $"Error {outputOptical.ErrorMessage} setting metadata, ");
+        Assert.IsTrue(outputOptical.SetMetadata(metadata), $"Error {outputOptical.ErrorMessage} setting metadata, ");
 
         CICMMetadataType       cicmMetadata = inputFormat.CicmMetadata;
         List<DumpHardwareType> dumpHardware = inputFormat.DumpHardware;
@@ -137,15 +134,13 @@ public abstract class OpticalImageConvertIssueTest
                 else
                     sectorsToDo = (uint)(trackSectors - doneSectors);
 
-                bool useNotLong = false;
-                bool result     = false;
+                var useNotLong = false;
+                var result     = false;
 
                 if(UseLong)
                 {
-                    errno = sectorsToDo == 1
-                                ? inputFormat.ReadSectorLong(doneSectors + track.StartSector, out sector)
-                                : inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo,
-                                                              out sector);
+                    errno = sectorsToDo == 1 ? inputFormat.ReadSectorLong(doneSectors + track.StartSector, out sector)
+                                : inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo, out sector);
 
                     if(errno == ErrorNumber.NoError)
                         result = sectorsToDo == 1
@@ -183,9 +178,9 @@ public abstract class OpticalImageConvertIssueTest
         string                   mcn                       = null;
         HashSet<int>             subchannelExtents         = new();
         Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
-        Track[]                  tracks                    = new Track[inputOptical.Tracks.Count];
+        var                      tracks                    = new Track[inputOptical.Tracks.Count];
 
-        for(int i = 0; i < tracks.Length; i++)
+        for(var i = 0; i < tracks.Length; i++)
         {
             tracks[i] = new Track
             {
@@ -220,8 +215,8 @@ public abstract class OpticalImageConvertIssueTest
             }
         }
 
-        foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
-                                                 Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
+        foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.Where(t => t == SectorTagType.CdTrackFlags).
+                                                 OrderBy(t => t))
         {
             foreach(Track track in tracks)
             {
@@ -274,8 +269,7 @@ public abstract class OpticalImageConvertIssueTest
                     case SectorTagType.CdTrackIsrc:
                         errno = inputFormat.ReadSectorTag(track.Sequence, tag, out sector);
 
-                        Assert.AreEqual(ErrorNumber.NoError, errno,
-                                        $"Error {errno} reading tag, not continuing...");
+                        Assert.AreEqual(ErrorNumber.NoError, errno, $"Error {errno} reading tag, not continuing...");
 
                         result = outputOptical.WriteSectorTag(sector, track.Sequence, tag);
 
@@ -297,8 +291,7 @@ public abstract class OpticalImageConvertIssueTest
                     {
                         errno = inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag, out sector);
 
-                        Assert.AreEqual(ErrorNumber.NoError, errno,
-                                        $"Error {errno} reading tag, not continuing...");
+                        Assert.AreEqual(ErrorNumber.NoError, errno, $"Error {errno} reading tag, not continuing...");
 
                         if(tag == SectorTagType.CdSectorSubchannel)
                         {
@@ -320,8 +313,7 @@ public abstract class OpticalImageConvertIssueTest
                         errno = inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo, tag,
                                                            out sector);
 
-                        Assert.AreEqual(ErrorNumber.NoError, errno,
-                                        $"Error {errno} reading tag, not continuing...");
+                        Assert.AreEqual(ErrorNumber.NoError, errno, $"Error {errno} reading tag, not continuing...");
 
                         if(tag == SectorTagType.CdSectorSubchannel)
                         {
@@ -336,8 +328,8 @@ public abstract class OpticalImageConvertIssueTest
                             result = true;
                         }
                         else
-                            result = outputOptical.WriteSectorsTag(sector, doneSectors + track.StartSector,
-                                                                   sectorsToDo, tag);
+                            result = outputOptical.WriteSectorsTag(sector, doneSectors + track.StartSector, sectorsToDo,
+                                                                   tag);
                     }
 
                     Assert.IsTrue(result,
@@ -350,8 +342,7 @@ public abstract class OpticalImageConvertIssueTest
 
         if(isrcs.Count > 0)
             foreach(KeyValuePair<byte, string> isrc in isrcs)
-                outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value), isrc.Key,
-                                             SectorTagType.CdTrackIsrc);
+                outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value), isrc.Key, SectorTagType.CdTrackIsrc);
 
         if(trackFlags.Count > 0)
             foreach((byte track, byte flags) in trackFlags)

@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.Console;
-
 namespace Aaru.Devices;
+
+using Aaru.Console;
 
 public sealed partial class Device
 {
@@ -47,11 +47,10 @@ public sealed partial class Device
     /// <param name="blockSize">Block size.</param>
     /// <param name="subchannel">Subchannel selection.</param>
     public bool PioneerReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
-                                uint transferLength, PioneerSubchannel subchannel, uint timeout,
-                                out double duration)
+                                uint transferLength, PioneerSubchannel subchannel, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReadCdDa;
         cdb[2]  = (byte)((lba & 0xFF000000) >> 24);
@@ -89,7 +88,7 @@ public sealed partial class Device
                                    uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReadCdDaMsf;
         cdb[3]  = (byte)((startMsf & 0xFF0000) >> 16);
@@ -100,7 +99,7 @@ public sealed partial class Device
         cdb[9]  = (byte)(endMsf & 0xFF);
         cdb[10] = (byte)subchannel;
 
-        uint transferLength = (uint)(((cdb[7] - cdb[3]) * 60 * 75) + ((cdb[8] - cdb[4]) * 75) + (cdb[9] - cdb[5]));
+        var transferLength = (uint)((cdb[7] - cdb[3]) * 60 * 75 + (cdb[8] - cdb[4]) * 75 + (cdb[9] - cdb[5]));
         buffer = new byte[blockSize * transferLength];
 
         LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -130,7 +129,7 @@ public sealed partial class Device
                                 bool errorFlags, bool wholeSector, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.ReadCdXa;
         cdb[2] = (byte)((lba & 0xFF000000) >> 24);

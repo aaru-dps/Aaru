@@ -31,6 +31,10 @@
 // Copyright © 2021-2022 Rebecca Wallander
 // ****************************************************************************/
 
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
+
+namespace Aaru.Core.Devices.Info;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
@@ -42,10 +46,7 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decryption;
 using Aaru.Devices;
 using Aaru.Helpers;
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
-
-namespace Aaru.Core.Devices.Info;
 
 /// <summary>Obtains and contains information about a device</summary>
 public partial class DeviceInfo
@@ -89,19 +90,16 @@ public partial class DeviceInfo
                     AaruConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
                     AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
-                                               errorRegisters.SectorCount);
+                    AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.SectorCount);
 
                     AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
                     AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
                                                errorRegisters.CylinderHigh);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
-                                               errorRegisters.CylinderLow);
+                    AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}", errorRegisters.CylinderLow);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
-                                               errorRegisters.DeviceHead);
+                    AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.DeviceHead);
 
                     AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
 
@@ -135,19 +133,16 @@ public partial class DeviceInfo
                     AaruConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
                     AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
-                                               errorRegisters.SectorCount);
+                    AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.SectorCount);
 
                     AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
                     AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
                                                errorRegisters.CylinderHigh);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
-                                               errorRegisters.CylinderLow);
+                    AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}", errorRegisters.CylinderLow);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
-                                               errorRegisters.DeviceHead);
+                    AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.DeviceHead);
 
                     AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
 
@@ -199,8 +194,8 @@ public partial class DeviceInfo
 
                 var devType = (PeripheralDeviceTypes)ScsiInquiry.Value.PeripheralDeviceType;
 
-                sense = dev.ModeSense10(out byte[] modeBuf, out senseBuf, false, true,
-                                        ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out _);
+                sense = dev.ModeSense10(out byte[] modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current,
+                                        0x3F, 0xFF, 5, out _);
 
                 if(!sense &&
                    !dev.Error)
@@ -208,8 +203,8 @@ public partial class DeviceInfo
 
                 if(sense || dev.Error)
                 {
-                    sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true,
-                                            ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
+                    sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current,
+                                            0x3F, 0x00, 5, out _);
 
                     if(!sense &&
                        !dev.Error)
@@ -222,8 +217,8 @@ public partial class DeviceInfo
 
                 bool useMode10 = !(sense || dev.Error || !ScsiMode.HasValue);
 
-                sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F,
-                                       0xFF, 5, out _);
+                sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0xFF,
+                                       5, out _);
 
                 if(!sense &&
                    !dev.Error)
@@ -324,8 +319,8 @@ public partial class DeviceInfo
                         #region Plextor
                         if(dev.Manufacturer == "PLEXTOR")
                         {
-                            bool   plxtSense = true;
-                            bool   plxtDvd   = false;
+                            var    plxtSense = true;
+                            var    plxtDvd   = false;
                             byte[] plxtBuf   = null;
 
                             switch(dev.Model)
@@ -335,8 +330,7 @@ public partial class DeviceInfo
                                 case "DVDR   PX-712A":
                                     plxtDvd = true;
 
-                                    plxtSense = dev.PlextorReadEeprom(out plxtBuf, out senseBuf, dev.Timeout,
-                                                                      out _);
+                                    plxtSense = dev.PlextorReadEeprom(out plxtBuf, out senseBuf, dev.Timeout, out _);
 
                                     break;
                                 case "DVDR   PX-714A":
@@ -349,8 +343,8 @@ public partial class DeviceInfo
 
                                     for(byte i = 0; i < 4; i++)
                                     {
-                                        plxtSense = dev.PlextorReadEepromBlock(out byte[] plxtBufSmall,
-                                                                               out senseBuf, i, 256, dev.Timeout, out _);
+                                        plxtSense = dev.PlextorReadEepromBlock(out byte[] plxtBufSmall, out senseBuf, i,
+                                                                               256, dev.Timeout, out _);
 
                                         if(plxtSense)
                                             break;
@@ -487,8 +481,7 @@ public partial class DeviceInfo
 
                             if(plxtDvd)
                             {
-                                plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, true, dev.Timeout,
-                                                                  out _);
+                                plxtSense = dev.PlextorGetVariRec(out plxtBuf, out senseBuf, true, dev.Timeout, out _);
 
                                 if(!plxtSense)
                                     PlextorFeatures.VariRecDvd = true;
@@ -515,8 +508,7 @@ public partial class DeviceInfo
                         #endregion Plextor
 
                         if(ScsiInquiry.Value.KreonPresent)
-                            if(!dev.KreonGetFeatureList(out senseBuf, out KreonFeatures krFeatures, dev.Timeout,
-                                                        out _))
+                            if(!dev.KreonGetFeatureList(out senseBuf, out KreonFeatures krFeatures, dev.Timeout, out _))
                                 KreonFeatures = krFeatures;
 
                         break;
@@ -534,8 +526,7 @@ public partial class DeviceInfo
                         sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, dev.Timeout, out _);
 
                         if(sense)
-                            AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT:\n{0}",
-                                                       Sense.PrettifySense(senseBuf));
+                            AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT:\n{0}", Sense.PrettifySense(senseBuf));
                         else
                         {
                             DensitySupport       = seqBuf;

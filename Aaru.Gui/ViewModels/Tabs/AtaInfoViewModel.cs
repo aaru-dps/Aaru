@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Tabs;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
@@ -38,16 +40,14 @@ using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels.Tabs;
-
 public sealed class AtaInfoViewModel : ViewModelBase
 {
     readonly byte[] _ata;
     readonly byte[] _atapi;
     readonly Window _view;
 
-    public AtaInfoViewModel([CanBeNull] byte[] ataIdentify, byte[] atapiIdentify,
-                            AtaErrorRegistersChs? ataMcptError, Window view)
+    public AtaInfoViewModel([CanBeNull] byte[] ataIdentify, byte[] atapiIdentify, AtaErrorRegistersChs? ataMcptError,
+                            Window view)
     {
         SaveAtaBinaryCommand = ReactiveCommand.Create(ExecuteSaveAtaBinaryCommand);
         SaveAtaTextCommand   = ReactiveCommand.Create(ExecuteSaveAtaTextCommand);
@@ -91,16 +91,14 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
                         break;
                     default:
-                        AtaMcptText =
-                            $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}";
+                        AtaMcptText = $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}";
 
                         break;
                 }
 
                 AtaMcptWriteProtectionChecked = (ataMcptError.Value.DeviceHead & 0x08) == 0x08;
 
-                ushort specificData = (ushort)((ataMcptError.Value.CylinderHigh * 0x100) +
-                                               ataMcptError.Value.CylinderLow);
+                var specificData = (ushort)(ataMcptError.Value.CylinderHigh * 0x100 + ataMcptError.Value.CylinderLow);
 
                 AtaMcptSpecificDataText = $"Card specific data: 0x{specificData:X4}";
             }

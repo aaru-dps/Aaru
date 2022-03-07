@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class BlindWrite5
 {
@@ -58,10 +58,10 @@ public sealed partial class BlindWrite5
         if(errno != ErrorNumber.NoError)
             return null;
 
-        int    bps    = (int)(buffer.Length / length);
-        byte[] sector = new byte[bps];
+        var bps    = (int)(buffer.Length / length);
+        var sector = new byte[bps];
 
-        for(int i = 0; i < length; i++)
+        for(var i = 0; i < length; i++)
         {
             Array.Copy(buffer, i * bps, sector, 0, bps);
             bool? sectorStatus = CdChecksums.CheckCdSector(sector);
@@ -96,10 +96,10 @@ public sealed partial class BlindWrite5
         if(errno != ErrorNumber.NoError)
             return null;
 
-        int    bps    = (int)(buffer.Length / length);
-        byte[] sector = new byte[bps];
+        var bps    = (int)(buffer.Length / length);
+        var sector = new byte[bps];
 
-        for(int i = 0; i < length; i++)
+        for(var i = 0; i < length; i++)
         {
             Array.Copy(buffer, i * bps, sector, 0, bps);
             bool? sectorStatus = CdChecksums.CheckCdSector(sector);

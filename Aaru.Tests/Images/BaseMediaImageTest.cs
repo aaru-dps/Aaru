@@ -1,6 +1,6 @@
-using Aaru.CommonTypes.Interfaces;
-
 namespace Aaru.Tests.Images;
+
+using Aaru.CommonTypes.Interfaces;
 
 public abstract class BaseMediaImageTest
 {

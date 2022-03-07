@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
-
-namespace Aaru.DiscImages;
 
 // TODO: Doesn't support compositing from several files
 // TODO: Doesn't support silences that are not in files

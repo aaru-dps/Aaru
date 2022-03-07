@@ -30,20 +30,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class DiscJuggler
 {
     /// <inheritdoc />
     public string Name => "DiscJuggler";
     /// <inheritdoc />
-    public Guid Id => new Guid("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
+    public Guid Id => new("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />

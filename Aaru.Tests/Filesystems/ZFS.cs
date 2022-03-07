@@ -26,21 +26,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems;
-
 [TestFixture]
 public class Zfs : FilesystemTest
 {
     public Zfs() : base("ZFS filesystem") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                      "Zettabyte File System");
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Zettabyte File System");
 
     public override IFilesystem Plugin     => new ZFS();
     public override bool        Partitions => false;

@@ -26,12 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui;
+
 using System.Text;
 using Avalonia;
 using Avalonia.Dialogs;
 using Avalonia.ReactiveUI;
-
-namespace Aaru.Gui;
 
 public static class Main
 {

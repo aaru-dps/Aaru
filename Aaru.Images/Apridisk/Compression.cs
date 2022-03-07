@@ -30,16 +30,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Apridisk
 {
     static uint Decompress(byte[] compressed, out byte[] decompressed)
     {
-        int readp  = 0;
+        var readp  = 0;
         int cLen   = compressed.Length;
         var buffer = new MemoryStream();
 
@@ -47,10 +47,10 @@ public sealed partial class Apridisk
 
         while(cLen >= 3)
         {
-            ushort blklen = BitConverter.ToUInt16(compressed, readp);
+            var blklen = BitConverter.ToUInt16(compressed, readp);
             readp += 2;
 
-            for(int i = 0; i < blklen; i++)
+            for(var i = 0; i < blklen; i++)
                 buffer.WriteByte(compressed[readp]);
 
             uLen += blklen;

@@ -30,11 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
+
 
 // ReSharper disable UnusedMember.Local
 
 namespace Aaru.Filesystems;
+
+using System;
 
 public sealed partial class FAT
 {
@@ -86,8 +88,7 @@ public sealed partial class FAT
         ("b639b4d5b25f63560e3b34a3a0feb732aa65486f", "Amstrad MS-DOS 3.20 (8-sector floppy)"),
         ("9311151f13f7611b1431593da05ddd3153370574", "Amstrad MS-DOS 3.20 (Spanish)"),
         ("55eda6a9b955f5199020e6b56a6954fa6fcb7dc6", "AT&T MS-DOS 2.11"),
-        ("d5e10822977efa96e4fbaec2b268ca008d74fe6f", "Atari TOS"),
-        ("17f11a12b96899d2a4976d889cef160502167f2d", "BeOS"),
+        ("d5e10822977efa96e4fbaec2b268ca008d74fe6f", "Atari TOS"), ("17f11a12b96899d2a4976d889cef160502167f2d", "BeOS"),
         ("d0e31673028fcfcea38dff71a7be13669aa20b8d", "Compaq MS-DOS 3.30"),
         ("3aa4ce2fa6f9a297b5b15aaef930401af369fcbc", "Compaq MS-DOS 3.30 (8-sector floppy)"),
         ("8f1d33520343f35034aa3ce47e4180b10e960b43", "Compaq MS-DOS 3.30 (8-sector floppy)"),
@@ -165,8 +166,7 @@ public sealed partial class FAT
         ("8f024b3d501c39ee6e3f8ca28173ad6a780d3eb0", "Windows Vista, 8, 10"),
         ("d3e93f8b82ef250db216037d827a4896dc97d2be", "TracerST"), // OEM ID: "TracerST"
         //("b741f85ef40288ccc8887de1f6e849009097e1c9", "Norton Utilities"), // OEM ID: "IBM PNCI", need to confirm
-        ("c49b275537ac7237cac64d83f34d2024ae0ca96a",
-         "Windows NT (Spanish)"), // Need to check Windows >= 2000 (Spanish)
+        ("c49b275537ac7237cac64d83f34d2024ae0ca96a", "Windows NT (Spanish)"), // Need to check Windows >= 2000 (Spanish)
         //("a48b0e4b696317eed829e960d1aa576562a4f185", "TracerST"), // Unknown OEM ID, apparently Tracer, unconfirmed
         ("fe477972602ba76658ff7143859045b3c4036ca5",
          "iomega"), // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
@@ -179,31 +179,52 @@ public sealed partial class FAT
     [Flags]
     enum FatAttributes : byte
     {
-        ReadOnly    = 0x01, Hidden       = 0x02, System  = 0x04,
-        VolumeLabel = 0x08, Subdirectory = 0x10, Archive = 0x20,
-        Device      = 0x40, Reserved     = 0x80, LFN     = 0x0F
+        ReadOnly     = 0x01,
+        Hidden       = 0x02,
+        System       = 0x04,
+        VolumeLabel  = 0x08,
+        Subdirectory = 0x10,
+        Archive      = 0x20,
+        Device       = 0x40,
+        Reserved     = 0x80,
+        LFN          = 0x0F
     }
 
     enum BpbKind
     {
-        None, Hardcoded, Atari,
-        Msx, Dos2, Dos3,
-        Dos32, Dos33, ShortExtended,
-        Extended, ShortFat32, LongFat32,
-        Andos, Apricot, DecRainbow,
+        None,
+        Hardcoded,
+        Atari,
+        Msx,
+        Dos2,
+        Dos3,
+        Dos32,
+        Dos33,
+        ShortExtended,
+        Extended,
+        ShortFat32,
+        LongFat32,
+        Andos,
+        Apricot,
+        DecRainbow,
         Human
     }
 
     enum Namespace
     {
-        Dos, Nt, Lfn,
-        Os2, Ecs, Human
+        Dos,
+        Nt,
+        Lfn,
+        Os2,
+        Ecs,
+        Human
     }
 
     [Flags]
     enum EaFlags : uint
     {
-        Normal = 0, Critical = 1
+        Normal   = 0,
+        Critical = 1
     }
 
     [Flags]

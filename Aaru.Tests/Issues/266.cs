@@ -1,9 +1,12 @@
-using System.Collections.Generic;
-using System.IO;
+
 
 // ReSharper disable StringLiteralTypo
 
 namespace Aaru.Tests.Issues;
+
+using System.Collections.Generic;
+using System.IO;
+
 /* https://github.com/aaru-dps/Aaru/issues/263
  *
  * SilasLaspada commented on Jan 2, 2020
@@ -18,7 +21,7 @@ public class _266 : FsExtractHashIssueTest
 {
     protected override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue266");
     protected override string TestFile => "Namco (USA) (2005 Assets).cue";
-    protected override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
+    protected override Dictionary<string, string> ParsedOptions => new();
     protected override bool Debug => false;
     protected override bool Xattrs => false;
     protected override string Encoding => null;

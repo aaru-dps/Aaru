@@ -30,6 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable UnusedType.Local
+
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -39,10 +45,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-// ReSharper disable UnusedType.Local
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the Professional File System</summary>
@@ -81,15 +83,14 @@ public sealed class PFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
+        var magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
         return magic == AFS_DISK || magic == PFS2_DISK || magic == PFS_DISK || magic == MUAF_DISK ||
                magic == MUPFS_DISK;
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         information = "";
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
@@ -141,8 +142,7 @@ public sealed class PFS : IFilesystem
                                                                 rootBlock.creationtick)).AppendLine();
 
         if(rootBlock.extension > 0)
-            sbInformation.AppendFormat("Root block extension resides at block {0}", rootBlock.extension).
-                          AppendLine();
+            sbInformation.AppendFormat("Root block extension resides at block {0}", rootBlock.extension).AppendLine();
 
         information = sbInformation.ToString();
 

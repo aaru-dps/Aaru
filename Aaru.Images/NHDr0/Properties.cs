@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -37,14 +39,12 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class Nhdr0
 {
     /// <inheritdoc />
     public string Name => "T98-Next NHD r0 Disk Image";
     /// <inheritdoc />
-    public Guid Id => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
+    public Guid Id => new("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />

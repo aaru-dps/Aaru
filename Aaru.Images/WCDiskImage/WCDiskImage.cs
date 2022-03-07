@@ -31,28 +31,26 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages;
-
 /// <inheritdoc />
 /// <summary>Manages floppy disk images created with d2f by DataPackRat</summary>
 [SuppressMessage("ReSharper", "NotAccessedField.Local"), SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class WCDiskImage : IMediaImage
 {
-    readonly Dictionary<(int cylinder, int head, int sector), bool> _badSectors =
-        new Dictionary<(int cylinder, int head, int sector), bool>();
+    readonly Dictionary<(int cylinder, int head, int sector), bool> _badSectors = new();
     /// <summary>The file header after the image has been opened</summary>
     FileHeader _fileHeader;
     ImageInfo _imageInfo;
 
     /* the sectors are cached here */
-    readonly Dictionary<(int cylinder, int head, int sector), byte[]> _sectorCache =
-        new Dictionary<(int cylinder, int head, int sector), byte[]>();
+    readonly Dictionary<(int cylinder, int head, int sector), byte[]> _sectorCache = new();
 
     /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
     IFilter _wcImageFilter;

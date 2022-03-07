@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
-
-namespace Aaru.Core;
 
 /// <summary>Media image entropy operations</summary>
 public sealed class Entropy
@@ -102,7 +102,7 @@ public sealed class Entropy
                     Invoke($"Entropying track {currentTrack.Sequence} of {inputTracks.Max(t => t.Sequence)}",
                            currentTrack.Sequence, inputTracks.Max(t => t.Sequence));
 
-                ulong[]      entTable              = new ulong[256];
+                var          entTable              = new ulong[256];
                 ulong        trackSize             = 0;
                 List<string> uniqueSectorsPerTrack = new();
 
@@ -177,7 +177,7 @@ public sealed class Entropy
         if(_inputFormat is not IMediaImage mediaImage)
             return entropy;
 
-        ulong[]      entTable      = new ulong[256];
+        var          entTable      = new ulong[256];
         ulong        diskSize      = 0;
         List<string> uniqueSectors = new();
 
@@ -234,8 +234,8 @@ public sealed class Entropy
         if(_inputFormat is not IByteAddressableImage byteAddressableImage)
             return entropy;
 
-        ulong[] entTable = new ulong[256];
-        byte[]  data     = new byte[byteAddressableImage.Info.Sectors];
+        var entTable = new ulong[256];
+        var data     = new byte[byteAddressableImage.Info.Sectors];
 
         entropy.Sectors = _inputFormat.Info.Sectors;
         AaruConsole.WriteLine("{0} bytes", entropy.Sectors);
@@ -252,7 +252,7 @@ public sealed class Entropy
 
         if(bytesRead != data.Length)
         {
-            byte[] tmp = new byte[bytesRead];
+            var tmp = new byte[bytesRead];
             Array.Copy(data, 0, tmp, 0, bytesRead);
             data = tmp;
         }

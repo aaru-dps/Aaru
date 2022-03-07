@@ -31,14 +31,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems.LisaFS;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Decoders;
 using Aaru.Helpers;
-
-namespace Aaru.Filesystems.LisaFS;
 
 public sealed partial class LisaFS
 {

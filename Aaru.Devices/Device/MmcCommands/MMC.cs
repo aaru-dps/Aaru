@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using System;
 using Aaru.Console;
-
-namespace Aaru.Devices;
 
 public sealed partial class Device
 {
@@ -155,7 +155,7 @@ public sealed partial class Device
     public bool Read(out byte[] buffer, out uint[] response, uint lba, uint blockSize, ushort transferLength,
                      bool byteAddressed, uint timeout, out double duration)
     {
-        bool sense = true;
+        var sense = true;
         buffer   = null;
         response = null;
         duration = -1;
@@ -164,8 +164,8 @@ public sealed partial class Device
             return ReadSingleBlock(out buffer, out response, lba, blockSize, byteAddressed, timeout, out duration);
 
         if(!_readMultipleBlockCannotSetBlockCount)
-            sense = ReadMultipleBlock(out buffer, out response, lba, blockSize, transferLength, byteAddressed,
-                                      timeout, out duration);
+            sense = ReadMultipleBlock(out buffer, out response, lba, blockSize, transferLength, byteAddressed, timeout,
+                                      out duration);
 
         if(_readMultipleBlockCannotSetBlockCount)
             return ReadMultipleUsingSingle(out buffer, out response, lba, blockSize, transferLength, byteAddressed,
@@ -183,8 +183,8 @@ public sealed partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadSingleBlock(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
-                                bool byteAddressed, uint timeout, out double duration)
+    public bool ReadSingleBlock(out byte[] buffer, out uint[] response, uint lba, uint blockSize, bool byteAddressed,
+                                uint timeout, out double duration)
     {
         uint address;
         buffer   = new byte[blockSize];
@@ -233,8 +233,8 @@ public sealed partial class Device
 
         LastError = SendMmcCommand(MmcCommands.ReadMultipleBlock, false, false,
                                    MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
-                                   blockSize, transferLength, ref buffer, out response, out duration,
-                                   out bool sense, timeout);
+                                   blockSize, transferLength, ref buffer, out response, out duration, out bool sense,
+                                   timeout);
 
         Error = LastError != 0;
 
@@ -260,13 +260,12 @@ public sealed partial class Device
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool ReadMultipleUsingSingle(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
-                                        ushort transferLength, bool byteAddressed, uint timeout,
-                                        out double duration)
+                                        ushort transferLength, bool byteAddressed, uint timeout, out double duration)
     {
         buffer = new byte[transferLength * blockSize];
-        byte[] blockBuffer = new byte[blockSize];
+        var blockBuffer = new byte[blockSize];
         duration = 0;
-        bool sense = true;
+        var sense = true;
         response = null;
 
         for(uint i = 0; i < transferLength; i++)
@@ -280,8 +279,8 @@ public sealed partial class Device
 
             LastError = SendMmcCommand(MmcCommands.ReadSingleBlock, false, false,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
-                                       blockSize, 1, ref blockBuffer, out response, out double blockDuration,
-                                       out sense, timeout);
+                                       blockSize, 1, ref blockBuffer, out response, out double blockDuration, out sense,
+                                       timeout);
 
             Error = LastError != 0;
 
@@ -332,8 +331,8 @@ public sealed partial class Device
     public bool ReadWithBlockCount(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
                                    ushort transferLength, bool byteAddressed, uint timeout, out double duration)
     {
-        uint               address  = byteAddressed ? lba * blockSize : lba;
-        MmcSingleCommand[] commands = new MmcSingleCommand[3];
+        uint address  = byteAddressed ? lba * blockSize : lba;
+        var  commands = new MmcSingleCommand[3];
 
         // SET_BLOCK_COUNT
         commands[0] = new MmcSingleCommand

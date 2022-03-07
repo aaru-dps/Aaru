@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.Console;
-
 namespace Aaru.Devices;
+
+using Aaru.Console;
 
 public sealed partial class Device
 {
@@ -48,7 +48,7 @@ public sealed partial class Device
                                  out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
         buffer = new byte[length];
 
         cdb[0] = (byte)ScsiCommands.MediaTekVendorCommand;

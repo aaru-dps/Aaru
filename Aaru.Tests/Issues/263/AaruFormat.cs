@@ -1,7 +1,8 @@
+namespace Aaru.Tests.Issues._263;
+
 using System.Collections.Generic;
 using System.IO;
 
-namespace Aaru.Tests.Issues._263;
 /* https://github.com/aaru-dps/Aaru/issues/263
  * 
  * SilasLaspada commented on Jan 2, 2020
@@ -17,7 +18,7 @@ public class AaruFormat : FsExtractIssueTest
 {
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue263");
     public override string TestFile => "Sony1.dicf";
-    public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
+    public override Dictionary<string, string> ParsedOptions => new();
     public override bool Debug => true;
     public override bool Xattrs => false;
     public override string Encoding => null;

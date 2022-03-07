@@ -30,6 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable MemberCanBeInternal
+
+namespace Aaru.Devices.Remote;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,10 +49,6 @@ using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Marshal = Aaru.Helpers.Marshal;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-// ReSharper disable MemberCanBeInternal
-
-namespace Aaru.Devices.Remote;
 
 /// <inheritdoc />
 /// <summary>Handles communication with a remote device that's connected using the AaruRemote protocol</summary>
@@ -89,7 +91,7 @@ public class Remote : IDisposable
 
         AaruConsole.WriteLine("Connected to {0}", uri.Host);
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         int len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -235,7 +237,7 @@ public class Remote : IDisposable
                 return false;
             }
 
-            byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -324,7 +326,7 @@ public class Remote : IDisposable
             return Array.Empty<DeviceInfo>();
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -392,9 +394,9 @@ public class Remote : IDisposable
         AaruPacketResponseListDevices response =
             Marshal.ByteArrayToStructureLittleEndian<AaruPacketResponseListDevices>(buf);
 
-        List<DeviceInfo> devices    = new List<DeviceInfo>();
-        int              offset     = Marshal.SizeOf<AaruPacketResponseListDevices>();
-        int              devInfoLen = Marshal.SizeOf<DeviceInfo>();
+        var devices    = new List<DeviceInfo>();
+        int offset     = Marshal.SizeOf<AaruPacketResponseListDevices>();
+        int devInfoLen = Marshal.SizeOf<DeviceInfo>();
 
         for(ushort i = 0; i < response.devices; i++)
         {
@@ -444,7 +446,7 @@ public class Remote : IDisposable
             return false;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -469,8 +471,7 @@ public class Remote : IDisposable
 
         if(hdr.packetType != AaruPacketType.Nop)
         {
-            AaruConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
-                                       hdr.packetType);
+            AaruConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...", hdr.packetType);
 
             lastError = -1;
 
@@ -543,7 +544,7 @@ public class Remote : IDisposable
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdScsi>() + cmdPkt.cdb_len + cmdPkt.buf_len);
 
         byte[] pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
-        byte[] buf    = new byte[cmdPkt.hdr.len];
+        var    buf    = new byte[cmdPkt.hdr.len];
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdScsi>());
 
@@ -562,7 +563,7 @@ public class Remote : IDisposable
             return -1;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -626,9 +627,9 @@ public class Remote : IDisposable
     /// </param>
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
-    public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
-                              AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
-                              uint timeout, bool transferBlocks, out double duration, out bool sense)
+    public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
+                              AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                              bool transferBlocks, out double duration, out bool sense)
     {
         duration       = 0;
         sense          = true;
@@ -656,7 +657,7 @@ public class Remote : IDisposable
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdAtaChs>() + cmdPkt.buf_len);
 
         byte[] pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
-        byte[] buf    = new byte[cmdPkt.hdr.len];
+        var    buf    = new byte[cmdPkt.hdr.len];
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaChs>());
 
@@ -672,7 +673,7 @@ public class Remote : IDisposable
             return -1;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -765,7 +766,7 @@ public class Remote : IDisposable
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdAtaLba28>() + cmdPkt.buf_len);
 
         byte[] pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
-        byte[] buf    = new byte[cmdPkt.hdr.len];
+        var    buf    = new byte[cmdPkt.hdr.len];
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaLba28>());
 
@@ -781,7 +782,7 @@ public class Remote : IDisposable
             return -1;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -804,8 +805,7 @@ public class Remote : IDisposable
 
         if(hdr.packetType != AaruPacketType.ResponseAtaLba28)
         {
-            AaruConsole.ErrorWriteLine("Expected ATA LBA28 Response Packet, got packet type {0}...",
-                                       hdr.packetType);
+            AaruConsole.ErrorWriteLine("Expected ATA LBA28 Response Packet, got packet type {0}...", hdr.packetType);
 
             return -1;
         }
@@ -875,7 +875,7 @@ public class Remote : IDisposable
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdAtaLba48>() + cmdPkt.buf_len);
 
         byte[] pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
-        byte[] buf    = new byte[cmdPkt.hdr.len];
+        var    buf    = new byte[cmdPkt.hdr.len];
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaLba48>());
 
@@ -891,7 +891,7 @@ public class Remote : IDisposable
             return -1;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -914,8 +914,7 @@ public class Remote : IDisposable
 
         if(hdr.packetType != AaruPacketType.ResponseAtaLba48)
         {
-            AaruConsole.ErrorWriteLine("Expected ATA LBA48 Response Packet, got packet type {0}...",
-                                       hdr.packetType);
+            AaruConsole.ErrorWriteLine("Expected ATA LBA48 Response Packet, got packet type {0}...", hdr.packetType);
 
             return -1;
         }
@@ -956,8 +955,8 @@ public class Remote : IDisposable
     /// <param name="response">Response registers</param>
     /// <param name="blockSize">Size of block in bytes</param>
     public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags, uint argument,
-                              uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
-                              out double duration, out bool sense, uint timeout = 0)
+                              uint blockSize, uint blocks, ref byte[] buffer, out uint[] response, out double duration,
+                              out bool sense, uint timeout = 0)
     {
         duration = 0;
         sense    = true;
@@ -991,7 +990,7 @@ public class Remote : IDisposable
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdSdhci>() + cmdPkt.command.buf_len);
 
         byte[] pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
-        byte[] buf    = new byte[cmdPkt.hdr.len];
+        var    buf    = new byte[cmdPkt.hdr.len];
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdSdhci>());
 
@@ -1007,7 +1006,7 @@ public class Remote : IDisposable
             return -1;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1089,7 +1088,7 @@ public class Remote : IDisposable
             return DeviceType.Unknown;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1112,8 +1111,7 @@ public class Remote : IDisposable
 
         if(hdr.packetType != AaruPacketType.ResponseGetType)
         {
-            AaruConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...",
-                                       hdr.packetType);
+            AaruConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...", hdr.packetType);
 
             return DeviceType.Unknown;
         }
@@ -1169,7 +1167,7 @@ public class Remote : IDisposable
             return false;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1192,8 +1190,7 @@ public class Remote : IDisposable
 
         if(hdr.packetType != AaruPacketType.ResponseGetSdhciRegisters)
         {
-            AaruConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...",
-                                       hdr.packetType);
+            AaruConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...", hdr.packetType);
 
             return false;
         }
@@ -1262,8 +1259,8 @@ public class Remote : IDisposable
     /// <param name="product">USB product string</param>
     /// <param name="serial">USB serial number string</param>
     /// <returns><c>true</c> if the device is attached via USB, <c>false</c> otherwise</returns>
-    public bool GetUsbData(out byte[] descriptors, out ushort idVendor, out ushort idProduct,
-                           out string manufacturer, out string product, out string serial)
+    public bool GetUsbData(out byte[] descriptors, out ushort idVendor, out ushort idProduct, out string manufacturer,
+                           out string product, out string serial)
     {
         descriptors  = null;
         idVendor     = 0;
@@ -1295,7 +1292,7 @@ public class Remote : IDisposable
             return false;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1388,7 +1385,7 @@ public class Remote : IDisposable
             return false;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1427,8 +1424,7 @@ public class Remote : IDisposable
             return false;
         }
 
-        AaruPacketResGetFireWireData res =
-            Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetFireWireData>(buf);
+        AaruPacketResGetFireWireData res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetFireWireData>(buf);
 
         if(!res.isFireWire)
             return false;
@@ -1472,7 +1468,7 @@ public class Remote : IDisposable
             return false;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1495,8 +1491,7 @@ public class Remote : IDisposable
 
         if(hdr.packetType != AaruPacketType.ResponseGetPcmciaData)
         {
-            AaruConsole.ErrorWriteLine("Expected PCMCIA Data Response Packet, got packet type {0}...",
-                                       hdr.packetType);
+            AaruConsole.ErrorWriteLine("Expected PCMCIA Data Response Packet, got packet type {0}...", hdr.packetType);
 
             return false;
         }
@@ -1529,7 +1524,7 @@ public class Remote : IDisposable
     /// <returns>Retrieved number of bytes</returns>
     static int Receive(Socket socket, byte[] buffer, int size, SocketFlags socketFlags)
     {
-        int offset = 0;
+        var offset = 0;
 
         while(size > 0)
         {
@@ -1591,7 +1586,7 @@ public class Remote : IDisposable
         duration = 0;
 
         long packetSize = Marshal.SizeOf<AaruPacketMultiCmdSdhci>() +
-                          (Marshal.SizeOf<AaruCmdSdhci>() * commands.LongLength);
+                          Marshal.SizeOf<AaruCmdSdhci>() * commands.LongLength;
 
         foreach(Device.MmcSingleCommand command in commands)
             packetSize += command.buffer?.Length ?? 0;
@@ -1609,7 +1604,7 @@ public class Remote : IDisposable
             }
         };
 
-        byte[] buf = new byte[packetSize];
+        var    buf = new byte[packetSize];
         byte[] tmp = Marshal.StructureToByteArrayLittleEndian(packet);
 
         Array.Copy(tmp, 0, buf, 0, tmp.Length);
@@ -1651,7 +1646,7 @@ public class Remote : IDisposable
             return -1;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1702,7 +1697,7 @@ public class Remote : IDisposable
 
         off = Marshal.SizeOf<AaruPacketMultiCmdSdhci>();
 
-        int error = 0;
+        var error = 0;
 
         foreach(Device.MmcSingleCommand command in commands)
         {
@@ -1743,12 +1738,11 @@ public class Remote : IDisposable
     /// <param name="sense">Set to <c>true</c> if any of the commands returned an error status, <c>false</c> otherwise</param>
     /// <param name="timeout">Maximum allowed time to execute a single command</param>
     /// <returns>0 if no error occurred, otherwise, errno</returns>
-    int SendMultipleMmcCommandsV1(Device.MmcSingleCommand[] commands, out double duration, out bool sense,
-                                  uint timeout)
+    int SendMultipleMmcCommandsV1(Device.MmcSingleCommand[] commands, out double duration, out bool sense, uint timeout)
     {
         sense    = false;
         duration = 0;
-        int error = 0;
+        var error = 0;
 
         foreach(Device.MmcSingleCommand command in commands)
         {
@@ -1795,7 +1789,7 @@ public class Remote : IDisposable
             return false;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1898,7 +1892,7 @@ public class Remote : IDisposable
             return false;
         }
 
-        byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
         len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 

@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using Aaru.CommonTypes.Interop;
 using Aaru.Devices.Linux;
 using Microsoft.Win32.SafeHandles;
-
-namespace Aaru.Devices;
 
 public sealed partial class Device
 {

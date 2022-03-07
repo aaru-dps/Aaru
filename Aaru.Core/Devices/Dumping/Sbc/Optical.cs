@@ -1,3 +1,11 @@
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Linq;
 using Aaru.CommonTypes.Extents;
@@ -7,12 +15,6 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Helpers;
 using Schemas;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -52,7 +54,7 @@ partial class Dump
         byte[]     buffer;
         ulong      sectorSpeedStart = 0;
         DateTime   timeSpeedStart   = DateTime.UtcNow;
-        bool       canMediumScan    = true;
+        var        canMediumScan    = true;
         var        outputFormat     = _outputPlugin as IWritableImage;
 
         InitProgress?.Invoke();

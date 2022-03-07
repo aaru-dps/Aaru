@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System.Text;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems;
-
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
-internal static partial class AppleCommon
+static partial class AppleCommon
 {
     internal static string GetBootBlockInformation(byte[] bbSector, Encoding encoding)
     {
@@ -62,9 +62,8 @@ internal static partial class AppleCommon
                 sb.AppendLine("Boot block should be executed.");
 
                 if((bb.bbVersion & 0x2000) > 0)
-                    sb.
-                        AppendFormat("System heap will be extended by {0} bytes and a {1} fraction of the available RAM",
-                                     bb.bbSysHeapExtra, bb.bbSysHeapFract).AppendLine();
+                    sb.AppendFormat("System heap will be extended by {0} bytes and a {1} fraction of the available RAM",
+                                    bb.bbSysHeapExtra, bb.bbSysHeapFract).AppendLine();
             }
         }
         else if((bb.bbVersion & 0xFF) == 0x0D)
@@ -77,11 +76,9 @@ internal static partial class AppleCommon
 
         sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.bbSysName, encoding)).AppendLine();
 
-        sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.bbShellName, encoding)).
-           AppendLine();
+        sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.bbShellName, encoding)).AppendLine();
 
-        sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.bbDbg1Name, encoding)).
-           AppendLine();
+        sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.bbDbg1Name, encoding)).AppendLine();
 
         sb.AppendFormat("Disassembler filename: {0}", StringHandlers.PascalToString(bb.bbDbg2Name, encoding)).
            AppendLine();

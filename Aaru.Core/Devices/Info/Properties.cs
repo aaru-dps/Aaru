@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices.Info;
+
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
@@ -39,8 +41,6 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
-
-namespace Aaru.Core.Devices.Info;
 
 public partial class DeviceInfo
 {

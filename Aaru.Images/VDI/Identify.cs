@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Vdi
 {
@@ -47,7 +47,7 @@ public sealed partial class Vdi
         if(stream.Length < 512)
             return false;
 
-        byte[] vHdrB = new byte[Marshal.SizeOf<Header>()];
+        var vHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
         _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 

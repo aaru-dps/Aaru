@@ -63,24 +63,26 @@
  * diskette image. Fortunately, the HD-Copy header is highly recognizable.
  */
 
-using System.Collections.Generic;
-using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
+
 
 // ReSharper disable NotAccessedField.Local
 
 namespace Aaru.DiscImages;
+
+using System.Collections.Generic;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 
 /// <inheritdoc />
 /// <summary>Implements reading HD-Copy disk images</summary>
 public sealed partial class HdCopy : IMediaImage
 {
     /// <summary>Every track that has been read is cached here</summary>
-    readonly Dictionary<int, byte[]> _trackCache = new Dictionary<int, byte[]>();
+    readonly Dictionary<int, byte[]> _trackCache = new();
 
     /// <summary>The offset in the file where each track starts, or -1 if the track is not present</summary>
-    readonly Dictionary<int, long> _trackOffset = new Dictionary<int, long>();
+    readonly Dictionary<int, long> _trackOffset = new();
     /// <summary>The HDCP file header after the image has been opened</summary>
     FileHeader _fileHeader;
 

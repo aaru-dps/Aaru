@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
-
-namespace Aaru.Devices;
 
 public sealed partial class Device
 {
@@ -56,9 +56,8 @@ public sealed partial class Device
             Feature = 0x0000
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout, false, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -139,9 +138,8 @@ public sealed partial class Device
 
         registers.LbaLowCurrent = logAddress;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                   AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -214,9 +212,8 @@ public sealed partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                   AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -244,9 +241,8 @@ public sealed partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout, false, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -293,9 +289,8 @@ public sealed partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                   AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 

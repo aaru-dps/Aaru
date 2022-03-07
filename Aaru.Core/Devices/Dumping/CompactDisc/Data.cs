@@ -30,6 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,12 +52,6 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -100,7 +102,7 @@ partial class Dump
         ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
         DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
         uint       blocksToRead;                       // How many sectors to read at once
-        bool       sense       = true;                 // Sense indicator
+        var        sense       = true;                 // Sense indicator
         byte[]     cmdBuf      = null;                 // Data buffer
         byte[]     senseBuf    = null;                 // Sense buffer
         double     cmdDuration = 0;                    // Command execution time
@@ -131,10 +133,10 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        int  currentReadSpeed      = _speed;
-        bool crossingLeadOut       = false;
-        bool failedCrossingLeadOut = false;
-        bool skippingLead          = false;
+        int currentReadSpeed      = _speed;
+        var crossingLeadOut       = false;
+        var failedCrossingLeadOut = false;
+        var skippingLead          = false;
 
         for(ulong i = _resume.NextBlock; (long)i <= lastSector; i += blocksToRead)
         {
@@ -156,7 +158,7 @@ partial class Dump
             if((long)i > lastSector)
                 break;
 
-            uint firstSectorToRead = (uint)i;
+            var firstSectorToRead = (uint)i;
 
             Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => i >= t.StartSector);
 
@@ -221,7 +223,6 @@ partial class Dump
             }
 
             if(_fixOffset && !inData)
-            {
                 if(offsetBytes < 0)
                 {
                     if(i == 0)
@@ -232,7 +233,6 @@ partial class Dump
                     if(blocksToRead <= sectorsForOffset)
                         blocksToRead += (uint)sectorsForOffset;
                 }
-            }
 
             if(!inData &&
                currentReadSpeed == 0xFFFF)
@@ -249,8 +249,7 @@ partial class Dump
             {
                 _dumpLog.WriteLine($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
 
-                UpdateStatus?.
-                    Invoke($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
+                UpdateStatus?.Invoke($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
 
                 _speed *= _speedMultiplier;
 
@@ -288,8 +287,8 @@ partial class Dump
 
             if(_supportsPlextorD8 && !inData)
             {
-                sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, firstSectorToRead, blockSize,
-                                                  blocksToRead, supportedPlextorSubchannel, out cmdDuration);
+                sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
+                                                  supportedPlextorSubchannel, out cmdDuration);
 
                 totalDuration += cmdDuration;
             }
@@ -298,9 +297,8 @@ partial class Dump
                 if(inData)
                 {
                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
-                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
-                                        true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
-                                        out cmdDuration);
+                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
+                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
                     if(sense)
                     {
@@ -309,13 +307,13 @@ partial class Dump
                         // Try to workaround firmware
                         if(decSense?.ASC == 0x64)
                         {
-                            bool goBackTrackTypeChange = false;
+                            var goBackTrackTypeChange = false;
 
                             // Go one for one as the drive does not tell us which one failed
-                            for(int bi = 0; bi < blocksToRead; bi++)
+                            for(var bi = 0; bi < blocksToRead; bi++)
                             {
-                                sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(firstSectorToRead + bi),
-                                                    blockSize, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(firstSectorToRead + bi), blockSize,
+                                                    1, MmcSectorTypes.AllTypes, false, false, true,
                                                     MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                                     supportedSubchannel, _dev.Timeout, out double cmdDuration2);
 
@@ -367,13 +365,13 @@ partial class Dump
                         DecodedSense? decSense = Sense.Decode(senseBuf);
 
                         // Try to workaround firmware
-                        if((decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05) ||
+                        if(decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05 ||
                            decSense?.ASC == 0x64)
                         {
                             sense = _dev.ReadCd(out cmdBuf, out _, firstSectorToRead, blockSize, blocksToRead,
-                                                MmcSectorTypes.AllTypes, false, false, true,
-                                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                                supportedSubchannel, _dev.Timeout, out double cmdDuration2);
+                                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                                true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                                out double cmdDuration2);
 
                             cmdDuration += cmdDuration2;
                         }
@@ -383,25 +381,17 @@ partial class Dump
                 totalDuration += cmdDuration;
             }
             else if(read16)
-            {
-                sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, false, false, firstSectorToRead, blockSize,
-                                    0, blocksToRead, false, _dev.Timeout, out cmdDuration);
-            }
+                sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, false, false, firstSectorToRead, blockSize, 0,
+                                    blocksToRead, false, _dev.Timeout, out cmdDuration);
             else if(read12)
-            {
                 sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, false, false, false, firstSectorToRead,
                                     blockSize, 0, blocksToRead, false, _dev.Timeout, out cmdDuration);
-            }
             else if(read10)
-            {
                 sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, false, false, false, firstSectorToRead,
                                     blockSize, 0, (ushort)blocksToRead, _dev.Timeout, out cmdDuration);
-            }
             else if(read6)
-            {
                 sense = _dev.Read6(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, (byte)blocksToRead,
                                    _dev.Timeout, out cmdDuration);
-            }
 
             double elapsed;
 
@@ -417,7 +407,7 @@ partial class Dump
 
                     if(_supportsPlextorD8)
                     {
-                        int adjustment = 0;
+                        var adjustment = 0;
 
                         if(offsetBytes < 0)
                             adjustment = -sectorsForOffset;
@@ -431,7 +421,7 @@ partial class Dump
 
                         if(!sense)
                         {
-                            uint sectorsForFix = (uint)(1 + sectorsForOffset);
+                            var sectorsForFix = (uint)(1 + sectorsForOffset);
 
                             FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel,
                                           ref sectorsForFix, subSize, ref cmdBuf, blockSize, false);
@@ -450,25 +440,17 @@ partial class Dump
                         totalDuration += cmdDuration;
                     }
                     else if(read16)
-                    {
                         sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i + r, blockSize, 0, 1,
                                             false, _dev.Timeout, out cmdDuration);
-                    }
                     else if(read12)
-                    {
                         sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)(i + r),
                                             blockSize, 0, 1, false, _dev.Timeout, out cmdDuration);
-                    }
                     else if(read10)
-                    {
                         sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)(i + r),
                                             blockSize, 0, 1, _dev.Timeout, out cmdDuration);
-                    }
                     else if(read6)
-                    {
                         sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)(i + r), blockSize, 1, _dev.Timeout,
                                            out cmdDuration);
-                    }
 
                     if(!sense &&
                        !_dev.Error)
@@ -480,8 +462,8 @@ partial class Dump
 
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
-                            byte[] data = new byte[sectorSize];
-                            byte[] sub  = new byte[subSize];
+                            var data = new byte[sectorSize];
+                            var sub  = new byte[subSize];
 
                             Array.Copy(cmdBuf, 0, data, 0, sectorSize);
 
@@ -491,12 +473,12 @@ partial class Dump
                                 outputFormat.WriteSectorsLong(data, i + r, 1);
                             else
                             {
-                                var    cooked = new MemoryStream();
-                                byte[] sector = new byte[sectorSize];
+                                var cooked = new MemoryStream();
+                                var sector = new byte[sectorSize];
 
-                                for(int b = 0; b < blocksToRead; b++)
+                                for(var b = 0; b < blocksToRead; b++)
                                 {
-                                    Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), sector, 0, sectorSize);
+                                    Array.Copy(cmdBuf, (int)(0 + b * blockSize), sector, 0, sectorSize);
                                     byte[] cookedSector = Sector.GetUserData(sector);
                                     cooked.Write(cookedSector, 0, cookedSector.Length);
                                 }
@@ -505,10 +487,10 @@ partial class Dump
                             }
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                desiredSubchannel, sub, i + r, 1, subLog, isrcs, (byte)track.Sequence,
-                                ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, outputFormat as IWritableOpticalImage,
-                                _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
-                                smallestPregapLbaPerTrack, true);
+                                desiredSubchannel, sub, i + r, 1, subLog, isrcs, (byte)track.Sequence, ref mcn,
+                                tracks, subchannelExtents, _fixSubchannelPosition,
+                                outputFormat as IWritableOpticalImage, _fixSubchannel, _fixSubchannelCrc, _dumpLog,
+                                UpdateStatus, smallestPregapLbaPerTrack, true);
 
                             // Set tracks and go back
                             if(indexesChanged)
@@ -525,10 +507,10 @@ partial class Dump
                                 outputFormat.WriteSectorsLong(cmdBuf, i + r, 1);
                             else
                             {
-                                var    cooked = new MemoryStream();
-                                byte[] sector = new byte[sectorSize];
+                                var cooked = new MemoryStream();
+                                var sector = new byte[sectorSize];
 
-                                for(int b = 0; b < blocksToRead; b++)
+                                for(var b = 0; b < blocksToRead; b++)
                                 {
                                     Array.Copy(cmdBuf, (int)(b * sectorSize), sector, 0, sectorSize);
                                     byte[] cookedSector = Sector.GetUserData(sector);
@@ -603,7 +585,7 @@ partial class Dump
             {
                 if(crossingLeadOut && failedCrossingLeadOut)
                 {
-                    byte[] tmp = new byte[cmdBuf.Length + blockSize];
+                    var tmp = new byte[cmdBuf.Length + blockSize];
                     Array.Copy(cmdBuf, 0, tmp, 0, cmdBuf.Length);
                 }
 
@@ -621,26 +603,26 @@ partial class Dump
 
                 if(supportedSubchannel != MmcSubchannel.None)
                 {
-                    byte[] data = new byte[sectorSize * blocksToRead];
-                    byte[] sub  = new byte[subSize    * blocksToRead];
+                    var data = new byte[sectorSize * blocksToRead];
+                    var sub  = new byte[subSize    * blocksToRead];
 
-                    for(int b = 0; b < blocksToRead; b++)
+                    for(var b = 0; b < blocksToRead; b++)
                     {
-                        Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
+                        Array.Copy(cmdBuf, (int)(0 + b * blockSize), data, sectorSize * b, sectorSize);
 
-                        Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
+                        Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize * b, subSize);
                     }
 
                     if(supportsLongSectors)
                         outputFormat.WriteSectorsLong(data, i, blocksToRead);
                     else
                     {
-                        var    cooked = new MemoryStream();
-                        byte[] sector = new byte[sectorSize];
+                        var cooked = new MemoryStream();
+                        var sector = new byte[sectorSize];
 
-                        for(int b = 0; b < blocksToRead; b++)
+                        for(var b = 0; b < blocksToRead; b++)
                         {
-                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), sector, 0, sectorSize);
+                            Array.Copy(cmdBuf, (int)(0 + b * blockSize), sector, 0, sectorSize);
                             byte[] cookedSector = Sector.GetUserData(sector);
                             cooked.Write(cookedSector, 0, cookedSector.Length);
                         }
@@ -649,8 +631,8 @@ partial class Dump
                     }
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                        desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.Sequence,
-                        ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, outputFormat as IWritableOpticalImage,
+                        desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.Sequence, ref mcn,
+                        tracks, subchannelExtents, _fixSubchannelPosition, outputFormat as IWritableOpticalImage,
                         _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack,
                         true);
 
@@ -669,10 +651,10 @@ partial class Dump
                         outputFormat.WriteSectorsLong(cmdBuf, i, blocksToRead);
                     else
                     {
-                        var    cooked = new MemoryStream();
-                        byte[] sector = new byte[sectorSize];
+                        var cooked = new MemoryStream();
+                        var sector = new byte[sectorSize];
 
-                        for(int b = 0; b < blocksToRead; b++)
+                        for(var b = 0; b < blocksToRead; b++)
                         {
                             Array.Copy(cmdBuf, (int)(b * sectorSize), sector, 0, sectorSize);
                             byte[] cookedSector = Sector.GetUserData(sector);
@@ -721,9 +703,7 @@ partial class Dump
                 else
                 {
                     if(supportsLongSectors)
-                    {
                         outputFormat.WriteSectorsLong(new byte[blockSize * _skip], i, _skip);
-                    }
                     else
                     {
                         if(cmdBuf.Length % sectorSize == 0)

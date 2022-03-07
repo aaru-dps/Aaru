@@ -64,6 +64,7 @@ public sealed partial class AppleHFS
 
     enum ForkType : sbyte
     {
-        Data = 0, Resource = -1
+        Data     = 0,
+        Resource = -1
     }
 }

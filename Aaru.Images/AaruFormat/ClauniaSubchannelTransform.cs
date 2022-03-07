@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using Aaru.Console;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
@@ -42,18 +42,18 @@ public sealed partial class AaruFormat
         if(interleaved == null)
             return null;
 
-        int[] p = new int[interleaved.Length / 8];
-        int[] q = new int[interleaved.Length / 8];
-        int[] r = new int[interleaved.Length / 8];
-        int[] s = new int[interleaved.Length / 8];
-        int[] t = new int[interleaved.Length / 8];
-        int[] u = new int[interleaved.Length / 8];
-        int[] v = new int[interleaved.Length / 8];
-        int[] w = new int[interleaved.Length / 8];
+        var p = new int[interleaved.Length / 8];
+        var q = new int[interleaved.Length / 8];
+        var r = new int[interleaved.Length / 8];
+        var s = new int[interleaved.Length / 8];
+        var t = new int[interleaved.Length / 8];
+        var u = new int[interleaved.Length / 8];
+        var v = new int[interleaved.Length / 8];
+        var w = new int[interleaved.Length / 8];
 
         DateTime start = DateTime.UtcNow;
 
-        for(int i = 0; i < interleaved.Length; i += 8)
+        for(var i = 0; i < interleaved.Length; i += 8)
         {
             p[i / 8] =  interleaved[i] & 0x80;
             p[i / 8] += (interleaved[i + 1] & 0x80) >> 1;
@@ -131,7 +131,7 @@ public sealed partial class AaruFormat
         DateTime end          = DateTime.UtcNow;
         TimeSpan deinterleave = end - start;
 
-        byte[] sequential = new byte[interleaved.Length];
+        var sequential = new byte[interleaved.Length];
         start = DateTime.UtcNow;
 
         int qStart = p.Length * 1;
@@ -142,7 +142,7 @@ public sealed partial class AaruFormat
         int vStart = p.Length * 6;
         int wStart = p.Length * 7;
 
-        for(int i = 0; i < p.Length; i++)
+        for(var i = 0; i < p.Length; i++)
         {
             sequential[i]          = (byte)p[i];
             sequential[qStart + i] = (byte)q[i];
@@ -174,14 +174,14 @@ public sealed partial class AaruFormat
         if(sequential == null)
             return null;
 
-        int[] p = new int[sequential.Length / 8];
-        int[] q = new int[sequential.Length / 8];
-        int[] r = new int[sequential.Length / 8];
-        int[] s = new int[sequential.Length / 8];
-        int[] t = new int[sequential.Length / 8];
-        int[] u = new int[sequential.Length / 8];
-        int[] v = new int[sequential.Length / 8];
-        int[] w = new int[sequential.Length / 8];
+        var p = new int[sequential.Length / 8];
+        var q = new int[sequential.Length / 8];
+        var r = new int[sequential.Length / 8];
+        var s = new int[sequential.Length / 8];
+        var t = new int[sequential.Length / 8];
+        var u = new int[sequential.Length / 8];
+        var v = new int[sequential.Length / 8];
+        var w = new int[sequential.Length / 8];
 
         int qStart = p.Length * 1;
         int rStart = p.Length * 2;
@@ -193,7 +193,7 @@ public sealed partial class AaruFormat
 
         DateTime start = DateTime.UtcNow;
 
-        for(int i = 0; i < p.Length; i++)
+        for(var i = 0; i < p.Length; i++)
         {
             p[i] = sequential[i];
             q[i] = sequential[qStart + i];
@@ -208,10 +208,10 @@ public sealed partial class AaruFormat
         DateTime end             = DateTime.UtcNow;
         TimeSpan desequentialize = end - start;
 
-        byte[] interleaved = new byte[sequential.Length];
+        var interleaved = new byte[sequential.Length];
         start = DateTime.UtcNow;
 
-        for(int i = 0; i < interleaved.Length; i += 8)
+        for(var i = 0; i < interleaved.Length; i += 8)
         {
             interleaved[i]     =  (byte)((p[i / 8] & 0x80) == 0x80 ? 0x80 : 0);
             interleaved[i + 1] += (byte)((p[i / 8] & 0x40) == 0x40 ? 0x80 : 0);

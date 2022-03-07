@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,8 +9,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using FluentAssertions;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Partitions;
 
 public abstract class PartitionSchemeTest
 {
@@ -36,13 +36,13 @@ public abstract class PartitionSchemeTest
 
             Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
 
-            IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
+            var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
             Assert.IsNotNull(image, $"Image format: {testFile}");
 
             Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), $"Cannot open image for {testFile}");
 
-            List<Partition> partitions = Core.Partitions.GetAll(image);
+            List<Partition> partitions = Partitions.GetAll(image);
 
             partitions.Should().BeEquivalentTo(test.Partitions, $"Partitions: {testFile}");
         }

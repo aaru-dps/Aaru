@@ -26,21 +26,21 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices.SCSI;
+
 using System;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Aaru.Helpers;
 
-namespace Aaru.Tests.Devices.SCSI;
-
-internal static class Spc
+static class Spc
 {
     internal static void Menu(string devPath, Device dev)
     {
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send a SCSI Primary Commands to the device:");
             AaruConsole.WriteLine("1.- Send INQUIRY command.");
@@ -56,12 +56,12 @@ internal static class Spc
             AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = System.Console.ReadLine();
+            string strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -114,7 +114,7 @@ internal static class Spc
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
+                    Console.ReadKey();
 
                     continue;
             }
@@ -123,11 +123,11 @@ internal static class Spc
 
     static void Inquiry(string devPath, Device dev)
     {
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending INQUIRY to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -146,13 +146,13 @@ internal static class Spc
         AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = System.Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -164,7 +164,7 @@ internal static class Spc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("INQUIRY response:");
 
@@ -172,13 +172,13 @@ internal static class Spc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("INQUIRY decoded response:");
 
@@ -186,13 +186,13 @@ internal static class Spc
                     AaruConsole.WriteLine("{0}", Decoders.SCSI.Inquiry.Prettify(buffer));
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("INQUIRY sense:");
 
@@ -200,27 +200,27 @@ internal static class Spc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("INQUIRY decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 5: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -232,11 +232,11 @@ internal static class Spc
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for INQUIRY command:");
             AaruConsole.WriteLine("EVPD page: {0}", page);
@@ -246,12 +246,12 @@ internal static class Spc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -264,13 +264,13 @@ internal static class Spc
                     return;
                 case 1:
                     AaruConsole.Write("Page?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out page))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         page = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -278,13 +278,12 @@ internal static class Spc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
-        bool sense = dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, page, dev.Timeout,
-                                     out double duration);
+        bool sense = dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, page, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending INQUIRY to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -303,13 +302,13 @@ internal static class Spc
         AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -321,7 +320,7 @@ internal static class Spc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("INQUIRY response:");
 
@@ -329,13 +328,13 @@ internal static class Spc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("INQUIRY sense:");
 
@@ -343,19 +342,19 @@ internal static class Spc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("INQUIRY decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -363,8 +362,8 @@ internal static class Spc
             case 5: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -372,18 +371,18 @@ internal static class Spc
 
     static void ModeSense6(string devPath, Device dev)
     {
-        bool                     dbd         = false;
+        var                      dbd         = false;
         ScsiModeSensePageControl pageControl = ScsiModeSensePageControl.Current;
         byte                     page        = 0x3F;
         byte                     subpage     = 0xFF;
         string                   strDev;
         int                      item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for MODE SENSE (6) command:");
             AaruConsole.WriteLine("DBD?: {0}", dbd);
@@ -396,12 +395,12 @@ internal static class Spc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -414,13 +413,13 @@ internal static class Spc
                     return;
                 case 1:
                     AaruConsole.Write("DBD?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out dbd))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         dbd = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
@@ -432,37 +431,37 @@ internal static class Spc
                                           ScsiModeSensePageControl.Saved);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out pageControl))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         pageControl = ScsiModeSensePageControl.Current;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Page?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out page))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         page = 0x3F;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Subpage?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out subpage))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         subpage = 0xFF;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -470,13 +469,13 @@ internal static class Spc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.ModeSense6(out byte[] buffer, out byte[] senseBuffer, dbd, pageControl, page, subpage,
                                     dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending MODE SENSE (6) to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -496,13 +495,13 @@ internal static class Spc
         AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -514,7 +513,7 @@ internal static class Spc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("MODE SENSE (6) response:");
 
@@ -522,13 +521,13 @@ internal static class Spc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("MODE SENSE (6) decoded response:");
 
@@ -536,13 +535,13 @@ internal static class Spc
                     AaruConsole.WriteLine("{0}", Modes.PrettifyModeHeader6(buffer, dev.ScsiType));
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("MODE SENSE (6) sense:");
 
@@ -550,19 +549,19 @@ internal static class Spc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("MODE SENSE (6) decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -570,8 +569,8 @@ internal static class Spc
             case 6: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -579,19 +578,19 @@ internal static class Spc
 
     static void ModeSense10(string devPath, Device dev)
     {
-        bool                     llba        = false;
-        bool                     dbd         = false;
+        var                      llba        = false;
+        var                      dbd         = false;
         ScsiModeSensePageControl pageControl = ScsiModeSensePageControl.Current;
         byte                     page        = 0x3F;
         byte                     subpage     = 0xFF;
         string                   strDev;
         int                      item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for MODE SENSE (10) command:");
             AaruConsole.WriteLine("LLBA?: {0}", llba);
@@ -605,12 +604,12 @@ internal static class Spc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -623,25 +622,25 @@ internal static class Spc
                     return;
                 case 1:
                     AaruConsole.Write("LLBA?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out llba))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         llba = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("DBD?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out dbd))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         dbd = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
@@ -653,37 +652,37 @@ internal static class Spc
                                           ScsiModeSensePageControl.Saved);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out pageControl))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         pageControl = ScsiModeSensePageControl.Current;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Page?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out page))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         page = 0x3F;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Subpage?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out subpage))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         subpage = 0xFF;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -691,13 +690,13 @@ internal static class Spc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
-        bool sense = dev.ModeSense10(out byte[] buffer, out byte[] senseBuffer, llba, dbd, pageControl, page,
-                                     subpage, dev.Timeout, out double duration);
+        bool sense = dev.ModeSense10(out byte[] buffer, out byte[] senseBuffer, llba, dbd, pageControl, page, subpage,
+                                     dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending MODE SENSE (10) to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -717,13 +716,13 @@ internal static class Spc
         AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -735,7 +734,7 @@ internal static class Spc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("MODE SENSE (10) response:");
 
@@ -743,13 +742,13 @@ internal static class Spc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("MODE SENSE (10) decoded response:");
 
@@ -757,13 +756,13 @@ internal static class Spc
                     AaruConsole.WriteLine("{0}", Modes.PrettifyModeHeader10(buffer, dev.ScsiType));
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("MODE SENSE (10) sense:");
 
@@ -771,19 +770,19 @@ internal static class Spc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("MODE SENSE (10) decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -791,8 +790,8 @@ internal static class Spc
             case 6: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -804,11 +803,11 @@ internal static class Spc
         string               strDev;
         int                  item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for PREVENT ALLOW MEDIUM REMOVAL command:");
             AaruConsole.WriteLine("Mode: {0}", mode);
@@ -818,12 +817,12 @@ internal static class Spc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -842,13 +841,13 @@ internal static class Spc
                                           ScsiPreventAllowMode.PreventChanger);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out mode))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         mode = ScsiPreventAllowMode.Allow;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -856,13 +855,12 @@ internal static class Spc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
-        bool sense =
-            dev.SpcPreventAllowMediumRemoval(out byte[] senseBuffer, mode, dev.Timeout, out double duration);
+        bool sense = dev.SpcPreventAllowMediumRemoval(out byte[] senseBuffer, mode, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending PREVENT ALLOW MEDIUM REMOVAL to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -876,13 +874,13 @@ internal static class Spc
         AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -897,8 +895,8 @@ internal static class Spc
             case 2: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -906,17 +904,17 @@ internal static class Spc
 
     static void ReadCapacity10(string devPath, Device dev)
     {
-        bool   relative = false;
-        bool   partial  = false;
+        var    relative = false;
+        var    partial  = false;
         uint   address  = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ CAPACITY (10) command:");
             AaruConsole.WriteLine("Relative address?: {0}", relative);
@@ -928,12 +926,12 @@ internal static class Spc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -946,37 +944,37 @@ internal static class Spc
                     return;
                 case 1:
                     AaruConsole.Write("Relative address?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out relative))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         relative = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Partial capacity?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out partial))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         partial = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Address?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out address))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         address = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -984,13 +982,13 @@ internal static class Spc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.ReadCapacity(out byte[] buffer, out byte[] senseBuffer, relative, address, partial,
                                       dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ CAPACITY (10) to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1009,13 +1007,13 @@ internal static class Spc
         AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -1027,7 +1025,7 @@ internal static class Spc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CAPACITY (10) response:");
 
@@ -1035,13 +1033,13 @@ internal static class Spc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CAPACITY (10) sense:");
 
@@ -1049,19 +1047,19 @@ internal static class Spc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CAPACITY (10) decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -1069,8 +1067,8 @@ internal static class Spc
             case 5: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -1078,16 +1076,16 @@ internal static class Spc
 
     static void ReadCapacity16(string devPath, Device dev)
     {
-        bool   partial = false;
+        var    partial = false;
         ulong  address = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ CAPACITY (16) command:");
             AaruConsole.WriteLine("Partial capacity?: {0}", partial);
@@ -1098,12 +1096,12 @@ internal static class Spc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -1116,25 +1114,25 @@ internal static class Spc
                     return;
                 case 1:
                     AaruConsole.Write("Partial capacity?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out partial))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         partial = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Address?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!ulong.TryParse(strDev, out address))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         address = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -1142,13 +1140,13 @@ internal static class Spc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.ReadCapacity16(out byte[] buffer, out byte[] senseBuffer, address, partial, dev.Timeout,
                                         out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ CAPACITY (16) to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1167,13 +1165,13 @@ internal static class Spc
         AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -1185,7 +1183,7 @@ internal static class Spc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CAPACITY (16) response:");
 
@@ -1193,13 +1191,13 @@ internal static class Spc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CAPACITY (16) sense:");
 
@@ -1207,19 +1205,19 @@ internal static class Spc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CAPACITY (16) decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -1227,8 +1225,8 @@ internal static class Spc
             case 5: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -1236,13 +1234,13 @@ internal static class Spc
 
     static void ReadMediaSerialNumber(string devPath, Device dev)
     {
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.ReadMediaSerialNumber(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
                                                out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ MEDIA SERIAL NUMBER to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1260,13 +1258,13 @@ internal static class Spc
         AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = System.Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -1278,7 +1276,7 @@ internal static class Spc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ MEDIA SERIAL NUMBER response:");
 
@@ -1286,13 +1284,13 @@ internal static class Spc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ MEDIA SERIAL NUMBER sense:");
 
@@ -1300,27 +1298,27 @@ internal static class Spc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ MEDIA SERIAL NUMBER decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -1328,15 +1326,15 @@ internal static class Spc
 
     static void RequestSense(string devPath, Device dev)
     {
-        bool   descriptor = false;
+        var    descriptor = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for REQUEST SENSE command:");
             AaruConsole.WriteLine("Descriptor: {0}", descriptor);
@@ -1346,12 +1344,12 @@ internal static class Spc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -1364,13 +1362,13 @@ internal static class Spc
                     return;
                 case 1:
                     AaruConsole.Write("Descriptor?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out descriptor))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         descriptor = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -1378,11 +1376,11 @@ internal static class Spc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.RequestSense(descriptor, out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending REQUEST SENSE to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1399,13 +1397,13 @@ internal static class Spc
         AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -1417,7 +1415,7 @@ internal static class Spc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("REQUEST SENSE sense:");
 
@@ -1425,8 +1423,8 @@ internal static class Spc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -1434,8 +1432,8 @@ internal static class Spc
             case 3: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -1443,11 +1441,11 @@ internal static class Spc
 
     static void TestUnitReady(string devPath, Device dev)
     {
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.ScsiTestUnitReady(out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending TEST UNIT READY to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1463,13 +1461,13 @@ internal static class Spc
         AaruConsole.WriteLine("0.- Return to SCSI Primary Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = System.Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -1481,7 +1479,7 @@ internal static class Spc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("TEST UNIT READY sense:");
 
@@ -1489,16 +1487,16 @@ internal static class Spc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }

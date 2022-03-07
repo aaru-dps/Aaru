@@ -31,11 +31,11 @@
 // Copyright © 2007 Fort Hood TX, herethen, Public Domain
 // ****************************************************************************/
 
+namespace Aaru.Devices.Windows;
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-
-namespace Aaru.Devices.Windows;
 
 //
 // A place for "higher level" related functions
@@ -43,7 +43,7 @@ namespace Aaru.Devices.Windows;
 //
 // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
 /// <summary>Implements functions for getting and accessing information from the USB bus</summary>
-internal static partial class Usb
+static partial class Usb
 {
     const          int    IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
     internal const string GuidDevinterfaceDisk            = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
@@ -55,7 +55,7 @@ internal static partial class Usb
     /// <returns>List of usb devices</returns>
     internal static List<UsbDevice> GetConnectedDevices()
     {
-        List<UsbDevice> devList = new List<UsbDevice>();
+        var devList = new List<UsbDevice>();
 
         foreach(UsbController controller in GetHostControllers())
             ListHub(controller.GetRootHub(), devList);
@@ -70,9 +70,7 @@ internal static partial class Usb
     {
         foreach(UsbPort port in hub.GetPorts())
             if(port.IsHub)
-            {
                 ListHub(port.GetHub(), devList);
-            }
             else
             {
                 if(port.IsDeviceConnected)
@@ -106,9 +104,7 @@ internal static partial class Usb
     {
         foreach(UsbPort port in hub.GetPorts())
             if(port.IsHub)
-            {
                 SearchHubDriverKeyName(port.GetHub(), ref foundDevice, driverKeyName);
-            }
             else
             {
                 if(!port.IsDeviceConnected)
@@ -151,9 +147,7 @@ internal static partial class Usb
     {
         foreach(UsbPort port in hub.GetPorts())
             if(port.IsHub)
-            {
                 SearchHubInstanceId(port.GetHub(), ref foundDevice, instanceId);
-            }
             else
             {
                 if(!port.IsDeviceConnected)
@@ -211,7 +205,7 @@ internal static partial class Usb
     static UsbDevice FindDeviceNumber(int devNum, string deviceGuid)
     {
         UsbDevice foundDevice = null;
-        string    instanceId  = "";
+        var       instanceId  = "";
 
         var diskGuid = new Guid(deviceGuid);
 
@@ -222,7 +216,7 @@ internal static partial class Usb
         if(h != INVALID_HANDLE_VALUE)
         {
             bool success;
-            int  i = 0;
+            var  i = 0;
 
             do
             {
@@ -246,7 +240,7 @@ internal static partial class Usb
                     }; // trust me :)
 
                     // now we can get some more detailed information
-                    int       nRequiredSize = 0;
+                    var       nRequiredSize = 0;
                     const int N_BYTES       = BUFFER_SIZE;
 
                     if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, N_BYTES, ref nRequiredSize, ref da))

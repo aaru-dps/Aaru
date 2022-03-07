@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes.Metadata;
-
 namespace Aaru.Core.Devices.Report;
+
+using Aaru.CommonTypes.Metadata;
 
 /// <summary>Implements creating a report for a USB device</summary>
 public sealed partial class DeviceReport

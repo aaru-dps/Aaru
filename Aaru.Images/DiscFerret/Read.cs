@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,17 +40,15 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class DiscFerret
 {
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        byte[] magicB = new byte[4];
+        var    magicB = new byte[4];
         Stream stream = imageFilter.GetDataForkStream();
         stream.Read(magicB, 0, 4);
-        uint magic = BitConverter.ToUInt32(magicB, 0);
+        var magic = BitConverter.ToUInt32(magicB, 0);
 
         if(magic != DFI_MAGIC &&
            magic != DFI_MAGIC2)
@@ -64,7 +64,7 @@ public sealed partial class DiscFerret
         {
             long thisOffset = stream.Position;
 
-            byte[] blk = new byte[Marshal.SizeOf<BlockHeader>()];
+            var blk = new byte[Marshal.SizeOf<BlockHeader>()];
             stream.Read(blk, 0, Marshal.SizeOf<BlockHeader>());
             BlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(blk);
 
@@ -73,11 +73,9 @@ public sealed partial class DiscFerret
 
             AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.head = {1}", thisOffset, blockHeader.head);
 
-            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.sector = {1}", thisOffset,
-                                       blockHeader.sector);
+            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.sector = {1}", thisOffset, blockHeader.sector);
 
-            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.length = {1}", thisOffset,
-                                       blockHeader.length);
+            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.length = {1}", thisOffset, blockHeader.length);
 
             if(stream.Position + blockHeader.length > stream.Length)
             {
@@ -135,8 +133,7 @@ public sealed partial class DiscFerret
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)

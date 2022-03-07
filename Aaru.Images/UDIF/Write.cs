@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,8 +44,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Claunia.PropertyList;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Udif
 {
@@ -223,7 +223,7 @@ public sealed partial class Udif
 
         for(uint i = 0; i < length; i++)
         {
-            byte[] tmp = new byte[_imageInfo.SectorSize];
+            var tmp = new byte[_imageInfo.SectorSize];
             Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
             if(!WriteSector(tmp, sectorAddress + i))

@@ -30,7 +30,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Runtime.InteropServices;
+
 
 // ReSharper disable UnusedType.Local
 
@@ -38,6 +38,8 @@ using System.Runtime.InteropServices;
 // ReSharper disable MemberCanBePrivate.Local
 
 namespace Aaru.Filesystems;
+
+using System.Runtime.InteropServices;
 
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf

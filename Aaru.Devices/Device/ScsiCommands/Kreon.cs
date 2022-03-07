@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using System;
 using Aaru.Console;
-
-namespace Aaru.Devices;
 
 public sealed partial class Device
 {
@@ -45,7 +45,7 @@ public sealed partial class Device
     public bool KreonDeprecatedUnlock(out byte[] senseBuffer, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.KreonCommand;
@@ -96,7 +96,7 @@ public sealed partial class Device
     public bool KreonSetLockState(out byte[] senseBuffer, KreonLockStates state, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.KreonCommand;
@@ -125,8 +125,8 @@ public sealed partial class Device
                                     out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
-        byte[] buffer = new byte[26];
+        var cdb    = new byte[6];
+        var buffer = new byte[26];
         features = 0;
 
         cdb[0] = (byte)ScsiCommands.KreonCommand;
@@ -150,9 +150,9 @@ public sealed partial class Device
            buffer[3] != 0xA5)
             return true;
 
-        for(int i = 4; i < 26; i += 2)
+        for(var i = 4; i < 26; i += 2)
         {
-            ushort feature = BitConverter.ToUInt16(buffer, i);
+            var feature = BitConverter.ToUInt16(buffer, i);
 
             if(feature == 0x0000)
                 break;
@@ -216,7 +216,7 @@ public sealed partial class Device
                                byte requestNumber = 0x00)
     {
         buffer = new byte[2048];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         senseBuffer = new byte[64];
 
         cdb[0]  = (byte)ScsiCommands.KreonSsCommand;

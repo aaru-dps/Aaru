@@ -30,22 +30,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {
     static int CdrWinMsfToLba(string msf)
     {
         string[] msfElements = msf.Split(':');
-        int      minute      = int.Parse(msfElements[0]);
-        int      second      = int.Parse(msfElements[1]);
-        int      frame       = int.Parse(msfElements[2]);
+        var      minute      = int.Parse(msfElements[0]);
+        var      second      = int.Parse(msfElements[1]);
+        var      frame       = int.Parse(msfElements[2]);
 
-        int sectors = (minute * 60 * 75) + (second * 75) + frame;
+        int sectors = minute * 60 * 75 + second * 75 + frame;
 
         return sectors;
     }

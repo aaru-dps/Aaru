@@ -31,14 +31,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui;
+
 using System;
 using System.Collections.ObjectModel;
 using Aaru.Console;
 using JetBrains.Annotations;
 
-namespace Aaru.Gui;
-
-internal static class ConsoleHandler
+static class ConsoleHandler
 {
     static bool _debug;
     static bool _verbose;
@@ -77,7 +77,7 @@ internal static class ConsoleHandler
         }
     }
 
-    public static ObservableCollection<LogEntry> Entries { get; } = new ObservableCollection<LogEntry>();
+    public static ObservableCollection<LogEntry> Entries { get; } = new();
 
     internal static void Init()
     {

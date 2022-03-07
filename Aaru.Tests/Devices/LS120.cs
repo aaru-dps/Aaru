@@ -26,6 +26,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,8 +36,6 @@ using Aaru.DiscImages;
 using Aaru.Filters;
 using FluentAssertions.Execution;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Devices;
 
 [TestFixture]
 public class Ls120
@@ -69,7 +69,7 @@ public class Ls120
 
         Assert.Multiple(() =>
         {
-            for(int i = 0; i < _testFiles.Length; i++)
+            for(var i = 0; i < _testFiles.Length; i++)
             {
                 var filter = new LZip();
                 filter.Open(_testFiles[i]);
@@ -83,14 +83,12 @@ public class Ls120
                     continue;
 
                 using(new AssertionScope())
-                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
                         Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
                         Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
                     });
-                }
             }
         });
     }

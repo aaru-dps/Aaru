@@ -30,15 +30,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices;
+
 using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 
-namespace Aaru.Core.Devices;
-
-internal sealed partial class Reader
+sealed partial class Reader
 {
     Identify.IdentifyDevice _ataId;
     bool                    _ataRead;
@@ -74,9 +74,9 @@ internal sealed partial class Reader
             Blocks    = (ulong)(Cylinders * Heads * Sectors);
         }
 
-        if((_ataId.CurrentCylinders != 0 && _ataId.CurrentHeads != 0 && _ataId.CurrentSectorsPerTrack != 0) ||
-           _ataId.Cylinders       <= 0                                                                      ||
-           _ataId.Heads           <= 0                                                                      ||
+        if(_ataId.CurrentCylinders != 0 && _ataId.CurrentHeads != 0 && _ataId.CurrentSectorsPerTrack != 0 ||
+           _ataId.Cylinders       <= 0                                                                    ||
+           _ataId.Heads           <= 0                                                                    ||
            _ataId.SectorsPerTrack <= 0)
             return;
 
@@ -111,7 +111,7 @@ internal sealed partial class Reader
             GetDeviceBlocks();
 
         bool                   sense;
-        int                    tries  = 0;
+        var                    tries  = 0;
         uint                   lba    = 0;
         ushort                 cyl    = 0;
         byte                   head   = 0;
@@ -139,15 +139,13 @@ internal sealed partial class Reader
             _ataReadDmaLba   = !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
             sense            = _dev.ReadDma(out cmdBuf, out errorLba, true, lba, 1, _timeout, out _);
 
-            _ataReadDmaRetryLba =
-                !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
+            _ataReadDmaRetryLba = !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
 
             sense         = _dev.Read(out cmdBuf, out AtaErrorRegistersLba48 errorLba48, lba, 1, _timeout, out _);
             _ataReadLba48 = !sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && cmdBuf.Length > 0;
             sense         = _dev.ReadDma(out cmdBuf, out errorLba48, lba, 1, _timeout, out _);
 
-            _ataReadDmaLba48 = !sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 &&
-                               cmdBuf.Length                        > 0;
+            _ataReadDmaLba48 = !sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && cmdBuf.Length > 0;
 
             if(_ataRead            ||
                _ataReadRetry       ||
@@ -159,9 +157,7 @@ internal sealed partial class Reader
                _ataReadDmaRetryLba ||
                _ataReadLba48       ||
                _ataReadDmaLba48)
-            {
                 break;
-            }
 
             lba    = (uint)rnd.Next(1, (int)Blocks);
             cyl    = (ushort)rnd.Next(0, Cylinders);
@@ -281,7 +277,7 @@ internal sealed partial class Reader
             return false;
         }
 
-        bool error = true;
+        var error = true;
 
         while(IsLba)
         {
@@ -345,7 +341,7 @@ internal sealed partial class Reader
 
     bool AtaReadBlocks(out byte[] buffer, ulong block, uint count, out double duration, out bool recoveredError)
     {
-        bool                   error = true;
+        var                    error = true;
         bool                   sense;
         AtaErrorRegistersLba28 errorLba;
         AtaErrorRegistersLba48 errorLba48;
@@ -431,7 +427,7 @@ internal sealed partial class Reader
     bool AtaReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration,
                     out bool recoveredError)
     {
-        bool                 error = true;
+        var                  error = true;
         bool                 sense;
         AtaErrorRegistersChs errorChs;
         byte                 status = 0, errorByte = 0;
@@ -452,8 +448,7 @@ internal sealed partial class Reader
         }
         else if(_ataReadDma)
         {
-            sense = _dev.ReadDma(out buffer, out errorChs, false, cylinder, head, sector, 1, _timeout,
-                                 out duration);
+            sense = _dev.ReadDma(out buffer, out errorChs, false, cylinder, head, sector, 1, _timeout, out duration);
 
             error     = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
             status    = errorChs.Status;

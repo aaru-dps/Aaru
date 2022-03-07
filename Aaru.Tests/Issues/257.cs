@@ -1,9 +1,10 @@
+namespace Aaru.Tests.Issues;
+
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 
-namespace Aaru.Tests.Issues;
 /* SilasLaspada commented on Nov 23, 2019
  *
  * Trying to convert an NRG image to various images formats fails in various ways. Converting it to ISO prints
@@ -18,7 +19,7 @@ namespace Aaru.Tests.Issues;
 // 20200621 CLAUNIA: Fixed in c80baa5efb4ea8a9e4347278086b2414469ae4c6
 public class _257 : OpticalImageConvertIssueTest
 {
-    public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
+    public override Dictionary<string, string> ParsedOptions => new();
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue257");
     public override string InputPath => "TempImage.nrg.xz";
     public override string SuggestedOutputFilename => "AaruIssue257Output.iso";

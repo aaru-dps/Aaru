@@ -30,6 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Media;
+
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Aaru.CommonTypes.Enums;
@@ -39,9 +42,7 @@ using Aaru.Core.Devices.Scanning;
 using Aaru.Devices;
 using Spectre.Console;
 
-namespace Aaru.Commands.Media;
-
-internal sealed class MediaScanCommand : Command
+sealed class MediaScanCommand : Command
 {
     static ProgressTask _progressTask1;
 
@@ -93,7 +94,7 @@ internal sealed class MediaScanCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -129,14 +130,14 @@ internal sealed class MediaScanCommand : Command
            char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-        Devices.Device dev = null;
+        Device dev = null;
 
         try
         {
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Opening device...").IsIndeterminate();
-                dev = new Devices.Device(devicePath);
+                dev = new Device(devicePath);
             });
 
             if(dev.IsRemote)
@@ -163,8 +164,7 @@ internal sealed class MediaScanCommand : Command
         ScanResults results = new();
 
         AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                    Start(ctx =>
+                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).Start(ctx =>
                     {
                         scanner.UpdateStatus += text =>
                         {
@@ -206,7 +206,7 @@ internal sealed class MediaScanCommand : Command
                             _progressTask1 = null;
                         };
 
-                        System.Console.CancelKeyPress += (_, e) =>
+                        Console.CancelKeyPress += (_, e) =>
                         {
                             e.Cancel = true;
                             scanner.Abort();

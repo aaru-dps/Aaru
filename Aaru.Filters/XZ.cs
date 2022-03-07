@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filters;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using SharpCompress.Compressors.Xz;
-
-namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Decompress xz files while reading</summary>
@@ -83,8 +83,8 @@ public sealed class XZ : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        byte[] buffer = new byte[6];
-        byte[] footer = new byte[2];
+        var buffer = new byte[6];
+        var footer = new byte[2];
 
         if(stream.Length < 8)
             return false;
@@ -95,8 +95,8 @@ public sealed class XZ : IFilter
         stream.Read(footer, 0, 2);
         stream.Seek(0, SeekOrigin.Begin);
 
-        return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
-               buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
+        return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A &&
+               buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
     }
 
     /// <inheritdoc />
@@ -105,9 +105,9 @@ public sealed class XZ : IFilter
         if(!File.Exists(path))
             return false;
 
-        var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        byte[] buffer = new byte[6];
-        byte[] footer = new byte[2];
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        var buffer = new byte[6];
+        var footer = new byte[2];
 
         if(stream.Length < 8)
             return false;
@@ -118,8 +118,8 @@ public sealed class XZ : IFilter
         stream.Read(footer, 0, 2);
         stream.Seek(0, SeekOrigin.Begin);
 
-        return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 &&
-               buffer[4] == 0x5A && buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
+        return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A &&
+               buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
     }
 
     /// <inheritdoc />
@@ -200,7 +200,7 @@ public sealed class XZ : IFilter
 
         // Seek to footer backwards size field
         _dataStream.Seek(-8, SeekOrigin.End);
-        byte[] tmp = new byte[4];
+        var tmp = new byte[4];
         _dataStream.Read(tmp, 0, 4);
         uint backwardSize = (BitConverter.ToUInt32(tmp, 0) + 1) * 4;
 
@@ -232,7 +232,7 @@ public sealed class XZ : IFilter
             sizeMax = 9;
 
         num = (ulong)(buf[0] & 0x7F);
-        int i = 0;
+        var i = 0;
 
         while((buf[i++] & 0x80) == 0x80)
         {

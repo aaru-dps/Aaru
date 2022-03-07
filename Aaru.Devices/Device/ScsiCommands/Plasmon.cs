@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.Console;
-
 namespace Aaru.Devices;
+
+using Aaru.Console;
 
 public sealed partial class Device
 {
@@ -67,9 +67,9 @@ public sealed partial class Device
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
                                 ushort transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
-                                out double duration) =>
-        HpReadLong(out buffer, out senseBuffer, relAddr, address, transferLen, blockBytes, pba, sectorCount,
-                   timeout, out duration);
+                                out double duration) => HpReadLong(out buffer, out senseBuffer, relAddr, address,
+                                                                   transferLen, blockBytes, pba, sectorCount, timeout,
+                                                                   out duration);
 
     /// <summary>Retrieves the logical or physical block address for the specified <paramref name="address" /></summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
@@ -83,7 +83,7 @@ public sealed partial class Device
                                           uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.PlasmonReadSectorLocation;
         cdb[2] = (byte)((address & 0xFF000000) >> 24);

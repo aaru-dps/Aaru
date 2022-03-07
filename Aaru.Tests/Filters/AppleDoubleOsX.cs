@@ -26,15 +26,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filters;
+
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Filters;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Filters;
 
 [TestFixture]
 public class AppleDoubleOsX
@@ -58,7 +57,7 @@ public class AppleDoubleOsX
         IFilter filter = new AppleDouble();
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
-        byte[] data = new byte[737280];
+        var    data = new byte[737280];
         str.Read(data, 0, 737280);
         str.Close();
         str.Dispose();
@@ -90,7 +89,7 @@ public class AppleDoubleOsX
         IFilter filter = new AppleDouble();
         filter.Open(_location);
         Stream str  = filter.GetResourceForkStream();
-        byte[] data = new byte[286];
+        var    data = new byte[286];
         str.Read(data, 0, 286);
         str.Close();
         str.Dispose();

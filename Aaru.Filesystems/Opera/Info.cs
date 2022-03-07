@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Text;
 using Aaru.CommonTypes;
@@ -37,8 +39,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
@@ -53,7 +53,7 @@ public sealed partial class OperaFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        byte[] syncBytes = new byte[5];
+        var syncBytes = new byte[5];
 
         byte recordType = sbSector[0x000];
         Array.Copy(sbSector, 0x001, syncBytes, 0, 5);
@@ -67,8 +67,7 @@ public sealed partial class OperaFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         // TODO: Find correct default encoding
         Encoding    = Encoding.ASCII;
@@ -92,13 +91,12 @@ public sealed partial class OperaFS
         superBlockMetadata.AppendFormat("Opera filesystem disc.").AppendLine();
 
         if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, Encoding)))
-            superBlockMetadata.
-                AppendFormat("Volume label: {0}", StringHandlers.CToString(sb.volume_label, Encoding)).AppendLine();
+            superBlockMetadata.AppendFormat("Volume label: {0}", StringHandlers.CToString(sb.volume_label, Encoding)).
+                               AppendLine();
 
         if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, Encoding)))
             superBlockMetadata.
-                AppendFormat("Volume comment: {0}", StringHandlers.CToString(sb.volume_comment, Encoding)).
-                AppendLine();
+                AppendFormat("Volume comment: {0}", StringHandlers.CToString(sb.volume_comment, Encoding)).AppendLine();
 
         superBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
         superBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();

@@ -1,7 +1,8 @@
+namespace Aaru.Tests.Issues;
+
 using System.Collections.Generic;
 using System.IO;
 
-namespace Aaru.Tests.Issues;
 /* https://github.com/aaru-dps/Aaru/issues/360
  *
  * claunia commented on May 20, 2020
@@ -15,7 +16,7 @@ public class _360 : FsExtractIssueTest
 {
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue360");
     public override string TestFile => "AAAA.iso.xz";
-    public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
+    public override Dictionary<string, string> ParsedOptions => new();
     public override bool Debug => true;
     public override bool Xattrs => false;
     public override string Encoding => null;

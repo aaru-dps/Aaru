@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using System;
 using Aaru.Console;
-
-namespace Aaru.Devices;
 
 public sealed partial class Device
 {
@@ -46,8 +46,8 @@ public sealed partial class Device
     /// <param name="lba">Starting block.</param>
     /// <param name="blockSize">Block size in bytes.</param>
     public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout,
-                             out double duration) =>
-        SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false, false, timeout, out duration);
+                             out double duration) => SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false,
+                                                                  false, timeout, out duration);
 
     /// <summary>Sends the SyQuest READ LONG (6) command</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
@@ -72,12 +72,12 @@ public sealed partial class Device
     /// <param name="readLong">If set to <c>true</c> drive will return ECC bytes and disable error detection.</param>
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="transferLength">How many blocks to read.</param>
-    public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
-                             byte transferLength, bool inhibitDma, bool readLong, uint timeout, out double duration)
+    public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, byte transferLength,
+                             bool inhibitDma, bool readLong, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[6];
-        bool   sense;
+        var  cdb = new byte[6];
+        bool sense;
 
         cdb[0] = (byte)ScsiCommands.Read6;
         cdb[1] = (byte)((lba & 0x1F0000) >> 16);
@@ -121,8 +121,7 @@ public sealed partial class Device
     /// <param name="senseBuffer">Sense buffer.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool SyQuestReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout,
-                                        out double duration) =>
+    public bool SyQuestReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
         AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
 
     /// <summary>Sends the SyQuest READ LONG (10) command</summary>
@@ -149,12 +148,11 @@ public sealed partial class Device
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="transferLength">How many blocks to read.</param>
     public bool SyQuestRead10(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
-                              ushort transferLength, bool inhibitDma, bool readLong, uint timeout,
-                              out double duration)
+                              ushort transferLength, bool inhibitDma, bool readLong, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
-        bool   sense;
+        var  cdb = new byte[10];
+        bool sense;
 
         cdb[0] = (byte)ScsiCommands.Read10;
         cdb[2] = (byte)((lba & 0xFF000000) >> 24);

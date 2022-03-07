@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Chd
 {
@@ -43,7 +43,7 @@ public sealed partial class Chd
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
-        byte[] magic = new byte[8];
+        var magic = new byte[8];
         stream.Read(magic, 0, 8);
 
         return _chdTag.SequenceEqual(magic);

@@ -1,91 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{282271D0-CCC2-4ED7-BA38-EC06A84BB974}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>Aaru.Archives</RootNamespace>
-    <AssemblyName>Aaru.Archives</AssemblyName>
-    <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>6.0.0-alpha8</Version>
-    <Company>Claunia.com</Company>
-    <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
-    <Product>Aaru Data Preservation Suite</Product>
-    <Title>Aaru.Archives</Title>
-    <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFramework>net6</TargetFramework>
-    <LangVersion>10</LangVersion>
-    <Description>Archive implementations used by the Aaru Data Preservation Suite.</Description>
-    <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
-    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/aaru-dps/Aaru.Archives</RepositoryUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
-    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-  </PropertyGroup>
-  <PropertyGroup>
-    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
-    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-    <NrtShowRevision>true</NrtShowRevision>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\net6</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\net6</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Register.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\LICENSE.LGPL">
-      <Link>LICENSE.LGPL</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj">
-    </ProjectReference>
-    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="SharpCompress" Version="0.30.1" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <Policies>
-          <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp" />
-          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp" />
-          <StandardHeader IncludeInNewFiles="True" Text="/***************************************************************************&#xA;Aaru Data Preservation Suite&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This library is free software; you can redistribute it and/or modify&#xA;    it under the terms of the GNU Lesser General Public License as&#xA;    published by the Free Software Foundation; either version 2.1 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This library is distributed in the hope that it will be useful, but&#xA;    WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&#xA;    Lesser General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU Lesser General Public&#xA;    License along with this library; if not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/" />
-        </Policies>
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{282271D0-CCC2-4ED7-BA38-EC06A84BB974}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <RootNamespace>Aaru.Archives</RootNamespace>
+        <AssemblyName>Aaru.Archives</AssemblyName>
+        <ReleaseVersion>$(Version)</ReleaseVersion>
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <Version>6.0.0-alpha8</Version>
+        <Company>Claunia.com</Company>
+        <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
+        <Product>Aaru Data Preservation Suite</Product>
+        <Title>Aaru.Archives</Title>
+        <ApplicationVersion>$(Version)</ApplicationVersion>
+        <TargetFramework>net6</TargetFramework>
+        <LangVersion>10</LangVersion>
+        <Description>Archive implementations used by the Aaru Data Preservation Suite.</Description>
+        <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+        <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/aaru-dps/Aaru.Archives</RepositoryUrl>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    </PropertyGroup>
+    <PropertyGroup>
+        <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+        <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+        <NrtShowRevision>true</NrtShowRevision>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\net6</OutputPath>
+        <DefineConstants>DEBUG;</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <ConsolePause>false</ConsolePause>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\net6</OutputPath>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <ConsolePause>false</ConsolePause>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="Register.cs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="..\LICENSE.LGPL">
+            <Link>LICENSE.LGPL</Link>
+        </EmbeddedResource>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"></ProjectReference>
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"></ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="SharpCompress" Version="0.30.1"/>
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    <ProjectExtensions>
+        <MonoDevelop>
+            <Properties>
+                <Policies>
+                    <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp"/>
+                    <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp"/>
+                    <StandardHeader IncludeInNewFiles="True" Text="/***************************************************************************&#xA;Aaru Data Preservation Suite&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This library is free software; you can redistribute it and/or modify&#xA;    it under the terms of the GNU Lesser General Public License as&#xA;    published by the Free Software Foundation; either version 2.1 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This library is distributed in the hope that it will be useful, but&#xA;    WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&#xA;    Lesser General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU Lesser General Public&#xA;    License along with this library; if not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/"/>
+                </Policies>
+            </Properties>
+        </MonoDevelop>
+    </ProjectExtensions>
     <PropertyGroup Condition="$(TargetFramework.StartsWith('net4')) and '$(OS)' == 'Unix'">
         <!-- When compiling .NET SDK 2.0 projects targeting .NET 4.x on Mono using 'dotnet build' you -->
         <!-- have to teach MSBuild where the Mono copy of the reference asssemblies is -->

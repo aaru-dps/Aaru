@@ -31,6 +31,12 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
+
+// ReSharper disable JoinDeclarationAndInitializer
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -43,16 +49,12 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decryption;
 using Aaru.Decryption.DVD;
 using Aaru.Devices;
+using Aaru.Settings;
 using Schemas;
 using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Spare = Aaru.Decoders.DVD.Spare;
-
-// ReSharper disable JoinDeclarationAndInitializer
-
-namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implement dumping optical discs from MultiMedia devices</summary>
 partial class Dump
@@ -63,15 +65,14 @@ partial class Dump
         MediaType     dskType = MediaType.Unknown;
         bool          sense;
         byte[]        tmpBuf;
-        bool          compactDisc      = true;
-        bool          gotConfiguration = false;
-        bool          isXbox           = false;
+        var           compactDisc      = true;
+        var           gotConfiguration = false;
+        var           isXbox           = false;
         DVDDecryption dvdDecrypt       = null;
         _speedMultiplier = 1;
 
         // TODO: Log not only what is it reading, but if it was read correctly or not.
-        sense = _dev.GetConfiguration(out byte[] cmdBuf, out _, 0, MmcGetConfigurationRt.Current, _dev.Timeout,
-                                      out _);
+        sense = _dev.GetConfiguration(out byte[] cmdBuf, out _, 0, MmcGetConfigurationRt.Current, _dev.Timeout, out _);
 
         if(!sense)
         {
@@ -206,8 +207,7 @@ partial class Dump
 
         Modes.DecodedMode? decMode = null;
 
-        sense = _dev.ModeSense6(out cmdBuf, out _, true, ScsiModeSensePageControl.Current, 0x00, _dev.Timeout,
-                                out _);
+        sense = _dev.ModeSense6(out cmdBuf, out _, true, ScsiModeSensePageControl.Current, 0x00, _dev.Timeout, out _);
 
         if(sense || _dev.Error)
         {
@@ -228,8 +228,8 @@ partial class Dump
 
             if(sense || _dev.Error)
             {
-                sense = _dev.ModeSense10(out cmdBuf, out _, false, false, ScsiModeSensePageControl.Current, 0x3F,
-                                         0x00, _dev.Timeout, out _);
+                sense = _dev.ModeSense10(out cmdBuf, out _, false, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
+                                         _dev.Timeout, out _);
 
                 if(sense || _dev.Error)
                 {
@@ -281,7 +281,7 @@ partial class Dump
         var   scsiReader = new Reader(_dev, _dev.Timeout, null, _errorLog, _dumpRaw);
         ulong blocks     = scsiReader.GetDeviceBlocks();
         _dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
-        Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
+        var mediaTags = new Dictionary<MediaTagType, byte[]>();
 
         if(dskType == MediaType.PD650)
             switch(blocks + 1)
@@ -323,8 +323,7 @@ partial class Dump
                     {
                         _dumpLog.WriteLine("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
 
-                        StoppingErrorMessage?.
-                            Invoke("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
+                        StoppingErrorMessage?.Invoke("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
 
                         return;
                     }
@@ -441,9 +440,7 @@ partial class Dump
                        DMI.IsXbox360(cmdBuf))
                     {
                         if(DMI.IsXbox(cmdBuf))
-                        {
                             dskType = MediaType.XGD;
-                        }
                         else if(DMI.IsXbox360(cmdBuf))
                         {
                             dskType = MediaType.XGD2;
@@ -519,7 +516,7 @@ partial class Dump
                         UpdateStatus?.Invoke("Drive reports no copy protection on disc.");
                     else
                     {
-                        if(!Settings.Settings.Current.EnableDecryption)
+                        if(!Settings.Current.EnableDecryption)
                             UpdateStatus?.Invoke("Drive reports the disc uses copy protection. " +
                                                  "The dump will be incorrect unless decryption is enabled.");
                         else
@@ -531,9 +528,8 @@ partial class Dump
                                 dvdDecrypt = new DVDDecryption(_dev);
 
                                 sense = dvdDecrypt.ReadBusKey(out cmdBuf, out _,
-                                                              CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.
-                                                                       CopyrightType ?? CopyrightType.NoProtection,
-                                                              _dev.Timeout, out _);
+                                                              CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ??
+                                                              CopyrightType.NoProtection, _dev.Timeout, out _);
 
                                 if(!sense)
                                 {
@@ -546,12 +542,10 @@ partial class Dump
                                     {
                                         CSS_CPRM.DiscKey? decodedDiscKey = CSS.DecodeDiscKey(cmdBuf, busKey);
 
-                                        sense = dvdDecrypt.ReadAsf(out cmdBuf, out _,
-                                                                   DvdCssKeyClass.DvdCssCppmOrCprm, _dev.Timeout,
-                                                                   out _);
+                                        sense = dvdDecrypt.ReadAsf(out cmdBuf, out _, DvdCssKeyClass.DvdCssCppmOrCprm,
+                                                                   _dev.Timeout, out _);
 
                                         if(!sense)
-                                        {
                                             if(cmdBuf[7] == 1)
                                             {
                                                 UpdateStatus?.Invoke("Disc and drive authentication succeeded.");
@@ -566,22 +560,18 @@ partial class Dump
                                                         CSS_CPRM.DecodeRegionalPlaybackControlState(cmdBuf);
 
                                                     if(rpc.HasValue)
-                                                    {
                                                         UpdateStatus?.Invoke(CSS.CheckRegion(rpc.Value, cmi.Value)
                                                                                  ? "Disc and drive regions match."
                                                                                  : "Disc and drive regions do not match. The dump will be incorrect");
-                                                    }
                                                 }
 
                                                 if(decodedDiscKey.HasValue)
                                                 {
-                                                    mediaTags.Add(MediaTagType.DVD_DiscKey,
-                                                                  decodedDiscKey.Value.Key);
+                                                    mediaTags.Add(MediaTagType.DVD_DiscKey, decodedDiscKey.Value.Key);
 
                                                     UpdateStatus?.Invoke("Decrypting disc key.");
 
-                                                    CSS.DecryptDiscKey(decodedDiscKey.Value.Key,
-                                                                       out byte[] discKey);
+                                                    CSS.DecryptDiscKey(decodedDiscKey.Value.Key, out byte[] discKey);
 
                                                     if(discKey != null)
                                                     {
@@ -592,16 +582,13 @@ partial class Dump
                                                         UpdateStatus?.Invoke("Decryption of disc key failed.");
                                                 }
                                             }
-                                        }
                                     }
                                 }
                             }
                             else
-                            {
                                 UpdateStatus?.
                                     Invoke($"Drive reports disc uses {(CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ?? CopyrightType.NoProtection).ToString()} copy protection. " +
                                            "This is not yet supported and the dump will be incorrect.");
-                            }
                         }
                     }
                 }
@@ -702,8 +689,7 @@ partial class Dump
                 _dumpLog.WriteLine("Reading Recordable Physical Information.");
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.DvdrPhysicalInformation, 0, _dev.Timeout,
-                                               out _);
+                                               MmcDiscStructureFormat.DvdrPhysicalInformation, 0, _dev.Timeout, out _);
 
                 if(!sense)
                 {
@@ -840,8 +826,7 @@ partial class Dump
                 _dumpLog.WriteLine("Reading Spare Area Information.");
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
-                                               MmcDiscStructureFormat.BdSpareAreaInformation, 0, _dev.Timeout,
-                                               out _);
+                                               MmcDiscStructureFormat.BdSpareAreaInformation, 0, _dev.Timeout, out _);
 
                 if(!sense)
                 {
@@ -897,7 +882,7 @@ partial class Dump
                     Checksums = Checksum.GetChecksums(tag).ToArray()
                 };
 
-                byte[] tmp = new byte[tag.Length + 4];
+                var tmp = new byte[tag.Length + 4];
                 Array.Copy(tag, 0, tmp, 4, tag.Length);
                 tmp[0] = (byte)((tag.Length & 0xFF00) >> 8);
                 tmp[1] = (byte)(tag.Length & 0xFF);

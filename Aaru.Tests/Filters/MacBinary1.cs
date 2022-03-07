@@ -26,15 +26,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filters;
+
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Filters;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Filters;
 
 [TestFixture]
 public class MacBinary1
@@ -44,8 +43,7 @@ public class MacBinary1
     const    string EXPECTED_RESOURCE = "c689c58945169065483d94e39583d416";
     readonly string _location;
 
-    public MacBinary1() =>
-        _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "MacBinary", "macbinary1.bin");
+    public MacBinary1() => _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "MacBinary", "macbinary1.bin");
 
     [Test]
     public void CheckContents()
@@ -53,7 +51,7 @@ public class MacBinary1
         IFilter filter = new MacBinary();
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
-        byte[] data = new byte[737280];
+        var    data = new byte[737280];
         str.Read(data, 0, 737280);
         str.Close();
         str.Dispose();
@@ -82,7 +80,7 @@ public class MacBinary1
         IFilter filter = new MacBinary();
         filter.Open(_location);
         Stream str  = filter.GetResourceForkStream();
-        byte[] data = new byte[286];
+        var    data = new byte[286];
         str.Read(data, 0, 286);
         str.Close();
         str.Dispose();

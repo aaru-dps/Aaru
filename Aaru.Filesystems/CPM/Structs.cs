@@ -30,12 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
+
 
 // ReSharper disable NotAccessedField.Local
 
 namespace Aaru.Filesystems;
+
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 public sealed partial class CPM
 {

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using System.Text;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class SaveDskF
 {
     /// <inheritdoc />
@@ -49,7 +49,7 @@ public sealed partial class SaveDskF
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        byte[] hdr = new byte[40];
+        var hdr = new byte[40];
 
         stream.Read(hdr, 0, 40);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
@@ -78,7 +78,7 @@ public sealed partial class SaveDskF
            _header.magic      == SDF_MAGIC_OLD)
             _header.dataOffset = 512;
 
-        byte[] cmt = new byte[_header.dataOffset - _header.commentOffset];
+        var cmt = new byte[_header.dataOffset - _header.commentOffset];
         stream.Seek(_header.commentOffset, SeekOrigin.Begin);
         stream.Read(cmt, 0, cmt.Length);
 
@@ -109,9 +109,8 @@ public sealed partial class SaveDskF
         _imageInfo.Sectors              = (ulong)(_header.sectorsPerTrack * _header.heads * _header.cylinders);
         _imageInfo.SectorSize           = _header.sectorSize;
 
-        _imageInfo.MediaType = Geometry.GetMediaType((_header.cylinders, (byte)_header.heads,
-                                                      _header.sectorsPerTrack, _header.sectorSize,
-                                                      MediaEncoding.MFM, false));
+        _imageInfo.MediaType = Geometry.GetMediaType((_header.cylinders, (byte)_header.heads, _header.sectorsPerTrack,
+                                                      _header.sectorSize, MediaEncoding.MFM, false));
 
         _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
@@ -141,8 +140,7 @@ public sealed partial class SaveDskF
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -157,8 +155,7 @@ public sealed partial class SaveDskF
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
-        Array.Copy(_decodedDisk, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0,
-                   length                           * _imageInfo.SectorSize);
+        Array.Copy(_decodedDisk, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0, length * _imageInfo.SectorSize);
 
         return ErrorNumber.NoError;
     }

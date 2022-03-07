@@ -30,19 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using Aaru.Console;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class DiskCopy42
 {
     /// <inheritdoc />
     public bool? VerifyMediaImage()
     {
-        byte[] data    = new byte[header.DataSize];
-        byte[] tags    = new byte[header.TagSize];
-        uint   tagsChk = 0;
+        var  data    = new byte[header.DataSize];
+        var  tags    = new byte[header.TagSize];
+        uint tagsChk = 0;
 
         AaruConsole.DebugWriteLine("DC42 plugin", "Reading data");
         Stream dataStream = dc42ImageFilter.GetDataForkStream();

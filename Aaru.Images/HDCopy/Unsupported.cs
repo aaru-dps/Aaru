@@ -31,9 +31,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes.Enums;
-
 namespace Aaru.DiscImages;
+
+using Aaru.CommonTypes.Enums;
 
 public sealed partial class HdCopy
 {

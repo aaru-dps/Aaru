@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -37,8 +39,6 @@ using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.SecureDigital;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
@@ -48,7 +48,7 @@ public sealed partial class AaruFormat
         // Search for SecureDigital CID
         if(_mediaTags.TryGetValue(MediaTagType.SD_CID, out byte[] sdCid))
         {
-            CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(sdCid);
+            CID decoded = Decoders.DecodeCID(sdCid);
 
             if(string.IsNullOrWhiteSpace(_imageInfo.DriveManufacturer))
                 _imageInfo.DriveManufacturer = VendorString.Prettify(decoded.Manufacturer);
@@ -67,10 +67,10 @@ public sealed partial class AaruFormat
         // Search for MultiMediaCard CID
         if(_mediaTags.TryGetValue(MediaTagType.MMC_CID, out byte[] mmcCid))
         {
-            Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(mmcCid);
+            Aaru.Decoders.MMC.CID decoded = Aaru.Decoders.MMC.Decoders.DecodeCID(mmcCid);
 
             if(string.IsNullOrWhiteSpace(_imageInfo.DriveManufacturer))
-                _imageInfo.DriveManufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
+                _imageInfo.DriveManufacturer = Aaru.Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
 
             if(string.IsNullOrWhiteSpace(_imageInfo.DriveModel))
                 _imageInfo.DriveModel = decoded.ProductName;
@@ -99,8 +99,7 @@ public sealed partial class AaruFormat
                     _imageInfo.DriveModel = StringHandlers.CToString(inquiry.ProductIdentification)?.Trim();
 
                 if(string.IsNullOrWhiteSpace(_imageInfo.DriveFirmwareRevision))
-                    _imageInfo.DriveFirmwareRevision =
-                        StringHandlers.CToString(inquiry.ProductRevisionLevel)?.Trim();
+                    _imageInfo.DriveFirmwareRevision = StringHandlers.CToString(inquiry.ProductRevisionLevel)?.Trim();
             }
         }
 
@@ -253,7 +252,7 @@ public sealed partial class AaruFormat
         long oldPosition = _imageStream.Position;
         _imageStream.Position =  _outMemoryDdtPosition + Marshal.SizeOf<DdtHeader>();
         _imageStream.Position += (long)(sectorAddress * sizeof(ulong));
-        byte[] temp = new byte[sizeof(ulong)];
+        var temp = new byte[sizeof(ulong)];
         _imageStream.Read(temp, 0, sizeof(ulong));
         _imageStream.Position = oldPosition;
         entry                 = BitConverter.ToUInt64(temp, 0);

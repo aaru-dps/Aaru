@@ -30,15 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Virtual98
 {
@@ -54,7 +53,7 @@ public sealed partial class Virtual98
         if(stream.Length < Marshal.SizeOf<Virtual98Header>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
         stream.Read(hdrB, 0, hdrB.Length);
 
         _v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
@@ -85,6 +84,7 @@ public sealed partial class Virtual98
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
     {
         buffer = null;
+
         if(sectorAddress > _imageInfo.Sectors - 1)
             return ErrorNumber.OutOfRange;
 
@@ -96,12 +96,12 @@ public sealed partial class Virtual98
         Stream stream = _nhdImageFilter.GetDataForkStream();
 
         // V98 are lazy allocated
-        if((long)(0xDC + (sectorAddress * _imageInfo.SectorSize)) >= stream.Length)
+        if((long)(0xDC + sectorAddress * _imageInfo.SectorSize) >= stream.Length)
             return ErrorNumber.NoError;
 
-        stream.Seek((long)(0xDC + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Seek((long)(0xDC + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
-        int toRead = (int)(length * _imageInfo.SectorSize);
+        var toRead = (int)(length * _imageInfo.SectorSize);
 
         if(toRead + stream.Position > stream.Length)
             toRead = (int)(stream.Length - stream.Position);

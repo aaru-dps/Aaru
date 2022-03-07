@@ -30,6 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+#pragma warning disable 169
+#pragma warning disable 649
+
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -39,11 +44,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
-
-#pragma warning disable 169
-#pragma warning disable 649
-
-namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of the SGI Disk Volume Header</summary>
@@ -60,8 +60,7 @@ public sealed class SGI : IPartition
     public string Author => "Natalia Portillo";
 
     /// <inheritdoc />
-    public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
-                               ulong sectorOffset)
+    public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
     {
         partitions = new List<CommonTypes.Partition>();
 
@@ -73,14 +72,13 @@ public sealed class SGI : IPartition
 
         Label dvh = Marshal.ByteArrayToStructureBigEndian<Label>(sector);
 
-        for(int i = 0; i < dvh.volume.Length; i++)
+        for(var i = 0; i < dvh.volume.Length; i++)
             dvh.volume[i] = (Volume)Marshal.SwapStructureMembersEndian(dvh.volume[i]);
 
-        for(int i = 0; i < dvh.partitions.Length; i++)
+        for(var i = 0; i < dvh.partitions.Length; i++)
             dvh.partitions[i] = (Partition)Marshal.SwapStructureMembersEndian(dvh.partitions[i]);
 
-        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.magic = 0x{0:X8} (should be 0x{1:X8})", dvh.magic,
-                                   SGI_MAGIC);
+        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.magic = 0x{0:X8} (should be 0x{1:X8})", dvh.magic, SGI_MAGIC);
 
         if(dvh.magic != SGI_MAGIC)
             return false;
@@ -88,8 +86,7 @@ public sealed class SGI : IPartition
         AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.root_part_num = {0}", dvh.root_part_num);
         AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.swap_part_num = {0}", dvh.swap_part_num);
 
-        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.boot_file = \"{0}\"",
-                                   StringHandlers.CToString(dvh.boot_file));
+        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.boot_file = \"{0}\"", StringHandlers.CToString(dvh.boot_file));
 
         AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_skew = {0}", dvh.device_params.dp_skew);
         AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_gap1 = {0}", dvh.device_params.dp_gap1);
@@ -105,8 +102,7 @@ public sealed class SGI : IPartition
         AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_ctq_depth = {0}",
                                    dvh.device_params.dp_ctq_depth);
 
-        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_cylshi = {0}",
-                                   dvh.device_params.dp_cylshi);
+        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_cylshi = {0}", dvh.device_params.dp_cylshi);
 
         AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_secs = {0}", dvh.device_params.dp_secs);
 
@@ -130,15 +126,13 @@ public sealed class SGI : IPartition
         AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xrdly = {0}", dvh.device_params.dp_xrdly);
         AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xgap2 = {0}", dvh.device_params.dp_xgap2);
 
-        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xrgate = {0}",
-                                   dvh.device_params.dp_xrgate);
+        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xrgate = {0}", dvh.device_params.dp_xrgate);
 
-        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xwcont = {0}",
-                                   dvh.device_params.dp_xwcont);
+        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xwcont = {0}", dvh.device_params.dp_xwcont);
 
         ulong counter = 0;
 
-        for(int i = 0; i < dvh.partitions.Length; i++)
+        for(var i = 0; i < dvh.partitions.Length; i++)
         {
             AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].num_blocks = {1}", i,
                                        dvh.partitions[i].num_blocks);
@@ -238,12 +232,23 @@ public sealed class SGI : IPartition
 
     enum SGIType : uint
     {
-        Header = 0, TrkRepl      = 1, SecRepl      = 2,
-        Swap   = 3, Bsd          = 4, SystemV      = 5,
-        Volume = 6, EFS          = 7, Lvol         = 8,
-        Rlvol  = 9, XFS          = 0xA, Xlvol      = 0xB,
-        Rxlvol = 0xC, Xvm        = 0x0D, LinuxSwap = 0x82,
-        Linux  = 0x83, LinuxRAID = 0xFD
+        Header    = 0,
+        TrkRepl   = 1,
+        SecRepl   = 2,
+        Swap      = 3,
+        Bsd       = 4,
+        SystemV   = 5,
+        Volume    = 6,
+        EFS       = 7,
+        Lvol      = 8,
+        Rlvol     = 9,
+        XFS       = 0xA,
+        Xlvol     = 0xB,
+        Rxlvol    = 0xC,
+        Xvm       = 0x0D,
+        LinuxSwap = 0x82,
+        Linux     = 0x83,
+        LinuxRAID = 0xFD
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

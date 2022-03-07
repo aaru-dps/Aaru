@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Anex86
 {
@@ -50,7 +50,7 @@ public sealed partial class Anex86
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(hdrB, 0, hdrB.Length);
 
         _header = Marshal.SpanToStructureLittleEndian<Header>(hdrB);
@@ -81,8 +81,7 @@ public sealed partial class Anex86
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -99,7 +98,7 @@ public sealed partial class Anex86
 
         Stream stream = _anexImageFilter.GetDataForkStream();
 
-        stream.Seek((long)((ulong)_header.hdrSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Seek((long)((ulong)_header.hdrSize + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
         stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 

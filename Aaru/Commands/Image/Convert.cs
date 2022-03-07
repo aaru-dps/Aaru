@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Image;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -53,9 +55,7 @@ using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace Aaru.Commands.Image;
-
-internal sealed class ConvertImageCommand : Command
+sealed class ConvertImageCommand : Command
 {
     public ConvertImageCommand() : base("convert", "Converts one image to another format.")
     {
@@ -278,7 +278,7 @@ internal sealed class ConvertImageCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -448,7 +448,7 @@ internal sealed class ConvertImageCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(inputPath);
@@ -472,7 +472,7 @@ internal sealed class ConvertImageCommand : Command
         IMediaImage inputFormat = null;
         IBaseImage  baseImage   = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             baseImage   = ImageFormat.Detect(inputFilter);
@@ -504,7 +504,7 @@ internal sealed class ConvertImageCommand : Command
         {
             ErrorNumber opened = ErrorNumber.NoData;
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Opening image file...").IsIndeterminate();
                 opened = inputFormat.Open(inputFilter);
@@ -651,7 +651,7 @@ internal sealed class ConvertImageCommand : Command
             return (int)ErrorNumber.UnsupportedMedia;
         }
 
-        bool ret = false;
+        var ret = false;
 
         if(inputTape?.IsTape == true &&
            outputTape        != null)
@@ -684,9 +684,9 @@ internal sealed class ConvertImageCommand : Command
             AaruConsole.ErrorWriteLine("Output format does not support sessions, this will end in a loss of data, continuing...");*/
         }
 
-        bool created = false;
+        var created = false;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
 
@@ -791,7 +791,8 @@ internal sealed class ConvertImageCommand : Command
         {
             if(!outputOptical.SetTracks(inputOptical.Tracks))
             {
-                AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.", outputOptical.ErrorMessage);
+                AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
+                                           outputOptical.ErrorMessage);
 
                 return (int)ErrorNumber.WriteError;
             }
@@ -830,8 +831,8 @@ internal sealed class ConvertImageCommand : Command
                                     trackTask.Description =
                                         $"Converting sectors {doneSectors + track.StartSector} to {doneSectors + sectorsToDo + track.StartSector} in track {track.Sequence}";
 
-                                    bool useNotLong = false;
-                                    bool result     = false;
+                                    var useNotLong = false;
+                                    var result     = false;
 
                                     if(useLong)
                                     {
@@ -888,18 +889,16 @@ internal sealed class ConvertImageCommand : Command
                                     {
                                         errno = sectorsToDo == 1
                                                     ? inputOptical.ReadSector(doneSectors + track.StartSector,
-                                                                             out sector)
+                                                                              out sector)
                                                     : inputOptical.ReadSectors(doneSectors + track.StartSector,
                                                                                sectorsToDo, out sector);
 
                                         if(errno == ErrorNumber.NoError)
-                                        {
                                             result = sectorsToDo == 1
                                                          ? outputOptical.WriteSector(sector,
                                                              doneSectors + track.StartSector)
                                                          : outputOptical.WriteSectors(sector,
                                                              doneSectors + track.StartSector, sectorsToDo);
-                                        }
                                         else
                                         {
                                             result = true;
@@ -955,9 +954,9 @@ internal sealed class ConvertImageCommand : Command
             string                   mcn                       = null;
             HashSet<int>             subchannelExtents         = new();
             Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
-            Track[]                  tracks                    = new Track[inputOptical.Tracks.Count];
+            var                      tracks                    = new Track[inputOptical.Tracks.Count];
 
-            for(int i = 0; i < tracks.Length; i++)
+            for(var i = 0; i < tracks.Length; i++)
             {
                 tracks[i] = new Track
                 {
@@ -978,8 +977,8 @@ internal sealed class ConvertImageCommand : Command
                     tracks[i].Indexes[idx.Key] = idx.Value;
             }
 
-            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.Where(t => t == SectorTagType.CdTrackIsrc).
-                                                     OrderBy(t => t))
+            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.
+                                                      Where(t => t == SectorTagType.CdTrackIsrc).OrderBy(t => t))
             {
                 foreach(Track track in tracks)
                 {
@@ -993,7 +992,7 @@ internal sealed class ConvertImageCommand : Command
             }
 
             foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.
-                                                     Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
+                                                      Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
             {
                 foreach(Track track in tracks)
                 {
@@ -1124,7 +1123,7 @@ internal sealed class ConvertImageCommand : Command
                                         if(sectorsToDo == 1)
                                         {
                                             errno = inputOptical.ReadSectorTag(doneSectors + track.StartSector, tag,
-                                                                              out sector);
+                                                                               out sector);
 
                                             if(errno == ErrorNumber.NoError)
                                             {
@@ -1135,9 +1134,9 @@ internal sealed class ConvertImageCommand : Command
                                                             MmcSubchannel.Raw, sector,
                                                             doneSectors + track.StartSector, 1, null, isrcs,
                                                             (byte)track.Sequence, ref mcn, tracks,
-                                                            subchannelExtents, fixSubchannelPosition, outputOptical,
-                                                            fixSubchannel, fixSubchannelCrc, null, null,
-                                                            smallestPregapLbaPerTrack, false);
+                                                            subchannelExtents, fixSubchannelPosition,
+                                                            outputOptical, fixSubchannel, fixSubchannelCrc, null,
+                                                            null, smallestPregapLbaPerTrack, false);
 
                                                     if(indexesChanged)
                                                         outputOptical.SetTracks(tracks.ToList());
@@ -1170,7 +1169,7 @@ internal sealed class ConvertImageCommand : Command
                                         else
                                         {
                                             errno = inputOptical.ReadSectorsTag(doneSectors + track.StartSector,
-                                                                               sectorsToDo, tag, out sector);
+                                                                                    sectorsToDo, tag, out sector);
 
                                             if(errno == ErrorNumber.NoError)
                                             {
@@ -1181,9 +1180,9 @@ internal sealed class ConvertImageCommand : Command
                                                             MmcSubchannel.Raw, sector,
                                                             doneSectors + track.StartSector, sectorsToDo, null,
                                                             isrcs, (byte)track.Sequence, ref mcn, tracks,
-                                                            subchannelExtents, fixSubchannelPosition, outputOptical,
-                                                            fixSubchannel, fixSubchannelCrc, null, null,
-                                                            smallestPregapLbaPerTrack, false);
+                                                            subchannelExtents, fixSubchannelPosition,
+                                                            outputOptical, fixSubchannel, fixSubchannelCrc, null,
+                                                            null, smallestPregapLbaPerTrack, false);
 
                                                     if(indexesChanged)
                                                         outputOptical.SetTracks(tracks.ToList());
@@ -1275,7 +1274,8 @@ internal sealed class ConvertImageCommand : Command
                 inputOptical.Info.MediaType == MediaType.PS1CD || inputOptical.Info.MediaType == MediaType.PS2CD ||
                 inputOptical.Info.MediaType == MediaType.MEGACD || inputOptical.Info.MediaType == MediaType.SATURNCD ||
                 inputOptical.Info.MediaType == MediaType.GDROM || inputOptical.Info.MediaType == MediaType.GDR ||
-                inputOptical.Info.MediaType == MediaType.MilCD || inputOptical.Info.MediaType == MediaType.SuperCDROM2 ||
+                inputOptical.Info.MediaType == MediaType.MilCD ||
+                inputOptical.Info.MediaType == MediaType.SuperCDROM2 ||
                 inputOptical.Info.MediaType == MediaType.JaguarCD || inputOptical.Info.MediaType == MediaType.ThreeDO ||
                 inputOptical.Info.MediaType == MediaType.PCFX || inputOptical.Info.MediaType == MediaType.NeoGeoCD ||
                 inputOptical.Info.MediaType == MediaType.CDTV || inputOptical.Info.MediaType == MediaType.CD32 ||
@@ -1284,15 +1284,13 @@ internal sealed class ConvertImageCommand : Command
                 inputOptical.Info.MediaType == MediaType.VideoNowColor ||
                 inputOptical.Info.MediaType == MediaType.VideoNowXp || inputOptical.Info.MediaType == MediaType.CVD) &&
                generateSubchannels)
-            {
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Generating subchannels...").IsIndeterminate();
 
                     CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, inputOptical.Info.Sectors,
                                                     null, null, null, null, null, outputOptical);
                 });
-            }
         }
         else
         {
@@ -1458,8 +1456,7 @@ internal sealed class ConvertImageCommand : Command
                                                 : inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag, out sector);
 
                                     if(errno == ErrorNumber.NoError)
-                                        result = sectorsToDo == 1
-                                                     ? outputMedia.WriteSectorTag(sector, doneSectors, tag)
+                                        result = sectorsToDo == 1 ? outputMedia.WriteSectorTag(sector, doneSectors, tag)
                                                      : outputMedia.WriteSectorsTag(sector, doneSectors, sectorsToDo,
                                                          tag);
                                     else
@@ -1540,7 +1537,7 @@ internal sealed class ConvertImageCommand : Command
         if(resume       != null ||
            dumpHardware != null)
         {
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Writing dump hardware list...").IsIndeterminate();
 
@@ -1559,7 +1556,7 @@ internal sealed class ConvertImageCommand : Command
         if(sidecar      != null ||
            cicmMetadata != null)
         {
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Writing metadata...").IsIndeterminate();
 
@@ -1573,9 +1570,9 @@ internal sealed class ConvertImageCommand : Command
                 AaruConsole.WriteLine("Written CICM XML metadata to output image.");
         }
 
-        bool closed = false;
+        var closed = false;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Closing output image...").IsIndeterminate();
             closed = outputFormat.Close();

@@ -31,11 +31,13 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-using System;
+
 
 // ReSharper disable UnusedMember.Local
 
 namespace Aaru.Filesystems;
+
+using System;
 
 public sealed partial class ISO9660
 {

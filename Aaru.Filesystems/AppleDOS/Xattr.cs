@@ -30,12 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Structs;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class AppleDOS
 {

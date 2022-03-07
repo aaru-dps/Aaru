@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Microsoft.EntityFrameworkCore.Design;
-
 namespace Aaru.Database;
+
+using Microsoft.EntityFrameworkCore.Design;
 
 /// <inheritdoc />
 /// <summary>Database context factory, for design time</summary>

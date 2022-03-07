@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-
-namespace Aaru.DiscImages;
 
 /// <summary>Implements reading partclone disk images</summary>
 public sealed partial class PartClone : IMediaImage, IVerifiableImage

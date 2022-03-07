@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes;
@@ -37,8 +39,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class CisCopy
 {
@@ -72,7 +72,7 @@ public sealed partial class CisCopy
                 return ErrorNumber.InvalidArgument;
         }
 
-        byte[] trackBytes = new byte[tracks];
+        var trackBytes = new byte[tracks];
         stream.Read(trackBytes, 0, tracks);
 
         var cmpr = (Compression)stream.ReadByte();
@@ -84,7 +84,7 @@ public sealed partial class CisCopy
             return ErrorNumber.NotImplemented;
         }
 
-        int trackSize = 0;
+        var trackSize = 0;
 
         switch(type)
         {
@@ -109,7 +109,7 @@ public sealed partial class CisCopy
                 break;
         }
 
-        int headStep = 1;
+        var headStep = 1;
 
         if(type == DiskType.MD1DD ||
            type == DiskType.MD1DD8)
@@ -117,9 +117,9 @@ public sealed partial class CisCopy
 
         var decodedImage = new MemoryStream();
 
-        for(int i = 0; i < tracks; i += headStep)
+        for(var i = 0; i < tracks; i += headStep)
         {
-            byte[] track = new byte[trackSize];
+            var track = new byte[trackSize];
 
             if((TrackType)trackBytes[i] == TrackType.Copied)
                 stream.Read(track, 0, trackSize);
@@ -207,8 +207,7 @@ public sealed partial class CisCopy
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -223,8 +222,7 @@ public sealed partial class CisCopy
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
-        Array.Copy(_decodedDisk, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0,
-                   length                           * _imageInfo.SectorSize);
+        Array.Copy(_decodedDisk, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0, length * _imageInfo.SectorSize);
 
         return ErrorNumber.NoError;
     }

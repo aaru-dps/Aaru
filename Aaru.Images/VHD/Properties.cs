@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Vhd
 {
@@ -47,7 +47,7 @@ public sealed partial class Vhd
     /// <inheritdoc />
     public string Name => "VirtualPC";
     /// <inheritdoc />
-    public Guid Id => new Guid("8014d88f-64cd-4484-9441-7635c632958a");
+    public Guid Id => new("8014d88f-64cd-4484-9441-7635c632958a");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
 

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -42,8 +44,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // TODO: Detect bootable
 /// <inheritdoc />
@@ -119,7 +119,7 @@ public sealed class UDF : IFilesystem
             }
         };
 
-        bool anchorFound = false;
+        var  anchorFound = false;
         uint ratio       = 1;
 
         foreach(ulong[] position in positions.Where(position => position[0] + partition.Start + position[1] <=
@@ -140,11 +140,9 @@ public sealed class UDF : IFilesystem
             AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagChecksum = 0x{0:X2}", anchor.tag.tagChecksum);
             AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.reserved = {0}", anchor.tag.reserved);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagSerialNumber = {0}",
-                                       anchor.tag.tagSerialNumber);
+            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagSerialNumber = {0}", anchor.tag.tagSerialNumber);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrc = 0x{0:X4}",
-                                       anchor.tag.descriptorCrc);
+            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrc = 0x{0:X4}", anchor.tag.descriptorCrc);
 
             AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrcLength = {0}",
                                        anchor.tag.descriptorCrcLength);
@@ -164,9 +162,8 @@ public sealed class UDF : IFilesystem
                                        anchor.reserveVolumeDescriptorSequenceExtent.location);
 
             if(anchor.tag.tagIdentifier != TagIdentifier.AnchorVolumeDescriptorPointer ||
-               anchor.tag.tagLocation   != position[0] / position[1]                   ||
-               (anchor.mainVolumeDescriptorSequenceExtent.location * position[1]) + partition.Start >=
-               partition.End)
+               anchor.tag.tagLocation != position[0] / position[1] ||
+               anchor.mainVolumeDescriptorSequenceExtent.location * position[1] + partition.Start >= partition.End)
                 continue;
 
             anchorFound = true;
@@ -184,7 +181,7 @@ public sealed class UDF : IFilesystem
         {
             ErrorNumber errno =
                 imagePlugin.
-                    ReadSectors(partition.Start + (anchor.mainVolumeDescriptorSequenceExtent.location * ratio) + (count * ratio),
+                    ReadSectors(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location * ratio + count * ratio,
                                 ratio, out sector);
 
             if(errno != ErrorNumber.NoError)
@@ -194,10 +191,10 @@ public sealed class UDF : IFilesystem
                 continue;
             }
 
-            var  tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
-            uint location = BitConverter.ToUInt32(sector, 0x0C);
+            var tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
+            var location = BitConverter.ToUInt32(sector, 0x0C);
 
-            if(location == (partition.Start / ratio) + anchor.mainVolumeDescriptorSequenceExtent.location + count)
+            if(location == partition.Start / ratio + anchor.mainVolumeDescriptorSequenceExtent.location + count)
             {
                 if(tagId == TagIdentifier.TerminatingDescriptor)
                     break;
@@ -220,8 +217,7 @@ public sealed class UDF : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         information = "";
         ErrorNumber errno;
@@ -305,16 +301,16 @@ public sealed class UDF : IFilesystem
         {
             errno =
                 imagePlugin.
-                    ReadSectors(partition.Start + (anchor.mainVolumeDescriptorSequenceExtent.location * ratio) + (count * ratio),
+                    ReadSectors(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location * ratio + count * ratio,
                                 ratio, out sector);
 
             if(errno != ErrorNumber.NoError)
                 continue;
 
-            var  tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
-            uint location = BitConverter.ToUInt32(sector, 0x0C);
+            var tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
+            var location = BitConverter.ToUInt32(sector, 0x0C);
 
-            if(location == (partition.Start / ratio) + anchor.mainVolumeDescriptorSequenceExtent.location + count)
+            if(location == partition.Start / ratio + anchor.mainVolumeDescriptorSequenceExtent.location + count)
             {
                 if(tagId == TagIdentifier.TerminatingDescriptor)
                     break;
@@ -348,7 +344,7 @@ public sealed class UDF : IFilesystem
            lvid.tag.tagLocation   == lvd.integritySequenceExtent.location)
             lvidiu =
                 Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptorImplementationUse>(sector,
-                    (int)((lvid.numberOfPartitions * 8) + 80),
+                    (int)(lvid.numberOfPartitions * 8 + 80),
                     System.Runtime.InteropServices.Marshal.SizeOf(lvidiu));
         else
             lvid = new LogicalVolumeIntegrityDescriptor();
@@ -359,9 +355,8 @@ public sealed class UDF : IFilesystem
         sbInformation.AppendFormat("Volume set identifier: {0}",
                                    StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier)).AppendLine();
 
-        sbInformation.
-            AppendFormat("Volume name: {0}", StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier)).
-            AppendLine();
+        sbInformation.AppendFormat("Volume name: {0}", StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier)).
+                      AppendLine();
 
         sbInformation.AppendFormat("Volume uses {0} bytes per block", lvd.logicalBlockSize).AppendLine();
 
@@ -370,13 +365,11 @@ public sealed class UDF : IFilesystem
 
         sbInformation.AppendFormat("Volume contains {0} partitions", lvid.numberOfPartitions).AppendLine();
 
-        sbInformation.
-            AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories).
-            AppendLine();
+        sbInformation.AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories).
+                      AppendLine();
 
         sbInformation.AppendFormat("Volume conforms to {0}",
-                                   Encoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000')).
-                      AppendLine();
+                                   Encoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000')).AppendLine();
 
         sbInformation.AppendFormat("Volume was last written by: {0}",
                                    Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')).
@@ -423,7 +416,8 @@ public sealed class UDF : IFilesystem
     [Flags]
     enum EntityFlags : byte
     {
-        Dirty = 0x01, Protected = 0x02
+        Dirty     = 0x01,
+        Protected = 0x02
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -456,9 +450,15 @@ public sealed class UDF : IFilesystem
 
     enum TagIdentifier : ushort
     {
-        PrimaryVolumeDescriptor           = 1, AnchorVolumeDescriptorPointer = 2, VolumeDescriptorPointer          = 3,
-        ImplementationUseVolumeDescriptor = 4, PartitionDescriptor           = 5, LogicalVolumeDescriptor          = 6,
-        UnallocatedSpaceDescriptor        = 7, TerminatingDescriptor         = 8, LogicalVolumeIntegrityDescriptor = 9
+        PrimaryVolumeDescriptor           = 1,
+        AnchorVolumeDescriptorPointer     = 2,
+        VolumeDescriptorPointer           = 3,
+        ImplementationUseVolumeDescriptor = 4,
+        PartitionDescriptor               = 5,
+        LogicalVolumeDescriptor           = 6,
+        UnallocatedSpaceDescriptor        = 7,
+        TerminatingDescriptor             = 8,
+        LogicalVolumeIntegrityDescriptor  = 9
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

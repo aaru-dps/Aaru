@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Qed
 {
@@ -53,7 +53,7 @@ public sealed partial class Qed
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] qHdrB = new byte[68];
+        var qHdrB = new byte[68];
         stream.Read(qHdrB, 0, 68);
         _qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
 
@@ -72,63 +72,74 @@ public sealed partial class Qed
         if(_qHdr.image_size <= 1)
         {
             AaruConsole.ErrorWriteLine("Image size is too small");
+
             return ErrorNumber.InvalidArgument;
         }
+
         if(!IsPowerOfTwo(_qHdr.cluster_size))
         {
             AaruConsole.ErrorWriteLine("Cluster size must be a power of 2");
+
             return ErrorNumber.InvalidArgument;
         }
+
         if(_qHdr.cluster_size < 4096 ||
            _qHdr.cluster_size > 67108864)
         {
             AaruConsole.ErrorWriteLine("Cluster size must be between 4 Kbytes and 64 Mbytes");
-            return ErrorNumber.InvalidArgument;
-        }
-        if(!IsPowerOfTwo(_qHdr.table_size))
-        {
-            AaruConsole.ErrorWriteLine("Table size must be a power of 2");
-            return ErrorNumber.InvalidArgument;
-        }
-        if(_qHdr.table_size < 1 ||
-           _qHdr.table_size > 16)
-        {
-            AaruConsole.ErrorWriteLine(
-                                       "Table size must be between 1 and 16 clusters");
-            return ErrorNumber.InvalidArgument;
-        }
-        if((_qHdr.features & QED_FEATURE_MASK) > 0)
-        {
-            AaruConsole.ErrorWriteLine(
-                                       $"Image uses unknown incompatible features {_qHdr.features & QED_FEATURE_MASK:X}");
 
             return ErrorNumber.InvalidArgument;
         }
+
+        if(!IsPowerOfTwo(_qHdr.table_size))
+        {
+            AaruConsole.ErrorWriteLine("Table size must be a power of 2");
+
+            return ErrorNumber.InvalidArgument;
+        }
+
+        if(_qHdr.table_size < 1 ||
+           _qHdr.table_size > 16)
+        {
+            AaruConsole.ErrorWriteLine("Table size must be between 1 and 16 clusters");
+
+            return ErrorNumber.InvalidArgument;
+        }
+
+        if((_qHdr.features & QED_FEATURE_MASK) > 0)
+        {
+            AaruConsole.
+                ErrorWriteLine($"Image uses unknown incompatible features {_qHdr.features & QED_FEATURE_MASK:X}");
+
+            return ErrorNumber.InvalidArgument;
+        }
+
         if((_qHdr.features & QED_FEATURE_BACKING_FILE) == QED_FEATURE_BACKING_FILE)
         {
             AaruConsole.ErrorWriteLine("Differencing images not yet supported");
 
             return ErrorNumber.NotImplemented;
         }
+
         _clusterSectors = _qHdr.cluster_size                    / 512;
         _tableSize      = _qHdr.cluster_size * _qHdr.table_size / 8;
 
         AaruConsole.DebugWriteLine("QED plugin", "qHdr.clusterSectors = {0}", _clusterSectors);
         AaruConsole.DebugWriteLine("QED plugin", "qHdr.tableSize = {0}", _tableSize);
 
-        byte[] l1TableB = new byte[_tableSize * 8];
+        var l1TableB = new byte[_tableSize * 8];
         stream.Seek((long)_qHdr.l1_table_offset, SeekOrigin.Begin);
         stream.Read(l1TableB, 0, (int)_tableSize * 8);
         AaruConsole.DebugWriteLine("QED plugin", "Reading L1 table");
         _l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
 
         _l1Mask = 0;
-        int c = 0;
+        var c = 0;
         _clusterBits = Ctz32(_qHdr.cluster_size);
         _l2Mask      = (_tableSize - 1) << _clusterBits;
         _l1Shift     = _clusterBits + Ctz32(_tableSize);
 
-        for(int i = 0; i < 64; i++)
+        for(var i = 0; i < 64; i++)
         {
             _l1Mask <<= 1;
 
@@ -141,7 +152,7 @@ public sealed partial class Qed
 
         _sectorMask = 0;
 
-        for(int i = 0; i < _clusterBits; i++)
+        for(var i = 0; i < _clusterBits; i++)
             _sectorMask = (_sectorMask << 1) + 1;
 
         AaruConsole.DebugWriteLine("QED plugin", "qHdr.clusterBits = {0}", _clusterBits);
@@ -210,7 +221,7 @@ public sealed partial class Qed
         if(!_l2TableCache.TryGetValue(l1Off, out ulong[] l2Table))
         {
             _imageStream.Seek((long)_l1Table[l1Off], SeekOrigin.Begin);
-            byte[] l2TableB = new byte[_tableSize * 8];
+            var l2TableB = new byte[_tableSize * 8];
             _imageStream.Read(l2TableB, 0, (int)_tableSize * 8);
             AaruConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
             l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();

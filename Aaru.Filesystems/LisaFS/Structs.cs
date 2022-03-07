@@ -30,12 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Diagnostics.CodeAnalysis;
+
 
 // ReSharper disable NotAccessedField.Local
 
 namespace Aaru.Filesystems.LisaFS;
+
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 public sealed partial class LisaFS
 {

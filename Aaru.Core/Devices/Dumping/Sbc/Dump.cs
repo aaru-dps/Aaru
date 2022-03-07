@@ -31,6 +31,12 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
+
+// ReSharper disable JoinDeclarationAndInitializer
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,16 +56,12 @@ using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
+using Aaru.Settings;
 using Schemas;
 using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using MediaType = Aaru.CommonTypes.MediaType;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-// ReSharper disable JoinDeclarationAndInitializer
-
-namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping SCSI Block Commands and Reduced Block Commands devices</summary>
 partial class Dump
@@ -75,7 +77,7 @@ partial class Dump
         bool               sense;
         byte               scsiMediumType     = 0;
         byte               scsiDensityCode    = 0;
-        bool               containsFloppyPage = false;
+        var                containsFloppyPage = false;
         const ushort       sbcProfile         = 0x0001;
         DateTime           start;
         DateTime           end;
@@ -132,8 +134,8 @@ partial class Dump
                 _dumpLog.WriteLine("Requesting MODE SENSE (10).");
                 UpdateStatus?.Invoke("Requesting MODE SENSE (10).");
 
-                sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
-                                         0xFF, 5, out _);
+                sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF,
+                                         5, out _);
 
                 if(!sense ||
                    _dev.Error)
@@ -155,8 +157,8 @@ partial class Dump
                                         out _);
 
                 if(sense || _dev.Error)
-                    sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
-                                            5, out _);
+                    sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5,
+                                            out _);
 
                 if(sense || _dev.Error)
                     sense = _dev.ModeSense(out cmdBuf, out _, 5, out _);
@@ -179,8 +181,7 @@ partial class Dump
                     // TODO: Fix this
                     containsFloppyPage = decMode.Value.Pages?.Aggregate(containsFloppyPage,
                                                                         (current, modePage) =>
-                                                                            current | (modePage.Page == 0x05)) ==
-                                         true;
+                                                                            current | (modePage.Page == 0x05)) == true;
                 }
             }
         }
@@ -344,9 +345,9 @@ partial class Dump
         UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
         _dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-        var  mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
-        var  ibgLog = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
-        bool imageCreated = false;
+        var mhddLog      = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
+        var ibgLog       = new IbgLog(_outputPrefix  + ".ibg", sbcProfile);
+        var imageCreated = false;
 
         if(!opticalDisc)
         {
@@ -369,7 +370,7 @@ partial class Dump
 
         start = DateTime.UtcNow;
         double imageWriteDuration      = 0;
-        bool   writeSingleOpticalTrack = true;
+        var    writeSingleOpticalTrack = true;
 
         if(opticalDisc)
         {
@@ -380,8 +381,7 @@ partial class Dump
 
                 if(!sense)
                 {
-                    DiscInformation.StandardDiscInformation? discInformation =
-                        DiscInformation.Decode000b(readBuffer);
+                    DiscInformation.StandardDiscInformation? discInformation = DiscInformation.Decode000b(readBuffer);
 
                     // This means the output image can store sessions that are not on a CD, like on a DVD or Blu-ray
                     bool canStoreNotCdSessions =
@@ -537,9 +537,8 @@ partial class Dump
                                 _dumpLog.WriteLine("Error sending tracks to output image, not continuing.");
                                 _dumpLog.WriteLine(opticalPlugin.ErrorMessage);
 
-                                StoppingErrorMessage?.
-                                    Invoke("Error sending tracks to output image, not continuing." +
-                                           Environment.NewLine + opticalPlugin.ErrorMessage);
+                                StoppingErrorMessage?.Invoke("Error sending tracks to output image, not continuing." +
+                                                             Environment.NewLine + opticalPlugin.ErrorMessage);
 
                                 return;
                             }
@@ -571,7 +570,7 @@ partial class Dump
         }
         else if(decMode?.Pages != null)
         {
-            bool setGeometry = false;
+            var setGeometry = false;
 
             foreach(Modes.ModePage page in decMode.Value.Pages)
                 if(page.Page    == 0x04 &&
@@ -693,10 +692,10 @@ partial class Dump
         if(_resume?.BlankExtents != null)
             blankExtents = ExtentsConverter.FromMetadata(_resume.BlankExtents);
 
-        bool newTrim = false;
+        var newTrim = false;
 
         if(mediaTags.TryGetValue(MediaTagType.DVD_CMI, out byte[] cmi) &&
-           Settings.Settings.Current.EnableDecryption                  &&
+           Settings.Current.EnableDecryption                           &&
            _titleKeys                                                  &&
            dskType               == MediaType.DVDROM                   &&
            (CopyrightType)cmi[0] == CopyrightType.CSS)
@@ -765,17 +764,16 @@ partial class Dump
            _retryPasses > 0)
             RetrySbcData(scsiReader, currentTry, extents, ref totalDuration, blankExtents);
 
-        if(_resume.MissingTitleKeys?.Count > 0        &&
-           !_aborted                                  &&
-           _retryPasses > 0                           &&
-           Settings.Settings.Current.EnableDecryption &&
-           _titleKeys                                 &&
+        if(_resume.MissingTitleKeys?.Count > 0 &&
+           !_aborted                           &&
+           _retryPasses > 0                    &&
+           Settings.Current.EnableDecryption   &&
+           _titleKeys                          &&
            mediaTags.ContainsKey(MediaTagType.DVD_DiscKey_Decrypted))
             RetryTitleKeys(dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted], ref totalDuration);
         #endregion Error handling
 
         if(opticalDisc)
-        {
             foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
             {
                 if(tag.Value is null)
@@ -793,12 +791,10 @@ partial class Dump
                 // Cannot write tag to image
                 StoppingErrorMessage?.Invoke($"Cannot write tag {tag.Key}.");
 
-                _dumpLog.WriteLine($"Cannot write tag {tag.Key}." + Environment.NewLine +
-                                   outputFormat.ErrorMessage);
+                _dumpLog.WriteLine($"Cannot write tag {tag.Key}." + Environment.NewLine + outputFormat.ErrorMessage);
 
                 return;
             }
-        }
         else
         {
             if(!_dev.IsRemovable ||
@@ -878,8 +874,8 @@ partial class Dump
 
                     if(!sense ||
                        _dev.Error)
-                        sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
-                                                 0x3F, 0x00, 5, out _);
+                        sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
+                                                 0x00, 5, out _);
 
                     if(!sense &&
                        !_dev.Error)
@@ -902,12 +898,12 @@ partial class Dump
                     UpdateStatus?.Invoke("Requesting MODE SENSE (6).");
                     _dumpLog.WriteLine("Requesting MODE SENSE (6).");
 
-                    sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
-                                            5, out _);
+                    sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5,
+                                            out _);
 
                     if(sense || _dev.Error)
-                        sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
-                                                0x00, 5, out _);
+                        sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
+                                                5, out _);
 
                     if(sense || _dev.Error)
                         sense = _dev.ModeSense(out cmdBuf, out _, 5, out _);
@@ -923,8 +919,8 @@ partial class Dump
                             {
                                 _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (6).");
 
-                                StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (6)." +
-                                                             Environment.NewLine + outputFormat.ErrorMessage);
+                                StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (6)." + Environment.NewLine +
+                                                             outputFormat.ErrorMessage);
 
                                 return;
                             }
@@ -944,7 +940,7 @@ partial class Dump
 
         // TODO: Media Serial Number
         // TODO: Non-removable drive information
-        var metadata = new CommonTypes.Structs.ImageInfo
+        var metadata = new ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()
@@ -986,7 +982,7 @@ partial class Dump
                 _dumpLog.WriteLine("Creating sidecar.");
                 var         filters     = new FiltersList();
                 IFilter     filter      = filters.GetFilter(_outputPath);
-                IMediaImage inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
+                var         inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
                 ErrorNumber opened      = inputPlugin.Open(filter);
 
                 if(opened != ErrorNumber.NoError)
@@ -1117,8 +1113,8 @@ partial class Dump
                             UpdateStatus?.Invoke("Requesting MODE SENSE (10).");
                             _dumpLog.WriteLine("Requesting MODE SENSE (10).");
 
-                            sense = _dev.ModeSense10(out cmdBuf, out _, false, true,
-                                                     ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5, out _);
+                            sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
+                                                     0x3F, 0xFF, 5, out _);
 
                             if(!sense ||
                                _dev.Error)
@@ -1139,8 +1135,8 @@ partial class Dump
                             UpdateStatus?.Invoke("Requesting MODE SENSE (6).");
                             _dumpLog.WriteLine("Requesting MODE SENSE (6).");
 
-                            sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current,
-                                                    0x3F, 0x00, 5, out _);
+                            sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
+                                                    0x00, 5, out _);
 
                             if(sense || _dev.Error)
                                 sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current,
@@ -1177,17 +1173,14 @@ partial class Dump
                                     o.type
                                 }).Distinct())
                         {
-                            UpdateStatus?.
-                                Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
+                            UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
 
-                            _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type,
-                                               filesystem.start);
+                            _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
                         }
 
                     sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
 
-                    (string type, string subType) xmlType =
-                        CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
+                    (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
 
                     sidecar.BlockMedia[0].DiskType    = xmlType.type;
                     sidecar.BlockMedia[0].DiskSubType = xmlType.subType;

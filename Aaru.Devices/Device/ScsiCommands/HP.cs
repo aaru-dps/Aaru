@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.Console;
-
 namespace Aaru.Devices;
+
+using Aaru.Console;
 
 public sealed partial class Device
 {
@@ -65,12 +65,11 @@ public sealed partial class Device
     /// </param>
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
-                           ushort transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
-                           out double duration)
+    public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address, ushort transferLen,
+                           ushort blockBytes, bool pba, bool sectorCount, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.ReadLong;
 

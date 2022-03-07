@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Text;
 using Aaru.CommonTypes;
@@ -39,8 +41,6 @@ using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
-
-namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
@@ -56,14 +56,13 @@ public sealed partial class AppleMFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        ushort drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
+        var drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
 
         return drSigWord == MFS_MAGIC;
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? new MacRoman();
         information = "";
@@ -100,7 +99,7 @@ public sealed partial class AppleMFS
         mdb.drNxtFNum  = BigEndianBitConverter.ToUInt32(mdbSector, 0x01E);
         mdb.drFreeBks  = BigEndianBitConverter.ToUInt16(mdbSector, 0x022);
         mdb.drVNSiz    = mdbSector[0x024];
-        byte[] variableSize = new byte[mdb.drVNSiz + 1];
+        var variableSize = new byte[mdb.drVNSiz + 1];
         Array.Copy(mdbSector, 0x024, variableSize, 0, mdb.drVNSiz + 1);
         mdb.drVN = StringHandlers.PascalToString(variableSize, Encoding);
 

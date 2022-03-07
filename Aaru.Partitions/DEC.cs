@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,8 +39,6 @@ using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of DEC disklabels</summary>
@@ -55,8 +55,7 @@ public sealed class DEC : IPartition
     public string Author => "Natalia Portillo";
 
     /// <inheritdoc />
-    public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
-                               ulong sectorOffset)
+    public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
     {
         partitions = new List<CommonTypes.Partition>();
 

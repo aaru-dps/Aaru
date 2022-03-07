@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes;
-
 namespace Aaru.DiscImages;
+
+using Aaru.CommonTypes;
 
 public sealed partial class Apple2Mg
 {

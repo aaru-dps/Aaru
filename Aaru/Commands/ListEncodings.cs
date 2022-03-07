@@ -30,7 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
+namespace Aaru.Commands;
+
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
@@ -40,9 +42,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 
-namespace Aaru.Commands;
-
-internal sealed class ListEncodingsCommand : Command
+sealed class ListEncodingsCommand : Command
 {
     public ListEncodingsCommand() : base("list-encodings", "Lists all supported text encodings and code pages.") =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
@@ -55,7 +55,7 @@ internal sealed class ListEncodingsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -81,7 +81,7 @@ internal sealed class ListEncodingsCommand : Command
         AaruConsole.DebugWriteLine("List-Encodings command", "--debug={0}", debug);
         AaruConsole.DebugWriteLine("List-Encodings command", "--verbose={0}", verbose);
 
-        List<CommonEncodingInfo> encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
+        var encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
         {
             Name        = info.Name,
             DisplayName = info.GetEncoding().EncodingName

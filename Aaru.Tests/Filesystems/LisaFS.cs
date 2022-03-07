@@ -26,23 +26,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems.LisaFS;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems;
-
 [TestFixture]
 public class LisaFs : ReadOnlyFilesystemTest
 {
     public LisaFs() : base("LisaFS") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                      "Apple Lisa filesystem");
-    public override IFilesystem Plugin     => new LisaFS();
-    public override bool        Partitions => false;
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple Lisa filesystem");
+    public override IFilesystem Plugin => new LisaFS();
+    public override bool Partitions => false;
 
     public override FileSystemTest[] Tests => new[]
     {

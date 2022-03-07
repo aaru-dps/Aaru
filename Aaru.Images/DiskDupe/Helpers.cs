@@ -31,12 +31,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Linq;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class DiskDupe
 {
@@ -45,7 +45,7 @@ public sealed partial class DiskDupe
         int         numTracks;
         int         trackLen; // the length of a single track, in bytes
         TrackInfo[] trackMap;
-        byte[]      buffer = new byte[6];
+        var         buffer = new byte[6];
         FileHeader  fHeader;
         long[]      trackOffsets;
 
@@ -80,7 +80,7 @@ public sealed partial class DiskDupe
                                    _diskTypes[fHeader.diskType].spt);
 
         // read the trackmap and store the track offsets
-        for(int i = 0; i < numTracks; i++)
+        for(var i = 0; i < numTracks; i++)
         {
             stream.Read(buffer, 0, 6);
             trackMap[i]     = Marshal.ByteArrayToStructureBigEndian<TrackInfo>(buffer);

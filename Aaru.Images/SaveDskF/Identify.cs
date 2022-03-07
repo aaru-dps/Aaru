@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class SaveDskF
 {
@@ -47,7 +47,7 @@ public sealed partial class SaveDskF
         if(stream.Length < 41)
             return false;
 
-        byte[] hdr = new byte[40];
+        var hdr = new byte[40];
         stream.Read(hdr, 0, 40);
 
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);

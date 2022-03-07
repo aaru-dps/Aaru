@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.CommandLine;
-
 namespace Aaru.Commands.Media;
 
-internal sealed class MediaFamily : Command
+using System.CommandLine;
+
+sealed class MediaFamily : Command
 {
     public MediaFamily() : base("media", "Commands to manage media inserted in devices")
     {

@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Issues;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,8 +9,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Issues;
 
 /// <summary>This will extract (and discard data) all files in all filesystems detected in an image.</summary>
 public abstract class FsExtractIssueTest
@@ -42,13 +42,13 @@ public abstract class FsExtractIssueTest
 
         PluginBase plugins = GetPluginBase.Instance;
 
-        IMediaImage imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
+        var imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
         Assert.NotNull(imageFormat, "Image format not identified, not proceeding with analysis.");
 
         Assert.AreEqual(ErrorNumber.NoError, imageFormat.Open(inputFilter), "Unable to open image format");
 
-        List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
+        List<Partition> partitions = Partitions.GetAll(imageFormat);
 
         if(partitions.Count == 0)
         {
@@ -65,11 +65,11 @@ public abstract class FsExtractIssueTest
             });
         }
 
-        bool filesystemFound = false;
+        var filesystemFound = false;
 
-        for(int i = 0; i < partitions.Count; i++)
+        for(var i = 0; i < partitions.Count; i++)
         {
-            Core.Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
+            Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
 
             if(idPlugins.Count == 0)
                 continue;
@@ -94,8 +94,7 @@ public abstract class FsExtractIssueTest
 
                         error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                        Assert.AreEqual(ErrorNumber.NoError, error,
-                                        $"Could not mount {pluginName} in partition {i}.");
+                        Assert.AreEqual(ErrorNumber.NoError, error, $"Could not mount {pluginName} in partition {i}.");
 
                         ExtractFilesInDir("/", fs, Xattrs);
                     }

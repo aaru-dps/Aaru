@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Image;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -42,9 +44,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 
-namespace Aaru.Commands.Image;
-
-internal sealed class VerifyCommand : Command
+sealed class VerifyCommand : Command
 {
     public VerifyCommand() : base("verify", "Verifies a disc image integrity, and if supported, sector integrity.")
     {
@@ -85,7 +85,7 @@ internal sealed class VerifyCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -117,7 +117,7 @@ internal sealed class VerifyCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -132,7 +132,7 @@ internal sealed class VerifyCommand : Command
 
         IBaseImage inputFormat = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             inputFormat = ImageFormat.Detect(inputFilter);
@@ -147,7 +147,7 @@ internal sealed class VerifyCommand : Command
 
         ErrorNumber opened = ErrorNumber.NoData;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
             opened = inputFormat.Open(inputFilter);
@@ -186,7 +186,7 @@ internal sealed class VerifyCommand : Command
             bool?    discCheckStatus = null;
             TimeSpan checkTime       = new();
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Verifying image checksums...").IsIndeterminate();
 
@@ -259,14 +259,11 @@ internal sealed class VerifyCommand : Command
 
                                         if(remainingSectors < 512)
                                             opticalMediaImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                            currentTrack.Sequence,
-                                                                            out tempFailingLbas,
+                                                                            currentTrack.Sequence, out tempFailingLbas,
                                                                             out tempUnknownLbas);
                                         else
-                                            opticalMediaImage.VerifySectors(currentSector, 512,
-                                                                            currentTrack.Sequence,
-                                                                            out tempFailingLbas,
-                                                                            out tempUnknownLbas);
+                                            opticalMediaImage.VerifySectors(currentSector, 512, currentTrack.Sequence,
+                                                                            out tempFailingLbas, out tempUnknownLbas);
 
                                         failingLbas.AddRange(tempFailingLbas);
 
@@ -321,8 +318,8 @@ internal sealed class VerifyCommand : Command
                                         verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors,
                                                                              out tempFailingLbas, out tempUnknownLbas);
                                     else
-                                        verifiableSectorsImage.VerifySectors(currentSector, 512,
-                                                                             out tempFailingLbas, out tempUnknownLbas);
+                                        verifiableSectorsImage.VerifySectors(currentSector, 512, out tempFailingLbas,
+                                                                             out tempUnknownLbas);
 
                                     failingLbas.AddRange(tempFailingLbas);
 

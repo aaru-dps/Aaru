@@ -26,21 +26,21 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices.SCSI;
+
 using System;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Aaru.Helpers;
 
-namespace Aaru.Tests.Devices.SCSI;
-
-internal static class Kreon
+static class Kreon
 {
     internal static void Menu(string devPath, Device dev)
     {
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send a Kreon vendor command to the device:");
             AaruConsole.WriteLine("1.- Send EXTRACT SS command.");
@@ -50,12 +50,12 @@ internal static class Kreon
             AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = System.Console.ReadLine();
+            string strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -84,7 +84,7 @@ internal static class Kreon
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
+                    Console.ReadKey();
 
                     continue;
             }
@@ -97,11 +97,11 @@ internal static class Kreon
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for EXTRACT SS command:");
             AaruConsole.WriteLine("Request number: {0}", requestNumber);
@@ -111,12 +111,12 @@ internal static class Kreon
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Kreon vendor commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -129,13 +129,13 @@ internal static class Kreon
                     return;
                 case 1:
                     AaruConsole.Write("Request number?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out requestNumber))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         requestNumber = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -143,13 +143,13 @@ internal static class Kreon
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.KreonExtractSs(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration,
                                         requestNumber);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending EXTRACT SS to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -168,13 +168,13 @@ internal static class Kreon
         AaruConsole.WriteLine("0.- Return to Kreon vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -186,7 +186,7 @@ internal static class Kreon
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("EXTRACT SS response:");
 
@@ -194,13 +194,13 @@ internal static class Kreon
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("EXTRACT SS sense:");
 
@@ -208,19 +208,19 @@ internal static class Kreon
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("EXTRACT SS decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -228,8 +228,8 @@ internal static class Kreon
             case 5: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -237,13 +237,13 @@ internal static class Kreon
 
     static void GetFeatureList(string devPath, Device dev)
     {
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.KreonGetFeatureList(out byte[] senseBuffer, out KreonFeatures features, dev.Timeout,
                                              out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending GET FEATURE LIST to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -260,13 +260,13 @@ internal static class Kreon
         AaruConsole.WriteLine("0.- Return to Kreon vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = System.Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -278,7 +278,7 @@ internal static class Kreon
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("GET FEATURE LIST sense:");
 
@@ -286,16 +286,16 @@ internal static class Kreon
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -307,11 +307,11 @@ internal static class Kreon
         string          strDev;
         int             item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for SET LOCK STATE command:");
             AaruConsole.WriteLine("Lock state: {0}", state);
@@ -321,12 +321,12 @@ internal static class Kreon
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Kreon vendor commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -344,13 +344,13 @@ internal static class Kreon
                                           KreonLockStates.Wxripper, KreonLockStates.Xtreme);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out state))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         state = KreonLockStates.Locked;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -358,11 +358,11 @@ internal static class Kreon
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.KreonSetLockState(out byte[] senseBuffer, state, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SET LOCK STATE to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -376,13 +376,13 @@ internal static class Kreon
         AaruConsole.WriteLine("0.- Return to Kreon vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -397,8 +397,8 @@ internal static class Kreon
             case 2: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -406,11 +406,11 @@ internal static class Kreon
 
     static void Unlock(string devPath, Device dev)
     {
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
         bool sense = dev.KreonDeprecatedUnlock(out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending UNLOCK to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -426,13 +426,13 @@ internal static class Kreon
         AaruConsole.WriteLine("0.- Return to Kreon vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = System.Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -444,7 +444,7 @@ internal static class Kreon
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("UNLOCK sense:");
 
@@ -452,16 +452,16 @@ internal static class Kreon
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }

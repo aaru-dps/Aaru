@@ -30,6 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,12 +48,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Devices;
 using Schemas;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -76,16 +78,16 @@ partial class Dump
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
     void DumpCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
-                        IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents,
-                        ref double maxSpeed, MhddLog mhddLog, ref double minSpeed, bool read6, bool read10,
-                        bool read12, bool read16, bool readcd, MmcSubchannel supportedSubchannel, uint subSize,
-                        ref double totalDuration, SubchannelLog subLog, MmcSubchannel desiredSubchannel,
-                        Dictionary<byte, string> isrcs, ref string mcn, Track[] tracks,
-                        HashSet<int> subchannelExtents, Dictionary<byte, int> smallestPregapLbaPerTrack)
+                        IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents, ref double maxSpeed,
+                        MhddLog mhddLog, ref double minSpeed, bool read6, bool read10, bool read12, bool read16,
+                        bool readcd, MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
+                        SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
+                        ref string mcn, Track[] tracks, HashSet<int> subchannelExtents,
+                        Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
         byte[]     cmdBuf        = null; // Data buffer
         const uint sectorSize    = 2352; // Full sector size
-        bool       sense         = true; // Sense indicator
+        var        sense         = true; // Sense indicator
         byte[]     senseBuf      = null;
         var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
@@ -119,9 +121,9 @@ partial class Dump
 
                 if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes,
-                                        false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                        MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes, false,
+                                        false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                        supportedSubchannel, _dev.Timeout, out cmdDuration);
 
                     totalDuration += cmdDuration;
                 }
@@ -129,14 +131,13 @@ partial class Dump
                     sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0, 1, false,
                                         _dev.Timeout, out cmdDuration);
                 else if(read12)
-                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize,
-                                        0, 1, false, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
+                                        1, false, _dev.Timeout, out cmdDuration);
                 else if(read10)
-                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize,
-                                        0, 1, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
+                                        1, _dev.Timeout, out cmdDuration);
                 else if(read6)
-                    sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout,
-                                       out cmdDuration);
+                    sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
 
                 if(!sense &&
                    !_dev.Error)
@@ -149,14 +150,14 @@ partial class Dump
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        byte[] data = new byte[sectorSize * _maximumReadable];
-                        byte[] sub  = new byte[subSize    * _maximumReadable];
+                        var data = new byte[sectorSize * _maximumReadable];
+                        var sub  = new byte[subSize    * _maximumReadable];
 
-                        for(int b = 0; b < _maximumReadable; b++)
+                        for(var b = 0; b < _maximumReadable; b++)
                         {
-                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
+                            Array.Copy(cmdBuf, (int)(0 + b * blockSize), data, sectorSize * b, sectorSize);
 
-                            Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
+                            Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize * b, subSize);
                         }
 
                         outputOptical.WriteSectorsLong(data, i, _maximumReadable);
@@ -169,7 +170,7 @@ partial class Dump
                         // Set tracks and go back
                         if(indexesChanged)
                         {
-                            (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
+                            outputOptical.SetTracks(tracks.ToList());
                             i--;
 
                             continue;
@@ -246,16 +247,16 @@ partial class Dump
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
     void RetryCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
-                         IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents,
-                         ref double maxSpeed, MhddLog mhddLog, ref double minSpeed, bool read6, bool read10,
-                         bool read12, bool read16, bool readcd, MmcSubchannel supportedSubchannel, uint subSize,
-                         ref double totalDuration, SubchannelLog subLog, MmcSubchannel desiredSubchannel,
-                         Dictionary<byte, string> isrcs, ref string mcn, Track[] tracks,
-                         HashSet<int> subchannelExtents, Dictionary<byte, int> smallestPregapLbaPerTrack)
+                         IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents, ref double maxSpeed,
+                         MhddLog mhddLog, ref double minSpeed, bool read6, bool read10, bool read12, bool read16,
+                         bool readcd, MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
+                         SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
+                         ref string mcn, Track[] tracks, HashSet<int> subchannelExtents,
+                         Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
         byte[]     cmdBuf        = null; // Data buffer
         const uint sectorSize    = 2352; // Full sector size
-        bool       sense         = true; // Sense indicator
+        var        sense         = true; // Sense indicator
         byte[]     senseBuf      = null;
         var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
@@ -288,9 +289,9 @@ partial class Dump
 
                 if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes,
-                                        false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                        MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes, false,
+                                        false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                        supportedSubchannel, _dev.Timeout, out cmdDuration);
 
                     totalDuration += cmdDuration;
                 }
@@ -298,14 +299,13 @@ partial class Dump
                     sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0, 1, false,
                                         _dev.Timeout, out cmdDuration);
                 else if(read12)
-                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize,
-                                        0, 1, false, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
+                                        1, false, _dev.Timeout, out cmdDuration);
                 else if(read10)
-                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize,
-                                        0, 1, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
+                                        1, _dev.Timeout, out cmdDuration);
                 else if(read6)
-                    sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout,
-                                       out cmdDuration);
+                    sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
 
                 if(!sense &&
                    !_dev.Error)
@@ -318,14 +318,14 @@ partial class Dump
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        byte[] data = new byte[sectorSize * _maximumReadable];
-                        byte[] sub  = new byte[subSize    * _maximumReadable];
+                        var data = new byte[sectorSize * _maximumReadable];
+                        var sub  = new byte[subSize    * _maximumReadable];
 
-                        for(int b = 0; b < _maximumReadable; b++)
+                        for(var b = 0; b < _maximumReadable; b++)
                         {
-                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
+                            Array.Copy(cmdBuf, (int)(0 + b * blockSize), data, sectorSize * b, sectorSize);
 
-                            Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
+                            Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize * b, subSize);
                         }
 
                         outputOptical.WriteSectorsLong(data, i, _maximumReadable);
@@ -338,7 +338,7 @@ partial class Dump
                         // Set tracks and go back
                         if(indexesChanged)
                         {
-                            (outputOptical as IWritableOpticalImage).SetTracks(tracks.ToList());
+                            outputOptical.SetTracks(tracks.ToList());
                             i--;
 
                             continue;

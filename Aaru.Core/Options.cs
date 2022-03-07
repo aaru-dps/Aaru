@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core;
+
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-
-namespace Aaru.Core;
 
 /// <summary>Option parsing</summary>
 public static class Options
@@ -44,18 +44,18 @@ public static class Options
     /// <returns>Options name-value dictionary</returns>
     public static Dictionary<string, string> Parse(string options)
     {
-        Dictionary<string, string> parsed  = new Dictionary<string, string>();
-        bool                       escaped = false;
-        bool                       quoted  = false;
-        bool                       inValue = false;
-        string                     name    = null;
-        string                     value;
-        var                        sb = new StringBuilder();
+        var    parsed  = new Dictionary<string, string>();
+        var    escaped = false;
+        var    quoted  = false;
+        var    inValue = false;
+        string name    = null;
+        string value;
+        var    sb = new StringBuilder();
 
         if(options == null)
             return parsed;
 
-        for(int index = 0; index < options.Length; index++)
+        for(var index = 0; index < options.Length; index++)
         {
             char c = options[index];
 

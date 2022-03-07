@@ -31,9 +31,9 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-using Aaru.Helpers;
-
 namespace Aaru.Filesystems;
+
+using Aaru.Helpers;
 
 public sealed partial class ISO9660
 {

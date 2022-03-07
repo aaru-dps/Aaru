@@ -30,6 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable UnusedMember.Local
+
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -39,10 +45,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-// ReSharper disable UnusedMember.Local
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the New Implementation of a Log-structured File System v2</summary>
@@ -73,7 +75,7 @@ public sealed class NILFS2 : IFilesystem
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -95,8 +97,7 @@ public sealed class NILFS2 : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.UTF8;
         information = "";
@@ -109,7 +110,7 @@ public sealed class NILFS2 : IFilesystem
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -146,11 +147,9 @@ public sealed class NILFS2 : IFilesystem
         sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(nilfsSb.volume_name, Encoding)).AppendLine();
         sb.AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime)).AppendLine();
 
-        sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.mtime)).
-           AppendLine();
+        sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.mtime)).AppendLine();
 
-        sb.AppendFormat("Volume last written on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime)).
-           AppendLine();
+        sb.AppendFormat("Volume last written on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime)).AppendLine();
 
         information = sb.ToString();
 
@@ -174,7 +173,9 @@ public sealed class NILFS2 : IFilesystem
 
     enum State : ushort
     {
-        Valid = 0x0001, Error = 0x0002, Resize = 0x0004
+        Valid  = 0x0001,
+        Error  = 0x0002,
+        Resize = 0x0004
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

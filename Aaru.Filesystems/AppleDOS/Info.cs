@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -38,8 +40,6 @@ using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class AppleDOS
 {
@@ -56,20 +56,19 @@ public sealed partial class AppleDOS
 
         int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
-        var errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
+        ErrorNumber errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
 
         if(errno != ErrorNumber.NoError)
             return false;
 
         _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
-        return _vtoc.catalogSector   < spt  && _vtoc.maxTrackSectorPairsPerSector <= 122 &&
-               _vtoc.sectorsPerTrack == spt && _vtoc.bytesPerSector               == 256;
+        return _vtoc.catalogSector < spt && _vtoc.maxTrackSectorPairsPerSector <= 122 && _vtoc.sectorsPerTrack == spt &&
+               _vtoc.bytesPerSector == 256;
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? new Apple2();
         information = "";
@@ -77,7 +76,7 @@ public sealed partial class AppleDOS
 
         int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
-        var errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
+        ErrorNumber errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
 
         if(errno != ErrorNumber.NoError)
             return;
@@ -97,8 +96,7 @@ public sealed partial class AppleDOS
         sb.AppendFormat("{0} sectors per track", _vtoc.sectorsPerTrack).AppendLine();
         sb.AppendFormat("{0} bytes per sector", _vtoc.bytesPerSector).AppendLine();
 
-        sb.AppendFormat("Track allocation is {0}", _vtoc.allocationDirection > 0 ? "forward" : "reverse").
-           AppendLine();
+        sb.AppendFormat("Track allocation is {0}", _vtoc.allocationDirection > 0 ? "forward" : "reverse").AppendLine();
 
         information = sb.ToString();
 

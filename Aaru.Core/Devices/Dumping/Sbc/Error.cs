@@ -25,6 +25,14 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
@@ -37,13 +45,6 @@ using Aaru.Decryption;
 using Aaru.Decryption.DVD;
 using Aaru.Devices;
 using Schemas;
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -53,12 +54,12 @@ partial class Dump
     /// <param name="totalDuration">Total time spent in commands</param>
     /// <param name="scsiReader">SCSI reader</param>
     /// <param name="blankExtents">Blank extents</param>
-    void RetrySbcData(Reader scsiReader, DumpHardwareType currentTry, ExtentsULong extents,
-                      ref double totalDuration, ExtentsULong blankExtents)
+    void RetrySbcData(Reader scsiReader, DumpHardwareType currentTry, ExtentsULong extents, ref double totalDuration,
+                      ExtentsULong blankExtents)
     {
-        int             pass              = 1;
-        bool            forward           = true;
-        bool            runningPersistent = false;
+        var             pass              = 1;
+        var             forward           = true;
+        var             runningPersistent = false;
         bool            sense;
         byte[]          buffer;
         bool            recoveredError;
@@ -66,7 +67,7 @@ partial class Dump
         byte[]          md6;
         byte[]          md10;
         bool            blankCheck;
-        bool            newBlank     = false;
+        var             newBlank     = false;
         var             outputFormat = _outputPlugin as IWritableImage;
 
         if(_persistent)
@@ -79,8 +80,8 @@ partial class Dump
 
             if(sense)
             {
-                sense = _dev.ModeSense10(out buffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
-                                         _dev.Timeout, out _);
+                sense = _dev.ModeSense10(out buffer, out _, false, ScsiModeSensePageControl.Current, 0x01, _dev.Timeout,
+                                         out _);
 
                 if(!sense)
                 {
@@ -97,8 +98,8 @@ partial class Dump
                 Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(buffer, _dev.ScsiType);
 
                 if(dcMode6?.Pages != null)
-                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage => modePage.Page == 0x01 &&
+                                modePage.Subpage                                                           == 0x00))
                         currentModePage = modePage;
             }
 
@@ -222,13 +223,11 @@ partial class Dump
                 _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
             }
             else
-            {
                 runningPersistent = true;
-            }
         }
 
         InitProgress?.Invoke();
-        repeatRetry:
+    repeatRetry:
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
         foreach(ulong badSector in tmpArray)
@@ -263,7 +262,7 @@ partial class Dump
                 continue;
             }
 
-            if((!sense && !_dev.Error) || recoveredError)
+            if(!sense && !_dev.Error || recoveredError)
             {
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
@@ -272,9 +271,7 @@ partial class Dump
                 _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
             }
             else if(runningPersistent)
-            {
                 outputFormat.WriteSector(buffer, badSector);
-            }
         }
 
         if(pass < _retryPasses &&
@@ -321,15 +318,15 @@ partial class Dump
 
     void RetryTitleKeys(DVDDecryption dvdDecrypt, byte[] discKey, ref double totalDuration)
     {
-        int    pass    = 1;
-        bool   forward = true;
+        var    pass    = 1;
+        var    forward = true;
         bool   sense;
         byte[] buffer;
         var    outputFormat = _outputPlugin as IWritableImage;
 
         InitProgress?.Invoke();
 
-        repeatRetry:
+    repeatRetry:
         ulong[] tmpArray = _resume.MissingTitleKeys.ToArray();
 
         foreach(ulong missingKey in tmpArray)

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
 /// <inheritdoc />
@@ -79,7 +79,7 @@ public sealed class AppleHFSPlus : IFilesystem
         if(vhSector.Length < 0x800)
             return false;
 
-        ushort drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
+        var drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
         if(drSigWord == AppleCommon.HFS_MAGIC) // "BD"
         {
@@ -88,13 +88,13 @@ public sealed class AppleHFSPlus : IFilesystem
             if(drSigWord == AppleCommon.HFSP_MAGIC) // "H+"
             {
                 // ReSharper disable once InconsistentNaming
-                ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
+                var xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
-                uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
+                var drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
 
-                ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
+                var drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
-                hfspOffset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.Info.SectorSize);
+                hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.Info.SectorSize);
             }
             else
                 hfspOffset = 0;
@@ -114,8 +114,7 @@ public sealed class AppleHFSPlus : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = Encoding.BigEndianUnicode;
         information = "";
@@ -135,7 +134,7 @@ public sealed class AppleHFSPlus : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        ushort drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
+        var drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
         if(drSigWord == AppleCommon.HFS_MAGIC) // "BD"
         {
@@ -144,13 +143,13 @@ public sealed class AppleHFSPlus : IFilesystem
             if(drSigWord == AppleCommon.HFSP_MAGIC) // "H+"
             {
                 // ReSharper disable once InconsistentNaming
-                ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
+                var xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
-                uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
+                var drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
 
-                ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
+                var drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
-                hfspOffset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.Info.SectorSize);
+                hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.Info.SectorSize);
                 wrapped    = true;
             }
             else
@@ -188,7 +187,7 @@ public sealed class AppleHFSPlus : IFilesystem
         if(wrapped)
             sb.AppendLine("Volume is wrapped inside an HFS volume.");
 
-        byte[] tmp = new byte[0x400];
+        var tmp = new byte[0x400];
         Array.Copy(vhSector, 0x400, tmp, 0, 0x400);
         vhSector = tmp;
 

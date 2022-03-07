@@ -1,3 +1,5 @@
+namespace Aaru.Tests.WritableImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,8 +15,6 @@ using Aaru.Devices;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using NUnit.Framework;
-
-namespace Aaru.Tests.WritableImages;
 
 public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
 {
@@ -55,7 +55,6 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                     continue;
 
                 using(new AssertionScope())
-                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
@@ -82,10 +81,10 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         image.Tracks.Select(t => t.Pregap).Should().
                               BeEquivalentTo(test.Tracks.Select(s => s.Pregap), $"Track pregap: {testFile}");
 
-                        int trackNo = 0;
+                        var trackNo = 0;
 
-                        byte?[] flags           = new byte?[image.Tracks.Count];
-                        ulong   latestEndSector = 0;
+                        var   flags           = new byte?[image.Tracks.Count];
+                        ulong latestEndSector = 0;
 
                         foreach(Track currentTrack in image.Tracks)
                         {
@@ -109,7 +108,6 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
                                         $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors} for image");
                     });
-                }
             }
         });
     }
@@ -147,8 +145,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 if(opened != ErrorNumber.NoError)
                     continue;
 
-                string outputPath =
-                    Path.Combine(Path.GetTempPath(), $"{Path.GetRandomFileName()}.{OutputExtension}");
+                string outputPath = Path.Combine(Path.GetTempPath(), $"{Path.GetRandomFileName()}.{OutputExtension}");
 
                 var outputFormat = Activator.CreateInstance(OutputPlugin.GetType()) as IWritableOpticalImage;
                 Assert.NotNull(outputFormat, $"Could not instantiate output plugin for {testFile}");
@@ -160,12 +157,10 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
 
                 foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags.Where(sectorTag =>
                             !outputFormat.SupportedSectorTags.Contains(sectorTag)))
-                {
                     if(sectorTag != SectorTagType.CdTrackFlags &&
                        sectorTag != SectorTagType.CdTrackIsrc  &&
                        sectorTag != SectorTagType.CdSectorSubchannel)
                         useLong = false;
-                }
 
                 Assert.IsTrue(outputFormat.Create(outputPath, inputFormat.Info.MediaType, new Dictionary<string, string>(), inputFormat.Info.Sectors, inputFormat.Info.SectorSize),
                               $"Error {outputFormat.ErrorMessage} creating output image.");
@@ -200,8 +195,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         else
                             sectorsToDo = (uint)(trackSectors - doneSectors);
 
-                        bool useNotLong = false;
-                        bool result     = false;
+                        var useNotLong = false;
+                        var result     = false;
 
                         if(useLong)
                         {
@@ -213,8 +208,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                             if(errno == ErrorNumber.NoError)
                                 result = sectorsToDo == 1
                                              ? outputFormat.WriteSectorLong(sector, doneSectors + track.StartSector)
-                                             : outputFormat.WriteSectorsLong(sector,
-                                                                             doneSectors + track.StartSector, sectorsToDo);
+                                             : outputFormat.WriteSectorsLong(sector, doneSectors + track.StartSector,
+                                                                             sectorsToDo);
                             else
                                 result = false;
 
@@ -250,9 +245,9 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 string                   mcn                       = null;
                 HashSet<int>             subchannelExtents         = new();
                 Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
-                Track[]                  tracks                    = new Track[inputFormat.Tracks.Count];
+                var                      tracks                    = new Track[inputFormat.Tracks.Count];
 
-                for(int i = 0; i < tracks.Length; i++)
+                for(var i = 0; i < tracks.Length; i++)
                 {
                     tracks[i] = new Track
                     {
@@ -288,8 +283,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 }
 
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
-                                                         Where(t => t == SectorTagType.CdTrackFlags).
-                                                         OrderBy(t => t))
+                                                         Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
                 {
                     foreach(Track track in tracks)
                     {
@@ -373,10 +367,9 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                                 if(tag == SectorTagType.CdSectorSubchannel)
                                 {
                                     bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                        MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1, null,
-                                        isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true,
-                                        outputFormat, true, true, null, null, smallestPregapLbaPerTrack,
-                                        false);
+                                        MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1, null, isrcs,
+                                        (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true,
+                                        outputFormat, true, true, null, null, smallestPregapLbaPerTrack, false);
 
                                     if(indexesChanged)
                                         outputFormat.SetTracks(tracks.ToList());
@@ -384,13 +377,12 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                                     result = true;
                                 }
                                 else
-                                    result = outputFormat.WriteSectorTag(sector, doneSectors + track.StartSector,
-                                                                         tag);
+                                    result = outputFormat.WriteSectorTag(sector, doneSectors + track.StartSector, tag);
                             }
                             else
                             {
-                                errno = inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo,
-                                                                   tag, out sector);
+                                errno = inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo, tag,
+                                                                   out sector);
 
                                 Assert.AreEqual(ErrorNumber.NoError, errno,
                                                 $"Error {errno} reading tag, not continuing...");
@@ -398,10 +390,10 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                                 if(tag == SectorTagType.CdSectorSubchannel)
                                 {
                                     bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                        MmcSubchannel.Raw, sector, doneSectors + track.StartSector,
-                                        sectorsToDo, null, isrcs, (byte)track.Sequence, ref mcn, tracks,
-                                        subchannelExtents, true, outputFormat, true, true, null, null,
-                                        smallestPregapLbaPerTrack, false);
+                                        MmcSubchannel.Raw, sector, doneSectors + track.StartSector, sectorsToDo,
+                                        null, isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents,
+                                        true, outputFormat, true, true, null, null, smallestPregapLbaPerTrack,
+                                        false);
 
                                     if(indexesChanged)
                                         outputFormat.SetTracks(tracks.ToList());
@@ -500,7 +492,6 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                     continue;
 
                 using(new AssertionScope())
-                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors (output): {testFile}");
@@ -512,8 +503,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         Assert.AreEqual(test.Tracks.Length, image.Tracks.Count, $"Tracks (output): {testFile}");
 
                         image.Tracks.Select(t => t.Session).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Session),
-                                             $"Track session (output): {testFile}");
+                              BeEquivalentTo(test.Tracks.Select(s => s.Session), $"Track session (output): {testFile}");
 
                         image.Tracks.Select(t => t.StartSector).Should().
                               BeEquivalentTo(test.Tracks.Select(s => s.Start), $"Track start (output): {testFile}");
@@ -522,13 +512,12 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                               BeEquivalentTo(test.Tracks.Select(s => s.End), $"Track end (output): {testFile}");
 
                         image.Tracks.Select(t => t.Pregap).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Pregap),
-                                             $"Track pregap (output): {testFile}");
+                              BeEquivalentTo(test.Tracks.Select(s => s.Pregap), $"Track pregap (output): {testFile}");
 
-                        int trackNo = 0;
+                        var trackNo = 0;
 
-                        byte?[] flags           = new byte?[image.Tracks.Count];
-                        ulong   latestEndSector = 0;
+                        var   flags           = new byte?[image.Tracks.Count];
+                        ulong latestEndSector = 0;
 
                         foreach(Track currentTrack in image.Tracks)
                         {
@@ -553,7 +542,6 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
                                         $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors} for image (output)");
                     });
-                }
 
                 Md5Context ctx;
 

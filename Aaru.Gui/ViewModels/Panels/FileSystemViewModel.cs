@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Panels;
+
 using JetBrains.Annotations;
 using Schemas;
-
-namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class FileSystemViewModel
 {

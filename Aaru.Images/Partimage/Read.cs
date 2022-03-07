@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Partimage
 {
@@ -53,7 +53,7 @@ public sealed partial class Partimage
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(hdrB, 0, Marshal.SizeOf<Header>());
         _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
@@ -63,8 +63,7 @@ public sealed partial class Partimage
         AaruConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.version = {0}",
                                    StringHandlers.CToString(_cVolumeHeader.version));
 
-        AaruConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.volumeNumber = {0}",
-                                   _cVolumeHeader.volumeNumber);
+        AaruConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.volumeNumber = {0}", _cVolumeHeader.volumeNumber);
 
         AaruConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.identificator = {0:X16}",
                                    _cVolumeHeader.identificator);
@@ -146,8 +145,7 @@ public sealed partial class Partimage
         AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_zone = {0}",
                                    _cMainHeader.dateCreate.Timezone);
 
-        var dateCreate = new DateTime(1900                               + (int)_cMainHeader.dateCreate.Year,
-                                      (int)_cMainHeader.dateCreate.Month + 1,
+        var dateCreate = new DateTime(1900 + (int)_cMainHeader.dateCreate.Year, (int)_cMainHeader.dateCreate.Month + 1,
                                       (int)_cMainHeader.dateCreate.DayOfMonth, (int)_cMainHeader.dateCreate.Hour,
                                       (int)_cMainHeader.dateCreate.Minute, (int)_cMainHeader.dateCreate.Second);
 
@@ -253,8 +251,7 @@ public sealed partial class Partimage
         AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlockSize = {0}", localHeader.qwBlockSize);
         AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwUsedBlocks = {0}", localHeader.qwUsedBlocks);
 
-        AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlocksCount = {0}",
-                                   localHeader.qwBlocksCount);
+        AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlocksCount = {0}", localHeader.qwBlocksCount);
 
         AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBitmapSize = {0}", localHeader.qwBitmapSize);
 
@@ -359,8 +356,7 @@ public sealed partial class Partimage
 
         DateTime end = DateTime.Now;
 
-        AaruConsole.DebugWriteLine("Partimage plugin", "Took {0} seconds to fill extents",
-                                   (end - start).TotalSeconds);
+        AaruConsole.DebugWriteLine("Partimage plugin", "Took {0} seconds to fill extents", (end - start).TotalSeconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -410,7 +406,7 @@ public sealed partial class Partimage
                         (long)(blockOff * _imageInfo.SectorSize) +
 
                         // How many bytes of CRC blocks to skip
-                        ((long)(blockOff / (CHECK_FREQUENCY / _imageInfo.SectorSize)) * Marshal.SizeOf<CCheck>());
+                        (long)(blockOff / (CHECK_FREQUENCY / _imageInfo.SectorSize)) * Marshal.SizeOf<CCheck>();
 
         buffer = new byte[_imageInfo.SectorSize];
         _imageStream.Seek(imageOff, SeekOrigin.Begin);
@@ -437,7 +433,7 @@ public sealed partial class Partimage
 
         var ms = new MemoryStream();
 
-        bool allEmpty = true;
+        var allEmpty = true;
 
         for(uint i = 0; i < length; i++)
             if((_bitmap[sectorAddress / 8] & (1 << (int)(sectorAddress % 8))) != 0)

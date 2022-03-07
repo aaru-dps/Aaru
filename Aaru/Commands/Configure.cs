@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands;
+
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -38,9 +40,7 @@ using Aaru.Console;
 using Aaru.Settings;
 using Spectre.Console;
 
-namespace Aaru.Commands;
-
-internal sealed class ConfigureCommand : Command
+sealed class ConfigureCommand : Command
 {
     public ConfigureCommand() : base("configure", "Configures user settings and statistics.") =>
         Handler = CommandHandler.Create((Func<bool, bool, int>)Invoke);
@@ -53,7 +53,7 @@ internal sealed class ConfigureCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -117,11 +117,11 @@ internal sealed class ConfigureCommand : Command
             AaruConsole.
                 Write("[italic]Do you want to enable decryption of copy protected media?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-            pressedKey = System.Console.ReadKey();
+            pressedKey = Console.ReadKey();
             AaruConsole.WriteLine();
         }
 
-        Settings.Settings.Current.EnableDecryption = pressedKey.Key == ConsoleKey.Y;
+        Settings.Current.EnableDecryption = pressedKey.Key == ConsoleKey.Y;
 
         #region Device reports
         AaruConsole.WriteLine();
@@ -142,11 +142,11 @@ internal sealed class ConfigureCommand : Command
             AaruConsole.
                 Write("[italic]Do you want to save device reports in shared folder of your computer? [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-            pressedKey = System.Console.ReadKey();
+            pressedKey = Console.ReadKey();
             AaruConsole.WriteLine();
         }
 
-        Settings.Settings.Current.SaveReportsGlobally = pressedKey.Key == ConsoleKey.Y;
+        Settings.Current.SaveReportsGlobally = pressedKey.Key == ConsoleKey.Y;
 
         pressedKey = new ConsoleKeyInfo();
         AaruConsole.WriteLine();
@@ -164,11 +164,11 @@ internal sealed class ConfigureCommand : Command
             AaruConsole.
                 Write("[italic]Do you want to share your device reports with us?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-            pressedKey = System.Console.ReadKey();
+            pressedKey = Console.ReadKey();
             AaruConsole.WriteLine();
         }
 
-        Settings.Settings.Current.ShareReports = pressedKey.Key == ConsoleKey.Y;
+        Settings.Current.ShareReports = pressedKey.Key == ConsoleKey.Y;
         #endregion Device reports
 
         #region Statistics
@@ -188,13 +188,13 @@ internal sealed class ConfigureCommand : Command
             AaruConsole.
                 Write("[italic]Do you want to save stats about your Aaru usage?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-            pressedKey = System.Console.ReadKey();
+            pressedKey = Console.ReadKey();
             AaruConsole.WriteLine();
         }
 
         if(pressedKey.Key == ConsoleKey.Y)
         {
-            Settings.Settings.Current.Stats = new StatsSettings();
+            Settings.Current.Stats = new StatsSettings();
 
             pressedKey = new ConsoleKeyInfo();
 
@@ -204,11 +204,11 @@ internal sealed class ConfigureCommand : Command
                 AaruConsole.
                     Write("[italic]Do you want to share your stats (anonymously)?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-                pressedKey = System.Console.ReadKey();
+                pressedKey = Console.ReadKey();
                 AaruConsole.WriteLine();
             }
 
-            Settings.Settings.Current.Stats.ShareStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Current.Stats.ShareStats = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
 
@@ -218,11 +218,11 @@ internal sealed class ConfigureCommand : Command
                 AaruConsole.
                     Write("[italic]Do you want to gather statistics about command usage?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-                pressedKey = System.Console.ReadKey();
+                pressedKey = Console.ReadKey();
                 AaruConsole.WriteLine();
             }
 
-            Settings.Settings.Current.Stats.CommandStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Current.Stats.CommandStats = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
 
@@ -232,11 +232,11 @@ internal sealed class ConfigureCommand : Command
                 AaruConsole.
                     Write("[italic]Do you want to gather statistics about found devices?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-                pressedKey = System.Console.ReadKey();
+                pressedKey = Console.ReadKey();
                 AaruConsole.WriteLine();
             }
 
-            Settings.Settings.Current.Stats.DeviceStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Current.Stats.DeviceStats = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
 
@@ -246,11 +246,11 @@ internal sealed class ConfigureCommand : Command
                 AaruConsole.
                     Write("[italic]Do you want to gather statistics about found filesystems?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-                pressedKey = System.Console.ReadKey();
+                pressedKey = Console.ReadKey();
                 AaruConsole.WriteLine();
             }
 
-            Settings.Settings.Current.Stats.FilesystemStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Current.Stats.FilesystemStats = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
 
@@ -260,11 +260,11 @@ internal sealed class ConfigureCommand : Command
                 AaruConsole.
                     Write("[italic]Do you want to gather statistics about found file filters?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-                pressedKey = System.Console.ReadKey();
+                pressedKey = Console.ReadKey();
                 AaruConsole.WriteLine();
             }
 
-            Settings.Settings.Current.Stats.FilterStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Current.Stats.FilterStats = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
 
@@ -274,11 +274,11 @@ internal sealed class ConfigureCommand : Command
                 AaruConsole.
                     Write("[italic]Do you want to gather statistics about found media image formats?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-                pressedKey = System.Console.ReadKey();
+                pressedKey = Console.ReadKey();
                 AaruConsole.WriteLine();
             }
 
-            Settings.Settings.Current.Stats.MediaImageStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Current.Stats.MediaImageStats = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
 
@@ -288,11 +288,11 @@ internal sealed class ConfigureCommand : Command
                 AaruConsole.
                     Write("[italic]Do you want to gather statistics about scanned media?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-                pressedKey = System.Console.ReadKey();
+                pressedKey = Console.ReadKey();
                 AaruConsole.WriteLine();
             }
 
-            Settings.Settings.Current.Stats.MediaScanStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Current.Stats.MediaScanStats = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
 
@@ -302,11 +302,11 @@ internal sealed class ConfigureCommand : Command
                 AaruConsole.
                     Write("[italic]Do you want to gather statistics about found partitioning schemes?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-                pressedKey = System.Console.ReadKey();
+                pressedKey = Console.ReadKey();
                 AaruConsole.WriteLine();
             }
 
-            Settings.Settings.Current.Stats.PartitionStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Current.Stats.PartitionStats = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
 
@@ -316,11 +316,11 @@ internal sealed class ConfigureCommand : Command
                 AaruConsole.
                     Write("[italic]Do you want to gather statistics about media types?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-                pressedKey = System.Console.ReadKey();
+                pressedKey = Console.ReadKey();
                 AaruConsole.WriteLine();
             }
 
-            Settings.Settings.Current.Stats.MediaStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Current.Stats.MediaStats = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
 
@@ -330,18 +330,18 @@ internal sealed class ConfigureCommand : Command
                 AaruConsole.
                     Write("[italic]Do you want to gather statistics about media image verifications?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-                pressedKey = System.Console.ReadKey();
+                pressedKey = Console.ReadKey();
                 AaruConsole.WriteLine();
             }
 
-            Settings.Settings.Current.Stats.VerifyStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Current.Stats.VerifyStats = pressedKey.Key == ConsoleKey.Y;
         }
         else
-            Settings.Settings.Current.Stats = null;
+            Settings.Current.Stats = null;
         #endregion Statistics
 
-        Settings.Settings.Current.GdprCompliance = DicSettings.GDPR_LEVEL;
-        Settings.Settings.SaveSettings();
+        Settings.Current.GdprCompliance = DicSettings.GDPR_LEVEL;
+        Settings.SaveSettings();
 
         return (int)ErrorNumber.NoError;
     }

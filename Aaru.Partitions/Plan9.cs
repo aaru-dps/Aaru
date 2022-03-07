@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,8 +39,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.Partitions;
 
 // This is the most stupid or the most intelligent partition scheme ever done, pick or take
 // At sector 1 from offset, text resides (yes, TEXT) in following format:

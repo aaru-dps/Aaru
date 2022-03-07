@@ -31,10 +31,10 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Helpers;
-
-namespace Aaru.Filesystems;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class ISO9660
@@ -44,7 +44,10 @@ public sealed partial class ISO9660
 
     enum Namespace
     {
-        Normal, Vms, Joliet,
-        Rrip, Romeo
+        Normal,
+        Vms,
+        Joliet,
+        Rrip,
+        Romeo
     }
 }

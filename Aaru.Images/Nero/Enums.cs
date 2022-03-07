@@ -30,19 +30,25 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
-
-namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Nero
 {
     enum DaoMode : ushort
     {
-        Data         = 0x0000, DataM2F1   = 0x0002, DataM2F2 = 0x0003,
-        DataRaw      = 0x0005, DataM2Raw  = 0x0006, Audio    = 0x0007,
-        AudioAlt     = 0x0008, DataRawSub = 0x000F, AudioSub = 0x0010,
+        Data         = 0x0000,
+        DataM2F1     = 0x0002,
+        DataM2F2     = 0x0003,
+        DataRaw      = 0x0005,
+        DataM2Raw    = 0x0006,
+        Audio        = 0x0007,
+        AudioAlt     = 0x0008,
+        DataRawSub   = 0x000F,
+        AudioSub     = 0x0010,
         DataM2RawSub = 0x0011
     }
 

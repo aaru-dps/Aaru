@@ -26,21 +26,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems;
-
 [TestFixture]
 public class Reiser3 : FilesystemTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Reiser filesystem v3");
-    public override IFilesystem Plugin     => new Reiser();
-    public override bool        Partitions => true;
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Reiser filesystem v3");
+    public override IFilesystem Plugin => new Reiser();
+    public override bool Partitions => true;
 
     public override FileSystemTest[] Tests => new[]
     {

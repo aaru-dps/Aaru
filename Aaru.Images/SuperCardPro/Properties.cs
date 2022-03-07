@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
@@ -44,7 +44,7 @@ public sealed partial class SuperCardPro
     /// <inheritdoc />
     public string Name => "SuperCardPro";
     /// <inheritdoc />
-    public Guid Id => new Guid("C5D3182E-1D45-4767-A205-E6E5C83444DC");
+    public Guid Id => new("C5D3182E-1D45-4767-A205-E6E5C83444DC");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class TeleDisk
 {
@@ -45,7 +45,7 @@ public sealed partial class TeleDisk
     /// <inheritdoc />
     public string Name => "Sydex TeleDisk";
     /// <inheritdoc />
-    public Guid Id => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+    public Guid Id => new("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

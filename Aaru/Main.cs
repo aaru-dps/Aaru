@@ -31,6 +31,8 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
+namespace Aaru;
+
 using System;
 using System.CommandLine;
 using System.IO;
@@ -53,9 +55,7 @@ using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Spectre.Console;
 
-namespace Aaru;
-
-internal class MainClass
+class MainClass
 {
     static string                                _assemblyCopyright;
     static string                                _assemblyTitle;
@@ -73,16 +73,14 @@ internal class MainClass
         attributes     = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 
         _assemblyVersion =
-            Attribute.GetCustomAttribute(typeof(MainClass).Assembly, typeof(AssemblyInformationalVersionAttribute))
-                as AssemblyInformationalVersionAttribute;
+            Attribute.GetCustomAttribute(typeof(MainClass).Assembly, typeof(AssemblyInformationalVersionAttribute)) as
+                AssemblyInformationalVersionAttribute;
 
         _assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 
         if(args.Length                == 1 &&
            args[0].ToLowerInvariant() == "gui")
-        {
             return Gui.Main.Start(args);
-        }
 
         AaruConsole.WriteLineEvent += (format, objects) =>
         {
@@ -110,7 +108,7 @@ internal class MainClass
 
         Settings.Settings.LoadSettings();
 
-        AaruContext ctx =null;
+        AaruContext ctx = null;
 
         try
         {
@@ -137,10 +135,8 @@ internal class MainClass
                 ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
             foreach(string migration in ctx.Database.GetPendingMigrations())
-            {
                 ctx.Database.
                     ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
-            }
 
             ctx.SaveChanges();
         }
@@ -158,12 +154,11 @@ internal class MainClass
                                            d.Revision     == duplicate.Revision     && d.Bus == duplicate.Bus).Skip(1));
 
         // Remove nulls
-        ctx.RemoveRange(ctx.SeenDevices!.Where(d => d.Manufacturer == null && d.Model == null &&
-                                                    d.Revision     == null));
+        ctx.RemoveRange(ctx.SeenDevices!.Where(d => d.Manufacturer == null && d.Model == null && d.Revision == null));
 
         ctx.SaveChanges();
 
-        bool mainDbUpdate = false;
+        var mainDbUpdate = false;
 
         if(!File.Exists(Settings.Settings.MainDbPath))
         {
@@ -196,8 +191,8 @@ internal class MainClass
 
         // GDPR level compliance does not match and there are no arguments or the arguments are neither GUI neither configure.
         if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL &&
-           (args.Length < 1 || (args.Length                >= 1 && args[0].ToLowerInvariant() != "gui" &&
-                                args[0].ToLowerInvariant() != "configure")))
+           (args.Length < 1 || args.Length >= 1 && args[0].ToLowerInvariant() != "gui" &&
+            args[0].ToLowerInvariant()     != "configure"))
             new ConfigureCommand().DoConfigure(true);
 
         Statistics.LoadStats();
@@ -230,8 +225,7 @@ internal class MainClass
                                         Argument = new Argument<bool>(() => false)
                                     });
 
-        rootCommand.Description =
-            $"{_assemblyTitle} {_assemblyVersion?.InformationalVersion}\n{_assemblyCopyright}";
+        rootCommand.Description = $"{_assemblyTitle} {_assemblyVersion?.InformationalVersion}\n{_assemblyCopyright}";
 
         rootCommand.AddCommand(new DatabaseFamily(mainDbUpdate));
         rootCommand.AddCommand(new DeviceFamily());

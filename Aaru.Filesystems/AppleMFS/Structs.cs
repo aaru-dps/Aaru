@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-
 #pragma warning disable 169
 
 namespace Aaru.Filesystems;
+
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 // Information from Inside Macintosh Volume II
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
@@ -79,7 +79,8 @@ public sealed partial class AppleMFS
     [Flags]
     enum FileFlags : byte
     {
-        Locked = 0x01, Used = 0x80
+        Locked = 0x01,
+        Used   = 0x80
     }
 
     struct FileEntry

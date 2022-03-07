@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
-
 namespace Aaru.DiscImages;
+
+using System.Collections.Generic;
 
 public sealed partial class Blu
 {

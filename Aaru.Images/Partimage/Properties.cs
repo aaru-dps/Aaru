@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Partimage
 {
@@ -45,7 +45,7 @@ public sealed partial class Partimage
     /// <inheritdoc />
     public string Name => "Partimage disk image";
     /// <inheritdoc />
-    public Guid Id => new Guid("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
+    public Guid Id => new("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

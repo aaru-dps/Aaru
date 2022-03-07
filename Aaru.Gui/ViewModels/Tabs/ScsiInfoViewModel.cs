@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Tabs;
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -44,8 +46,6 @@ using Aaru.Helpers;
 using Avalonia.Controls;
 using ReactiveUI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class ScsiInfoViewModel : ViewModelBase
 {
@@ -311,8 +311,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         }
                         case 0x21:
                         {
-                            if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() ==
-                               "CERTANCE")
+                            if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() == "CERTANCE")
                                 decodedText = Modes.PrettifyCertanceModePage_21(page.PageResponse);
                             else
                                 goto default;
@@ -321,8 +320,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         }
                         case 0x22:
                         {
-                            if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() ==
-                               "CERTANCE")
+                            if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() == "CERTANCE")
                                 decodedText = Modes.PrettifyCertanceModePage_22(page.PageResponse);
                             else
                                 goto default;
@@ -426,10 +424,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         }
 
         if(scsiEvpdPages != null)
-        {
             foreach(KeyValuePair<byte, byte[]> page in scsiEvpdPages.OrderBy(t => t.Key))
             {
-                string evpdPageTitle = "";
+                var    evpdPageTitle = "";
                 string evpdDecodedPage;
 
                 if(page.Key >= 0x01 &&
@@ -504,44 +501,44 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     evpdDecodedPage = EVPD.DecodePageB4(page.Value);
                 }
                 else if(page.Key == 0xC0 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                       Trim() == "quantum")
+                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                        "quantum")
                 {
                     evpdPageTitle   = "Quantum Firmware Build Information page";
                     evpdDecodedPage = EVPD.PrettifyPage_C0_Quantum(page.Value);
                 }
                 else if(page.Key == 0xC0 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                       Trim() == "seagate")
+                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                        "seagate")
                 {
                     evpdPageTitle   = "Seagate Firmware Numbers page";
                     evpdDecodedPage = EVPD.PrettifyPage_C0_Seagate(page.Value);
                 }
                 else if(page.Key == 0xC0 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                       Trim() == "ibm")
+                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                        "ibm")
                 {
                     evpdPageTitle   = "IBM Drive Component Revision Levels page";
                     evpdDecodedPage = EVPD.PrettifyPage_C0_IBM(page.Value);
                 }
                 else if(page.Key == 0xC1 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                       Trim() == "ibm")
+                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                        "ibm")
                 {
                     evpdPageTitle   = "IBM Drive Serial Numbers page";
                     evpdDecodedPage = EVPD.PrettifyPage_C1_IBM(page.Value);
                 }
                 else if((page.Key == 0xC0 || page.Key == 0xC1) &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                       Trim() == "certance")
+                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                        "certance")
                 {
                     evpdPageTitle   = "Certance Drive Component Revision Levels page";
                     evpdDecodedPage = EVPD.PrettifyPage_C0_C1_Certance(page.Value);
                 }
                 else if((page.Key == 0xC2 || page.Key == 0xC3 || page.Key == 0xC4 || page.Key == 0xC5 ||
                          page.Key == 0xC6) &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                       Trim() == "certance")
+                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                        "certance")
                 {
                     switch(page.Key)
                     {
@@ -571,8 +568,8 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                 }
                 else if((page.Key == 0xC0 || page.Key == 0xC1 || page.Key == 0xC2 || page.Key == 0xC3 ||
                          page.Key == 0xC4 || page.Key == 0xC5) &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                       Trim() == "hp")
+                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                        "hp")
                 {
                     switch(page.Key)
                     {
@@ -605,8 +602,8 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     evpdDecodedPage = EVPD.PrettifyPage_C0_to_C5_HP(page.Value);
                 }
                 else if(page.Key == 0xDF &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                       Trim() == "certance")
+                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
+                        "certance")
                 {
                     evpdPageTitle   = "Certance drive status page";
                     evpdDecodedPage = EVPD.PrettifyPage_DF_Certance(page.Value);
@@ -630,14 +627,12 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     Description = evpdDecodedPage
                 });
             }
-        }
 
         if(_configuration != null)
         {
             Features.SeparatedFeatures ftr = Features.Separate(_configuration);
 
-            AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes",
-                                       ftr.DataLength);
+            AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes", ftr.DataLength);
 
             AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION current profile is {0:X4}h",
                                        ftr.CurrentProfile);
@@ -896,8 +891,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     });
                 }
             else
-                AaruConsole.DebugWriteLine("Device-Info command",
-                                           "GET CONFIGURATION returned no feature descriptors");
+                AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION returned no feature descriptors");
         }
     }
 

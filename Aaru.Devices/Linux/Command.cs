@@ -31,15 +31,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices.Linux;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interop;
 using Aaru.Decoders.ATA;
 
-namespace Aaru.Devices.Linux;
-
-internal static class Command
+static class Command
 {
     /// <summary>Sends a SCSI command</summary>
     /// <returns>0 if no error occurred, otherwise, errno</returns>
@@ -139,9 +139,8 @@ internal static class Command
     /// <param name="transferRegister">Which register contains the transfer count</param>
     /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
     internal static int SendAtaCommand(int fd, AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
-                                       AtaProtocol protocol, AtaTransferRegister transferRegister,
-                                       ref byte[] buffer, uint timeout, bool transferBlocks, out double duration,
-                                       out bool sense)
+                                       AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                       uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         duration       = 0;
         sense          = false;
@@ -150,7 +149,7 @@ internal static class Command
         if(buffer == null)
             return -1;
 
-        byte[] cdb = new byte[16];
+        var cdb = new byte[16];
         cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
         cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
 
@@ -190,7 +189,7 @@ internal static class Command
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
         if(senseBuffer.Length < 22 ||
-           (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
+           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
             return error;
 
         errorRegisters.Error = senseBuffer[11];
@@ -219,10 +218,9 @@ internal static class Command
     /// <param name="protocol">ATA protocol to use</param>
     /// <param name="transferRegister">Which register contains the transfer count</param>
     /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
-    internal static int SendAtaCommand(int fd, AtaRegistersLba28 registers,
-                                       out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
-                                       AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                       bool transferBlocks, out double duration, out bool sense)
+    internal static int SendAtaCommand(int fd, AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
+                                       AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                       uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         duration       = 0;
         sense          = false;
@@ -231,7 +229,7 @@ internal static class Command
         if(buffer == null)
             return -1;
 
-        byte[] cdb = new byte[16];
+        var cdb = new byte[16];
         cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
         cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
 
@@ -271,7 +269,7 @@ internal static class Command
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
         if(senseBuffer.Length < 22 ||
-           (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
+           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
             return error;
 
         errorRegisters.Error = senseBuffer[11];
@@ -300,10 +298,9 @@ internal static class Command
     /// <param name="protocol">ATA protocol to use</param>
     /// <param name="transferRegister">Which register contains the transfer count</param>
     /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
-    internal static int SendAtaCommand(int fd, AtaRegistersLba48 registers,
-                                       out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
-                                       AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
-                                       bool transferBlocks, out double duration, out bool sense)
+    internal static int SendAtaCommand(int fd, AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
+                                       AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                       uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         duration       = 0;
         sense          = false;
@@ -312,7 +309,7 @@ internal static class Command
         if(buffer == null)
             return -1;
 
-        byte[] cdb = new byte[16];
+        var cdb = new byte[16];
         cdb[0] =  (byte)ScsiCommands.AtaPassThrough16;
         cdb[1] =  (byte)(((byte)protocol << 1) & 0x1E);
         cdb[1] |= 0x01;
@@ -358,7 +355,7 @@ internal static class Command
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
         if(senseBuffer.Length < 22 ||
-           (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
+           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
             return error;
 
         errorRegisters.Error = senseBuffer[11];
@@ -455,17 +452,17 @@ internal static class Command
         int off;
 
         // Create array for buffers
-        IntPtr[] bufferPointers = new IntPtr[commands.Length];
+        var bufferPointers = new IntPtr[commands.Length];
 
         // Allocate memory for the array for commands
-        byte[] ioMultiCmd = new byte[sizeof(ulong) + (Marshal.SizeOf<MmcIocCmd>() * commands.Length)];
+        var ioMultiCmd = new byte[sizeof(ulong) + Marshal.SizeOf<MmcIocCmd>() * commands.Length];
 
         // First value of array is uint64 with count of commands
         Array.Copy(BitConverter.GetBytes((ulong)commands.Length), 0, ioMultiCmd, 0, sizeof(ulong));
 
         off = sizeof(ulong);
 
-        for(int i = 0; i < commands.Length; i++)
+        for(var i = 0; i < commands.Length; i++)
         {
             // Create command
             var ioCmd = new MmcIocCmd();
@@ -525,9 +522,9 @@ internal static class Command
         Marshal.Copy(ioMultiCmdPtr, ioMultiCmd, 0, ioMultiCmd.Length);
 
         // TODO: Use real pointers this is too slow
-        for(int i = 0; i < commands.Length; i++)
+        for(var i = 0; i < commands.Length; i++)
         {
-            byte[] tmp = new byte[Marshal.SizeOf<MmcIocCmd>()];
+            var tmp = new byte[Marshal.SizeOf<MmcIocCmd>()];
 
             // Copy command to managed space
             Array.Copy(ioMultiCmd, off, tmp, 0, tmp.Length);
@@ -604,7 +601,7 @@ internal static class Command
             resultSize = result;
         }
 
-        byte[] resultString = new byte[resultSize];
+        var resultString = new byte[resultSize];
         Marshal.Copy(buf, resultString, 0, resultSize);
         Marshal.FreeHGlobal(buf);
 

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems.UCSDPascal;
+
 using System;
 using System.Text;
 using Aaru.CommonTypes;
@@ -40,8 +42,6 @@ using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
-
-namespace Aaru.Filesystems.UCSDPascal;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
@@ -56,7 +56,7 @@ public sealed partial class PascalPlugin
 
         // Blocks 0 and 1 are boot code
         ErrorNumber errno =
-            imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier, out byte[] volBlock);
+            imagePlugin.ReadSectors(_multiplier * 2 + partition.Start, _multiplier, out byte[] volBlock);
 
         if(errno != ErrorNumber.NoError)
             return false;
@@ -84,6 +84,7 @@ public sealed partial class PascalPlugin
         AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.firstBlock = {0}", volEntry.FirstBlock);
         AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBlock = {0}", volEntry.LastBlock);
         AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.entryType = {0}", volEntry.EntryType);
+
         //            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.volumeName = {0}", volEntry.VolumeName);
         AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.blocks = {0}", volEntry.Blocks);
         AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.files = {0}", volEntry.Files);
@@ -97,7 +98,7 @@ public sealed partial class PascalPlugin
 
         // Last volume record block must be after first block, and before end of device
         if(volEntry.LastBlock        <= volEntry.FirstBlock ||
-           (ulong)volEntry.LastBlock > (imagePlugin.Info.Sectors / _multiplier) - 2)
+           (ulong)volEntry.LastBlock > imagePlugin.Info.Sectors / _multiplier - 2)
             return false;
 
         // Volume record entry type must be volume or secure
@@ -119,8 +120,7 @@ public sealed partial class PascalPlugin
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding = encoding ?? new Apple2();
         var sbInformation = new StringBuilder();
@@ -132,7 +132,7 @@ public sealed partial class PascalPlugin
 
         // Blocks 0 and 1 are boot code
         ErrorNumber errno =
-            imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier, out byte[] volBlock);
+            imagePlugin.ReadSectors(_multiplier * 2 + partition.Start, _multiplier, out byte[] volBlock);
 
         if(errno != ErrorNumber.NoError)
             return;
@@ -163,7 +163,7 @@ public sealed partial class PascalPlugin
 
         // Last volume record block must be after first block, and before end of device
         if(volEntry.LastBlock        <= volEntry.FirstBlock ||
-           (ulong)volEntry.LastBlock > (imagePlugin.Info.Sectors / _multiplier) - 2)
+           (ulong)volEntry.LastBlock > imagePlugin.Info.Sectors / _multiplier - 2)
             return;
 
         // Volume record entry type must be volume or secure
@@ -187,16 +187,14 @@ public sealed partial class PascalPlugin
         sbInformation.AppendFormat("Volume record spans from block {0} to block {1}", volEntry.FirstBlock,
                                    volEntry.LastBlock).AppendLine();
 
-        sbInformation.
-            AppendFormat("Volume name: {0}", StringHandlers.PascalToString(volEntry.VolumeName, Encoding)).
-            AppendLine();
+        sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(volEntry.VolumeName, Encoding)).
+                      AppendLine();
 
         sbInformation.AppendFormat("Volume has {0} blocks", volEntry.Blocks).AppendLine();
         sbInformation.AppendFormat("Volume has {0} files", volEntry.Files).AppendLine();
 
-        sbInformation.
-            AppendFormat("Volume last booted at {0}", DateHandlers.UcsdPascalToDateTime(volEntry.LastBoot)).
-            AppendLine();
+        sbInformation.AppendFormat("Volume last booted at {0}", DateHandlers.UcsdPascalToDateTime(volEntry.LastBoot)).
+                      AppendLine();
 
         information = sbInformation.ToString();
 

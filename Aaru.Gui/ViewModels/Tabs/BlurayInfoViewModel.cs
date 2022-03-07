@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Tabs;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
@@ -38,8 +40,6 @@ using Aaru.Decoders.SCSI.MMC;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class BlurayInfoViewModel
 {
@@ -75,8 +75,7 @@ public sealed class BlurayInfoViewModel
         SaveBlurayDdsCommand              = ReactiveCommand.Create(ExecuteSaveBlurayDdsCommand);
         SaveBlurayCartridgeStatusCommand  = ReactiveCommand.Create(ExecuteSaveBlurayCartridgeStatusCommand);
 
-        SaveBluraySpareAreaInformationCommand =
-            ReactiveCommand.Create(ExecuteSaveBluraySpareAreaInformationCommand);
+        SaveBluraySpareAreaInformationCommand = ReactiveCommand.Create(ExecuteSaveBluraySpareAreaInformationCommand);
 
         SaveBlurayPowResourcesCommand   = ReactiveCommand.Create(ExecuteSaveBlurayPowResourcesCommand);
         SaveBlurayTrackResourcesCommand = ReactiveCommand.Create(ExecuteSaveBlurayTrackResourcesCommand);

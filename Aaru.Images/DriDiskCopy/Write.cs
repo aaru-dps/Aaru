@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class DriDiskCopy
 {
@@ -109,8 +109,8 @@ public sealed partial class DriDiskCopy
             }
         };
 
-        Array.Copy(Encoding.ASCII.GetBytes("DiskImage 2.01 (C) 1990,1991 Digital Research Inc"), 0,
-                   _footer.signature, 0, 49);
+        Array.Copy(Encoding.ASCII.GetBytes("DiskImage 2.01 (C) 1990,1991 Digital Research Inc"), 0, _footer.signature,
+                   0, 49);
 
         _footer.bpbcopy = _footer.bpb;
 
@@ -218,7 +218,7 @@ public sealed partial class DriDiskCopy
             return false;
         }
 
-        byte[] hdr    = new byte[Marshal.SizeOf<Footer>()];
+        var    hdr    = new byte[Marshal.SizeOf<Footer>()];
         IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Footer>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(_footer, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);

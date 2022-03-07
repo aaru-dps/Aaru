@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Panels;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,8 +49,6 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 using ScsiInfo = Aaru.Core.Media.Info.ScsiInfo;
-
-namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class MediaInfoViewModel : ViewModelBase
 {
@@ -127,7 +127,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
         {
             var sbSerial = new StringBuilder();
 
-            for(int i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
+            for(var i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
                 sbSerial.AppendFormat("{0:X2}", scsiInfo.MediaSerialNumber[i]);
 
             MediaSerial = sbSerial.ToString();
@@ -159,18 +159,17 @@ public sealed class MediaInfoViewModel : ViewModelBase
         {
             DataContext = new CompactDiscInfoViewModel(scsiInfo.Toc, scsiInfo.Atip, scsiInfo.DiscInformation,
                                                        scsiInfo.Session, scsiInfo.RawToc, scsiInfo.Pma,
-                                                       scsiInfo.CdTextLeadIn, scsiInfo.DecodedToc,
-                                                       scsiInfo.DecodedAtip, scsiInfo.DecodedSession,
-                                                       scsiInfo.FullToc, scsiInfo.DecodedCdTextLeadIn,
-                                                       scsiInfo.DecodedDiscInformation, scsiInfo.Mcn,
-                                                       scsiInfo.Isrcs, _view)
+                                                       scsiInfo.CdTextLeadIn, scsiInfo.DecodedToc, scsiInfo.DecodedAtip,
+                                                       scsiInfo.DecodedSession, scsiInfo.FullToc,
+                                                       scsiInfo.DecodedCdTextLeadIn, scsiInfo.DecodedDiscInformation,
+                                                       scsiInfo.Mcn, scsiInfo.Isrcs, _view)
         };
 
         DvdInfo = new DvdInfo
         {
-            DataContext = new DvdInfoViewModel(scsiInfo.MediaType, scsiInfo.DvdPfi, scsiInfo.DvdDmi,
-                                               scsiInfo.DvdCmi, scsiInfo.HddvdCopyrightInformation, scsiInfo.DvdBca,
-                                               scsiInfo.DvdAacs, scsiInfo.DecodedPfi, _view)
+            DataContext = new DvdInfoViewModel(scsiInfo.MediaType, scsiInfo.DvdPfi, scsiInfo.DvdDmi, scsiInfo.DvdCmi,
+                                               scsiInfo.HddvdCopyrightInformation, scsiInfo.DvdBca, scsiInfo.DvdAacs,
+                                               scsiInfo.DecodedPfi, _view)
         };
 
         XboxInfo = new XboxInfo
@@ -184,8 +183,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
             DataContext = new DvdWritableInfoViewModel(scsiInfo.MediaType, scsiInfo.DvdRamDds,
                                                        scsiInfo.DvdRamCartridgeStatus, scsiInfo.DvdRamSpareArea,
                                                        scsiInfo.LastBorderOutRmd, scsiInfo.DvdPreRecordedInfo,
-                                                       scsiInfo.DvdrMediaIdentifier,
-                                                       scsiInfo.DvdrPhysicalInformation,
+                                                       scsiInfo.DvdrMediaIdentifier, scsiInfo.DvdrPhysicalInformation,
                                                        scsiInfo.HddvdrMediumStatus, scsiInfo.HddvdrLastRmd,
                                                        scsiInfo.DvdrLayerCapacity, scsiInfo.DvdrDlMiddleZoneStart,
                                                        scsiInfo.DvdrDlJumpIntervalSize,
@@ -426,8 +424,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.GDR:
             case CommonTypes.MediaType.GDROM:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", "GD-ROM scan support is not yet implemented.",
-                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
+                      GetMessageBoxStandardWindow("Error", "GD-ROM scan support is not yet implemented.", ButtonEnum.Ok,
+                                                  Icon.Error).ShowDialog(_view);
 
                 return;
 
@@ -436,8 +434,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.XGD2:
             case CommonTypes.MediaType.XGD3:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", "Scanning Xbox discs is not yet supported.",
-                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
+                      GetMessageBoxStandardWindow("Error", "Scanning Xbox discs is not yet supported.", ButtonEnum.Ok,
+                                                  Icon.Error).ShowDialog(_view);
 
                 return;
         }

@@ -31,15 +31,17 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Diagnostics.CodeAnalysis;
+
 
 // ReSharper disable UnusedMember.Global
 
 namespace Aaru.Devices.Windows;
 
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 [Flags]
-internal enum FileAttributes : uint
+enum FileAttributes : uint
 {
     /// <summary>FILE_ATTRIBUTE_ARCHIVE</summary>
     Archive = 0x20,
@@ -127,7 +129,7 @@ internal enum FileAttributes : uint
 }
 
 [Flags]
-internal enum FileAccess : uint
+enum FileAccess : uint
 {
     /// <summary>FILE_READ_DATA</summary>
     ReadData = 0x0001,
@@ -185,7 +187,7 @@ internal enum FileAccess : uint
 }
 
 [Flags]
-internal enum FileShare : uint
+enum FileShare : uint
 {
     /// <summary>FILE_SHARE_NONE</summary>
     None = 0x00,
@@ -201,7 +203,7 @@ internal enum FileShare : uint
 }
 
 [Flags]
-internal enum FileMode : uint
+enum FileMode : uint
 {
     /// <summary>NEW</summary>
     New = 0x01,
@@ -220,7 +222,7 @@ internal enum FileMode : uint
 }
 
 /// <summary>Direction of SCSI transfer</summary>
-internal enum ScsiIoctlDirection : byte
+enum ScsiIoctlDirection : byte
 {
     /// <summary>From host to device SCSI_IOCTL_DATA_OUT</summary>
     Out = 0,
@@ -232,9 +234,10 @@ internal enum ScsiIoctlDirection : byte
     Unspecified = 2
 }
 
-internal enum WindowsIoctl : uint
+enum WindowsIoctl : uint
 {
-    IoctlAtaPassThrough = 0x4D02C, IoctlAtaPassThroughDirect = 0x4D030,
+    IoctlAtaPassThrough       = 0x4D02C,
+    IoctlAtaPassThroughDirect = 0x4D030,
 
     /// <summary>ScsiPassThrough</summary>
     IoctlScsiPassThrough = 0x4D004,
@@ -243,13 +246,15 @@ internal enum WindowsIoctl : uint
     IoctlScsiPassThroughDirect = 0x4D014,
 
     /// <summary>ScsiGetAddress</summary>
-    IoctlScsiGetAddress = 0x41018, IoctlStorageQueryProperty = 0x2D1400, IoctlIdePassThrough             = 0x4D028,
-    IoctlStorageGetDeviceNumber                              = 0x2D1080, IoctlSffdiskQueryDeviceProtocol = 0x71E80,
+    IoctlScsiGetAddress = 0x41018, IoctlStorageQueryProperty = 0x2D1400,
+    IoctlIdePassThrough                                      = 0x4D028,
+    IoctlStorageGetDeviceNumber                              = 0x2D1080,
+    IoctlSffdiskQueryDeviceProtocol                          = 0x71E80,
     IoctlSffdiskDeviceCommand                                = 0x79E84
 }
 
 [Flags]
-internal enum AtaFlags : ushort
+enum AtaFlags : ushort
 {
     /// <summary>ATA_FLAGS_DRDY_REQUIRED</summary>
     DrdyRequired = 0x01,
@@ -270,36 +275,62 @@ internal enum AtaFlags : ushort
     NoMultiple = 0x20
 }
 
-internal enum StoragePropertyId
+enum StoragePropertyId
 {
-    Device           = 0, Adapter      = 1, Id              = 2,
-    UniqueId         = 3, WriteCache   = 4, Miniport        = 5,
-    AccessAlignment  = 6, SeekPenalty  = 7, Trim            = 8,
-    WriteAggregation = 9, Telemetry    = 10, LbProvisioning = 11,
-    Power            = 12, Copyoffload = 13, Resiliency     = 14
+    Device           = 0,
+    Adapter          = 1,
+    Id               = 2,
+    UniqueId         = 3,
+    WriteCache       = 4,
+    Miniport         = 5,
+    AccessAlignment  = 6,
+    SeekPenalty      = 7,
+    Trim             = 8,
+    WriteAggregation = 9,
+    Telemetry        = 10,
+    LbProvisioning   = 11,
+    Power            = 12,
+    Copyoffload      = 13,
+    Resiliency       = 14
 }
 
-internal enum StorageQueryType
+enum StorageQueryType
 {
-    Standard = 0, Exists = 1, Mask = 2,
+    Standard = 0,
+    Exists   = 1,
+    Mask     = 2,
     Max      = 3
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-internal enum StorageBusType
+enum StorageBusType
 {
-    Unknown           = 0, SCSI             = 1, ATAPI        = 2,
-    ATA               = 3, FireWire         = 4, SSA          = 5,
-    Fibre             = 6, USB              = 7, RAID         = 8,
-    iSCSI             = 9, SAS              = 0xA, SATA       = 0xB,
-    SecureDigital     = 0xC, MultiMediaCard = 0xD, Virtual    = 0xE,
-    FileBackedVirtual = 0xF, Spaces         = 16, SCM         = 18,
-    UFS               = 19, Max             = 20, MaxReserved = 127,
+    Unknown           = 0,
+    SCSI              = 1,
+    ATAPI             = 2,
+    ATA               = 3,
+    FireWire          = 4,
+    SSA               = 5,
+    Fibre             = 6,
+    USB               = 7,
+    RAID              = 8,
+    iSCSI             = 9,
+    SAS               = 0xA,
+    SATA              = 0xB,
+    SecureDigital     = 0xC,
+    MultiMediaCard    = 0xD,
+    Virtual           = 0xE,
+    FileBackedVirtual = 0xF,
+    Spaces            = 16,
+    SCM               = 18,
+    UFS               = 19,
+    Max               = 20,
+    MaxReserved       = 127,
     NVMe              = 0x11
 }
 
 [Flags]
-internal enum DeviceGetClassFlags : uint
+enum DeviceGetClassFlags : uint
 {
     /// <summary>DIGCF_DEFAULT</summary>
     Default = 0x01,
@@ -317,47 +348,63 @@ internal enum DeviceGetClassFlags : uint
     DeviceInterface = 0x10
 }
 
-internal enum SdCommandClass : uint
+enum SdCommandClass : uint
 {
-    Standard, AppCmd
+    Standard,
+    AppCmd
 }
 
-internal enum SdTransferDirection : uint
+enum SdTransferDirection : uint
 {
-    Unspecified, Read, Write
+    Unspecified,
+    Read,
+    Write
 }
 
-internal enum SdTransferType : uint
+enum SdTransferType : uint
 {
-    Unspecified, CmdOnly, SingleBlock,
-    MultiBlock, MultiBlockNoCmd12
+    Unspecified,
+    CmdOnly,
+    SingleBlock,
+    MultiBlock,
+    MultiBlockNoCmd12
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-internal enum SdResponseType : uint
+enum SdResponseType : uint
 {
-    Unspecified, None, R1,
-    R1b, R2, R3,
-    R4, R5, R5b,
+    Unspecified,
+    None,
+    R1,
+    R1b,
+    R2,
+    R3,
+    R4,
+    R5,
+    R5b,
     R6
 }
 
-internal enum SffdiskDcmd : uint
+enum SffdiskDcmd : uint
 {
-    GetVersion, LockChannel, UnlockChannel,
+    GetVersion,
+    LockChannel,
+    UnlockChannel,
     DeviceCommand
 }
 
-internal static class Consts
+static class Consts
 {
-    public static Guid GuidSffProtocolSd  = new Guid("AD7536A8-D055-4C40-AA4D-96312DDB6B38");
-    public static Guid GuidSffProtocolMmc = new Guid("77274D3F-2365-4491-A030-8BB44AE60097");
+    public static Guid GuidSffProtocolSd  = new("AD7536A8-D055-4C40-AA4D-96312DDB6B38");
+    public static Guid GuidSffProtocolMmc = new("77274D3F-2365-4491-A030-8BB44AE60097");
 
     public static Guid GuidDevinterfaceDisk =
-        new Guid(0x53F56307, 0xB6BF, 0x11D0, 0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B);
+        new(0x53F56307, 0xB6BF, 0x11D0, 0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B);
 }
 
-internal enum MoveMethod : uint
+enum MoveMethod : uint
 {
-    Begin = 0, Current = 1, End = 2
+    Begin   = 0,
+    Current = 1,
+    End     = 2
 }

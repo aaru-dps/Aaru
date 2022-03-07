@@ -30,6 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using time_t = System.Int32;
+using ufs_daddr_t = System.Int32;
+
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -42,10 +47,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-using time_t = System.Int32;
-using ufs_daddr_t = System.Int32;
-
-namespace Aaru.Filesystems;
 
 // Using information from Linux kernel headers
 /// <inheritdoc />
@@ -132,7 +133,6 @@ public sealed class FFSPlugin : IFilesystem
         try
         {
             foreach(ulong loc in locations)
-            {
                 if(partition.End > partition.Start + loc + sbSizeInSectors)
                 {
                     ErrorNumber errno =
@@ -141,7 +141,7 @@ public sealed class FFSPlugin : IFilesystem
                     if(errno != ErrorNumber.NoError)
                         continue;
 
-                    uint magic = BitConverter.ToUInt32(ufsSbSectors, 0x055C);
+                    var magic = BitConverter.ToUInt32(ufsSbSectors, 0x055C);
 
                     if(magic == UFS_MAGIC     ||
                        magic == UFS_CIGAM     ||
@@ -153,7 +153,6 @@ public sealed class FFSPlugin : IFilesystem
                        magic == UFS_BAD_CIGAM)
                         return true;
                 }
-            }
 
             return false;
         }
@@ -164,8 +163,7 @@ public sealed class FFSPlugin : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -175,13 +173,13 @@ public sealed class FFSPlugin : IFilesystem
         uint   sb_size_in_sectors;
         byte[] ufs_sb_sectors;
         ulong  sb_offset     = partition.Start;
-        bool   fs_type_42bsd = false;
-        bool   fs_type_43bsd = false;
-        bool   fs_type_44bsd = false;
-        bool   fs_type_ufs   = false;
-        bool   fs_type_ufs2  = false;
-        bool   fs_type_sun   = false;
-        bool   fs_type_sun86 = false;
+        var    fs_type_42bsd = false;
+        var    fs_type_43bsd = false;
+        var    fs_type_44bsd = false;
+        var    fs_type_ufs   = false;
+        var    fs_type_ufs2  = false;
+        var    fs_type_sun   = false;
+        var    fs_type_sun86 = false;
 
         if(imagePlugin.Info.SectorSize == 2336 ||
            imagePlugin.Info.SectorSize == 2352 ||
@@ -290,10 +288,10 @@ public sealed class FFSPlugin : IFilesystem
 
         SuperBlock bs_sfu = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(ufs_sb_sectors);
 
-        if((bs_sfu.fs_magic == UFS_MAGIC     && sb.fs_magic == UFS_CIGAM)    ||
-           (bs_sfu.fs_magic == UFS_MAGIC_BW  && sb.fs_magic == UFS_CIGAM_BW) ||
-           (bs_sfu.fs_magic == UFS2_MAGIC    && sb.fs_magic == UFS2_CIGAM)   ||
-           (bs_sfu.fs_magic == UFS_BAD_MAGIC && sb.fs_magic == UFS_BAD_CIGAM))
+        if(bs_sfu.fs_magic == UFS_MAGIC     && sb.fs_magic == UFS_CIGAM    ||
+           bs_sfu.fs_magic == UFS_MAGIC_BW  && sb.fs_magic == UFS_CIGAM_BW ||
+           bs_sfu.fs_magic == UFS2_MAGIC    && sb.fs_magic == UFS2_CIGAM   ||
+           bs_sfu.fs_magic == UFS_BAD_MAGIC && sb.fs_magic == UFS_BAD_CIGAM)
         {
             sb                           = bs_sfu;
             sb.fs_old_cstotal.cs_nbfree  = Swapping.Swap(sb.fs_old_cstotal.cs_nbfree);
@@ -355,11 +353,9 @@ public sealed class FFSPlugin : IFilesystem
         else
         {
             const uint
-                SunOSEpoch =
-                    0x1A54C580; // We are supposing there cannot be a Sun's fs created before 1/1/1982 00:00:00
+                SunOSEpoch = 0x1A54C580; // We are supposing there cannot be a Sun's fs created before 1/1/1982 00:00:00
 
-            fs_type_43bsd =
-                true; // There is no way of knowing this is the version, but there is of knowing it is not.
+            fs_type_43bsd = true; // There is no way of knowing this is the version, but there is of knowing it is not.
 
             if(sb.fs_link > 0)
             {
@@ -552,8 +548,7 @@ public sealed class FFSPlugin : IFilesystem
             sbInformation.AppendFormat("Volume last mounted on \"{0}\"", StringHandlers.CToString(sb.fs_fsmnt)).
                           AppendLine();
 
-            sbInformation.AppendFormat("Volume name: \"{0}\"", StringHandlers.CToString(sb.fs_volname)).
-                          AppendLine();
+            sbInformation.AppendFormat("Volume name: \"{0}\"", StringHandlers.CToString(sb.fs_volname)).AppendLine();
 
             XmlFsType.VolumeName = StringHandlers.CToString(sb.fs_volname);
             sbInformation.AppendFormat("Volume ID: 0x{0:X16}", sb.fs_swuid).AppendLine();
@@ -604,8 +599,7 @@ public sealed class FFSPlugin : IFilesystem
 
             sbInformation.AppendFormat("A file can be {0} bytes at max", sb.fs_maxfilesize).AppendLine();
 
-            sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(sb.fs_state)).
-                          AppendLine();
+            sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(sb.fs_state)).AppendLine();
         }
 
         if(sb.fs_old_nrpos > 0)

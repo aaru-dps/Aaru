@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.CommandLine;
-
 namespace Aaru.Commands.Filesystem;
 
-internal sealed class FilesystemFamily : Command
+using System.CommandLine;
+
+sealed class FilesystemFamily : Command
 {
     public FilesystemFamily() : base("filesystem", "Commands to manage filesystems")
     {

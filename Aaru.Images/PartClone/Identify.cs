@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class PartClone
 {
@@ -48,7 +48,7 @@ public sealed partial class PartClone
         if(stream.Length < 512)
             return false;
 
-        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+        var pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
@@ -57,7 +57,7 @@ public sealed partial class PartClone
 
         stream.Seek((long)_pHdr.totalBlocks, SeekOrigin.Current);
 
-        byte[] bitmagic = new byte[8];
+        var bitmagic = new byte[8];
         stream.Read(bitmagic, 0, 8);
 
         return _partCloneMagic.SequenceEqual(_pHdr.magic) && _biTmAgIc.SequenceEqual(bitmagic);

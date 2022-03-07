@@ -1,3 +1,5 @@
+namespace Aaru.DiscImages.ByteAddressable;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -11,8 +13,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.DiscImages.ByteAddressable;
 
 public class GameBoyAdvance : IByteAddressableImage
 {
@@ -48,9 +48,9 @@ public class GameBoyAdvance : IByteAddressableImage
             return false;
 
         stream.Position = 4;
-        byte[] magicBytes = new byte[8];
+        var magicBytes = new byte[8];
         stream.Read(magicBytes, 0, 8);
-        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
+        var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         return magic == 0x21A29A6951AEFF24;
     }
@@ -68,9 +68,9 @@ public class GameBoyAdvance : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 4;
-        byte[] magicBytes = new byte[8];
+        var magicBytes = new byte[8];
         stream.Read(magicBytes, 0, 8);
-        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
+        var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic != 0x21A29A6951AEFF24)
             return ErrorNumber.InvalidArgument;
@@ -342,12 +342,11 @@ public class GameBoyAdvance : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom     = false;
-        bool foundSaveRam = false;
+        var foundRom     = false;
+        var foundSaveRam = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
-        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -360,7 +359,6 @@ public class GameBoyAdvance : IByteAddressableImage
                     break;
                 default: return ErrorNumber.InvalidArgument;
             }
-        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;

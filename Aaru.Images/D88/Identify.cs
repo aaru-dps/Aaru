@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class D88
 {
@@ -53,21 +53,19 @@ public sealed partial class D88
         if(stream.Length < Marshal.SizeOf<Header>())
             return false;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(hdrB, 0, hdrB.Length);
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
-        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
-                                   StringHandlers.CToString(hdr.name, shiftjis));
+        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"", StringHandlers.CToString(hdr.name, shiftjis));
 
         AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
                                    hdr.reserved.SequenceEqual(_reservedEmpty));
 
         AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", hdr.write_protect);
 
-        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", hdr.disk_type,
-                                   (byte)hdr.disk_type);
+        AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", hdr.disk_type, (byte)hdr.disk_type);
 
         AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", hdr.disk_size);
 
@@ -82,7 +80,7 @@ public sealed partial class D88
         if(!hdr.reserved.SequenceEqual(_reservedEmpty))
             return false;
 
-        int counter = 0;
+        var counter = 0;
 
         foreach(int t in hdr.track_table)
         {

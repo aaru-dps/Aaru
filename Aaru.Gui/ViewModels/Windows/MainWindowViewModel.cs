@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Windows;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -53,6 +55,7 @@ using Aaru.Gui.ViewModels.Panels;
 using Aaru.Gui.Views.Dialogs;
 using Aaru.Gui.Views.Panels;
 using Aaru.Gui.Views.Windows;
+using Aaru.Settings;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -62,12 +65,11 @@ using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
+using Console = Aaru.Gui.Views.Dialogs.Console;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using ImageInfo = Aaru.Gui.Views.Panels.ImageInfo;
 using Partition = Aaru.Gui.Views.Panels.Partition;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MainWindowViewModel : ViewModelBase
 {
@@ -83,7 +85,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     readonly Bitmap           _sdIcon;
     readonly Bitmap           _usbIcon;
     readonly MainWindow       _view;
-    Views.Dialogs.Console     _console;
+    Console                   _console;
     object                    _contentPanel;
     bool                      _devicesSupported;
     object                    _treeViewSelectedItem;
@@ -148,18 +150,15 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         _usbIcon =
             new
-                Bitmap(_assets.Open(new
-                                        Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
+                Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
 
         _removableIcon =
-            new
-                Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
+            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
 
         _sdIcon =
             new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-flash-sd-mmc.png")));
 
-        _ejectIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
+        _ejectIcon = new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
     }
 
     public bool DevicesSupported
@@ -243,7 +242,6 @@ public sealed class MainWindowViewModel : ViewModelBase
                 case DeviceModel deviceModel:
                 {
                     if(deviceModel.ViewModel is null)
-                    {
                         try
                         {
                             var dev = new Device(deviceModel.Path);
@@ -290,8 +288,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                                     deviceModel.Media.Add(new MediaModel
                                     {
                                         DevicePath = deviceModel.Path,
-                                        Icon = _assets.Exists(mediaResource)
-                                                   ? new Bitmap(_assets.Open(mediaResource)) : null,
+                                        Icon = _assets.Exists(mediaResource) ? new Bitmap(_assets.Open(mediaResource))
+                                                   : null,
                                         Name      = $"{scsiInfo.MediaType}",
                                         ViewModel = new MediaInfoViewModel(scsiInfo, deviceModel.Path, _view)
                                     });
@@ -310,7 +308,6 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                             return;
                         }
-                    }
 
                     ContentPanel = new Views.Panels.DeviceInfo
                     {
@@ -455,7 +452,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteStatisticsCommand()
     {
-        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.LocalDbPath);
 
         if(!ctx.Commands.Any()     &&
            !ctx.Filesystems.Any()  &&
@@ -489,7 +486,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     {
         if(_console is null)
         {
-            _console             = new Views.Dialogs.Console();
+            _console             = new Console();
             _console.DataContext = new ConsoleViewModel(_console);
         }
 
@@ -523,12 +520,12 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         try
         {
-            IMediaImage imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
+            var imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
             if(imageFormat == null)
             {
-                MessageBoxManager.GetMessageBoxStandardWindow("Error", "Image format not identified.",
-                                                              ButtonEnum.Ok, Icon.Error);
+                MessageBoxManager.GetMessageBoxStandardWindow("Error", "Image format not identified.", ButtonEnum.Ok,
+                                                              Icon.Error);
 
                 return;
             }
@@ -550,8 +547,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                     return;
                 }
 
-                var mediaResource =
-                    new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{imageFormat.Info.MediaType}.png");
+                var mediaResource = new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{imageFormat.Info.MediaType}.png");
 
                 var imageModel = new ImageModel
                 {
@@ -569,10 +565,10 @@ public sealed class MainWindowViewModel : ViewModelBase
                     Filter    = inputFilter
                 };
 
-                List<CommonTypes.Partition> partitions = Core.Partitions.GetAll(imageFormat);
-                Core.Partitions.AddSchemesToStats(partitions);
+                List<CommonTypes.Partition> partitions = Partitions.GetAll(imageFormat);
+                Partitions.AddSchemesToStats(partitions);
 
-                bool         checkRaw = false;
+                var          checkRaw = false;
                 List<string> idPlugins;
                 IFilesystem  plugin;
                 PluginBase   plugins = GetPluginBase.Instance;
@@ -608,7 +604,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                             AaruConsole.WriteLine("Identifying filesystem on partition");
 
-                            Core.Filesystems.Identify(imageFormat, out idPlugins, partition);
+                            Filesystems.Identify(imageFormat, out idPlugins, partition);
 
                             if(idPlugins.Count == 0)
                                 AaruConsole.WriteLine("Filesystem not identified");
@@ -677,7 +673,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                         Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                     };
 
-                    Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                    Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                     if(idPlugins.Count == 0)
                         AaruConsole.WriteLine("Filesystem not identified");
@@ -737,8 +733,8 @@ public sealed class MainWindowViewModel : ViewModelBase
             }
             catch(Exception ex)
             {
-                MessageBoxManager.GetMessageBoxStandardWindow("Error", "Unable to open image format.",
-                                                              ButtonEnum.Ok, Icon.Error);
+                MessageBoxManager.GetMessageBoxStandardWindow("Error", "Unable to open image format.", ButtonEnum.Ok,
+                                                              Icon.Error);
 
                 AaruConsole.ErrorWriteLine("Unable to open image format");
                 AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
@@ -771,8 +767,8 @@ public sealed class MainWindowViewModel : ViewModelBase
             AaruConsole.WriteLine("Refreshing devices");
             _devicesRoot.Devices.Clear();
 
-            foreach(Devices.DeviceInfo device in Device.ListDevices().Where(d => d.Supported).
-                                                        OrderBy(d => d.Vendor).ThenBy(d => d.Model))
+            foreach(Devices.DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor).
+                                                        ThenBy(d => d.Model))
             {
                 AaruConsole.DebugWriteLine("Main window",
                                            "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",

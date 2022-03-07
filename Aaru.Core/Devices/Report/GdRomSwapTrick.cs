@@ -30,6 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable InlineOutVariableDeclaration
+
+namespace Aaru.Core.Devices.Report;
+
 using System;
 using System.Linq;
 using System.Threading;
@@ -38,10 +44,6 @@ using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
-
-// ReSharper disable InlineOutVariableDeclaration
-
-namespace Aaru.Core.Devices.Report;
 
 public sealed partial class DeviceReport
 {
@@ -59,7 +61,7 @@ public sealed partial class DeviceReport
             AaruConsole.
                 Write("Have you previously tried with a GD-ROM disc and did the computer hang or crash? (Y/N): ");
 
-            pressedKey = System.Console.ReadKey();
+            pressedKey = Console.ReadKey();
             AaruConsole.WriteLine();
         }
 
@@ -77,11 +79,11 @@ public sealed partial class DeviceReport
 
         AaruConsole.WriteLine("Please insert trap disc inside...");
         AaruConsole.WriteLine("Press any key to continue...");
-        System.Console.ReadLine();
+        Console.ReadLine();
 
         AaruConsole.WriteLine("Sending READ FULL TOC to the device...");
 
-        int    retries = 0;
+        var    retries = 0;
         bool   sense;
         byte[] buffer;
         byte[] senseBuffer;
@@ -144,8 +146,8 @@ public sealed partial class DeviceReport
             return;
         }
 
-        int  min         = 0, sec, frame;
-        bool tocIsNotBcd = false;
+        int min         = 0, sec, frame;
+        var tocIsNotBcd = false;
 
         report.GdRomSwapDiscCapabilities.SwapDiscLeadOutPMIN  = leadOutTrack.PMIN;
         report.GdRomSwapDiscCapabilities.SwapDiscLeadOutPSEC  = leadOutTrack.PSEC;
@@ -169,12 +171,12 @@ public sealed partial class DeviceReport
         }
         else
         {
-            min   += ((leadOutTrack.PMIN   >> 4) * 10) + (leadOutTrack.PMIN   & 0x0F);
-            sec   =  ((leadOutTrack.PSEC   >> 4) * 10) + (leadOutTrack.PSEC   & 0x0F);
-            frame =  ((leadOutTrack.PFRAME >> 4) * 10) + (leadOutTrack.PFRAME & 0x0F);
+            min   += (leadOutTrack.PMIN   >> 4) * 10 + (leadOutTrack.PMIN   & 0x0F);
+            sec   =  (leadOutTrack.PSEC   >> 4) * 10 + (leadOutTrack.PSEC   & 0x0F);
+            frame =  (leadOutTrack.PFRAME >> 4) * 10 + (leadOutTrack.PFRAME & 0x0F);
         }
 
-        int sectors = (min * 60 * 75) + (sec * 75) + frame - 150;
+        int sectors = min * 60 * 75 + sec * 75 + frame - 150;
 
         AaruConsole.WriteLine("Trap disc shows {0} sectors...", sectors);
 
@@ -196,7 +198,7 @@ public sealed partial class DeviceReport
 
         AaruConsole.WriteLine("Please MANUALLY get the trap disc out and put the GD-ROM disc inside...");
         AaruConsole.WriteLine("Press any key to continue...");
-        System.Console.ReadLine();
+        Console.ReadLine();
 
         AaruConsole.WriteLine("Waiting 5 seconds...");
         Thread.Sleep(5000);
@@ -314,11 +316,10 @@ public sealed partial class DeviceReport
             report.GdRomSwapDiscCapabilities.Lba100000AudioReadable = !_dev.ReadCd(out byte[] lba100000AudioBuffer,
                                                                           out byte[] lba100000AudioSenseBuffer,
                                                                           100000, 2352, cluster,
-                                                                          MmcSectorTypes.Cdda, false, false,
-                                                                          false, MmcHeaderCodes.None, true,
-                                                                          false, MmcErrorField.None,
-                                                                          MmcSubchannel.None, _dev.Timeout,
-                                                                          out _);
+                                                                          MmcSectorTypes.Cdda, false, false, false,
+                                                                          MmcHeaderCodes.None, true, false,
+                                                                          MmcErrorField.None, MmcSubchannel.None,
+                                                                          _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba100000AudioData  = lba100000AudioBuffer;
             report.GdRomSwapDiscCapabilities.Lba100000AudioSense = lba100000AudioSenseBuffer;
@@ -346,18 +347,15 @@ public sealed partial class DeviceReport
         {
             report.GdRomSwapDiscCapabilities.Lba50000AudioReadable = !_dev.ReadCd(out byte[] lba50000AudioBuffer,
                                                                          out byte[] lba50000AudioSenseBuffer,
-                                                                         50000, 2352, cluster,
-                                                                         MmcSectorTypes.Cdda, false, false,
-                                                                         false, MmcHeaderCodes.None, true,
-                                                                         false, MmcErrorField.None,
-                                                                         MmcSubchannel.None, _dev.Timeout,
-                                                                         out _);
+                                                                         50000, 2352, cluster, MmcSectorTypes.Cdda,
+                                                                         false, false, false, MmcHeaderCodes.None,
+                                                                         true, false, MmcErrorField.None,
+                                                                         MmcSubchannel.None, _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba50000AudioData  = lba50000AudioBuffer;
             report.GdRomSwapDiscCapabilities.Lba50000AudioSense = lba50000AudioSenseBuffer;
 
-            report.GdRomSwapDiscCapabilities.Lba50000AudioDecodedSense =
-                Sense.PrettifySense(lba50000AudioSenseBuffer);
+            report.GdRomSwapDiscCapabilities.Lba50000AudioDecodedSense = Sense.PrettifySense(lba50000AudioSenseBuffer);
 
             report.GdRomSwapDiscCapabilities.Lba50000AudioReadableCluster = (int)cluster;
 
@@ -380,11 +378,10 @@ public sealed partial class DeviceReport
             report.GdRomSwapDiscCapabilities.Lba450000AudioReadable = !_dev.ReadCd(out byte[] lba450000AudioBuffer,
                                                                           out byte[] lba450000AudioSenseBuffer,
                                                                           450000, 2352, cluster,
-                                                                          MmcSectorTypes.Cdda, false, false,
-                                                                          false, MmcHeaderCodes.None, true,
-                                                                          false, MmcErrorField.None,
-                                                                          MmcSubchannel.None, _dev.Timeout,
-                                                                          out _);
+                                                                          MmcSectorTypes.Cdda, false, false, false,
+                                                                          MmcHeaderCodes.None, true, false,
+                                                                          MmcErrorField.None, MmcSubchannel.None,
+                                                                          _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba450000AudioData  = lba450000AudioBuffer;
             report.GdRomSwapDiscCapabilities.Lba450000AudioSense = lba450000AudioSenseBuffer;
@@ -413,11 +410,10 @@ public sealed partial class DeviceReport
             report.GdRomSwapDiscCapabilities.Lba400000AudioReadable = !_dev.ReadCd(out byte[] lba400000AudioBuffer,
                                                                           out byte[] lba400000AudioSenseBuffer,
                                                                           400000, 2352, cluster,
-                                                                          MmcSectorTypes.Cdda, false, false,
-                                                                          false, MmcHeaderCodes.None, true,
-                                                                          false, MmcErrorField.None,
-                                                                          MmcSubchannel.None, _dev.Timeout,
-                                                                          out _);
+                                                                          MmcSectorTypes.Cdda, false, false, false,
+                                                                          MmcHeaderCodes.None, true, false,
+                                                                          MmcErrorField.None, MmcSubchannel.None,
+                                                                          _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba400000AudioData  = lba400000AudioBuffer;
             report.GdRomSwapDiscCapabilities.Lba400000AudioSense = lba400000AudioSenseBuffer;
@@ -445,18 +441,15 @@ public sealed partial class DeviceReport
         {
             report.GdRomSwapDiscCapabilities.Lba45000AudioReadable = !_dev.ReadCd(out byte[] lba45000AudioBuffer,
                                                                          out byte[] lba45000AudioSenseBuffer,
-                                                                         45000, 2352, cluster,
-                                                                         MmcSectorTypes.Cdda, false, false,
-                                                                         false, MmcHeaderCodes.None, true,
-                                                                         false, MmcErrorField.None,
-                                                                         MmcSubchannel.None, _dev.Timeout,
-                                                                         out _);
+                                                                         45000, 2352, cluster, MmcSectorTypes.Cdda,
+                                                                         false, false, false, MmcHeaderCodes.None,
+                                                                         true, false, MmcErrorField.None,
+                                                                         MmcSubchannel.None, _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba45000AudioData  = lba45000AudioBuffer;
             report.GdRomSwapDiscCapabilities.Lba45000AudioSense = lba45000AudioSenseBuffer;
 
-            report.GdRomSwapDiscCapabilities.Lba45000AudioDecodedSense =
-                Sense.PrettifySense(lba45000AudioSenseBuffer);
+            report.GdRomSwapDiscCapabilities.Lba45000AudioDecodedSense = Sense.PrettifySense(lba45000AudioSenseBuffer);
 
             report.GdRomSwapDiscCapabilities.Lba45000AudioReadableCluster = (int)cluster;
 
@@ -478,18 +471,15 @@ public sealed partial class DeviceReport
         {
             report.GdRomSwapDiscCapabilities.Lba44990AudioReadable = !_dev.ReadCd(out byte[] lba44990AudioBuffer,
                                                                          out byte[] lba44990AudioSenseBuffer,
-                                                                         44990, 2352, cluster,
-                                                                         MmcSectorTypes.Cdda, false, false,
-                                                                         false, MmcHeaderCodes.None, true,
-                                                                         false, MmcErrorField.None,
-                                                                         MmcSubchannel.None, _dev.Timeout,
-                                                                         out _);
+                                                                         44990, 2352, cluster, MmcSectorTypes.Cdda,
+                                                                         false, false, false, MmcHeaderCodes.None,
+                                                                         true, false, MmcErrorField.None,
+                                                                         MmcSubchannel.None, _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba44990AudioData  = lba44990AudioBuffer;
             report.GdRomSwapDiscCapabilities.Lba44990AudioSense = lba44990AudioSenseBuffer;
 
-            report.GdRomSwapDiscCapabilities.Lba44990AudioDecodedSense =
-                Sense.PrettifySense(lba44990AudioSenseBuffer);
+            report.GdRomSwapDiscCapabilities.Lba44990AudioDecodedSense = Sense.PrettifySense(lba44990AudioSenseBuffer);
 
             report.GdRomSwapDiscCapabilities.Lba44990AudioReadableCluster = (int)cluster;
 
@@ -509,10 +499,14 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba100000AudioPqReadable =
-                !_dev.ReadCd(out byte[] lba100000AudioPqBuffer, out byte[] lba100000AudioPqSenseBuffer, 100000,
-                             2368, cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
-                             false, MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba100000AudioPqReadable = !_dev.ReadCd(out byte[] lba100000AudioPqBuffer,
+                                                                            out byte[] lba100000AudioPqSenseBuffer,
+                                                                            100000, 2368, cluster,
+                                                                            MmcSectorTypes.Cdda, false, false,
+                                                                            false, MmcHeaderCodes.None, true,
+                                                                            false, MmcErrorField.None,
+                                                                            MmcSubchannel.Q16, _dev.Timeout,
+                                                                            out _);
 
             report.GdRomSwapDiscCapabilities.Lba100000AudioPqData  = lba100000AudioPqBuffer;
             report.GdRomSwapDiscCapabilities.Lba100000AudioPqSense = lba100000AudioPqSenseBuffer;
@@ -538,10 +532,13 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba50000AudioPqReadable =
-                !_dev.ReadCd(out byte[] lba50000AudioPqBuffer, out byte[] lba50000AudioPqSenseBuffer, 50000, 2368,
-                             cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
-                             MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba50000AudioPqReadable = !_dev.ReadCd(out byte[] lba50000AudioPqBuffer,
+                                                                           out byte[] lba50000AudioPqSenseBuffer,
+                                                                           50000, 2368, cluster,
+                                                                           MmcSectorTypes.Cdda, false, false,
+                                                                           false, MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.None, MmcSubchannel.Q16,
+                                                                           _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba50000AudioPqData  = lba50000AudioPqBuffer;
             report.GdRomSwapDiscCapabilities.Lba50000AudioPqSense = lba50000AudioPqSenseBuffer;
@@ -567,10 +564,14 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba450000AudioPqReadable =
-                !_dev.ReadCd(out byte[] lba450000AudioPqBuffer, out byte[] lba450000AudioPqSenseBuffer, 450000,
-                             2368, cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
-                             false, MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba450000AudioPqReadable = !_dev.ReadCd(out byte[] lba450000AudioPqBuffer,
+                                                                            out byte[] lba450000AudioPqSenseBuffer,
+                                                                            450000, 2368, cluster,
+                                                                            MmcSectorTypes.Cdda, false, false,
+                                                                            false, MmcHeaderCodes.None, true,
+                                                                            false, MmcErrorField.None,
+                                                                            MmcSubchannel.Q16, _dev.Timeout,
+                                                                            out _);
 
             report.GdRomSwapDiscCapabilities.Lba450000AudioPqData  = lba450000AudioPqBuffer;
             report.GdRomSwapDiscCapabilities.Lba450000AudioPqSense = lba450000AudioPqSenseBuffer;
@@ -596,10 +597,14 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba400000AudioPqReadable =
-                !_dev.ReadCd(out byte[] lba400000AudioPqBuffer, out byte[] lba400000AudioPqSenseBuffer, 400000,
-                             2368, cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
-                             false, MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba400000AudioPqReadable = !_dev.ReadCd(out byte[] lba400000AudioPqBuffer,
+                                                                            out byte[] lba400000AudioPqSenseBuffer,
+                                                                            400000, 2368, cluster,
+                                                                            MmcSectorTypes.Cdda, false, false,
+                                                                            false, MmcHeaderCodes.None, true,
+                                                                            false, MmcErrorField.None,
+                                                                            MmcSubchannel.Q16, _dev.Timeout,
+                                                                            out _);
 
             report.GdRomSwapDiscCapabilities.Lba400000AudioPqData  = lba400000AudioPqBuffer;
             report.GdRomSwapDiscCapabilities.Lba400000AudioPqSense = lba400000AudioPqSenseBuffer;
@@ -625,10 +630,13 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba45000AudioPqReadable =
-                !_dev.ReadCd(out byte[] lba45000AudioPqBuffer, out byte[] lba45000AudioPqSenseBuffer, 45000, 2368,
-                             cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
-                             MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba45000AudioPqReadable = !_dev.ReadCd(out byte[] lba45000AudioPqBuffer,
+                                                                           out byte[] lba45000AudioPqSenseBuffer,
+                                                                           45000, 2368, cluster,
+                                                                           MmcSectorTypes.Cdda, false, false,
+                                                                           false, MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.None, MmcSubchannel.Q16,
+                                                                           _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba45000AudioPqData  = lba45000AudioPqBuffer;
             report.GdRomSwapDiscCapabilities.Lba45000AudioPqSense = lba45000AudioPqSenseBuffer;
@@ -654,10 +662,13 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba44990AudioPqReadable =
-                !_dev.ReadCd(out byte[] lba44990AudioPqBuffer, out byte[] lba44990AudioPqSenseBuffer, 44990, 2368,
-                             cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
-                             MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba44990AudioPqReadable = !_dev.ReadCd(out byte[] lba44990AudioPqBuffer,
+                                                                           out byte[] lba44990AudioPqSenseBuffer,
+                                                                           44990, 2368, cluster,
+                                                                           MmcSectorTypes.Cdda, false, false,
+                                                                           false, MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.None, MmcSubchannel.Q16,
+                                                                           _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba44990AudioPqData  = lba44990AudioPqBuffer;
             report.GdRomSwapDiscCapabilities.Lba44990AudioPqSense = lba44990AudioPqSenseBuffer;
@@ -683,10 +694,14 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba100000AudioRwReadable =
-                !_dev.ReadCd(out byte[] lba100000AudioRwBuffer, out byte[] lba100000AudioRwSenseBuffer, 100000,
-                             2448, cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
-                             false, MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba100000AudioRwReadable = !_dev.ReadCd(out byte[] lba100000AudioRwBuffer,
+                                                                            out byte[] lba100000AudioRwSenseBuffer,
+                                                                            100000, 2448, cluster,
+                                                                            MmcSectorTypes.Cdda, false, false,
+                                                                            false, MmcHeaderCodes.None, true,
+                                                                            false, MmcErrorField.None,
+                                                                            MmcSubchannel.Raw, _dev.Timeout,
+                                                                            out _);
 
             report.GdRomSwapDiscCapabilities.Lba100000AudioRwData  = lba100000AudioRwBuffer;
             report.GdRomSwapDiscCapabilities.Lba100000AudioRwSense = lba100000AudioRwSenseBuffer;
@@ -712,10 +727,13 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba50000AudioRwReadable =
-                !_dev.ReadCd(out byte[] lba50000AudioRwBuffer, out byte[] lba50000AudioRwSenseBuffer, 50000, 2448,
-                             cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
-                             MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba50000AudioRwReadable = !_dev.ReadCd(out byte[] lba50000AudioRwBuffer,
+                                                                           out byte[] lba50000AudioRwSenseBuffer,
+                                                                           50000, 2448, cluster,
+                                                                           MmcSectorTypes.Cdda, false, false,
+                                                                           false, MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.None, MmcSubchannel.Raw,
+                                                                           _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba50000AudioRwData  = lba50000AudioRwBuffer;
             report.GdRomSwapDiscCapabilities.Lba50000AudioRwSense = lba50000AudioRwSenseBuffer;
@@ -741,10 +759,14 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba450000AudioRwReadable =
-                !_dev.ReadCd(out byte[] lba450000AudioRwBuffer, out byte[] lba450000AudioRwSenseBuffer, 450000,
-                             2448, cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
-                             false, MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba450000AudioRwReadable = !_dev.ReadCd(out byte[] lba450000AudioRwBuffer,
+                                                                            out byte[] lba450000AudioRwSenseBuffer,
+                                                                            450000, 2448, cluster,
+                                                                            MmcSectorTypes.Cdda, false, false,
+                                                                            false, MmcHeaderCodes.None, true,
+                                                                            false, MmcErrorField.None,
+                                                                            MmcSubchannel.Raw, _dev.Timeout,
+                                                                            out _);
 
             report.GdRomSwapDiscCapabilities.Lba450000AudioRwData  = lba450000AudioRwBuffer;
             report.GdRomSwapDiscCapabilities.Lba450000AudioRwSense = lba450000AudioRwSenseBuffer;
@@ -770,10 +792,14 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba400000AudioRwReadable =
-                !_dev.ReadCd(out byte[] lba400000AudioRwBuffer, out byte[] lba400000AudioRwSenseBuffer, 400000,
-                             2448, cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
-                             false, MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba400000AudioRwReadable = !_dev.ReadCd(out byte[] lba400000AudioRwBuffer,
+                                                                            out byte[] lba400000AudioRwSenseBuffer,
+                                                                            400000, 2448, cluster,
+                                                                            MmcSectorTypes.Cdda, false, false,
+                                                                            false, MmcHeaderCodes.None, true,
+                                                                            false, MmcErrorField.None,
+                                                                            MmcSubchannel.Raw, _dev.Timeout,
+                                                                            out _);
 
             report.GdRomSwapDiscCapabilities.Lba400000AudioRwData  = lba400000AudioRwBuffer;
             report.GdRomSwapDiscCapabilities.Lba400000AudioRwSense = lba400000AudioRwSenseBuffer;
@@ -799,10 +825,13 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba45000AudioRwReadable =
-                !_dev.ReadCd(out byte[] lba45000AudioRwBuffer, out byte[] lba45000AudioRwSenseBuffer, 45000, 2448,
-                             cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
-                             MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba45000AudioRwReadable = !_dev.ReadCd(out byte[] lba45000AudioRwBuffer,
+                                                                           out byte[] lba45000AudioRwSenseBuffer,
+                                                                           45000, 2448, cluster,
+                                                                           MmcSectorTypes.Cdda, false, false,
+                                                                           false, MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.None, MmcSubchannel.Raw,
+                                                                           _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba45000AudioRwData  = lba45000AudioRwBuffer;
             report.GdRomSwapDiscCapabilities.Lba45000AudioRwSense = lba45000AudioRwSenseBuffer;
@@ -828,10 +857,13 @@ public sealed partial class DeviceReport
 
         while(true)
         {
-            report.GdRomSwapDiscCapabilities.Lba44990AudioRwReadable =
-                !_dev.ReadCd(out byte[] lba44990AudioRwBuffer, out byte[] lba44990AudioRwSenseBuffer, 44990, 2448,
-                             cluster, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
-                             MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout, out _);
+            report.GdRomSwapDiscCapabilities.Lba44990AudioRwReadable = !_dev.ReadCd(out byte[] lba44990AudioRwBuffer,
+                                                                           out byte[] lba44990AudioRwSenseBuffer,
+                                                                           44990, 2448, cluster,
+                                                                           MmcSectorTypes.Cdda, false, false,
+                                                                           false, MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.None, MmcSubchannel.Raw,
+                                                                           _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba44990AudioRwData  = lba44990AudioRwBuffer;
             report.GdRomSwapDiscCapabilities.Lba44990AudioRwSense = lba44990AudioRwSenseBuffer;
@@ -1034,10 +1066,12 @@ public sealed partial class DeviceReport
             report.GdRomSwapDiscCapabilities.Lba100000PqReadable = !_dev.ReadCd(out byte[] lba100000PqBuffer,
                                                                                     out byte[] lba100000PqSenseBuffer,
                                                                                     100000, 2368, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false, false,
-                                                                                    true, MmcHeaderCodes.AllHeaders, true,
+                                                                                    MmcSectorTypes.AllTypes, false,
+                                                                                    false, true,
+                                                                                    MmcHeaderCodes.AllHeaders, true,
                                                                                     true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                                    MmcSubchannel.Q16, _dev.Timeout,
+                                                                                    out _);
 
             report.GdRomSwapDiscCapabilities.Lba100000PqData            = lba100000PqBuffer;
             report.GdRomSwapDiscCapabilities.Lba100000PqSense           = lba100000PqSenseBuffer;
@@ -1092,10 +1126,12 @@ public sealed partial class DeviceReport
             report.GdRomSwapDiscCapabilities.Lba450000PqReadable = !_dev.ReadCd(out byte[] lba450000PqBuffer,
                                                                                     out byte[] lba450000PqSenseBuffer,
                                                                                     450000, 2368, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false, false,
-                                                                                    true, MmcHeaderCodes.AllHeaders, true,
+                                                                                    MmcSectorTypes.AllTypes, false,
+                                                                                    false, true,
+                                                                                    MmcHeaderCodes.AllHeaders, true,
                                                                                     true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                                    MmcSubchannel.Q16, _dev.Timeout,
+                                                                                    out _);
 
             report.GdRomSwapDiscCapabilities.Lba450000PqData            = lba450000PqBuffer;
             report.GdRomSwapDiscCapabilities.Lba450000PqSense           = lba450000PqSenseBuffer;
@@ -1121,10 +1157,12 @@ public sealed partial class DeviceReport
             report.GdRomSwapDiscCapabilities.Lba400000PqReadable = !_dev.ReadCd(out byte[] lba400000PqBuffer,
                                                                                     out byte[] lba400000PqSenseBuffer,
                                                                                     400000, 2368, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false, false,
-                                                                                    true, MmcHeaderCodes.AllHeaders, true,
+                                                                                    MmcSectorTypes.AllTypes, false,
+                                                                                    false, true,
+                                                                                    MmcHeaderCodes.AllHeaders, true,
                                                                                     true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                                    MmcSubchannel.Q16, _dev.Timeout,
+                                                                                    out _);
 
             report.GdRomSwapDiscCapabilities.Lba400000PqData            = lba400000PqBuffer;
             report.GdRomSwapDiscCapabilities.Lba400000PqSense           = lba400000PqSenseBuffer;
@@ -1208,10 +1246,12 @@ public sealed partial class DeviceReport
             report.GdRomSwapDiscCapabilities.Lba100000RwReadable = !_dev.ReadCd(out byte[] lba100000RwBuffer,
                                                                                     out byte[] lba100000RwSenseBuffer,
                                                                                     100000, 2448, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false, false,
-                                                                                    true, MmcHeaderCodes.AllHeaders, true,
+                                                                                    MmcSectorTypes.AllTypes, false,
+                                                                                    false, true,
+                                                                                    MmcHeaderCodes.AllHeaders, true,
                                                                                     true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                                    MmcSubchannel.Raw, _dev.Timeout,
+                                                                                    out _);
 
             report.GdRomSwapDiscCapabilities.Lba100000RwData            = lba100000RwBuffer;
             report.GdRomSwapDiscCapabilities.Lba100000RwSense           = lba100000RwSenseBuffer;
@@ -1266,10 +1306,12 @@ public sealed partial class DeviceReport
             report.GdRomSwapDiscCapabilities.Lba450000RwReadable = !_dev.ReadCd(out byte[] lba450000RwBuffer,
                                                                                     out byte[] lba450000RwSenseBuffer,
                                                                                     450000, 2448, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false, false,
-                                                                                    true, MmcHeaderCodes.AllHeaders, true,
+                                                                                    MmcSectorTypes.AllTypes, false,
+                                                                                    false, true,
+                                                                                    MmcHeaderCodes.AllHeaders, true,
                                                                                     true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                                    MmcSubchannel.Raw, _dev.Timeout,
+                                                                                    out _);
 
             report.GdRomSwapDiscCapabilities.Lba450000RwData            = lba450000RwBuffer;
             report.GdRomSwapDiscCapabilities.Lba450000RwSense           = lba450000RwSenseBuffer;
@@ -1295,10 +1337,12 @@ public sealed partial class DeviceReport
             report.GdRomSwapDiscCapabilities.Lba400000RwReadable = !_dev.ReadCd(out byte[] lba400000RwBuffer,
                                                                                     out byte[] lba400000RwSenseBuffer,
                                                                                     400000, 2448, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false, false,
-                                                                                    true, MmcHeaderCodes.AllHeaders, true,
+                                                                                    MmcSectorTypes.AllTypes, false,
+                                                                                    false, true,
+                                                                                    MmcHeaderCodes.AllHeaders, true,
                                                                                     true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                                    MmcSubchannel.Raw, _dev.Timeout,
+                                                                                    out _);
 
             report.GdRomSwapDiscCapabilities.Lba400000RwData            = lba400000RwBuffer;
             report.GdRomSwapDiscCapabilities.Lba400000RwSense           = lba400000RwSenseBuffer;
@@ -1395,7 +1439,7 @@ public sealed partial class DeviceReport
                 Write("The next part of the test will read the whole high density area of a GD-ROM from the smallest known readable sector until the first error happens\n" +
                       "Do you want to proceed? (Y/N): ");
 
-            pressedKey = System.Console.ReadKey();
+            pressedKey = Console.ReadKey();
             AaruConsole.WriteLine();
         }
 
@@ -1403,8 +1447,8 @@ public sealed partial class DeviceReport
             return;
 
         uint          startingSector = 45000;
-        bool          readAsAudio    = false;
-        bool          aborted        = false;
+        var           readAsAudio    = false;
+        var           aborted        = false;
         MmcSubchannel subchannel     = MmcSubchannel.None;
         uint          blockSize      = 2352;
 
@@ -1519,7 +1563,7 @@ public sealed partial class DeviceReport
                 subchannel = MmcSubchannel.Q16;
         }
 
-        System.Console.CancelKeyPress += (sender, e) =>
+        Console.CancelKeyPress += (sender, e) =>
         {
             e.Cancel = true;
             aborted  = true;
@@ -1541,7 +1585,7 @@ public sealed partial class DeviceReport
 
         byte[] lastSuccessfulPq = null;
         byte[] lastSuccessfulRw = null;
-        bool   trackModeChange  = false;
+        var    trackModeChange  = false;
 
         AaruConsole.WriteLine();
 
@@ -1558,12 +1602,13 @@ public sealed partial class DeviceReport
             AaruConsole.Write("\rReading LBA {0} of {1}", lba, sectors);
 
             sense = readAsAudio
-                        ? _dev.ReadCd(out buffer, out senseBuffer, lba, blockSize, cluster, MmcSectorTypes.Cdda,
-                                      false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                      subchannel, _dev.Timeout, out _) : _dev.ReadCd(out buffer, out senseBuffer,
-                            lba, blockSize, cluster, MmcSectorTypes.AllTypes, false, false, true,
-                            MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, subchannel,
-                            _dev.Timeout, out _);
+                        ? _dev.ReadCd(out buffer, out senseBuffer, lba, blockSize, cluster, MmcSectorTypes.Cdda, false,
+                                      false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None, subchannel,
+                                      _dev.Timeout, out _) : _dev.ReadCd(out buffer, out senseBuffer, lba, blockSize,
+                                                                         cluster, MmcSectorTypes.AllTypes, false, false,
+                                                                         true, MmcHeaderCodes.AllHeaders, true, true,
+                                                                         MmcErrorField.None, subchannel, _dev.Timeout,
+                                                                         out _);
 
             if(sense)
             {

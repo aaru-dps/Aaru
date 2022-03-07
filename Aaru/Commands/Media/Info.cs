@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Media;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -51,18 +53,18 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Decoders.Xbox;
 using Aaru.Devices;
+using Aaru.Settings;
 using Spectre.Console;
 using BCA = Aaru.Decoders.Bluray.BCA;
 using Cartridge = Aaru.Decoders.DVD.Cartridge;
 using Command = System.CommandLine.Command;
 using DDS = Aaru.Decoders.DVD.DDS;
+using Device = Aaru.Devices.Device;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Session = Aaru.Decoders.CD.Session;
 using Spare = Aaru.Decoders.DVD.Spare;
 
-namespace Aaru.Commands.Media;
-
-internal sealed class MediaInfoCommand : Command
+sealed class MediaInfoCommand : Command
 {
     public MediaInfoCommand() : base("info", "Gets information about the media inserted on a device.")
     {
@@ -93,7 +95,7 @@ internal sealed class MediaInfoCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -127,14 +129,14 @@ internal sealed class MediaInfoCommand : Command
            char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-        Devices.Device dev = null;
+        Device dev = null;
 
         try
         {
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Opening device...").IsIndeterminate();
-                dev = new Devices.Device(devicePath);
+                dev = new Device(devicePath);
             });
 
             if(dev.IsRemote)
@@ -185,16 +187,16 @@ internal sealed class MediaInfoCommand : Command
 
     static void DoAtaMediaInfo() => AaruConsole.ErrorWriteLine("Please use device-info command for ATA devices.");
 
-    static void DoNvmeMediaInfo(string outputPrefix, Devices.Device dev) =>
+    static void DoNvmeMediaInfo(string outputPrefix, Device dev) =>
         throw new NotImplementedException("NVMe devices not yet supported.");
 
     static void DoSdMediaInfo() => AaruConsole.ErrorWriteLine("Please use device-info command for MMC/SD devices.");
 
-    static void DoScsiMediaInfo(bool debug, string outputPrefix, Devices.Device dev)
+    static void DoScsiMediaInfo(bool debug, string outputPrefix, Device dev)
     {
         ScsiInfo scsiInfo = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Retrieving SCSI information...").IsIndeterminate();
             scsiInfo = new ScsiInfo(dev);
@@ -219,9 +221,8 @@ internal sealed class MediaInfoCommand : Command
             case PeripheralDeviceTypes.OpticalDevice:
             case PeripheralDeviceTypes.SimplifiedDevice:
             case PeripheralDeviceTypes.WriteOnceDevice:
-            case PeripheralDeviceTypes.BridgingExpander
-                when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
-                     dev.Model.StartsWith("MDH", StringComparison.Ordinal):
+            case PeripheralDeviceTypes.BridgingExpander when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
+                                                             dev.Model.StartsWith("MDH", StringComparison.Ordinal):
                 if(scsiInfo.ReadCapacity != null)
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readcapacity.bin", "SCSI READ CAPACITY",
                                      scsiInfo.ReadCapacity);
@@ -268,8 +269,7 @@ internal sealed class MediaInfoCommand : Command
 
                 if(scsiInfo.MediaTypeSupport != null)
                 {
-                    DataFile.WriteTo("Media-Info command", outputPrefix,
-                                     "_ssc_reportdensitysupport_medium_media.bin",
+                    DataFile.WriteTo("Media-Info command", outputPrefix, "_ssc_reportdensitysupport_medium_media.bin",
                                      "SSC REPORT DENSITY SUPPORT (MEDIUM & MEDIA)", scsiInfo.MediaTypeSupport);
 
                     if(scsiInfo.MediaTypeSupportHeader.HasValue)
@@ -313,8 +313,7 @@ internal sealed class MediaInfoCommand : Command
                                  "SCSI READ DISC STRUCTURE", scsiInfo.DvdDmi);
 
                 if(DMI.IsXbox(scsiInfo.DvdDmi))
-                    AaruConsole.WriteLine("[bold]Xbox DMI:[/]\n{0}",
-                                          Markup.Escape(DMI.PrettifyXbox(scsiInfo.DvdDmi)));
+                    AaruConsole.WriteLine("[bold]Xbox DMI:[/]\n{0}", Markup.Escape(DMI.PrettifyXbox(scsiInfo.DvdDmi)));
                 else if(DMI.IsXbox360(scsiInfo.DvdDmi))
                     AaruConsole.WriteLine("[bold]Xbox 360 DMI:[/]\n{0}",
                                           Markup.Escape(DMI.PrettifyXbox360(scsiInfo.DvdDmi)));
@@ -477,8 +476,8 @@ internal sealed class MediaInfoCommand : Command
                                  "SCSI READ DISC STRUCTURE", scsiInfo.BlurayCartridgeStatus);
 
                 AaruConsole.WriteLine("[bold]Blu-ray Cartridge Status:[/]\n{0}",
-                                      Markup.Escape(Decoders.Bluray.Cartridge.Prettify(scsiInfo.
-                                                        BlurayCartridgeStatus)));
+                                      Markup.Escape(Decoders.Bluray.Cartridge.
+                                                             Prettify(scsiInfo.BlurayCartridgeStatus)));
             }
 
             if(scsiInfo.BluraySpareAreaInformation != null)
@@ -528,8 +527,7 @@ internal sealed class MediaInfoCommand : Command
                                  scsiInfo.Atip);
 
                 if(scsiInfo.DecodedAtip != null)
-                    AaruConsole.WriteLine("[bold]ATIP:[/]\n{0}",
-                                          Markup.Escape(ATIP.Prettify(scsiInfo.DecodedAtip)));
+                    AaruConsole.WriteLine("[bold]ATIP:[/]\n{0}", Markup.Escape(ATIP.Prettify(scsiInfo.DecodedAtip)));
             }
 
             if(scsiInfo.DiscInformation != null)
@@ -539,8 +537,7 @@ internal sealed class MediaInfoCommand : Command
 
                 if(scsiInfo.DecodedDiscInformation.HasValue)
                     AaruConsole.WriteLine("[bold]Standard Disc Information:[/]\n{0}",
-                                          Markup.Escape(DiscInformation.
-                                                            Prettify000b(scsiInfo.DecodedDiscInformation)));
+                                          Markup.Escape(DiscInformation.Prettify000b(scsiInfo.DecodedDiscInformation)));
             }
 
             if(scsiInfo.Session != null)
@@ -559,8 +556,7 @@ internal sealed class MediaInfoCommand : Command
                                  scsiInfo.RawToc);
 
                 if(scsiInfo.FullToc.HasValue)
-                    AaruConsole.WriteLine("[bold]Raw TOC:[/]\n{0}",
-                                          Markup.Escape(FullTOC.Prettify(scsiInfo.RawToc)));
+                    AaruConsole.WriteLine("[bold]Raw TOC:[/]\n{0}", Markup.Escape(FullTOC.Prettify(scsiInfo.RawToc)));
             }
 
             if(scsiInfo.Pma != null)
@@ -615,7 +611,7 @@ internal sealed class MediaInfoCommand : Command
 
             AaruConsole.Write("[bold]Media Serial Number:[/] ");
 
-            for(int i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
+            for(var i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
                 AaruConsole.Write("{0:X2}", scsiInfo.MediaSerialNumber[i]);
 
             AaruConsole.WriteLine();
@@ -632,13 +628,13 @@ internal sealed class MediaInfoCommand : Command
 
             if(tracks != null)
             {
-                uint firstLba = (uint)tracks.Min(t => t.StartSector);
+                var firstLba = (uint)tracks.Min(t => t.StartSector);
 
                 bool supportsPqSubchannel = Dump.SupportsPqSubchannel(dev, null, null, firstLba);
                 bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null, firstLba);
 
                 // Open main database
-                var ctx = AaruContext.Create(Settings.Settings.MainDbPath);
+                var ctx = AaruContext.Create(Settings.MainDbPath);
 
                 // Search for device in main database
                 Aaru.Database.Models.Device dbDev =
@@ -648,7 +644,7 @@ internal sealed class MediaInfoCommand : Command
                 Dump.SolveTrackPregaps(dev, null, null, tracks, supportsPqSubchannel, supportsRwSubchannel, dbDev,
                                        out bool inexactPositioning, false);
 
-                for(int t = 1; t < tracks.Length; t++)
+                for(var t = 1; t < tracks.Length; t++)
                     tracks[t - 1].EndSector = tracks[t].StartSector - 1;
 
                 tracks[^1].EndSector = (ulong)lastSector;
@@ -675,8 +671,7 @@ internal sealed class MediaInfoCommand : Command
                 CdOffset cdOffset =
                     ctx.CdOffsets.FirstOrDefault(d => (d.Manufacturer == dev.Manufacturer ||
                                                        d.Manufacturer == dev.Manufacturer.Replace('/', '-')) &&
-                                                      (d.Model == dev.Model ||
-                                                       d.Model == dev.Model.Replace('/', '-')));
+                                                      (d.Model == dev.Model || d.Model == dev.Model.Replace('/', '-')));
 
                 CompactDisc.GetOffset(cdOffset, dbDev, debug, dev, scsiInfo.MediaType, null, tracks, null,
                                       out int? driveOffset, out int? combinedOffset, out _);
@@ -712,8 +707,7 @@ internal sealed class MediaInfoCommand : Command
                         AaruConsole.
                             WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
 
-                        AaruConsole.
-                            WriteLine($"Combined offset is {offsetBytes} bytes ({offsetBytes / 4} samples)");
+                        AaruConsole.WriteLine($"Combined offset is {offsetBytes} bytes ({offsetBytes / 4} samples)");
 
                         int? discOffset = offsetBytes - driveOffset;
 

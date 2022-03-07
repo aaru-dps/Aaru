@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class ZZZRawImage
 {
@@ -171,7 +171,8 @@ public sealed partial class ZZZRawImage
     public CICMMetadataType CicmMetadata { get; private set; }
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.Concat(_writeOnlySidecars).
-                                                                              OrderBy(t => t.tag).Select(t => t.tag).ToArray();
+                                                                              OrderBy(t => t.tag).Select(t => t.tag).
+                                                                              ToArray();
 
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
@@ -221,8 +222,8 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
-        ".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st", ".1kn", ".2kn", ".4kn",
-        ".8kn", ".16kn", ".32kn", ".64kn", ".512e", ".512", ".128", ".256"
+        ".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st", ".1kn", ".2kn", ".4kn", ".8kn",
+        ".16kn", ".32kn", ".64kn", ".512e", ".512", ".128", ".256"
     };
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

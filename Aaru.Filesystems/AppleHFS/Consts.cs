@@ -30,11 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
+
 
 // ReSharper disable InconsistentNaming
 
 namespace Aaru.Filesystems;
+
+using System.Diagnostics.CodeAnalysis;
 
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf

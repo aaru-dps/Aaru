@@ -30,12 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using Aaru.Console;
+
 
 // ReSharper disable InconsistentNaming
 
 namespace Aaru.Devices;
+
+using System;
+using Aaru.Console;
 
 public sealed partial class Device
 {
@@ -49,7 +51,7 @@ public sealed partial class Device
     {
         ushort transferLength = 2336;
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.MiniDiscReadDTOC;
 
@@ -80,7 +82,7 @@ public sealed partial class Device
     {
         ushort transferLength = 2336;
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.MiniDiscReadUTOC;
 
@@ -113,7 +115,7 @@ public sealed partial class Device
     {
         ushort transferLength = 4;
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.MiniDiscD5;
 
@@ -141,7 +143,7 @@ public sealed partial class Device
     public bool MiniDiscStopPlaying(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.MiniDiscStopPlay;
 
@@ -167,7 +169,7 @@ public sealed partial class Device
     {
         ushort transferLength = 4;
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.MiniDiscReadPosition;
 
@@ -196,7 +198,7 @@ public sealed partial class Device
     {
         ushort transferLength = 8;
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.MiniDiscGetType;
 

@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Apple2Mg
 {
@@ -47,7 +47,7 @@ public sealed partial class Apple2Mg
     /// <inheritdoc />
     public string Name => "Apple 2IMG";
     /// <inheritdoc />
-    public Guid Id => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");
+    public Guid Id => new("CBAF8824-BA5F-415F-953A-19A03519B2D1");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Tabs;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
@@ -38,8 +40,6 @@ using Aaru.Decoders.Xbox;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class XboxInfoViewModel
 {

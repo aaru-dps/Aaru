@@ -30,6 +30,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+// UNICOS is ILP64 so let's think everything is 64-bit
+using blkno_t = System.Int64;
+using daddr_t = System.Int64;
+using dev_t = System.Int64;
+using extent_t = System.Int64;
+using ino_t = System.Int64;
+using time_t = System.Int64;
+
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -40,17 +50,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
-
-// UNICOS is ILP64 so let's think everything is 64-bit
-using blkno_t = System.Int64;
-using daddr_t = System.Int64;
-using dev_t = System.Int64;
-using extent_t = System.Int64;
-using ino_t = System.Int64;
 using Marshal = Aaru.Helpers.Marshal;
-using time_t = System.Int64;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection for the Cray UNICOS filesystem</summary>
@@ -79,7 +79,7 @@ public sealed class UNICOS : IFilesystem
         if(imagePlugin.Info.SectorSize < 512)
             return false;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -104,8 +104,7 @@ public sealed class UNICOS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -113,7 +112,7 @@ public sealed class UNICOS : IFilesystem
         if(imagePlugin.Info.SectorSize < 512)
             return;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;

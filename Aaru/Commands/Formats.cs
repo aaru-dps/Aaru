@@ -30,6 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands;
+
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -41,12 +44,9 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 
-namespace Aaru.Commands;
-
-internal sealed class FormatsCommand : Command
+sealed class FormatsCommand : Command
 {
-    public FormatsCommand() : base("formats",
-                                   "Lists all supported disc images, partition schemes and file systems.") =>
+    public FormatsCommand() : base("formats", "Lists all supported disc images, partition schemes and file systems.") =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
     public static int Invoke(bool verbose, bool debug)
@@ -57,7 +57,7 @@ internal sealed class FormatsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -109,9 +109,9 @@ internal sealed class FormatsCommand : Command
         table = new Table
         {
             Title = new TableTitle(string.Format("Read-only media image formats ({0}):",
-                                                 plugins.ImagePluginsList.Count(t => !t.Value.GetType().
-                                                                                    GetInterfaces().
-                                                                                    Contains(typeof(IWritableImage)))))
+                                                 plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces().
+                                                                                    Contains(typeof(
+                                                                                        IWritableImage)))))
         };
 
         if(verbose)
@@ -132,8 +132,7 @@ internal sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Read/write media image formats ({0}):",
-                                                 plugins.WritableImages.Count))
+            Title = new TableTitle(string.Format("Read/write media image formats ({0}):", plugins.WritableImages.Count))
         };
 
         if(verbose)
@@ -153,9 +152,8 @@ internal sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title =
-                new TableTitle(string.Format("Supported filesystems for identification and information only ({0}):",
-                                             plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().
+            Title = new TableTitle(string.Format("Supported filesystems for identification and information only ({0}):",
+                                                 plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().
                                                                                Contains(typeof(
                                                                                    IReadOnlyFilesystem)))))
         };

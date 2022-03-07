@@ -26,6 +26,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices.SCSI;
+
 using System;
 using Aaru.Console;
 using Aaru.Decoders.CD;
@@ -34,15 +36,13 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
 using Aaru.Helpers;
 
-namespace Aaru.Tests.Devices.SCSI;
-
-internal static class Mmc
+static class Mmc
 {
     internal static void Menu(string devPath, Device dev)
     {
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send a MultiMedia Command to the device:");
             AaruConsole.WriteLine("1.- Send GET CONFIGURATION command.");
@@ -56,12 +56,12 @@ internal static class Mmc
             AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = System.Console.ReadLine();
+            string strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -106,7 +106,7 @@ internal static class Mmc
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
+                    Console.ReadKey();
 
                     continue;
             }
@@ -120,11 +120,11 @@ internal static class Mmc
         string                strDev;
         int                   item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for GET CONFIGURATION command:");
             AaruConsole.WriteLine("RT: {0}", rt);
@@ -135,12 +135,12 @@ internal static class Mmc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -159,25 +159,25 @@ internal static class Mmc
                                           MmcGetConfigurationRt.Single);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out rt))
                     {
                         AaruConsole.WriteLine("Not a correct object type. Press any key to continue...");
                         rt = MmcGetConfigurationRt.All;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Feature number");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out startingFeatureNumber))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         startingFeatureNumber = 1;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -185,13 +185,13 @@ internal static class Mmc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.GetConfiguration(out byte[] buffer, out byte[] senseBuffer, startingFeatureNumber, rt,
                                           dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending GET CONFIGURATION to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -211,13 +211,13 @@ internal static class Mmc
         AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -229,7 +229,7 @@ internal static class Mmc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("GET CONFIGURATION buffer:");
 
@@ -237,13 +237,13 @@ internal static class Mmc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("GET CONFIGURATION decoded buffer:");
 
@@ -560,13 +560,13 @@ internal static class Mmc
                 }
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("GET CONFIGURATION sense:");
 
@@ -574,13 +574,13 @@ internal static class Mmc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("GET CONFIGURATION decoded sense:");
 
@@ -588,8 +588,8 @@ internal static class Mmc
                     AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -597,8 +597,8 @@ internal static class Mmc
             case 6: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -606,16 +606,16 @@ internal static class Mmc
 
     static void PreventAllowMediumRemoval(string devPath, Device dev)
     {
-        bool   prevent    = false;
-        bool   persistent = false;
+        var    prevent    = false;
+        var    persistent = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for PREVENT ALLOW MEDIUM REMOVAL command:");
             AaruConsole.WriteLine("Prevent removal?: {0}", prevent);
@@ -626,12 +626,12 @@ internal static class Mmc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -644,25 +644,25 @@ internal static class Mmc
                     return;
                 case 1:
                     AaruConsole.Write("Prevent removal?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out prevent))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         prevent = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Persistent value?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out persistent))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         persistent = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -670,13 +670,13 @@ internal static class Mmc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.PreventAllowMediumRemoval(out byte[] senseBuffer, persistent, prevent, dev.Timeout,
                                                    out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending PREVENT ALLOW MEDIUM REMOVAL to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -693,13 +693,13 @@ internal static class Mmc
         AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -711,7 +711,7 @@ internal static class Mmc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("PREVENT ALLOW MEDIUM REMOVAL sense:");
 
@@ -719,8 +719,8 @@ internal static class Mmc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -728,8 +728,8 @@ internal static class Mmc
             case 3: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -740,23 +740,23 @@ internal static class Mmc
         uint           address    = 0;
         uint           length     = 1;
         MmcSectorTypes sectorType = MmcSectorTypes.AllTypes;
-        bool           dap        = false;
-        bool           relative   = false;
-        bool           sync       = false;
+        var            dap        = false;
+        var            relative   = false;
+        var            sync       = false;
         MmcHeaderCodes header     = MmcHeaderCodes.None;
-        bool           user       = true;
-        bool           edc        = false;
+        var            user       = true;
+        var            edc        = false;
         MmcErrorField  c2         = MmcErrorField.None;
         MmcSubchannel  subchan    = MmcSubchannel.None;
         uint           blockSize  = 2352;
         string         strDev;
         int            item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ CD command:");
             AaruConsole.WriteLine("Address relative to current position?: {0}", relative);
@@ -777,12 +777,12 @@ internal static class Mmc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -795,37 +795,37 @@ internal static class Mmc
                     return;
                 case 1:
                     AaruConsole.Write("Address is relative to current position?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out relative))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         relative = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("{0}?: ", relative ? "Address" : "LBA");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out address))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         address = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("How many sectors to transfer?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out length))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         length = 1;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
@@ -837,37 +837,37 @@ internal static class Mmc
                                           MmcSectorTypes.Mode2Form1, MmcSectorTypes.Mode2Form2);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out sectorType))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         sectorType = MmcSectorTypes.AllTypes;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Process audio?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out dap))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         dap = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Retrieve sync bytes?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out sync))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         sync = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
@@ -879,83 +879,83 @@ internal static class Mmc
                                           MmcHeaderCodes.AllHeaders);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out header))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         header = MmcHeaderCodes.None;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Retrieve user data?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out user))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         user = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Retrieve EDC/ECC?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out edc))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         edc = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.WriteLine("C2 mode");
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2}", MmcErrorField.None,
-                                          MmcErrorField.C2Pointers, MmcErrorField.C2PointersAndBlock);
+                    AaruConsole.WriteLine("Available values: {0} {1} {2}", MmcErrorField.None, MmcErrorField.C2Pointers,
+                                          MmcErrorField.C2PointersAndBlock);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out c2))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         c2 = MmcErrorField.None;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.WriteLine("Subchannel mode");
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcSubchannel.None,
-                                          MmcSubchannel.Raw, MmcSubchannel.Q16, MmcSubchannel.Rw);
+                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcSubchannel.None, MmcSubchannel.Raw,
+                                          MmcSubchannel.Q16, MmcSubchannel.Rw);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out subchan))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         subchan = MmcSubchannel.None;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Expected block size?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out blockSize))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         blockSize = 2352;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -963,14 +963,13 @@ internal static class Mmc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
-        bool sense = dev.ReadCd(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length, sectorType,
-                                dap, relative, sync, header, user, edc, c2, subchan, dev.Timeout,
-                                out double duration);
+        bool sense = dev.ReadCd(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length, sectorType, dap,
+                                relative, sync, header, user, edc, c2, subchan, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ CD to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -989,13 +988,13 @@ internal static class Mmc
         AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -1007,7 +1006,7 @@ internal static class Mmc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CD response:");
 
@@ -1015,13 +1014,13 @@ internal static class Mmc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CD sense:");
 
@@ -1029,19 +1028,19 @@ internal static class Mmc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CD decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -1049,8 +1048,8 @@ internal static class Mmc
             case 5: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -1065,22 +1064,22 @@ internal static class Mmc
         byte           endSecond   = 0;
         byte           endMinute   = 0;
         MmcSectorTypes sectorType  = MmcSectorTypes.AllTypes;
-        bool           dap         = false;
-        bool           sync        = false;
+        var            dap         = false;
+        var            sync        = false;
         MmcHeaderCodes header      = MmcHeaderCodes.None;
-        bool           user        = true;
-        bool           edc         = false;
+        var            user        = true;
+        var            edc         = false;
         MmcErrorField  c2          = MmcErrorField.None;
         MmcSubchannel  subchan     = MmcSubchannel.None;
         uint           blockSize   = 2352;
         string         strDev;
         int            item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ CD MSF command:");
             AaruConsole.WriteLine("Start: {0:D2}:{1:D2}:{2:D2}", startMinute, startSecond, startFrame);
@@ -1100,12 +1099,12 @@ internal static class Mmc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -1118,73 +1117,73 @@ internal static class Mmc
                     return;
                 case 1:
                     AaruConsole.Write("Start minute?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out startMinute))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         startMinute = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Start second?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out startSecond))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         startSecond = 2;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Start frame?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out startFrame))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         startFrame = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("End minute?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out endMinute))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         endMinute = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("End second?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out endMinute))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         endMinute = 2;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("End frame?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out endFrame))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         endFrame = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
@@ -1196,37 +1195,37 @@ internal static class Mmc
                                           MmcSectorTypes.Mode2Form1, MmcSectorTypes.Mode2Form2);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out sectorType))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         sectorType = MmcSectorTypes.AllTypes;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Process audio?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out dap))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         dap = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Retrieve sync bytes?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out sync))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         sync = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
@@ -1238,83 +1237,83 @@ internal static class Mmc
                                           MmcHeaderCodes.AllHeaders);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out header))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         header = MmcHeaderCodes.None;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Retrieve user data?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out user))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         user = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Retrieve EDC/ECC?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out edc))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         edc = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.WriteLine("C2 mode");
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2}", MmcErrorField.None,
-                                          MmcErrorField.C2Pointers, MmcErrorField.C2PointersAndBlock);
+                    AaruConsole.WriteLine("Available values: {0} {1} {2}", MmcErrorField.None, MmcErrorField.C2Pointers,
+                                          MmcErrorField.C2PointersAndBlock);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out c2))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         c2 = MmcErrorField.None;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.WriteLine("Subchannel mode");
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcSubchannel.None,
-                                          MmcSubchannel.Raw, MmcSubchannel.Q16, MmcSubchannel.Rw);
+                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcSubchannel.None, MmcSubchannel.Raw,
+                                          MmcSubchannel.Q16, MmcSubchannel.Rw);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out subchan))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         subchan = MmcSubchannel.None;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Expected block size?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out blockSize))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         blockSize = 2352;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -1322,16 +1321,15 @@ internal static class Mmc
             }
         }
 
-        start:
-        uint startMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
-        uint endMsf   = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
-        System.Console.Clear();
+    start:
+        var startMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
+        var endMsf   = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
+        Console.Clear();
 
-        bool sense = dev.ReadCdMsf(out byte[] buffer, out byte[] senseBuffer, startMsf, endMsf, blockSize,
-                                   sectorType, dap, sync, header, user, edc, c2, subchan, dev.Timeout,
-                                   out double duration);
+        bool sense = dev.ReadCdMsf(out byte[] buffer, out byte[] senseBuffer, startMsf, endMsf, blockSize, sectorType,
+                                   dap, sync, header, user, edc, c2, subchan, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ CD MSF to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1350,13 +1348,13 @@ internal static class Mmc
         AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -1368,7 +1366,7 @@ internal static class Mmc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CD MSF response:");
 
@@ -1376,13 +1374,13 @@ internal static class Mmc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CD MSF sense:");
 
@@ -1390,19 +1388,19 @@ internal static class Mmc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ CD MSF decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -1410,8 +1408,8 @@ internal static class Mmc
             case 5: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -1423,11 +1421,11 @@ internal static class Mmc
         string                      strDev;
         int                         item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ DISC INFORMATION command:");
             AaruConsole.WriteLine("Information type: {0}", info);
@@ -1437,12 +1435,12 @@ internal static class Mmc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -1456,19 +1454,18 @@ internal static class Mmc
                 case 1:
                     AaruConsole.WriteLine("Information type");
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2}",
-                                          MmcDiscInformationDataTypes.DiscInformation,
+                    AaruConsole.WriteLine("Available values: {0} {1} {2}", MmcDiscInformationDataTypes.DiscInformation,
                                           MmcDiscInformationDataTypes.TrackResources,
                                           MmcDiscInformationDataTypes.PowResources);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out info))
                     {
                         AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
                         info = MmcDiscInformationDataTypes.DiscInformation;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -1476,13 +1473,13 @@ internal static class Mmc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, info, dev.Timeout,
                                              out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ DISC INFORMATION to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1502,13 +1499,13 @@ internal static class Mmc
         AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -1520,7 +1517,7 @@ internal static class Mmc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DISC INFORMATION response:");
 
@@ -1528,24 +1525,24 @@ internal static class Mmc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DISC INFORMATION decoded response:");
                 AaruConsole.Write("{0}", DiscInformation.Prettify(buffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DISC INFORMATION sense:");
 
@@ -1553,19 +1550,19 @@ internal static class Mmc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DISC INFORMATION decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -1573,8 +1570,8 @@ internal static class Mmc
             case 6: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -1590,11 +1587,11 @@ internal static class Mmc
         string                    strDev;
         int                       item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ DISC STRUCTURE command:");
             AaruConsole.WriteLine("Media type: {0}", mediaType);
@@ -1608,12 +1605,12 @@ internal static class Mmc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -1631,13 +1628,13 @@ internal static class Mmc
                                           MmcDiscStructureMediaType.Bd);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out mediaType))
                     {
                         AaruConsole.WriteLine("Not a correct media type. Press any key to continue...");
                         mediaType = MmcDiscStructureMediaType.Dvd;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
@@ -1669,8 +1666,7 @@ internal static class Mmc
                                                   MmcDiscStructureFormat.PreRecordedInfo,
                                                   MmcDiscStructureFormat.DvdrMediaIdentifier);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
-                                                  MmcDiscStructureFormat.DvdrPhysicalInformation,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DvdrPhysicalInformation,
                                                   MmcDiscStructureFormat.Adip,
                                                   MmcDiscStructureFormat.HddvdCopyrightInformation,
                                                   MmcDiscStructureFormat.DvdAacs);
@@ -1682,15 +1678,13 @@ internal static class Mmc
 
                             AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.JumpIntervalSize,
                                                   MmcDiscStructureFormat.ManualLayerJumpStartLba,
-                                                  MmcDiscStructureFormat.RemapAnchorPoint,
-                                                  MmcDiscStructureFormat.Dcb);
+                                                  MmcDiscStructureFormat.RemapAnchorPoint, MmcDiscStructureFormat.Dcb);
 
                             break;
                         case MmcDiscStructureMediaType.Bd:
                             AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DiscInformation,
                                                   MmcDiscStructureFormat.BdBurstCuttingArea,
-                                                  MmcDiscStructureFormat.BdDds,
-                                                  MmcDiscStructureFormat.CartridgeStatus);
+                                                  MmcDiscStructureFormat.BdDds, MmcDiscStructureFormat.CartridgeStatus);
 
                             AaruConsole.WriteLine("\t{0} {1} {2}", MmcDiscStructureFormat.BdSpareAreaInformation,
                                                   MmcDiscStructureFormat.RawDfl, MmcDiscStructureFormat.Pac);
@@ -1699,8 +1693,8 @@ internal static class Mmc
                     }
 
                     AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AacsVolId,
-                                          MmcDiscStructureFormat.AacsMediaSerial,
-                                          MmcDiscStructureFormat.AacsMediaId, MmcDiscStructureFormat.Aacsmkb);
+                                          MmcDiscStructureFormat.AacsMediaSerial, MmcDiscStructureFormat.AacsMediaId,
+                                          MmcDiscStructureFormat.Aacsmkb);
 
                     AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AacsDataKeys,
                                           MmcDiscStructureFormat.AacslbaExtents, MmcDiscStructureFormat.Aacsmkbcprm,
@@ -1710,49 +1704,49 @@ internal static class Mmc
                                           MmcDiscStructureFormat.CapabilityList);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out format))
                     {
                         AaruConsole.WriteLine("Not a correct media type. Press any key to continue...");
                         format = MmcDiscStructureFormat.CapabilityList;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Address?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out address))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         address = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Layer?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out layer))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         layer = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("AGID?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out agid))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         agid = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -1760,13 +1754,13 @@ internal static class Mmc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
-        bool sense = dev.ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, mediaType, address, layer,
-                                           format, agid, dev.Timeout, out double duration);
+        bool sense = dev.ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, mediaType, address, layer, format,
+                                           agid, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ DISC STRUCTURE to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1786,13 +1780,13 @@ internal static class Mmc
         AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -1804,7 +1798,7 @@ internal static class Mmc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DISC STRUCTURE response:");
 
@@ -1812,25 +1806,25 @@ internal static class Mmc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 // TODO: Implement
                 AaruConsole.WriteLine("READ DISC STRUCTURE decoding not yet implemented:");
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DISC STRUCTURE sense:");
 
@@ -1838,19 +1832,19 @@ internal static class Mmc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DISC STRUCTURE decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -1858,8 +1852,8 @@ internal static class Mmc
             case 6: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -1867,17 +1861,17 @@ internal static class Mmc
 
     static void ReadTocPmaAtip(string devPath, Device dev)
     {
-        bool   msf     = false;
+        var    msf     = false;
         byte   format  = 0;
         byte   session = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ TOC/PMA/ATIP command:");
             AaruConsole.WriteLine("Return MSF values?: {0}", msf);
@@ -1889,12 +1883,12 @@ internal static class Mmc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -1907,37 +1901,37 @@ internal static class Mmc
                     return;
                 case 1:
                     AaruConsole.Write("Return MSF values?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out msf))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         msf = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Format?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out format))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         format = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Session?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out session))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         session = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -1945,13 +1939,13 @@ internal static class Mmc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
-        bool sense = dev.ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, msf, format, session,
-                                        dev.Timeout, out double duration);
+        bool sense = dev.ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, msf, format, session, dev.Timeout,
+                                        out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ TOC/PMA/ATIP to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1971,13 +1965,13 @@ internal static class Mmc
         AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -1989,7 +1983,7 @@ internal static class Mmc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ TOC/PMA/ATIP buffer:");
 
@@ -1997,13 +1991,13 @@ internal static class Mmc
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ TOC/PMA/ATIP decoded buffer:");
 
@@ -2043,13 +2037,13 @@ internal static class Mmc
                     }
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ TOC/PMA/ATIP sense:");
 
@@ -2057,13 +2051,13 @@ internal static class Mmc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ TOC/PMA/ATIP decoded sense:");
 
@@ -2071,8 +2065,8 @@ internal static class Mmc
                     AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -2080,8 +2074,8 @@ internal static class Mmc
             case 6: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }
@@ -2089,20 +2083,20 @@ internal static class Mmc
 
     static void StartStopUnit(string devPath, Device dev)
     {
-        bool   immediate         = false;
-        bool   changeFormatLayer = false;
-        bool   loadEject         = false;
-        bool   start             = false;
+        var    immediate         = false;
+        var    changeFormatLayer = false;
+        var    loadEject         = false;
+        var    start             = false;
         byte   formatLayer       = 0;
         byte   powerConditions   = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for START STOP UNIT command:");
             AaruConsole.WriteLine("Immediate?: {0}", immediate);
@@ -2117,12 +2111,12 @@ internal static class Mmc
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
 
-            strDev = System.Console.ReadLine();
+            strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -2135,73 +2129,73 @@ internal static class Mmc
                     return;
                 case 1:
                     AaruConsole.Write("Immediate?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out immediate))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         immediate = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Change format layer?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out changeFormatLayer))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         changeFormatLayer = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Eject?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out loadEject))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         loadEject = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Start?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out start))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         start = false;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Format layer?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out formatLayer))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         formatLayer = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Power conditions?: ");
-                    strDev = System.Console.ReadLine();
+                    strDev = Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out powerConditions))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         powerConditions = 0;
-                        System.Console.ReadKey();
+                        Console.ReadKey();
                     }
 
                     break;
@@ -2209,13 +2203,13 @@ internal static class Mmc
             }
         }
 
-        start:
-        System.Console.Clear();
+    start:
+        Console.Clear();
 
         bool sense = dev.StartStopUnit(out byte[] senseBuffer, immediate, formatLayer, powerConditions,
                                        changeFormatLayer, loadEject, start, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending START STOP UNIT to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -2232,13 +2226,13 @@ internal static class Mmc
         AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = System.Console.ReadLine();
+        strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            System.Console.ReadKey();
-            System.Console.Clear();
+            Console.ReadKey();
+            Console.Clear();
 
             goto menu;
         }
@@ -2250,7 +2244,7 @@ internal static class Mmc
 
                 return;
             case 1:
-                System.Console.Clear();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("START STOP UNIT sense:");
 
@@ -2258,8 +2252,8 @@ internal static class Mmc
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -2267,8 +2261,8 @@ internal static class Mmc
             case 3: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                System.Console.ReadKey();
-                System.Console.Clear();
+                Console.ReadKey();
+                Console.Clear();
 
                 goto menu;
         }

@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
-
 namespace Aaru.Core.Devices.Scanning;
+
+using System.Collections.Generic;
 
 /// <summary>Contains the results of a media scan</summary>
 public struct ScanResults

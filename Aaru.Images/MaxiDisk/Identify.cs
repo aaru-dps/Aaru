@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class MaxiDisk
 {
@@ -47,7 +47,7 @@ public sealed partial class MaxiDisk
         if(stream.Length < 8)
             return false;
 
-        byte[] buffer = new byte[8];
+        var buffer = new byte[8];
         stream.Seek(0, SeekOrigin.Begin);
         stream.Read(buffer, 0, buffer.Length);
 
@@ -59,8 +59,7 @@ public sealed partial class MaxiDisk
         AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.cylinders = {0}", tmpHeader.cylinders);
         AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.bytesPerSector = {0}", tmpHeader.bytesPerSector);
 
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.sectorsPerTrack = {0}",
-                                   tmpHeader.sectorsPerTrack);
+        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.sectorsPerTrack = {0}", tmpHeader.sectorsPerTrack);
 
         AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown2 = {0}", tmpHeader.unknown2);
         AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown3 = {0}", tmpHeader.unknown3);
@@ -83,8 +82,8 @@ public sealed partial class MaxiDisk
         if(tmpHeader.bytesPerSector > 7)
             return false;
 
-        int expectedFileSize = (tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
-                                (128 << tmpHeader.bytesPerSector)) + 8;
+        int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
+                               (128 << tmpHeader.bytesPerSector) + 8;
 
         return expectedFileSize == stream.Length;
     }

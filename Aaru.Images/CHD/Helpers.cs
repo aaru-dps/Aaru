@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,8 +42,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Chd
 {
@@ -73,7 +73,7 @@ public sealed partial class Chd
                 ulong offset = _hunkTable[hunkNo] & 0x00000FFFFFFFFFFF;
                 ulong length = _hunkTable[hunkNo] >> 44;
 
-                byte[] compHunk = new byte[length];
+                var compHunk = new byte[length];
                 _imageStream.Seek((long)offset, SeekOrigin.Begin);
                 _imageStream.Read(compHunk, 0, compHunk.Length);
 
@@ -104,7 +104,7 @@ public sealed partial class Chd
 
                 break;
             case 3:
-                byte[] entryBytes = new byte[16];
+                var entryBytes = new byte[16];
                 Array.Copy(_hunkMap, (int)(hunkNo * 16), entryBytes, 0, 16);
                 MapEntryV3 entry = Marshal.ByteArrayToStructureBigEndian<MapEntryV3>(entryBytes);
 
@@ -122,7 +122,7 @@ public sealed partial class Chd
                             case Compression.ZlibPlus:
                                 if(_isHdd)
                                 {
-                                    byte[] zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
+                                    var zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
                                     _imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
                                     _imageStream.Read(zHunk, 0, zHunk.Length);
 
@@ -153,15 +153,14 @@ public sealed partial class Chd
 
                                 break;
                             case Compression.Av:
-                                AaruConsole.
-                                    ErrorWriteLine($"Unsupported compression {(Compression)_hdrCompression}");
+                                AaruConsole.ErrorWriteLine($"Unsupported compression {(Compression)_hdrCompression}");
 
                                 return ErrorNumber.NotImplemented;
                         }
 
                         break;
                     case EntryFlagsV3.Uncompressed:
-                        uncompressedV3:
+                    uncompressedV3:
                         buffer = new byte[_bytesPerHunk];
                         _imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
                         _imageStream.Read(buffer, 0, buffer.Length);
@@ -172,7 +171,7 @@ public sealed partial class Chd
                         byte[] mini;
                         mini = BigEndianBitConverter.GetBytes(entry.offset);
 
-                        for(int i = 0; i < _bytesPerHunk; i++)
+                        for(var i = 0; i < _bytesPerHunk; i++)
                             buffer[i] = mini[i % 8];
 
                         break;

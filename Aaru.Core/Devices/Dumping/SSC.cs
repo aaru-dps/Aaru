@@ -30,6 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,10 +56,6 @@ using Aaru.Helpers;
 using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-// ReSharper disable JoinDeclarationAndInitializer
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -117,7 +119,7 @@ partial class Dump
 
             // And yet, did not rewind!
             if(decSense.HasValue &&
-               ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00) ||
+               (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00 ||
                 decSense.Value.ASC != 0x00))
             {
                 StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
@@ -133,8 +135,7 @@ partial class Dump
         }
 
         // Check position
-        sense = _dev.ReadPosition(out byte[] cmdBuf, out senseBuf, SscPositionForms.Short, _dev.Timeout,
-                                  out duration);
+        sense = _dev.ReadPosition(out byte[] cmdBuf, out senseBuf, SscPositionForms.Short, _dev.Timeout, out duration);
 
         if(sense)
         {
@@ -143,8 +144,8 @@ partial class Dump
             decSense = Sense.Decode(senseBuf);
 
             if(decSense.HasValue &&
-               ((decSense.Value.ASC == 0x20 && decSense.Value.ASCQ     != 0x00) ||
-                (decSense.Value.ASC != 0x20 && decSense.Value.SenseKey != SenseKeys.IllegalRequest)))
+               (decSense.Value.ASC == 0x20 && decSense.Value.ASCQ != 0x00 || decSense.Value.ASC != 0x20 &&
+                decSense.Value.SenseKey != SenseKeys.IllegalRequest))
             {
                 StoppingErrorMessage?.Invoke("Could not get position. Sense follows..." + Environment.NewLine +
                                              decSense.Value.Description);
@@ -194,7 +195,7 @@ partial class Dump
 
                 // And yet, did not rewind!
                 if(decSense.HasValue &&
-                   ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00) ||
+                   (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00 ||
                     decSense.Value.ASC != 0x00))
                 {
                     StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
@@ -202,14 +203,13 @@ partial class Dump
 
                     _dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
 
-                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                                       decSense.Value.ASC, decSense.Value.ASCQ);
 
                     return;
                 }
 
-                sense = _dev.ReadPosition(out cmdBuf, out senseBuf, SscPositionForms.Short, _dev.Timeout,
-                                          out duration);
+                sense = _dev.ReadPosition(out cmdBuf, out senseBuf, SscPositionForms.Short, _dev.Timeout, out duration);
 
                 if(sense)
                 {
@@ -246,8 +246,8 @@ partial class Dump
 
         UpdateStatus?.Invoke("Requesting MODE SENSE (10).");
 
-        sense = _dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F,
-                                 0xFF, 5, out duration);
+        sense = _dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5,
+                                 out duration);
 
         if(!sense ||
            _dev.Error)
@@ -267,8 +267,8 @@ partial class Dump
                                 out duration);
 
         if(sense || _dev.Error)
-            sense = _dev.ModeSense6(out cmdBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
-                                    5, out duration);
+            sense = _dev.ModeSense6(out cmdBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5,
+                                    out duration);
 
         if(sense || _dev.Error)
             sense = _dev.ModeSense(out cmdBuf, out senseBuf, 5, out duration);
@@ -322,15 +322,15 @@ partial class Dump
         _dumpLog.WriteLine("SCSI density type: {0}.", scsiDensityCodeTape);
         _dumpLog.WriteLine("Media identified as {0}.", dskType);
 
-        bool  endOfMedia       = false;
+        var   endOfMedia       = false;
         ulong currentBlock     = 0;
         uint  currentFile      = 0;
         byte  currentPartition = 0;
         byte  totalPartitions  = 1; // TODO: Handle partitions.
-        bool  fixedLen         = false;
+        var   fixedLen         = false;
         uint  transferLen      = blockSize;
 
-        firstRead:
+    firstRead:
 
         sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, _dev.Timeout,
                            out duration);
@@ -371,15 +371,15 @@ partial class Dump
                     fixedLen    = true;
                     transferLen = 1;
 
-                    sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize,
-                                       _dev.Timeout, out duration);
+                    sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, _dev.Timeout,
+                                       out duration);
 
                     if(sense)
                     {
                         decSense = Sense.Decode(senseBuf);
 
-                        StoppingErrorMessage?.Invoke("Drive could not read. Sense follows..." +
-                                                     Environment.NewLine + decSense.Value.Description);
+                        StoppingErrorMessage?.Invoke("Drive could not read. Sense follows..." + Environment.NewLine +
+                                                     decSense.Value.Description);
 
                         _dumpLog.WriteLine("Drive could not read. Sense follows...");
 
@@ -417,8 +417,7 @@ partial class Dump
                         UpdateStatus?.Invoke($"Blocksize changed to {blockSize} bytes at block {currentBlock}");
                         _dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
 
-                        sense = _dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, _dev.Timeout,
-                                           out duration);
+                        sense = _dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, _dev.Timeout, out duration);
 
                         totalDuration += duration;
 
@@ -445,8 +444,8 @@ partial class Dump
 
                     _dumpLog.WriteLine("Drive could not read. Sense follows...");
 
-                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                                       decSense.Value.ASC, decSense.Value.ASCQ);
 
                     return;
                 }
@@ -457,8 +456,8 @@ partial class Dump
 
                     _dumpLog.WriteLine("Drive could not read. Sense follows...");
 
-                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                                       decSense.Value.ASC, decSense.Value.ASCQ);
 
                     return;
                 }
@@ -512,8 +511,8 @@ partial class Dump
             return;
         }
 
-        bool canLocateLong = false;
-        bool canLocate     = false;
+        var canLocateLong = false;
+        var canLocate     = false;
 
         UpdateStatus?.Invoke("Positioning tape to block 1.");
         _dumpLog.WriteLine("Positioning tape to block 1");
@@ -713,8 +712,7 @@ partial class Dump
             {
                 if(!_force)
                 {
-                    _dumpLog.
-                        WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                    _dumpLog.WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
 
                     StoppingErrorMessage?.
                         Invoke("Cannot reposition tape, unable to resume. If you want to continue use force.");
@@ -743,7 +741,7 @@ partial class Dump
 
             // And yet, did not rewind!
             if(decSense.HasValue &&
-               ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x00 && decSense.Value.ASCQ != 0x04) ||
+               (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x00 && decSense.Value.ASCQ != 0x04 ||
                 decSense.Value.ASC != 0x00))
             {
                 StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
@@ -809,9 +807,7 @@ partial class Dump
             currentBlock = _resume.NextBlock;
 
             currentTapeFile =
-                outputTape.Files.FirstOrDefault(f => f.LastBlock ==
-                                                     outputTape?.
-                                                         Files.Max(g => g.LastBlock));
+                outputTape.Files.FirstOrDefault(f => f.LastBlock == outputTape?.Files.Max(g => g.LastBlock));
 
             currentTapePartition =
                 outputTape.TapePartitions.FirstOrDefault(p => p.LastBlock ==
@@ -925,8 +921,7 @@ partial class Dump
                    ili                         &&
                    valid)
                 {
-                    blockSize = (uint)((int)blockSize -
-                                       BitConverter.ToInt32(BitConverter.GetBytes(information), 0));
+                    blockSize = (uint)((int)blockSize - BitConverter.ToInt32(BitConverter.GetBytes(information), 0));
 
                     if(!fixedLen)
                         transferLen = blockSize;
@@ -968,8 +963,7 @@ partial class Dump
 
                     // For sure this is an end-of-tape/partition
                     case SenseKeys.BlankCheck when decSense.Value.ASC == 0x00 &&
-                                                   (decSense.Value.ASCQ == 0x02 || decSense.Value.ASCQ == 0x05 ||
-                                                    eom):
+                                                   (decSense.Value.ASCQ == 0x02 || decSense.Value.ASCQ == 0x05 || eom):
                         // TODO: Detect end of partition
                         endOfMedia = true;
                         UpdateStatus?.Invoke("Found end-of-tape/partition...");
@@ -1033,8 +1027,8 @@ partial class Dump
 
                     _dumpLog.WriteLine($"Drive could not read block ${currentBlock}. Sense follows...");
 
-                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                                       decSense.Value.ASC, decSense.Value.ASCQ);
                 }
 
                 // TODO: Reset device after X errors
@@ -1116,9 +1110,9 @@ partial class Dump
            _retryPasses > 0            &&
            (canLocate || canLocateLong))
         {
-            int  pass              = 1;
-            bool forward           = false;
-            bool runningPersistent = false;
+            var pass              = 1;
+            var forward           = false;
+            var runningPersistent = false;
 
             Modes.ModePage? currentModePage = null;
 
@@ -1128,7 +1122,7 @@ partial class Dump
             }
 
             InitProgress?.Invoke();
-            repeatRetry:
+        repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             foreach(ulong badBlock in tmpArray)
@@ -1269,7 +1263,7 @@ partial class Dump
         outputTape.SetDumpHardware(_resume.Tries);
 
         // TODO: Media Serial Number
-        var metadata = new CommonTypes.Structs.ImageInfo
+        var metadata = new ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()
@@ -1314,7 +1308,7 @@ partial class Dump
             _dumpLog.WriteLine("Creating sidecar.");
             var         filters     = new FiltersList();
             IFilter     filter      = filters.GetFilter(_outputPath);
-            IMediaImage inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
+            var         inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
             ErrorNumber opened      = inputPlugin.Open(filter);
 
             if(opened != ErrorNumber.NoError)
@@ -1359,8 +1353,7 @@ partial class Dump
 
                 if(sidecar.BlockMedia[0].FileSystemInformation != null)
                     filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
-                                         where partition.FileSystems != null
-                                         from fileSystem in partition.FileSystems
+                                         where partition.FileSystems != null from fileSystem in partition.FileSystems
                                          select (partition.StartSector, fileSystem.Type));
 
                 if(filesystems.Count > 0)

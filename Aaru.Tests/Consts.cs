@@ -28,7 +28,7 @@
 
 namespace Aaru.Tests;
 
-internal static class Consts
+static class Consts
 {
     public const string TEST_FILES_ROOT = "/mnt/DiscImageChef";
 }

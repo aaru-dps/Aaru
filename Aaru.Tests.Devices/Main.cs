@@ -26,21 +26,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices;
+
+using System;
 using System.Linq;
 using Aaru.Console;
 using Aaru.Devices;
 
-namespace Aaru.Tests.Devices;
-
-internal static partial class MainClass
+static partial class MainClass
 {
     public static void Main()
     {
-        AaruConsole.WriteLineEvent        += System.Console.WriteLine;
-        AaruConsole.WriteEvent            += System.Console.Write;
-        AaruConsole.ErrorWriteLineEvent   += System.Console.Error.WriteLine;
-        AaruConsole.DebugWriteLineEvent   += System.Console.Error.WriteLine;
-        AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+        AaruConsole.WriteLineEvent        += Console.WriteLine;
+        AaruConsole.WriteEvent            += Console.Write;
+        AaruConsole.ErrorWriteLineEvent   += Console.Error.WriteLine;
+        AaruConsole.DebugWriteLineEvent   += Console.Error.WriteLine;
+        AaruConsole.VerboseWriteLineEvent += Console.WriteLine;
 
         DeviceInfo[] devices = Aaru.Devices.Device.ListDevices();
 
@@ -56,29 +57,29 @@ internal static partial class MainClass
 
         while(true)
         {
-            System.Console.Clear();
+            Console.Clear();
 
             AaruConsole.WriteLine("DiscImageChef device handling tests");
 
-            AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor",
-                                  "Model", "Serial", "Bus", "Supported?", "Number");
+            AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
+                                  "Serial", "Bus", "Supported?", "Number");
 
-            AaruConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
-                                  "----------------------", "----------------", "------------------------",
-                                  "------------------------", "----------", "----------", "--------");
+            AaruConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
+                                  "----------------", "------------------------", "------------------------",
+                                  "----------", "----------", "--------");
 
-            for(int i = 0; i < devices.Length; i++)
+            for(var i = 0; i < devices.Length; i++)
                 AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].Path,
                                       devices[i].Vendor, devices[i].Model, devices[i].Serial, devices[i].Bus,
                                       devices[i].Supported, i + 1);
 
             AaruConsole.Write("Please choose which drive to test (0 to exit): ");
-            string strDev = System.Console.ReadLine();
+            string strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }
@@ -93,7 +94,7 @@ internal static partial class MainClass
             if(item > devices.Length)
             {
                 AaruConsole.WriteLine("No such device. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 continue;
             }

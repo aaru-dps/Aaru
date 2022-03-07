@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-
-namespace Aaru.DiscImages;
 
 /// <summary>Implements reading Basic Lisa Utility disk images</summary>
 public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage

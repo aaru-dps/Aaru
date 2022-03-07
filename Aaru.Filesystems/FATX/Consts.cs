@@ -30,11 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
+
 
 // ReSharper disable UnusedMember.Local
 
 namespace Aaru.Filesystems;
+
+using System;
 
 public sealed partial class XboxFatPlugin
 {
@@ -62,7 +64,10 @@ public sealed partial class XboxFatPlugin
     [Flags]
     enum Attributes : byte
     {
-        ReadOnly  = 0x01, Hidden  = 0x02, System = 0x04,
-        Directory = 0x10, Archive = 0x20
+        ReadOnly  = 0x01,
+        Hidden    = 0x02,
+        System    = 0x04,
+        Directory = 0x10,
+        Archive   = 0x20
     }
 }

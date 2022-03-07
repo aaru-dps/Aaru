@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Nero
 {
@@ -45,7 +45,7 @@ public sealed partial class Nero
     /// <inheritdoc />
     public string Name => "Nero Burning ROM image";
     /// <inheritdoc />
-    public Guid Id => new Guid("D160F9FF-5941-43FC-B037-AD81DD141F05");
+    public Guid Id => new("D160F9FF-5941-43FC-B037-AD81DD141F05");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

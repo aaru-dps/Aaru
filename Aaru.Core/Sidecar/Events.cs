@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes;
-
 namespace Aaru.Core;
+
+using Aaru.CommonTypes;
 
 public sealed partial class Sidecar
 {
@@ -72,6 +72,5 @@ public sealed partial class Sidecar
     public void EndProgress2() => EndProgressEvent2?.Invoke();
 
     /// <summary>Updates a status indicator</summary>
-    public void UpdateStatus(string text, params object[] args) =>
-        UpdateStatusEvent?.Invoke(string.Format(text, args));
+    public void UpdateStatus(string text, params object[] args) => UpdateStatusEvent?.Invoke(string.Format(text, args));
 }

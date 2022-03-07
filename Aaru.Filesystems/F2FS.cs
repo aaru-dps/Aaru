@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the Flash-Friendly File System (F2FS)</summary>
@@ -80,7 +80,7 @@ public sealed class F2FS : IFilesystem
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -102,8 +102,7 @@ public sealed class F2FS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = Encoding.Unicode;
         information = "";
@@ -117,7 +116,7 @@ public sealed class F2FS : IFilesystem
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;

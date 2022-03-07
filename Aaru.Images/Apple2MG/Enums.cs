@@ -36,6 +36,8 @@ public sealed partial class Apple2Mg
 {
     enum SectorOrder : uint
     {
-        Dos = 0, ProDos = 1, Nibbles = 2
+        Dos     = 0,
+        ProDos  = 1,
+        Nibbles = 2
     }
 }

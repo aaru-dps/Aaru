@@ -26,19 +26,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Images.CisCopy;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.DiscImages;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Images.CisCopy;
 
 [TestFixture]
 public class Uncompressed : BlockMediaImageTest
 {
     // TODO: Support compression
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CisCopy");
-    public override IMediaImage _plugin    => new DiscImages.CisCopy();
+    public override IMediaImage _plugin    => new CisCopy();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

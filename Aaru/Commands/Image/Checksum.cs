@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Image;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -43,9 +45,7 @@ using Aaru.Core;
 using Schemas;
 using Spectre.Console;
 
-namespace Aaru.Commands.Image;
-
-internal sealed class ChecksumCommand : Command
+sealed class ChecksumCommand : Command
 {
     // How many sectors to read at once
     const uint SECTORS_TO_READ = 256;
@@ -182,7 +182,7 @@ internal sealed class ChecksumCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -226,7 +226,7 @@ internal sealed class ChecksumCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -241,7 +241,7 @@ internal sealed class ChecksumCommand : Command
 
         IBaseImage inputFormat = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             inputFormat = ImageFormat.Detect(inputFilter);
@@ -256,7 +256,7 @@ internal sealed class ChecksumCommand : Command
 
         ErrorNumber opened = ErrorNumber.NoData;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
             opened = inputFormat.Open(inputFilter);
@@ -651,8 +651,8 @@ internal sealed class ChecksumCommand : Command
                                 ProgressTask imageTask = ctx.AddTask("Hashing image...");
                                 ulong        length    = byteAddressableImage.Info.Sectors;
                                 imageTask.MaxValue = length;
-                                ulong  doneBytes = 0;
-                                byte[] data      = new byte[BYTES_TO_READ];
+                                ulong doneBytes = 0;
+                                var   data      = new byte[BYTES_TO_READ];
 
                                 while(doneBytes < length)
                                 {

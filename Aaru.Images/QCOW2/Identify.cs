@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Qcow2
 {
@@ -48,7 +48,7 @@ public sealed partial class Qcow2
         if(stream.Length < 512)
             return false;
 
-        byte[] qHdrB = new byte[Marshal.SizeOf<Header>()];
+        var qHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(qHdrB, 0, Marshal.SizeOf<Header>());
         _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 

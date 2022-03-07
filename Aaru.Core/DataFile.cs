@@ -30,15 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core;
+
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.Console;
 
-namespace Aaru.Core;
-
 /// <summary>Abstracts a datafile with a block based interface</summary>
-[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global"),
- SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global"), SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class DataFile
 {
     readonly FileStream _dataFs;
@@ -90,8 +89,7 @@ public sealed class DataFile
     /// <param name="data">Data</param>
     /// <param name="block">Block</param>
     /// <param name="blockSize">Bytes per block</param>
-    public void WriteAt(byte[] data, ulong block, uint blockSize) =>
-        WriteAt(data, block, blockSize, 0, data.Length);
+    public void WriteAt(byte[] data, ulong block, uint blockSize) => WriteAt(data, block, blockSize, 0, data.Length);
 
     /// <summary>Writes data at specified block</summary>
     /// <param name="data">Data</param>
@@ -114,8 +112,7 @@ public sealed class DataFile
     /// <param name="outputPrefix">First part of the file name</param>
     /// <param name="outputSuffix">Last part of the file name</param>
     /// <param name="whatWriting">What is the data about?</param>
-    public static void WriteTo(string who, string outputPrefix, string outputSuffix, string whatWriting,
-                               byte[] data)
+    public static void WriteTo(string who, string outputPrefix, string outputSuffix, string whatWriting, byte[] data)
     {
         if(!string.IsNullOrEmpty(outputPrefix) &&
            !string.IsNullOrEmpty(outputSuffix))

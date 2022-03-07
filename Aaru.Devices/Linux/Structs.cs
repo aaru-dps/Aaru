@@ -31,14 +31,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices.Linux;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Aaru.Devices.Linux;
-
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct SgIoHdrT
+struct SgIoHdrT
 {
     /// <summary>Always 'S' for SG v3</summary>
     public int interface_id;                   /* [i] 'S' (required) */
@@ -66,7 +66,7 @@ internal struct SgIoHdrT
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct MmcIocCmd
+struct MmcIocCmd
 {
     /// <summary>Implies direction of data. true = write, false = read</summary>
     public bool write_flag;

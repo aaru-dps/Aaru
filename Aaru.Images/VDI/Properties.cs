@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Vdi
 {
@@ -47,7 +47,7 @@ public sealed partial class Vdi
     /// <inheritdoc />
     public string Name => "VirtualBox Disk Image";
     /// <inheritdoc />
-    public Guid Id => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+    public Guid Id => new("E314DE35-C103-48A3-AD36-990F68523C46");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

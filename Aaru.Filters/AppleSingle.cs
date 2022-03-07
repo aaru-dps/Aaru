@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filters;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Decodes AppleSingle files</summary>
@@ -174,7 +174,7 @@ public sealed class AppleSingle : IFilter
            buffer.Length < 26)
             return false;
 
-        byte[] hdrB = new byte[26];
+        var hdrB = new byte[26];
         Array.Copy(buffer, 0, hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
@@ -188,7 +188,7 @@ public sealed class AppleSingle : IFilter
            stream.Length < 26)
             return false;
 
-        byte[] hdrB = new byte[26];
+        var hdrB = new byte[26];
         stream.Seek(0, SeekOrigin.Begin);
         stream.Read(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
@@ -207,7 +207,7 @@ public sealed class AppleSingle : IFilter
         if(fstream.Length < 26)
             return false;
 
-        byte[] hdrB = new byte[26];
+        var hdrB = new byte[26];
         fstream.Read(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
@@ -222,15 +222,15 @@ public sealed class AppleSingle : IFilter
         var ms = new MemoryStream(buffer);
         ms.Seek(0, SeekOrigin.Begin);
 
-        byte[] hdrB = new byte[26];
+        var hdrB = new byte[26];
         ms.Read(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        Entry[] entries = new Entry[_header.entries];
+        var entries = new Entry[_header.entries];
 
-        for(int i = 0; i < _header.entries; i++)
+        for(var i = 0; i < _header.entries; i++)
         {
-            byte[] entry = new byte[12];
+            var entry = new byte[12];
             ms.Read(entry, 0, 12);
             entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
@@ -247,7 +247,7 @@ public sealed class AppleSingle : IFilter
                     break;
                 case AppleSingleEntryID.FileDates:
                     ms.Seek(entry.offset, SeekOrigin.Begin);
-                    byte[] datesB = new byte[16];
+                    var datesB = new byte[16];
                     ms.Read(datesB, 0, 16);
 
                     FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
@@ -258,7 +258,7 @@ public sealed class AppleSingle : IFilter
                     break;
                 case AppleSingleEntryID.FileInfo:
                     ms.Seek(entry.offset, SeekOrigin.Begin);
-                    byte[] finfo = new byte[entry.length];
+                    var finfo = new byte[entry.length];
                     ms.Read(finfo, 0, finfo.Length);
 
                     if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
@@ -286,8 +286,7 @@ public sealed class AppleSingle : IFilter
                     {
                         DOSFileInfo dosinfo = Marshal.ByteArrayToStructureBigEndian<DOSFileInfo>(finfo);
 
-                        LastWriteTime =
-                            DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
+                        LastWriteTime = DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                     }
 
                     break;
@@ -309,15 +308,15 @@ public sealed class AppleSingle : IFilter
     {
         stream.Seek(0, SeekOrigin.Begin);
 
-        byte[] hdrB = new byte[26];
+        var hdrB = new byte[26];
         stream.Read(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        Entry[] entries = new Entry[_header.entries];
+        var entries = new Entry[_header.entries];
 
-        for(int i = 0; i < _header.entries; i++)
+        for(var i = 0; i < _header.entries; i++)
         {
-            byte[] entry = new byte[12];
+            var entry = new byte[12];
             stream.Read(entry, 0, 12);
             entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
@@ -334,7 +333,7 @@ public sealed class AppleSingle : IFilter
                     break;
                 case AppleSingleEntryID.FileDates:
                     stream.Seek(entry.offset, SeekOrigin.Begin);
-                    byte[] datesB = new byte[16];
+                    var datesB = new byte[16];
                     stream.Read(datesB, 0, 16);
 
                     FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
@@ -345,7 +344,7 @@ public sealed class AppleSingle : IFilter
                     break;
                 case AppleSingleEntryID.FileInfo:
                     stream.Seek(entry.offset, SeekOrigin.Begin);
-                    byte[] finfo = new byte[entry.length];
+                    var finfo = new byte[entry.length];
                     stream.Read(finfo, 0, finfo.Length);
 
                     if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
@@ -373,8 +372,7 @@ public sealed class AppleSingle : IFilter
                     {
                         DOSFileInfo dosinfo = Marshal.ByteArrayToStructureBigEndian<DOSFileInfo>(finfo);
 
-                        LastWriteTime =
-                            DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
+                        LastWriteTime = DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                     }
 
                     break;
@@ -397,15 +395,15 @@ public sealed class AppleSingle : IFilter
         var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
         fs.Seek(0, SeekOrigin.Begin);
 
-        byte[] hdrB = new byte[26];
+        var hdrB = new byte[26];
         fs.Read(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        Entry[] entries = new Entry[_header.entries];
+        var entries = new Entry[_header.entries];
 
-        for(int i = 0; i < _header.entries; i++)
+        for(var i = 0; i < _header.entries; i++)
         {
-            byte[] entry = new byte[12];
+            var entry = new byte[12];
             fs.Read(entry, 0, 12);
             entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
@@ -422,7 +420,7 @@ public sealed class AppleSingle : IFilter
                     break;
                 case AppleSingleEntryID.FileDates:
                     fs.Seek(entry.offset, SeekOrigin.Begin);
-                    byte[] datesB = new byte[16];
+                    var datesB = new byte[16];
                     fs.Read(datesB, 0, 16);
 
                     FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
@@ -433,7 +431,7 @@ public sealed class AppleSingle : IFilter
                     break;
                 case AppleSingleEntryID.FileInfo:
                     fs.Seek(entry.offset, SeekOrigin.Begin);
-                    byte[] finfo = new byte[entry.length];
+                    var finfo = new byte[entry.length];
                     fs.Read(finfo, 0, finfo.Length);
 
                     if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
@@ -461,8 +459,7 @@ public sealed class AppleSingle : IFilter
                     {
                         DOSFileInfo dosinfo = Marshal.ByteArrayToStructureBigEndian<DOSFileInfo>(finfo);
 
-                        LastWriteTime =
-                            DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
+                        LastWriteTime = DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                     }
 
                     break;
@@ -481,12 +478,22 @@ public sealed class AppleSingle : IFilter
 
     enum AppleSingleEntryID : uint
     {
-        Invalid     = 0, DataFork    = 1, ResourceFork    = 2,
-        RealName    = 3, Comment     = 4, Icon            = 5,
-        ColorIcon   = 6, FileInfo    = 7, FileDates       = 8,
-        FinderInfo  = 9, MacFileInfo = 10, ProDOSFileInfo = 11,
-        DOSFileInfo = 12, ShortName  = 13, AfpFileInfo    = 14,
-        DirectoryID = 15
+        Invalid        = 0,
+        DataFork       = 1,
+        ResourceFork   = 2,
+        RealName       = 3,
+        Comment        = 4,
+        Icon           = 5,
+        ColorIcon      = 6,
+        FileInfo       = 7,
+        FileDates      = 8,
+        FinderInfo     = 9,
+        MacFileInfo    = 10,
+        ProDOSFileInfo = 11,
+        DOSFileInfo    = 12,
+        ShortName      = 13,
+        AfpFileInfo    = 14,
+        DirectoryID    = 15
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

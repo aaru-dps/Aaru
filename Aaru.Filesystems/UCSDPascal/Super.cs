@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems.UCSDPascal;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -40,8 +42,6 @@ using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
-
-namespace Aaru.Filesystems.UCSDPascal;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
@@ -85,25 +85,24 @@ public sealed partial class PascalPlugin
         _mountedVolEntry.LastBoot = BigEndianBitConverter.ToInt16(_catalogBlocks, 0x14);
         _mountedVolEntry.Tail     = BigEndianBitConverter.ToInt32(_catalogBlocks, 0x16);
 
-        if(_mountedVolEntry.FirstBlock       != 0                                       ||
-           _mountedVolEntry.LastBlock        <= _mountedVolEntry.FirstBlock             ||
-           (ulong)_mountedVolEntry.LastBlock > (_device.Info.Sectors / _multiplier) - 2 ||
-           (_mountedVolEntry.EntryType != PascalFileKind.Volume &&
-            _mountedVolEntry.EntryType != PascalFileKind.Secure)                ||
-           _mountedVolEntry.VolumeName[0] > 7                                   ||
-           _mountedVolEntry.Blocks        < 0                                   ||
-           (ulong)_mountedVolEntry.Blocks != _device.Info.Sectors / _multiplier ||
+        if(_mountedVolEntry.FirstBlock       != 0                                                                     ||
+           _mountedVolEntry.LastBlock        <= _mountedVolEntry.FirstBlock                                           ||
+           (ulong)_mountedVolEntry.LastBlock > _device.Info.Sectors / _multiplier - 2                                 ||
+           _mountedVolEntry.EntryType != PascalFileKind.Volume && _mountedVolEntry.EntryType != PascalFileKind.Secure ||
+           _mountedVolEntry.VolumeName[0] > 7                                                                         ||
+           _mountedVolEntry.Blocks        < 0                                                                         ||
+           (ulong)_mountedVolEntry.Blocks != _device.Info.Sectors / _multiplier                                       ||
            _mountedVolEntry.Files         < 0)
             return ErrorNumber.InvalidArgument;
 
-        errno = _device.ReadSectors(_multiplier * 2,
-                                    (uint)(_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock - 2) *
-                                    _multiplier, out _catalogBlocks);
+        errno = _device.ReadSectors(_multiplier                                                          * 2,
+                                    (uint)(_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock - 2) * _multiplier,
+                                    out _catalogBlocks);
 
         if(errno != ErrorNumber.NoError)
             return errno;
 
-        int offset = 26;
+        var offset = 26;
 
         _fileEntries = new List<PascalFileEntry>();
 
@@ -171,8 +170,7 @@ public sealed partial class PascalPlugin
             Type           = "UCSD Pascal"
         };
 
-        stat.FreeBlocks =
-            (ulong)(_mountedVolEntry.Blocks - (_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock));
+        stat.FreeBlocks = (ulong)(_mountedVolEntry.Blocks - (_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock));
 
         foreach(PascalFileEntry entry in _fileEntries)
             stat.FreeBlocks -= (ulong)(entry.LastBlock - entry.FirstBlock);

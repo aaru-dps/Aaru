@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Aaru.Filesystems.UCSDPascal;
+
+using System.Diagnostics.CodeAnalysis;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 [SuppressMessage("ReSharper", "UnusedMember.Local")]

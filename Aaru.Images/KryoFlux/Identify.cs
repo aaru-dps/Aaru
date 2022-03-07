@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class KryoFlux
 {
@@ -47,7 +47,7 @@ public sealed partial class KryoFlux
         if(stream.Length < Marshal.SizeOf<OobBlock>())
             return false;
 
-        byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
+        var hdr = new byte[Marshal.SizeOf<OobBlock>()];
         stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
 
         OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);

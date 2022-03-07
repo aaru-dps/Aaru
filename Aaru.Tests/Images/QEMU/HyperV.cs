@@ -26,19 +26,18 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Images.QEMU;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.QEMU;
-
 [TestFixture]
 public class HyperV : BlockMediaImageTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "Hyper-V");
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "Hyper-V");
     public override IMediaImage _plugin => new Vhdx();
 
     public override BlockImageTestExpected[] Tests => new[]

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -37,14 +39,12 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class RayDim
 {
     /// <inheritdoc />
     public string Name => "Ray Arachelian's Disk IMage";
     /// <inheritdoc />
-    public Guid Id => new Guid("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");
+    public Guid Id => new("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />

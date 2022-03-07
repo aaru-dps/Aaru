@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,8 +44,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Nero
 {
@@ -58,7 +58,7 @@ public sealed partial class Nero
             var footerV2 = new FooterV2();
 
             _imageStream.Seek(-8, SeekOrigin.End);
-            byte[] buffer = new byte[8];
+            var buffer = new byte[8];
             _imageStream.Read(buffer, 0, 8);
             footerV1.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
             footerV1.FirstChunkOffset = BigEndianBitConverter.ToUInt32(buffer, 4);
@@ -101,7 +101,7 @@ public sealed partial class Nero
             else
                 _imageStream.Seek(footerV1.FirstChunkOffset, SeekOrigin.Begin);
 
-            bool   parsing        = true;
+            var    parsing        = true;
             ushort currentSession = 1;
             uint   currentTrack   = 1;
 
@@ -111,18 +111,18 @@ public sealed partial class Nero
             _imageInfo.MediaType  = CommonTypes.MediaType.CD;
             _imageInfo.Sectors    = 0;
             _imageInfo.SectorSize = 0;
-            bool oldFormat          = false;
-            int  currentLba         = -150;
-            bool corruptedTrackMode = false;
+            var oldFormat          = false;
+            int currentLba         = -150;
+            var corruptedTrackMode = false;
 
             // Parse chunks
             while(parsing)
             {
-                byte[] chunkHeaderBuffer = new byte[8];
+                var chunkHeaderBuffer = new byte[8];
 
                 _imageStream.Read(chunkHeaderBuffer, 0, 8);
-                uint chunkId     = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 0);
-                uint chunkLength = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 4);
+                var chunkId     = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 0);
+                var chunkLength = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 4);
 
                 AaruConsole.DebugWriteLine("Nero plugin", "ChunkID = 0x{0:X8} (\"{1}\")", chunkId,
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(chunkId)));
@@ -143,42 +143,42 @@ public sealed partial class Nero
                             Entries   = new List<CueEntryV1>()
                         };
 
-                        byte[] tmpBuffer = new byte[8];
+                        var tmpBuffer = new byte[8];
 
-                        for(int i = 0; i < newCuesheetV1.ChunkSize; i += 8)
+                        for(var i = 0; i < newCuesheetV1.ChunkSize; i += 8)
                         {
                             var entry = new CueEntryV1();
                             _imageStream.Read(tmpBuffer, 0, 8);
                             entry.Mode = tmpBuffer[0];
 
-                            entry.TrackNumber = (byte)((((tmpBuffer[1] & 0xF0) >> 4) * 10) + (tmpBuffer[1] & 0xF));
-                            entry.IndexNumber = (byte)((((tmpBuffer[2] & 0xF0) >> 4) * 10) + (tmpBuffer[2] & 0xF));
+                            entry.TrackNumber = (byte)(((tmpBuffer[1] & 0xF0) >> 4) * 10 + (tmpBuffer[1] & 0xF));
+                            entry.IndexNumber = (byte)(((tmpBuffer[2] & 0xF0) >> 4) * 10 + (tmpBuffer[2] & 0xF));
                             entry.Dummy       = BigEndianBitConverter.ToUInt16(tmpBuffer, 3);
-                            entry.Minute      = (byte)((((tmpBuffer[5] & 0xF0) >> 4) * 10) + (tmpBuffer[5] & 0xF));
-                            entry.Second      = (byte)((((tmpBuffer[6] & 0xF0) >> 4) * 10) + (tmpBuffer[6] & 0xF));
-                            entry.Frame       = (byte)((((tmpBuffer[7] & 0xF0) >> 4) * 10) + (tmpBuffer[7] & 0xF));
+                            entry.Minute      = (byte)(((tmpBuffer[5] & 0xF0) >> 4) * 10 + (tmpBuffer[5] & 0xF));
+                            entry.Second      = (byte)(((tmpBuffer[6] & 0xF0) >> 4) * 10 + (tmpBuffer[6] & 0xF));
+                            entry.Frame       = (byte)(((tmpBuffer[7] & 0xF0) >> 4) * 10 + (tmpBuffer[7] & 0xF));
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", (i / 8) + 1);
+                            AaruConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", i / 8 + 1);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1:X2}", (i / 8) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1:X2}", i / 8 + 1,
                                                        entry.Mode);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = {1:X2}",
-                                                       (i / 8) + 1, entry.TrackNumber);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = {1:X2}", i / 8 + 1,
+                                                       entry.TrackNumber);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].IndexNumber = {1:X2}",
-                                                       (i / 8) + 1, entry.IndexNumber);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].IndexNumber = {1:X2}", i / 8 + 1,
+                                                       entry.IndexNumber);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Dummy = {1:X4}", (i / 8) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Dummy = {1:X4}", i / 8 + 1,
                                                        entry.Dummy);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Minute = {1:X2}", (i / 8) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Minute = {1:X2}", i / 8 + 1,
                                                        entry.Minute);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Second = {1:X2}", (i / 8) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Second = {1:X2}", i / 8 + 1,
                                                        entry.Second);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Frame = {1:X2}", (i / 8) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Frame = {1:X2}", i / 8 + 1,
                                                        entry.Frame);
 
                             newCuesheetV1.Entries.Add(entry);
@@ -204,33 +204,33 @@ public sealed partial class Nero
                             Entries   = new List<CueEntryV2>()
                         };
 
-                        byte[] tmpBuffer = new byte[8];
+                        var tmpBuffer = new byte[8];
 
-                        for(int i = 0; i < newCuesheetV2.ChunkSize; i += 8)
+                        for(var i = 0; i < newCuesheetV2.ChunkSize; i += 8)
                         {
                             var entry = new CueEntryV2();
                             _imageStream.Read(tmpBuffer, 0, 8);
                             entry.Mode        = tmpBuffer[0];
-                            entry.TrackNumber = (byte)((((tmpBuffer[1] & 0xF0) >> 4) * 10) + (tmpBuffer[1] & 0xF));
-                            entry.IndexNumber = (byte)((((tmpBuffer[2] & 0xF0) >> 4) * 10) + (tmpBuffer[2] & 0xF));
+                            entry.TrackNumber = (byte)(((tmpBuffer[1] & 0xF0) >> 4) * 10 + (tmpBuffer[1] & 0xF));
+                            entry.IndexNumber = (byte)(((tmpBuffer[2] & 0xF0) >> 4) * 10 + (tmpBuffer[2] & 0xF));
                             entry.Dummy       = tmpBuffer[3];
                             entry.LbaStart    = BigEndianBitConverter.ToInt32(tmpBuffer, 4);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", (i / 8) + 1);
+                            AaruConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", i / 8 + 1);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = 0x{1:X2}", (i / 8) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = 0x{1:X2}", i / 8 + 1,
                                                        entry.Mode);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = {1:X2}",
-                                                       (i / 8) + 1, entry.TrackNumber);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = {1:X2}", i / 8 + 1,
+                                                       entry.TrackNumber);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].IndexNumber = {1:X2}",
-                                                       (i / 8) + 1, entry.IndexNumber);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].IndexNumber = {1:X2}", i / 8 + 1,
+                                                       entry.IndexNumber);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Dummy = {1:X2}", (i / 8) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Dummy = {1:X2}", i / 8 + 1,
                                                        entry.Dummy);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].LBAStart = {1}", (i / 8) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].LBAStart = {1}", i / 8 + 1,
                                                        entry.LbaStart);
 
                             newCuesheetV2.Entries.Add(entry);
@@ -255,7 +255,7 @@ public sealed partial class Nero
                             ChunkSizeBe = chunkLength
                         };
 
-                        byte[] tmpBuffer = new byte[22];
+                        var tmpBuffer = new byte[22];
                         _imageStream.Read(tmpBuffer, 0, 22);
                         _neroDaov1.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
                         _neroDaov1.Upc         = new byte[14];
@@ -271,20 +271,17 @@ public sealed partial class Nero
                         AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.UPC = \"{0}\"",
                                                    StringHandlers.CToString(_neroDaov1.Upc));
 
-                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.TocType = 0x{0:X4}",
-                                                   _neroDaov1.TocType);
+                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.TocType = 0x{0:X4}", _neroDaov1.TocType);
 
-                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.FirstTrack = {0}",
-                                                   _neroDaov1.FirstTrack);
+                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.FirstTrack = {0}", _neroDaov1.FirstTrack);
 
-                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.LastTrack = {0}",
-                                                   _neroDaov1.LastTrack);
+                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.LastTrack = {0}", _neroDaov1.LastTrack);
 
                         _upc = _neroDaov1.Upc;
 
                         tmpBuffer = new byte[30];
 
-                        for(int i = 0; i < _neroDaov1.ChunkSizeBe - 22; i += 30)
+                        for(var i = 0; i < _neroDaov1.ChunkSizeBe - 22; i += 30)
                         {
                             var entry = new DaoEntryV1();
                             _imageStream.Read(tmpBuffer, 0, 30);
@@ -313,28 +310,28 @@ public sealed partial class Nero
                                 }
                             }
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", (i / 32) + 1);
+                            AaruConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", i / 32 + 1);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", (i / 32) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", i / 32 + 1,
                                                        StringHandlers.CToString(entry.Isrc));
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}",
-                                                       (i / 32) + 1, entry.SectorSize);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}", i / 32 + 1,
+                                                       entry.SectorSize);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
-                                                       (i / 32) + 1, (DaoMode)entry.Mode, entry.Mode);
+                                                       i / 32 + 1, (DaoMode)entry.Mode, entry.Mode);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
-                                                       (i / 32) + 1, entry.Unknown);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}", i / 32 + 1,
+                                                       entry.Unknown);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", (i / 32) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", i / 32 + 1,
                                                        entry.Index0);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", (i / 32) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", i / 32 + 1,
                                                        entry.Index1);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}",
-                                                       (i / 32) + 1, entry.EndOfTrack);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}", i / 32 + 1,
+                                                       entry.EndOfTrack);
 
                             _neroDaov1.Tracks.Add(entry);
 
@@ -374,7 +371,7 @@ public sealed partial class Nero
                             ChunkSizeBe = chunkLength
                         };
 
-                        byte[] tmpBuffer = new byte[22];
+                        var tmpBuffer = new byte[22];
                         _imageStream.Read(tmpBuffer, 0, 22);
                         _neroDaov2.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
                         _neroDaov2.Upc         = new byte[14];
@@ -392,18 +389,15 @@ public sealed partial class Nero
                         AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.UPC = \"{0}\"",
                                                    StringHandlers.CToString(_neroDaov2.Upc));
 
-                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.TocType = 0x{0:X4}",
-                                                   _neroDaov2.TocType);
+                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.TocType = 0x{0:X4}", _neroDaov2.TocType);
 
-                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.FirstTrack = {0}",
-                                                   _neroDaov2.FirstTrack);
+                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.FirstTrack = {0}", _neroDaov2.FirstTrack);
 
-                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.LastTrack = {0}",
-                                                   _neroDaov2.LastTrack);
+                        AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.LastTrack = {0}", _neroDaov2.LastTrack);
 
                         tmpBuffer = new byte[42];
 
-                        for(int i = 0; i < _neroDaov2.ChunkSizeBe - 22; i += 42)
+                        for(var i = 0; i < _neroDaov2.ChunkSizeBe - 22; i += 42)
                         {
                             var entry = new DaoEntryV2();
                             _imageStream.Read(tmpBuffer, 0, 42);
@@ -432,28 +426,28 @@ public sealed partial class Nero
                                 }
                             }
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", (i / 32) + 1);
+                            AaruConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", i / 32 + 1);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", (i / 32) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", i / 32 + 1,
                                                        StringHandlers.CToString(entry.Isrc));
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}",
-                                                       (i / 32) + 1, entry.SectorSize);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}", i / 32 + 1,
+                                                       entry.SectorSize);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
-                                                       (i / 32) + 1, (DaoMode)entry.Mode, entry.Mode);
+                                                       i / 32 + 1, (DaoMode)entry.Mode, entry.Mode);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = {1:X2}",
-                                                       (i / 32) + 1, entry.Unknown);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = {1:X2}", i / 32 + 1,
+                                                       entry.Unknown);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", (i / 32) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", i / 32 + 1,
                                                        entry.Index0);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", (i / 32) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", i / 32 + 1,
                                                        entry.Index1);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}",
-                                                       (i / 32) + 1, entry.EndOfTrack);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}", i / 32 + 1,
+                                                       entry.EndOfTrack);
 
                             _neroDaov2.Tracks.Add(entry);
 
@@ -495,9 +489,9 @@ public sealed partial class Nero
                             Packs     = new List<CdTextPack>()
                         };
 
-                        byte[] tmpBuffer = new byte[18];
+                        var tmpBuffer = new byte[18];
 
-                        for(int i = 0; i < _cdtxt.ChunkSize; i += 18)
+                        for(var i = 0; i < _cdtxt.ChunkSize; i += 18)
                         {
                             var entry = new CdTextPack();
                             _imageStream.Read(tmpBuffer, 0, 18);
@@ -510,24 +504,24 @@ public sealed partial class Nero
                             Array.Copy(tmpBuffer, 4, entry.Text, 0, 12);
                             entry.Crc = BigEndianBitConverter.ToUInt16(tmpBuffer, 16);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "CD-TEXT entry {0}", (i / 18) + 1);
+                            AaruConsole.DebugWriteLine("Nero plugin", "CD-TEXT entry {0}", i / 18 + 1);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].PackType = 0x{1:X2}",
-                                                       (i / 18) + 1, entry.PackType);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].PackType = 0x{1:X2}", i / 18 + 1,
+                                                       entry.PackType);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = 0x{1:X2}",
-                                                       (i / 18) + 1, entry.TrackNumber);
+                                                       i / 18 + 1, entry.TrackNumber);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].PackNumber = 0x{1:X2}",
-                                                       (i / 18) + 1, entry.PackNumber);
+                                                       i / 18 + 1, entry.PackNumber);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].BlockNumber = 0x{1:X2}",
-                                                       (i / 18) + 1, entry.BlockNumber);
+                                                       i / 18 + 1, entry.BlockNumber);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Text = \"{1}\"", (i / 18) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Text = \"{1}\"", i / 18 + 1,
                                                        StringHandlers.CToString(entry.Text));
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].CRC = 0x{1:X4}", (i / 18) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].CRC = 0x{1:X4}", i / 18 + 1,
                                                        entry.Crc);
 
                             _cdtxt.Packs.Add(entry);
@@ -550,9 +544,9 @@ public sealed partial class Nero
                             Tracks    = new List<TaoEntryV0>()
                         };
 
-                        byte[] tmpBuffer = new byte[12];
+                        var tmpBuffer = new byte[12];
 
-                        for(int i = 0; i < _taoV0.ChunkSize; i += 12)
+                        for(var i = 0; i < _taoV0.ChunkSize; i += 12)
                         {
                             var entry = new TaoEntryV0();
                             _imageStream.Read(tmpBuffer, 0, 12);
@@ -561,16 +555,16 @@ public sealed partial class Nero
                             entry.Length = BigEndianBitConverter.ToUInt32(tmpBuffer, 4);
                             entry.Mode   = BigEndianBitConverter.ToUInt32(tmpBuffer, 8);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", (i / 20) + 1);
+                            AaruConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", i / 20 + 1);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", (i / 20) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", i / 20 + 1,
                                                        entry.Offset);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes",
-                                                       (i / 20) + 1, entry.Length);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes", i / 20 + 1,
+                                                       entry.Length);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
-                                                       (i / 20) + 1, (DaoMode)entry.Mode, entry.Mode);
+                                                       i / 20 + 1, (DaoMode)entry.Mode, entry.Mode);
 
                             _taoV0.Tracks.Add(entry);
 
@@ -613,9 +607,9 @@ public sealed partial class Nero
                             Tracks    = new List<TaoEntryV1>()
                         };
 
-                        byte[] tmpBuffer = new byte[20];
+                        var tmpBuffer = new byte[20];
 
-                        for(int i = 0; i < _taoV1.ChunkSize; i += 20)
+                        for(var i = 0; i < _taoV1.ChunkSize; i += 20)
                         {
                             var entry = new TaoEntryV1();
                             _imageStream.Read(tmpBuffer, 0, 20);
@@ -626,22 +620,22 @@ public sealed partial class Nero
                             entry.StartLba = BigEndianBitConverter.ToUInt32(tmpBuffer, 12);
                             entry.Unknown  = BigEndianBitConverter.ToUInt32(tmpBuffer, 16);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", (i / 20) + 1);
+                            AaruConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", i / 20 + 1);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", (i / 20) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", i / 20 + 1,
                                                        entry.Offset);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes",
-                                                       (i / 20) + 1, entry.Length);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes", i / 20 + 1,
+                                                       entry.Length);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
-                                                       (i / 20) + 1, (DaoMode)entry.Mode, entry.Mode);
+                                                       i / 20 + 1, (DaoMode)entry.Mode, entry.Mode);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].StartLBA = {1}", (i / 20) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].StartLBA = {1}", i / 20 + 1,
                                                        entry.StartLba);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
-                                                       (i / 20) + 1, entry.Unknown);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}", i / 20 + 1,
+                                                       entry.Unknown);
 
                             _taoV1.Tracks.Add(entry);
 
@@ -683,9 +677,9 @@ public sealed partial class Nero
                             Tracks    = new List<TaoEntryV2>()
                         };
 
-                        byte[] tmpBuffer = new byte[32];
+                        var tmpBuffer = new byte[32];
 
-                        for(int i = 0; i < _taoV2.ChunkSize; i += 32)
+                        for(var i = 0; i < _taoV2.ChunkSize; i += 32)
                         {
                             var entry = new TaoEntryV2();
                             _imageStream.Read(tmpBuffer, 0, 32);
@@ -697,24 +691,24 @@ public sealed partial class Nero
                             entry.Unknown  = BigEndianBitConverter.ToUInt32(tmpBuffer, 24);
                             entry.Sectors  = BigEndianBitConverter.ToUInt32(tmpBuffer, 28);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", (i / 32) + 1);
+                            AaruConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", i / 32 + 1);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", (i / 32) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", i / 32 + 1,
                                                        entry.Offset);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes",
-                                                       (i / 32) + 1, entry.Length);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes", i / 32 + 1,
+                                                       entry.Length);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
-                                                       (i / 32) + 1, (DaoMode)entry.Mode, entry.Mode);
+                                                       i / 32 + 1, (DaoMode)entry.Mode, entry.Mode);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].StartLBA = {1}", (i / 32) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].StartLBA = {1}", i / 32 + 1,
                                                        entry.StartLba);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
-                                                       (i / 32) + 1, entry.Unknown);
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}", i / 32 + 1,
+                                                       entry.Unknown);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Sectors = {1}", (i / 32) + 1,
+                            AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Sectors = {1}", i / 32 + 1,
                                                        entry.Sectors);
 
                             _taoV2.Tracks.Add(entry);
@@ -759,9 +753,9 @@ public sealed partial class Nero
                         AaruConsole.DebugWriteLine("Nero plugin", "Found \"SINF\" chunk, parsing {0} bytes",
                                                    chunkLength);
 
-                        byte[] tmpBuffer = new byte[4];
+                        var tmpBuffer = new byte[4];
                         _imageStream.Read(tmpBuffer, 0, 4);
-                        uint sessionTracks = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
+                        var sessionTracks = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
                         _neroSessions.Add(currentSession, sessionTracks);
 
                         AaruConsole.DebugWriteLine("Nero plugin", "\tSession {0} has {1} tracks", currentSession,
@@ -783,7 +777,7 @@ public sealed partial class Nero
                             ChunkSize = chunkLength
                         };
 
-                        byte[] tmpBuffer = new byte[4];
+                        var tmpBuffer = new byte[4];
                         _imageStream.Read(tmpBuffer, 0, 4);
                         _mediaType.Type = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
 
@@ -806,7 +800,7 @@ public sealed partial class Nero
                             ChunkSize = chunkLength
                         };
 
-                        byte[] tmpBuffer = new byte[4];
+                        var tmpBuffer = new byte[4];
                         _imageStream.Read(tmpBuffer, 0, 4);
                         _discInfo.Unknown = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
 
@@ -827,12 +821,11 @@ public sealed partial class Nero
                             ChunkSize = chunkLength
                         };
 
-                        byte[] tmpBuffer = new byte[4];
+                        var tmpBuffer = new byte[4];
                         _imageStream.Read(tmpBuffer, 0, 4);
                         _relo.Unknown = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
 
-                        AaruConsole.DebugWriteLine("Nero plugin", "\tneroRELO.Unknown = 0x{0:X4} ({0})",
-                                                   _relo.Unknown);
+                        AaruConsole.DebugWriteLine("Nero plugin", "\tneroRELO.Unknown = 0x{0:X4} ({0})", _relo.Unknown);
 
                         break;
                     }
@@ -848,7 +841,7 @@ public sealed partial class Nero
                             ChunkSize = chunkLength
                         };
 
-                        byte[] tmpBuffer = new byte[2];
+                        var tmpBuffer = new byte[2];
                         _imageStream.Read(tmpBuffer, 0, 2);
                         _toc.Unknown = BigEndianBitConverter.ToUInt16(tmpBuffer, 0);
 
@@ -868,8 +861,7 @@ public sealed partial class Nero
                                 break;
                         }
 
-                        AaruConsole.DebugWriteLine("Nero plugin", "\tneroTOC.Unknown = 0x{0:X4} ({0})",
-                                                   _toc.Unknown);
+                        AaruConsole.DebugWriteLine("Nero plugin", "\tneroTOC.Unknown = 0x{0:X4} ({0})", _toc.Unknown);
 
                         break;
                     }
@@ -885,8 +877,7 @@ public sealed partial class Nero
                     default:
                     {
                         AaruConsole.DebugWriteLine("Nero plugin", "Unknown chunk ID \"{0}\", skipping...",
-                                                   Encoding.ASCII.GetString(BigEndianBitConverter.
-                                                                                GetBytes(chunkId)));
+                                                   Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(chunkId)));
 
                         _imageStream.Seek(chunkLength, SeekOrigin.Current);
 
@@ -951,7 +942,7 @@ public sealed partial class Nero
             var   currentSessionStruct       = new CommonTypes.Structs.Session();
             ulong partitionSequence          = 0;
             ulong partitionStartByte         = 0;
-            int   trackCounter               = 1;
+            var   trackCounter               = 1;
             _trackFlags = new Dictionary<uint, byte>();
 
             if(currentSessionMaxTrack == 0)
@@ -964,8 +955,7 @@ public sealed partial class Nero
             {
                 if(neroTrack.Offset >= (_imageNewFormat ? footerV2.FirstChunkOffset : footerV1.FirstChunkOffset))
                 {
-                    AaruConsole.
-                        ErrorWriteLine("This image contains a track that is set to start outside the file.");
+                    AaruConsole.ErrorWriteLine("This image contains a track that is set to start outside the file.");
 
                     AaruConsole.ErrorWriteLine("Breaking track processing and trying recovery of information.");
 
@@ -986,7 +976,7 @@ public sealed partial class Nero
                                                             OrderBy(e => e.IndexNumber))
                     {
                         track.Indexes[entry.IndexNumber] =
-                            (entry.Minute * 60 * 75) + (entry.Second * 75) + entry.Frame - 150;
+                            entry.Minute * 60 * 75 + entry.Second * 75 + entry.Frame - 150;
 
                         _trackFlags[entry.TrackNumber] = (byte)((entry.Mode & 0xF0) >> 4);
                     }
@@ -1054,7 +1044,7 @@ public sealed partial class Nero
 
                 // Common track data
                 track.Description    = StringHandlers.CToString(neroTrack.Isrc);
-                track.EndSector      = (neroTrack.Length / neroTrack.SectorSize) + track.StartSector - 1;
+                track.EndSector      = neroTrack.Length / neroTrack.SectorSize + track.StartSector - 1;
                 track.Sequence       = neroTrack.Sequence;
                 track.Session        = currentSession;
                 track.Type           = NeroTrackModeToTrackType((DaoMode)neroTrack.Mode);
@@ -1067,7 +1057,6 @@ public sealed partial class Nero
 
                 // Flags not set for this track
                 if(!_trackFlags.ContainsKey(track.Sequence))
-                {
                     switch(track.Type)
                     {
                         case TrackType.Audio:
@@ -1083,7 +1072,6 @@ public sealed partial class Nero
 
                             break;
                     }
-                }
 
                 // If ISRC is not empty
                 if(!string.IsNullOrWhiteSpace(track.Description))
@@ -1094,8 +1082,8 @@ public sealed partial class Nero
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
                 }
 
-                bool rawMode1 = false;
-                bool rawMode2 = false;
+                var rawMode1 = false;
+                var rawMode2 = false;
 
                 switch((DaoMode)neroTrack.Mode)
                 {
@@ -1221,8 +1209,7 @@ public sealed partial class Nero
                 // Add to offset map
                 _offsetmap.Add(track.Sequence, track.StartSector);
 
-                AaruConsole.DebugWriteLine("Nero plugin", "\t\t Offset[{0}]: {1}", track.Sequence,
-                                           track.StartSector);
+                AaruConsole.DebugWriteLine("Nero plugin", "\t\t Offset[{0}]: {1}", track.Sequence, track.StartSector);
 
                 // Create partition
                 var partition = new Partition
@@ -1264,8 +1251,8 @@ public sealed partial class Nero
                 // Common track data
                 track.Description = StringHandlers.CToString(_neroTracks[1].Isrc);
 
-                track.EndSector = ((_imageNewFormat ? footerV2.FirstChunkOffset : footerV1.FirstChunkOffset) /
-                                   _neroTracks[1].SectorSize) - 150;
+                track.EndSector = (_imageNewFormat ? footerV2.FirstChunkOffset : footerV1.FirstChunkOffset) /
+                                  _neroTracks[1].SectorSize - 150;
 
                 track.Sequence       = _neroTracks[1].Sequence;
                 track.Session        = currentSession;
@@ -1276,9 +1263,9 @@ public sealed partial class Nero
                 track.SubchannelType = TrackSubchannelType.None;
                 track.Indexes[1]     = 0;
 
-                bool rawMode1 = false;
-                bool rawMode2 = false;
-                int  subSize  = 0;
+                var rawMode1 = false;
+                var rawMode2 = false;
+                var subSize  = 0;
 
                 switch((DaoMode)_neroTracks[1].Mode)
                 {
@@ -1441,13 +1428,13 @@ public sealed partial class Nero
             if(_imageInfo.MediaType == CommonTypes.MediaType.Unknown ||
                _imageInfo.MediaType == CommonTypes.MediaType.CD)
             {
-                bool data       = false;
-                bool mode2      = false;
-                bool firstAudio = false;
-                bool firstData  = false;
-                bool audio      = false;
+                var data       = false;
+                var mode2      = false;
+                var firstAudio = false;
+                var firstData  = false;
+                var audio      = false;
 
-                for(int i = 0; i < _neroTracks.Count; i++)
+                for(var i = 0; i < _neroTracks.Count; i++)
                 {
                     // First track is audio
                     firstAudio |= i == 0 && ((DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.Audio    ||
@@ -1489,7 +1476,7 @@ public sealed partial class Nero
                         Sessions.Count > 1 &&
                         mode2)
                     _imageInfo.MediaType = CommonTypes.MediaType.CDPLUS;
-                else if((firstData && audio) || mode2)
+                else if(firstData && audio || mode2)
                     _imageInfo.MediaType = CommonTypes.MediaType.CDROMXA;
                 else if(!audio)
                     _imageInfo.MediaType = CommonTypes.MediaType.CDROM;
@@ -1584,8 +1571,7 @@ public sealed partial class Nero
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
@@ -1605,9 +1591,9 @@ public sealed partial class Nero
         buffer = null;
 
         foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
-                                                 from track in Tracks where track.Sequence  == kvp.Key
-                                                 where sectorAddress   - kvp.Value <=
-                                                       track.EndSector - track.StartSector select kvp)
+                                                 from track in Tracks where track.Sequence == kvp.Key
+                                                 where sectorAddress - kvp.Value <= track.EndSector - track.StartSector
+                                                 select kvp)
             return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -1619,9 +1605,9 @@ public sealed partial class Nero
         buffer = null;
 
         foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
-                                                 from track in Tracks where track.Sequence  == kvp.Key
-                                                 where sectorAddress   - kvp.Value <=
-                                                       track.EndSector - track.StartSector select kvp)
+                                                 from track in Tracks where track.Sequence == kvp.Key
+                                                 where sectorAddress - kvp.Value <= track.EndSector - track.StartSector
+                                                 select kvp)
         {
             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
 
@@ -1645,7 +1631,7 @@ public sealed partial class Nero
         uint sectorOffset;
         uint sectorSize;
         uint sectorSkip;
-        bool mode2 = false;
+        var  mode2 = false;
 
         switch((DaoMode)aaruTrack.Mode)
         {
@@ -1734,9 +1720,8 @@ public sealed partial class Nero
         _imageStream = _neroFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.
-           Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                SeekOrigin.Begin);
+        br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                           SeekOrigin.Begin);
 
         if(mode2)
         {
@@ -1744,9 +1729,9 @@ public sealed partial class Nero
 
             buffer = br.ReadBytes((int)((sectorSize + sectorSkip) * length));
 
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[sectorSize];
+                var sector = new byte[sectorSize];
                 Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
                 sector = Sector.GetUserData(sector);
                 mode2Ms.Write(sector, 0, sector.Length);
@@ -1758,7 +1743,7 @@ public sealed partial class Nero
                 sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -2069,15 +2054,14 @@ public sealed partial class Nero
         _imageStream = _neroFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.
-           Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                SeekOrigin.Begin);
+        br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                           SeekOrigin.Begin);
 
         if(sectorOffset == 0 &&
            sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -2102,9 +2086,9 @@ public sealed partial class Nero
         buffer = null;
 
         foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
-                                                 from track in Tracks where track.Sequence  == kvp.Key
-                                                 where sectorAddress   - kvp.Value <=
-                                                       track.EndSector - track.StartSector select kvp)
+                                                 from track in Tracks where track.Sequence == kvp.Key
+                                                 where sectorAddress - kvp.Value <= track.EndSector - track.StartSector
+                                                 select kvp)
             return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -2180,15 +2164,14 @@ public sealed partial class Nero
         _imageStream = _neroFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.
-           Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                SeekOrigin.Begin);
+        br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                           SeekOrigin.Begin);
 
         if(sectorOffset == 0 &&
            sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -2201,8 +2184,8 @@ public sealed partial class Nero
         {
             case DaoMode.Data:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -2218,15 +2201,14 @@ public sealed partial class Nero
             }
             case DaoMode.DataM2F1:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
                     Array.Copy(buffer, i * 2048, fullSector, 24, 2048);
 
-                    _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1,
-                                                     (long)(sectorAddress + i));
+                    _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1, (long)(sectorAddress + i));
 
                     _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode2Form1);
                     Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
@@ -2238,8 +2220,8 @@ public sealed partial class Nero
             }
             case DaoMode.DataM2F2:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {

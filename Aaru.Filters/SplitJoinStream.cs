@@ -1,3 +1,5 @@
+namespace Aaru.Filters;
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -5,8 +7,6 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Microsoft.Win32.SafeHandles;
-
-namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Implements a stream that joins two or more files (sequentially) as a single stream</summary>
@@ -140,8 +140,8 @@ public class SplitJoinStream : Stream
     ///     4096.
     /// </param>
     /// <param name="useAsync">Specifies whether to use asynchronous I/O or synchronous I/O.</param>
-    public void Add(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
-                    bool useAsync) => Add(new FileStream(path, mode, access, share, bufferSize, useAsync));
+    public void Add(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool useAsync) =>
+        Add(new FileStream(path, mode, access, share, bufferSize, useAsync));
 
     /// <summary>Adds the specified file to the end of the current stream</summary>
     /// <param name="path">A relative or absolute path for the file that the stream will encapsulate.</param>
@@ -257,13 +257,13 @@ public class SplitJoinStream : Stream
     }
 
     /// <inheritdoc />
-    public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback,
-                                           object state) =>
+    public override IAsyncResult
+        BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state) =>
         throw new NotSupportedException("Asynchronous I/O is not supported.");
 
     /// <inheritdoc />
-    public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback,
-                                            object state) =>
+    public override IAsyncResult
+        BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state) =>
         throw new NotSupportedException("Asynchronous I/O is not supported.");
 
     /// <inheritdoc />
@@ -310,7 +310,7 @@ public class SplitJoinStream : Stream
     /// <inheritdoc />
     public override int Read(byte[] buffer, int offset, int count)
     {
-        int read = 0;
+        var read = 0;
 
         while(count > 0)
         {

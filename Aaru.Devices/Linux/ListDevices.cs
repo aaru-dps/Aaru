@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices.Linux;
+
 using System;
 using System.IO;
 using System.Text;
 
-namespace Aaru.Devices.Linux;
-
-internal static class ListDevices
+static class ListDevices
 {
     const string PATH_SYS_DEVBLOCK = "/sys/block/";
 
@@ -46,8 +46,8 @@ internal static class ListDevices
     {
         string[] sysdevs = Directory.GetFileSystemEntries(PATH_SYS_DEVBLOCK, "*", SearchOption.TopDirectoryOnly);
 
-        DeviceInfo[] devices = new DeviceInfo[sysdevs.Length];
-        bool         hasUdev;
+        var  devices = new DeviceInfo[sysdevs.Length];
+        bool hasUdev;
 
         IntPtr udev = IntPtr.Zero;
 
@@ -61,7 +61,7 @@ internal static class ListDevices
             hasUdev = false;
         }
 
-        for(int i = 0; i < sysdevs.Length; i++)
+        for(var i = 0; i < sysdevs.Length; i++)
         {
             devices[i] = new DeviceInfo
             {

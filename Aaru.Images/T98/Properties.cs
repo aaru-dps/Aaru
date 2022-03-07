@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -37,14 +39,12 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class T98
 {
     /// <inheritdoc />
     public string Name => "T98 Hard Disk Image";
     /// <inheritdoc />
-    public Guid Id => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
+    public Guid Id => new("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />

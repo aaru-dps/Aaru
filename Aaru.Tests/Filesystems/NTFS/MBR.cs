@@ -26,12 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems.NTFS;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Filesystems;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Filesystems.NTFS;
 
 [TestFixture]
 public class MBR : FilesystemTest
@@ -41,7 +42,7 @@ public class MBR : FilesystemTest
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "New Technology File System (MBR)");
 
-    public override IFilesystem Plugin     => new Aaru.Filesystems.NTFS();
+    public override IFilesystem Plugin     => new NTFS();
     public override bool        Partitions => true;
 
     public override FileSystemTest[] Tests => new[]

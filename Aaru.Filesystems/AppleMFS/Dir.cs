@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
@@ -77,7 +77,7 @@ public sealed partial class AppleMFS
         _idToEntry    = new Dictionary<uint, FileEntry>();
         _filenameToId = new Dictionary<string, uint>();
 
-        int offset = 0;
+        var offset = 0;
 
         while(offset + 51 < _directoryBlocks.Length)
         {
@@ -91,8 +91,7 @@ public sealed partial class AppleMFS
 
             entry.flTyp = _directoryBlocks[offset + 1];
 
-            entry.flUsrWds =
-                Marshal.ByteArrayToStructureBigEndian<AppleCommon.FInfo>(_directoryBlocks, offset + 2, 16);
+            entry.flUsrWds = Marshal.ByteArrayToStructureBigEndian<AppleCommon.FInfo>(_directoryBlocks, offset + 2, 16);
 
             entry.flFlNum  = BigEndianBitConverter.ToUInt32(_directoryBlocks, offset + 18);
             entry.flStBlk  = BigEndianBitConverter.ToUInt16(_directoryBlocks, offset + 22);

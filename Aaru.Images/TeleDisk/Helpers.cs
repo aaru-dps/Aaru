@@ -30,34 +30,34 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class TeleDisk
 {
     (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
     {
-        ushort cylinder = (ushort)(lba                            / (_imageInfo.Heads * _imageInfo.SectorsPerTrack));
-        byte   head     = (byte)(lba / _imageInfo.SectorsPerTrack % _imageInfo.Heads);
-        byte   sector   = (byte)((lba % _imageInfo.SectorsPerTrack) + 1);
+        var cylinder = (ushort)(lba                            / (_imageInfo.Heads * _imageInfo.SectorsPerTrack));
+        var head     = (byte)(lba / _imageInfo.SectorsPerTrack % _imageInfo.Heads);
+        var sector   = (byte)(lba % _imageInfo.SectorsPerTrack + 1);
 
         return (cylinder, head, sector);
     }
 
     static ushort TeleDiskCrc(ushort crc, byte[] buffer)
     {
-        int counter = 0;
+        var counter = 0;
 
         while(counter < buffer.Length)
         {
             crc ^= (ushort)((buffer[counter] & 0xFF) << 8);
 
-            for(int i = 0; i < 8; i++)
+            for(var i = 0; i < 8; i++)
                 if((crc & 0x8000) > 0)
                     crc = (ushort)((crc << 1) ^ TELE_DISK_CRC_POLY);
                 else
@@ -118,16 +118,16 @@ public sealed partial class TeleDisk
                 break;
             case DATA_BLOCK_PATTERN:
             {
-                int ins  = 0;
-                int outs = 0;
+                var ins  = 0;
+                var outs = 0;
 
                 while(ins < encodedData.Length)
                 {
-                    byte[] repeatValue = new byte[2];
+                    var repeatValue = new byte[2];
 
-                    ushort repeatNumber = BitConverter.ToUInt16(encodedData, ins);
+                    var repeatNumber = BitConverter.ToUInt16(encodedData, ins);
                     Array.Copy(encodedData, ins + 2, repeatValue, 0, 2);
-                    byte[] decodedPiece = new byte[repeatNumber * 2];
+                    var decodedPiece = new byte[repeatNumber * 2];
                     ArrayHelpers.ArrayFill(decodedPiece, repeatValue);
                     Array.Copy(decodedPiece, 0, decodedData, outs, decodedPiece.Length);
                     ins  += 4;
@@ -140,19 +140,18 @@ public sealed partial class TeleDisk
                 AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed input: {0} bytes",
                                            ins);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin",
-                                           "(Block pattern decoder): Output data size: {0} bytes",
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Output data size: {0} bytes",
                                            decodedData.Length);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin",
-                                           "(Block pattern decoder): Processed Output: {0} bytes", outs);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed Output: {0} bytes",
+                                           outs);
 
                 break;
             }
             case DATA_BLOCK_RLE:
             {
-                int ins  = 0;
-                int outs = 0;
+                var ins  = 0;
+                var outs = 0;
 
                 while(ins < encodedData.Length)
                 {
@@ -170,10 +169,10 @@ public sealed partial class TeleDisk
                     else
                     {
                         length = (byte)(encoding * 2);
-                        byte   run  = encodedData[ins + 1];
-                        byte[] part = new byte[length];
+                        byte run  = encodedData[ins + 1];
+                        var  part = new byte[length];
                         Array.Copy(encodedData, ins + 2, part, 0, length);
-                        byte[] piece = new byte[length * run];
+                        var piece = new byte[length * run];
                         ArrayHelpers.ArrayFill(piece, part);
                         Array.Copy(piece, 0, decodedData, outs, piece.Length);
                         ins  += 2 + length;
@@ -212,13 +211,11 @@ public sealed partial class TeleDisk
             {
                 switch(_totalDiskSize)
                 {
-                    case 143360:
-                        return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy_Mod_I : MediaType.Unknown;
+                    case 143360: return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy_Mod_I : MediaType.Unknown;
                     case 163840:
                     {
                         // Acorn disk uses 256 bytes/sector
-                        return _imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_40
-                                   : MediaType.DOS_525_SS_DD_8;
+                        return _imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_40 : MediaType.DOS_525_SS_DD_8;
 
                         // DOS disks use 512 bytes/sector
                     }
@@ -229,13 +226,11 @@ public sealed partial class TeleDisk
 
                         // DOS disks use 512 bytes/sector
                     }
-                    case 315392:
-                        return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy_Mod_II : MediaType.Unknown;
+                    case 315392: return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy_Mod_II : MediaType.Unknown;
                     case 327680:
                     {
                         // Acorn disk uses 256 bytes/sector
-                        return _imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_80
-                                   : MediaType.DOS_525_DS_DD_8;
+                        return _imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_80 : MediaType.DOS_525_DS_DD_8;
 
                         // DOS disks use 512 bytes/sector
                     }
@@ -336,8 +331,8 @@ public sealed partial class TeleDisk
             }
             default:
             {
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes",
-                                           _totalDiskSize, _header.DriveType);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes", _totalDiskSize,
+                                           _header.DriveType);
 
                 return MediaType.Unknown;
             }

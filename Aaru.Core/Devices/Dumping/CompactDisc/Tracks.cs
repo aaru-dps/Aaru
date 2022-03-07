@@ -30,6 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,12 +47,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -61,16 +63,15 @@ partial class Dump
     /// <param name="updateStatus">Update status handler</param>
     /// <returns>List of tracks</returns>
     public static Track[] GetCdTracks(Device dev, DumpLog dumpLog, bool force, out long lastSector,
-                                      Dictionary<int, long> leadOutStarts,
-                                      Dictionary<MediaTagType, byte[]> mediaTags,
+                                      Dictionary<int, long> leadOutStarts, Dictionary<MediaTagType, byte[]> mediaTags,
                                       ErrorMessageHandler stoppingErrorMessage, out FullTOC.CDFullTOC? toc,
                                       Dictionary<byte, byte> trackFlags, UpdateStatusHandler updateStatus)
     {
-        byte[]      cmdBuf;                        // Data buffer
-        const uint  sectorSize = 2352;             // Full sector size
-        bool        sense;                         // Sense indicator
-        List<Track> trackList = new List<Track>(); // Tracks in disc
-        byte[]      tmpBuf;                        // Temporary buffer
+        byte[]     cmdBuf;                        // Data buffer
+        const uint sectorSize = 2352;             // Full sector size
+        bool       sense;                         // Sense indicator
+        var        trackList = new List<Track>(); // Tracks in disc
+        byte[]     tmpBuf;                        // Temporary buffer
         toc        = null;
         lastSector = 0;
         TrackType leadoutTrackType = TrackType.Audio;
@@ -110,11 +111,10 @@ partial class Dump
                         Sequence = trk.POINT,
                         Session  = trk.SessionNumber,
                         Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                               (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
-                                   ? TrackType.Data : TrackType.Audio,
+                               (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
+                                   : TrackType.Audio,
                         StartSector =
-                            (ulong)((trk.PHOUR * 3600 * 75) + (trk.PMIN * 60 * 75) + (trk.PSEC * 75) + trk.PFRAME -
-                                    150),
+                            (ulong)(trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME - 150),
                         BytesPerSector    = (int)sectorSize,
                         RawBytesPerSector = (int)sectorSize
                     });
@@ -159,17 +159,15 @@ partial class Dump
                         phour  = trk.PHOUR;
                     }
 
-                    lastSector = (phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe - 150;
+                    lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
                     leadOutStarts?.Add(trk.SessionNumber, lastSector + 1);
                 }
                 else if(trk.POINT == 0xA0 &&
                         trk.ADR   == 1)
-                {
                     leadoutTrackType =
                         (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                         (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
                             : TrackType.Audio;
-                }
         }
         else
         {
@@ -191,8 +189,7 @@ partial class Dump
             }
 
             if(oldToc.HasValue)
-                foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.
-                                                                   OrderBy(t => t.TrackNumber).
+                foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.OrderBy(t => t.TrackNumber).
                                                                    Where(trk => trk.ADR == 1 || trk.ADR == 4))
                     if(trk.TrackNumber >= 0x01 &&
                        trk.TrackNumber <= 0x63)
@@ -202,8 +199,8 @@ partial class Dump
                             Sequence = trk.TrackNumber,
                             Session  = 1,
                             Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                   (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
-                                       ? TrackType.Data : TrackType.Audio,
+                                   (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
+                                       : TrackType.Audio,
                             StartSector       = trk.TrackStartAddress,
                             BytesPerSector    = (int)sectorSize,
                             RawBytesPerSector = (int)sectorSize
@@ -247,7 +244,7 @@ partial class Dump
 
         if(!sense)
         {
-            byte[] temp = new byte[8];
+            var temp = new byte[8];
 
             Array.Copy(cmdBuf, 0, temp, 0, 8);
             Array.Reverse(temp);

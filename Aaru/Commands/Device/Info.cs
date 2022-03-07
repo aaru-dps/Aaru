@@ -31,6 +31,8 @@
 // Copyright © 2021-2022 Rebecca Wallander
 // ****************************************************************************/
 
+namespace Aaru.Commands.Device;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -45,21 +47,23 @@ using Aaru.Core;
 using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Decoders.DVD;
+using Aaru.Decoders.MMC;
 using Aaru.Decoders.PCMCIA;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Aaru.Helpers;
+using Aaru.Settings;
 using Spectre.Console;
 using Command = System.CommandLine.Command;
+using Device = Aaru.Devices.Device;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
+using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
 using Inquiry = Aaru.Decoders.SCSI.Inquiry;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 
-namespace Aaru.Commands.Device;
-
-internal sealed class DeviceInfoCommand : Command
+sealed class DeviceInfoCommand : Command
 {
     public DeviceInfoCommand() : base("info", "Gets information about a device.")
     {
@@ -90,7 +94,7 @@ internal sealed class DeviceInfoCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -124,11 +128,11 @@ internal sealed class DeviceInfoCommand : Command
            char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-        Devices.Device dev;
+        Device dev;
 
         try
         {
-            dev = new Devices.Device(devicePath);
+            dev = new Device(devicePath);
 
             if(dev.IsRemote)
                 Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -280,7 +284,7 @@ internal sealed class DeviceInfoCommand : Command
                              devInfo.AtaIdentify);
 
             Identify.IdentifyDevice? decodedIdentify = Identify.Decode(devInfo.AtaIdentify);
-            AaruConsole.WriteLine(Decoders.ATA.Identify.Prettify(decodedIdentify));
+            AaruConsole.WriteLine(Aaru.Decoders.ATA.Identify.Prettify(decodedIdentify));
 
             if(devInfo.AtaMcptError.HasValue)
             {
@@ -318,8 +322,8 @@ internal sealed class DeviceInfoCommand : Command
                 if((devInfo.AtaMcptError.Value.DeviceHead & 0x08) == 0x08)
                     AaruConsole.WriteLine("Media card is write protected");
 
-                ushort specificData = (ushort)((devInfo.AtaMcptError.Value.CylinderHigh * 0x100) +
-                                               devInfo.AtaMcptError.Value.CylinderLow);
+                var specificData = (ushort)(devInfo.AtaMcptError.Value.CylinderHigh * 0x100 +
+                                            devInfo.AtaMcptError.Value.CylinderLow);
 
                 if(specificData != 0)
                     AaruConsole.WriteLine("Card specific data: 0x{0:X4}", specificData);
@@ -334,15 +338,10 @@ internal sealed class DeviceInfoCommand : Command
                 if(ataid.CurrentCylinders       > 0 &&
                    ataid.CurrentHeads           > 0 &&
                    ataid.CurrentSectorsPerTrack > 0)
-                {
-                    blocks =
-                        (ulong)Math.Max(ataid.CurrentCylinders * ataid.CurrentHeads * ataid.CurrentSectorsPerTrack,
-                                        ataid.CurrentSectors);
-                }
+                    blocks = (ulong)Math.Max(ataid.CurrentCylinders * ataid.CurrentHeads * ataid.CurrentSectorsPerTrack,
+                                             ataid.CurrentSectors);
                 else
-                {
                     blocks = (ulong)(ataid.Cylinders * ataid.Heads * ataid.SectorsPerTrack);
-                }
 
                 if(ataid.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
                     blocks = ataid.LBASectors;
@@ -355,8 +354,7 @@ internal sealed class DeviceInfoCommand : Command
                 MediaType mediaType = MediaTypeFromDevice.GetFromAta(dev.Manufacturer, dev.Model, removable,
                                                                      dev.IsCompactFlash, dev.IsPcmcia, blocks);
 
-                AaruConsole.WriteLine(removable ? "Media identified as {0}" : "Device identified as {0}",
-                                      mediaType);
+                AaruConsole.WriteLine(removable ? "Media identified as {0}" : "Device identified as {0}", mediaType);
 
                 Statistics.AddMedia(mediaType, true);
             }
@@ -367,7 +365,7 @@ internal sealed class DeviceInfoCommand : Command
             DataFile.WriteTo("Device-Info command", outputPrefix, "_atapi_identify.bin", "ATAPI IDENTIFY",
                              devInfo.AtapiIdentify);
 
-            AaruConsole.WriteLine(Decoders.ATA.Identify.Prettify(devInfo.AtapiIdentify));
+            AaruConsole.WriteLine(Aaru.Decoders.ATA.Identify.Prettify(devInfo.AtapiIdentify));
         }
 
         if(devInfo.ScsiInquiry != null)
@@ -385,8 +383,7 @@ internal sealed class DeviceInfoCommand : Command
                     if(page.Key >= 0x01 &&
                        page.Key <= 0x7F)
                     {
-                        AaruConsole.WriteLine("ASCII Page {0:X2}h: {1}", page.Key,
-                                              EVPD.DecodeASCIIPage(page.Value));
+                        AaruConsole.WriteLine("ASCII Page {0:X2}h: {1}", page.Key, EVPD.DecodeASCIIPage(page.Value));
 
                         DataFile.WriteTo("Device-Info command", outputPrefix, page.Value);
                     }
@@ -472,8 +469,7 @@ internal sealed class DeviceInfoCommand : Command
                     }
                     else if(page.Key == 0xB3)
                     {
-                        AaruConsole.WriteLine("Automation Device Serial Number: {0}",
-                                              EVPD.DecodePageB3(page.Value));
+                        AaruConsole.WriteLine("Automation Device Serial Number: {0}", EVPD.DecodePageB3(page.Value));
 
                         DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
                                          $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
@@ -487,8 +483,8 @@ internal sealed class DeviceInfoCommand : Command
                                          $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
                     }
                     else if(page.Key == 0xC0 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
-                                           ToLowerInvariant().Trim() == "quantum")
+                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "quantum")
                     {
                         AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_Quantum(page.Value));
 
@@ -496,8 +492,8 @@ internal sealed class DeviceInfoCommand : Command
                                          $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
                     }
                     else if(page.Key == 0xC0 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
-                                           ToLowerInvariant().Trim() == "seagate")
+                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "seagate")
                     {
                         AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_Seagate(page.Value));
 
@@ -505,8 +501,8 @@ internal sealed class DeviceInfoCommand : Command
                                          $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
                     }
                     else if(page.Key == 0xC0 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
-                                           ToLowerInvariant().Trim() == "ibm")
+                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "ibm")
                     {
                         AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_IBM(page.Value));
 
@@ -514,8 +510,8 @@ internal sealed class DeviceInfoCommand : Command
                                          $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
                     }
                     else if(page.Key == 0xC1 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
-                                           ToLowerInvariant().Trim() == "ibm")
+                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "ibm")
                     {
                         AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C1_IBM(page.Value));
 
@@ -523,8 +519,8 @@ internal sealed class DeviceInfoCommand : Command
                                          $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
                     }
                     else if((page.Key == 0xC0 || page.Key == 0xC1) &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
-                                           ToLowerInvariant().Trim() == "certance")
+                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "certance")
                     {
                         AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_C1_Certance(page.Value));
 
@@ -533,8 +529,8 @@ internal sealed class DeviceInfoCommand : Command
                     }
                     else if((page.Key == 0xC2 || page.Key == 0xC3 || page.Key == 0xC4 || page.Key == 0xC5 ||
                              page.Key == 0xC6) &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
-                                           ToLowerInvariant().Trim() == "certance")
+                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "certance")
                     {
                         AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(page.Value));
 
@@ -543,8 +539,8 @@ internal sealed class DeviceInfoCommand : Command
                     }
                     else if((page.Key == 0xC0 || page.Key == 0xC1 || page.Key == 0xC2 || page.Key == 0xC3 ||
                              page.Key == 0xC4 || page.Key == 0xC5) &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
-                                           ToLowerInvariant().Trim() == "hp")
+                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "hp")
                     {
                         AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_to_C5_HP(page.Value));
 
@@ -552,8 +548,8 @@ internal sealed class DeviceInfoCommand : Command
                                          $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
                     }
                     else if(page.Key == 0xDF &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
-                                           ToLowerInvariant().Trim() == "certance")
+                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "certance")
                     {
                         AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_DF_Certance(page.Value));
 
@@ -848,10 +844,8 @@ internal sealed class DeviceInfoCommand : Command
                     }
                 }
                 else
-                {
                     AaruConsole.DebugWriteLine("Device-Info command",
                                                "GET CONFIGURATION returned no feature descriptors");
-                }
             }
 
             if(devInfo.RPC != null)
@@ -909,9 +903,9 @@ internal sealed class DeviceInfoCommand : Command
                                       devInfo.PlextorFeatures.PoweRecSelected / 177);
 
                     if(devInfo.PlextorFeatures.PoweRecMax > 0)
-                        AaruConsole.
-                            WriteLine("Maximum PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
-                                      devInfo.PlextorFeatures.PoweRecMax, devInfo.PlextorFeatures.PoweRecMax / 177);
+                        AaruConsole.WriteLine("Maximum PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
+                                              devInfo.PlextorFeatures.PoweRecMax,
+                                              devInfo.PlextorFeatures.PoweRecMax / 177);
 
                     if(devInfo.PlextorFeatures.PoweRecLast > 0)
                         AaruConsole.WriteLine("Last used PoweRec was {0} Kb/sec ({1}x)",
@@ -1071,27 +1065,27 @@ internal sealed class DeviceInfoCommand : Command
         {
             case DeviceType.MMC:
             {
-                bool noInfo = true;
+                var noInfo = true;
 
                 if(devInfo.CID != null)
                 {
                     noInfo = false;
                     DataFile.WriteTo("Device-Info command", outputPrefix, "_mmc_cid.bin", "MMC CID", devInfo.CID);
-                    AaruConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCID(devInfo.CID));
+                    AaruConsole.WriteLine("{0}", Decoders.PrettifyCID(devInfo.CID));
                 }
 
                 if(devInfo.CSD != null)
                 {
                     noInfo = false;
                     DataFile.WriteTo("Device-Info command", outputPrefix, "_mmc_csd.bin", "MMC CSD", devInfo.CSD);
-                    AaruConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCSD(devInfo.CSD));
+                    AaruConsole.WriteLine("{0}", Decoders.PrettifyCSD(devInfo.CSD));
                 }
 
                 if(devInfo.OCR != null)
                 {
                     noInfo = false;
                     DataFile.WriteTo("Device-Info command", outputPrefix, "_mmc_ocr.bin", "MMC OCR", devInfo.OCR);
-                    AaruConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyOCR(devInfo.OCR));
+                    AaruConsole.WriteLine("{0}", Decoders.PrettifyOCR(devInfo.OCR));
                 }
 
                 if(devInfo.ExtendedCSD != null)
@@ -1101,7 +1095,7 @@ internal sealed class DeviceInfoCommand : Command
                     DataFile.WriteTo("Device-Info command", outputPrefix, "_mmc_ecsd.bin", "MMC Extended CSD",
                                      devInfo.ExtendedCSD);
 
-                    AaruConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(devInfo.ExtendedCSD));
+                    AaruConsole.WriteLine("{0}", Decoders.PrettifyExtendedCSD(devInfo.ExtendedCSD));
                 }
 
                 if(noInfo)
@@ -1111,7 +1105,7 @@ internal sealed class DeviceInfoCommand : Command
                 break;
             case DeviceType.SecureDigital:
             {
-                bool noInfo = true;
+                var noInfo = true;
 
                 if(devInfo.CID != null)
                 {
@@ -1120,7 +1114,7 @@ internal sealed class DeviceInfoCommand : Command
                     DataFile.WriteTo("Device-Info command", outputPrefix, "_sd_cid.bin", "SecureDigital CID",
                                      devInfo.CID);
 
-                    AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(devInfo.CID));
+                    AaruConsole.WriteLine("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyCID(devInfo.CID));
                 }
 
                 if(devInfo.CSD != null)
@@ -1130,7 +1124,7 @@ internal sealed class DeviceInfoCommand : Command
                     DataFile.WriteTo("Device-Info command", outputPrefix, "_sd_csd.bin", "SecureDigital CSD",
                                      devInfo.CSD);
 
-                    AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(devInfo.CSD));
+                    AaruConsole.WriteLine("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyCSD(devInfo.CSD));
                 }
 
                 if(devInfo.OCR != null)
@@ -1140,7 +1134,7 @@ internal sealed class DeviceInfoCommand : Command
                     DataFile.WriteTo("Device-Info command", outputPrefix, "_sd_ocr.bin", "SecureDigital OCR",
                                      devInfo.OCR);
 
-                    AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(devInfo.OCR));
+                    AaruConsole.WriteLine("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyOCR(devInfo.OCR));
                 }
 
                 if(devInfo.SCR != null)
@@ -1150,7 +1144,7 @@ internal sealed class DeviceInfoCommand : Command
                     DataFile.WriteTo("Device-Info command", outputPrefix, "_sd_scr.bin", "SecureDigital SCR",
                                      devInfo.SCR);
 
-                    AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifySCR(devInfo.SCR));
+                    AaruConsole.WriteLine("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifySCR(devInfo.SCR));
                 }
 
                 if(noInfo)
@@ -1165,7 +1159,7 @@ internal sealed class DeviceInfoCommand : Command
         AaruConsole.WriteLine();
 
         // Open main database
-        var ctx = AaruContext.Create(Settings.Settings.MainDbPath);
+        var ctx = AaruContext.Create(Settings.MainDbPath);
 
         // Search for device in main database
         Aaru.Database.Models.Device dbDev =

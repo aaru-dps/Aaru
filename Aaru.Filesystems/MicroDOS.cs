@@ -30,6 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable UnusedType.Local
+// ReSharper disable UnusedMember.Local
+
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,11 +45,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-// ReSharper disable UnusedType.Local
-// ReSharper disable UnusedMember.Local
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>
@@ -85,8 +87,7 @@ public sealed class MicroDOS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("koi8-r");
         information = "";
@@ -178,7 +179,10 @@ public sealed class MicroDOS : IFilesystem
 
     enum FileStatus : byte
     {
-        CommonFile = 0, Protected  = 1, LogicalDisk = 2,
-        BadFile    = 0x80, Deleted = 0xFF
+        CommonFile  = 0,
+        Protected   = 1,
+        LogicalDisk = 2,
+        BadFile     = 0x80,
+        Deleted     = 0xFF
     }
 }

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,8 +43,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
 using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
-
-namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -60,9 +60,9 @@ partial class Dump
                              int? discOffset)
     {
         _dumpLog.WriteLine("Creating sidecar.");
-        var         filters     = new FiltersList();
-        IFilter     filter      = filters.GetFilter(_outputPath);
-        IMediaImage inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
+        var     filters     = new FiltersList();
+        IFilter filter      = filters.GetFilter(_outputPath);
+        var     inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
         totalChkDuration = 0;
         ErrorNumber opened = inputPlugin.Open(filter);
 
@@ -106,9 +106,9 @@ partial class Dump
 
         if(sidecar.OpticalDisc[0].Track != null)
             filesystems.AddRange(from xmlTrack in sidecar.OpticalDisc[0].Track
-                                 where xmlTrack.FileSystemInformation != null
-                                 from partition in xmlTrack.FileSystemInformation
-                                 where partition.FileSystems != null from fileSystem in partition.FileSystems
+                                 where xmlTrack.FileSystemInformation                                         != null
+                                 from partition in xmlTrack.FileSystemInformation where partition.FileSystems != null
+                                 from fileSystem in partition.FileSystems
                                  select (partition.StartSector, fileSystem.Type));
 
         if(filesystems.Count > 0)
@@ -134,8 +134,8 @@ partial class Dump
         }
 
         if(mediaTags != null)
-            foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags.Where(tag => _outputPlugin.
-                                                                                  SupportedMediaTags.Contains(tag.Key)))
+            foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags.Where(tag => _outputPlugin.SupportedMediaTags.
+                                                                                  Contains(tag.Key)))
                 AddMediaTagToSidecar(_outputPath, tag.Key, tag.Value, ref sidecar);
 
         UpdateStatus?.Invoke("Writing metadata sidecar");

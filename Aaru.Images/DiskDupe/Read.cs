@@ -31,14 +31,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class DiskDupe
 {
@@ -86,8 +86,8 @@ public sealed partial class DiskDupe
     public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
     {
         buffer = null;
-        int trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
-        int sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
+        var trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
+        var sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
 
         if(sectorAddress > _imageInfo.Sectors - 1)
             return ErrorNumber.OutOfRange;
@@ -103,7 +103,7 @@ public sealed partial class DiskDupe
         {
             Stream strm = _ddiImageFilter.GetDataForkStream();
 
-            strm.Seek(_trackOffsets[trackNum] + (sectorOffset * _imageInfo.SectorSize), SeekOrigin.Begin);
+            strm.Seek(_trackOffsets[trackNum] + sectorOffset * _imageInfo.SectorSize, SeekOrigin.Begin);
 
             strm.Read(buffer, 0, (int)_imageInfo.SectorSize);
         }

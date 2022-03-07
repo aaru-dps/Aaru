@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems.LisaFS;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -42,8 +44,6 @@ using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
-
-namespace Aaru.Filesystems.LisaFS;
 
 public sealed partial class LisaFS
 {
@@ -103,7 +103,7 @@ public sealed partial class LisaFS
                     return errno;
 
                 _mddf = new MDDF();
-                byte[] pString = new byte[33];
+                var pString = new byte[33];
 
                 _mddf.fsversion = BigEndianBitConverter.ToUInt16(sector, 0x00);
                 _mddf.volid     = BigEndianBitConverter.ToUInt64(sector, 0x02);
@@ -118,7 +118,7 @@ public sealed partial class LisaFS
                 _mddf.unknown2       = sector[0x4F];
                 _mddf.machine_id     = BigEndianBitConverter.ToUInt32(sector, 0x50);
                 _mddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
-                uint lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x58);
+                var lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x58);
                 _mddf.dtvc                         = DateHandlers.LisaToDateTime(lisaTime);
                 lisaTime                           = BigEndianBitConverter.ToUInt32(sector, 0x5C);
                 _mddf.dtcc                         = DateHandlers.LisaToDateTime(lisaTime);

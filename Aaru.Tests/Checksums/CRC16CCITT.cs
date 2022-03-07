@@ -26,12 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Checksums;
+
 using System.IO;
 using Aaru.Checksums;
 using FluentAssertions;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Checksums;
 
 [TestFixture]
 public class Crc16Ccitt
@@ -64,7 +64,7 @@ public class Crc16Ccitt
     [Test]
     public void EmptyData()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
@@ -79,8 +79,7 @@ public class Crc16Ccitt
     [Test]
     public void EmptyFile()
     {
-        byte[] result =
-            CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
+        byte[] result = CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
 
         result.Should().BeEquivalentTo(_expectedEmpty);
     }
@@ -88,7 +87,7 @@ public class Crc16Ccitt
     [Test]
     public void EmptyInstance()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
@@ -105,10 +104,10 @@ public class Crc16Ccitt
     [Test]
     public void RandomData()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
         fs.Close();
@@ -120,8 +119,7 @@ public class Crc16Ccitt
     [Test]
     public void RandomFile()
     {
-        byte[] result =
-            CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
+        byte[] result = CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
 
         result.Should().BeEquivalentTo(_expectedRandom);
     }
@@ -129,10 +127,10 @@ public class Crc16Ccitt
     [Test]
     public void RandomInstance()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
         fs.Close();
@@ -146,10 +144,10 @@ public class Crc16Ccitt
     [Test]
     public void PartialInstance15()
     {
-        byte[] data = new byte[15];
+        var data = new byte[15];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 15);
         fs.Close();
@@ -163,10 +161,10 @@ public class Crc16Ccitt
     [Test]
     public void PartialInstance31()
     {
-        byte[] data = new byte[31];
+        var data = new byte[31];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 31);
         fs.Close();
@@ -180,10 +178,10 @@ public class Crc16Ccitt
     [Test]
     public void PartialInstance63()
     {
-        byte[] data = new byte[63];
+        var data = new byte[63];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 63);
         fs.Close();
@@ -197,10 +195,10 @@ public class Crc16Ccitt
     [Test]
     public void PartialInstance2352()
     {
-        byte[] data = new byte[2352];
+        var data = new byte[2352];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 2352);
         fs.Close();

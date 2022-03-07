@@ -30,22 +30,36 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace Aaru.DiscImages;
+
+using System;
 
 public sealed partial class SuperCardPro
 {
     public enum ScpDiskType : byte
     {
-        Commodore64 = 0x00, CommodoreAmiga = 0x04, AtariFMSS  = 0x10,
-        AtariFMDS   = 0x11, AtariFSEx      = 0x12, AtariSTSS  = 0x14,
-        AtariSTDS   = 0x15, AppleII        = 0x20, AppleIIPro = 0x21,
-        Apple400K   = 0x24, Apple800K      = 0x25, Apple144   = 0x26,
-        PC360K      = 0x30, PC720K         = 0x31, PC12M      = 0x32,
-        PC144M      = 0x33, TandySSSD      = 0x40, TandySSDD  = 0x41,
-        TandyDSSD   = 0x42, TandyDSDD      = 0x43, Ti994A     = 0x50,
-        RolandD20   = 0x60
+        Commodore64    = 0x00,
+        CommodoreAmiga = 0x04,
+        AtariFMSS      = 0x10,
+        AtariFMDS      = 0x11,
+        AtariFSEx      = 0x12,
+        AtariSTSS      = 0x14,
+        AtariSTDS      = 0x15,
+        AppleII        = 0x20,
+        AppleIIPro     = 0x21,
+        Apple400K      = 0x24,
+        Apple800K      = 0x25,
+        Apple144       = 0x26,
+        PC360K         = 0x30,
+        PC720K         = 0x31,
+        PC12M          = 0x32,
+        PC144M         = 0x33,
+        TandySSSD      = 0x40,
+        TandySSDD      = 0x41,
+        TandyDSSD      = 0x42,
+        TandyDSDD      = 0x43,
+        Ti994A         = 0x50,
+        RolandD20      = 0x60
     }
 
     [Flags]

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,8 +53,6 @@ using DMI = Aaru.Decoders.Xbox.DMI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class ZZZRawImage
 {
@@ -342,8 +342,8 @@ public sealed partial class ZZZRawImage
         if(_imageInfo.ImageSize % 2352 == 0 ||
            _imageInfo.ImageSize % 2448 == 0)
         {
-            byte[] sync   = new byte[12];
-            byte[] header = new byte[4];
+            var sync   = new byte[12];
+            var header = new byte[4];
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(sync, 0, 12);
             stream.Read(header, 0, 4);
@@ -384,7 +384,7 @@ public sealed partial class ZZZRawImage
                     continue;
 
                 AaruConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
-                byte[] data = new byte[filter.DataForkLength];
+                var data = new byte[filter.DataForkLength];
                 filter.GetDataForkStream().Read(data, 0, data.Length);
                 _mediaTags.Add(sidecar.tag, data);
             }
@@ -502,9 +502,7 @@ public sealed partial class ZZZRawImage
                 if(DMI.IsXbox(dmi) ||
                    DMI.IsXbox360(dmi))
                     if(DMI.IsXbox(dmi))
-                    {
                         _imageInfo.MediaType = MediaType.XGD;
-                    }
                     else if(DMI.IsXbox360(dmi))
                     {
                         _imageInfo.MediaType = MediaType.XGD2;
@@ -1058,16 +1056,13 @@ public sealed partial class ZZZRawImage
 
                 _imageInfo.DriveModel = StringHandlers.CToString(scsiInq.Value.ProductIdentification).Trim();
 
-                _imageInfo.DriveFirmwareRevision =
-                    StringHandlers.CToString(scsiInq.Value.ProductRevisionLevel).Trim();
+                _imageInfo.DriveFirmwareRevision = StringHandlers.CToString(scsiInq.Value.ProductRevisionLevel).Trim();
 
                 _imageInfo.MediaType = MediaTypeFromDevice.GetFromScsi((byte)devType, _imageInfo.DriveManufacturer,
-                                                                       _imageInfo.DriveModel, mediumType,
-                                                                       densityCode, _imageInfo.Sectors,
-                                                                       _imageInfo.SectorSize,
+                                                                       _imageInfo.DriveModel, mediumType, densityCode,
+                                                                       _imageInfo.Sectors, _imageInfo.SectorSize,
                                                                        _mediaTags.ContainsKey(MediaTagType.
-                                                                           USB_Descriptors),
-                                                                       _rawCompactDisc);
+                                                                           USB_Descriptors), _rawCompactDisc);
             }
 
             if(_imageInfo.MediaType == MediaType.Unknown)
@@ -1219,8 +1214,7 @@ public sealed partial class ZZZRawImage
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -1263,9 +1257,9 @@ public sealed partial class ZZZRawImage
 
             buffer = br.ReadBytes((int)((sectorSize + sectorSkip) * length));
 
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[sectorSize];
+                var sector = new byte[sectorSize];
                 Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
                 sector = Sector.GetUserDataFromMode2(sector);
                 mode2Ms.Write(sector, 0, sector.Length);
@@ -1277,7 +1271,7 @@ public sealed partial class ZZZRawImage
                 sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -1404,7 +1398,7 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-           (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
+           !_rawCompactDisc && tag != SectorTagType.CdTrackFlags)
             return ErrorNumber.NotSupported;
 
         return ReadSectorsTag(sectorAddress, 1, tag, out buffer);
@@ -1416,7 +1410,7 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-           (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
+           !_rawCompactDisc && tag != SectorTagType.CdTrackFlags)
             return ErrorNumber.NotSupported;
 
         if(tag == SectorTagType.CdTrackFlags)
@@ -1453,7 +1447,6 @@ public sealed partial class ZZZRawImage
             sectorSize   = 96;
         }
         else
-        {
             switch(tag)
             {
                 case SectorTagType.CdSectorSync:
@@ -1521,7 +1514,6 @@ public sealed partial class ZZZRawImage
 
                 default: return ErrorNumber.NotSupported;
             }
-        }
 
         buffer = new byte[sectorSize * length];
 
@@ -1533,7 +1525,7 @@ public sealed partial class ZZZRawImage
            sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -1579,7 +1571,7 @@ public sealed partial class ZZZRawImage
         if(sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
                 byte[] sector = br.ReadBytes((int)sectorSize);
                 br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);

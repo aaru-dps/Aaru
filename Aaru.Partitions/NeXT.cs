@@ -30,6 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// Information learnt from XNU source and testing against real disks
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -42,9 +47,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
-
-// Information learnt from XNU source and testing against real disks
-namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of NeXT disklabels</summary>
@@ -72,7 +74,7 @@ public sealed class NeXTDisklabel : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        bool   magicFound = false;
+        var    magicFound = false;
         byte[] labelSector;
 
         uint sectorSize;
@@ -98,7 +100,7 @@ public sealed class NeXTDisklabel : IPartition
             if(errno != ErrorNumber.NoError)
                 continue;
 
-            uint magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);
+            var magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);
 
             if(magic != NEXT_MAGIC1 &&
                magic != NEXT_MAGIC2 &&
@@ -124,8 +126,8 @@ public sealed class NeXTDisklabel : IPartition
         if(errno != ErrorNumber.NoError)
             return false;
 
-        Label  label    = Marshal.ByteArrayToStructureBigEndian<Label>(labelSector);
-        byte[] disktabB = new byte[498];
+        Label label    = Marshal.ByteArrayToStructureBigEndian<Label>(labelSector);
+        var   disktabB = new byte[498];
         Array.Copy(labelSector, 44, disktabB, 0, 498);
         label.dl_dt              = Marshal.ByteArrayToStructureBigEndian<DiskTab>(disktabB);
         label.dl_dt.d_partitions = new Entry[8];
@@ -134,8 +136,7 @@ public sealed class NeXTDisklabel : IPartition
         AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_label_blkno = {0}", label.dl_label_blkno);
         AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_size = {0}", label.dl_size);
 
-        AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_label = \"{0}\"",
-                                   StringHandlers.CToString(label.dl_label));
+        AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_label = \"{0}\"", StringHandlers.CToString(label.dl_label));
 
         AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_flags = {0}", label.dl_flags);
         AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_tag = 0x{0:X8}", label.dl_tag);
@@ -158,11 +159,9 @@ public sealed class NeXTDisklabel : IPartition
         AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_alts = {0}", label.dl_dt.d_ag_alts);
         AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_off = {0}", label.dl_dt.d_ag_off);
 
-        AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[0] = {0}",
-                                   label.dl_dt.d_boot0_blkno[0]);
+        AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[0] = {0}", label.dl_dt.d_boot0_blkno[0]);
 
-        AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[1] = {0}",
-                                   label.dl_dt.d_boot0_blkno[1]);
+        AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[1] = {0}", label.dl_dt.d_boot0_blkno[1]);
 
         AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_bootfile = \"{0}\"",
                                    StringHandlers.CToString(label.dl_dt.d_bootfile));
@@ -173,10 +172,10 @@ public sealed class NeXTDisklabel : IPartition
         AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rootpartition = {0}", label.dl_dt.d_rootpartition);
         AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rwpartition = {0}", label.dl_dt.d_rwpartition);
 
-        for(int i = 0; i < 8; i++)
+        for(var i = 0; i < 8; i++)
         {
-            byte[] partB = new byte[44];
-            Array.Copy(labelSector, 44 + 146 + (44 * i), partB, 0, 44);
+            var partB = new byte[44];
+            Array.Copy(labelSector, 44 + 146 + 44 * i, partB, 0, 44);
             label.dl_dt.d_partitions[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(partB);
 
             AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_base = {1}", i,
@@ -224,9 +223,8 @@ public sealed class NeXTDisklabel : IPartition
 
             var part = new Partition
             {
-                Size = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize),
-                Offset =
-                    (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize),
+                Size     = (ulong)(label.dl_dt.d_partitions[i].p_size                         * label.dl_dt.d_secsize),
+                Offset   = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize),
                 Type     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
                 Sequence = (ulong)i,
                 Name     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
@@ -242,8 +240,7 @@ public sealed class NeXTDisklabel : IPartition
                 part.Length = imagePlugin.Info.Sectors - part.Start;
                 part.Size   = part.Length * sectorSize;
 
-                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
-                                           part.Length);
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i, part.Length);
             }
 
             sb.AppendFormat("{0} bytes per block", label.dl_dt.d_partitions[i].p_bsize).AppendLine();

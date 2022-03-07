@@ -31,12 +31,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class HdCopy
 {
@@ -46,7 +46,7 @@ public sealed partial class HdCopy
     /// <inheritdoc />
     public string Name => "HD-Copy disk image";
     /// <inheritdoc />
-    public Guid Id => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
+    public Guid Id => new("8D57483F-71A5-42EC-9B87-66AEC439C792");
     /// <inheritdoc />
     public string Author => "Michael Drüing";
     /// <inheritdoc />

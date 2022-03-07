@@ -31,6 +31,8 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -42,8 +44,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -129,7 +129,6 @@ public sealed partial class ISO9660
 
         if(entry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) == true &&
            entry.Extents.Count                                                 == 1)
-        {
             try
             {
                 long firstSector    = offset                  / 2352;
@@ -157,7 +156,6 @@ public sealed partial class ISO9660
 
                 return ErrorNumber.UnexpectedException;
             }
-        }
 
         buf = ReadWithExtents(offset, size, entry.Extents,
                               entry.XA?.signature                                    == XA_MAGIC &&
@@ -453,7 +451,7 @@ public sealed partial class ISO9660
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;
 
-        string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
+        var parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
         if(!_directoryCache.TryGetValue(parentPath, out _))
         {
@@ -478,8 +476,7 @@ public sealed partial class ISO9660
             if(!_joliet &&
                !pieces[^1].EndsWith(";1", StringComparison.Ordinal))
             {
-                dirent = parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) ==
-                                                    pieces[^1] + ";1");
+                dirent = parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[^1] + ";1");
 
                 if(string.IsNullOrEmpty(dirent.Key))
                     return ErrorNumber.NoSuchFile;
@@ -514,7 +511,7 @@ public sealed partial class ISO9660
         var  ms             = new MemoryStream();
         long currentFilePos = 0;
 
-        for(int i = 0; i < extents.Count; i++)
+        for(var i = 0; i < extents.Count; i++)
         {
             if(offset - currentFilePos >= extents[i].size)
             {
@@ -528,8 +525,8 @@ public sealed partial class ISO9660
 
             while(leftExtentSize > 0)
             {
-                ErrorNumber errno = ReadSector(extents[i].extent + currentExtentSector, out byte[] sector,
-                                               interleaved, fileNumber);
+                ErrorNumber errno = ReadSector(extents[i].extent + currentExtentSector, out byte[] sector, interleaved,
+                                               fileNumber);
 
                 if(errno != ErrorNumber.NoError ||
                    sector is null)
@@ -549,8 +546,7 @@ public sealed partial class ISO9660
                 }
 
                 if(offset - currentFilePos > 0)
-                    ms.Write(sector, (int)(offset - currentFilePos),
-                             (int)(sector.Length  - (offset - currentFilePos)));
+                    ms.Write(sector, (int)(offset - currentFilePos), (int)(sector.Length - (offset - currentFilePos)));
                 else
                     ms.Write(sector, 0, sector.Length);
 
@@ -576,16 +572,15 @@ public sealed partial class ISO9660
     {
         var ms = new MemoryStream();
 
-        for(int i = 0; i < extents.Count; i++)
+        for(var i = 0; i < extents.Count; i++)
         {
             long leftExtentSize      = extents[i].size;
             uint currentExtentSector = 0;
 
             while(leftExtentSize > 0)
             {
-                ErrorNumber errno =
-                    _image.ReadSectorTag((extents[i].extent + currentExtentSector) * _blockSize / 2048,
-                                         SectorTagType.CdSectorSubHeader, out byte[] fullSector);
+                ErrorNumber errno = _image.ReadSectorTag((extents[i].extent + currentExtentSector) * _blockSize / 2048,
+                                                         SectorTagType.CdSectorSubHeader, out byte[] fullSector);
 
                 if(errno != ErrorNumber.NoError)
                     return null;

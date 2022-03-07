@@ -31,10 +31,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using System;
 using Aaru.Console;
-
-namespace Aaru.Devices;
 
 public sealed partial class Device
 {
@@ -59,7 +59,7 @@ public sealed partial class Device
                                  out double duration)
     {
         buffer = new byte[8];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
@@ -86,8 +86,7 @@ public sealed partial class Device
     /// <param name="senseBuffer">Sense buffer.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool
-        AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, uint timeout, out double duration) =>
+    public bool AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, uint timeout, out double duration) =>
         AdaptecSetErrorThreshold(threshold, out senseBuffer, false, timeout, out duration);
 
     /// <summary>Sets the error threshold</summary>
@@ -100,9 +99,9 @@ public sealed partial class Device
     public bool AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, bool drive1, uint timeout,
                                          out double duration)
     {
-        byte[] buffer = new byte[1];
+        var buffer = new byte[1];
         buffer[0] = threshold;
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.AdaptecSetErrorThreshold;
@@ -127,8 +126,7 @@ public sealed partial class Device
     /// <param name="senseBuffer">Sense buffer.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout,
-                                        out double duration) =>
+    public bool AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
         AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
 
     /// <summary>Requests the usage, seek and error counters, and resets them</summary>
@@ -141,7 +139,7 @@ public sealed partial class Device
                                         out double duration)
     {
         buffer = new byte[9];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
@@ -168,10 +166,10 @@ public sealed partial class Device
     /// <param name="duration">Duration.</param>
     public bool AdaptecWriteBuffer(byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
-        byte[] oneKBuffer = new byte[1024];
+        var oneKBuffer = new byte[1024];
         Array.Copy(buffer, 0, oneKBuffer, 0, buffer.Length < 1024 ? buffer.Length : 1024);
 
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.AdaptecWriteBuffer;
@@ -194,7 +192,7 @@ public sealed partial class Device
     public bool AdaptecReadBuffer(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         buffer = new byte[1024];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.AdaptecReadBuffer;

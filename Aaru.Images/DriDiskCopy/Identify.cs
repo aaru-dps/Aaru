@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class DriDiskCopy
 {
@@ -48,7 +48,7 @@ public sealed partial class DriDiskCopy
         if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0)
             return false;
 
-        byte[] buffer = new byte[Marshal.SizeOf<Footer>()];
+        var buffer = new byte[Marshal.SizeOf<Footer>()];
         stream.Seek(-buffer.Length, SeekOrigin.End);
         stream.Read(buffer, 0, buffer.Length);
 
@@ -59,13 +59,11 @@ public sealed partial class DriDiskCopy
         AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.signature = \"{0}\"", sig);
         AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.five = {0}", tmpFooter.bpb.five);
 
-        AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb._driveCode = {0}",
-                                   tmpFooter.bpb._driveCode);
+        AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb._driveCode = {0}", tmpFooter.bpb._driveCode);
 
         AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown = {0}", tmpFooter.bpb.unknown);
 
-        AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.cylinders = {0}",
-                                   tmpFooter.bpb.cylinders);
+        AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.cylinders = {0}", tmpFooter.bpb.cylinders);
 
         AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown2 = {0}", tmpFooter.bpb.unknown2);
         AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.bps = {0}", tmpFooter.bpb.bps);
@@ -101,6 +99,6 @@ public sealed partial class DriDiskCopy
         if(tmpFooter.bpb.sptrack * tmpFooter.bpb.cylinders * tmpFooter.bpb.heads != tmpFooter.bpb.sectors)
             return false;
 
-        return (tmpFooter.bpb.sectors * tmpFooter.bpb.bps) + Marshal.SizeOf<Footer>() == stream.Length;
+        return tmpFooter.bpb.sectors * tmpFooter.bpb.bps + Marshal.SizeOf<Footer>() == stream.Length;
     }
 }

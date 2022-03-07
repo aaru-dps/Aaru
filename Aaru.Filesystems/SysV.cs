@@ -30,6 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable NotAccessedField.Local
+
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -39,10 +45,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
-
-// ReSharper disable NotAccessedField.Local
-
-namespace Aaru.Filesystems;
 
 // Information from the Linux kernel
 /// <inheritdoc />
@@ -98,12 +100,12 @@ public sealed class SysVfs : IFilesystem
             sb_size_in_sectors = 1; // If not a single sector can store it
 
         if(partition.End <=
-           partition.Start + (4 * (ulong)sb_size_in_sectors) +
+           partition.Start + 4 * (ulong)sb_size_in_sectors +
            sb_size_in_sectors) // Device must be bigger than SB location + SB size + offset
             return false;
 
         // Sectors in a cylinder
-        int spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
+        var spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
 
         // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
         int[] locations =
@@ -124,7 +126,7 @@ public sealed class SysVfs : IFilesystem
                sb_sector.Length < 0x400)
                 continue;
 
-            uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
+            var magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
             if(magic == XENIX_MAGIC ||
                magic == XENIX_CIGAM ||
@@ -144,21 +146,21 @@ public sealed class SysVfs : IFilesystem
                magic == XENIX_CIGAM)
                 return true;
 
-            byte[] coherent_string = new byte[6];
+            var coherent_string = new byte[6];
             Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
             string s_fname = StringHandlers.CToString(coherent_string);
             Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
             string s_fpack = StringHandlers.CToString(coherent_string);
 
-            if((s_fname == COH_FNAME && s_fpack == COH_FPACK) ||
-               (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
-               (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
+            if(s_fname == COH_FNAME && s_fpack == COH_FPACK ||
+               s_fname == COH_XXXXX && s_fpack == COH_XXXXX ||
+               s_fname == COH_XXXXS && s_fpack == COH_XXXXN)
                 return true;
 
             // Now try to identify 7th edition
-            uint   s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
-            ushort s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
-            ushort s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
+            var s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
+            var s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
+            var s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
 
             if(s_fsize  <= 0          ||
                s_fsize  >= 0xFFFFFFFF ||
@@ -199,23 +201,22 @@ public sealed class SysVfs : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
 
         var    sb        = new StringBuilder();
-        bool   bigEndian = false; // Start in little endian until we know what are we handling here
-        int    start     = 0;
-        bool   xenix     = false;
-        bool   sysv      = false;
-        bool   sys7th    = false;
-        bool   coherent  = false;
-        bool   xenix3    = false;
+        var    bigEndian = false; // Start in little endian until we know what are we handling here
+        var    start     = 0;
+        var    xenix     = false;
+        var    sysv      = false;
+        var    sys7th    = false;
+        var    coherent  = false;
+        var    xenix3    = false;
         byte[] sb_sector;
         byte   sb_size_in_sectors;
-        int    offset = 0;
+        var    offset = 0;
 
         if(imagePlugin.Info.SectorSize <=
            0x400) // Check if underlying device sector size is smaller than SuperBlock size
@@ -224,7 +225,7 @@ public sealed class SysVfs : IFilesystem
             sb_size_in_sectors = 1; // If not a single sector can store it
 
         // Sectors in a cylinder
-        int spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
+        var spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
 
         // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
         int[] locations =
@@ -244,7 +245,7 @@ public sealed class SysVfs : IFilesystem
             if(errno != ErrorNumber.NoError)
                 continue;
 
-            uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
+            var magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
             if(magic == XENIX_MAGIC ||
                magic == SYSV_MAGIC)
@@ -318,15 +319,15 @@ public sealed class SysVfs : IFilesystem
                 break;
             }
 
-            byte[] coherent_string = new byte[6];
+            var coherent_string = new byte[6];
             Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
             string s_fname = StringHandlers.CToString(coherent_string, Encoding);
             Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
             string s_fpack = StringHandlers.CToString(coherent_string, Encoding);
 
-            if((s_fname == COH_FNAME && s_fpack == COH_FPACK) ||
-               (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
-               (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
+            if(s_fname == COH_FNAME && s_fpack == COH_FPACK ||
+               s_fname == COH_XXXXX && s_fpack == COH_XXXXX ||
+               s_fname == COH_XXXXS && s_fpack == COH_XXXXN)
             {
                 coherent = true;
                 start    = i;
@@ -335,9 +336,9 @@ public sealed class SysVfs : IFilesystem
             }
 
             // Now try to identify 7th edition
-            uint   s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
-            ushort s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
-            ushort s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
+            var s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
+            var s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
+            var s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
 
             if(s_fsize  <= 0          ||
                s_fsize  >= 0xFFFFFFFF ||
@@ -390,8 +391,8 @@ public sealed class SysVfs : IFilesystem
 
         if(xenix || xenix3)
         {
-            byte[] xenix_strings = new byte[6];
-            var    xnx_sb        = new XenixSuperBlock();
+            var xenix_strings = new byte[6];
+            var xnx_sb        = new XenixSuperBlock();
             errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
 
             if(errno != ErrorNumber.NoError)
@@ -513,11 +514,9 @@ public sealed class SysVfs : IFilesystem
 
             sb.AppendFormat("{0} zones on volume ({1} bytes)", xnx_sb.s_fsize, xnx_sb.s_fsize * bs).AppendLine();
 
-            sb.AppendFormat("{0} free zones on volume ({1} bytes)", xnx_sb.s_tfree, xnx_sb.s_tfree * bs).
-               AppendLine();
+            sb.AppendFormat("{0} free zones on volume ({1} bytes)", xnx_sb.s_tfree, xnx_sb.s_tfree * bs).AppendLine();
 
-            sb.AppendFormat("{0} free blocks on list ({1} bytes)", xnx_sb.s_nfree, xnx_sb.s_nfree * bs).
-               AppendLine();
+            sb.AppendFormat("{0} free blocks on list ({1} bytes)", xnx_sb.s_nfree, xnx_sb.s_nfree * bs).AppendLine();
 
             sb.AppendFormat("{0} blocks per cylinder ({1} bytes)", xnx_sb.s_cylblks, xnx_sb.s_cylblks * bs).
                AppendLine();
@@ -539,8 +538,7 @@ public sealed class SysVfs : IFilesystem
             if(xnx_sb.s_ronly > 0)
                 sb.AppendLine("Volume is mounted read-only");
 
-            sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixToDateTime(xnx_sb.s_time)).
-               AppendLine();
+            sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixToDateTime(xnx_sb.s_time)).AppendLine();
 
             if(xnx_sb.s_time != 0)
             {
@@ -568,7 +566,7 @@ public sealed class SysVfs : IFilesystem
             if(errno != ErrorNumber.NoError)
                 return;
 
-            byte[] sysv_strings = new byte[6];
+            var sysv_strings = new byte[6];
 
             var sysv_sb = new SystemVRelease4SuperBlock
             {
@@ -684,17 +682,14 @@ public sealed class SysVfs : IFilesystem
             XmlFsType.Clusters = sysv_sb.s_fsize;
             sb.AppendFormat("{0} zones on volume ({1} bytes)", sysv_sb.s_fsize, sysv_sb.s_fsize * bs).AppendLine();
 
-            sb.AppendFormat("{0} free zones on volume ({1} bytes)", sysv_sb.s_tfree, sysv_sb.s_tfree * bs).
-               AppendLine();
+            sb.AppendFormat("{0} free zones on volume ({1} bytes)", sysv_sb.s_tfree, sysv_sb.s_tfree * bs).AppendLine();
 
-            sb.AppendFormat("{0} free blocks on list ({1} bytes)", sysv_sb.s_nfree, sysv_sb.s_nfree * bs).
-               AppendLine();
+            sb.AppendFormat("{0} free blocks on list ({1} bytes)", sysv_sb.s_nfree, sysv_sb.s_nfree * bs).AppendLine();
 
             sb.AppendFormat("{0} blocks per cylinder ({1} bytes)", sysv_sb.s_cylblks, sysv_sb.s_cylblks * bs).
                AppendLine();
 
-            sb.AppendFormat("{0} blocks per gap ({1} bytes)", sysv_sb.s_gapblks, sysv_sb.s_gapblks * bs).
-               AppendLine();
+            sb.AppendFormat("{0} blocks per gap ({1} bytes)", sysv_sb.s_gapblks, sysv_sb.s_gapblks * bs).AppendLine();
 
             sb.AppendFormat("First data zone: {0}", sysv_sb.s_isize).AppendLine();
             sb.AppendFormat("{0} free inodes on volume", sysv_sb.s_tinode).AppendLine();
@@ -741,8 +736,8 @@ public sealed class SysVfs : IFilesystem
             if(errno != ErrorNumber.NoError)
                 return;
 
-            var    coh_sb      = new CoherentSuperBlock();
-            byte[] coh_strings = new byte[6];
+            var coh_sb      = new CoherentSuperBlock();
+            var coh_strings = new byte[6];
 
             coh_sb.s_isize  = BitConverter.ToUInt16(sb_sector, 0x000);
             coh_sb.s_fsize  = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x002));
@@ -769,17 +764,14 @@ public sealed class SysVfs : IFilesystem
             sb.AppendLine("Coherent UNIX filesystem");
 
             if(imagePlugin.Info.SectorSize != 512)
-                sb.
-                    AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
-                                 512, 2048).AppendLine();
+                sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
+                                512, 2048).AppendLine();
 
             sb.AppendFormat("{0} zones on volume ({1} bytes)", coh_sb.s_fsize, coh_sb.s_fsize * 512).AppendLine();
 
-            sb.AppendFormat("{0} free zones on volume ({1} bytes)", coh_sb.s_tfree, coh_sb.s_tfree * 512).
-               AppendLine();
+            sb.AppendFormat("{0} free zones on volume ({1} bytes)", coh_sb.s_tfree, coh_sb.s_tfree * 512).AppendLine();
 
-            sb.AppendFormat("{0} free blocks on list ({1} bytes)", coh_sb.s_nfree, coh_sb.s_nfree * 512).
-               AppendLine();
+            sb.AppendFormat("{0} free blocks on list ({1} bytes)", coh_sb.s_nfree, coh_sb.s_nfree * 512).AppendLine();
 
             sb.AppendFormat("First data zone: {0}", coh_sb.s_isize).AppendLine();
             sb.AppendFormat("{0} free inodes on volume", coh_sb.s_tinode).AppendLine();
@@ -818,8 +810,8 @@ public sealed class SysVfs : IFilesystem
             if(errno != ErrorNumber.NoError)
                 return;
 
-            var    v7_sb        = new UNIX7thEditionSuperBlock();
-            byte[] sys7_strings = new byte[6];
+            var v7_sb        = new UNIX7thEditionSuperBlock();
+            var sys7_strings = new byte[6];
 
             v7_sb.s_isize  = BitConverter.ToUInt16(sb_sector, 0x000);
             v7_sb.s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
@@ -845,14 +837,12 @@ public sealed class SysVfs : IFilesystem
             sb.AppendLine("UNIX 7th Edition filesystem");
 
             if(imagePlugin.Info.SectorSize != 512)
-                sb.
-                    AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
-                                 512, 2048).AppendLine();
+                sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
+                                512, 2048).AppendLine();
 
             sb.AppendFormat("{0} zones on volume ({1} bytes)", v7_sb.s_fsize, v7_sb.s_fsize * 512).AppendLine();
 
-            sb.AppendFormat("{0} free zones on volume ({1} bytes)", v7_sb.s_tfree, v7_sb.s_tfree * 512).
-               AppendLine();
+            sb.AppendFormat("{0} free zones on volume ({1} bytes)", v7_sb.s_tfree, v7_sb.s_tfree * 512).AppendLine();
 
             sb.AppendFormat("{0} free blocks on list ({1} bytes)", v7_sb.s_nfree, v7_sb.s_nfree * 512).AppendLine();
             sb.AppendFormat("First data zone: {0}", v7_sb.s_isize).AppendLine();

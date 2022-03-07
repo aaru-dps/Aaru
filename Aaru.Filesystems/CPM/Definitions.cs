@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -37,8 +39,6 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class CPM
 {
@@ -67,7 +67,7 @@ public sealed partial class CPM
                         sectorIds = new int[def.sectorsPerTrack]
                     };
 
-                    for(int i = 0; i < def.sectorsPerTrack; i++)
+                    for(var i = 0; i < def.sectorsPerTrack; i++)
                         def.side1.sectorIds[i] = i + 1;
                 }
 
@@ -82,7 +82,7 @@ public sealed partial class CPM
                         sectorIds = new int[def.sectorsPerTrack]
                     };
 
-                    for(int i = 0; i < def.sectorsPerTrack; i++)
+                    for(var i = 0; i < def.sectorsPerTrack; i++)
                         def.side2.sectorIds[i] = i + 1;
                 }
             }

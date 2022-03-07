@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
-
-namespace Aaru.Devices;
 
 public sealed partial class Device
 {
@@ -77,9 +77,8 @@ public sealed partial class Device
             Command = (byte)AtaCommands.IdentifyDevice
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout, false, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -151,8 +150,8 @@ public sealed partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder,
-                             byte head, byte sector, byte count, uint timeout, out double duration)
+    public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head,
+                             byte sector, byte count, uint timeout, out double duration)
     {
         buffer = count == 0 ? new byte[512 * 256] : new byte[512 * count];
 
@@ -166,9 +165,8 @@ public sealed partial class Device
             Sector       = sector
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                   AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -217,9 +215,8 @@ public sealed partial class Device
             Sector       = sector
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                   AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -268,9 +265,8 @@ public sealed partial class Device
             Sector       = sector
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                   AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -287,8 +283,8 @@ public sealed partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool Seek(out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head, byte sector,
-                     uint timeout, out double duration)
+    public bool Seek(out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head, byte sector, uint timeout,
+                     out double duration)
     {
         byte[] buffer = Array.Empty<byte>();
 
@@ -301,9 +297,8 @@ public sealed partial class Device
             Sector       = sector
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -332,8 +327,8 @@ public sealed partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool SetFeatures(out AtaErrorRegistersChs statusRegisters, AtaFeatures feature, ushort cylinder,
-                            byte head, byte sector, byte sectorCount, uint timeout, out double duration)
+    public bool SetFeatures(out AtaErrorRegistersChs statusRegisters, AtaFeatures feature, ushort cylinder, byte head,
+                            byte sector, byte sectorCount, uint timeout, out double duration)
     {
         byte[] buffer = Array.Empty<byte>();
 
@@ -348,9 +343,8 @@ public sealed partial class Device
             Feature      = (byte)feature
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -373,9 +367,8 @@ public sealed partial class Device
             Command = (byte)AtaCommands.DoorLock
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -398,9 +391,8 @@ public sealed partial class Device
             Command = (byte)AtaCommands.DoorUnLock
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -423,9 +415,8 @@ public sealed partial class Device
             Command = (byte)AtaCommands.MediaEject
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
-                                   AtaTransferRegister.NoTransfer, ref buffer, timeout, true, out duration,
-                                   out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -38,8 +40,6 @@ using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class FAT
 {
@@ -102,7 +102,7 @@ public sealed partial class FAT
 
         currentDirectory = _rootDirectoryCache;
 
-        for(int p = 0; p < pieces.Length; p++)
+        for(var p = 0; p < pieces.Length; p++)
         {
             entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
 
@@ -135,12 +135,12 @@ public sealed partial class FAT
             if(clusters is null)
                 return ErrorNumber.InvalidArgument;
 
-            byte[] directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
+            var directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
 
-            for(int i = 0; i < clusters.Length; i++)
+            for(var i = 0; i < clusters.Length; i++)
             {
-                errno = _image.ReadSectors(_firstClusterSector + (clusters[i] * _sectorsPerCluster),
-                                           _sectorsPerCluster, out byte[] buffer);
+                errno = _image.ReadSectors(_firstClusterSector + clusters[i] * _sectorsPerCluster, _sectorsPerCluster,
+                                           out byte[] buffer);
 
                 if(errno != ErrorNumber.NoError)
                     return errno;
@@ -152,7 +152,7 @@ public sealed partial class FAT
             byte[] lastLfnName     = null;
             byte   lastLfnChecksum = 0;
 
-            for(int pos = 0; pos < directoryBuffer.Length; pos += Marshal.SizeOf<DirectoryEntry>())
+            for(var pos = 0; pos < directoryBuffer.Length; pos += Marshal.SizeOf<DirectoryEntry>())
             {
                 DirectoryEntry dirent =
                     Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directoryBuffer, pos,
@@ -191,8 +191,8 @@ public sealed partial class FAT
                     lfnSequence--;
 
                     Array.Copy(lfnEntry.name1, 0, lastLfnName, lfnSequence * 26, 10);
-                    Array.Copy(lfnEntry.name2, 0, lastLfnName, (lfnSequence * 26) + 10, 12);
-                    Array.Copy(lfnEntry.name3, 0, lastLfnName, (lfnSequence * 26) + 22, 4);
+                    Array.Copy(lfnEntry.name2, 0, lastLfnName, lfnSequence * 26 + 10, 12);
+                    Array.Copy(lfnEntry.name3, 0, lastLfnName, lfnSequence * 26 + 22, 4);
 
                     continue;
                 }
@@ -251,14 +251,14 @@ public sealed partial class FAT
                     AaruConsole.DebugWriteLine("FAT filesystem", "Found empty filename in {0}", path);
 
                     if(!_debug ||
-                       (dirent.size > 0 && dirent.start_cluster == 0))
+                       dirent.size > 0 && dirent.start_cluster == 0)
                         continue; // Skip invalid name
 
                     // If debug, add it
                     name = ":{EMPTYNAME}:";
 
                     // Try to create a unique filename with an extension from 000 to 999
-                    for(int uniq = 0; uniq < 1000; uniq++)
+                    for(var uniq = 0; uniq < 1000; uniq++)
                     {
                         extension = $"{uniq:D03}";
 
@@ -320,8 +320,7 @@ public sealed partial class FAT
                (_namespace == Namespace.Os2 || _namespace == Namespace.Ecs) &&
                !_fat32)
             {
-                List<KeyValuePair<string, CompleteDirectoryEntry>> filesWithEas =
-                    currentDirectory.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
+                var filesWithEas = currentDirectory.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
 
                 foreach(KeyValuePair<string, CompleteDirectoryEntry> fileWithEa in filesWithEas)
                 {
@@ -336,12 +335,12 @@ public sealed partial class FAT
                     if(BitConverter.ToUInt16(longnameEa, 0) != EAT_ASCII)
                         continue;
 
-                    ushort longnameSize = BitConverter.ToUInt16(longnameEa, 2);
+                    var longnameSize = BitConverter.ToUInt16(longnameEa, 2);
 
                     if(longnameSize + 4 > longnameEa.Length)
                         continue;
 
-                    byte[] longnameBytes = new byte[longnameSize];
+                    var longnameBytes = new byte[longnameSize];
 
                     Array.Copy(longnameEa, 4, longnameBytes, 0, longnameSize);
 
@@ -362,8 +361,8 @@ public sealed partial class FAT
             // Check FAT32.IFS EAs
             if(_fat32 || _debug)
             {
-                List<KeyValuePair<string, CompleteDirectoryEntry>> fat32EaSidecars = currentDirectory.
-                    Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).ToList();
+                var fat32EaSidecars = currentDirectory.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).
+                                                       ToList();
 
                 foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
                 {

@@ -30,10 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes.Enums;
-using JetBrains.Annotations;
-
 namespace Aaru.Gui.ViewModels.Tabs;
+
+using Aaru.Decoders.MMC;
+using JetBrains.Annotations;
+using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
 
 public sealed class SdMmcInfoViewModel
 {
@@ -47,16 +48,16 @@ public sealed class SdMmcInfoViewModel
                 //Text = "MultiMediaCard";
 
                 if(cid != null)
-                    CidText = Decoders.MMC.Decoders.PrettifyCID(cid);
+                    CidText = Decoders.PrettifyCID(cid);
 
                 if(csd != null)
-                    CsdText = Decoders.MMC.Decoders.PrettifyCSD(csd);
+                    CsdText = Decoders.PrettifyCSD(csd);
 
                 if(ocr != null)
-                    OcrText = Decoders.MMC.Decoders.PrettifyOCR(ocr);
+                    OcrText = Decoders.PrettifyOCR(ocr);
 
                 if(extendedCsd != null)
-                    ExtendedCsdText = Decoders.MMC.Decoders.PrettifyExtendedCSD(extendedCsd);
+                    ExtendedCsdText = Decoders.PrettifyExtendedCSD(extendedCsd);
             }
 
                 break;
@@ -65,16 +66,16 @@ public sealed class SdMmcInfoViewModel
                 //Text = "SecureDigital";
 
                 if(cid != null)
-                    CidText = Decoders.SecureDigital.Decoders.PrettifyCID(cid);
+                    CidText = Aaru.Decoders.SecureDigital.Decoders.PrettifyCID(cid);
 
                 if(csd != null)
-                    CsdText = Decoders.SecureDigital.Decoders.PrettifyCSD(csd);
+                    CsdText = Aaru.Decoders.SecureDigital.Decoders.PrettifyCSD(csd);
 
                 if(ocr != null)
-                    OcrText = Decoders.SecureDigital.Decoders.PrettifyOCR(ocr);
+                    OcrText = Aaru.Decoders.SecureDigital.Decoders.PrettifyOCR(ocr);
 
                 if(scr != null)
-                    ScrText = Decoders.SecureDigital.Decoders.PrettifySCR(scr);
+                    ScrText = Aaru.Decoders.SecureDigital.Decoders.PrettifySCR(scr);
             }
 
                 break;

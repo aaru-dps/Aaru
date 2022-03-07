@@ -30,17 +30,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+
+namespace Aaru.Core.Devices.Scanning;
+
 using System;
 using System.Collections.Generic;
 using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
 using Aaru.Decoders.SecureDigital;
 using CSD = Aaru.Decoders.MMC.CSD;
+using Decoders = Aaru.Decoders.MMC.Decoders;
 using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
-
-// ReSharper disable JoinDeclarationAndInitializer
-
-namespace Aaru.Core.Devices.Scanning;
 
 /// <summary>Implements scanning a SecureDigital or MultiMediaCard flash card</summary>
 public sealed partial class MediaScan
@@ -56,8 +59,8 @@ public sealed partial class MediaScan
         const ushort sdProfile     = 0x0001;
         ushort       blocksToRead  = 128;
         uint         blockSize     = 512;
-        bool         byteAddressed = true;
-        bool         supportsCmd23 = false;
+        var          byteAddressed = true;
+        var          supportsCmd23 = false;
 
         switch(_dev.Type)
         {
@@ -67,7 +70,7 @@ public sealed partial class MediaScan
 
                 if(!sense)
                 {
-                    CSD csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
+                    CSD csd = Decoders.DecodeCSD(cmdBuf);
                     results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
                     blockSize      = (uint)Math.Pow(2, csd.ReadBlockLength);
 
@@ -80,7 +83,7 @@ public sealed partial class MediaScan
 
                         if(!sense)
                         {
-                            ExtendedCSD ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
+                            ExtendedCSD ecsd = Decoders.DecodeExtendedCSD(cmdBuf);
                             results.Blocks = ecsd.SectorCount;
                             blockSize      = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
 
@@ -104,11 +107,10 @@ public sealed partial class MediaScan
 
                 if(!sense)
                 {
-                    Decoders.SecureDigital.CSD csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
+                    Aaru.Decoders.SecureDigital.CSD csd = Aaru.Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
 
-                    results.Blocks = (ulong)(csd.Structure == 0
-                                                 ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
-                                                 : (csd.Size + 1) * 1024);
+                    results.Blocks = (ulong)(csd.Structure == 0 ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
+                                                 : (csd.Size                + 1) * 1024);
 
                     blockSize = (uint)Math.Pow(2, csd.ReadBlockLength);
 
@@ -125,8 +127,8 @@ public sealed partial class MediaScan
                     sense = _dev.ReadScr(out cmdBuf, out _, timeout, out _);
 
                     if(!sense)
-                        supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(cmdBuf)?.CommandSupport.
-                                                 HasFlag(CommandSupport.SetBlockCount) ?? false;
+                        supportsCmd23 = Aaru.Decoders.SecureDigital.Decoders.DecodeSCR(cmdBuf)?.CommandSupport.
+                                             HasFlag(CommandSupport.SetBlockCount) ?? false;
                 }
 
                 break;
@@ -142,13 +144,11 @@ public sealed partial class MediaScan
 
         if(supportsCmd23)
         {
-            sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, 1, byteAddressed, timeout,
-                                            out duration);
+            sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, 1, byteAddressed, timeout, out duration);
 
             if(sense || _dev.Error)
             {
-                UpdateStatus?.
-                    Invoke("Environment does not support setting block count, downgrading to OS reading.");
+                UpdateStatus?.Invoke("Environment does not support setting block count, downgrading to OS reading.");
 
                 supportsCmd23 = false;
             }
@@ -168,8 +168,8 @@ public sealed partial class MediaScan
         {
             while(true)
             {
-                sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed,
-                                                timeout, out duration);
+                sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, timeout,
+                                                out duration);
 
                 if(sense)
                     blocksToRead /= 2;
@@ -181,8 +181,7 @@ public sealed partial class MediaScan
 
             if(sense)
             {
-                StoppingErrorMessage?.
-                    Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+                StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
 
                 return results;
             }
@@ -253,11 +252,10 @@ public sealed partial class MediaScan
                 error = _dev.ReadWithBlockCount(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
                                                 timeout, out duration);
             else if(_useBufferedReads)
-                error = _dev.BufferedOsRead(out cmdBuf, (long)(i * blockSize), blockSize * blocksToRead,
-                                            out duration);
+                error = _dev.BufferedOsRead(out cmdBuf, (long)(i * blockSize), blockSize * blocksToRead, out duration);
             else
-                error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead,
-                                                     byteAddressed, timeout, out duration);
+                error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
+                                                     timeout, out duration);
 
             if(!error)
             {
@@ -309,17 +307,16 @@ public sealed partial class MediaScan
         mhddLog.Close();
 
         ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                     blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
-                     _devicePath);
+                     blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000), _devicePath);
 
         InitProgress?.Invoke();
 
-        for(int i = 0; i < seekTimes; i++)
+        for(var i = 0; i < seekTimes; i++)
         {
             if(_aborted || !_seekTest)
                 break;
 
-            uint seekPos = (uint)rnd.Next((int)results.Blocks);
+            var seekPos = (uint)rnd.Next((int)results.Blocks);
 
             PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 

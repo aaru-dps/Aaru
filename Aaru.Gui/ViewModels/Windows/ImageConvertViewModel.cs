@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Windows;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -58,8 +60,6 @@ using ReactiveUI;
 using Schemas;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageConvertViewModel : ViewModelBase
 {
@@ -570,7 +570,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
     async void DoWork(object plugin)
     {
-        bool warning = false;
+        var warning = false;
 
         if(!(plugin is IWritableImage outputFormat))
         {
@@ -752,8 +752,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
             Progress2Indeterminate = true;
         });
 
-        if(!outputFormat.Create(DestinationText, _inputFormat.Info.MediaType, parsedOptions,
-                                _inputFormat.Info.Sectors, _inputFormat.Info.SectorSize))
+        if(!outputFormat.Create(DestinationText, _inputFormat.Info.MediaType, parsedOptions, _inputFormat.Info.Sectors,
+                                _inputFormat.Info.SectorSize))
         {
             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                             GetMessageBoxStandardWindow("Error",
@@ -804,7 +804,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
                     await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                                   GetMessageBoxStandardWindow("Error",
                                                                                       $"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
-                                                                                      icon: Icon.Error).ShowDialog(_view));
+                                                                                      icon: Icon.Error).
+                                                                                  ShowDialog(_view));
 
                     AaruConsole.ErrorWriteLine("not continuing...");
 
@@ -835,8 +836,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                                                                   icon: Icon.Error).
                                                                               ShowDialog(_view));
 
-                AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
-                                           outputFormat.ErrorMessage);
+                AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.", outputFormat.ErrorMessage);
 
                 return;
             }
@@ -868,8 +868,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 warning = true;
 
                 if(errno == ErrorNumber.NoError)
-                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...",
-                                               outputFormat.ErrorMessage);
+                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
                 else
                     AaruConsole.ErrorWriteLine("Error {0} reading media tag, continuing...", errno);
             }
@@ -984,8 +983,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
                                                                           $"Error {errno} reading sector {doneSectors}, not continuing...",
-                                                                          icon: Icon.Error).
-                                                                      ShowDialog(_view));
+                                                                          icon: Icon.Error).ShowDialog(_view));
 
                             AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
                                                        doneSectors);
@@ -1018,8 +1016,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
                                                                           $"Error {errno} reading sector {doneSectors}, not continuing...",
-                                                                          icon: Icon.Error).
-                                                                      ShowDialog(_view));
+                                                                          icon: Icon.Error).ShowDialog(_view));
 
                             AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
                                                        doneSectors);
@@ -1171,9 +1168,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                track != null)
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                    MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs,
-                                    (byte)track.Sequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
-                                    outputFormat as IWritableOpticalImage, false, false, null, null, smallestPregapLbaPerTrack, false);
+                                    MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs, (byte)track.Sequence,
+                                    ref mcn, tracks.ToArray(), subchannelExtents, false,
+                                    outputFormat as IWritableOpticalImage, false, false, null, null,
+                                    smallestPregapLbaPerTrack, false);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
@@ -1224,7 +1222,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                     MmcSubchannel.Raw, sector, doneSectors, sectorsToDo, null, isrcs,
                                     (byte)track.Sequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
-                                    outputFormat as IWritableOpticalImage, false, false, null, null, smallestPregapLbaPerTrack, false);
+                                    outputFormat as IWritableOpticalImage, false, false, null, null,
+                                    smallestPregapLbaPerTrack, false);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
@@ -1274,8 +1273,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
                                                                           $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
-                                                                          icon: Icon.Error).
-                                                                      ShowDialog(_view));
+                                                                          icon: Icon.Error).ShowDialog(_view));
 
                             AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                        outputFormat.ErrorMessage, doneSectors);
@@ -1389,8 +1387,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                     }
                     else
                     {
-                        errno = sectorsToDo == 1
-                                    ? _inputFormat.ReadSector(doneSectors + track.StartSector, out sector)
+                        errno = sectorsToDo == 1 ? _inputFormat.ReadSector(doneSectors + track.StartSector, out sector)
                                     : _inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo,
                                                                out sector);
 
@@ -1436,8 +1433,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
                                                                           $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
-                                                                          icon: Icon.Error).
-                                                                      ShowDialog(_view));
+                                                                          icon: Icon.Error).ShowDialog(_view));
 
                             return;
                         }
@@ -1573,12 +1569,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                                                   out sector);
 
                         if(errno == ErrorNumber.NoError)
-                        {
                             result = sectorsToDo == 1
                                          ? outputFormat.WriteSectorTag(sector, doneSectors + track.StartSector, tag)
                                          : outputFormat.WriteSectorsTag(sector, doneSectors + track.StartSector,
                                                                         sectorsToDo, tag);
-                        }
                         else
                         {
                             result = true;
@@ -1587,8 +1581,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 warning = true;
 
-                                AaruConsole.ErrorWriteLine("Error {0} reading tag for sector {1}, continuing...",
-                                                           errno, doneSectors);
+                                AaruConsole.ErrorWriteLine("Error {0} reading tag for sector {1}, continuing...", errno,
+                                                           doneSectors);
                             }
                             else
                             {
@@ -1919,8 +1913,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
     void ExecuteDriveSerialNumberCommand() => DriveSerialNumberText = _inputFormat.Info.DriveSerialNumber;
 
-    void ExecuteDriveFirmwareRevisionCommand() =>
-        DriveFirmwareRevisionText = _inputFormat.Info.DriveFirmwareRevision;
+    void ExecuteDriveFirmwareRevisionCommand() => DriveFirmwareRevisionText = _inputFormat.Info.DriveFirmwareRevision;
 
     void ExecuteCicmXmlFromImageCommand()
     {
@@ -2014,17 +2007,15 @@ public sealed class ImageConvertViewModel : ViewModelBase
             }
             else
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error",
-                                                  "Resume file does not contain dump hardware information...",
+                      GetMessageBoxStandardWindow("Error", "Resume file does not contain dump hardware information...",
                                                   icon: Icon.Error).ShowDialog(_view);
 
             sr.Close();
         }
         catch
         {
-            await MessageBoxManager.
-                  GetMessageBoxStandardWindow("Error", "Incorrect resume file...", icon: Icon.Error).
-                  ShowDialog(_view);
+            await MessageBoxManager.GetMessageBoxStandardWindow("Error", "Incorrect resume file...", icon: Icon.Error).
+                                    ShowDialog(_view);
         }
     }
 }

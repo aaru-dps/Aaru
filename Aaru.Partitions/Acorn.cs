@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of Acorn partitions</summary>
@@ -86,9 +86,9 @@ public sealed class Acorn : IPartition
 
         AcornBootBlock bootBlock = Marshal.ByteArrayToStructureLittleEndian<AcornBootBlock>(sector);
 
-        int checksum = 0;
+        var checksum = 0;
 
-        for(int i = 0; i < 0x1FF; i++)
+        for(var i = 0; i < 0x1FF; i++)
             checksum = (checksum & 0xFF) + (checksum >> 8) + sector[i];
 
         int heads     = bootBlock.discRecord.heads + ((bootBlock.discRecord.lowsector >> 6) & 1);
@@ -109,9 +109,9 @@ public sealed class Acorn : IPartition
         {
             var part = new Partition
             {
-                Size = ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000) + bootBlock.discRecord.disc_size,
-                Length = (((ulong)bootBlock.discRecord.disc_size_high * 0x100000000) +
-                          bootBlock.discRecord.disc_size) / imagePlugin.Info.SectorSize,
+                Size = (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
+                Length = ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size) /
+                         imagePlugin.Info.SectorSize,
                 Type = "ADFS",
                 Name = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
             };

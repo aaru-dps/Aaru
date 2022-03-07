@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -40,8 +42,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection for the Plan-9 Fossil on-disk filesystem</summary>
@@ -86,8 +86,7 @@ public sealed class Fossil : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         // Technically everything on Plan 9 from Bell Labs is in UTF-8
         Encoding    = Encoding.UTF8;
@@ -118,7 +117,7 @@ public sealed class Fossil : IFilesystem
         sb.AppendFormat("Data starts at block {0}", hdr.data).AppendLine();
         sb.AppendFormat("Volume has {0} blocks", hdr.end).AppendLine();
 
-        ulong sbLocation = (hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize)) + partition.Start;
+        ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize) + partition.Start;
 
         XmlFsType = new FileSystemType
         {

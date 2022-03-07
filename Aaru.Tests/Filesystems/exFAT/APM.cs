@@ -26,12 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems.exFAT;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Filesystems;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Filesystems.exFAT;
 
 [TestFixture]
 public class APM : FilesystemTest
@@ -39,7 +40,7 @@ public class APM : FilesystemTest
     public APM() : base("exFAT") {}
 
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (APM)");
-    public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();
+    public override IFilesystem Plugin     => new exFAT();
     public override bool        Partitions => true;
 
     public override FileSystemTest[] Tests => new[]

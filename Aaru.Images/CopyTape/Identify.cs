@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class CopyTape
 {
@@ -45,7 +45,7 @@ public sealed partial class CopyTape
         if(imageFilter.DataForkLength <= 16)
             return false;
 
-        byte[] header = new byte[16];
+        var header = new byte[16];
 
         Stream strm = imageFilter.GetDataForkStream();
         strm.Position = 0;

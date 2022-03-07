@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Runtime.InteropServices;
-
 namespace Aaru.DiscImages;
+
+using System.Runtime.InteropServices;
 
 public sealed partial class Qcow
 {

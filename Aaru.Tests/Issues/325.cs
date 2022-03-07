@@ -1,7 +1,8 @@
+namespace Aaru.Tests.Issues;
+
 using System.IO;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Issues;
 /*
  * SilasLaspada commented on Mar 19, 2020
  *

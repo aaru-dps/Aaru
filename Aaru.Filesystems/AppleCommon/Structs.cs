@@ -30,15 +30,17 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Runtime.InteropServices;
+
 
 // ReSharper disable InconsistentNaming
 
 namespace Aaru.Filesystems;
 
+using System.Runtime.InteropServices;
+
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
-internal static partial class AppleCommon
+static partial class AppleCommon
 {
     /// <summary>Should be sectors 0 and 1 in volume, followed by boot code</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

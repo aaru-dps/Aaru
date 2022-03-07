@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of Sharp's Human68K partitions</summary>
@@ -101,7 +101,7 @@ public sealed class Human68K : IPartition
         if(table.magic != X68K_MAGIC)
             return false;
 
-        for(int i = 0; i < table.entries.Length; i++)
+        for(var i = 0; i < table.entries.Length; i++)
             table.entries[i] = (Entry)Marshal.SwapStructureMembersEndian(table.entries[i]);
 
         AaruConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}", table.size);

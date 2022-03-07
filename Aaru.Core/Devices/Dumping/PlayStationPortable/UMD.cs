@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -47,8 +49,6 @@ using Aaru.Devices;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-namespace Aaru.Core.Devices.Dumping;
 
 public partial class Dump
 {
@@ -78,11 +78,11 @@ public partial class Dump
             return;
         }
 
-        ushort fatStart      = (ushort)((readBuffer[0x0F] << 8) + readBuffer[0x0E]);
-        ushort sectorsPerFat = (ushort)((readBuffer[0x17] << 8) + readBuffer[0x16]);
-        ushort rootStart     = (ushort)((sectorsPerFat * 2)     + fatStart);
-        ushort rootSize      = (ushort)(((readBuffer[0x12] << 8) + readBuffer[0x11]) * 32 / 512);
-        ushort umdStart      = (ushort)(rootStart + rootSize);
+        var fatStart      = (ushort)((readBuffer[0x0F] << 8)                          + readBuffer[0x0E]);
+        var sectorsPerFat = (ushort)((readBuffer[0x17] << 8)                          + readBuffer[0x16]);
+        var rootStart     = (ushort)(sectorsPerFat                                * 2 + fatStart);
+        var rootSize      = (ushort)(((readBuffer[0x12] << 8) + readBuffer[0x11]) * 32 / 512);
+        var umdStart      = (ushort)(rootStart + rootSize);
 
         UpdateStatus?.Invoke($"Reading root directory in sector {rootStart}...");
         _dumpLog.WriteLine("Reading root directory in sector {0}...", rootStart);
@@ -98,7 +98,7 @@ public partial class Dump
             return;
         }
 
-        uint   umdSizeInBytes  = BitConverter.ToUInt32(readBuffer, 0x3C);
+        var    umdSizeInBytes  = BitConverter.ToUInt32(readBuffer, 0x3C);
         ulong  blocks          = umdSizeInBytes / blockSize;
         string mediaPartNumber = Encoding.ASCII.GetString(readBuffer, 0, 11).Trim();
 
@@ -156,9 +156,9 @@ public partial class Dump
         start = DateTime.UtcNow;
         double imageWriteDuration = 0;
 
-        (outputOptical as IWritableOpticalImage)?.SetTracks(new List<Track>
+        outputOptical?.SetTracks(new List<Track>
         {
-            new Track
+            new()
             {
                 BytesPerSector    = (int)blockSize,
                 EndSector         = blocks - 1,
@@ -188,7 +188,7 @@ public partial class Dump
         if(_resume.NextBlock > 0)
             _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
 
-        bool newTrim = false;
+        var newTrim = false;
 
         DateTime timeSpeedStart   = DateTime.UtcNow;
         ulong    sectorSpeedStart = 0;
@@ -219,9 +219,8 @@ public partial class Dump
             UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                    (long)blocks);
 
-            sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false,
-                                (uint)(umdStart + (i * 4)), 512, 0, blocksToRead * 4, false, _dev.Timeout,
-                                out double cmdDuration);
+            sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)(umdStart + i * 4),
+                                512, 0, blocksToRead * 4, false, _dev.Timeout, out double cmdDuration);
 
             totalDuration += cmdDuration;
 
@@ -325,8 +324,7 @@ public partial class Dump
                 PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                 sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false,
-                                    (uint)(umdStart + (badSector * 4)), 512, 0, 4, false, _dev.Timeout,
-                                    out double _);
+                                    (uint)(umdStart + badSector * 4), 512, 0, 4, false, _dev.Timeout, out double _);
 
                 if(sense || _dev.Error)
                 {
@@ -351,9 +349,9 @@ public partial class Dump
            !_aborted                   &&
            _retryPasses > 0)
         {
-            int  pass              = 1;
-            bool forward           = true;
-            bool runningPersistent = false;
+            var pass              = 1;
+            var forward           = true;
+            var runningPersistent = false;
 
             Modes.ModePage? currentModePage = null;
             byte[]          md6;
@@ -439,15 +437,14 @@ public partial class Dump
 
                     AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
 
-                    _dumpLog.
-                        WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                    _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
                 }
                 else
                     runningPersistent = true;
             }
 
             InitProgress?.Invoke();
-            repeatRetry:
+        repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             foreach(ulong badSector in tmpArray)
@@ -464,7 +461,7 @@ public partial class Dump
                     Invoke($"Retrying sector {badSector}, pass {pass}, {(runningPersistent ? "recovering partial data, " : "")}{(forward ? "forward" : "reverse")}");
 
                 sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false,
-                                    (uint)(umdStart + (badSector * 4)), 512, 0, 4, false, _dev.Timeout,
+                                    (uint)(umdStart + badSector * 4), 512, 0, 4, false, _dev.Timeout,
                                     out double cmdDuration);
 
                 totalDuration += cmdDuration;
@@ -530,7 +527,7 @@ public partial class Dump
 
         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
-        var metadata = new CommonTypes.Structs.ImageInfo
+        var metadata = new ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion(),

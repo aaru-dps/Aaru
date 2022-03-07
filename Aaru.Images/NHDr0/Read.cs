@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Nhdr0
 {
@@ -53,7 +53,7 @@ public sealed partial class Nhdr0
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(hdrB, 0, hdrB.Length);
 
         _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
@@ -78,8 +78,7 @@ public sealed partial class Nhdr0
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, out byte[] buffer)
@@ -96,7 +95,7 @@ public sealed partial class Nhdr0
 
         Stream stream = _nhdImageFilter.GetDataForkStream();
 
-        stream.Seek((long)((ulong)_nhdhdr.dwHeadSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Seek((long)((ulong)_nhdhdr.dwHeadSize + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
         stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 

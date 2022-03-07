@@ -1,11 +1,13 @@
-using Aaru.Decoders.SecureDigital;
-using Aaru.Helpers;
-using FluentAssertions.Execution;
-using NUnit.Framework;
+
 
 // ReSharper disable InconsistentNaming
 
 namespace Aaru.Tests.Devices.SecureDigital;
+
+using Aaru.Decoders.SecureDigital;
+using Aaru.Helpers;
+using FluentAssertions.Execution;
+using NUnit.Framework;
 
 [TestFixture]
 public class SCR
@@ -137,15 +139,13 @@ public class SCR
     [Test]
     public void Test()
     {
-        for(int i = 0; i < cards.Length; i++)
-        {
+        for(var i = 0; i < cards.Length; i++)
             using(new AssertionScope())
-            {
                 Assert.Multiple(() =>
                 {
                     int count = Marshal.ConvertFromHexAscii(scrs[i], out byte[] response);
                     Assert.AreEqual(8, count, $"Size - {cards[i]}");
-                    Decoders.SecureDigital.SCR scr = Decoders.SecureDigital.Decoders.DecodeSCR(response);
+                    Aaru.Decoders.SecureDigital.SCR scr = Decoders.DecodeSCR(response);
                     Assert.IsNotNull(scr, $"Decoded - {cards[i]}");
                     Assert.AreEqual(structure_version[i], scr.Structure, $"Version - {cards[i]}");
                     Assert.AreEqual(specification_version[i], scr.Spec, $"Specification version - {cards[i]}");
@@ -165,7 +165,5 @@ public class SCR
 
                     Assert.AreEqual(mfg[i], scr.ManufacturerReserved, $"Manufacturer reserved - {cards[i]}");
                 });
-            }
-        }
     }
 }

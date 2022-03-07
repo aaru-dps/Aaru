@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes;
@@ -37,8 +39,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class UkvFdi
 {
@@ -51,7 +51,7 @@ public sealed partial class UkvFdi
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(hdrB, 0, hdrB.Length);
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
@@ -64,7 +64,7 @@ public sealed partial class UkvFdi
         AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.heads = {0}", hdr.heads);
 
         stream.Seek(hdr.descOff, SeekOrigin.Begin);
-        byte[] description = new byte[hdr.dataOff - hdr.descOff];
+        var description = new byte[hdr.dataOff - hdr.descOff];
         stream.Read(description, 0, description.Length);
         _imageInfo.Comments = StringHandlers.CToString(description);
 
@@ -72,8 +72,8 @@ public sealed partial class UkvFdi
 
         stream.Seek(0xE + hdr.addInfoLen, SeekOrigin.Begin);
 
-        long       spt        = long.MaxValue;
-        uint[][][] sectorsOff = new uint[hdr.cylinders][][];
+        long spt        = long.MaxValue;
+        var  sectorsOff = new uint[hdr.cylinders][][];
         _sectorsData = new byte[hdr.cylinders][][][];
 
         _imageInfo.Cylinders = hdr.cylinders;
@@ -87,11 +87,11 @@ public sealed partial class UkvFdi
 
             for(ushort head = 0; head < hdr.heads; head++)
             {
-                byte[] sctB = new byte[4];
+                var sctB = new byte[4];
                 stream.Read(sctB, 0, 4);
                 stream.Seek(2, SeekOrigin.Current);
-                byte sectors = (byte)stream.ReadByte();
-                uint trkOff  = BitConverter.ToUInt32(sctB, 0);
+                var sectors = (byte)stream.ReadByte();
+                var trkOff  = BitConverter.ToUInt32(sctB, 0);
 
                 AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}", cyl);
                 AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}", head);
@@ -107,14 +107,14 @@ public sealed partial class UkvFdi
 
                 for(ushort sec = 0; sec < sectors; sec++)
                 {
-                    byte   c    = (byte)stream.ReadByte();
-                    byte   h    = (byte)stream.ReadByte();
-                    byte   r    = (byte)stream.ReadByte();
-                    byte   n    = (byte)stream.ReadByte();
-                    var    f    = (SectorFlags)stream.ReadByte();
-                    byte[] offB = new byte[2];
+                    var c    = (byte)stream.ReadByte();
+                    var h    = (byte)stream.ReadByte();
+                    var r    = (byte)stream.ReadByte();
+                    var n    = (byte)stream.ReadByte();
+                    var f    = (SectorFlags)stream.ReadByte();
+                    var offB = new byte[2];
                     stream.Read(offB, 0, 2);
-                    ushort secOff = BitConverter.ToUInt16(offB, 0);
+                    var secOff = BitConverter.ToUInt16(offB, 0);
 
                     AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}", c);
                     AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}", h);
@@ -138,7 +138,7 @@ public sealed partial class UkvFdi
         // Read sectors
         for(ushort cyl = 0; cyl < hdr.cylinders; cyl++)
         {
-            bool emptyCyl = false;
+            var emptyCyl = false;
 
             for(ushort head = 0; head < hdr.heads; head++)
             {
@@ -163,7 +163,7 @@ public sealed partial class UkvFdi
                 {
                     _sectorsData[cyl][head] = new byte[spt][];
 
-                    for(int i = 0; i < spt; i++)
+                    for(var i = 0; i < spt; i++)
                         _sectorsData[cyl][head][i] = new byte[_imageInfo.SectorSize];
                 }
             }

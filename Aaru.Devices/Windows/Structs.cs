@@ -31,14 +31,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices.Windows;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Aaru.Devices.Windows;
-
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct ScsiPassThroughDirect
+struct ScsiPassThroughDirect
 {
     public ushort Length;
     public byte   ScsiStatus;
@@ -59,7 +59,7 @@ internal struct ScsiPassThroughDirect
 }
 
 [StructLayout(LayoutKind.Sequential)]
-internal struct ScsiPassThroughDirectAndSenseBuffer
+struct ScsiPassThroughDirectAndSenseBuffer
 {
     public ScsiPassThroughDirect sptd;
 
@@ -68,7 +68,7 @@ internal struct ScsiPassThroughDirectAndSenseBuffer
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct AtaPassThroughDirect
+struct AtaPassThroughDirect
 {
     /// <summary>Length in bytes of this structure</summary>
     public ushort Length;
@@ -109,7 +109,7 @@ internal struct AtaPassThroughDirect
 }
 
 [StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct AtaTaskFile
+struct AtaTaskFile
 {
     // Fields for commands sent
     [FieldOffset(0)]
@@ -139,7 +139,7 @@ internal struct AtaTaskFile
 }
 
 [StructLayout(LayoutKind.Sequential)]
-internal struct StoragePropertyQuery
+struct StoragePropertyQuery
 {
     [MarshalAs(UnmanagedType.U4)]
     public StoragePropertyId PropertyId;
@@ -151,14 +151,14 @@ internal struct StoragePropertyQuery
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct StorageDescriptorHeader
+struct StorageDescriptorHeader
 {
     public uint Version;
     public uint Size;
 }
 
 [StructLayout(LayoutKind.Sequential)]
-internal struct StorageDeviceDescriptor
+struct StorageDeviceDescriptor
 {
     public uint Version;
     public uint Size;
@@ -178,7 +178,7 @@ internal struct StorageDeviceDescriptor
 }
 
 [StructLayout(LayoutKind.Sequential)]
-internal struct IdePassThroughDirect
+struct IdePassThroughDirect
 {
     /// <summary>ATA registers</summary>
     public AtaTaskFile CurrentTaskFile;
@@ -192,7 +192,7 @@ internal struct IdePassThroughDirect
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct StorageDeviceNumber
+struct StorageDeviceNumber
 {
     public int deviceType;
     public int deviceNumber;
@@ -200,7 +200,7 @@ internal struct StorageDeviceNumber
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct DeviceInfoData
+struct DeviceInfoData
 {
     public int    cbSize;
     public Guid   classGuid;
@@ -209,7 +209,7 @@ internal struct DeviceInfoData
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct DeviceInterfaceData
+struct DeviceInterfaceData
 {
     public   int    cbSize;
     public   Guid   interfaceClassGuid;
@@ -218,7 +218,7 @@ internal struct DeviceInterfaceData
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct UsbSetupPacket
+struct UsbSetupPacket
 {
     public byte  bmRequest;
     public byte  bRequest;
@@ -228,7 +228,7 @@ internal struct UsbSetupPacket
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct UsbDescriptorRequest
+struct UsbDescriptorRequest
 {
     public int ConnectionIndex;
 
@@ -238,7 +238,7 @@ internal struct UsbDescriptorRequest
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct SffdiskQueryDeviceProtocolData
+struct SffdiskQueryDeviceProtocolData
 {
     public ushort size;
     public ushort reserved;
@@ -246,7 +246,7 @@ internal struct SffdiskQueryDeviceProtocolData
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-internal struct SffdiskDeviceCommandData
+struct SffdiskDeviceCommandData
 {
     public ushort      size;
     public ushort      reserved;
@@ -257,7 +257,7 @@ internal struct SffdiskDeviceCommandData
 }
 
 [StructLayout(LayoutKind.Sequential)]
-internal struct SdCmdDescriptor
+struct SdCmdDescriptor
 {
     public byte                commandCode;
     public SdCommandClass      cmdClass;

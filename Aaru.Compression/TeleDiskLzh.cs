@@ -42,10 +42,10 @@
 // Copyright © 1988 Kenji RIKITAKE
 // ****************************************************************************/
 
+namespace Aaru.Compression;
+
 using System;
 using System.IO;
-
-namespace Aaru.Compression;
 
 /*
  * Based on Japanese version 29-NOV-1988
@@ -56,11 +56,6 @@ namespace Aaru.Compression;
 /// <summary>Implements the TeleDisk version of LZH</summary>
 public class TeleDiskLzh
 {
-    /// <summary>
-    /// Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.
-    /// </summary>
-    public static bool IsSupported => true;
-
     const int BUFSZ = 512;
 
     /* LZSS Parameters */
@@ -73,8 +68,8 @@ public class TeleDiskLzh
 
     const int N_CHAR = 256 - THRESHOLD + F;
     /* character code (= 0..N_CHAR-1) */
-    const int T        = (N_CHAR * 2) - 1; /* Size of table */
-    const int ROOT     = T            - 1; /* root position */
+    const int T        = N_CHAR * 2 - 1; /* Size of table */
+    const int ROOT     = T          - 1; /* root position */
     const int MAX_FREQ = 0x8000;
 
     /*
@@ -157,6 +152,9 @@ public class TeleDiskLzh
         _tdctl.R  = N - F;
         _inStream = dataStream;
     }
+
+    /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
+    public static bool IsSupported => true;
 
     /* DeCompression
 
@@ -258,7 +256,7 @@ public class TeleDiskLzh
         if(NextWord() < 0)
             return -1;
 
-        short i = (short)_getbuf;
+        var i = (short)_getbuf;
         _getbuf <<= 1;
         _getlen--;
 
@@ -333,7 +331,7 @@ public class TeleDiskLzh
             for(k = (short)(j - 1); f < _freq[k]; k--) {}
 
             k++;
-            ushort l = (ushort)((j - k) * 2);
+            var l = (ushort)((j - k) * 2);
 
             Array.ConstrainedCopy(_freq, k, _freq, k + 1, l);
             _freq[k] = f;
@@ -396,7 +394,7 @@ public class TeleDiskLzh
 
     short DecodeChar()
     {
-        ushort c = (ushort)_son[ROOT];
+        var c = (ushort)_son[ROOT];
 
         /*
          * start searching tree from the root to leaves.
@@ -428,8 +426,8 @@ public class TeleDiskLzh
         if((bit = (short)GetByte()) < 0)
             return -1;
 
-        ushort i = (ushort)bit;
-        ushort c = (ushort)(_dCode[i] << 6);
+        var    i = (ushort)bit;
+        var    c = (ushort)(_dCode[i] << 6);
         ushort j = _dLen[i];
 
         /* input lower 6 bits directly */

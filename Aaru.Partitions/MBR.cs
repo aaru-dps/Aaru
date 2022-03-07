@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Partitions;
 
 // TODO: Support AAP extensions
 /// <inheritdoc />
@@ -63,8 +63,7 @@ public sealed class MBR : IPartition
         "FAT16 < 32 MiB", "Extended", "FAT16", "IFS (HPFS/NTFS)",
 
         // 0x08
-        "AIX boot, OS/2, Commodore DOS", "AIX data, Coherent, QNX", "Coherent swap, OPUS, OS/2 Boot Manager",
-        "FAT32",
+        "AIX boot, OS/2, Commodore DOS", "AIX data, Coherent, QNX", "Coherent swap, OPUS, OS/2 Boot Manager", "FAT32",
 
         // 0x0C
         "FAT32 (LBA)", "Unknown", "FAT16 (LBA)", "Extended (LBA)",
@@ -211,8 +210,7 @@ public sealed class MBR : IPartition
         "DR-DOS reserved", "DR-DOS reserved", "DR-DOS reserved", "DR-DOS secured FAT32",
 
         // 0xCC
-        "DR-DOS secured FAT32 (LBA)", "DR-DOS reserved", "DR-DOS secured FAT16 (LBA)",
-        "DR-DOS secured extended (LBA)",
+        "DR-DOS secured FAT32 (LBA)", "DR-DOS reserved", "DR-DOS secured FAT16 (LBA)", "DR-DOS secured extended (LBA)",
 
         // 0xD0
         "Multiuser DOS secured FAT12", "Multiuser DOS secured FAT12", "Unknown", "Unknown",
@@ -309,7 +307,7 @@ public sealed class MBR : IPartition
         if(errno != ErrorNumber.NoError)
             return false;
 
-        ulong signature = BitConverter.ToUInt64(hdrBytes, 0);
+        var signature = BitConverter.ToUInt64(hdrBytes, 0);
 
         AaruConsole.DebugWriteLine("MBR Plugin", "gpt.signature = 0x{0:X16}", signature);
 
@@ -342,18 +340,18 @@ public sealed class MBR : IPartition
 
         foreach(PartitionEntry entry in entries)
         {
-            byte   startSector   = (byte)(entry.start_sector & 0x3F);
-            ushort startCylinder = (ushort)(((entry.start_sector & 0xC0) << 2) | entry.start_cylinder);
-            byte   endSector     = (byte)(entry.end_sector & 0x3F);
-            ushort endCylinder   = (ushort)(((entry.end_sector & 0xC0) << 2) | entry.end_cylinder);
-            ulong  lbaStart      = entry.lba_start;
-            ulong  lbaSectors    = entry.lba_sectors;
+            var   startSector   = (byte)(entry.start_sector & 0x3F);
+            var   startCylinder = (ushort)(((entry.start_sector & 0xC0) << 2) | entry.start_cylinder);
+            var   endSector     = (byte)(entry.end_sector & 0x3F);
+            var   endCylinder   = (ushort)(((entry.end_sector & 0xC0) << 2) | entry.end_cylinder);
+            ulong lbaStart      = entry.lba_start;
+            ulong lbaSectors    = entry.lba_sectors;
 
             // Let's start the fun...
 
-            bool valid    = true;
-            bool extended = false;
-            bool minix    = false;
+            var valid    = true;
+            var extended = false;
+            var minix    = false;
 
             if(entry.status != 0x00 &&
                entry.status != 0x80)
@@ -466,7 +464,7 @@ public sealed class MBR : IPartition
             if(!extended)
                 continue;
 
-            bool  processingExtended = true;
+            var   processingExtended = true;
             ulong chainStart         = lbaStart;
 
             while(processingExtended)
@@ -487,14 +485,14 @@ public sealed class MBR : IPartition
 
                 foreach(PartitionEntry ebrEntry in ebr.entries)
                 {
-                    bool extValid = true;
+                    var extValid = true;
                     startSector   = (byte)(ebrEntry.start_sector & 0x3F);
                     startCylinder = (ushort)(((ebrEntry.start_sector & 0xC0) << 2) | ebrEntry.start_cylinder);
                     endSector     = (byte)(ebrEntry.end_sector & 0x3F);
                     endCylinder   = (ushort)(((ebrEntry.end_sector & 0xC0) << 2) | ebrEntry.end_cylinder);
                     ulong extStart   = ebrEntry.lba_start;
                     ulong extSectors = ebrEntry.lba_sectors;
-                    bool  extMinix   = false;
+                    var   extMinix   = false;
 
                     AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.status {0}", ebrEntry.status);
                     AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.type {0}", ebrEntry.type);
@@ -511,17 +509,16 @@ public sealed class MBR : IPartition
                     extValid &= ebrEntry.status == 0x00 || ebrEntry.status == 0x80;
                     extValid &= ebrEntry.type != 0x00;
 
-                    extValid &= ebrEntry.lba_start      != 0 || ebrEntry.lba_sectors  != 0 ||
-                                ebrEntry.start_cylinder != 0 || ebrEntry.start_head   != 0 ||
-                                ebrEntry.start_sector   != 0 || ebrEntry.end_cylinder != 0 ||
-                                ebrEntry.end_head       != 0 || ebrEntry.end_sector   != 0;
+                    extValid &= ebrEntry.lba_start  != 0 || ebrEntry.lba_sectors != 0 || ebrEntry.start_cylinder != 0 ||
+                                ebrEntry.start_head != 0 || ebrEntry.start_sector != 0 || ebrEntry.end_cylinder != 0 ||
+                                ebrEntry.end_head   != 0 || ebrEntry.end_sector != 0;
 
                     if(ebrEntry.lba_start   == 0 &&
                        ebrEntry.lba_sectors == 0 &&
                        extValid)
                     {
-                        extStart = CHS.ToLBA(startCylinder, ebrEntry.start_head, startSector,
-                                             imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack);
+                        extStart = CHS.ToLBA(startCylinder, ebrEntry.start_head, startSector, imagePlugin.Info.Heads,
+                                             imagePlugin.Info.SectorsPerTrack);
 
                         extSectors = CHS.ToLBA(endCylinder, ebrEntry.end_head, ebrEntry.end_sector,
                                                imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack) - extStart;
@@ -622,17 +619,17 @@ public sealed class MBR : IPartition
         if(mnx.magic != MBR_MAGIC)
             return false;
 
-        bool anyMnx = false;
+        var anyMnx = false;
 
         foreach(PartitionEntry mnxEntry in mnx.entries)
         {
-            bool   mnxValid      = true;
-            byte   startSector   = (byte)(mnxEntry.start_sector & 0x3F);
-            ushort startCylinder = (ushort)(((mnxEntry.start_sector & 0xC0) << 2) | mnxEntry.start_cylinder);
-            byte   endSector     = (byte)(mnxEntry.end_sector & 0x3F);
-            ushort endCylinder   = (ushort)(((mnxEntry.end_sector & 0xC0) << 2) | mnxEntry.end_cylinder);
-            ulong  mnxStart      = mnxEntry.lba_start;
-            ulong  mnxSectors    = mnxEntry.lba_sectors;
+            var   mnxValid      = true;
+            var   startSector   = (byte)(mnxEntry.start_sector & 0x3F);
+            var   startCylinder = (ushort)(((mnxEntry.start_sector & 0xC0) << 2) | mnxEntry.start_cylinder);
+            var   endSector     = (byte)(mnxEntry.end_sector & 0x3F);
+            var   endCylinder   = (ushort)(((mnxEntry.end_sector & 0xC0) << 2) | mnxEntry.end_cylinder);
+            ulong mnxStart      = mnxEntry.lba_start;
+            ulong mnxSectors    = mnxEntry.lba_sectors;
 
             AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.status {0}", mnxEntry.status);
             AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.type {0}", mnxEntry.type);

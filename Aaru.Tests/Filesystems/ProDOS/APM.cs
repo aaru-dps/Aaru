@@ -26,21 +26,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems.ProDOS;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.ProDOS;
-
 [TestFixture]
 public class APM : FilesystemTest
 {
     public APM() : base("ProDOS") {}
 
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ProDOS filesystem (APM)");
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ProDOS filesystem (APM)");
 
     public override IFilesystem Plugin     => new ProDOSPlugin();
     public override bool        Partitions => true;

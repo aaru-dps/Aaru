@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,8 +39,6 @@ using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
-
-namespace Aaru.Filesystems;
 
 public sealed partial class FAT
 {
@@ -135,7 +135,7 @@ public sealed partial class FAT
 
         foreach(uint cluster in rootDirectoryClusters)
         {
-            ErrorNumber errno = _image.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
+            ErrorNumber errno = _image.ReadSectors(_firstClusterSector + cluster * _sectorsPerCluster,
                                                    _sectorsPerCluster, out byte[] buffer);
 
             if(errno != ErrorNumber.NoError)
@@ -145,8 +145,8 @@ public sealed partial class FAT
         }
 
         byte[] full = eaMs.ToArray();
-        ushort size = BitConverter.ToUInt16(full, 0);
-        byte[] eas  = new byte[size];
+        var    size = BitConverter.ToUInt16(full, 0);
+        var    eas  = new byte[size];
         Array.Copy(full, 0, eas, 0, size);
 
         eaMs.Close();
@@ -159,11 +159,11 @@ public sealed partial class FAT
         int aIndex = eaHandle >> 7;
 
         // First 0x20 bytes are the magic number and unused words
-        ushort a = BitConverter.ToUInt16(_cachedEaData, (aIndex * 2) + 0x20);
+        var a = BitConverter.ToUInt16(_cachedEaData, aIndex * 2 + 0x20);
 
-        ushort b = BitConverter.ToUInt16(_cachedEaData, (eaHandle * 2) + 0x200);
+        var b = BitConverter.ToUInt16(_cachedEaData, eaHandle * 2 + 0x200);
 
-        uint eaCluster = (uint)(a + b);
+        var eaCluster = (uint)(a + b);
 
         if(b == EA_UNUSED)
             return null;
@@ -175,13 +175,12 @@ public sealed partial class FAT
         if(header.magic != 0x4145)
             return null;
 
-        uint eaLen = BitConverter.ToUInt32(_cachedEaData,
-                                           (int)(eaCluster * _bytesPerCluster) + Marshal.SizeOf<EaHeader>());
+        var eaLen = BitConverter.ToUInt32(_cachedEaData,
+                                          (int)(eaCluster * _bytesPerCluster) + Marshal.SizeOf<EaHeader>());
 
-        byte[] eaData = new byte[eaLen];
+        var eaData = new byte[eaLen];
 
-        Array.Copy(_cachedEaData, (int)(eaCluster * _bytesPerCluster) + Marshal.SizeOf<EaHeader>(), eaData, 0,
-                   eaLen);
+        Array.Copy(_cachedEaData, (int)(eaCluster * _bytesPerCluster) + Marshal.SizeOf<EaHeader>(), eaData, 0, eaLen);
 
         return GetEas(eaData);
     }
@@ -197,19 +196,19 @@ public sealed partial class FAT
         if(_debug)
             eas.Add("com.microsoft.os2.fea", eaData);
 
-        int pos = 4;
+        var pos = 4;
 
         while(pos < eaData.Length)
         {
             pos++; // Skip fEA
-            byte   cbName  = eaData[pos++];
-            ushort cbValue = BitConverter.ToUInt16(eaData, pos);
+            byte cbName  = eaData[pos++];
+            var  cbValue = BitConverter.ToUInt16(eaData, pos);
             pos += 2;
 
             string name = Encoding.ASCII.GetString(eaData, pos, cbName);
             pos += cbName;
             pos++;
-            byte[] data = new byte[cbValue];
+            var data = new byte[cbValue];
 
             Array.Copy(eaData, pos, data, 0, cbValue);
             pos += cbValue;
@@ -239,7 +238,7 @@ public sealed partial class FAT
 
         foreach(uint cluster in GetClusters(_eaDirEntry.start_cluster))
         {
-            ErrorNumber errno = _image.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
+            ErrorNumber errno = _image.ReadSectors(_firstClusterSector + cluster * _sectorsPerCluster,
                                                    _sectorsPerCluster, out byte[] buffer);
 
             if(errno != ErrorNumber.NoError)

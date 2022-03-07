@@ -33,9 +33,9 @@
 
 // ReSharper disable IdentifierTypo
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Aaru.Filesystems;
+
+using System.Diagnostics.CodeAnalysis;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class ISO9660

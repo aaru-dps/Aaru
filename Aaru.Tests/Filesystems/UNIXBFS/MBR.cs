@@ -26,23 +26,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems.UNIXBFS;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.UNIXBFS;
-
 [TestFixture]
 public class MBR : FilesystemTest
 {
     public MBR() : base("BFS") {}
 
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Boot File System (MBR)");
-    public override IFilesystem Plugin     => new BFS();
-    public override bool        Partitions => true;
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Boot File System (MBR)");
+    public override IFilesystem Plugin => new BFS();
+    public override bool Partitions => true;
 
     public override FileSystemTest[] Tests => new[]
     {

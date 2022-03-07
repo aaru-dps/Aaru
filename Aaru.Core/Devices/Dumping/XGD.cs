@@ -30,6 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable JoinDeclarationAndInitializer
+
+namespace Aaru.Core.Devices.Dumping;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,10 +56,6 @@ using Schemas;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-// ReSharper disable JoinDeclarationAndInitializer
-
-namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping an Xbox Game Disc using a Kreon drive</summary>
 partial class Dump
@@ -142,7 +144,7 @@ partial class Dump
             return;
         }
 
-        byte[] tmpBuf = new byte[ssBuf.Length - 4];
+        var tmpBuf = new byte[ssBuf.Length - 4];
         Array.Copy(ssBuf, 4, tmpBuf, 0, ssBuf.Length - 4);
         mediaTags.Add(MediaTagType.Xbox_SecuritySector, tmpBuf);
 
@@ -175,8 +177,7 @@ partial class Dump
         }
 
         ulong totalSize =
-            (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) &
-            0xFFFFFFFF;
+            (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) & 0xFFFFFFFF;
 
         UpdateStatus?.Invoke("Reading Physical Format Information.");
         _dumpLog.WriteLine("Reading Physical Format Information.");
@@ -225,8 +226,8 @@ partial class Dump
             UpdateStatus?.Invoke("Video partition is too big, did lock work? Trying cold values.");
             _dumpLog.WriteLine("Video partition is too big, did lock work? Trying cold values.");
 
-            totalSize = (ulong)((coldReadCapacity[0] << 24) + (coldReadCapacity[1] << 16) +
-                                (coldReadCapacity[2] << 8)  + coldReadCapacity[3]) & 0xFFFFFFFF;
+            totalSize = (ulong)((coldReadCapacity[0] << 24) + (coldReadCapacity[1] << 16) + (coldReadCapacity[2] << 8) +
+                                coldReadCapacity[3]) & 0xFFFFFFFF;
 
             tmpBuf = new byte[coldPfi.Length - 4];
             Array.Copy(coldPfi, 4, tmpBuf, 0, coldPfi.Length - 4);
@@ -371,8 +372,8 @@ partial class Dump
         Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
         mediaTags.Add(MediaTagType.Xbox_DMI, tmpBuf);
 
-        totalSize = l0Video + l1Video + (middleZone * 2) + gameSize;
-        ulong layerBreak = l0Video + middleZone + (gameSize / 2);
+        totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
+        ulong layerBreak = l0Video + middleZone + gameSize / 2;
 
         UpdateStatus?.Invoke($"Video layer 0 size: {l0Video} sectors");
         UpdateStatus?.Invoke($"Video layer 1 size: {l1Video} sectors");
@@ -442,7 +443,7 @@ partial class Dump
         if(_skip < blocksToRead)
             _skip = blocksToRead;
 
-        bool ret = true;
+        var ret = true;
 
         foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !outputFormat.SupportedMediaTags.Contains(tag)))
         {
@@ -503,7 +504,7 @@ partial class Dump
 
         (outputFormat as IWritableOpticalImage).SetTracks(new List<Track>
         {
-            new Track
+            new()
             {
                 BytesPerSector    = (int)blockSize,
                 EndSector         = blocks - 1,
@@ -523,7 +524,7 @@ partial class Dump
             _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
         }
 
-        bool newTrim = false;
+        var newTrim = false;
 
         _dumpLog.WriteLine("Reading game partition.");
         UpdateStatus?.Invoke("Reading game partition.");
@@ -531,7 +532,7 @@ partial class Dump
         ulong    sectorSpeedStart = 0;
         InitProgress?.Invoke();
 
-        for(int e = 0; e <= 16; e++)
+        for(var e = 0; e <= 16; e++)
         {
             if(_aborted)
             {
@@ -554,13 +555,13 @@ partial class Dump
                 if(xboxSs.Value.Extents[e].StartPSN <= xboxSs.Value.Layer0EndPSN)
                     extentStart = xboxSs.Value.Extents[e].StartPSN - 0x30000;
                 else
-                    extentStart = ((xboxSs.Value.Layer0EndPSN + 1) * 2)               -
+                    extentStart = (xboxSs.Value.Layer0EndPSN + 1) * 2                 -
                                   ((xboxSs.Value.Extents[e].StartPSN ^ 0xFFFFFF) + 1) - 0x30000;
 
                 if(xboxSs.Value.Extents[e].EndPSN <= xboxSs.Value.Layer0EndPSN)
                     extentEnd = xboxSs.Value.Extents[e].EndPSN - 0x30000;
                 else
-                    extentEnd = ((xboxSs.Value.Layer0EndPSN + 1) * 2)             -
+                    extentEnd = (xboxSs.Value.Layer0EndPSN + 1) * 2               -
                                 ((xboxSs.Value.Extents[e].EndPSN ^ 0xFFFFFF) + 1) - 0x30000;
             }
 
@@ -601,8 +602,8 @@ partial class Dump
                 UpdateProgress?.Invoke($"Reading sector {i} of {totalSize} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)totalSize);
 
-                sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)i, blockSize,
-                                    0, blocksToRead, false, _dev.Timeout, out cmdDuration);
+                sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)i, blockSize, 0,
+                                    blocksToRead, false, _dev.Timeout, out cmdDuration);
 
                 totalDuration += cmdDuration;
 
@@ -959,7 +960,7 @@ partial class Dump
            !_aborted                   &&
            _retryPasses > 0)
         {
-            List<ulong> tmpList = new List<ulong>();
+            var tmpList = new List<ulong>();
 
             foreach(ulong ur in _resume.BadBlocks)
                 for(ulong i = ur; i < ur + blocksToRead; i++)
@@ -967,9 +968,9 @@ partial class Dump
 
             tmpList.Sort();
 
-            int  pass              = 1;
-            bool forward           = true;
-            bool runningPersistent = false;
+            var pass              = 1;
+            var forward           = true;
+            var runningPersistent = false;
 
             _resume.BadBlocks = tmpList;
             Modes.ModePage? currentModePage = null;
@@ -1001,8 +1002,7 @@ partial class Dump
                 }
                 else
                 {
-                    Modes.DecodedMode? dcMode6 =
-                        Modes.DecodeMode6(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
+                    Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
 
                     if(dcMode6.HasValue)
                         foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
@@ -1065,15 +1065,14 @@ partial class Dump
 
                     AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
 
-                    _dumpLog.
-                        WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                    _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
                 }
                 else
                     runningPersistent = true;
             }
 
             InitProgress?.Invoke();
-            repeatRetry:
+        repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             foreach(ulong badSector in tmpArray)
@@ -1187,7 +1186,7 @@ partial class Dump
 
         outputFormat.SetDumpHardware(_resume.Tries);
 
-        var metadata = new CommonTypes.Structs.ImageInfo
+        var metadata = new ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()

@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Ndif
 {
@@ -44,7 +44,7 @@ public sealed partial class Ndif
     /// <inheritdoc />
     public string Name => "Apple New Disk Image Format";
     /// <inheritdoc />
-    public Guid Id => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
+    public Guid Id => new("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
     /// <inheritdoc />
     public string Format => "Apple New Disk Image Format";
     /// <inheritdoc />

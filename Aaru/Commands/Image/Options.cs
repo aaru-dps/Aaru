@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Image;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -43,9 +45,7 @@ using Aaru.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
 
-namespace Aaru.Commands.Image;
-
-internal sealed class ListOptionsCommand : Command
+sealed class ListOptionsCommand : Command
 {
     public ListOptionsCommand() : base("options", "Lists all options supported by writable media images.") =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
@@ -58,7 +58,7 @@ internal sealed class ListOptionsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -89,8 +89,7 @@ internal sealed class ListOptionsCommand : Command
 
         foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
         {
-            List<(string name, Type type, string description, object @default)> options =
-                kvp.Value.SupportedOptions.ToList();
+            var options = kvp.Value.SupportedOptions.ToList();
 
             if(options.Count == 0)
                 continue;
@@ -107,8 +106,8 @@ internal sealed class ListOptionsCommand : Command
 
             foreach((string name, Type type, string description, object @default) option in
                     options.OrderBy(t => t.name))
-                table.AddRow(Markup.Escape(option.name), TypeToString(option.type),
-                             option.@default?.ToString() ?? "", Markup.Escape(option.description));
+                table.AddRow(Markup.Escape(option.name), TypeToString(option.type), option.@default?.ToString() ?? "",
+                             Markup.Escape(option.description));
 
             AnsiConsole.Render(table);
             AaruConsole.WriteLine();

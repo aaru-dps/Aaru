@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Windows;
+
 using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -43,8 +45,6 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using JetBrains.Annotations;
 using ReactiveUI;
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageEntropyViewModel : ViewModelBase
 {
@@ -317,8 +317,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
 
                 foreach(EntropyResults trackEntropy in _tracksEntropy)
                 {
-                    AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track,
-                                          trackEntropy.Entropy);
+                    AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track, trackEntropy.Entropy);
 
                     if(trackEntropy.UniqueSectors != null)
                         AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
@@ -348,7 +347,6 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         ResultsVisible  = true;
 
         if(SeparatedTracksChecked)
-        {
             foreach(EntropyResults trackEntropy in _tracksEntropy)
                 TrackEntropy.Add(new TrackEntropyModel
                 {
@@ -357,7 +355,6 @@ public sealed class ImageEntropyViewModel : ViewModelBase
                     UniqueSectors =
                         $"{trackEntropy.UniqueSectors} ({(trackEntropy.UniqueSectors ?? 0) / (double)trackEntropy.Sectors:P3})"
                 });
-        }
 
         if(WholeDiscChecked != true)
             return;
@@ -386,41 +383,39 @@ public sealed class ImageEntropyViewModel : ViewModelBase
 
     void EndProgress2() => Progress2Visible = false;
 
-    async void UpdateProgress(string text, long current, long maximum) =>
-        await Dispatcher.UIThread.InvokeAsync(() =>
+    async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
+    {
+        ProgressText = text;
+
+        if(maximum == 0)
         {
-            ProgressText = text;
+            ProgressIndeterminate = true;
 
-            if(maximum == 0)
-            {
-                ProgressIndeterminate = true;
+            return;
+        }
 
-                return;
-            }
+        if(ProgressIndeterminate)
+            ProgressIndeterminate = false;
 
-            if(ProgressIndeterminate)
-                ProgressIndeterminate = false;
+        ProgressMax   = maximum;
+        ProgressValue = current;
+    });
 
-            ProgressMax   = maximum;
-            ProgressValue = current;
-        });
+    async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
+    {
+        Progress2Text = text;
 
-    async void UpdateProgress2(string text, long current, long maximum) =>
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        if(maximum == 0)
         {
-            Progress2Text = text;
+            Progress2Indeterminate = true;
 
-            if(maximum == 0)
-            {
-                Progress2Indeterminate = true;
+            return;
+        }
 
-                return;
-            }
+        if(Progress2Indeterminate)
+            Progress2Indeterminate = false;
 
-            if(Progress2Indeterminate)
-                Progress2Indeterminate = false;
-
-            Progress2Max   = maximum;
-            Progress2Value = current;
-        });
+        Progress2Max   = maximum;
+        Progress2Value = current;
+    });
 }

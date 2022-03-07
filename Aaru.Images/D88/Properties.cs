@@ -30,19 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class D88
 {
     /// <inheritdoc />
     public string Name => "D88 Disk Image";
     /// <inheritdoc />
-    public Guid Id => new Guid("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
+    public Guid Id => new("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />

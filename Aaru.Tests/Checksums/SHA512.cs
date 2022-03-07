@@ -26,13 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Checksums;
+
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
 using FluentAssertions;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Checksums;
 
 [TestFixture]
 public class Sha512
@@ -55,7 +55,7 @@ public class Sha512
     [Test]
     public void EmptyData()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
@@ -77,7 +77,7 @@ public class Sha512
     [Test]
     public void EmptyInstance()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
@@ -94,10 +94,10 @@ public class Sha512
     [Test]
     public void RandomData()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
         fs.Close();
@@ -116,10 +116,10 @@ public class Sha512
     [Test]
     public void RandomInstance()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
-                                FileMode.Open, FileAccess.Read);
+        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
         fs.Close();

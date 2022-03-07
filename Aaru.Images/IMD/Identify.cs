@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Imd
 {
@@ -49,7 +49,7 @@ public sealed partial class Imd
         if(stream.Length < 4)
             return false;
 
-        byte[] hdr = new byte[stream.Length < 256 ? stream.Length : 256];
+        var hdr = new byte[stream.Length < 256 ? stream.Length : 256];
         stream.Read(hdr, 0, hdr.Length);
 
         string hdrStr = StringHandlers.CToString(hdr, Encoding.ASCII);

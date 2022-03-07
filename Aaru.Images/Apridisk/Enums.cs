@@ -36,12 +36,15 @@ public sealed partial class Apridisk
 {
     enum RecordType : uint
     {
-        Deleted = 0xE31D0000, Sector = 0xE31D0001, Comment = 0xE31D0002,
+        Deleted = 0xE31D0000,
+        Sector  = 0xE31D0001,
+        Comment = 0xE31D0002,
         Creator = 0xE31D0003
     }
 
     enum CompressType : ushort
     {
-        Uncompresed = 0x9E90, Compressed = 0x3E5A
+        Uncompresed = 0x9E90,
+        Compressed  = 0x3E5A
     }
 }

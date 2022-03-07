@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices.Report;
+
 using System;
 using System.Linq;
 using System.Text;
@@ -40,9 +42,7 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
 using Aaru.Helpers;
-using Spectre.Console;
-
-namespace Aaru.Core.Devices.Report;
+using global::Spectre.Console;
 
 public sealed partial class DeviceReport
 {
@@ -52,8 +52,8 @@ public sealed partial class DeviceReport
 
         while(offset + 4 < response.Length)
         {
-            ushort code = (ushort)((response[offset + 0] << 8) + response[offset + 1]);
-            byte[] data = new byte[response[offset + 3] + 4];
+            var code = (ushort)((response[offset + 0] << 8) + response[offset + 1]);
+            var data = new byte[response[offset + 3] + 4];
 
             if(code != 0x0108)
             {
@@ -76,7 +76,7 @@ public sealed partial class DeviceReport
     /// <returns>MMC features report</returns>
     public MmcFeatures ReportMmcFeatures()
     {
-        bool   sense  = true;
+        var    sense  = true;
         byte[] buffer = Array.Empty<byte>();
 
         Spectre.ProgressSingleSpinner(ctx =>
@@ -490,7 +490,7 @@ public sealed partial class DeviceReport
 
                     if(ftr010C.HasValue)
                     {
-                        byte[] temp = new byte[4];
+                        var temp = new byte[4];
                         temp[0] = (byte)((ftr010C.Value.Century & 0xFF00) >> 8);
                         temp[1] = (byte)(ftr010C.Value.Century & 0xFF);
                         temp[2] = (byte)((ftr010C.Value.Year & 0xFF00) >> 8);
@@ -520,8 +520,8 @@ public sealed partial class DeviceReport
                         try
                         {
                             report.FirmwareDate = new DateTime(int.Parse(syear), int.Parse(smonth), int.Parse(sday),
-                                                               int.Parse(shour), int.Parse(sminute),
-                                                               int.Parse(ssecond), DateTimeKind.Utc);
+                                                               int.Parse(shour), int.Parse(sminute), int.Parse(ssecond),
+                                                               DateTimeKind.Utc);
                         }
                         #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                         catch
@@ -587,10 +587,10 @@ public sealed partial class DeviceReport
     /// <param name="tryHldtst">Try HL-DT-ST vendor commands</param>
     /// <param name="tryMediaTekF106">Try MediaTek vendor commands</param>
     /// <returns></returns>
-    public TestedMedia ReportMmcMedia(string mediaType, bool tryPlextor, bool tryPioneer, bool tryNec,
-                                      bool tryHldtst, bool tryMediaTekF106)
+    public TestedMedia ReportMmcMedia(string mediaType, bool tryPlextor, bool tryPioneer, bool tryNec, bool tryHldtst,
+                                      bool tryMediaTekF106)
     {
-        bool   sense       = true;
+        var    sense       = true;
         byte[] buffer      = Array.Empty<byte>();
         byte[] senseBuffer = Array.Empty<byte>();
         var    mediaTest   = new TestedMedia();
@@ -622,7 +622,7 @@ public sealed partial class DeviceReport
            !_dev.Error)
         {
             mediaTest.SupportsReadCapacity16 = true;
-            byte[] temp = new byte[8];
+            var temp = new byte[8];
             Array.Copy(buffer, 0, temp, 0, 8);
             Array.Reverse(temp);
             mediaTest.Blocks    = BitConverter.ToUInt64(temp, 0) + 1;
@@ -635,8 +635,8 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
 
-            sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current,
-                                     0x3F, 0x00, _dev.Timeout, out _);
+            sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
+                                     0x00, _dev.Timeout, out _);
         });
 
         if(!sense &&
@@ -743,8 +743,8 @@ public sealed partial class DeviceReport
 
                 mediaTest.CanReadDMI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                               MmcDiscStructureFormat.DiscManufacturingInformation,
-                                                               0, _dev.Timeout, out _);
+                                                               MmcDiscStructureFormat.DiscManufacturingInformation, 0,
+                                                               _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDMI);
@@ -879,8 +879,8 @@ public sealed partial class DeviceReport
 
                     mediaTest.CanReadDDS = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                    MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                   MmcDiscStructureFormat.DvdramDds, 0,
-                                                                   _dev.Timeout, out _);
+                                                                   MmcDiscStructureFormat.DvdramDds, 0, _dev.Timeout,
+                                                                   out _);
                 });
 
                 AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDDS);
@@ -913,8 +913,7 @@ public sealed partial class DeviceReport
 
                 mediaTest.CanReadDDS = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                MmcDiscStructureMediaType.Bd, 0, 0,
-                                                               MmcDiscStructureFormat.BdDds, 0, _dev.Timeout,
-                                                               out _);
+                                                               MmcDiscStructureFormat.BdDds, 0, _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDDS);
@@ -944,8 +943,8 @@ public sealed partial class DeviceReport
 
                 mediaTest.CanReadPRI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                               MmcDiscStructureFormat.PreRecordedInfo, 0,
-                                                               _dev.Timeout, out _);
+                                                               MmcDiscStructureFormat.PreRecordedInfo, 0, _dev.Timeout,
+                                                               out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPRI);
@@ -975,9 +974,8 @@ public sealed partial class DeviceReport
 
                 mediaTest.CanReadRecordablePFI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                          MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                         MmcDiscStructureFormat.
-                                                                             DvdrPhysicalInformation, 0,
-                                                                         _dev.Timeout, out _);
+                                                                         MmcDiscStructureFormat.DvdrPhysicalInformation,
+                                                                         0, _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRecordablePFI);
@@ -994,8 +992,7 @@ public sealed partial class DeviceReport
 
                 mediaTest.CanReadADIP = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                 MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                MmcDiscStructureFormat.Adip, 0, _dev.Timeout,
-                                                                out _);
+                                                                MmcDiscStructureFormat.Adip, 0, _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadADIP);
@@ -1024,8 +1021,8 @@ public sealed partial class DeviceReport
 
                 mediaTest.CanReadHDCMI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                  MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                 MmcDiscStructureFormat.HddvdCopyrightInformation,
-                                                                 0, _dev.Timeout, out _);
+                                                                 MmcDiscStructureFormat.HddvdCopyrightInformation, 0,
+                                                                 _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadHDCMI);
@@ -1041,8 +1038,8 @@ public sealed partial class DeviceReport
 
                 mediaTest.CanReadLayerCapacity = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                          MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                         MmcDiscStructureFormat.DvdrLayerCapacity,
-                                                                         0, _dev.Timeout, out _);
+                                                                         MmcDiscStructureFormat.DvdrLayerCapacity, 0,
+                                                                         _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadLayerCapacity);
@@ -1064,8 +1061,8 @@ public sealed partial class DeviceReport
 
                 mediaTest.CanReadDiscInformation = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                            MmcDiscStructureMediaType.Bd, 0, 0,
-                                                                           MmcDiscStructureFormat.DiscInformation,
-                                                                           0, _dev.Timeout, out _);
+                                                                           MmcDiscStructureFormat.DiscInformation, 0,
+                                                                           _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDiscInformation);
@@ -1117,8 +1114,8 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask("Trying SCSI READ (10)...").IsIndeterminate();
 
-                mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false,
-                                                        16, 512, 0, 1, _dev.Timeout, out _);
+                mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 16,
+                                                        512, 0, 1, _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
@@ -1129,8 +1126,8 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask("Trying SCSI READ (12)...").IsIndeterminate();
 
-                mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false,
-                                                        16, 512, 0, 1, false, _dev.Timeout, out _);
+                mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 16,
+                                                        512, 0, 1, false, _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
@@ -1141,8 +1138,8 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask("Trying SCSI READ (16)...").IsIndeterminate();
 
-                mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16, 512,
-                                                        0, 1, false, _dev.Timeout, out _);
+                mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16, 512, 0,
+                                                        1, false, _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
@@ -1165,8 +1162,8 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask("Trying SCSI READ (10)...").IsIndeterminate();
 
-                mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false,
-                                                        16, 2048, 0, 1, _dev.Timeout, out _);
+                mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 16,
+                                                        2048, 0, 1, _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
@@ -1177,8 +1174,8 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask("Trying SCSI READ (12)...").IsIndeterminate();
 
-                mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false,
-                                                        16, 2048, 0, 1, false, _dev.Timeout, out _);
+                mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 16,
+                                                        2048, 0, 1, false, _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
@@ -1189,8 +1186,8 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask("Trying SCSI READ (16)...").IsIndeterminate();
 
-                mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16,
-                                                        2048, 0, 1, false, _dev.Timeout, out _);
+                mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16, 2048, 0,
+                                                        1, false, _dev.Timeout, out _);
             });
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
@@ -1222,11 +1219,10 @@ public sealed partial class DeviceReport
                 {
                     ctx.AddTask("Trying SCSI READ CD MSF...").IsIndeterminate();
 
-                    mediaTest.SupportsReadCdMsf = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210,
-                                                                  0x00000211, 2352, MmcSectorTypes.Cdda, false,
-                                                                  false, MmcHeaderCodes.None, true, false,
-                                                                  MmcErrorField.None, MmcSubchannel.None,
-                                                                  _dev.Timeout, out _);
+                    mediaTest.SupportsReadCdMsf = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210, 0x00000211,
+                                                                  2352, MmcSectorTypes.Cdda, false, false,
+                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                  MmcSubchannel.None, _dev.Timeout, out _);
                 });
 
                 AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsf);
@@ -1253,11 +1249,10 @@ public sealed partial class DeviceReport
                 {
                     ctx.AddTask("Trying SCSI READ CD MSF...").IsIndeterminate();
 
-                    mediaTest.SupportsReadCdMsf = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210,
-                                                                  0x00000211, 2048, MmcSectorTypes.AllTypes, false,
-                                                                  false, MmcHeaderCodes.None, true, false,
-                                                                  MmcErrorField.None, MmcSubchannel.None,
-                                                                  _dev.Timeout, out _);
+                    mediaTest.SupportsReadCdMsf = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210, 0x00000211,
+                                                                  2048, MmcSectorTypes.AllTypes, false, false,
+                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                  MmcSubchannel.None, _dev.Timeout, out _);
                 });
 
                 AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsf);
@@ -1284,9 +1279,9 @@ public sealed partial class DeviceReport
                     ctx.AddTask("Trying SCSI READ CD MSF full sector...").IsIndeterminate();
 
                     mediaTest.SupportsReadCdMsfRaw = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210,
-                                                                     0x00000211, 2352, MmcSectorTypes.AllTypes,
-                                                                     false, false, MmcHeaderCodes.AllHeaders, true,
-                                                                     true, MmcErrorField.None, MmcSubchannel.None,
+                                                                     0x00000211, 2352, MmcSectorTypes.AllTypes, false,
+                                                                     false, MmcHeaderCodes.AllHeaders, true, true,
+                                                                     MmcErrorField.None, MmcSubchannel.None,
                                                                      _dev.Timeout, out _);
                 });
 
@@ -1310,10 +1305,9 @@ public sealed partial class DeviceReport
                                                 false, false, false, MmcHeaderCodes.None, true, false,
                                                 MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
                         else
-                            sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1,
-                                                MmcSectorTypes.AllTypes, false, false, true,
-                                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                                MmcSubchannel.None, _dev.Timeout, out _);
+                            sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.AllTypes,
+                                                false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                                MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
 
                         // ReSharper restore IntVariableOverflowInUncheckedContext
 
@@ -1346,10 +1340,9 @@ public sealed partial class DeviceReport
                                                 false, false, false, MmcHeaderCodes.None, true, false,
                                                 MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
                         else
-                            sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1,
-                                                MmcSectorTypes.AllTypes, false, false, true,
-                                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                                MmcSubchannel.None, _dev.Timeout, out _);
+                            sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.AllTypes,
+                                                false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                                MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
 
                         AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", sense);
 
@@ -1374,16 +1367,15 @@ public sealed partial class DeviceReport
                         mediaTest.CanReadLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
                                                                 (uint)(mediaTest.Blocks + 1), 2352, 1,
                                                                 MmcSectorTypes.Cdda, false, false, false,
-                                                                MmcHeaderCodes.None, true, false,
-                                                                MmcErrorField.None, MmcSubchannel.None,
-                                                                _dev.Timeout, out _);
+                                                                MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                MmcSubchannel.None, _dev.Timeout, out _);
                     else
                         mediaTest.CanReadLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
                                                                 (uint)(mediaTest.Blocks + 1), 2352, 1,
                                                                 MmcSectorTypes.AllTypes, false, false, true,
                                                                 MmcHeaderCodes.AllHeaders, true, true,
-                                                                MmcErrorField.None, MmcSubchannel.None,
-                                                                _dev.Timeout, out _);
+                                                                MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
+                                                                out _);
                 });
 
                 AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadLeadOut);
@@ -1428,9 +1420,8 @@ public sealed partial class DeviceReport
 
                     mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2368, 1,
                                                                  MmcSectorTypes.Cdda, false, false, false,
-                                                                 MmcHeaderCodes.None, true, false,
-                                                                 MmcErrorField.None, MmcSubchannel.Q16,
-                                                                 _dev.Timeout, out _);
+                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                 MmcSubchannel.Q16, _dev.Timeout, out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
 
@@ -1438,9 +1429,8 @@ public sealed partial class DeviceReport
 
                     mediaTest.CanReadRWSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2448, 1,
                                                                  MmcSectorTypes.Cdda, false, false, false,
-                                                                 MmcHeaderCodes.None, true, false,
-                                                                 MmcErrorField.None, MmcSubchannel.Raw,
-                                                                 _dev.Timeout, out _);
+                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                 MmcSubchannel.Raw, _dev.Timeout, out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
 
@@ -1474,51 +1464,48 @@ public sealed partial class DeviceReport
                         mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2662, 1,
                                                                            MmcSectorTypes.Cdda, false, false, false,
                                                                            MmcHeaderCodes.None, true, false,
-                                                                           MmcErrorField.C2Pointers,
-                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Q16,
+                                                                           _dev.Timeout, out _);
 
                         if(mediaTest.CanReadPQSubchannelWithC2 == false)
-                            mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11,
-                                                                               2664, 1, MmcSectorTypes.Cdda, false,
-                                                                               false, false, MmcHeaderCodes.None, true,
-                                                                               false, MmcErrorField.C2PointersAndBlock,
+                            mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2664, 1,
+                                                                               MmcSectorTypes.Cdda, false, false, false,
+                                                                               MmcHeaderCodes.None, true, false,
+                                                                               MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                   !mediaTest.CanReadPQSubchannelWithC2);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
                         mediaTest.PQSubchannelWithC2Data = buffer;
 
                         mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2712, 1,
                                                                            MmcSectorTypes.Cdda, false, false, false,
                                                                            MmcHeaderCodes.None, true, false,
-                                                                           MmcErrorField.C2Pointers,
-                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Raw,
+                                                                           _dev.Timeout, out _);
 
                         if(mediaTest.CanReadRWSubchannelWithC2 == false)
-                            mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11,
-                                                                               2714, 1, MmcSectorTypes.Cdda, false,
-                                                                               false, false, MmcHeaderCodes.None, true,
-                                                                               false, MmcErrorField.C2PointersAndBlock,
+                            mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2714, 1,
+                                                                               MmcSectorTypes.Cdda, false, false, false,
+                                                                               MmcHeaderCodes.None, true, false,
+                                                                               MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                   !mediaTest.CanReadRWSubchannelWithC2);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
                         mediaTest.RWSubchannelWithC2Data = buffer;
 
-                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11,
-                                                                         2712, 1, MmcSectorTypes.Cdda, false,
-                                                                         false, false, MmcHeaderCodes.None,
-                                                                         true, false, MmcErrorField.C2Pointers,
-                                                                         MmcSubchannel.Rw, _dev.Timeout,
-                                                                         out _);
+                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2712,
+                                                                         1, MmcSectorTypes.Cdda, false, false,
+                                                                         false, MmcHeaderCodes.None, true, false,
+                                                                         MmcErrorField.C2Pointers,
+                                                                         MmcSubchannel.Rw, _dev.Timeout, out _);
 
                         if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
-                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                             11, 2714, 1, MmcSectorTypes.Cdda,
-                                                                             false, false, false,
-                                                                             MmcHeaderCodes.None, true, false,
+                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11,
+                                                                             2714, 1, MmcSectorTypes.Cdda, false,
+                                                                             false, false, MmcHeaderCodes.None,
+                                                                             true, false,
                                                                              MmcErrorField.C2PointersAndBlock,
                                                                              MmcSubchannel.Rw, _dev.Timeout,
                                                                              out _);
@@ -1567,8 +1554,8 @@ public sealed partial class DeviceReport
                     mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2368, 1,
                                                                  MmcSectorTypes.AllTypes, false, false, true,
                                                                  MmcHeaderCodes.AllHeaders, true, true,
-                                                                 MmcErrorField.None, MmcSubchannel.Q16,
-                                                                 _dev.Timeout, out _);
+                                                                 MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout,
+                                                                 out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
 
@@ -1577,8 +1564,8 @@ public sealed partial class DeviceReport
                     mediaTest.CanReadRWSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2448, 1,
                                                                  MmcSectorTypes.AllTypes, false, false, true,
                                                                  MmcHeaderCodes.AllHeaders, true, true,
-                                                                 MmcErrorField.None, MmcSubchannel.Raw,
-                                                                 _dev.Timeout, out _);
+                                                                 MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout,
+                                                                 out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
 
@@ -1608,58 +1595,50 @@ public sealed partial class DeviceReport
                     else
                     {
                         mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2662, 1,
-                                                                           MmcSectorTypes.AllTypes, false, false,
-                                                                           true, MmcHeaderCodes.AllHeaders, true,
-                                                                           true, MmcErrorField.C2Pointers,
-                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                           MmcSectorTypes.AllTypes, false, false, true,
+                                                                           MmcHeaderCodes.AllHeaders, true, true,
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Q16,
+                                                                           _dev.Timeout, out _);
 
                         if(mediaTest.CanReadPQSubchannelWithC2 == false)
-                            mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
-                                                                               2664, 1, MmcSectorTypes.AllTypes, false,
-                                                                               false, true, MmcHeaderCodes.AllHeaders,
-                                                                               true, true,
-                                                                               MmcErrorField.C2PointersAndBlock,
+                            mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2664, 1,
+                                                                               MmcSectorTypes.AllTypes, false, false,
+                                                                               true, MmcHeaderCodes.AllHeaders, true,
+                                                                               true, MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                   !mediaTest.CanReadPQSubchannelWithC2);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
                         mediaTest.PQSubchannelWithC2Data = buffer;
 
                         mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2712, 1,
-                                                                           MmcSectorTypes.AllTypes, false, false,
-                                                                           true, MmcHeaderCodes.AllHeaders, true,
-                                                                           true, MmcErrorField.C2Pointers,
-                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                           MmcSectorTypes.AllTypes, false, false, true,
+                                                                           MmcHeaderCodes.AllHeaders, true, true,
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Raw,
+                                                                           _dev.Timeout, out _);
 
                         if(mediaTest.CanReadRWSubchannelWithC2 == false)
-                            mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
-                                                                               2714, 1, MmcSectorTypes.AllTypes, false,
-                                                                               false, true, MmcHeaderCodes.AllHeaders,
-                                                                               true, true,
-                                                                               MmcErrorField.C2PointersAndBlock,
+                            mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2714, 1,
+                                                                               MmcSectorTypes.AllTypes, false, false,
+                                                                               true, MmcHeaderCodes.AllHeaders, true,
+                                                                               true, MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                   !mediaTest.CanReadRWSubchannelWithC2);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
                         mediaTest.RWSubchannelWithC2Data = buffer;
 
-                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
-                                                                         2712, 1, MmcSectorTypes.AllTypes,
-                                                                         false, false, true,
-                                                                         MmcHeaderCodes.AllHeaders, true, true,
-                                                                         MmcErrorField.C2Pointers,
-                                                                         MmcSubchannel.Rw, _dev.Timeout,
-                                                                         out _);
+                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2712,
+                                                                         1, MmcSectorTypes.AllTypes, false, false,
+                                                                         true, MmcHeaderCodes.AllHeaders, true,
+                                                                         true, MmcErrorField.C2Pointers,
+                                                                         MmcSubchannel.Rw, _dev.Timeout, out _);
 
                         if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
-                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                             16, 2714, 1,
-                                                                             MmcSectorTypes.AllTypes, false,
-                                                                             false, true,
-                                                                             MmcHeaderCodes.AllHeaders, true,
-                                                                             true,
+                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
+                                                                             2714, 1, MmcSectorTypes.AllTypes,
+                                                                             false, false, true,
+                                                                             MmcHeaderCodes.AllHeaders, true, true,
                                                                              MmcErrorField.C2PointersAndBlock,
                                                                              MmcSubchannel.Rw, _dev.Timeout,
                                                                              out _);
@@ -1707,9 +1686,8 @@ public sealed partial class DeviceReport
 
                     mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2064, 1,
                                                                  MmcSectorTypes.AllTypes, false, false, false,
-                                                                 MmcHeaderCodes.None, true, false,
-                                                                 MmcErrorField.None, MmcSubchannel.Q16,
-                                                                 _dev.Timeout, out _);
+                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                 MmcSubchannel.Q16, _dev.Timeout, out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
 
@@ -1717,17 +1695,16 @@ public sealed partial class DeviceReport
 
                     mediaTest.CanReadRWSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2144, 1,
                                                                  MmcSectorTypes.AllTypes, false, false, false,
-                                                                 MmcHeaderCodes.None, true, false,
-                                                                 MmcErrorField.None, MmcSubchannel.Raw,
-                                                                 _dev.Timeout, out _);
+                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                 MmcSubchannel.Raw, _dev.Timeout, out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
 
                     mediaTest.RWSubchannelData = buffer;
 
                     mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2144, 1,
-                                                                        MmcSectorTypes.AllTypes, false, false,
-                                                                        false, MmcHeaderCodes.None, true, false,
+                                                                        MmcSectorTypes.AllTypes, false, false, false,
+                                                                        MmcHeaderCodes.None, true, false,
                                                                         MmcErrorField.None, MmcSubchannel.Rw,
                                                                         _dev.Timeout, out _);
 
@@ -1749,55 +1726,50 @@ public sealed partial class DeviceReport
                     else
                     {
                         mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2358, 1,
-                                                                           MmcSectorTypes.AllTypes, false, false,
-                                                                           false, MmcHeaderCodes.None, true, false,
-                                                                           MmcErrorField.C2Pointers,
-                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                           MmcSectorTypes.AllTypes, false, false, false,
+                                                                           MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Q16,
+                                                                           _dev.Timeout, out _);
 
                         if(mediaTest.CanReadPQSubchannelWithC2 == false)
-                            mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
-                                                                               2360, 1, MmcSectorTypes.AllTypes, false,
-                                                                               false, false, MmcHeaderCodes.None, true,
-                                                                               false, MmcErrorField.C2PointersAndBlock,
+                            mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2360, 1,
+                                                                               MmcSectorTypes.AllTypes, false, false,
+                                                                               false, MmcHeaderCodes.None, true, false,
+                                                                               MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                   !mediaTest.CanReadPQSubchannelWithC2);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
                         mediaTest.PQSubchannelWithC2Data = buffer;
 
                         mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2438, 1,
-                                                                           MmcSectorTypes.AllTypes, false, false,
-                                                                           false, MmcHeaderCodes.None, true, false,
-                                                                           MmcErrorField.C2Pointers,
-                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                           MmcSectorTypes.AllTypes, false, false, false,
+                                                                           MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.C2Pointers, MmcSubchannel.Raw,
+                                                                           _dev.Timeout, out _);
 
                         if(mediaTest.CanReadRWSubchannelWithC2 == false)
-                            mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
-                                                                               2440, 1, MmcSectorTypes.AllTypes, false,
-                                                                               false, false, MmcHeaderCodes.None, true,
-                                                                               false, MmcErrorField.C2PointersAndBlock,
+                            mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2440, 1,
+                                                                               MmcSectorTypes.AllTypes, false, false,
+                                                                               false, MmcHeaderCodes.None, true, false,
+                                                                               MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                   !mediaTest.CanReadRWSubchannelWithC2);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
                         mediaTest.RWSubchannelWithC2Data = buffer;
 
-                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
-                                                                         2438, 1, MmcSectorTypes.AllTypes,
-                                                                         false, false, false,
-                                                                         MmcHeaderCodes.None, true, false,
+                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2438,
+                                                                         1, MmcSectorTypes.AllTypes, false, false,
+                                                                         false, MmcHeaderCodes.None, true, false,
                                                                          MmcErrorField.C2Pointers,
-                                                                         MmcSubchannel.Rw, _dev.Timeout,
-                                                                         out _);
+                                                                         MmcSubchannel.Rw, _dev.Timeout, out _);
 
                         if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
-                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                             16, 2440, 1,
-                                                                             MmcSectorTypes.AllTypes, false,
-                                                                             false, false, MmcHeaderCodes.None,
-                                                                             true, false,
+                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
+                                                                             2440, 1, MmcSectorTypes.AllTypes,
+                                                                             false, false, false,
+                                                                             MmcHeaderCodes.None, true, false,
                                                                              MmcErrorField.C2PointersAndBlock,
                                                                              MmcSubchannel.Rw, _dev.Timeout,
                                                                              out _);
@@ -1961,8 +1933,8 @@ public sealed partial class DeviceReport
 
         if(tryMediaTekF106)
         {
-            bool triedLba0    = false;
-            bool triedLeadOut = false;
+            var triedLba0    = false;
+            var triedLeadOut = false;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -1971,9 +1943,8 @@ public sealed partial class DeviceReport
                 if(mediaType                == "Audio CD" &&
                    mediaTest.SupportsReadCd == true)
                 {
-                    _dev.ReadCd(out _, out _, 0, 2352, 1, MmcSectorTypes.Cdda, false, false, false,
-                                MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                _dev.Timeout, out _);
+                    _dev.ReadCd(out _, out _, 0, 2352, 1, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None,
+                                true, false, MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
 
                     triedLba0 = true;
                 }
@@ -1992,8 +1963,8 @@ public sealed partial class DeviceReport
                         mediaTest.SupportsReadCd == true)
                 {
                     _dev.ReadCd(out _, out _, 0, 2048, 1, MmcSectorTypes.AllTypes, false, false, false,
-                                MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                _dev.Timeout, out _);
+                                MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
+                                out _);
 
                     triedLba0 = true;
                 }
@@ -2009,8 +1980,7 @@ public sealed partial class DeviceReport
                 }
                 else if(mediaTest.SupportsRead12 == true)
                 {
-                    _dev.Read12(out _, out _, 0, false, true, false, false, 0, 2048, 0, 1, false, _dev.Timeout,
-                                out _);
+                    _dev.Read12(out _, out _, 0, false, true, false, false, 0, 2048, 0, 1, false, _dev.Timeout, out _);
 
                     triedLba0 = true;
                 }
@@ -2050,8 +2020,8 @@ public sealed partial class DeviceReport
                              mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)") &&
                             mediaTest.SupportsReadCdRaw == true)
                     {
-                        _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.AllTypes,
-                                    false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                        _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.AllTypes, false,
+                                    false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                     MmcSubchannel.None, _dev.Timeout, out _);
 
                         triedLeadOut = true;
@@ -2060,8 +2030,8 @@ public sealed partial class DeviceReport
                              mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)") &&
                             mediaTest.SupportsReadCd == true)
                     {
-                        _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2048, 1, MmcSectorTypes.AllTypes,
-                                    false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                        _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2048, 1, MmcSectorTypes.AllTypes, false,
+                                    false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                     MmcSubchannel.None, _dev.Timeout, out _);
 
                         triedLeadOut = true;
@@ -2073,15 +2043,15 @@ public sealed partial class DeviceReport
                     }
                     else if(mediaTest.SupportsRead10 == true)
                     {
-                        _dev.Read10(out _, out _, 0, false, true, false, false, (uint)(mediaTest.Blocks + 1), 2048,
-                                    0, 1, _dev.Timeout, out _);
+                        _dev.Read10(out _, out _, 0, false, true, false, false, (uint)(mediaTest.Blocks + 1), 2048, 0,
+                                    1, _dev.Timeout, out _);
 
                         triedLeadOut = true;
                     }
                     else if(mediaTest.SupportsRead12 == true)
                     {
-                        _dev.Read12(out _, out _, 0, false, true, false, false, (uint)(mediaTest.Blocks + 1), 2048,
-                                    0, 1, false, _dev.Timeout, out _);
+                        _dev.Read12(out _, out _, 0, false, true, false, false, (uint)(mediaTest.Blocks + 1), 2048, 0,
+                                    1, false, _dev.Timeout, out _);
 
                         triedLeadOut = true;
                     }
@@ -2098,8 +2068,7 @@ public sealed partial class DeviceReport
                         mediaTest.CanReadF1_06LeadOut =
                             !_dev.MediaTekReadDram(out buffer, out senseBuffer, 0, 0xB00, _dev.Timeout, out _);
 
-                        mediaTest.ReadF1_06LeadOutData =
-                            mediaTest.CanReadF1_06LeadOut == true ? buffer : senseBuffer;
+                        mediaTest.ReadF1_06LeadOutData = mediaTest.CanReadF1_06LeadOut == true ? buffer : senseBuffer;
 
                         // This means it has returned the same as previous read, so not really lead-out.
                         if(mediaTest.CanReadF1_06        == true &&
@@ -2162,8 +2131,7 @@ public sealed partial class DeviceReport
                         return null;
                     }
 
-                    AaruConsole.DebugWriteLine("SCSI Report",
-                                               "First session Lead-Out starts at {0:D2}:{1:D2}:{2:D2}",
+                    AaruConsole.DebugWriteLine("SCSI Report", "First session Lead-Out starts at {0:D2}:{1:D2}:{2:D2}",
                                                firstSessionLeadOutTrack.PMIN, firstSessionLeadOutTrack.PSEC,
                                                firstSessionLeadOutTrack.PFRAME);
 
@@ -2172,14 +2140,14 @@ public sealed partial class DeviceReport
                                                secondSessionFirstTrack.PFRAME);
 
                     // Skip Lead-Out pre-gap
-                    uint firstSessionLeadOutLba = (uint)((firstSessionLeadOutTrack.PMIN * 60 * 75) +
-                                                         (firstSessionLeadOutTrack.PSEC * 75)      +
-                                                         firstSessionLeadOutTrack.PFRAME           + 150);
+                    var firstSessionLeadOutLba = (uint)(firstSessionLeadOutTrack.PMIN * 60 * 75 +
+                                                        firstSessionLeadOutTrack.PSEC * 75      +
+                                                        firstSessionLeadOutTrack.PFRAME         + 150);
 
                     // Skip second session track pre-gap
-                    uint secondSessionLeadInLba = (uint)((secondSessionFirstTrack.PMIN * 60 * 75) +
-                                                         (secondSessionFirstTrack.PSEC * 75)      +
-                                                         secondSessionFirstTrack.PFRAME - 300);
+                    var secondSessionLeadInLba = (uint)(secondSessionFirstTrack.PMIN * 60 * 75 +
+                                                        secondSessionFirstTrack.PSEC * 75      +
+                                                        secondSessionFirstTrack.PFRAME - 300);
 
                     Spectre.ProgressSingleSpinner(ctx =>
                     {
@@ -2196,12 +2164,10 @@ public sealed partial class DeviceReport
                         {
                             mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
                                                                           firstSessionLeadOutLba, 2368, 1,
-                                                                          MmcSectorTypes.AllTypes, false,
-                                                                          false, false,
-                                                                          MmcHeaderCodes.AllHeaders, true,
+                                                                          MmcSectorTypes.AllTypes, false, false,
+                                                                          false, MmcHeaderCodes.AllHeaders, true,
                                                                           false, MmcErrorField.None,
-                                                                          MmcSubchannel.Q16, _dev.Timeout,
-                                                                          out _);
+                                                                          MmcSubchannel.Q16, _dev.Timeout, out _);
 
                             if(mediaTest.CanReadingIntersessionLeadOut == false)
                                 mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
@@ -2215,8 +2181,7 @@ public sealed partial class DeviceReport
                         }
                     });
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                               !mediaTest.CanReadingIntersessionLeadOut);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadingIntersessionLeadOut);
 
                     mediaTest.IntersessionLeadOutData = buffer;
 
@@ -2236,25 +2201,22 @@ public sealed partial class DeviceReport
                             mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
                                                                          secondSessionLeadInLba, 2368, 1,
                                                                          MmcSectorTypes.AllTypes, false, false,
-                                                                         false, MmcHeaderCodes.AllHeaders,
-                                                                         true, false, MmcErrorField.None,
-                                                                         MmcSubchannel.Q16, _dev.Timeout,
-                                                                         out _);
+                                                                         false, MmcHeaderCodes.AllHeaders, true,
+                                                                         false, MmcErrorField.None,
+                                                                         MmcSubchannel.Q16, _dev.Timeout, out _);
 
                             if(mediaTest.CanReadingIntersessionLeadIn == false)
                                 mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
                                                                              secondSessionLeadInLba, 2352, 1,
-                                                                             MmcSectorTypes.AllTypes, false,
-                                                                             false, false,
-                                                                             MmcHeaderCodes.AllHeaders, true,
-                                                                             false, MmcErrorField.None,
+                                                                             MmcSectorTypes.AllTypes, false, false,
+                                                                             false, MmcHeaderCodes.AllHeaders,
+                                                                             true, false, MmcErrorField.None,
                                                                              MmcSubchannel.None, _dev.Timeout,
                                                                              out _);
                         }
                     });
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                               !mediaTest.CanReadingIntersessionLeadIn);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadingIntersessionLeadIn);
 
                     mediaTest.IntersessionLeadInData = buffer;
                 }

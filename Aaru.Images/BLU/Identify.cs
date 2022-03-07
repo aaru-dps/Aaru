@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Blu
 {
@@ -48,7 +48,7 @@ public sealed partial class Blu
         if(stream.Length < 0x200)
             return false;
 
-        byte[] header = new byte[0x17];
+        var header = new byte[0x17];
         stream.Read(header, 0, 0x17);
 
         var tmpHdr = new BluHeader
@@ -61,7 +61,7 @@ public sealed partial class Blu
         tmpHdr.DeviceBlocks  = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
         tmpHdr.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
-        for(int i = 0; i < 0xD; i++)
+        for(var i = 0; i < 0xD; i++)
             if(tmpHdr.DeviceName[i] < 0x20)
                 return false;
 

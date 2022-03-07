@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,8 +39,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class AppleDos
 {
@@ -61,8 +61,8 @@ public sealed partial class AppleDos
             return false;
         }
 
-        if((mediaType == MediaType.Apple32SS && sectors != 455) ||
-           (mediaType == MediaType.Apple33SS && sectors != 560))
+        if(mediaType == MediaType.Apple32SS && sectors != 455 ||
+           mediaType == MediaType.Apple33SS && sectors != 560)
         {
             ErrorMessage = "Incorrect number of sectors for media";
 
@@ -177,10 +177,9 @@ public sealed partial class AppleDos
             tmp = _deinterleaved;
         else
         {
-            bool isDos = _deinterleaved[0x11001] == 17  && _deinterleaved[0x11002] < 16  &&
+            bool isDos = _deinterleaved[0x11001] == 17  && _deinterleaved[0x11002] < 16 &&
                          _deinterleaved[0x11027] <= 122 && _deinterleaved[0x11034] == 35 &&
-                         _deinterleaved[0x11035] == 16  && _deinterleaved[0x11036] == 0  &&
-                         _deinterleaved[0x11037] == 1;
+                         _deinterleaved[0x11035] == 16  && _deinterleaved[0x11036] == 0 && _deinterleaved[0x11037] == 1;
 
             tmp = new byte[_deinterleaved.Length];
 
@@ -192,10 +191,9 @@ public sealed partial class AppleDos
                                     ? _interleave
                                     : _deinterleave;
 
-            for(int t = 0; t < 35; t++)
-                for(int s = 0; s < 16; s++)
-                    Array.Copy(_deinterleaved, (t * 16 * 256) + (offsets[s] * 256), tmp, (t * 16 * 256) + (s * 256),
-                               256);
+            for(var t = 0; t < 35; t++)
+                for(var s = 0; s < 16; s++)
+                    Array.Copy(_deinterleaved, t * 16 * 256 + offsets[s] * 256, tmp, t * 16 * 256 + s * 256, 256);
         }
 
         _writingStream.Seek(0, SeekOrigin.Begin);

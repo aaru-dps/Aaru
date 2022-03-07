@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class CopyQm
 {
@@ -47,10 +47,10 @@ public sealed partial class CopyQm
         if(stream.Length < 133)
             return false;
 
-        byte[] hdr = new byte[133];
+        var hdr = new byte[133];
         stream.Read(hdr, 0, 133);
 
-        ushort magic = BitConverter.ToUInt16(hdr, 0);
+        var magic = BitConverter.ToUInt16(hdr, 0);
 
         return magic == COPYQM_MAGIC && hdr[0x02] == COPYQM_MARK && 133 + hdr[0x6F] < stream.Length;
     }

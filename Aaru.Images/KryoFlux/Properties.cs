@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class KryoFlux
 {
@@ -47,7 +47,7 @@ public sealed partial class KryoFlux
     /// <inheritdoc />
     public string Name => "KryoFlux STREAM";
     /// <inheritdoc />
-    public Guid Id => new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
+    public Guid Id => new("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
     /// <inheritdoc />
     public string Format => "KryoFlux STREAM";
     /// <inheritdoc />

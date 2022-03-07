@@ -26,16 +26,17 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices;
+
+using System;
 using Aaru.Console;
 using Aaru.Devices;
 
-namespace Aaru.Tests.Devices;
-
-internal static partial class MainClass
+static partial class MainClass
 {
     public static void NVMe(string devPath, Device dev)
     {
         AaruConsole.WriteLine("NVMe commands not yet implemented. Press any key to continue...");
-        System.Console.ReadKey();
+        Console.ReadKey();
     }
 }

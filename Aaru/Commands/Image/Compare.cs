@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Image;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -45,9 +47,7 @@ using Aaru.Helpers;
 using Spectre.Console;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 
-namespace Aaru.Commands.Image;
-
-internal sealed class CompareCommand : Command
+sealed class CompareCommand : Command
 {
     public CompareCommand() : base("compare", "Compares two disc images.")
     {
@@ -78,7 +78,7 @@ internal sealed class CompareCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -110,7 +110,7 @@ internal sealed class CompareCommand : Command
         IFilter inputFilter1 = null;
         IFilter inputFilter2 = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file 1 filter...").IsIndeterminate();
             inputFilter1 = filtersList.GetFilter(imagePath1);
@@ -118,7 +118,7 @@ internal sealed class CompareCommand : Command
 
         filtersList = new FiltersList();
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file 2 filter...").IsIndeterminate();
             inputFilter2 = filtersList.GetFilter(imagePath2);
@@ -141,13 +141,13 @@ internal sealed class CompareCommand : Command
         IBaseImage input1Format = null;
         IBaseImage input2Format = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image 1 format...").IsIndeterminate();
             input1Format = ImageFormat.Detect(inputFilter1);
         });
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image 1 format...").IsIndeterminate();
             input2Format = ImageFormat.Detect(inputFilter2);
@@ -182,7 +182,7 @@ internal sealed class CompareCommand : Command
         ErrorNumber opened1 = ErrorNumber.NoData;
         ErrorNumber opened2 = ErrorNumber.NoData;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image 1 file...").IsIndeterminate();
             opened1 = input1Format.Open(inputFilter1);
@@ -196,7 +196,7 @@ internal sealed class CompareCommand : Command
             return (int)opened1;
         }
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image 2 file...").IsIndeterminate();
             opened2 = input2Format.Open(inputFilter2);
@@ -235,7 +235,7 @@ internal sealed class CompareCommand : Command
             sb.AppendFormat("[bold]Media image 2:[/] {0}", imagePath2).AppendLine();
         }
 
-        bool        imagesDiffer = false;
+        var         imagesDiffer = false;
         ErrorNumber errno;
 
         ImageInfo                        image1Info       = input1Format.Info;
@@ -327,7 +327,7 @@ internal sealed class CompareCommand : Command
 
         ulong leastSectors = 0;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Comparing disk image characteristics").IsIndeterminate();
 
@@ -442,19 +442,14 @@ internal sealed class CompareCommand : Command
                                                               image2Sector);
 
                                     if(different)
-                                    {
                                         imagesDiffer = true;
 
-                                        //       sb.AppendFormat("Sector {0} is different", sector).AppendLine();
-                                    }
+                                    //       sb.AppendFormat("Sector {0} is different", sector).AppendLine();
                                     else if(!sameSize)
-                                    {
                                         imagesDiffer = true;
-
-                                        /*     sb.
+                                    /*     sb.
                                                  AppendFormat("Sector {0} has different sizes ({1} bytes in image 1, {2} in image 2) but are otherwise identical",
                                                               sector, image1Sector.LongLength, image2Sector.LongLength).AppendLine();*/
-                                    }
                                 }
                                 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                 catch
@@ -474,8 +469,8 @@ internal sealed class CompareCommand : Command
                             ProgressTask task = ctx.AddTask("Comparing images...");
                             task.IsIndeterminate = true;
 
-                            byte[] data1 = new byte[input1ByteAddressable.Info.Sectors];
-                            byte[] data2 = new byte[input2ByteAddressable.Info.Sectors];
+                            var    data1 = new byte[input1ByteAddressable.Info.Sectors];
+                            var    data2 = new byte[input2ByteAddressable.Info.Sectors];
                             byte[] tmp;
 
                             input1ByteAddressable.ReadBytes(data1, 0, data1.Length, out int bytesRead);

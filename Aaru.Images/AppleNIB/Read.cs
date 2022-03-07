@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Decoders.Floppy;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class AppleNib
 {
@@ -52,7 +52,7 @@ public sealed partial class AppleNib
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] buffer = new byte[stream.Length];
+        var buffer = new byte[stream.Length];
         stream.Read(buffer, 0, buffer.Length);
 
         AaruConsole.DebugWriteLine("Apple NIB Plugin", "Decoding whole image");
@@ -61,10 +61,10 @@ public sealed partial class AppleNib
 
         Dictionary<ulong, Apple2.RawSector> rawSectors = new();
 
-        int  spt            = 0;
-        bool allTracksEqual = true;
+        var spt            = 0;
+        var allTracksEqual = true;
 
-        for(int i = 1; i < tracks.Count; i++)
+        for(var i = 1; i < tracks.Count; i++)
             allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
 
         if(allTracksEqual)
@@ -91,16 +91,16 @@ public sealed partial class AppleNib
                                            skewing.SequenceEqual(_dosSkewing) ? "" : "Pro");
             }
 
-        for(int i = 0; i < tracks.Count; i++)
+        for(var i = 0; i < tracks.Count; i++)
             foreach(Apple2.RawSector sector in tracks[i].sectors)
                 if(skewed && spt != 0)
                 {
-                    ulong sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
-                                              (sector.addressField.sector[1] & 0x55)) & 0xFF);
+                    var sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
+                                            (sector.addressField.sector[1] & 0x55)) & 0xFF);
 
                     AaruConsole.DebugWriteLine("Apple NIB Plugin",
-                                               "Hardware sector {0} of track {1} goes to logical sector {2}",
-                                               sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
+                                               "Hardware sector {0} of track {1} goes to logical sector {2}", sectorNo,
+                                               i, skewing[sectorNo] + (ulong)(i * spt));
 
                     rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
                     _imageInfo.Sectors++;
@@ -172,8 +172,7 @@ public sealed partial class AppleNib
         if(sectorAddress > _imageInfo.Sectors - 1)
             return ErrorNumber.OutOfRange;
 
-        return _cookedSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError
-                   : ErrorNumber.SectorNotFound;
+        return _cookedSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.SectorNotFound;
     }
 
     /// <inheritdoc />
@@ -257,8 +256,7 @@ public sealed partial class AppleNib
         if(sectorAddress > _imageInfo.Sectors - 1)
             return ErrorNumber.OutOfRange;
 
-        return _longSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError
-                   : ErrorNumber.SectorNotFound;
+        return _longSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.SectorNotFound;
     }
 
     /// <inheritdoc />

@@ -30,12 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+
 
 // ReSharper disable NotAccessedField.Local
 
 namespace Aaru.DiscImages;
+
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Nero

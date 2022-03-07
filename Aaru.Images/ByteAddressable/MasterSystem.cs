@@ -1,3 +1,5 @@
+namespace Aaru.DiscImages.ByteAddressable;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -10,8 +12,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.DiscImages.ByteAddressable;
 
 public class MasterSystem : IByteAddressableImage
 {
@@ -49,9 +49,9 @@ public class MasterSystem : IByteAddressableImage
             return false;
 
         stream.Position = 0x7ff0;
-        byte[] magicBytes = new byte[8];
+        var magicBytes = new byte[8];
         stream.Read(magicBytes, 0, 8);
-        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
+        var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic == 0x4147455320524D54)
             return true;
@@ -84,12 +84,12 @@ public class MasterSystem : IByteAddressableImage
         if(stream.Length % 8192 != 0)
             return ErrorNumber.InvalidArgument;
 
-        int headerPosition = 0;
+        var headerPosition = 0;
 
         stream.Position = 0x7ff0;
-        byte[] magicBytes = new byte[8];
+        var magicBytes = new byte[8];
         stream.Read(magicBytes, 0, 8);
-        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
+        var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic != 0x0B000DCC6666EDCE)
             headerPosition = 0x7ff0;
@@ -134,9 +134,9 @@ public class MasterSystem : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        int productCode = (header.ProductCode[0] & 0xF) + ((header.ProductCode[0] & 0xF0) * 10) +
-                          ((header.ProductCode[1] & 0xF) * 100) + ((header.ProductCode[1] & 0xF0) * 1000) +
-                          (((header.VersionAndProduct & 0xF0) >> 4) * 10000);
+        int productCode = (header.ProductCode[0] & 0xF) + (header.ProductCode[0] & 0xF0) * 10 +
+                          (header.ProductCode[1] & 0xF) * 100 + (header.ProductCode[1] & 0xF0) * 1000 +
+                          ((header.VersionAndProduct & 0xF0) >> 4) * 10000;
 
         sb.AppendFormat("Product code: {0}", productCode).AppendLine();
 
@@ -186,18 +186,18 @@ public class MasterSystem : IByteAddressableImage
         int sizeCode = header.SizeAndRegion & 0xF;
 
         _romSize = sizeCode switch
-        {
-            0   => 262144,
-            1   => 524288,
-            2   => 1048576,
-            0xA => 8192,
-            0xB => 16384,
-            0xC => 32768,
-            0xD => 49152,
-            0xE => 65536,
-            0xF => 131072,
-            _   => 0
-        };
+                   {
+                       0   => 262144,
+                       1   => 524288,
+                       2   => 1048576,
+                       0xA => 8192,
+                       0xB => 16384,
+                       0xC => 32768,
+                       0xD => 49152,
+                       0xE => 65536,
+                       0xF => 131072,
+                       _   => 0
+                   };
 
         sb.AppendFormat("Region: {0}", region).AppendLine();
         sb.AppendFormat("Cartridge type: {0}", cartType).AppendLine();
@@ -443,11 +443,10 @@ public class MasterSystem : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom = false;
+        var foundRom = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
-        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -456,7 +455,6 @@ public class MasterSystem : IByteAddressableImage
                     break;
                 default: return ErrorNumber.InvalidArgument;
             }
-        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;

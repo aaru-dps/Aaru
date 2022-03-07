@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes;
-
 namespace Aaru.Gui.ViewModels.Panels;
+
+using Aaru.CommonTypes;
 
 public sealed class PartitionViewModel
 {

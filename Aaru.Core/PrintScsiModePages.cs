@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core;
+
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Helpers;
-
-namespace Aaru.Core;
 
 /// <summary>Prints all SCSI MODE pages</summary>
 public static class PrintScsiModePages
@@ -64,8 +64,8 @@ public static class PrintScsiModePages
                     else
                     {
                         if(page.Subpage != 0)
-                            AaruConsole.WriteLine("Found unknown vendor mode page {0:X2}h subpage {1:X2}h",
-                                                  page.Page, page.Subpage);
+                            AaruConsole.WriteLine("Found unknown vendor mode page {0:X2}h subpage {1:X2}h", page.Page,
+                                                  page.Subpage);
                         else
                             AaruConsole.WriteLine("Found unknown vendor mode page {0:X2}h", page.Page);
                     }

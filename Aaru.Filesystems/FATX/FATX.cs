@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements the Xbox File Allocation Table (FATX or XTAF) filesystem.</summary>

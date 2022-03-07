@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Qcow2
 {
@@ -47,7 +47,7 @@ public sealed partial class Qcow2
     /// <inheritdoc />
     public string Name => "QEMU Copy-On-Write disk image v2";
     /// <inheritdoc />
-    public Guid Id => new Guid("F20107CB-95B3-4398-894B-975261F1E8C5");
+    public Guid Id => new("F20107CB-95B3-4398-894B-975261F1E8C5");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

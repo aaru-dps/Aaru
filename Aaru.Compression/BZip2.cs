@@ -26,17 +26,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Compression;
+
 using System.IO;
 using System.Runtime.InteropServices;
 using Ionic.BZip2;
 
-namespace Aaru.Compression;
-
 public class BZip2
 {
-    /// <summary>
-    /// Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.
-    /// </summary>
+    /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
@@ -52,7 +50,7 @@ public class BZip2
     /// <returns>The number of decoded bytes</returns>
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
-        uint destinationSize = (uint)destination.Length;
+        var destinationSize = (uint)destination.Length;
 
         if(Native.IsSupported)
         {
@@ -74,7 +72,7 @@ public class BZip2
     /// <returns></returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int blockSize100k)
     {
-        uint destinationSize = (uint)destination.Length;
+        var destinationSize = (uint)destination.Length;
 
         if(Native.IsSupported)
         {

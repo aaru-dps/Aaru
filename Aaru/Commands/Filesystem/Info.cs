@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Filesystem;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -42,9 +44,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 
-namespace Aaru.Commands.Filesystem;
-
-internal sealed class FilesystemInfoCommand : Command
+sealed class FilesystemInfoCommand : Command
 {
     public FilesystemInfoCommand() : base("info",
                                           "Opens a disc image and prints info on the found partitions and/or filesystems.")
@@ -95,7 +95,7 @@ internal sealed class FilesystemInfoCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -128,7 +128,7 @@ internal sealed class FilesystemInfoCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -160,14 +160,14 @@ internal sealed class FilesystemInfoCommand : Command
 
         PluginBase plugins = GetPluginBase.Instance;
 
-        bool checkRaw = false;
+        var checkRaw = false;
 
         try
         {
             IMediaImage imageFormat = null;
             IBaseImage  baseImage   = null;
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Identifying image format...").IsIndeterminate();
                 baseImage   = ImageFormat.Detect(inputFilter);
@@ -199,7 +199,7 @@ internal sealed class FilesystemInfoCommand : Command
             {
                 ErrorNumber opened = ErrorNumber.NoData;
 
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Opening image file...").IsIndeterminate();
                     opened = imageFormat.Open(inputFilter);
@@ -240,13 +240,13 @@ internal sealed class FilesystemInfoCommand : Command
             {
                 List<Partition> partitionsList = null;
 
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Enumerating partitions...").IsIndeterminate();
-                    partitionsList = Core.Partitions.GetAll(imageFormat);
+                    partitionsList = Partitions.GetAll(imageFormat);
                 });
 
-                Core.Partitions.AddSchemesToStats(partitionsList);
+                Partitions.AddSchemesToStats(partitionsList);
 
                 if(partitionsList.Count == 0)
                 {
@@ -265,7 +265,7 @@ internal sealed class FilesystemInfoCommand : Command
                 {
                     AaruConsole.WriteLine("{0} partitions found.", partitionsList.Count);
 
-                    for(int i = 0; i < partitionsList.Count; i++)
+                    for(var i = 0; i < partitionsList.Count; i++)
                     {
                         Table table = new();
                         table.Title = new TableTitle($"Partition {partitionsList[i].Sequence}:");
@@ -287,10 +287,10 @@ internal sealed class FilesystemInfoCommand : Command
                         if(!filesystems)
                             continue;
 
-                        Core.Spectre.ProgressSingleSpinner(ctx =>
+                        Spectre.ProgressSingleSpinner(ctx =>
                         {
                             ctx.AddTask("Identifying filesystems on partition...").IsIndeterminate();
-                            Core.Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
+                            Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
                         });
 
                         if(idPlugins.Count == 0)
@@ -338,10 +338,10 @@ internal sealed class FilesystemInfoCommand : Command
                     Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                 };
 
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Identifying filesystems...").IsIndeterminate();
-                    Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                    Filesystems.Identify(imageFormat, out idPlugins, wholePart);
                 });
 
                 if(idPlugins.Count == 0)

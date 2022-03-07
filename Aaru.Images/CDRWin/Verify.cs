@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,8 +40,6 @@ using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {
@@ -54,8 +54,8 @@ public sealed partial class CdrWin
         long      readBytes;
         byte[]    verifyBytes;
 
-        IFilter[] filters = _discImage.Tracks.OrderBy(t => t.Sequence).Select(t => t.TrackFile.DataFilter).
-                                       Distinct().ToArray();
+        IFilter[] filters = _discImage.Tracks.OrderBy(t => t.Sequence).Select(t => t.TrackFile.DataFilter).Distinct().
+                                       ToArray();
 
         if(_discImage.DiscHashes.TryGetValue("sha1", out string sha1))
         {
@@ -166,10 +166,10 @@ public sealed partial class CdrWin
         if(errno != ErrorNumber.NoError)
             return null;
 
-        int    bps    = (int)(buffer.Length / length);
-        byte[] sector = new byte[bps];
+        var bps    = (int)(buffer.Length / length);
+        var sector = new byte[bps];
 
-        for(int i = 0; i < length; i++)
+        for(var i = 0; i < length; i++)
         {
             Array.Copy(buffer, i * bps, sector, 0, bps);
             bool? sectorStatus = CdChecksums.CheckCdSector(sector);
@@ -199,14 +199,15 @@ public sealed partial class CdrWin
     {
         failingLbas = new List<ulong>();
         unknownLbas = new List<ulong>();
-        var errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
+        ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
 
         if(errno != ErrorNumber.NoError)
             return null;
-        int    bps    = (int)(buffer.Length / length);
-        byte[] sector = new byte[bps];
 
-        for(int i = 0; i < length; i++)
+        var bps    = (int)(buffer.Length / length);
+        var sector = new byte[bps];
+
+        for(var i = 0; i < length; i++)
         {
             Array.Copy(buffer, i * bps, sector, 0, bps);
             bool? sectorStatus = CdChecksums.CheckCdSector(sector);

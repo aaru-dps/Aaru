@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-
-namespace Aaru.Partitions;
 
 // These partitions are hardwired in kernel sources for some UNIX versions predating System V.
 // They depend on exact device, indeed the kernel chooses what to use depending on the disk driver, so that's what we do.
@@ -49,7 +49,7 @@ public sealed class UNIX : IPartition
 {
     readonly Partition[] RA60 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -60,7 +60,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -71,7 +71,7 @@ public sealed class UNIX : IPartition
             Offset      = 4915200,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -82,7 +82,7 @@ public sealed class UNIX : IPartition
             Offset      = 15155200,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -93,7 +93,7 @@ public sealed class UNIX : IPartition
             Offset      = 15257600,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -104,7 +104,7 @@ public sealed class UNIX : IPartition
             Offset      = 18329600,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -115,7 +115,7 @@ public sealed class UNIX : IPartition
             Offset      = 18329600,
             Sequence    = 4
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -126,7 +126,7 @@ public sealed class UNIX : IPartition
             Offset      = 111353856,
             Sequence    = 5
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "maintenance area",
@@ -141,7 +141,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RA80 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -152,7 +152,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -163,7 +163,7 @@ public sealed class UNIX : IPartition
             Offset      = 4915200,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -174,7 +174,7 @@ public sealed class UNIX : IPartition
             Offset      = 15155200,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -185,7 +185,7 @@ public sealed class UNIX : IPartition
             Offset      = 15257600,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -196,7 +196,7 @@ public sealed class UNIX : IPartition
             Offset      = 18329600,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "maintenance area",
@@ -211,7 +211,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RA81 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -222,7 +222,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -233,7 +233,7 @@ public sealed class UNIX : IPartition
             Offset      = 4915200,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -244,7 +244,7 @@ public sealed class UNIX : IPartition
             Offset      = 15155200,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -255,7 +255,7 @@ public sealed class UNIX : IPartition
             Offset      = 15257600,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -266,7 +266,7 @@ public sealed class UNIX : IPartition
             Offset      = 18329600,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -277,7 +277,7 @@ public sealed class UNIX : IPartition
             Offset      = 18329600,
             Sequence    = 4
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -288,7 +288,7 @@ public sealed class UNIX : IPartition
             Offset      = 111353856,
             Sequence    = 5
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -299,7 +299,7 @@ public sealed class UNIX : IPartition
             Offset      = 204378112,
             Sequence    = 6
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "maintenance area",
@@ -314,7 +314,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RC25 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -325,7 +325,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -336,7 +336,7 @@ public sealed class UNIX : IPartition
             Offset      = 4608000,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -347,7 +347,7 @@ public sealed class UNIX : IPartition
             Offset      = 4710400,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -358,7 +358,7 @@ public sealed class UNIX : IPartition
             Offset      = 6758400,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -369,7 +369,7 @@ public sealed class UNIX : IPartition
             Offset      = 6758400,
             Sequence    = 4
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -380,7 +380,7 @@ public sealed class UNIX : IPartition
             Offset      = 6758400,
             Sequence    = 5
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "maintenance area",
@@ -395,7 +395,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RD31 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -406,7 +406,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -417,7 +417,7 @@ public sealed class UNIX : IPartition
             Offset      = 4966400,
             Sequence    = 5
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -428,7 +428,7 @@ public sealed class UNIX : IPartition
             Offset      = 5017600,
             Sequence    = 5
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -439,7 +439,7 @@ public sealed class UNIX : IPartition
             Offset      = 6553600,
             Sequence    = 6
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "maintenance area",
@@ -454,7 +454,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RD32 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -465,7 +465,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -476,7 +476,7 @@ public sealed class UNIX : IPartition
             Offset      = 4966400,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -487,7 +487,7 @@ public sealed class UNIX : IPartition
             Offset      = 13824000,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -498,7 +498,7 @@ public sealed class UNIX : IPartition
             Offset      = 13875200,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -509,7 +509,7 @@ public sealed class UNIX : IPartition
             Offset      = 15411200,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "maintenance area",
@@ -524,7 +524,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RD51 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -535,7 +535,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -546,7 +546,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -557,7 +557,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -568,7 +568,7 @@ public sealed class UNIX : IPartition
             Offset      = 6758400,
             Sequence    = 4
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "maintenance area",
@@ -583,7 +583,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RD52 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -594,7 +594,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -605,7 +605,7 @@ public sealed class UNIX : IPartition
             Offset      = 4966400,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -616,7 +616,7 @@ public sealed class UNIX : IPartition
             Offset      = 13824000,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -627,7 +627,7 @@ public sealed class UNIX : IPartition
             Offset      = 13875200,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -638,7 +638,7 @@ public sealed class UNIX : IPartition
             Offset      = 15411200,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "maintenance area",
@@ -653,7 +653,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RD53 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -664,7 +664,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -675,7 +675,7 @@ public sealed class UNIX : IPartition
             Offset      = 4966400,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -686,7 +686,7 @@ public sealed class UNIX : IPartition
             Offset      = 13824000,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -697,7 +697,7 @@ public sealed class UNIX : IPartition
             Offset      = 13875200,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -708,7 +708,7 @@ public sealed class UNIX : IPartition
             Offset      = 15411200,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "maintenance area",
@@ -723,7 +723,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RD54 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -734,7 +734,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -745,7 +745,7 @@ public sealed class UNIX : IPartition
             Offset      = 4966400,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -756,7 +756,7 @@ public sealed class UNIX : IPartition
             Offset      = 13824000,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -767,7 +767,7 @@ public sealed class UNIX : IPartition
             Offset      = 13875200,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -778,7 +778,7 @@ public sealed class UNIX : IPartition
             Offset      = 15411200,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "maintenance area",
@@ -793,7 +793,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RK06 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -804,7 +804,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -815,7 +815,7 @@ public sealed class UNIX : IPartition
             Offset      = 4055040,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -826,7 +826,7 @@ public sealed class UNIX : IPartition
             Offset      = 4106240,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -837,7 +837,7 @@ public sealed class UNIX : IPartition
             Offset      = 5609472,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "bad sector file",
@@ -852,7 +852,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RK07 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -863,7 +863,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -874,7 +874,7 @@ public sealed class UNIX : IPartition
             Offset      = 4055040,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -885,7 +885,7 @@ public sealed class UNIX : IPartition
             Offset      = 4106240,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -896,7 +896,7 @@ public sealed class UNIX : IPartition
             Offset      = 5609472,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "bad sector file",
@@ -911,7 +911,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RM02 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -922,7 +922,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -933,7 +933,7 @@ public sealed class UNIX : IPartition
             Offset      = 4669440,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -944,7 +944,7 @@ public sealed class UNIX : IPartition
             Offset      = 2764800,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -955,7 +955,7 @@ public sealed class UNIX : IPartition
             Offset      = 14909440,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -966,7 +966,7 @@ public sealed class UNIX : IPartition
             Offset      = 17776640,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -977,7 +977,7 @@ public sealed class UNIX : IPartition
             Offset      = 17776640,
             Sequence    = 4
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -988,7 +988,7 @@ public sealed class UNIX : IPartition
             Offset      = 34242560,
             Sequence    = 5
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -999,7 +999,7 @@ public sealed class UNIX : IPartition
             Offset      = 50708480,
             Sequence    = 6
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "bad sector file",
@@ -1014,7 +1014,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RM05 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -1025,7 +1025,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -1036,7 +1036,7 @@ public sealed class UNIX : IPartition
             Offset      = 5292032,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -1047,7 +1047,7 @@ public sealed class UNIX : IPartition
             Offset      = 16187392,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -1058,7 +1058,7 @@ public sealed class UNIX : IPartition
             Offset      = 16289792,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -1069,7 +1069,7 @@ public sealed class UNIX : IPartition
             Offset      = 19611648,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -1080,7 +1080,7 @@ public sealed class UNIX : IPartition
             Offset      = 19611648,
             Sequence    = 4
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -1091,7 +1091,7 @@ public sealed class UNIX : IPartition
             Offset      = 98369536,
             Sequence    = 5
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -1102,7 +1102,7 @@ public sealed class UNIX : IPartition
             Offset      = 98369536,
             Sequence    = 6
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "bad sector file",
@@ -1117,7 +1117,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RP02 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -1128,7 +1128,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -1139,7 +1139,7 @@ public sealed class UNIX : IPartition
             Offset      = 4300800,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -1150,7 +1150,7 @@ public sealed class UNIX : IPartition
             Offset      = 4352000,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -1165,7 +1165,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RP03 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -1176,7 +1176,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -1187,7 +1187,7 @@ public sealed class UNIX : IPartition
             Offset      = 4300800,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -1198,7 +1198,7 @@ public sealed class UNIX : IPartition
             Offset      = 4352000,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -1213,7 +1213,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RP04 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -1224,7 +1224,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -1235,7 +1235,7 @@ public sealed class UNIX : IPartition
             Offset      = 4922368,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -1246,7 +1246,7 @@ public sealed class UNIX : IPartition
             Offset      = 15195136,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -1257,7 +1257,7 @@ public sealed class UNIX : IPartition
             Offset      = 15297536,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -1268,7 +1268,7 @@ public sealed class UNIX : IPartition
             Offset      = 18405376,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "bad sector file",
@@ -1283,7 +1283,7 @@ public sealed class UNIX : IPartition
 
     readonly Partition[] RP06 =
     {
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/",
@@ -1294,7 +1294,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "/usr",
@@ -1305,7 +1305,7 @@ public sealed class UNIX : IPartition
             Offset      = 4922368,
             Sequence    = 1
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "error log",
@@ -1316,7 +1316,7 @@ public sealed class UNIX : IPartition
             Offset      = 15195136,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "swap",
@@ -1327,7 +1327,7 @@ public sealed class UNIX : IPartition
             Offset      = 15297536,
             Sequence    = 2
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -1338,7 +1338,7 @@ public sealed class UNIX : IPartition
             Offset      = 18405376,
             Sequence    = 3
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -1349,7 +1349,7 @@ public sealed class UNIX : IPartition
             Offset      = 18405376,
             Sequence    = 4
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "user",
@@ -1360,7 +1360,7 @@ public sealed class UNIX : IPartition
             Offset      = 87960576,
             Sequence    = 5
         },
-        new Partition
+        new()
         {
             Description = null,
             Name        = "bad sector file",
@@ -1376,7 +1376,7 @@ public sealed class UNIX : IPartition
     /// <inheritdoc />
     public string Name => "UNIX hardwired";
     /// <inheritdoc />
-    public Guid Id => new Guid("9ED7E30B-53BF-4619-87A0-5D2002155617");
+    public Guid Id => new("9ED7E30B-53BF-4619-87A0-5D2002155617");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
 
@@ -1468,7 +1468,7 @@ public sealed class UNIX : IPartition
             default: return false;
         }
 
-        for(int i = 0; i < parts.Length; i++)
+        for(var i = 0; i < parts.Length; i++)
             parts[i].Scheme = "";
 
         partitions = parts.ToList();

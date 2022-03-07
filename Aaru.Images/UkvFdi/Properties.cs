@@ -30,19 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class UkvFdi
 {
     /// <inheritdoc />
     public string Name => "Spectrum Floppy Disk Image";
     /// <inheritdoc />
-    public Guid Id => new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
+    public Guid Id => new("DADFC9B2-67C1-42A3-B124-825528163FC0");
     /// <inheritdoc />
     public string Format => "Spectrum floppy disk image";
     /// <inheritdoc />

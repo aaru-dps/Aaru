@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,8 +43,6 @@ using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Helpers;
 using Schemas;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class RsIde
 {
@@ -143,7 +143,7 @@ public sealed partial class RsIde
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -177,7 +177,7 @@ public sealed partial class RsIde
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -254,18 +254,17 @@ public sealed partial class RsIde
         {
             var ataId = new Identify.IdentifyDevice
             {
-                GeneralConfiguration =
-                    CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.UltraFastIDE |
-                    CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed        |
-                    CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM       | CommonTypes.Structs.
-                        Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
-                Cylinders = (ushort)_imageInfo.Cylinders,
-                Heads = (ushort)_imageInfo.Heads,
+                GeneralConfiguration = CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.UltraFastIDE |
+                                       CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed        |
+                                       CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM       |
+                                       CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
+                Cylinders       = (ushort)_imageInfo.Cylinders,
+                Heads           = (ushort)_imageInfo.Heads,
                 SectorsPerTrack = (ushort)_imageInfo.SectorsPerTrack,
-                VendorWord47 = 0x80,
+                VendorWord47    = 0x80,
                 Capabilities = CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.DMASupport |
-                               CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY | CommonTypes.Structs.
-                                   Devices.ATA.Identify.CapabilitiesBit.LBASupport,
+                               CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY      |
+                               CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.LBASupport,
                 ExtendedIdentify       = CommonTypes.Structs.Devices.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
                 CurrentCylinders       = (ushort)_imageInfo.Cylinders,
                 CurrentHeads           = (ushort)_imageInfo.Heads,
@@ -288,17 +287,16 @@ public sealed partial class RsIde
             if(string.IsNullOrEmpty(_imageInfo.DriveSerialNumber))
                 _imageInfo.DriveSerialNumber = $"{new Random().NextDouble():16X}";
 
-            byte[] ataIdBytes = new byte[Marshal.SizeOf<Identify.IdentifyDevice>()];
+            var    ataIdBytes = new byte[Marshal.SizeOf<Identify.IdentifyDevice>()];
             IntPtr ptr        = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
             System.Runtime.InteropServices.Marshal.StructureToPtr(ataId, ptr, true);
 
-            System.Runtime.InteropServices.Marshal.Copy(ptr, ataIdBytes, 0,
-                                                        Marshal.SizeOf<Identify.IdentifyDevice>());
+            System.Runtime.InteropServices.Marshal.Copy(ptr, ataIdBytes, 0, Marshal.SizeOf<Identify.IdentifyDevice>());
 
             System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
 
-            Array.Copy(ScrambleAtaString(_imageInfo.DriveManufacturer + " " + _imageInfo.DriveModel, 40), 0,
-                       ataIdBytes, 27 * 2, 40);
+            Array.Copy(ScrambleAtaString(_imageInfo.DriveManufacturer + " " + _imageInfo.DriveModel, 40), 0, ataIdBytes,
+                       27 * 2, 40);
 
             Array.Copy(ScrambleAtaString(_imageInfo.DriveFirmwareRevision, 8), 0, ataIdBytes, 23 * 2, 8);
             Array.Copy(ScrambleAtaString(_imageInfo.DriveSerialNumber, 20), 0, ataIdBytes, 10    * 2, 20);
@@ -307,7 +305,7 @@ public sealed partial class RsIde
         else
             Array.Copy(_identify, 0, header.identify, 0, 106);
 
-        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+        var    hdr    = new byte[Marshal.SizeOf<Header>()];
         IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);

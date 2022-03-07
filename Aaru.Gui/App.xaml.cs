@@ -30,6 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
+
+namespace Aaru.Gui;
+
 using System;
 using Aaru.Gui.ViewModels.Windows;
 using Aaru.Gui.Views.Windows;
@@ -37,11 +44,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-
-// ReSharper disable UnusedMember.Local
-// ReSharper disable UnusedParameter.Local
-
-namespace Aaru.Gui;
 
 public sealed class App : Application
 {
@@ -84,9 +86,9 @@ public sealed class App : Application
     void OnAboutClicked(object sender, EventArgs args)
     {
         if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
-                {
-                    MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
-                }))
+                                    {
+                                        MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
+                                    }))
             return;
 
         mainWindowViewModel.ExecuteAboutCommand();
@@ -95,9 +97,9 @@ public sealed class App : Application
     void OnQuitClicked(object sender, EventArgs args)
     {
         if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
-                {
-                    MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
-                }))
+                                    {
+                                        MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
+                                    }))
             return;
 
         mainWindowViewModel.ExecuteExitCommand();
@@ -106,9 +108,9 @@ public sealed class App : Application
     void OnPreferencesClicked(object sender, EventArgs args)
     {
         if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
-                {
-                    MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
-                }))
+                                    {
+                                        MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
+                                    }))
             return;
 
         mainWindowViewModel.ExecuteSettingsCommand();

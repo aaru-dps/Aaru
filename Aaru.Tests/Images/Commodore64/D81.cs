@@ -26,19 +26,18 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Images.Commodore64;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images.Commodore64;
-
 [TestFixture]
 public class D81 : BlockMediaImageTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Commodore D81");
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Commodore D81");
     public override IMediaImage _plugin => new ZZZRawImage();
 
     public override BlockImageTestExpected[] Tests => new[]

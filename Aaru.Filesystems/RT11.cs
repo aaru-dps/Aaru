@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,8 +43,6 @@ using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information from http://www.trailing-edge.com/~shoppa/rt11fs/
 /// <inheritdoc />
@@ -66,7 +66,7 @@ public sealed class RT11 : IFilesystem
         if(1 + partition.Start >= partition.End)
             return false;
 
-        byte[]      magicB = new byte[12];
+        var         magicB = new byte[12];
         ErrorNumber errno  = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
 
         if(errno != ErrorNumber.NoError)
@@ -82,8 +82,7 @@ public sealed class RT11 : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = new Radix50();
         information = "";
@@ -108,14 +107,13 @@ public sealed class RT11 : IFilesystem
          */
         ushort check = 0;
 
-        for(int i = 0; i < 512; i += 2)
+        for(var i = 0; i < 512; i += 2)
             check += BitConverter.ToUInt16(hbSector, i);
 
-        sb.AppendFormat("Volume format is {0}",
-                        StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII)).AppendLine();
-
-        sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512).
+        sb.AppendFormat("Volume format is {0}", StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII)).
            AppendLine();
+
+        sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512).AppendLine();
 
         sb.AppendFormat("First directory segment starts at block {0}", homeblock.rootBlock).AppendLine();
         sb.AppendFormat("Volume owner is \"{0}\"", Encoding.GetString(homeblock.ownername).TrimEnd()).AppendLine();

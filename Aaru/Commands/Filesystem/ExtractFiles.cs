@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Filesystem;
+
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -46,9 +48,7 @@ using JetBrains.Annotations;
 using Spectre.Console;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace Aaru.Commands.Filesystem;
-
-internal sealed class ExtractFilesCommand : Command
+sealed class ExtractFilesCommand : Command
 {
     const long BUFFER_SIZE = 16777216;
 
@@ -116,7 +116,7 @@ internal sealed class ExtractFilesCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -150,7 +150,7 @@ internal sealed class ExtractFilesCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -195,7 +195,7 @@ internal sealed class ExtractFilesCommand : Command
             IMediaImage imageFormat = null;
             IBaseImage  baseImage   = null;
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Identifying image format...").IsIndeterminate();
                 baseImage   = ImageFormat.Detect(inputFilter);
@@ -242,7 +242,7 @@ internal sealed class ExtractFilesCommand : Command
             {
                 ErrorNumber opened = ErrorNumber.NoData;
 
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Opening image file...").IsIndeterminate();
                     opened = imageFormat.Open(inputFilter);
@@ -280,13 +280,13 @@ internal sealed class ExtractFilesCommand : Command
 
             List<Partition> partitions = null;
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Enumerating partitions...").IsIndeterminate();
-                partitions = Core.Partitions.GetAll(imageFormat);
+                partitions = Partitions.GetAll(imageFormat);
             });
 
-            Core.Partitions.AddSchemesToStats(partitions);
+            Partitions.AddSchemesToStats(partitions);
 
             if(partitions.Count == 0)
             {
@@ -305,17 +305,17 @@ internal sealed class ExtractFilesCommand : Command
 
             AaruConsole.WriteLine("{0} partitions found.", partitions.Count);
 
-            for(int i = 0; i < partitions.Count; i++)
+            for(var i = 0; i < partitions.Count; i++)
             {
                 AaruConsole.WriteLine();
                 AaruConsole.WriteLine("[bold]Partition {0}:[/]", partitions[i].Sequence);
 
                 List<string> idPlugins = null;
 
-                Core.Spectre.ProgressSingleSpinner(ctx =>
+                Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Identifying filesystems on partition...").IsIndeterminate();
-                    Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                    Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
                 });
 
                 if(idPlugins.Count == 0)
@@ -338,7 +338,7 @@ internal sealed class ExtractFilesCommand : Command
                                                                      Invoke(new object[]
                                                                                 {});
 
-                                Core.Spectre.ProgressSingleSpinner(ctx =>
+                                Spectre.ProgressSingleSpinner(ctx =>
                                 {
                                     ctx.AddTask("Mounting filesystem...").IsIndeterminate();
 
@@ -372,7 +372,7 @@ internal sealed class ExtractFilesCommand : Command
                                                              Invoke(new object[]
                                                                         {});
 
-                        Core.Spectre.ProgressSingleSpinner(ctx =>
+                        Spectre.ProgressSingleSpinner(ctx =>
                         {
                             ctx.AddTask("Mounting filesystem...").IsIndeterminate();
                             error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
@@ -423,7 +423,7 @@ internal sealed class ExtractFilesCommand : Command
         {
             FileEntryInfo stat = new();
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
+            Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Retrieving file information...").IsIndeterminate();
                 error = fs.Stat(path + "/" + entry, out stat);
@@ -486,7 +486,7 @@ internal sealed class ExtractFilesCommand : Command
                 {
                     List<string> xattrs = null;
 
-                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                    Spectre.ProgressSingleSpinner(ctx =>
                     {
                         ctx.AddTask("Listing extended attributes...").IsIndeterminate();
                         error = fs.ListXAttr(path + "/" + entry, out xattrs);
@@ -497,7 +497,7 @@ internal sealed class ExtractFilesCommand : Command
                         {
                             byte[] xattrBuf = Array.Empty<byte>();
 
-                            Core.Spectre.ProgressSingleSpinner(ctx =>
+                            Spectre.ProgressSingleSpinner(ctx =>
                             {
                                 ctx.AddTask("Reading extended attribute...").IsIndeterminate();
                                 error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
@@ -514,7 +514,7 @@ internal sealed class ExtractFilesCommand : Command
 
                             if(!File.Exists(outputPath))
                             {
-                                Core.Spectre.ProgressSingleSpinner(ctx =>
+                                Spectre.ProgressSingleSpinner(ctx =>
                                 {
                                     ctx.AddTask("Writing extended attribute...").IsIndeterminate();
 

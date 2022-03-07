@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Gdi
 {
@@ -47,14 +47,14 @@ public sealed partial class Gdi
         try
         {
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
-            byte[] testArray = new byte[512];
+            var testArray = new byte[512];
             imageFilter.GetDataForkStream().Read(testArray, 0, 512);
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
 
             // Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
-            bool twoConsecutiveNulls = false;
+            var twoConsecutiveNulls = false;
 
-            for(int i = 0; i < 512; i++)
+            for(var i = 0; i < 512; i++)
             {
                 if(i >= imageFilter.GetDataForkStream().Length)
                     break;
@@ -77,9 +77,9 @@ public sealed partial class Gdi
             }
 
             _gdiStream = new StreamReader(imageFilter.GetDataForkStream());
-            int lineNumber  = 0;
-            int tracksFound = 0;
-            int tracks      = 0;
+            var lineNumber  = 0;
+            var tracksFound = 0;
+            var tracks      = 0;
 
             while(_gdiStream.Peek() >= 0)
             {

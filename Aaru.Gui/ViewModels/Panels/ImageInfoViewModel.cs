@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Panels;
+
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -57,8 +59,6 @@ using ReactiveUI;
 using Schemas;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
-
-namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class ImageInfoViewModel : ViewModelBase
 {
@@ -278,7 +278,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 2 != toc.Length)
                 {
-                    byte[] tmp = new byte[toc.Length + 2];
+                    var tmp = new byte[toc.Length + 2];
                     Array.Copy(toc, 0, tmp, 2, toc.Length);
                     tmp[0] = (byte)((toc.Length & 0xFF00) >> 8);
                     tmp[1] = (byte)(toc.Length & 0xFF);
@@ -300,7 +300,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 2 != fullToc.Length)
                 {
-                    byte[] tmp = new byte[fullToc.Length + 2];
+                    var tmp = new byte[fullToc.Length + 2];
                     Array.Copy(fullToc, 0, tmp, 2, fullToc.Length);
                     tmp[0]  = (byte)((fullToc.Length & 0xFF00) >> 8);
                     tmp[1]  = (byte)(fullToc.Length & 0xFF);
@@ -322,7 +322,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 2 != pma.Length)
                 {
-                    byte[] tmp = new byte[pma.Length + 2];
+                    var tmp = new byte[pma.Length + 2];
                     Array.Copy(pma, 0, tmp, 2, pma.Length);
                     tmp[0] = (byte)((pma.Length & 0xFF00) >> 8);
                     tmp[1] = (byte)(pma.Length & 0xFF);
@@ -341,7 +341,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 4 != atip.Length)
                 {
-                    byte[] tmp = new byte[atip.Length + 4];
+                    var tmp = new byte[atip.Length + 4];
                     Array.Copy(atip, 0, tmp, 4, atip.Length);
                     tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
                     tmp[1] = (byte)((atip.Length & 0xFF0000)   >> 16);
@@ -364,7 +364,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 4 != cdtext.Length)
                 {
-                    byte[] tmp = new byte[cdtext.Length + 4];
+                    var tmp = new byte[cdtext.Length + 4];
                     Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
                     tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
                     tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);
@@ -486,11 +486,10 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             DataContext = new DvdWritableInfoViewModel(imageFormat.Info.MediaType, dvdRamDds, dvdRamCartridgeStatus,
                                                        dvdRamSpareArea, lastBorderOutRmd, dvdPreRecordedInfo,
-                                                       dvdrMediaIdentifier, dvdrPhysicalInformation,
-                                                       hddvdrMediumStatus, null, dvdrLayerCapacity,
-                                                       dvdrDlMiddleZoneStart, dvdrDlJumpIntervalSize,
-                                                       dvdrDlManualLayerJumpStartLba, null, dvdPlusAdip, dvdPlusDcb,
-                                                       view)
+                                                       dvdrMediaIdentifier, dvdrPhysicalInformation, hddvdrMediumStatus,
+                                                       null, dvdrLayerCapacity, dvdrDlMiddleZoneStart,
+                                                       dvdrDlJumpIntervalSize, dvdrDlManualLayerJumpStartLba, null,
+                                                       dvdPlusAdip, dvdPlusDcb, view)
         };
 
         byte[] blurayBurstCuttingArea     = null;
@@ -525,8 +524,8 @@ public sealed class ImageInfoViewModel : ViewModelBase
         BlurayInfo = new BlurayInfo
         {
             DataContext = new BlurayInfoViewModel(blurayDiscInformation, blurayBurstCuttingArea, blurayDds,
-                                                  blurayCartridgeStatus, bluraySpareAreaInformation,
-                                                  blurayPowResources, blurayTrackResources, null, null, view)
+                                                  blurayCartridgeStatus, bluraySpareAreaInformation, blurayPowResources,
+                                                  blurayTrackResources, null, null, view)
         };
 
         byte[]             xboxDmi                   = null;

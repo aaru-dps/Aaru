@@ -31,12 +31,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class WCDiskImage
 {
@@ -46,7 +46,7 @@ public sealed partial class WCDiskImage
     /// <inheritdoc />
     public string Name => "d2f disk image";
     /// <inheritdoc />
-    public Guid Id => new Guid("DDE01493-BCA2-41C2-A269-7E56D3716D2F");
+    public Guid Id => new("DDE01493-BCA2-41C2-A269-7E56D3716D2F");
     /// <inheritdoc />
     public string Author => "Michael Drüing";
     /// <inheritdoc />

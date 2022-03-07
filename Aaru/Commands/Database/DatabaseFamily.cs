@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.CommandLine;
-
 namespace Aaru.Commands.Database;
 
-internal sealed class DatabaseFamily : Command
+using System.CommandLine;
+
+sealed class DatabaseFamily : Command
 {
     internal DatabaseFamily(bool mainDbUpdate) : base("database",
                                                       "Commands to manage the device and statistics database")

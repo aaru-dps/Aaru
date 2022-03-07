@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
@@ -39,8 +41,6 @@ using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class DiskCopy42
 {
     /// <inheritdoc />
@@ -48,8 +48,8 @@ public sealed partial class DiskCopy42
                        uint sectorSize)
     {
         header = new Header();
-        bool tags   = false;
-        bool macosx = false;
+        var tags   = false;
+        var macosx = false;
 
         if(options != null &&
            options.TryGetValue("macosx", out string tmpOption))
@@ -246,7 +246,7 @@ public sealed partial class DiskCopy42
             return false;
         }
 
-        writingStream.Seek((long)(dataOffset + (sectorAddress * 512)), SeekOrigin.Begin);
+        writingStream.Seek((long)(dataOffset + sectorAddress * 512), SeekOrigin.Begin);
         writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -278,7 +278,7 @@ public sealed partial class DiskCopy42
             return false;
         }
 
-        writingStream.Seek((long)(dataOffset + (sectorAddress * 512)), SeekOrigin.Begin);
+        writingStream.Seek((long)(dataOffset + sectorAddress * 512), SeekOrigin.Begin);
         writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -317,9 +317,9 @@ public sealed partial class DiskCopy42
             return false;
         }
 
-        writingStream.Seek((long)(dataOffset + (sectorAddress * 512)), SeekOrigin.Begin);
+        writingStream.Seek((long)(dataOffset + sectorAddress * 512), SeekOrigin.Begin);
         writingStream.Write(data, 0, 512);
-        writingStream.Seek((long)(tagOffset + (sectorAddress * 12)), SeekOrigin.Begin);
+        writingStream.Seek((long)(tagOffset + sectorAddress * 12), SeekOrigin.Begin);
         writingStream.Write(data, 512, 12);
 
         ErrorMessage = "";
@@ -360,12 +360,12 @@ public sealed partial class DiskCopy42
 
         for(uint i = 0; i < length; i++)
         {
-            writingStream.Seek((long)(dataOffset + ((sectorAddress + i) * 512)), SeekOrigin.Begin);
-            writingStream.Write(data, (int)((i                          * 524) + 0), 512);
+            writingStream.Seek((long)(dataOffset + (sectorAddress + i) * 512), SeekOrigin.Begin);
+            writingStream.Write(data, (int)(i                          * 524 + 0), 512);
 
-            writingStream.Seek((long)(tagOffset + ((sectorAddress + i) * 12)), SeekOrigin.Begin);
+            writingStream.Seek((long)(tagOffset + (sectorAddress + i) * 12), SeekOrigin.Begin);
 
-            writingStream.Write(data, (int)((i * 524) + 512), 12);
+            writingStream.Write(data, (int)(i * 524 + 512), 12);
         }
 
         ErrorMessage = "";
@@ -388,7 +388,7 @@ public sealed partial class DiskCopy42
             header.TagSize = 0;
 
         writingStream.Seek(0x54, SeekOrigin.Begin);
-        byte[] data = new byte[header.DataSize];
+        var data = new byte[header.DataSize];
         writingStream.Read(data, 0, (int)header.DataSize);
         header.DataChecksum = CheckSum(data);
         writingStream.Seek(0x54 + header.DataSize, SeekOrigin.Begin);

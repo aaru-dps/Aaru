@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class CopyQm
 {
@@ -44,7 +44,7 @@ public sealed partial class CopyQm
     /// <inheritdoc />
     public string Name => "Sydex CopyQM";
     /// <inheritdoc />
-    public Guid Id => new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
+    public Guid Id => new("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
     /// <inheritdoc />
     public string Format => "Sydex CopyQM";
     /// <inheritdoc />

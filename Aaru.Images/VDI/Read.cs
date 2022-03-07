@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Vdi
 {
@@ -53,7 +53,7 @@ public sealed partial class Vdi
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] vHdrB = new byte[Marshal.SizeOf<Header>()];
+        var vHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
         _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
@@ -97,7 +97,7 @@ public sealed partial class Vdi
         DateTime start = DateTime.UtcNow;
         AaruConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
         stream.Seek(_vHdr.offsetBlocks, SeekOrigin.Begin);
-        byte[] ibmB = new byte[_vHdr.blocks * 4];
+        var ibmB = new byte[_vHdr.blocks * 4];
         stream.Read(ibmB, 0, ibmB.Length);
         _ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
         DateTime end = DateTime.UtcNow;
@@ -218,9 +218,9 @@ public sealed partial class Vdi
             return ErrorNumber.NoError;
         }
 
-        ulong imageOff = _vHdr.offsetData + ((ulong)ibmOff * _vHdr.blockSize);
+        ulong imageOff = _vHdr.offsetData + (ulong)ibmOff * _vHdr.blockSize;
 
-        byte[] cluster = new byte[_vHdr.blockSize];
+        var cluster = new byte[_vHdr.blockSize];
         _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
         _imageStream.Read(cluster, 0, (int)_vHdr.blockSize);
         buffer = new byte[_vHdr.sectorSize];

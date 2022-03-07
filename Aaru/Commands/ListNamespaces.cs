@@ -30,6 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands;
+
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -41,12 +44,10 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 
-namespace Aaru.Commands;
-
-internal sealed class ListNamespacesCommand : Command
+sealed class ListNamespacesCommand : Command
 {
-    public ListNamespacesCommand() : base("list-namespaces",
-                                          "Lists all namespaces supported by read-only filesystems.") =>
+    public ListNamespacesCommand() :
+        base("list-namespaces", "Lists all namespaces supported by read-only filesystems.") =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
     public static int Invoke(bool debug, bool verbose)
@@ -57,7 +58,7 @@ internal sealed class ListNamespacesCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>

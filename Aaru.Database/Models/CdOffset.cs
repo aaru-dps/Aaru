@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace Aaru.Database.Models;
+
+using System;
 
 /// <inheritdoc />
 /// <summary>CD read offset</summary>

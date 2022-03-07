@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -43,8 +45,6 @@ using Claunia.Encoding;
 using Claunia.RsrcFork;
 using Version = Resources.Version;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class Dart
 {
     /// <inheritdoc />
@@ -56,7 +56,7 @@ public sealed partial class Dart
             return ErrorNumber.InvalidArgument;
 
         stream.Seek(0, SeekOrigin.Begin);
-        byte[] headerB = new byte[Marshal.SizeOf<Header>()];
+        var headerB = new byte[Marshal.SizeOf<Header>()];
 
         stream.Read(headerB, 0, Marshal.SizeOf<Header>());
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
@@ -64,7 +64,7 @@ public sealed partial class Dart
         if(header.srcCmp > COMPRESS_NONE)
             return ErrorNumber.NotSupported;
 
-        int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
+        int expectedMaxSize = 84 + header.srcSize * 2 * 524;
 
         switch(header.srcType)
         {
@@ -117,9 +117,9 @@ public sealed partial class Dart
         else
             bLength = new short[BLOCK_ARRAY_LEN_LOW];
 
-        for(int i = 0; i < bLength.Length; i++)
+        for(var i = 0; i < bLength.Length; i++)
         {
-            byte[] tmpShort = new byte[2];
+            var tmpShort = new byte[2];
             stream.Read(tmpShort, 0, 2);
             bLength[i] = BigEndianBitConverter.ToInt16(tmpShort, 0);
         }
@@ -130,7 +130,7 @@ public sealed partial class Dart
         foreach(short l in bLength)
             if(l != 0)
             {
-                byte[] buffer = new byte[BUFFER_SIZE];
+                var buffer = new byte[BUFFER_SIZE];
 
                 if(l == -1)
                 {
@@ -323,8 +323,7 @@ public sealed partial class Dart
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
@@ -343,8 +342,7 @@ public sealed partial class Dart
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
-        Array.Copy(_dataCache, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0,
-                   length                         * _imageInfo.SectorSize);
+        Array.Copy(_dataCache, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0, length * _imageInfo.SectorSize);
 
         return ErrorNumber.NoError;
     }
@@ -407,7 +405,7 @@ public sealed partial class Dart
                        _imageInfo.SectorSize);
 
             Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
-                       (i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE)) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
+                       i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
         }
 
         return ErrorNumber.NoError;

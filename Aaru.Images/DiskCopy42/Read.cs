@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -42,8 +44,6 @@ using Claunia.Encoding;
 using Claunia.RsrcFork;
 using Version = Resources.Version;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class DiskCopy42
 {
     /// <inheritdoc />
@@ -51,8 +51,8 @@ public sealed partial class DiskCopy42
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
-        byte[] buffer  = new byte[0x58];
-        byte[] pString = new byte[64];
+        var buffer  = new byte[0x58];
+        var pString = new byte[64];
         stream.Read(buffer, 0, 0x58);
         IsWriting = false;
 
@@ -123,8 +123,7 @@ public sealed partial class DiskCopy42
            header.FmtByte != kFmtNotStandard           &&
            header.FmtByte != kMacOSXFmtByte)
         {
-            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value",
-                                       header.FmtByte);
+            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", header.FmtByte);
 
             return ErrorNumber.NotSupported;
         }
@@ -161,7 +160,7 @@ public sealed partial class DiskCopy42
             imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
         }
 
-        imageInfo.ImageSize            = (imageInfo.Sectors * imageInfo.SectorSize) + (imageInfo.Sectors * bptag);
+        imageInfo.ImageSize            = imageInfo.Sectors * imageInfo.SectorSize + imageInfo.Sectors * bptag;
         imageInfo.CreationTime         = imageFilter.CreationTime;
         imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         imageInfo.MediaTitle           = header.DiskName;
@@ -226,8 +225,8 @@ public sealed partial class DiskCopy42
 
         if(imageInfo.MediaType == MediaType.AppleFileWare)
         {
-            byte[] data = new byte[header.DataSize];
-            byte[] tags = new byte[header.TagSize];
+            var data = new byte[header.DataSize];
+            var tags = new byte[header.TagSize];
 
             twiggyCache     = new byte[header.DataSize];
             twiggyCacheTags = new byte[header.TagSize];
@@ -241,8 +240,8 @@ public sealed partial class DiskCopy42
             tagStream.Seek(tagOffset, SeekOrigin.Begin);
             tagStream.Read(tags, 0, (int)header.TagSize);
 
-            ushort mfsMagic     = BigEndianBitConverter.ToUInt16(data, (data.Length / 2) + 0x400);
-            ushort mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, (data.Length / 2) + 0x412);
+            var mfsMagic     = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x400);
+            var mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x412);
 
             // Detect a Macintosh Twiggy
             if(mfsMagic     == 0xD2D7 &&
@@ -260,10 +259,10 @@ public sealed partial class DiskCopy42
                 Array.Copy(data, 0, twiggyCache, 0, header.DataSize    / 2);
                 Array.Copy(tags, 0, twiggyCacheTags, 0, header.TagSize / 2);
 
-                int copiedSectors = 0;
-                int sectorsToCopy = 0;
+                var copiedSectors = 0;
+                var sectorsToCopy = 0;
 
-                for(int i = 0; i < 46; i++)
+                for(var i = 0; i < 46; i++)
                 {
                     if(i >= 0 &&
                        i <= 3)
@@ -297,12 +296,11 @@ public sealed partial class DiskCopy42
                        i <= 45)
                         sectorsToCopy = 15;
 
-                    Array.Copy(data, (header.DataSize / 2) + (copiedSectors * 512), twiggyCache,
-                               twiggyCache.Length          - (copiedSectors * 512) - (sectorsToCopy * 512),
-                               sectorsToCopy * 512);
+                    Array.Copy(data, header.DataSize / 2 + copiedSectors * 512, twiggyCache,
+                               twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
 
-                    Array.Copy(tags, (header.TagSize / 2) + (copiedSectors * bptag), twiggyCacheTags,
-                               twiggyCacheTags.Length     - (copiedSectors * bptag) - (sectorsToCopy * bptag),
+                    Array.Copy(tags, header.TagSize / 2 + copiedSectors * bptag, twiggyCacheTags,
+                               twiggyCacheTags.Length   - copiedSectors * bptag - sectorsToCopy * bptag,
                                sectorsToCopy * bptag);
 
                     copiedSectors += sectorsToCopy;
@@ -467,8 +465,7 @@ public sealed partial class DiskCopy42
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
@@ -493,7 +490,7 @@ public sealed partial class DiskCopy42
         else
         {
             Stream stream = dc42ImageFilter.GetDataForkStream();
-            stream.Seek((long)(dataOffset + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
+            stream.Seek((long)(dataOffset + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
             stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
         }
 
@@ -524,7 +521,7 @@ public sealed partial class DiskCopy42
         else
         {
             Stream stream = dc42ImageFilter.GetDataForkStream();
-            stream.Seek((long)(tagOffset + (sectorAddress * bptag)), SeekOrigin.Begin);
+            stream.Seek((long)(tagOffset + sectorAddress * bptag), SeekOrigin.Begin);
             stream.Read(buffer, 0, (int)(length * bptag));
         }
 
@@ -563,7 +560,7 @@ public sealed partial class DiskCopy42
             Array.Copy(data, i * imageInfo.SectorSize, buffer, i * (imageInfo.SectorSize + bptag),
                        imageInfo.SectorSize);
 
-            Array.Copy(tags, i * bptag, buffer, (i * (imageInfo.SectorSize + bptag)) + imageInfo.SectorSize, bptag);
+            Array.Copy(tags, i * bptag, buffer, i * (imageInfo.SectorSize + bptag) + imageInfo.SectorSize, bptag);
         }
 
         return ErrorNumber.NoError;

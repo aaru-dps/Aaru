@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -40,8 +42,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the Locus filesystem</summary>
@@ -76,9 +76,9 @@ public sealed class RBF : IFilesystem
                     0, 4, 15
                 })
         {
-            ulong location = (ulong)i;
+            var location = (ulong)i;
 
-            uint sbSize = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<IdSector>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -98,8 +98,8 @@ public sealed class RBF : IFilesystem
             NewIdSector rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<NewIdSector>(sector);
 
             AaruConsole.DebugWriteLine("RBF plugin",
-                                       "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
-                                       location, rbfSb.dd_sync, rbf9000Sb.rid_sync, RBF_SYNC, RBF_CNYS);
+                                       "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})", location,
+                                       rbfSb.dd_sync, rbf9000Sb.rid_sync, RBF_SYNC, RBF_CNYS);
 
             if(rbfSb.dd_sync      == RBF_SYNC ||
                rbf9000Sb.rid_sync == RBF_SYNC ||
@@ -111,8 +111,7 @@ public sealed class RBF : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -128,8 +127,8 @@ public sealed class RBF : IFilesystem
                     0, 4, 15
                 })
         {
-            ulong location = (ulong)i;
-            uint  sbSize   = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
+            var location = (ulong)i;
+            var sbSize   = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<IdSector>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -146,8 +145,8 @@ public sealed class RBF : IFilesystem
             rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<NewIdSector>(sector);
 
             AaruConsole.DebugWriteLine("RBF plugin",
-                                       "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
-                                       location, rbfSb.dd_sync, rbf9000Sb.rid_sync, RBF_SYNC, RBF_CNYS);
+                                       "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})", location,
+                                       rbfSb.dd_sync, rbf9000Sb.rid_sync, RBF_SYNC, RBF_CNYS);
 
             if(rbfSb.dd_sync      == RBF_SYNC ||
                rbf9000Sb.rid_sync == RBF_SYNC ||
@@ -180,8 +179,7 @@ public sealed class RBF : IFilesystem
             // TODO: Convert to flags?
             sb.AppendLine((rbf9000Sb.rid_format & 0x01) == 0x01 ? "Disk is double sided" : "Disk is single sided");
 
-            sb.AppendLine((rbf9000Sb.rid_format & 0x02) == 0x02 ? "Disk is double density"
-                              : "Disk is single density");
+            sb.AppendLine((rbf9000Sb.rid_format & 0x02) == 0x02 ? "Disk is double density" : "Disk is single density");
 
             if((rbf9000Sb.rid_format & 0x10) == 0x10)
                 sb.AppendLine("Disk is 384 TPI");
@@ -206,14 +204,12 @@ public sealed class RBF : IFilesystem
             sb.AppendFormat("Disk is owned by group {0} user {1}", rbf9000Sb.rid_group, rbf9000Sb.rid_owner).
                AppendLine();
 
-            sb.AppendFormat("Volume was created on {0}", DateHandlers.UnixToDateTime(rbf9000Sb.rid_ctime)).
-               AppendLine();
+            sb.AppendFormat("Volume was created on {0}", DateHandlers.UnixToDateTime(rbf9000Sb.rid_ctime)).AppendLine();
 
             sb.AppendFormat("Volume's identification block was last written on {0}",
                             DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime)).AppendLine();
 
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbf9000Sb.rid_name, Encoding)).
-               AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(rbf9000Sb.rid_name, Encoding)).AppendLine();
 
             XmlFsType = new FileSystemType
             {
@@ -263,8 +259,7 @@ public sealed class RBF : IFilesystem
                 sb.AppendFormat("Boot file starts at block {0} and has {1} bytes", LSNToUInt32(rbfSb.dd_bt),
                                 rbfSb.dd_bsz).AppendLine();
 
-            sb.AppendFormat("Root directory descriptor starts at block {0}", LSNToUInt32(rbfSb.dd_dir)).
-               AppendLine();
+            sb.AppendFormat("Root directory descriptor starts at block {0}", LSNToUInt32(rbfSb.dd_dir)).AppendLine();
 
             sb.AppendFormat("Disk is owned by user {0}", rbfSb.dd_own).AppendLine();
             sb.AppendFormat("Volume was created on {0}", DateHandlers.Os9ToDateTime(rbfSb.dd_dat)).AppendLine();

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Tabs;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
@@ -38,8 +40,6 @@ using Aaru.Decoders.DVD;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class DvdInfoViewModel
 {
@@ -51,9 +51,8 @@ public sealed class DvdInfoViewModel
     readonly byte[] _hddvdCopyrightInformation;
     readonly Window _view;
 
-    public DvdInfoViewModel(MediaType mediaType, [CanBeNull] byte[] pfi, [CanBeNull] byte[] dmi,
-                            [CanBeNull] byte[] cmi, [CanBeNull] byte[] hdCopyrightInformation,
-                            [CanBeNull] byte[] bca, [CanBeNull] byte[] aacs,
+    public DvdInfoViewModel(MediaType mediaType, [CanBeNull] byte[] pfi, [CanBeNull] byte[] dmi, [CanBeNull] byte[] cmi,
+                            [CanBeNull] byte[] hdCopyrightInformation, [CanBeNull] byte[] bca, [CanBeNull] byte[] aacs,
                             PFI.PhysicalFormatInformation? decodedPfi, Window view)
     {
         _dvdPfi                    = pfi;

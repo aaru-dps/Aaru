@@ -30,19 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Dart
 {
     /// <inheritdoc />
     public string Name => "Apple Disk Archival/Retrieval Tool";
     /// <inheritdoc />
-    public Guid Id => new Guid("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
+    public Guid Id => new("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />

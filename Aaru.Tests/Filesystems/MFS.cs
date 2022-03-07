@@ -26,23 +26,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems;
-
 [TestFixture]
 public class Mfs : ReadOnlyFilesystemTest
 {
     public Mfs() : base("MFS") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                      "Macintosh File System");
-    public override IFilesystem Plugin     => new AppleMFS();
-    public override bool        Partitions => false;
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Macintosh File System");
+    public override IFilesystem Plugin => new AppleMFS();
+    public override bool Partitions => false;
 
     public override FileSystemTest[] Tests => new[]
     {

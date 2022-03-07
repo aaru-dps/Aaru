@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class AppleNib
 {
@@ -45,7 +45,7 @@ public sealed partial class AppleNib
     /// <inheritdoc />
     public string Name => "Apple NIB";
     /// <inheritdoc />
-    public Guid Id => new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");
+    public Guid Id => new("AE171AE8-6747-49CC-B861-9D450B7CD42E");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

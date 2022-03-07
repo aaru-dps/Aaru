@@ -30,6 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Commands.Image;
+
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using Aaru.CommonTypes;
@@ -42,9 +45,7 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Spectre.Console;
 
-namespace Aaru.Commands.Image;
-
-internal sealed class DecodeCommand : Command
+sealed class DecodeCommand : Command
 {
     public DecodeCommand() : base("decode", "Decodes and pretty prints disk and/or sector tags.")
     {
@@ -103,7 +104,7 @@ internal sealed class DecodeCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -137,7 +138,7 @@ internal sealed class DecodeCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -153,7 +154,7 @@ internal sealed class DecodeCommand : Command
         IMediaImage inputFormat = null;
         IBaseImage  baseImage   = null;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             baseImage   = ImageFormat.Detect(inputFilter);
@@ -176,7 +177,7 @@ internal sealed class DecodeCommand : Command
 
         ErrorNumber opened = ErrorNumber.NoData;
 
-        Core.Spectre.ProgressSingleSpinner(ctx =>
+        Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
             opened = inputFormat.Open(inputFilter);

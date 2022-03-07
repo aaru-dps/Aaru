@@ -26,18 +26,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Devices;
+
+using System;
 using Aaru.Console;
 using Aaru.Devices;
 using Aaru.Helpers;
 
-namespace Aaru.Tests.Devices;
-
-internal static partial class MainClass
+static partial class MainClass
 {
     public static void Device(string devPath)
     {
         AaruConsole.WriteLine("Going to open {0}. Press any key to continue...", devPath);
-        System.Console.ReadKey();
+        Console.ReadKey();
 
         var dev = new Device(devPath);
 
@@ -59,8 +60,7 @@ internal static partial class MainClass
             AaruConsole.WriteLine("dev.USBVendorID = 0x{0:X4}", dev.UsbVendorId);
             AaruConsole.WriteLine("dev.USBProductID = 0x{0:X4}", dev.UsbProductId);
 
-            AaruConsole.WriteLine("dev.USBDescriptors.Length = {0}",
-                                  dev.UsbDescriptors?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("dev.USBDescriptors.Length = {0}", dev.UsbDescriptors?.Length.ToString() ?? "null");
 
             AaruConsole.WriteLine("dev.USBManufacturerString = \"{0}\"", dev.UsbManufacturerString);
             AaruConsole.WriteLine("dev.USBProductString = \"{0}\"", dev.UsbProductString);
@@ -76,10 +76,10 @@ internal static partial class MainClass
             AaruConsole.WriteLine("dev.CIS.Length = {0}", dev.Cis?.Length.ToString() ?? "null");
 
             AaruConsole.WriteLine("Press any key to continue...", devPath);
-            System.Console.ReadKey();
+            Console.ReadKey();
 
-            menu:
-            System.Console.Clear();
+        menu:
+            Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Options:");
             AaruConsole.WriteLine("1.- Print USB descriptors.");
@@ -88,12 +88,12 @@ internal static partial class MainClass
             AaruConsole.WriteLine("0.- Return to device selection.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = System.Console.ReadLine();
+            string strDev = Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                System.Console.ReadKey();
+                Console.ReadKey();
 
                 goto menu;
             }
@@ -105,7 +105,7 @@ internal static partial class MainClass
 
                     return;
                 case 1:
-                    System.Console.Clear();
+                    Console.Clear();
                     AaruConsole.WriteLine("Device: {0}", devPath);
                     AaruConsole.WriteLine("USB descriptors:");
 
@@ -113,11 +113,11 @@ internal static partial class MainClass
                         PrintHex.PrintHexArray(dev.UsbDescriptors, 64);
 
                     AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
+                    Console.ReadKey();
 
                     goto menu;
                 case 2:
-                    System.Console.Clear();
+                    Console.Clear();
                     AaruConsole.WriteLine("Device: {0}", devPath);
                     AaruConsole.WriteLine("PCMCIA CIS:");
 
@@ -125,7 +125,7 @@ internal static partial class MainClass
                         PrintHex.PrintHexArray(dev.Cis, 64);
 
                     AaruConsole.WriteLine("Press any key to continue...");
-                    System.Console.ReadKey();
+                    Console.ReadKey();
 
                     goto menu;
                 case 3:
@@ -134,7 +134,7 @@ internal static partial class MainClass
                     goto menu;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    System.Console.ReadKey();
+                    Console.ReadKey();
 
                     goto menu;
             }

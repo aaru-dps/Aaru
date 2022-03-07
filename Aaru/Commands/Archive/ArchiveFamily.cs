@@ -31,11 +31,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.CommandLine;
-
 namespace Aaru.Commands.Archive;
 
-internal sealed class ArchiveFamily : Command
+using System.CommandLine;
+
+sealed class ArchiveFamily : Command
 {
     internal ArchiveFamily() : base("archive", "Commands to manage archive files")
     {

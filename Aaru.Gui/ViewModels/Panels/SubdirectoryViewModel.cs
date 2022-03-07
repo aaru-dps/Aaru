@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Panels;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -48,8 +50,6 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
-
-namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class SubdirectoryViewModel
 {
@@ -180,7 +180,7 @@ public sealed class SubdirectoryViewModel
                     else
                         chars = new char[filename.Length];
 
-                    for(int ci = 0; ci < chars.Length; ci++)
+                    for(var ci = 0; ci < chars.Length; ci++)
                         switch(filename[ci])
                         {
                             case '<':
@@ -279,8 +279,8 @@ public sealed class SubdirectoryViewModel
                 catch(IOException)
                 {
                     mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Cannot delete",
-                                     "Could not delete existing file.\nDo you want to continue?",
-                                     ButtonEnum.YesNo, Icon.Error).ShowDialog(_view);
+                                     "Could not delete existing file.\nDo you want to continue?", ButtonEnum.YesNo,
+                                     Icon.Error).ShowDialog(_view);
 
                     if(mboxResult == ButtonResult.No)
                         return;
@@ -291,14 +291,13 @@ public sealed class SubdirectoryViewModel
             {
                 byte[] outBuf = Array.Empty<byte>();
 
-                ErrorNumber error =
-                    _model.Plugin.Read(_model.Path + "/" + file.Name, 0, file.Stat.Length, ref outBuf);
+                ErrorNumber error = _model.Plugin.Read(_model.Path + "/" + file.Name, 0, file.Stat.Length, ref outBuf);
 
                 if(error != ErrorNumber.NoError)
                 {
                     mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Error reading file",
-                                     $"Error {error} reading file.\nDo you want to continue?",
-                                     ButtonEnum.YesNo, Icon.Error).ShowDialog(_view);
+                                     $"Error {error} reading file.\nDo you want to continue?", ButtonEnum.YesNo,
+                                     Icon.Error).ShowDialog(_view);
 
                     if(mboxResult == ButtonResult.No)
                         return;
@@ -346,8 +345,8 @@ public sealed class SubdirectoryViewModel
             catch(IOException)
             {
                 mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Cannot create file",
-                                 "Could not create destination file.\nDo you want to continue?",
-                                 ButtonEnum.YesNo, Icon.Error).ShowDialog(_view);
+                                 "Could not create destination file.\nDo you want to continue?", ButtonEnum.YesNo,
+                                 Icon.Error).ShowDialog(_view);
 
                 if(mboxResult == ButtonResult.No)
                     return;

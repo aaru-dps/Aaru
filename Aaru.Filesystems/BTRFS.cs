@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the b-tree filesystem (btrfs)</summary>
@@ -97,8 +97,7 @@ public sealed class BTRFS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         var sbInformation = new StringBuilder();
@@ -160,21 +159,18 @@ public sealed class BTRFS : IFilesystem
 
         AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.type = {0}", btrfsSb.dev_item.type);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.generation = {0}",
-                                   btrfsSb.dev_item.generation);
+        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.generation = {0}", btrfsSb.dev_item.generation);
 
         AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.start_offset = {0}",
                                    btrfsSb.dev_item.start_offset);
 
         AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.dev_group = {0}", btrfsSb.dev_item.dev_group);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.seek_speed = {0}",
-                                   btrfsSb.dev_item.seek_speed);
+        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.seek_speed = {0}", btrfsSb.dev_item.seek_speed);
 
         AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bandwitdh = {0}", btrfsSb.dev_item.bandwitdh);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.device_uuid = {0}",
-                                   btrfsSb.dev_item.device_uuid);
+        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.device_uuid = {0}", btrfsSb.dev_item.device_uuid);
 
         AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.uuid = {0}", btrfsSb.dev_item.uuid);
         AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.label = {0}", btrfsSb.label);
@@ -214,7 +210,7 @@ public sealed class BTRFS : IFilesystem
             Type                  = Name
         };
 
-        XmlFsType.FreeClusters = XmlFsType.Clusters - (btrfsSb.bytes_used / btrfsSb.sectorsize);
+        XmlFsType.FreeClusters = XmlFsType.Clusters - btrfsSb.bytes_used / btrfsSb.sectorsize;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

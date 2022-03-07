@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Dialogs;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,17 +45,16 @@ using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
+using Console = Aaru.Gui.Views.Dialogs.Console;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace Aaru.Gui.ViewModels.Dialogs;
-
 public sealed class ConsoleViewModel : ViewModelBase
 {
-    readonly Views.Dialogs.Console _view;
-    bool                           _debugChecked;
+    readonly Console _view;
+    bool             _debugChecked;
 
-    public ConsoleViewModel(Views.Dialogs.Console view)
+    public ConsoleViewModel(Console view)
     {
         _view        = view;
         SaveCommand  = ReactiveCommand.Create(ExecuteSaveCommand);

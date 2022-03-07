@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -41,8 +43,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Partitions;
 
 // Information about structures learnt from Inside Macintosh
 // Constants from image testing
@@ -92,7 +92,7 @@ public sealed class AppleMap : IPartition
 
         if(sectorSize == 256)
         {
-            byte[] tmp = new byte[512];
+            var tmp = new byte[512];
             Array.Copy(ddmSector, 0, tmp, 0, 256);
             ddmSector  = tmp;
             maxDrivers = 29;
@@ -117,20 +117,20 @@ public sealed class AppleMap : IPartition
             {
                 ddm.sbMap = new AppleDriverEntry[ddm.sbDrvrCount];
 
-                for(int i = 0; i < ddm.sbDrvrCount; i++)
+                for(var i = 0; i < ddm.sbDrvrCount; i++)
                 {
-                    byte[] tmp = new byte[8];
-                    Array.Copy(ddmSector, 18 + (i * 8), tmp, 0, 8);
+                    var tmp = new byte[8];
+                    Array.Copy(ddmSector, 18 + i * 8, tmp, 0, 8);
                     ddm.sbMap[i] = Marshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
 
-                    AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}",
-                                               ddm.sbMap[i].ddBlock, i);
+                    AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}", ddm.sbMap[i].ddBlock,
+                                               i);
 
-                    AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddSize = {0}",
-                                               ddm.sbMap[i].ddSize, i);
+                    AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize,
+                                               i);
 
-                    AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddType = {0}",
-                                               ddm.sbMap[i].ddType, i);
+                    AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType,
+                                               i);
 
                     if(ddm.sbMap[i].ddSize == 0)
                         continue;
@@ -165,9 +165,9 @@ public sealed class AppleMap : IPartition
         // This is the easy one, no sector size mixing
         if(oldMap.pdSig == APM_MAGIC_OLD)
         {
-            for(int i = 2; i < partSector.Length; i += 12)
+            for(var i = 2; i < partSector.Length; i += 12)
             {
-                byte[] tmp = new byte[12];
+                var tmp = new byte[12];
                 Array.Copy(partSector, i, tmp, 0, 12);
 
                 AppleMapOldPartitionEntry oldEntry =
@@ -179,8 +179,8 @@ public sealed class AppleMap : IPartition
                 AaruConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdSize = {0}", oldEntry.pdSize,
                                            (i - 2) / 12);
 
-                AaruConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdFSID = 0x{0:X8}",
-                                           oldEntry.pdFSID, (i - 2) / 12);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdFSID = 0x{0:X8}", oldEntry.pdFSID,
+                                           (i - 2) / 12);
 
                 if(oldEntry.pdSize == 0 &&
                    oldEntry.pdFSID == 0)
@@ -219,7 +219,7 @@ public sealed class AppleMap : IPartition
         // If sector is bigger than 512
         if(ddmSector.Length > 512)
         {
-            byte[] tmp = new byte[512];
+            var tmp = new byte[512];
             Array.Copy(ddmSector, 512, tmp, 0, 512);
             entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
 
@@ -230,7 +230,7 @@ public sealed class AppleMap : IPartition
                 entrySize     = 512;
                 entryCount    = entry.entries;
                 skipDdm       = 512;
-                sectorsToRead = ((entryCount + 1) * 512 / sectorSize) + 1;
+                sectorsToRead = (entryCount + 1) * 512 / sectorSize + 1;
             }
             else
             {
@@ -274,13 +274,13 @@ public sealed class AppleMap : IPartition
         AaruConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}", skipDdm);
         AaruConsole.DebugWriteLine("AppleMap Plugin", "sectors_to_read = {0}", sectorsToRead);
 
-        byte[] copy = new byte[entries.Length - skipDdm];
+        var copy = new byte[entries.Length - skipDdm];
         Array.Copy(entries, skipDdm, copy, 0, copy.Length);
         entries = copy;
 
-        for(int i = 0; i < entryCount; i++)
+        for(var i = 0; i < entryCount; i++)
         {
-            byte[] tmp = new byte[entrySize];
+            var tmp = new byte[entrySize];
             Array.Copy(entries, i * entrySize, tmp, 0, entrySize);
             entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
 
@@ -310,16 +310,13 @@ public sealed class AppleMap : IPartition
 
             AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].boot_size = {1}", i, entry.boot_size);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address = 0x{1:X8}", i,
-                                       entry.load_address);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address = 0x{1:X8}", i, entry.load_address);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address2 = 0x{1:X8}", i,
-                                       entry.load_address2);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address2 = 0x{1:X8}", i, entry.load_address2);
 
             AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point = 0x{1:X8}", i, entry.entry_point);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point2 = 0x{1:X8}", i,
-                                       entry.entry_point2);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point2 = 0x{1:X8}", i, entry.entry_point2);
 
             AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].checksum = 0x{1:X8}", i, entry.checksum);
 
@@ -343,8 +340,8 @@ public sealed class AppleMap : IPartition
                 Name     = StringHandlers.CToString(entry.name),
                 Offset   = entry.start   * entrySize,
                 Size     = entry.sectors * entrySize,
-                Start    = (entry.start * entrySize / sectorSize) + sectorOffset,
-                Length   = entry.sectors * entrySize / sectorSize,
+                Start    = entry.start * entrySize / sectorSize + sectorOffset,
+                Length   = entry.sectors           * entrySize / sectorSize,
                 Scheme   = Name
             };
 
@@ -370,8 +367,7 @@ public sealed class AppleMap : IPartition
 
             if(flags.HasFlag(AppleMapFlags.Bootable))
             {
-                sb.AppendFormat("First boot sector: {0}", entry.first_boot_block * entrySize / sectorSize).
-                   AppendLine();
+                sb.AppendFormat("First boot sector: {0}", entry.first_boot_block * entrySize / sectorSize).AppendLine();
 
                 sb.AppendFormat("Boot is {0} bytes.", entry.boot_size).AppendLine();
                 sb.AppendFormat("Boot load address: 0x{0:X8}", entry.load_address).AppendLine();
@@ -395,9 +391,8 @@ public sealed class AppleMap : IPartition
             // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
             else if(partition.Start < imagePlugin.Info.Sectors)
             {
-                AaruConsole.DebugWriteLine("AppleMap Plugin",
-                                           "Cutting last partition end ({0}) to media size ({1})", partition.End,
-                                           imagePlugin.Info.Sectors - 1);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "Cutting last partition end ({0}) to media size ({1})",
+                                           partition.End, imagePlugin.Info.Sectors - 1);
 
                 partition.Length = imagePlugin.Info.Sectors - partition.Start;
                 partitions.Add(partition);

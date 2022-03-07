@@ -30,18 +30,26 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Aaru.DiscImages;
+
+using System.Diagnostics.CodeAnalysis;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class MaxiDisk
 {
     enum HdkDiskTypes : byte
     {
-        Dos360  = 0, Maxi420 = 1, Dos720    = 2,
-        Maxi800 = 3, Dos1200 = 4, Maxi1400  = 5,
-        Dos1440 = 6, Mac1440 = 7, Maxi1600  = 8,
-        Dmf     = 9, Dos2880 = 10, Maxi3200 = 11
+        Dos360   = 0,
+        Maxi420  = 1,
+        Dos720   = 2,
+        Maxi800  = 3,
+        Dos1200  = 4,
+        Maxi1400 = 5,
+        Dos1440  = 6,
+        Mac1440  = 7,
+        Maxi1600 = 8,
+        Dmf      = 9,
+        Dos2880  = 10,
+        Maxi3200 = 11
     }
 }

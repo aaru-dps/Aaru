@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Windows;
+
 using System;
 using System.IO;
 using System.Linq;
@@ -45,8 +47,6 @@ using Aaru.Settings;
 using Avalonia.Threading;
 using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class SplashWindowViewModel : ViewModelBase
 {
@@ -107,7 +107,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
         Task.Run(() =>
         {
             // TODO: Detect there are no settings yet
-            Settings.Settings.LoadSettings();
+            Settings.LoadSettings();
 
             Dispatcher.UIThread.Post(MigrateLocalDatabase);
         });
@@ -125,7 +125,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
             try
             {
-                ctx = AaruContext.Create(Settings.Settings.LocalDbPath, false);
+                ctx = AaruContext.Create(Settings.LocalDbPath, false);
                 ctx.Database.Migrate();
             }
             catch(NotSupportedException)
@@ -140,18 +140,16 @@ public sealed class SplashWindowViewModel : ViewModelBase
                     // Should not ever arrive here, but if it does, keep trying to replace it anyway
                 }
 
-                File.Delete(Settings.Settings.LocalDbPath);
-                ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+                File.Delete(Settings.LocalDbPath);
+                ctx = AaruContext.Create(Settings.LocalDbPath);
                 ctx.Database.EnsureCreated();
 
                 ctx.Database.
                     ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
                 foreach(string migration in ctx.Database.GetPendingMigrations())
-                {
                     ctx.Database.
                         ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
-                }
 
                 ctx.SaveChanges();
             }
@@ -165,9 +163,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
                         a.Bus
                     }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
                 ctx.RemoveRange(ctx.SeenDevices!.
-                                    Where(d => d.Manufacturer == duplicate.Manufacturer &&
-                                               d.Model        == duplicate.Model && d.Revision == duplicate.Revision &&
-                                               d.Bus          == duplicate.Bus).Skip(1));
+                                    Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&
+                                               d.Revision     == duplicate.Revision && d.Bus == duplicate.Bus).Skip(1));
 
             // Remove nulls
             ctx.RemoveRange(ctx.SeenDevices!.Where(d => d.Manufacturer == null && d.Model == null &&
@@ -187,16 +184,14 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
         Task.Run(() =>
         {
-            bool mainDbUpdate = false;
+            var mainDbUpdate = false;
 
-            if(!File.Exists(Settings.Settings.MainDbPath))
-            {
+            if(!File.Exists(Settings.MainDbPath))
                 mainDbUpdate = true;
 
-                // TODO: Update database
-            }
+            // TODO: Update database
 
-            var mainContext = AaruContext.Create(Settings.Settings.MainDbPath, false);
+            var mainContext = AaruContext.Create(Settings.MainDbPath, false);
 
             if(mainContext.Database.GetPendingMigrations().Any())
             {
@@ -204,14 +199,13 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
                 try
                 {
-                    File.Delete(Settings.Settings.MainDbPath);
+                    File.Delete(Settings.MainDbPath);
                 }
                 catch(Exception)
                 {
-                    AaruConsole.
-                        ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
+                    AaruConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
 
-                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MainDbPath);
+                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.MainDbPath);
 
                     return;
                 }
@@ -229,7 +223,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
         Message = "Checking GDPR compliance...";
         AaruConsole.WriteLine("Checking GDPR compliance...");
 
-        if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
+        if(Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
         {
             var settingsDialog          = new SettingsDialog();
             var settingsDialogViewModel = new SettingsViewModel(settingsDialog, true);

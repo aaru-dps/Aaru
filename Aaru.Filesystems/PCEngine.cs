@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the PC-Engine CD file headers</summary>
@@ -60,7 +60,7 @@ public sealed class PCEnginePlugin : IFilesystem
         if(2 + partition.Start >= partition.End)
             return false;
 
-        byte[]      systemDescriptor = new byte[23];
+        var         systemDescriptor = new byte[23];
         ErrorNumber errno            = imagePlugin.ReadSector(1 + partition.Start, out byte[] sector);
 
         if(errno != ErrorNumber.NoError)
@@ -72,8 +72,7 @@ public sealed class PCEnginePlugin : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("shift_jis");
         information = "";

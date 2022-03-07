@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Logging;
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Interop;
 using Aaru.Devices;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
-
-namespace Aaru.Core.Logging;
 
 /// <summary>Creates a dump log</summary>
 public sealed class DumpLog
@@ -91,7 +91,7 @@ public sealed class DumpLog
         {
             string[] args = Environment.GetCommandLineArgs();
 
-            for(int i = 0; i < args.Length; i++)
+            for(var i = 0; i < args.Length; i++)
             {
                 if(args[i].StartsWith("/dev", StringComparison.OrdinalIgnoreCase) ||
                    args[i].StartsWith("aaru://", StringComparison.OrdinalIgnoreCase))
@@ -120,8 +120,7 @@ public sealed class DumpLog
             _logSw.WriteLine("Server: {0}", dev.RemoteApplication);
             _logSw.WriteLine("Version: {0}", dev.RemoteVersion);
 
-            _logSw.WriteLine("Operating system: {0} {1}", dev.RemoteOperatingSystem,
-                             dev.RemoteOperatingSystemVersion);
+            _logSw.WriteLine("Operating system: {0} {1}", dev.RemoteOperatingSystem, dev.RemoteOperatingSystemVersion);
 
             _logSw.WriteLine("Architecture: {0}", dev.RemoteArchitecture);
             _logSw.WriteLine("Protocol version: {0}", dev.RemoteProtocolVersion);
@@ -184,7 +183,7 @@ public sealed class DumpLog
         if(_logSw == null)
             return;
 
-        string text = string.Format(format, args);
+        var text = string.Format(format, args);
         _logSw.WriteLine("{0:s} {1}", DateTime.Now, text);
         _logSw.Flush();
     }

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Apridisk
 {
@@ -176,7 +176,7 @@ public sealed partial class Apridisk
         _writingStream.Seek(0, SeekOrigin.Begin);
         _writingStream.Write(_signature, 0, _signature.Length);
 
-        byte[] hdr = new byte[Marshal.SizeOf<Record>()];
+        var hdr = new byte[Marshal.SizeOf<Record>()];
 
         for(ushort c = 0; c < _imageInfo.Cylinders; c++)
         {

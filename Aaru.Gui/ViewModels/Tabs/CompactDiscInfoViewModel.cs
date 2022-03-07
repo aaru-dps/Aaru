@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Tabs;
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -39,8 +41,6 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Gui.Models;
 using Avalonia.Controls;
 using ReactiveUI;
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class CompactDiscInfoViewModel : ViewModelBase
 {
@@ -57,8 +57,8 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
                                     byte[] rawToc, byte[] pma, byte[] cdTextLeadIn, TOC.CDTOC? decodedToc,
                                     ATIP.CDATIP decodedAtip, Session.CDSessionInfo? decodedSession,
                                     FullTOC.CDFullTOC? fullToc, CDTextOnLeadIn.CDText? decodedCdTextLeadIn,
-                                    DiscInformation.StandardDiscInformation? decodedCompactDiscInformation,
-                                    string mcn, Dictionary<byte, string> isrcs, Window view)
+                                    DiscInformation.StandardDiscInformation? decodedCompactDiscInformation, string mcn,
+                                    Dictionary<byte, string> isrcs, Window view)
     {
         _tocData                    = toc;
         _atipData                   = atip;
@@ -100,14 +100,12 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         if(isrcs       != null &&
            isrcs.Count > 0)
-        {
             foreach(KeyValuePair<byte, string> isrc in isrcs)
                 IsrcList.Add(new IsrcModel
                 {
                     Track = isrc.Key.ToString(),
                     Isrc  = isrc.Value
                 });
-        }
 
         MiscellaneousVisible = McnText != null || isrcs?.Count > 0 || pma != null;
         CdPmaVisible         = pma != null;

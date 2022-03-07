@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class PartClone
 {
@@ -54,7 +54,7 @@ public sealed partial class PartClone
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+        var pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
@@ -63,8 +63,7 @@ public sealed partial class PartClone
         AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.filesystem = {0}",
                                    StringHandlers.CToString(_pHdr.filesystem));
 
-        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.version = {0}",
-                                   StringHandlers.CToString(_pHdr.version));
+        AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.version = {0}", StringHandlers.CToString(_pHdr.version));
 
         AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.blockSize = {0}", _pHdr.blockSize);
         AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.deviceSize = {0}", _pHdr.deviceSize);
@@ -75,7 +74,7 @@ public sealed partial class PartClone
         AaruConsole.DebugWriteLine("PartClone plugin", "Reading bytemap {0} bytes", _byteMap.Length);
         stream.Read(_byteMap, 0, _byteMap.Length);
 
-        byte[] bitmagic = new byte[8];
+        var bitmagic = new byte[8];
         stream.Read(bitmagic, 0, 8);
 
         AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.bitmagic = {0}", StringHandlers.CToString(bitmagic));
@@ -123,8 +122,7 @@ public sealed partial class PartClone
 
         DateTime end = DateTime.Now;
 
-        AaruConsole.DebugWriteLine("PartClone plugin", "Took {0} seconds to fill extents",
-                                   (end - start).TotalSeconds);
+        AaruConsole.DebugWriteLine("PartClone plugin", "Took {0} seconds to fill extents", (end - start).TotalSeconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -186,7 +184,7 @@ public sealed partial class PartClone
 
         var ms = new MemoryStream();
 
-        bool allEmpty = true;
+        var allEmpty = true;
 
         for(uint i = 0; i < length; i++)
             if(_byteMap[sectorAddress + i] != 0)

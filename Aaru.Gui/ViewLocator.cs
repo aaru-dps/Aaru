@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui;
+
 using System;
 using Aaru.Gui.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using JetBrains.Annotations;
-
-namespace Aaru.Gui;
 
 public sealed class ViewLocator : IDataTemplate
 {
@@ -53,9 +53,7 @@ public sealed class ViewLocator : IDataTemplate
         var type = Type.GetType(name);
 
         if(type != null)
-        {
             return (Control)Activator.CreateInstance(type);
-        }
 
         return new TextBlock
         {

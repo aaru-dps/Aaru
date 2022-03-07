@@ -1,7 +1,8 @@
+namespace Aaru.Tests.Issues;
+
 using System.Collections.Generic;
 using System.IO;
 
-namespace Aaru.Tests.Issues;
 /* https://github.com/aaru-dps/Aaru/issues/410
  * 
  * darkstar commented on Sep 27, 2020
@@ -22,7 +23,7 @@ public class _410 : FsExtractIssueTest
 {
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue410");
     public override string TestFile => "cyberstorm.mds";
-    public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
+    public override Dictionary<string, string> ParsedOptions => new();
     public override bool Debug => false;
     public override bool Xattrs => false;
     public override string Encoding => null;

@@ -31,14 +31,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class HdCopy
 {
@@ -55,8 +55,7 @@ public sealed partial class HdCopy
         if(!TryReadHeader(stream, ref fheader, ref currentOffset))
             return ErrorNumber.InvalidArgument;
 
-        AaruConsole.DebugWriteLine("HDCP plugin",
-                                   "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
+        AaruConsole.DebugWriteLine("HDCP plugin", "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
                                    fheader.lastCylinder + 1, fheader.sectorsPerTrack);
 
         _imageInfo.Cylinders       = (uint)fheader.lastCylinder + 1;
@@ -77,7 +76,7 @@ public sealed partial class HdCopy
                                                       false));
 
         // build table of track offsets
-        for(int i = 0; i < _imageInfo.Cylinders * 2; i++)
+        for(var i = 0; i < _imageInfo.Cylinders * 2; i++)
             if(fheader.trackMap[i] == 0)
                 _trackOffset[i] = -1;
             else
@@ -86,16 +85,16 @@ public sealed partial class HdCopy
                 if(currentOffset + 3 >= stream.Length)
                     return ErrorNumber.InvalidArgument;
 
-                byte[] blkHeader = new byte[2];
+                var blkHeader = new byte[2];
                 stream.Read(blkHeader, 0, 2);
-                short blkLength = BitConverter.ToInt16(blkHeader, 0);
+                var blkLength = BitConverter.ToInt16(blkHeader, 0);
 
                 // assume block sizes are positive
                 if(blkLength < 0)
                     return ErrorNumber.InvalidArgument;
 
-                AaruConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i,
-                                           currentOffset, blkLength);
+                AaruConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i, currentOffset,
+                                           blkLength);
 
                 _trackOffset[i] = currentOffset;
 
@@ -120,8 +119,8 @@ public sealed partial class HdCopy
     public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
     {
         buffer = null;
-        int trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
-        int sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
+        var trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
+        var sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
 
         if(sectorAddress > _imageInfo.Sectors - 1)
             return ErrorNumber.OutOfRange;
@@ -144,8 +143,7 @@ public sealed partial class HdCopy
                     return errno;
             }
 
-            Array.Copy(_trackCache[trackNum], sectorOffset * _imageInfo.SectorSize, buffer, 0,
-                       _imageInfo.SectorSize);
+            Array.Copy(_trackCache[trackNum], sectorOffset * _imageInfo.SectorSize, buffer, 0, _imageInfo.SectorSize);
         }
 
         return ErrorNumber.NoError;

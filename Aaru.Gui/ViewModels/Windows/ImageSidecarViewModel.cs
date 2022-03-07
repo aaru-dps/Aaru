@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Windows;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,8 +46,6 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
 using Schemas;
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageSidecarViewModel : ViewModelBase
 {
@@ -266,15 +266,14 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         Progress2Visible = false;
     });
 
-    async void UpdateProgress2(string text, long current, long maximum) =>
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            Progress2Text          = text;
-            Progress2Indeterminate = false;
+    async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
+    {
+        Progress2Text          = text;
+        Progress2Indeterminate = false;
 
-            Progress2MaxValue = maximum;
-            Progress2Value    = current;
-        });
+        Progress2MaxValue = maximum;
+        Progress2Value    = current;
+    });
 
     async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
     {
@@ -286,15 +285,14 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         Progress1Visible = false;
     });
 
-    async void UpdateProgress(string text, long current, long maximum) =>
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            ProgressText          = text;
-            ProgressIndeterminate = false;
+    async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
+    {
+        ProgressText          = text;
+        ProgressIndeterminate = false;
 
-            ProgressMaxValue = maximum;
-            ProgressValue    = current;
-        });
+        ProgressMaxValue = maximum;
+        ProgressValue    = current;
+    });
 
     async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
     {

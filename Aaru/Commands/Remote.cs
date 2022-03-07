@@ -32,6 +32,8 @@
 
 // TODO: Fix errors returned
 
+namespace Aaru.Commands;
+
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
@@ -41,9 +43,7 @@ using Aaru.Core;
 using Spectre.Console;
 using Remote = Aaru.Devices.Remote.Remote;
 
-namespace Aaru.Commands;
-
-internal sealed class RemoteCommand : Command
+sealed class RemoteCommand : Command
 {
     public RemoteCommand() : base("remote", "Tests connection to a Aaru Remote Server.")
     {
@@ -65,7 +65,7 @@ internal sealed class RemoteCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(System.Console.Error)
+                Out = new AnsiConsoleOutput(Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>

@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -41,8 +43,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements identification for the SGI Extent FileSystem</summary>
@@ -58,7 +58,7 @@ public sealed class EFS : IFilesystem
     /// <inheritdoc />
     public string Name => "Extent File System Plugin";
     /// <inheritdoc />
-    public Guid Id => new Guid("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
+    public Guid Id => new("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
 
@@ -71,18 +71,20 @@ public sealed class EFS : IFilesystem
         // Misaligned
         if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
         {
-            uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
 
             if((Marshal.SizeOf<Superblock>() + 0x200) % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
-            var errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
-            if(errno != ErrorNumber.NoError) return false;
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
 
-            byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
+            var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
             Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
@@ -97,13 +99,15 @@ public sealed class EFS : IFilesystem
         }
         else
         {
-            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
-            var errno = imagePlugin.ReadSectors(partition.Start + 1, sbSize, out byte[] sector);
-            if(errno != ErrorNumber.NoError) return false;
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + 1, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return false;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
@@ -122,8 +126,7 @@ public sealed class EFS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -136,18 +139,20 @@ public sealed class EFS : IFilesystem
         // Misaligned
         if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
         {
-            uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
             if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
-            var errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
-            if(errno != ErrorNumber.NoError) return;
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
-            byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
+            var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
             Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
@@ -158,13 +163,15 @@ public sealed class EFS : IFilesystem
         }
         else
         {
-            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
-            var errno = imagePlugin.ReadSectors(partition.Start + 1, sbSize, out byte[] sector);
-            if(errno != ErrorNumber.NoError) return;
+            ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + 1, sbSize, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                return;
 
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;

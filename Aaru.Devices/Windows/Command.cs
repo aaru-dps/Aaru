@@ -31,16 +31,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices.Windows;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Aaru.Decoders.ATA;
 using Microsoft.Win32.SafeHandles;
 
-namespace Aaru.Devices.Windows;
-
 [SuppressMessage("ReSharper", "UnusedParameter.Global")]
-internal static class Command
+static class Command
 {
     /// <summary>Sends a SCSI command</summary>
     /// <returns>0 if no error occurred, otherwise, errno</returns>
@@ -56,8 +56,7 @@ internal static class Command
     ///     sense
     /// </param>
     internal static int SendScsiCommand(SafeFileHandle fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
-                                        uint timeout, ScsiIoctlDirection direction, out double duration,
-                                        out bool sense)
+                                        uint timeout, ScsiIoctlDirection direction, out double duration, out bool sense)
     {
         senseBuffer = null;
         duration    = 0;
@@ -86,7 +85,7 @@ internal static class Command
         Array.Copy(cdb, sptdSb.sptd.Cdb, cdb.Length);
 
         uint k     = 0;
-        int  error = 0;
+        var  error = 0;
 
         Marshal.Copy(buffer, 0, sptdSb.sptd.DataBuffer, buffer.Length);
 
@@ -126,8 +125,8 @@ internal static class Command
     /// <param name="errorRegisters">Registers returned by drive</param>
     /// <param name="protocol">ATA protocol to use</param>
     internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersChs registers,
-                                       out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
-                                       ref byte[] buffer, uint timeout, out double duration, out bool sense)
+                                       out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol, ref byte[] buffer,
+                                       uint timeout, out double duration, out bool sense)
     {
         duration       = 0;
         sense          = false;
@@ -186,7 +185,7 @@ internal static class Command
         aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
         uint k     = 0;
-        int  error = 0;
+        var  error = 0;
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
@@ -291,7 +290,7 @@ internal static class Command
         aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
         uint k     = 0;
-        int  error = 0;
+        var  error = 0;
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
@@ -405,7 +404,7 @@ internal static class Command
         aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
         uint k     = 0;
-        int  error = 0;
+        var  error = 0;
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
@@ -475,9 +474,8 @@ internal static class Command
     /// <param name="response">Response registers</param>
     /// <param name="blockSize">Size of block in bytes</param>
     internal static int SendMmcCommand(SafeFileHandle fd, MmcCommands command, bool write, bool isApplication,
-                                       MmcFlags flags, uint argument, uint blockSize, uint blocks,
-                                       ref byte[] buffer, out uint[] response, out double duration, out bool sense,
-                                       uint timeout = 0)
+                                       MmcFlags flags, uint argument, uint blockSize, uint blocks, ref byte[] buffer,
+                                       out uint[] response, out double duration, out bool sense, uint timeout = 0)
     {
         var commandData       = new SffdiskDeviceCommandData();
         var commandDescriptor = new SdCmdDescriptor();
@@ -489,10 +487,10 @@ internal static class Command
         commandDescriptor.cmdClass          = isApplication ? SdCommandClass.AppCmd : SdCommandClass.Standard;
         commandDescriptor.transferDirection = write ? SdTransferDirection.Write : SdTransferDirection.Read;
 
-        commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandAdtc)
-                                             ? command == MmcCommands.ReadMultipleBlock
-                                                   ? SdTransferType.MultiBlock
-                                                   : SdTransferType.SingleBlock : SdTransferType.CmdOnly;
+        commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandAdtc) ? command == MmcCommands.ReadMultipleBlock
+                                                                                   ? SdTransferType.MultiBlock
+                                                                                   : SdTransferType.SingleBlock
+                                             : SdTransferType.CmdOnly;
 
         commandDescriptor.responseType = 0;
 
@@ -523,8 +521,7 @@ internal static class Command
         if(flags.HasFlag(MmcFlags.ResponseR6))
             commandDescriptor.responseType = SdResponseType.R6;
 
-        byte[] commandB = new byte[commandData.size + commandData.protocolArgumentSize +
-                                   commandData.deviceDataBufferSize];
+        var commandB = new byte[commandData.size + commandData.protocolArgumentSize + commandData.deviceDataBufferSize];
 
         Array.Copy(buffer, 0, commandB, commandData.size + commandData.protocolArgumentSize, buffer.Length);
         IntPtr hBuf = Marshal.AllocHGlobal(commandB.Length);
@@ -534,7 +531,7 @@ internal static class Command
         Marshal.Copy(hBuf, commandB, 0, commandB.Length);
         Marshal.FreeHGlobal(hBuf);
 
-        int      error = 0;
+        var      error = 0;
         DateTime start = DateTime.Now;
 
         sense = !Extern.DeviceIoControl(fd, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB, (uint)commandB.Length,
@@ -557,7 +554,7 @@ internal static class Command
     internal static int SendMultipleMmcCommands(SafeFileHandle fd, Device.MmcSingleCommand[] commands,
                                                 out double duration, out bool sense, uint timeout = 0)
     {
-        int error = 0;
+        var error = 0;
         duration = 0;
         sense    = false;
 
@@ -566,16 +563,14 @@ internal static class Command
            commands[1].command == MmcCommands.ReadMultipleBlock &&
            commands[2].command == MmcCommands.StopTransmission)
             return SendMmcCommand(fd, commands[1].command, commands[1].write, commands[1].isApplication,
-                                  commands[1].flags, commands[1].argument, commands[1].blockSize,
-                                  commands[1].blocks, ref commands[1].buffer, out commands[1].response,
-                                  out duration, out sense, timeout);
+                                  commands[1].flags, commands[1].argument, commands[1].blockSize, commands[1].blocks,
+                                  ref commands[1].buffer, out commands[1].response, out duration, out sense, timeout);
 
         foreach(Device.MmcSingleCommand command in commands)
         {
-            int singleError = SendMmcCommand(fd, command.command, command.write, command.isApplication,
-                                             command.flags, command.argument, command.blockSize, command.blocks,
-                                             ref command.buffer, out command.response, out double cmdDuration,
-                                             out bool cmdSense, timeout);
+            int singleError = SendMmcCommand(fd, command.command, command.write, command.isApplication, command.flags,
+                                             command.argument, command.blockSize, command.blocks, ref command.buffer,
+                                             out command.response, out double cmdDuration, out bool cmdSense, timeout);
 
             if(error       == 0 &&
                singleError != 0)

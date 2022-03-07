@@ -1,4 +1,3 @@
-
 [*]
 charset = utf-8
 end_of_line = lf
@@ -30,11 +29,11 @@ dotnet_naming_rule.unity_serialized_field_rule_1.style = lower_camel_case_style
 dotnet_naming_rule.unity_serialized_field_rule_1.symbols = unity_serialized_field_symbols_1
 dotnet_naming_style.lower_camel_case_style.capitalization = camel_case
 dotnet_naming_symbols.unity_serialized_field_symbols.applicable_accessibilities = *
-dotnet_naming_symbols.unity_serialized_field_symbols.applicable_kinds = 
+dotnet_naming_symbols.unity_serialized_field_symbols.applicable_kinds =
 dotnet_naming_symbols.unity_serialized_field_symbols.resharper_applicable_kinds = unity_serialised_field
 dotnet_naming_symbols.unity_serialized_field_symbols.resharper_required_modifiers = instance
 dotnet_naming_symbols.unity_serialized_field_symbols_1.applicable_accessibilities = *
-dotnet_naming_symbols.unity_serialized_field_symbols_1.applicable_kinds = 
+dotnet_naming_symbols.unity_serialized_field_symbols_1.applicable_kinds =
 dotnet_naming_symbols.unity_serialized_field_symbols_1.resharper_applicable_kinds = unity_serialised_field
 dotnet_naming_symbols.unity_serialized_field_symbols_1.resharper_required_modifiers = instance
 dotnet_style_parentheses_in_arithmetic_binary_operators = never_if_unnecessary:warning

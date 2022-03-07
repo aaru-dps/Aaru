@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems.LisaFS;
+
 using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
 using Aaru.Helpers;
-
-namespace Aaru.Filesystems.LisaFS;
 
 public sealed partial class LisaFS
 {
@@ -208,13 +208,12 @@ public sealed partial class LisaFS
            !tags)
             return ErrorNumber.NoError;
 
-        int count = 0;
+        var count = 0;
 
         if(fileId == FILEID_SRECORD)
             if(!tags)
             {
-                errno = _device.ReadSectors(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len,
-                                            out buf);
+                errno = _device.ReadSectors(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len, out buf);
 
                 if(errno != ErrorNumber.NoError)
                     return errno;
@@ -397,7 +396,7 @@ public sealed partial class LisaFS
         tags &= _debug;
 
         if(fileId < 4 ||
-           (fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1))
+           fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
             return ErrorNumber.InvalidArgument;
 
         if(!tags &&
@@ -416,11 +415,11 @@ public sealed partial class LisaFS
         else
             sectorSize = (int)_device.Info.SectorSize;
 
-        byte[] temp = new byte[file.length * sectorSize];
+        var temp = new byte[file.length * sectorSize];
 
-        int offset = 0;
+        var offset = 0;
 
-        for(int i = 0; i < file.extents.Length; i++)
+        for(var i = 0; i < file.extents.Length; i++)
         {
             byte[] sector;
 
@@ -525,7 +524,7 @@ public sealed partial class LisaFS
             }
         }
 
-        for(int lvl = 0; lvl < pathElements.Length; lvl++)
+        for(var lvl = 0; lvl < pathElements.Length; lvl++)
         {
             string wantedFilename = pathElements[0].Replace('-', '/');
 

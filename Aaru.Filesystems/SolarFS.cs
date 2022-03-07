@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 // Based on FAT's BPB, cannot find a FAT or directory
 /// <inheritdoc />
@@ -69,7 +69,7 @@ public sealed class SolarFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        byte[] fsTypeB = new byte[8];
+        var fsTypeB = new byte[8];
 
         byte signature = bpb[0x25];
         Array.Copy(bpb, 0x35, fsTypeB, 0, 8);
@@ -79,8 +79,7 @@ public sealed class SolarFS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -103,7 +102,7 @@ public sealed class SolarFS : IFilesystem
             signature = bpbSector[0x25]
         };
 
-        byte[] bpbStrings = new byte[8];
+        var bpbStrings = new byte[8];
         Array.Copy(bpbSector, 0x03, bpbStrings, 0, 8);
         bpb.OEMName = StringHandlers.CToString(bpbStrings);
         bpbStrings  = new byte[8];

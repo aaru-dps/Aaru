@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace Aaru.DiscImages;
+
+using System;
 
 public sealed partial class RsIde
 {

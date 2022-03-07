@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -40,8 +42,6 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information from VMS File System Internals by Kirby McCoy
 // ISBN: 1-55558-056-4
@@ -76,7 +76,7 @@ public sealed class ODS : IFilesystem
         if(imagePlugin.Info.SectorSize < 512)
             return false;
 
-        byte[]      magicB = new byte[12];
+        var         magicB = new byte[12];
         ErrorNumber errno  = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
 
         if(errno != ErrorNumber.NoError)
@@ -112,8 +112,7 @@ public sealed class ODS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
         information = "";
@@ -171,14 +170,13 @@ public sealed class ODS : IFilesystem
         sb.AppendFormat("Highest structure in the volume is Level {0}, revision {1}",
                         (homeblock.highstruclev & 0xFF00) >> 8, homeblock.highstruclev & 0xFF).AppendLine();
 
-        sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512).
-           AppendLine();
+        sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512).AppendLine();
 
         sb.AppendFormat("This home block is on sector {0} (VBN {1})", homeblock.homelbn, homeblock.homevbn).
            AppendLine();
 
-        sb.AppendFormat("Secondary home block is on sector {0} (VBN {1})", homeblock.alhomelbn,
-                        homeblock.alhomevbn).AppendLine();
+        sb.AppendFormat("Secondary home block is on sector {0} (VBN {1})", homeblock.alhomelbn, homeblock.alhomevbn).
+           AppendLine();
 
         sb.AppendFormat("Volume bitmap starts in sector {0} (VBN {1})", homeblock.ibmaplbn, homeblock.ibmapvbn).
            AppendLine();

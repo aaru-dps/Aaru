@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems.UCSDPascal;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
-
-namespace Aaru.Filesystems.UCSDPascal;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 /// <inheritdoc />

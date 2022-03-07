@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Devices;
+
 using System;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 
-namespace Aaru.Core.Devices;
-
-internal sealed partial class Reader
+sealed partial class Reader
 {
     // TODO: Raw reading
     bool _hldtstReadRaw;
@@ -65,9 +65,9 @@ internal sealed partial class Reader
             return true;
 
         byte[] senseBuf;
-        int    tries      = 0;
+        var    tries      = 0;
         uint   lba        = 0;
-        bool   mediumScan = false;
+        var    mediumScan = false;
 
         if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
         {
@@ -97,9 +97,7 @@ internal sealed partial class Reader
                _read10 ||
                _read12 ||
                _read16)
-            {
                 break;
-            }
 
             lba = (uint)rnd.Next(1, (int)Blocks);
 
@@ -226,8 +224,8 @@ internal sealed partial class Reader
                         {
                             LongBlockSize = 0xFFFF - (information & 0xFFFF);
 
-                            _readLong10 = !_dev.ReadLong10(out _, out senseBuf, false, false, 0,
-                                                           (ushort)LongBlockSize, _timeout, out _);
+                            _readLong10 = !_dev.ReadLong10(out _, out senseBuf, false, false, 0, (ushort)LongBlockSize,
+                                                           _timeout, out _);
                         }
                     }
                 }
@@ -249,8 +247,7 @@ internal sealed partial class Reader
                                         600, 610, 630
                                     })
                             {
-                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout,
-                                                            out _);
+                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
 
                                 if(!testSense &&
                                    !_dev.Error)
@@ -262,8 +259,8 @@ internal sealed partial class Reader
                                     break;
                                 }
 
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize,
-                                                            _timeout, out _);
+                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, _timeout,
+                                                            out _);
 
                                 if(testSense || _dev.Error)
                                     continue;
@@ -288,8 +285,7 @@ internal sealed partial class Reader
                                         1200
                                     })
                             {
-                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout,
-                                                            out _);
+                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
 
                                 if(!testSense &&
                                    !_dev.Error)
@@ -301,8 +297,8 @@ internal sealed partial class Reader
                                     break;
                                 }
 
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize,
-                                                            _timeout, out _);
+                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, _timeout,
+                                                            out _);
 
                                 if(testSense || _dev.Error)
                                     continue;
@@ -426,8 +422,7 @@ internal sealed partial class Reader
                                     ili         = true;
                                     information = (uint)Sense.DecodeDescriptor00(desc00);
 
-                                    if(decSense.Value.Descriptor.Value.Descriptors.
-                                                TryGetValue(4, out byte[] desc04))
+                                    if(decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4, out byte[] desc04))
                                         Sense.DecodeDescriptor04(desc04, out _, out _, out ili);
                                 }
 
@@ -436,8 +431,7 @@ internal sealed partial class Reader
                                     LongBlockSize = 0xFFFF - (information & 0xFFFF);
 
                                     _syqReadLong10 =
-                                        !_dev.SyQuestReadLong10(out _, out senseBuf, 0, LongBlockSize, _timeout,
-                                                                out _);
+                                        !_dev.SyQuestReadLong10(out _, out senseBuf, 0, LongBlockSize, _timeout, out _);
                                 }
                             }
                             else
@@ -476,8 +470,8 @@ internal sealed partial class Reader
                                             LongBlockSize = 0xFFFF - (information & 0xFFFF);
 
                                             _syqReadLong6 =
-                                                !_dev.SyQuestReadLong6(out _, out senseBuf, 0, LongBlockSize,
-                                                                       _timeout, out _);
+                                                !_dev.SyQuestReadLong6(out _, out senseBuf, 0, LongBlockSize, _timeout,
+                                                                       out _);
                                         }
                                     }
                                 }
@@ -589,7 +583,7 @@ internal sealed partial class Reader
 
             if(!sense)
             {
-                byte[] temp = new byte[8];
+                var temp = new byte[8];
 
                 Array.Copy(cmdBuf, 0, temp, 0, 8);
                 Array.Reverse(temp);
@@ -619,24 +613,24 @@ internal sealed partial class Reader
             }
             else if(_read10)
             {
-                _dev.Read10(out _, out _, 0, false, true, false, false, 0, LogicalBlockSize, 0,
-                            (ushort)BlocksToRead, _timeout, out _);
+                _dev.Read10(out _, out _, 0, false, true, false, false, 0, LogicalBlockSize, 0, (ushort)BlocksToRead,
+                            _timeout, out _);
 
                 if(_dev.Error)
                     BlocksToRead /= 2;
             }
             else if(_read12)
             {
-                _dev.Read12(out _, out _, 0, false, false, false, false, 0, LogicalBlockSize, 0, BlocksToRead,
-                            false, _timeout, out _);
+                _dev.Read12(out _, out _, 0, false, false, false, false, 0, LogicalBlockSize, 0, BlocksToRead, false,
+                            _timeout, out _);
 
                 if(_dev.Error)
                     BlocksToRead /= 2;
             }
             else if(_read16)
             {
-                _dev.Read16(out _, out _, 0, false, true, false, 0, LogicalBlockSize, 0, BlocksToRead, false,
-                            _timeout, out _);
+                _dev.Read16(out _, out _, 0, false, true, false, 0, LogicalBlockSize, 0, BlocksToRead, false, _timeout,
+                            out _);
 
                 if(_dev.Error)
                     BlocksToRead /= 2;
@@ -676,8 +670,7 @@ internal sealed partial class Reader
 
         if(CanReadRaw)
             if(_readLong16)
-                sense = _dev.ReadLong16(out buffer, out senseBuf, false, block, LongBlockSize, _timeout,
-                                        out duration);
+                sense = _dev.ReadLong16(out buffer, out senseBuf, false, block, LongBlockSize, _timeout, out duration);
             else if(_readLong10)
                 sense = _dev.ReadLong10(out buffer, out senseBuf, false, false, (uint)block, (ushort)LongBlockSize,
                                         _timeout, out duration);
@@ -707,8 +700,8 @@ internal sealed partial class Reader
                 sense = _dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
                                     LogicalBlockSize, 0, count, false, _timeout, out duration);
             else if(_read16)
-                sense = _dev.Read16(out buffer, out senseBuf, 0, false, false, false, block, LogicalBlockSize, 0,
-                                    count, false, _timeout, out duration);
+                sense = _dev.Read16(out buffer, out senseBuf, 0, false, false, false, block, LogicalBlockSize, 0, count,
+                                    false, _timeout, out duration);
             else
                 return true;
         }
@@ -731,7 +724,7 @@ internal sealed partial class Reader
 
     bool ScsiSeek(ulong block, out double duration)
     {
-        bool sense = true;
+        var sense = true;
         duration = 0;
 
         if(_seek6)

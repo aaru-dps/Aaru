@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Claunia.RsrcFork;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Ndif
 {
@@ -56,7 +56,7 @@ public sealed partial class Ndif
             Resource rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
 
             Stream dataFork  = imageFilter.GetDataForkStream();
-            byte[] udifMagic = new byte[4];
+            var    udifMagic = new byte[4];
             dataFork.Read(udifMagic, 0, 4);
 
             if(BitConverter.ToUInt32(udifMagic, 0) == 0x796C6F6B)

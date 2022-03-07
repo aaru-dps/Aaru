@@ -30,19 +30,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Imd
 {
     /// <inheritdoc />
     public string Name => "Dunfield's IMD";
     /// <inheritdoc />
-    public Guid Id => new Guid("0D67162E-38A3-407D-9B1A-CF40080A48CB");
+    public Guid Id => new("0D67162E-38A3-407D-9B1A-CF40080A48CB");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />

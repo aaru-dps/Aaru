@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of Rio Karma partitions</summary>
@@ -51,7 +51,7 @@ public sealed class RioKarma : IPartition
     /// <inheritdoc />
     public string Name => "Rio Karma partitioning";
     /// <inheritdoc />
-    public Guid Id => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+    public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
 
@@ -59,9 +59,10 @@ public sealed class RioKarma : IPartition
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
         partitions = null;
-        var errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
+        ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError ||sector.Length < 512)
+        if(errno         != ErrorNumber.NoError ||
+           sector.Length < 512)
             return false;
 
         Table table = Marshal.ByteArrayToStructureLittleEndian<Table>(sector);

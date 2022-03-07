@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filters;
+
 using System;
 using System.IO;
-
-namespace Aaru.Filters;
 
 /// <summary>
 ///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams) by doing the
@@ -105,7 +105,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
         do
         {
-            byte[] buffer = new byte[BUFFER_LEN];
+            var buffer = new byte[BUFFER_LEN];
             read = _baseStream.Read(buffer, 0, BUFFER_LEN);
             _backStream.Write(buffer, 0, read);
         } while(read == BUFFER_LEN);
@@ -131,13 +131,13 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
         _backStream.Position = _backStream.Length;
         long   toPosition      = position - _backStream.Position;
-        int    fullBufferReads = (int)(toPosition / BUFFER_LEN);
-        int    restToRead      = (int)(toPosition % BUFFER_LEN);
+        var    fullBufferReads = (int)(toPosition / BUFFER_LEN);
+        var    restToRead      = (int)(toPosition % BUFFER_LEN);
         byte[] buffer;
         var    bufPos = 0;
-        var    left   = BUFFER_LEN;
+        int    left   = BUFFER_LEN;
 
-        for(int i = 0; i < fullBufferReads; i++)
+        for(var i = 0; i < fullBufferReads; i++)
         {
             buffer = new byte[BUFFER_LEN];
             bufPos = 0;
@@ -145,7 +145,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
             while(left > 0)
             {
-                var done = _baseStream.Read(buffer, bufPos, left);
+                int done = _baseStream.Read(buffer, bufPos, left);
                 left   -= done;
                 bufPos += done;
             }
@@ -159,7 +159,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
         while(left > 0)
         {
-            var done = _baseStream.Read(buffer, bufPos, left);
+            int done = _baseStream.Read(buffer, bufPos, left);
             left   -= done;
             bufPos += done;
         }
@@ -183,7 +183,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
         if(_backStream.Position + count <= _backStream.Length)
             return _backStream.Read(buffer, offset, count);
 
-        var oldPosition = _backStream.Position;
+        long oldPosition = _backStream.Position;
         SetPosition(_backStream.Position + count);
         SetPosition(oldPosition);
 

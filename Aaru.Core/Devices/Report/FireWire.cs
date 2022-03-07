@@ -30,15 +30,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes.Metadata;
-
 namespace Aaru.Core.Devices.Report;
+
+using Aaru.CommonTypes.Metadata;
 
 /// <summary>Implements creating a report for a FireWire device</summary>
 public sealed partial class DeviceReport
 {
     /// <summary>Fills a device report with parameters specific to a FireWire device</summary>
-    public FireWire FireWireReport() => new FireWire
+    public FireWire FireWireReport() => new()
     {
         Manufacturer = _dev.FireWireVendorName,
         Product      = _dev.FireWireModelName,

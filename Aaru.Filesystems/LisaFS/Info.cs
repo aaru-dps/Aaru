@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems.LisaFS;
+
 using System;
 using System.Text;
 using Aaru.CommonTypes;
@@ -41,8 +43,6 @@ using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
-
-namespace Aaru.Filesystems.LisaFS;
 
 public sealed partial class LisaFS
 {
@@ -61,7 +61,7 @@ public sealed partial class LisaFS
         int beforeMddf = -1;
 
         // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
-        for(int i = 0; i < 100; i++)
+        for(var i = 0; i < 100; i++)
         {
             errno = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag, out byte[] tag);
 
@@ -132,8 +132,7 @@ public sealed partial class LisaFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = new LisaRoman();
         information = "";
@@ -150,7 +149,7 @@ public sealed partial class LisaFS
         int beforeMddf = -1;
 
         // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
-        for(int i = 0; i < 100; i++)
+        for(var i = 0; i < 100; i++)
         {
             errno = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag, out byte[] tag);
 
@@ -173,8 +172,8 @@ public sealed partial class LisaFS
             if(errno != ErrorNumber.NoError)
                 continue;
 
-            var    infoMddf = new MDDF();
-            byte[] pString  = new byte[33];
+            var infoMddf = new MDDF();
+            var pString  = new byte[33];
 
             infoMddf.fsversion = BigEndianBitConverter.ToUInt16(sector, 0x00);
             infoMddf.volid     = BigEndianBitConverter.ToUInt64(sector, 0x02);
@@ -189,7 +188,7 @@ public sealed partial class LisaFS
             infoMddf.unknown2       = sector[0x4F];
             infoMddf.machine_id     = BigEndianBitConverter.ToUInt32(sector, 0x50);
             infoMddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
-            uint lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x58);
+            var lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x58);
             infoMddf.dtvc                         = DateHandlers.LisaToDateTime(lisaTime);
             lisaTime                              = BigEndianBitConverter.ToUInt32(sector, 0x5C);
             infoMddf.dtcc                         = DateHandlers.LisaToDateTime(lisaTime);

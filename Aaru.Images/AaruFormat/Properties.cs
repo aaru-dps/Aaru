@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,8 +39,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
@@ -62,7 +62,7 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public string Name => "Aaru Format";
     /// <inheritdoc />
-    public Guid Id => new Guid("49360069-1784-4A2F-B723-0C844D610B0A");
+    public Guid Id => new("49360069-1784-4A2F-B723-0C844D610B0A");
     /// <inheritdoc />
     public string Format => "Aaru";
     /// <inheritdoc />
@@ -78,8 +78,7 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata { get; private set; }
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags =>
-        Enum.GetValues(typeof(MediaTagType)).Cast<MediaTagType>();
+    public IEnumerable<MediaTagType> SupportedMediaTags => Enum.GetValues(typeof(MediaTagType)).Cast<MediaTagType>();
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags =>
         Enum.GetValues(typeof(SectorTagType)).Cast<SectorTagType>();
@@ -99,8 +98,7 @@ public sealed partial class AaruFormat
         ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data", false),
         ("deduplicate", typeof(bool),
          "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default", true),
-        ("compress", typeof(bool), "Compress user data blocks. Other blocks will always be compressed",
-         (object)true)
+        ("compress", typeof(bool), "Compress user data blocks. Other blocks will always be compressed", (object)true)
     };
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]

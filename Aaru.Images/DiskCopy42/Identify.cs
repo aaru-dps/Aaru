@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Claunia.Encoding;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class DiskCopy42
 {
@@ -46,8 +46,8 @@ public sealed partial class DiskCopy42
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
-        byte[] buffer  = new byte[0x58];
-        byte[] pString = new byte[64];
+        var buffer  = new byte[0x58];
+        var pString = new byte[64];
         stream.Read(buffer, 0, 0x58);
 
         // Incorrect pascal string length, not DC42
@@ -104,8 +104,7 @@ public sealed partial class DiskCopy42
            tmpHeader.Format != kSigmaFormatTwiggy &&
            tmpHeader.Format != kNotStandardFormat)
         {
-            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.format = 0x{0:X2} value",
-                                       tmpHeader.Format);
+            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.format = 0x{0:X2} value", tmpHeader.Format);
 
             return false;
         }
@@ -119,8 +118,7 @@ public sealed partial class DiskCopy42
            tmpHeader.FmtByte != kFmtNotStandard           &&
            tmpHeader.FmtByte != kMacOSXFmtByte)
         {
-            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value",
-                                       tmpHeader.FmtByte);
+            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", tmpHeader.FmtByte);
 
             return false;
         }

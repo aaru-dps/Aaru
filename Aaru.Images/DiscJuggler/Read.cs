@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,8 +46,6 @@ using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Session = Aaru.CommonTypes.Structs.Session;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class DiscJuggler
 {
     /// <inheritdoc />
@@ -55,14 +55,14 @@ public sealed partial class DiscJuggler
 
         // Read size of image descriptor
         _imageStream.Seek(-4, SeekOrigin.End);
-        byte[] dscLenB = new byte[4];
+        var dscLenB = new byte[4];
         _imageStream.Read(dscLenB, 0, 4);
-        int dscLen = BitConverter.ToInt32(dscLenB, 0);
+        var dscLen = BitConverter.ToInt32(dscLenB, 0);
 
         if(dscLen >= _imageStream.Length)
             return ErrorNumber.InvalidArgument;
 
-        byte[] descriptor = new byte[dscLen];
+        var descriptor = new byte[dscLen];
         _imageStream.Seek(-dscLen, SeekOrigin.End);
         _imageStream.Read(descriptor, 0, dscLen);
 
@@ -71,7 +71,7 @@ public sealed partial class DiscJuggler
            descriptor[0] == 0)
             return ErrorNumber.InvalidArgument;
 
-        int position = 1;
+        var position = 1;
 
         ushort sessionSequence = 0;
         Sessions    = new List<Session>();
@@ -107,7 +107,7 @@ public sealed partial class DiscJuggler
                descriptor[position + 13] != 0xFF ||
                descriptor[position + 14] != 0xFF)
             {
-                bool nextFound = false;
+                var nextFound = false;
 
                 // But on generated (not dumped) image, it can have some data between last written session and
                 // next open one, so depend on if we already got a track
@@ -163,7 +163,7 @@ public sealed partial class DiscJuggler
             };
 
             position += 15;
-            bool addedATrack = false;
+            var addedATrack = false;
 
             // Read track
             for(byte t = 0; t < maxT; t++)
@@ -174,7 +174,7 @@ public sealed partial class DiscJuggler
                 // Skip unknown
                 position += 16;
 
-                byte[] trackFilenameB = new byte[descriptor[position]];
+                var trackFilenameB = new byte[descriptor[position]];
                 position++;
                 Array.Copy(descriptor, position, trackFilenameB, 0, trackFilenameB.Length);
                 position   += trackFilenameB.Length;
@@ -189,27 +189,27 @@ public sealed partial class DiscJuggler
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tmediumType = {0}", mediumType);
 
                 // Read indices
-                ushort maxI = BitConverter.ToUInt16(descriptor, position);
+                var maxI = BitConverter.ToUInt16(descriptor, position);
                 position += 2;
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tmaxI = {0}", maxI);
 
                 // This is not really the index position, but, the index length, go figure
                 for(ushort i = 0; i < maxI; i++)
                 {
-                    int index = BitConverter.ToInt32(descriptor, position);
+                    var index = BitConverter.ToInt32(descriptor, position);
                     track.Indexes.Add(i, index);
                     position += 4;
                     AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tindex[{1}] = {0}", index, i);
                 }
 
                 // Read CD-Text
-                uint maxC = BitConverter.ToUInt32(descriptor, position);
+                var maxC = BitConverter.ToUInt32(descriptor, position);
                 position += 4;
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tmaxC = {0}", maxC);
 
                 for(uint c = 0; c < maxC; c++)
                 {
-                    for(int cb = 0; cb < 18; cb++)
+                    for(var cb = 0; cb < 18; cb++)
                     {
                         int bLen = descriptor[position];
                         position++;
@@ -218,7 +218,7 @@ public sealed partial class DiscJuggler
                         if(bLen <= 0)
                             continue;
 
-                        byte[] textBlk = new byte[bLen];
+                        var textBlk = new byte[bLen];
                         Array.Copy(descriptor, position, textBlk, 0, bLen);
                         position += bLen;
 
@@ -233,7 +233,7 @@ public sealed partial class DiscJuggler
                 }
 
                 position += 2;
-                uint trackMode = BitConverter.ToUInt32(descriptor, position);
+                var trackMode = BitConverter.ToUInt32(descriptor, position);
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackMode = {0}", trackMode);
                 position += 4;
 
@@ -262,7 +262,7 @@ public sealed partial class DiscJuggler
                 track.StartSector =  BitConverter.ToUInt32(descriptor, position);
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackStart = {0}", track.StartSector);
                 position += 4;
-                uint trackLen = BitConverter.ToUInt32(descriptor, position);
+                var trackLen = BitConverter.ToUInt32(descriptor, position);
 
                 // DiscJuggler counts the first track pregap start as 0 instead of -150, we need to adjust appropriately
                 if(track.StartSector == 0)
@@ -270,7 +270,7 @@ public sealed partial class DiscJuggler
                 else
                     track.StartSector -= 150;
 
-                int leftLen = (int)trackLen;
+                var leftLen = (int)trackLen;
 
                 // Convert index length to index position
                 foreach(KeyValuePair<ushort, int> idx in track.Indexes.Reverse())
@@ -303,21 +303,21 @@ public sealed partial class DiscJuggler
                 // Skip unknown
                 position += 16;
 
-                uint readMode = BitConverter.ToUInt32(descriptor, position);
+                var readMode = BitConverter.ToUInt32(descriptor, position);
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\treadMode = {0}", readMode);
                 position += 4;
-                uint trackCtl = BitConverter.ToUInt32(descriptor, position);
+                var trackCtl = BitConverter.ToUInt32(descriptor, position);
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackCtl = {0}", trackCtl);
                 position += 4;
 
                 // Skip unknown
                 position += 9;
 
-                byte[] isrc = new byte[12];
+                var isrc = new byte[12];
                 Array.Copy(descriptor, position, isrc, 0, 12);
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tisrc = {0}", StringHandlers.CToString(isrc));
                 position += 12;
-                uint isrcValid = BitConverter.ToUInt32(descriptor, position);
+                var isrcValid = BitConverter.ToUInt32(descriptor, position);
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tisrc_valid = {0}", isrcValid);
                 position += 4;
 
@@ -335,7 +335,7 @@ public sealed partial class DiscJuggler
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackFollows = {0}", trackFollows);
                 position += 2;
 
-                uint endAddress = BitConverter.ToUInt32(descriptor, position);
+                var endAddress = BitConverter.ToUInt32(descriptor, position);
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tendAddress = {0}", endAddress);
                 position += 4;
 
@@ -662,7 +662,7 @@ public sealed partial class DiscJuggler
         position += 16;
 
         AaruConsole.DebugWriteLine("DiscJuggler plugin", "Current position = {0}", position);
-        byte[] filenameB = new byte[descriptor[position]];
+        var filenameB = new byte[descriptor[position]];
         position++;
         Array.Copy(descriptor, position, filenameB, 0, filenameB.Length);
         position += filenameB.Length;
@@ -676,11 +676,11 @@ public sealed partial class DiscJuggler
         position   += 2;
         AaruConsole.DebugWriteLine("DiscJuggler plugin", "mediumType = {0}", mediumType);
 
-        uint discSize = BitConverter.ToUInt32(descriptor, position);
+        var discSize = BitConverter.ToUInt32(descriptor, position);
         position += 4;
         AaruConsole.DebugWriteLine("DiscJuggler plugin", "discSize = {0}", discSize);
 
-        byte[] volidB = new byte[descriptor[position]];
+        var volidB = new byte[descriptor[position]];
         position++;
         Array.Copy(descriptor, position, volidB, 0, volidB.Length);
         position += volidB.Length;
@@ -690,15 +690,15 @@ public sealed partial class DiscJuggler
         // Skip unknown
         position += 9;
 
-        byte[] mcn = new byte[13];
+        var mcn = new byte[13];
         Array.Copy(descriptor, position, mcn, 0, 13);
         AaruConsole.DebugWriteLine("DiscJuggler plugin", "mcn = {0}", StringHandlers.CToString(mcn));
         position += 13;
-        uint mcnValid = BitConverter.ToUInt32(descriptor, position);
+        var mcnValid = BitConverter.ToUInt32(descriptor, position);
         AaruConsole.DebugWriteLine("DiscJuggler plugin", "mcn_valid = {0}", mcnValid);
         position += 4;
 
-        uint cdtextLen = BitConverter.ToUInt32(descriptor, position);
+        var cdtextLen = BitConverter.ToUInt32(descriptor, position);
         AaruConsole.DebugWriteLine("DiscJuggler plugin", "cdtextLen = {0}", cdtextLen);
         position += 4;
 
@@ -719,13 +719,13 @@ public sealed partial class DiscJuggler
 
         if(_imageInfo.MediaType == MediaType.CDROM)
         {
-            bool data       = false;
-            bool mode2      = false;
-            bool firstaudio = false;
-            bool firstdata  = false;
-            bool audio      = false;
+            var data       = false;
+            var mode2      = false;
+            var firstaudio = false;
+            var firstdata  = false;
+            var audio      = false;
 
-            for(int i = 0; i < Tracks.Count; i++)
+            for(var i = 0; i < Tracks.Count; i++)
             {
                 // First track is audio
                 firstaudio |= i == 0 && Tracks[i].Type == TrackType.Audio;
@@ -758,7 +758,7 @@ public sealed partial class DiscJuggler
                     Sessions.Count > 1 &&
                     mode2)
                 _imageInfo.MediaType = MediaType.CDPLUS;
-            else if((firstdata && audio) || mode2)
+            else if(firstdata && audio || mode2)
                 _imageInfo.MediaType = MediaType.CDROMXA;
             else if(!audio)
                 _imageInfo.MediaType = MediaType.CDROM;
@@ -821,8 +821,7 @@ public sealed partial class DiscJuggler
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) =>
-        ReadSectors(sectorAddress, 1, out buffer);
+    public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer) => ReadSectors(sectorAddress, 1, out buffer);
 
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer) =>
@@ -884,7 +883,7 @@ public sealed partial class DiscJuggler
         uint sectorOffset;
         uint sectorSize;
         uint sectorSkip;
-        bool mode2 = false;
+        var  mode2 = false;
 
         switch(aaruTrack.Type)
         {
@@ -942,7 +941,7 @@ public sealed partial class DiscJuggler
 
         buffer = new byte[sectorSize * length];
 
-        _imageStream.Seek((long)(aaruTrack.FileOffset + (sectorAddress * (sectorOffset + sectorSize + sectorSkip))),
+        _imageStream.Seek((long)(aaruTrack.FileOffset + sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                           SeekOrigin.Begin);
 
         if(mode2)
@@ -952,9 +951,9 @@ public sealed partial class DiscJuggler
             buffer = new byte[(aaruTrack.RawBytesPerSector + sectorSkip) * length];
             _imageStream.Read(buffer, 0, buffer.Length);
 
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[aaruTrack.RawBytesPerSector];
+                var sector = new byte[aaruTrack.RawBytesPerSector];
 
                 Array.Copy(buffer, (aaruTrack.RawBytesPerSector + sectorSkip) * i, sector, 0,
                            aaruTrack.RawBytesPerSector);
@@ -969,9 +968,9 @@ public sealed partial class DiscJuggler
                 sectorSkip   == 0)
             _imageStream.Read(buffer, 0, buffer.Length);
         else
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[sectorSize];
+                var sector = new byte[sectorSize];
                 _imageStream.Seek(sectorOffset, SeekOrigin.Current);
                 _imageStream.Read(sector, 0, sector.Length);
                 _imageStream.Seek(sectorSkip, SeekOrigin.Current);
@@ -1208,16 +1207,16 @@ public sealed partial class DiscJuggler
 
         buffer = new byte[sectorSize * length];
 
-        _imageStream.Seek((long)(aaruTrack.FileOffset + (sectorAddress * (sectorOffset + sectorSize + sectorSkip))),
+        _imageStream.Seek((long)(aaruTrack.FileOffset + sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                           SeekOrigin.Begin);
 
         if(sectorOffset == 0 &&
            sectorSkip   == 0)
             _imageStream.Read(buffer, 0, buffer.Length);
         else
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[sectorSize];
+                var sector = new byte[sectorSize];
                 _imageStream.Seek(sectorOffset, SeekOrigin.Current);
                 _imageStream.Read(sector, 0, sector.Length);
                 _imageStream.Seek(sectorSkip, SeekOrigin.Current);
@@ -1269,7 +1268,7 @@ public sealed partial class DiscJuggler
         if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
             return ErrorNumber.OutOfRange;
 
-        uint sectorSize = (uint)aaruTrack.RawBytesPerSector;
+        var  sectorSize = (uint)aaruTrack.RawBytesPerSector;
         uint sectorSkip = 0;
 
         switch(aaruTrack.SubchannelType)
@@ -1291,15 +1290,14 @@ public sealed partial class DiscJuggler
 
         buffer = new byte[sectorSize * length];
 
-        _imageStream.Seek((long)(aaruTrack.FileOffset + (sectorAddress * (sectorSize + sectorSkip))),
-                          SeekOrigin.Begin);
+        _imageStream.Seek((long)(aaruTrack.FileOffset + sectorAddress * (sectorSize + sectorSkip)), SeekOrigin.Begin);
 
         if(sectorSkip == 0)
             _imageStream.Read(buffer, 0, buffer.Length);
         else
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[sectorSize];
+                var sector = new byte[sectorSize];
                 _imageStream.Read(sector, 0, sector.Length);
                 _imageStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
@@ -1309,8 +1307,8 @@ public sealed partial class DiscJuggler
         {
             case TrackType.CdMode1 when aaruTrack.RawBytesPerSector == 2048:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -1326,8 +1324,8 @@ public sealed partial class DiscJuggler
             }
             case TrackType.CdMode2Formless when aaruTrack.RawBytesPerSector == 2336:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {

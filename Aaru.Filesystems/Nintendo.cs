@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Text;
 using Aaru.CommonTypes;
@@ -38,8 +40,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the filesystem used by Nintendo Gamecube and Wii discs</summary>
@@ -70,15 +70,14 @@ public sealed class NintendoPlugin : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
-        uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
+        var magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
+        var magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
         return magicGc == 0xC2339F3D || magicWii == 0x5D1C9EA3;
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding = encoding ?? Encoding.GetEncoding("shift_jis");
         var sbInformation = new StringBuilder();
@@ -92,10 +91,10 @@ public sealed class NintendoPlugin : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        bool wii = false;
+        var wii = false;
 
-        uint magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
-        uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
+        var magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
+        var magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
         if(magicWii == 0x5D1C9EA3)
             wii = true;
@@ -111,7 +110,7 @@ public sealed class NintendoPlugin : IFilesystem
         fields.DiscVersion      =  header[7];
         fields.Streaming        |= header[8] > 0;
         fields.StreamBufferSize =  header[9];
-        byte[] temp = new byte[64];
+        var temp = new byte[64];
         Array.Copy(header, 0x20, temp, 0, 64);
         fields.Title = StringHandlers.CToString(temp, Encoding);
 
@@ -137,44 +136,40 @@ public sealed class NintendoPlugin : IFilesystem
             fields.ThirdPartitions  = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40010)];
             fields.FourthPartitions = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40018)];
 
-            for(int i = 0; i < fields.FirstPartitions.Length; i++)
-                if(offset1 + (i * 8) + 8 < 0x50000)
+            for(var i = 0; i < fields.FirstPartitions.Length; i++)
+                if(offset1 + i * 8 + 8 < 0x50000)
                 {
                     fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset1 + (i * 8) + 0)) << 2;
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 0)) << 2;
 
-                    fields.FirstPartitions[i].Type =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset1 + (i * 8) + 4));
+                    fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 4));
                 }
 
-            for(int i = 0; i < fields.SecondPartitions.Length; i++)
-                if(offset1 + (i * 8) + 8 < 0x50000)
+            for(var i = 0; i < fields.SecondPartitions.Length; i++)
+                if(offset1 + i * 8 + 8 < 0x50000)
                 {
                     fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset2 + (i * 8) + 0)) << 2;
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 0)) << 2;
 
-                    fields.FirstPartitions[i].Type =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset2 + (i * 8) + 4));
+                    fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 4));
                 }
 
-            for(int i = 0; i < fields.ThirdPartitions.Length; i++)
-                if(offset1 + (i * 8) + 8 < 0x50000)
+            for(var i = 0; i < fields.ThirdPartitions.Length; i++)
+                if(offset1 + i * 8 + 8 < 0x50000)
                 {
                     fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset3 + (i * 8) + 0)) << 2;
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 0)) << 2;
 
-                    fields.FirstPartitions[i].Type =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset3 + (i * 8) + 4));
+                    fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 4));
                 }
 
-            for(int i = 0; i < fields.FourthPartitions.Length; i++)
-                if(offset1 + (i * 8) + 8 < 0x50000)
+            for(var i = 0; i < fields.FourthPartitions.Length; i++)
+                if(offset1 + i * 8 + 8 < 0x50000)
                 {
                     fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset4 + (i * 8) + 0)) << 2;
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 0)) << 2;
 
-                    fields.FirstPartitions[i].Type =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset4 + (i * 8) + 4));
+                    fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
                 }
 
             fields.Region       = header[0x4E000];
@@ -213,7 +208,7 @@ public sealed class NintendoPlugin : IFilesystem
         AaruConsole.DebugWriteLine("Nintendo plugin", "fstSize = {0}", fields.FstSize);
         AaruConsole.DebugWriteLine("Nintendo plugin", "fstMax = {0}", fields.FstMax);
 
-        for(int i = 0; i < fields.FirstPartitions.Length; i++)
+        for(var i = 0; i < fields.FirstPartitions.Length; i++)
         {
             AaruConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].offset = {0}",
                                        fields.FirstPartitions[i].Offset, i);
@@ -222,7 +217,7 @@ public sealed class NintendoPlugin : IFilesystem
                                        fields.FirstPartitions[i].Type, i);
         }
 
-        for(int i = 0; i < fields.SecondPartitions.Length; i++)
+        for(var i = 0; i < fields.SecondPartitions.Length; i++)
         {
             AaruConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].offset = {0}",
                                        fields.SecondPartitions[i].Offset, i);
@@ -231,7 +226,7 @@ public sealed class NintendoPlugin : IFilesystem
                                        fields.SecondPartitions[i].Type, i);
         }
 
-        for(int i = 0; i < fields.ThirdPartitions.Length; i++)
+        for(var i = 0; i < fields.ThirdPartitions.Length; i++)
         {
             AaruConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].offset = {0}",
                                        fields.ThirdPartitions[i].Offset, i);
@@ -240,7 +235,7 @@ public sealed class NintendoPlugin : IFilesystem
                                        fields.ThirdPartitions[i].Type, i);
         }
 
-        for(int i = 0; i < fields.FourthPartitions.Length; i++)
+        for(var i = 0; i < fields.FourthPartitions.Length; i++)
         {
             AaruConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].offset = {0}",
                                        fields.FourthPartitions[i].Offset, i);
@@ -281,22 +276,22 @@ public sealed class NintendoPlugin : IFilesystem
 
         if(wii)
         {
-            for(int i = 0; i < fields.FirstPartitions.Length; i++)
+            for(var i = 0; i < fields.FirstPartitions.Length; i++)
                 sbInformation.AppendFormat("First {0} partition starts at sector {1}",
                                            PartitionTypeToString(fields.FirstPartitions[i].Type),
                                            fields.FirstPartitions[i].Offset / 2048).AppendLine();
 
-            for(int i = 0; i < fields.SecondPartitions.Length; i++)
+            for(var i = 0; i < fields.SecondPartitions.Length; i++)
                 sbInformation.AppendFormat("Second {0} partition starts at sector {1}",
                                            PartitionTypeToString(fields.SecondPartitions[i].Type),
                                            fields.SecondPartitions[i].Offset / 2048).AppendLine();
 
-            for(int i = 0; i < fields.ThirdPartitions.Length; i++)
+            for(var i = 0; i < fields.ThirdPartitions.Length; i++)
                 sbInformation.AppendFormat("Third {0} partition starts at sector {1}",
                                            PartitionTypeToString(fields.ThirdPartitions[i].Type),
                                            fields.ThirdPartitions[i].Offset / 2048).AppendLine();
 
-            for(int i = 0; i < fields.FourthPartitions.Length; i++)
+            for(var i = 0; i < fields.FourthPartitions.Length; i++)
                 sbInformation.AppendFormat("Fourth {0} partition starts at sector {1}",
                                            PartitionTypeToString(fields.FourthPartitions[i].Type),
                                            fields.FourthPartitions[i].Offset / 2048).AppendLine();

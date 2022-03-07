@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.CommandLine;
-
 namespace Aaru.Commands.Image;
 
-internal sealed class ImageFamily : Command
+using System.CommandLine;
+
+sealed class ImageFamily : Command
 {
     public ImageFamily() : base("image", "Commands to manage images")
     {

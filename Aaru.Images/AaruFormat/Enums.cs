@@ -259,13 +259,19 @@ public sealed partial class AaruFormat
 
     enum ChecksumAlgorithm : byte
     {
-        Invalid = 0, Md5     = 1, Sha1 = 2,
-        Sha256  = 3, SpamSum = 4
+        Invalid = 0,
+        Md5     = 1,
+        Sha1    = 2,
+        Sha256  = 3,
+        SpamSum = 4
     }
 
     enum CdFixFlags : uint
     {
-        NotDumped    = 0x10000000, Correct         = 0x20000000, Mode2Form1Ok = 0x30000000,
-        Mode2Form2Ok = 0x40000000, Mode2Form2NoCrc = 0x50000000
+        NotDumped       = 0x10000000,
+        Correct         = 0x20000000,
+        Mode2Form1Ok    = 0x30000000,
+        Mode2Form2Ok    = 0x40000000,
+        Mode2Form2NoCrc = 0x50000000
     }
 }

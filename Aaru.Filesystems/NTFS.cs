@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information from Inside Windows NT
 /// <inheritdoc />
@@ -65,7 +65,7 @@ public sealed class NTFS : IFilesystem
         if(2 + partition.Start >= partition.End)
             return false;
 
-        byte[] eigthBytes = new byte[8];
+        var eigthBytes = new byte[8];
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] ntfsBpb);
 
@@ -78,9 +78,9 @@ public sealed class NTFS : IFilesystem
         if(oemName != "NTFS    ")
             return false;
 
-        byte   fatsNo    = ntfsBpb[0x010];
-        ushort spFat     = BitConverter.ToUInt16(ntfsBpb, 0x016);
-        ushort signature = BitConverter.ToUInt16(ntfsBpb, 0x1FE);
+        byte fatsNo    = ntfsBpb[0x010];
+        var  spFat     = BitConverter.ToUInt16(ntfsBpb, 0x016);
+        var  signature = BitConverter.ToUInt16(ntfsBpb, 0x1FE);
 
         if(fatsNo != 0)
             return false;
@@ -92,8 +92,7 @@ public sealed class NTFS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = Encoding.Unicode;
         information = "";
@@ -126,8 +125,7 @@ public sealed class NTFS : IFilesystem
 
         //          sb.AppendFormat("NT flags: 0x{0:X2}", ntfs_bb.nt_flags).AppendLine();
         //          sb.AppendFormat("Signature 1: 0x{0:X2}", ntfs_bb.signature1).AppendLine();
-        sb.AppendFormat("{0} sectors on volume ({1} bytes)", ntfsBb.sectors, ntfsBb.sectors * ntfsBb.bps).
-           AppendLine();
+        sb.AppendFormat("{0} sectors on volume ({1} bytes)", ntfsBb.sectors, ntfsBb.sectors * ntfsBb.bps).AppendLine();
 
         sb.AppendFormat("Cluster where $MFT starts: {0}", ntfsBb.mft_lsn).AppendLine();
         sb.AppendFormat("Cluster where $MFTMirr starts: {0}", ntfsBb.mftmirror_lsn).AppendLine();

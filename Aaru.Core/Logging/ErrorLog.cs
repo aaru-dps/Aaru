@@ -26,14 +26,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Logging;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.Decoders.ATA;
 using Aaru.Decoders.SCSI;
-
-namespace Aaru.Core.Logging;
 
 /// <summary>Logs errors</summary>
 public sealed class ErrorLog
@@ -76,8 +76,8 @@ public sealed class ErrorLog
         }
         else
         {
-            List<string> error  = new List<string>();
-            List<string> status = new List<string>();
+            var error  = new List<string>();
+            var status = new List<string>();
 
             if((registers.Status & 0x01) == 0x01)
                 status.Add("ERR");
@@ -153,8 +153,8 @@ public sealed class ErrorLog
         }
         else
         {
-            List<string> error  = new List<string>();
-            List<string> status = new List<string>();
+            var error  = new List<string>();
+            var status = new List<string>();
 
             if((registers.Status & 0x01) == 0x01)
                 status.Add("ERR");
@@ -204,8 +204,8 @@ public sealed class ErrorLog
             if((registers.Error & 0x80) == 0x80)
                 error.Add("BBK");
 
-            _logSw.WriteLine("ATA reading C/H/S {0}/{1}/{2} error: status = {3}, error = {4}.", cylinder, head,
-                             sector, string.Join(' ', status), string.Join(' ', error));
+            _logSw.WriteLine("ATA reading C/H/S {0}/{1}/{2} error: status = {3}, error = {4}.", cylinder, head, sector,
+                             string.Join(' ', status), string.Join(' ', error));
 
             _logSw.Flush();
         }
@@ -225,8 +225,8 @@ public sealed class ErrorLog
         }
         else
         {
-            List<string> error  = new List<string>();
-            List<string> status = new List<string>();
+            var error  = new List<string>();
+            var status = new List<string>();
 
             if((registers.Status & 0x01) == 0x01)
                 status.Add("ERR");
@@ -276,8 +276,8 @@ public sealed class ErrorLog
             if((registers.Error & 0x80) == 0x80)
                 error.Add("BBK");
 
-            _logSw.WriteLine("ATA reading LBA {0} error: status = {1}, error = {2}.", block,
-                             string.Join(' ', status), string.Join(' ', error));
+            _logSw.WriteLine("ATA reading LBA {0} error: status = {1}, error = {2}.", block, string.Join(' ', status),
+                             string.Join(' ', error));
 
             _logSw.Flush();
         }
@@ -297,8 +297,8 @@ public sealed class ErrorLog
         }
         else
         {
-            List<string> error  = new List<string>();
-            List<string> status = new List<string>();
+            var error  = new List<string>();
+            var status = new List<string>();
 
             if((registers.Status & 0x01) == 0x01)
                 status.Add("ERR");
@@ -348,8 +348,8 @@ public sealed class ErrorLog
             if((registers.Error & 0x80) == 0x80)
                 error.Add("BBK");
 
-            _logSw.WriteLine("ATA reading LBA {0} error: status = {1}, error = {2}.", block,
-                             string.Join(' ', status), string.Join(' ', error));
+            _logSw.WriteLine("ATA reading LBA {0} error: status = {1}, error = {2}.", block, string.Join(' ', status),
+                             string.Join(' ', error));
 
             _logSw.Flush();
         }
@@ -372,7 +372,7 @@ public sealed class ErrorLog
 
         DecodedSense? decodedSense = Sense.Decode(senseBuffer);
         string        prettySense  = Sense.PrettifySense(senseBuffer);
-        string        hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
+        var           hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
 
         if(decodedSense.HasValue)
         {
@@ -387,15 +387,13 @@ public sealed class ErrorLog
                 prettySense = prettySense.Replace("\n", " - ");
 
                 _logSw.WriteLine("SCSI command {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.", command,
-                                 decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ,
-                                 hexSense, prettySense);
+                                 decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ, hexSense,
+                                 prettySense);
             }
             else
-            {
                 _logSw.WriteLine("SCSI command {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.", command,
                                  decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ,
                                  hexSense);
-            }
         }
         else
         {
@@ -412,9 +410,7 @@ public sealed class ErrorLog
                 _logSw.WriteLine("SCSI command {0} error: {1}, {2}.", command, hexSense, prettySense);
             }
             else
-            {
                 _logSw.WriteLine("SCSI command {0} error: {1}", command, hexSense);
-            }
         }
 
         _logSw.Flush();
@@ -440,7 +436,7 @@ public sealed class ErrorLog
 
         DecodedSense? decodedSense = Sense.Decode(senseBuffer);
         string        prettySense  = Sense.PrettifySense(senseBuffer);
-        string        hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
+        var           hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
 
         if(decodedSense.HasValue)
         {
@@ -455,15 +451,13 @@ public sealed class ErrorLog
                 prettySense = prettySense.Replace("\n", " - ");
 
                 _logSw.WriteLine("SCSI reading LBA {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.", block,
-                                 decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ,
-                                 hexSense, prettySense);
+                                 decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ, hexSense,
+                                 prettySense);
             }
             else
-            {
                 _logSw.WriteLine("SCSI reading LBA {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.", block,
                                  decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ,
                                  hexSense);
-            }
         }
         else
         {
@@ -480,9 +474,7 @@ public sealed class ErrorLog
                 _logSw.WriteLine("SCSI reading LBA {0} error: {1}, {2}.", block, hexSense, prettySense);
             }
             else
-            {
                 _logSw.WriteLine("SCSI reading LBA {0} error: {1}", block, hexSense);
-            }
         }
 
         _logSw.Flush();
@@ -529,8 +521,8 @@ public sealed class ErrorLog
             return;
         }
 
-        _logSw.WriteLine("SD/MMC reading LBA {0} ({1}-addressed) error: {2}", block,
-                         byteAddressed ? "byte" : "block", string.Join(" - ", response.Select(r => $"0x{r:X8}")));
+        _logSw.WriteLine("SD/MMC reading LBA {0} ({1}-addressed) error: {2}", block, byteAddressed ? "byte" : "block",
+                         string.Join(" - ", response.Select(r => $"0x{r:X8}")));
 
         throw new NotImplementedException();
     }

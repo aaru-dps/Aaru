@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of Apricot partitions</summary>
@@ -130,8 +130,7 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine("Apricot partitions", "label.copyProtected = {0}", label.copyProtected);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.bootType = {0} ({1})", label.bootType,
-                                   label.bootType < _bootTypeCodes.Length ? _bootTypeCodes[label.bootType]
-                                       : "Unknown");
+                                   label.bootType < _bootTypeCodes.Length ? _bootTypeCodes[label.bootType] : "Unknown");
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.partitionCount = {0}", label.partitionCount);
         AaruConsole.DebugWriteLine("Apricot partitions", "label.winchester = {0}", label.winchester);
@@ -171,13 +170,11 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.media = {0}", label.mainBPB.media);
         AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.spfat = {0}", label.mainBPB.spfat);
 
-        AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.diskType = {0} ({1})",
-                                   label.mainBPB.diskType,
+        AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.diskType = {0} ({1})", label.mainBPB.diskType,
                                    label.mainBPB.diskType < _diskTypeCodes.Length
                                        ? _diskTypeCodes[label.mainBPB.diskType] : "Unknown");
 
-        AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.startSector = {0}",
-                                   label.mainBPB.startSector);
+        AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.startSector = {0}", label.mainBPB.startSector);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.fontName = \"{0}\"",
                                    StringHandlers.CToString(label.fontName));
@@ -190,8 +187,7 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine("Apricot partitions", "label.diagnosticsFlag = {0}", label.diagnosticsFlag);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.prnDevice = {0} ({1})", label.prnDevice,
-                                   label.prnDevice < _printDevices.Length ? _printDevices[label.prnDevice]
-                                       : "Unknown");
+                                   label.prnDevice < _printDevices.Length ? _printDevices[label.prnDevice] : "Unknown");
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.bellVolume = {0}", label.bellVolume);
         AaruConsole.DebugWriteLine("Apricot partitions", "label.enableCache = {0}", label.enableCache);
@@ -206,8 +202,7 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine("Apricot partitions", "label.autorepeat = {0}", label.autorepeat);
         AaruConsole.DebugWriteLine("Apricot partitions", "label.autorepeatLeadIn = {0}", label.autorepeatLeadIn);
 
-        AaruConsole.DebugWriteLine("Apricot partitions", "label.autorepeatInterval = {0}",
-                                   label.autorepeatInterval);
+        AaruConsole.DebugWriteLine("Apricot partitions", "label.autorepeatInterval = {0}", label.autorepeatInterval);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.microscreenMode = {0}", label.microscreenMode);
 
@@ -240,8 +235,7 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine("Apricot partitions", "label.parityCheck = {0}", label.parityCheck);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.parityType = {0} ({1})", label.parityType,
-                                   label.parityType < _parityTypes.Length ? _parityTypes[label.parityType]
-                                       : "Unknown");
+                                   label.parityType < _parityTypes.Length ? _parityTypes[label.parityType] : "Unknown");
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.txXonXoff = {0}", label.txXonXoff);
         AaruConsole.DebugWriteLine("Apricot partitions", "label.rxXonXoff = {0}", label.rxXonXoff);
@@ -280,16 +274,16 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine("Apricot partitions", "label.spareRamDisk is null? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(label.spareRamDisk));
 
-        for(int i = 0; i < 32; i++)
+        for(var i = 0; i < 32; i++)
             AaruConsole.DebugWriteLine("Apricot partitions", "label.badBlocks[{1}] = {0}", label.badBlocks[i], i);
 
-        for(int i = 0; i < 8; i++)
+        for(var i = 0; i < 8; i++)
         {
-            AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].bps = {0}",
-                                       label.partitions[i].bps, i);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].bps = {0}", label.partitions[i].bps,
+                                       i);
 
-            AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].spc = {0}",
-                                       label.partitions[i].spc, i);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].spc = {0}", label.partitions[i].spc,
+                                       i);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].rsectors = {0}",
                                        label.partitions[i].rsectors, i);

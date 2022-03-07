@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Partitions;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -41,8 +43,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of UNIX VTOC partitions</summary>
@@ -59,7 +59,7 @@ public sealed class VTOC : IPartition
     /// <inheritdoc />
     public string Name => "UNIX VTOC";
     /// <inheritdoc />
-    public Guid Id => new Guid("6D35A66F-8D77-426F-A562-D88F6A1F1702");
+    public Guid Id => new("6D35A66F-8D77-426F-A562-D88F6A1F1702");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
 
@@ -71,8 +71,8 @@ public sealed class VTOC : IPartition
         uint        magic      = 0;
         ulong       pdloc      = 0;
         byte[]      pdsector   = null;
-        bool        magicFound = false;
-        bool        absolute   = false;
+        var         magicFound = false;
+        var         absolute   = false;
         ErrorNumber errno;
 
         foreach(ulong i in new ulong[]
@@ -84,6 +84,7 @@ public sealed class VTOC : IPartition
 
             if(errno != ErrorNumber.NoError)
                 continue;
+
             magic = BitConverter.ToUInt32(pdsector, 4);
 
             AaruConsole.DebugWriteLine("VTOC plugin", "sanity at {0} is 0x{1:X8} (should be 0x{2:X8} or 0x{3:X8})",
@@ -118,8 +119,7 @@ public sealed class VTOC : IPartition
 
         AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.driveid = {0}", pd.driveid);
 
-        AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.sanity = 0x{0:X8} (should be 0x{1:X8})", pd.sanity,
-                                   PD_MAGIC);
+        AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.sanity = 0x{0:X8} (should be 0x{1:X8})", pd.sanity, PD_MAGIC);
 
         AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.version = {0}", pd.version);
         AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.serial = \"{0}\"", StringHandlers.CToString(pd.serial));
@@ -162,11 +162,12 @@ public sealed class VTOC : IPartition
         AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[7] = {0}", pd.pad[7]);
 
         magicFound = false;
-        bool useOld = false;
+        var useOld = false;
         errno = imagePlugin.ReadSector(pdloc + sectorOffset + 1, out byte[] vtocsector);
 
         if(errno != ErrorNumber.NoError)
             return false;
+
         var vtoc    = new vtoc();
         var vtocOld = new vtocold();
         magic = BitConverter.ToUInt32(vtocsector, 0);
@@ -183,7 +184,7 @@ public sealed class VTOC : IPartition
             {
                 vtoc = Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
 
-                for(int i = 0; i < vtoc.v_part.Length; i++)
+                for(var i = 0; i < vtoc.v_part.Length; i++)
                 {
                     vtoc.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtoc.v_part[i].p_tag);
                     vtoc.v_part[i].p_flag  = (pFlag)Swapping.Swap((ushort)vtoc.v_part[i].p_flag);
@@ -212,7 +213,7 @@ public sealed class VTOC : IPartition
                 {
                     vtocOld = Marshal.ByteArrayToStructureBigEndian<vtocold>(vtocsector);
 
-                    for(int i = 0; i < vtocOld.v_part.Length; i++)
+                    for(var i = 0; i < vtocOld.v_part.Length; i++)
                     {
                         vtocOld.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtocOld.v_part[i].p_tag);
                         vtocOld.v_part[i].p_flag  = (pFlag)Swapping.Swap((ushort)vtocOld.v_part[i].p_flag);
@@ -249,6 +250,7 @@ public sealed class VTOC : IPartition
 
             if(errno != ErrorNumber.NoError)
                 return false;
+
             vtocsector = new byte[pd.vtoc_len];
             Array.Copy(tmp, relSecOff, vtocsector, 0, pd.vtoc_len);
             magic = BitConverter.ToUInt32(vtocsector, 0);
@@ -265,7 +267,7 @@ public sealed class VTOC : IPartition
                 {
                     vtoc = Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
 
-                    for(int i = 0; i < vtoc.v_part.Length; i++)
+                    for(var i = 0; i < vtoc.v_part.Length; i++)
                     {
                         vtoc.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtoc.v_part[i].p_tag);
                         vtoc.v_part[i].p_flag  = (pFlag)Swapping.Swap((ushort)vtoc.v_part[i].p_flag);
@@ -297,7 +299,7 @@ public sealed class VTOC : IPartition
             AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_sectorsz = {0}", vtocOld.v_sectorsz);
             AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_nparts = {0}", vtocOld.v_nparts);
 
-            for(int i = 0; i < V_NUMPAR; i++)
+            for(var i = 0; i < V_NUMPAR; i++)
             {
                 AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_tag = {1} ({2})", i,
                                            vtocOld.v_part[i].p_tag, (ushort)vtocOld.v_part[i].p_tag);
@@ -317,8 +319,8 @@ public sealed class VTOC : IPartition
         }
         else
         {
-            AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_sanity = 0x{0:X8} (should be 0x{1:X8})",
-                                       vtoc.v_sanity, VTOC_SANE);
+            AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_sanity = 0x{0:X8} (should be 0x{1:X8})", vtoc.v_sanity,
+                                       VTOC_SANE);
 
             AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_version = {0}", vtoc.v_version);
 
@@ -328,19 +330,17 @@ public sealed class VTOC : IPartition
             AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_pad = {0}", vtoc.v_pad);
             AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_nparts = {0}", vtoc.v_nparts);
 
-            for(int i = 0; i < V_NUMPAR; i++)
+            for(var i = 0; i < V_NUMPAR; i++)
             {
-                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_tag = {1} ({2})", i,
-                                           vtoc.v_part[i].p_tag, (ushort)vtoc.v_part[i].p_tag);
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_tag = {1} ({2})", i, vtoc.v_part[i].p_tag,
+                                           (ushort)vtoc.v_part[i].p_tag);
 
                 AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_flag = {1} ({2})", i,
                                            vtoc.v_part[i].p_flag, (ushort)vtoc.v_part[i].p_flag);
 
-                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_start = {1}", i,
-                                           vtoc.v_part[i].p_start);
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_start = {1}", i, vtoc.v_part[i].p_start);
 
-                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_size = {1}", i,
-                                           vtoc.v_part[i].p_size);
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_size = {1}", i, vtoc.v_part[i].p_size);
 
                 AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.timestamp[{0}] = {1}", i,
                                            DateHandlers.UnixToDateTime(vtoc.timestamp[i]));
@@ -366,7 +366,7 @@ public sealed class VTOC : IPartition
 
         // Check for a partition describing the VTOC whose start is the same as the start we know.
         // This means partition starts are absolute, not relative, to the VTOC position
-        for(int i = 0; i < V_NUMPAR; i++)
+        for(var i = 0; i < V_NUMPAR; i++)
             if(parts[i].p_tag          == pTag.V_BACKUP &&
                (ulong)parts[i].p_start == sectorOffset)
             {
@@ -375,7 +375,7 @@ public sealed class VTOC : IPartition
                 break;
             }
 
-        for(int i = 0; i < V_NUMPAR; i++)
+        for(var i = 0; i < V_NUMPAR; i++)
             if(parts[i].p_tag != pTag.V_UNUSED)
             {
                 var part = new Partition
@@ -389,7 +389,7 @@ public sealed class VTOC : IPartition
                     Scheme   = Name
                 };
 
-                string info = "";
+                var info = "";
 
                 // Apparently old ones are absolute :?
                 if(!useOld &&
@@ -618,8 +618,11 @@ public sealed class VTOC : IPartition
     [Flags, SuppressMessage("ReSharper", "InconsistentNaming")]
     enum pFlag : ushort
     {
-        /* Partition permission flags */ V_UNMNT = 0x01, /* Unmountable partition */ V_RONLY = 0x10, /* Read only */
-        V_REMAP = 0x20, /* do alternate sector mapping */ V_OPEN = 0x100, /* Partition open (for driver use) */
-        V_VALID = 0x200, /* Partition is valid to use */ V_VOMASK = 0x300 /* mask for open and valid */
+        /* Partition permission flags */ V_UNMNT = 0x01,  /* Unmountable partition */
+        V_RONLY                                  = 0x10,  /* Read only */
+        V_REMAP                                  = 0x20,  /* do alternate sector mapping */
+        V_OPEN                                   = 0x100, /* Partition open (for driver use) */
+        V_VALID                                  = 0x200, /* Partition is valid to use */
+        V_VOMASK                                 = 0x300  /* mask for open and valid */
     }
 }

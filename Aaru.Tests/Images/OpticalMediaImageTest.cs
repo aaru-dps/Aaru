@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Images;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,8 +18,6 @@ using FluentAssertions.Execution;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Images;
 
 public abstract class OpticalMediaImageTest : BaseMediaImageTest
 {
@@ -57,7 +57,6 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                     continue;
 
                 using(new AssertionScope())
-                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
@@ -84,10 +83,10 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                         image.Tracks.Select(t => t.Pregap).Should().
                               BeEquivalentTo(test.Tracks.Select(s => s.Pregap), $"Track pregap: {testFile}");
 
-                        int trackNo = 0;
+                        var trackNo = 0;
 
-                        byte?[] flags           = new byte?[image.Tracks.Count];
-                        ulong   latestEndSector = 0;
+                        var   flags           = new byte?[image.Tracks.Count];
+                        ulong latestEndSector = 0;
 
                         foreach(Track currentTrack in image.Tracks)
                         {
@@ -114,7 +113,6 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                         Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
                                         $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors} for image");
                     });
-                }
             }
         });
     }
@@ -152,7 +150,6 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                     continue;
 
                 using(new AssertionScope())
-                {
                     Assert.Multiple(() =>
                     {
                         foreach(TrackInfoTestExpected track in test.Tracks)
@@ -172,12 +169,12 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 Start  = trackStart
                             };
 
-                            Core.Filesystems.Identify(image, out List<string> idPlugins, partition);
+                            Filesystems.Identify(image, out List<string> idPlugins, partition);
 
                             Assert.AreEqual(track.FileSystems.Length, idPlugins.Count,
                                             $"Expected {track.FileSystems.Length} filesystems in {testFile} but found {idPlugins.Count}");
 
-                            for(int i = 0; i < track.FileSystems.Length; i++)
+                            for(var i = 0; i < track.FileSystems.Length; i++)
                             {
                                 PluginBase plugins = GetPluginBase.Instance;
                                 bool found = plugins.PluginsList.TryGetValue(idPlugins[i], out IFilesystem plugin);
@@ -195,8 +192,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                                 if(track.FileSystems[i].ApplicationId != null)
                                     Assert.AreEqual(track.FileSystems[i].ApplicationId,
-                                                    fs.XmlFsType.ApplicationIdentifier,
-                                                    $"Application ID: {testFile}");
+                                                    fs.XmlFsType.ApplicationIdentifier, $"Application ID: {testFile}");
 
                                 Assert.AreEqual(track.FileSystems[i].Bootable, fs.XmlFsType.Bootable,
                                                 $"Bootable: {testFile}");
@@ -250,30 +246,26 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 serializer.Converters.Add(new StringEnumConverter());
 
                                 if(track.FileSystems[i].ContentsJson != null)
-                                {
                                     track.FileSystems[i].Contents =
                                         serializer.
                                             Deserialize<
-                                                Dictionary<string,
-                                                    FileData>>(new JsonTextReader(new StringReader(track.
-                                                                   FileSystems[i].ContentsJson)));
-                                }
+                                                Dictionary<string, FileData>>(new JsonTextReader(new StringReader(track.
+                                                                                  FileSystems[i].
+                                                                                  ContentsJson)));
                                 else if(File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
                                 {
                                     var sr =
-                                        new
-                                            StreamReader($"{testFile}.track{track.Number}.filesystem{i}.contents.json");
+                                        new StreamReader($"{testFile}.track{track.Number}.filesystem{i}.contents.json");
 
                                     track.FileSystems[i].Contents =
-                                        serializer.
-                                            Deserialize<Dictionary<string, FileData>>(new JsonTextReader(sr));
+                                        serializer.Deserialize<Dictionary<string, FileData>>(new JsonTextReader(sr));
                                 }
 
                                 if(track.FileSystems[i].Contents is null)
                                     continue;
 
-                                ReadOnlyFilesystemTest.TestDirectory(rofs, "/", track.FileSystems[i].Contents,
-                                                                     testFile, false);
+                                ReadOnlyFilesystemTest.TestDirectory(rofs, "/", track.FileSystems[i].Contents, testFile,
+                                                                     false);
 
                                 // Uncomment to generate JSON file
                                 /*    var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/");
@@ -284,7 +276,6 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                             }
                         }
                     });
-                }
             }
         });
     }
@@ -346,16 +337,14 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 {
                                     errno = @long ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
                                                                           currentTrack.Sequence, out sector)
-                                                : image.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                    currentTrack.Sequence,
+                                                : image.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.Sequence,
                                                                     out sector);
 
                                     doneSectors += SECTORS_TO_READ;
                                 }
                                 else
                                 {
-                                    errno = @long ? image.ReadSectorsLong(doneSectors,
-                                                                          (uint)(sectors - doneSectors),
+                                    errno = @long ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
                                                                           currentTrack.Sequence, out sector)
                                                 : image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
                                                                     currentTrack.Sequence, out sector);
@@ -397,8 +386,8 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                             else
                             {
                                 errno = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                             currentTrack.Sequence,
-                                                             SectorTagType.CdSectorSubchannel, out sector);
+                                                             currentTrack.Sequence, SectorTagType.CdSectorSubchannel,
+                                                             out sector);
 
                                 doneSectors += sectors - doneSectors;
                             }

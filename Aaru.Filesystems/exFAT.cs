@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -40,8 +42,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
-
-namespace Aaru.Filesystems;
 
 // Information from https://www.sans.org/reading-room/whitepapers/forensics/reverse-engineering-microsoft-exfat-file-system-33274
 /// <inheritdoc />
@@ -87,8 +87,7 @@ public sealed class exFAT : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -152,7 +151,7 @@ public sealed class exFAT : IFilesystem
         if(vbr.flags.HasFlag(VolumeFlags.MediaFailure))
             sb.AppendLine("Underlying media presented errors");
 
-        int count = 1;
+        var count = 1;
 
         foreach(OemParameter parameter in parametersTable.parameters)
         {
@@ -187,7 +186,9 @@ public sealed class exFAT : IFilesystem
     [Flags]
     enum VolumeFlags : ushort
     {
-        SecondFatActive = 1, VolumeDirty = 2, MediaFailure = 4,
+        SecondFatActive = 1,
+        VolumeDirty     = 2,
+        MediaFailure    = 4,
         ClearToZero     = 8
     }
 

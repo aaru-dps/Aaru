@@ -26,21 +26,20 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems.AOFS;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.AOFS;
-
 [TestFixture]
 public class Whole : FilesystemTest
 {
     public Whole() : base("Amiga OFS") {}
 
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System");
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System");
 
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => false;

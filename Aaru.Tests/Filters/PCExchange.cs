@@ -26,14 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filters;
+
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Filters;
 
 [TestFixture]
 public class PcExchange
@@ -52,7 +51,7 @@ public class PcExchange
         IFilter filter = new Aaru.Filters.PcExchange();
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
-        byte[] data = new byte[737280];
+        var    data = new byte[737280];
         str.Read(data, 0, 737280);
         str.Close();
         str.Dispose();
@@ -64,8 +63,8 @@ public class PcExchange
     [Test]
     public void CheckCorrectFile()
     {
-        string result =
-            Md5Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "PC Exchange", "FINDER.DAT"), out _);
+        string result = Md5Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "PC Exchange", "FINDER.DAT"),
+                                        out _);
 
         Assert.AreEqual(EXPECTED_FILE, result);
     }
@@ -83,7 +82,7 @@ public class PcExchange
         IFilter filter = new Aaru.Filters.PcExchange();
         filter.Open(_location);
         Stream str  = filter.GetResourceForkStream();
-        byte[] data = new byte[546];
+        var    data = new byte[546];
         str.Read(data, 0, 546);
         str.Close();
         str.Dispose();

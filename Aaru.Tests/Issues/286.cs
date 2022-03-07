@@ -1,9 +1,10 @@
+namespace Aaru.Tests.Issues;
+
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 
-namespace Aaru.Tests.Issues;
 /* FakeShemp commented on Mar 1, 2020
  *
  * Neither of the Dreamcast homebrew images found on
@@ -14,7 +15,7 @@ namespace Aaru.Tests.Issues;
 // 20210307 CLAUNIA: Reopened.
 public class _286 : OpticalImageConvertIssueTest
 {
-    public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
+    public override Dictionary<string, string> ParsedOptions => new();
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue286");
     public override string InputPath => "2d_house_of_terror.nrg";
     public override string SuggestedOutputFilename => "AaruTestIssue286.aif";

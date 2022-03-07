@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.IO;
 using System.Text;
@@ -38,15 +40,13 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Compression;
 using Aaru.Console;
 
-namespace Aaru.DiscImages;
-
 public sealed partial class TeleDisk
 {
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         _header = new Header();
-        byte[] headerBytes = new byte[12];
+        var headerBytes = new byte[12];
         _inStream = imageFilter.GetDataForkStream();
         var stream = new MemoryStream();
         _inStream.Seek(0, SeekOrigin.Begin);
@@ -74,7 +74,7 @@ public sealed partial class TeleDisk
         _imageInfo.Version     = $"{(_header.Version & 0xF0) >> 4}.{_header.Version & 0x0F}";
         _imageInfo.Application = _imageInfo.Version;
 
-        byte[] headerBytesForCrc = new byte[10];
+        var headerBytesForCrc = new byte[10];
         Array.Copy(headerBytes, headerBytesForCrc, 10);
         ushort calculatedHeaderCrc = TeleDiskCrc(0x0000, headerBytesForCrc);
 
@@ -132,7 +132,7 @@ public sealed partial class TeleDisk
         else
         {
             // Not using Stream.CopyTo() because it's failing with LZIP
-            byte[] copybuf = new byte[_inStream.Length];
+            var copybuf = new byte[_inStream.Length];
             _inStream.Seek(0, SeekOrigin.Begin);
             _inStream.Read(copybuf, 0, copybuf.Length);
             stream.Seek(0, SeekOrigin.Begin);
@@ -147,7 +147,7 @@ public sealed partial class TeleDisk
         {
             _commentHeader = new CommentBlockHeader();
 
-            byte[] commentHeaderBytes = new byte[10];
+            var commentHeaderBytes = new byte[10];
 
             stream.Read(commentHeaderBytes, 0, 10);
             _commentHeader.Crc    = BitConverter.ToUInt16(commentHeaderBytes, 0);
@@ -162,7 +162,7 @@ public sealed partial class TeleDisk
             _commentBlock = new byte[_commentHeader.Length];
             stream.Read(_commentBlock, 0, _commentHeader.Length);
 
-            byte[] commentBlockForCrc = new byte[_commentHeader.Length + 8];
+            var commentBlockForCrc = new byte[_commentHeader.Length + 8];
             Array.Copy(commentHeaderBytes, 2, commentBlockForCrc, 0, 8);
             Array.Copy(_commentBlock, 0, commentBlockForCrc, 8, _commentHeader.Length);
 
@@ -172,8 +172,7 @@ public sealed partial class TeleDisk
             AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.crc = 0x{0:X4}", _commentHeader.Crc);
             AaruConsole.DebugWriteLine("TeleDisk plugin", "\tCalculated CRC = 0x{0:X4}", cmtcrc);
 
-            AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.length = {0} bytes",
-                                       _commentHeader.Length);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.length = {0} bytes", _commentHeader.Length);
 
             AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.year = {0}", _commentHeader.Year);
             AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.month = {0}", _commentHeader.Month);
@@ -184,7 +183,7 @@ public sealed partial class TeleDisk
 
             _aDiskCrcHasFailed |= cmtcrc != _commentHeader.Crc;
 
-            for(int i = 0; i < _commentBlock.Length; i++)
+            for(var i = 0; i < _commentBlock.Length; i++)
 
                 // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
                 if(_commentBlock[i] == 0x00)
@@ -216,7 +215,7 @@ public sealed partial class TeleDisk
         int  totalCylinders = -1;
         int  totalHeads     = -1;
         int  maxSector      = -1;
-        int  totalSectors   = 0;
+        var  totalSectors   = 0;
         long currentPos     = stream.Position;
         _imageInfo.SectorSize      = uint.MaxValue;
         _imageInfo.SectorsPerTrack = uint.MaxValue;
@@ -243,9 +242,9 @@ public sealed partial class TeleDisk
 
             for(byte processedSectors = 0; processedSectors < teleDiskTrack.Sectors; processedSectors++)
             {
-                var    teleDiskSector = new SectorHeader();
-                var    teleDiskData   = new DataHeader();
-                byte[] dataSizeBytes  = new byte[2];
+                var teleDiskSector = new SectorHeader();
+                var teleDiskData   = new DataHeader();
+                var dataSizeBytes  = new byte[2];
 
                 teleDiskSector.Cylinder     = (byte)stream.ReadByte();
                 teleDiskSector.Head         = (byte)stream.ReadByte();
@@ -264,7 +263,7 @@ public sealed partial class TeleDisk
                     teleDiskData.DataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
                     teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
                     teleDiskData.DataEncoding = (byte)stream.ReadByte();
-                    byte[] data = new byte[teleDiskData.DataSize];
+                    var data = new byte[teleDiskData.DataSize];
                     stream.Read(data, 0, teleDiskData.DataSize);
                 }
 
@@ -286,8 +285,8 @@ public sealed partial class TeleDisk
             return ErrorNumber.InvalidArgument;
         }
 
-        bool hasLeadOutOnHead0 = false;
-        bool hasLeadOutOnHead1 = false;
+        var hasLeadOutOnHead0 = false;
+        var hasLeadOutOnHead1 = false;
         _imageInfo.Cylinders = (ushort)totalCylinders;
         _imageInfo.Heads     = (byte)totalHeads;
 
@@ -321,9 +320,9 @@ public sealed partial class TeleDisk
 
             for(byte processedSectors = 0; processedSectors < teleDiskTrack.Sectors; processedSectors++)
             {
-                var    teleDiskSector = new SectorHeader();
-                var    teleDiskData   = new DataHeader();
-                byte[] dataSizeBytes  = new byte[2];
+                var teleDiskSector = new SectorHeader();
+                var teleDiskData   = new DataHeader();
+                var dataSizeBytes  = new byte[2];
 
                 teleDiskSector.Cylinder     = (byte)stream.ReadByte();
                 teleDiskSector.Head         = (byte)stream.ReadByte();
@@ -340,7 +339,7 @@ public sealed partial class TeleDisk
                 teleDiskData.DataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
                 teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
                 teleDiskData.DataEncoding = (byte)stream.ReadByte();
-                byte[] data = new byte[teleDiskData.DataSize];
+                var data = new byte[teleDiskData.DataSize];
                 stream.Read(data, 0, teleDiskData.DataSize);
             }
         }
@@ -348,19 +347,19 @@ public sealed partial class TeleDisk
         _sectorsData = new byte[totalCylinders][][][];
 
         // Total sectors per track
-        uint[][] spts = new uint[totalCylinders][];
+        var spts = new uint[totalCylinders][];
 
         AaruConsole.DebugWriteLine("TeleDisk plugin",
                                    "Found {0} cylinders and {1} heads with a maximum sector number of {2}",
                                    totalCylinders, totalHeads, maxSector);
 
         // Create heads
-        for(int i = 0; i < totalCylinders; i++)
+        for(var i = 0; i < totalCylinders; i++)
         {
             _sectorsData[i] = new byte[totalHeads][][];
             spts[i]         = new uint[totalHeads];
 
-            for(int j = 0; j < totalHeads; j++)
+            for(var j = 0; j < totalHeads; j++)
                 _sectorsData[i][j] = new byte[maxSector + 1][];
         }
 
@@ -369,8 +368,8 @@ public sealed partial class TeleDisk
 
         while(true)
         {
-            var    teleDiskTrack = new TrackHeader();
-            byte[] tdTrackForCrc = new byte[3];
+            var teleDiskTrack = new TrackHeader();
+            var tdTrackForCrc = new byte[3];
 
             teleDiskTrack.Sectors  = (byte)stream.ReadByte();
             teleDiskTrack.Cylinder = (byte)stream.ReadByte();
@@ -381,7 +380,7 @@ public sealed partial class TeleDisk
             tdTrackForCrc[1] = teleDiskTrack.Cylinder;
             tdTrackForCrc[2] = teleDiskTrack.Head;
 
-            byte tdTrackCalculatedCrc = (byte)(TeleDiskCrc(0, tdTrackForCrc) & 0xFF);
+            var tdTrackCalculatedCrc = (byte)(TeleDiskCrc(0, tdTrackForCrc) & 0xFF);
 
             AaruConsole.DebugWriteLine("TeleDisk plugin", "Track follows");
             AaruConsole.DebugWriteLine("TeleDisk plugin", "\tTrack cylinder: {0}\t", teleDiskTrack.Cylinder);
@@ -397,8 +396,8 @@ public sealed partial class TeleDisk
             {
                 AaruConsole.DebugWriteLine("TeleDisk plugin", "End of disk image arrived");
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes",
-                                           totalSectors, _totalDiskSize);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes", totalSectors,
+                                           _totalDiskSize);
 
                 break;
             }
@@ -407,7 +406,7 @@ public sealed partial class TeleDisk
             {
                 var    teleDiskSector = new SectorHeader();
                 var    teleDiskData   = new DataHeader();
-                byte[] dataSizeBytes  = new byte[2];
+                var    dataSizeBytes  = new byte[2];
                 byte[] decodedData;
 
                 teleDiskSector.Cylinder     = (byte)stream.ReadByte();
@@ -419,8 +418,7 @@ public sealed partial class TeleDisk
 
                 AaruConsole.DebugWriteLine("TeleDisk plugin", "\tSector follows");
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark cylinder: {0}",
-                                           teleDiskSector.Cylinder);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark cylinder: {0}", teleDiskSector.Cylinder);
 
                 AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark head: {0}", teleDiskSector.Head);
 
@@ -433,9 +431,8 @@ public sealed partial class TeleDisk
                 AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}",
                                            teleDiskSector.Crc);
 
-                uint lba = (uint)((teleDiskSector.Cylinder * _header.Sides * _imageInfo.SectorsPerTrack) +
-                                  (teleDiskSector.Head     * _imageInfo.SectorsPerTrack)                 +
-                                  (teleDiskSector.SectorNumber - 1));
+                var lba = (uint)(teleDiskSector.Cylinder * _header.Sides * _imageInfo.SectorsPerTrack +
+                                 teleDiskSector.Head * _imageInfo.SectorsPerTrack + (teleDiskSector.SectorNumber - 1));
 
                 if((teleDiskSector.Flags & FLAGS_SECTOR_DATALESS) != FLAGS_SECTOR_DATALESS &&
                    (teleDiskSector.Flags & FLAGS_SECTOR_SKIPPED)  != FLAGS_SECTOR_SKIPPED)
@@ -445,7 +442,7 @@ public sealed partial class TeleDisk
                     teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
                     _imageInfo.ImageSize      += teleDiskData.DataSize;
                     teleDiskData.DataEncoding =  (byte)stream.ReadByte();
-                    byte[] data = new byte[teleDiskData.DataSize];
+                    var data = new byte[teleDiskData.DataSize];
                     stream.Read(data, 0, teleDiskData.DataSize);
 
                     AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}",
@@ -454,21 +451,20 @@ public sealed partial class TeleDisk
                     AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}",
                                                teleDiskData.DataEncoding);
 
-                    ErrorNumber errno = DecodeTeleDiskData(teleDiskSector.SectorSize, teleDiskData.DataEncoding,
-                                                           data, out decodedData);
+                    ErrorNumber errno = DecodeTeleDiskData(teleDiskSector.SectorSize, teleDiskData.DataEncoding, data,
+                                                           out decodedData);
 
                     if(errno != ErrorNumber.NoError)
                         return errno;
 
-                    byte tdSectorCalculatedCrc = (byte)(TeleDiskCrc(0, decodedData) & 0xFF);
+                    var tdSectorCalculatedCrc = (byte)(TeleDiskCrc(0, decodedData) & 0xFF);
 
                     if(tdSectorCalculatedCrc != teleDiskSector.Crc)
                     {
                         AaruConsole.DebugWriteLine("TeleDisk plugin",
                                                    "Sector {0}:{3}:{4} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}",
-                                                   teleDiskTrack.Cylinder, tdSectorCalculatedCrc,
-                                                   teleDiskSector.Crc, teleDiskTrack.Cylinder,
-                                                   teleDiskSector.SectorNumber);
+                                                   teleDiskTrack.Cylinder, tdSectorCalculatedCrc, teleDiskSector.Crc,
+                                                   teleDiskTrack.Cylinder, teleDiskSector.SectorNumber);
 
                         if((teleDiskSector.Flags & FLAGS_SECTOR_NO_ID) != FLAGS_SECTOR_NO_ID)
                             _sectorsWhereCrcHasFailed.Add(lba);
@@ -484,16 +480,14 @@ public sealed partial class TeleDisk
 
                 if(_sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] != null)
                     AaruConsole.DebugWriteLine("TeleDisk plugin",
-                                               (teleDiskSector.Flags & FLAGS_SECTOR_DUPLICATE) ==
-                                               FLAGS_SECTOR_DUPLICATE
+                                               (teleDiskSector.Flags & FLAGS_SECTOR_DUPLICATE) == FLAGS_SECTOR_DUPLICATE
                                                    ? "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so"
                                                    : "\t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
                                                teleDiskSector.SectorNumber, teleDiskSector.Cylinder,
                                                teleDiskSector.Head);
                 else
                 {
-                    _sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] =
-                        decodedData;
+                    _sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] = decodedData;
 
                     _totalDiskSize += (uint)decodedData.Length;
                 }
@@ -503,13 +497,13 @@ public sealed partial class TeleDisk
         var leadOutMs = new MemoryStream();
 
         if(hasLeadOutOnHead0)
-            for(int i = 0; i < _sectorsData[totalCylinders - 1][0].Length; i++)
+            for(var i = 0; i < _sectorsData[totalCylinders - 1][0].Length; i++)
                 if(_sectorsData[totalCylinders - 1][0][i] != null)
                     leadOutMs.Write(_sectorsData[totalCylinders - 1][0][i], 0,
                                     _sectorsData[totalCylinders - 1][0][i].Length);
 
         if(hasLeadOutOnHead1)
-            for(int i = 0; i < _sectorsData[totalCylinders - 1][1].Length; i++)
+            for(var i = 0; i < _sectorsData[totalCylinders - 1][1].Length; i++)
                 if(_sectorsData[totalCylinders - 1][1][i] != null)
                     leadOutMs.Write(_sectorsData[totalCylinders - 1][1][i], 0,
                                     _sectorsData[totalCylinders - 1][1][i].Length);

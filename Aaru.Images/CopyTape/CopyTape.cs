@@ -1,10 +1,10 @@
+namespace Aaru.DiscImages;
+
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-
-namespace Aaru.DiscImages;
 
 /// <inheritdoc />
 /// <summary>Implements reading and writing copytape tape images</summary>

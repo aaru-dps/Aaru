@@ -26,22 +26,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Tests.Filesystems.BeFS;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Filesystems;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Filesystems.BeFS;
 
 [TestFixture]
 public class APM : FilesystemTest
 {
     public APM() : base("BeFS") {}
 
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (APM)");
-    public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
-    public override bool        Partitions => true;
+    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (APM)");
+    public override IFilesystem Plugin => new BeFS();
+    public override bool Partitions => true;
 
     public override FileSystemTest[] Tests => new[]
     {

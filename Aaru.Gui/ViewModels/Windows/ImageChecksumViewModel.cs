@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Windows;
+
 using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
@@ -44,8 +46,6 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
 using Schemas;
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageChecksumViewModel : ViewModelBase
 {
@@ -369,8 +369,8 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
     async void DoWork()
     {
-        var  opticalMediaImage = _inputFormat as IOpticalMediaImage;
-        bool formatHasTracks   = false;
+        var opticalMediaImage = _inputFormat as IOpticalMediaImage;
+        var formatHasTracks   = false;
 
         if(opticalMediaImage != null)
             try
@@ -488,8 +488,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
                     AaruConsole.DebugWriteLine("Checksum command",
                                                "Track {0} starts at sector {1} and ends at sector {2}",
-                                               currentTrack.Sequence, currentTrack.StartSector,
-                                               currentTrack.EndSector);
+                                               currentTrack.Sequence, currentTrack.StartSector, currentTrack.EndSector);
 
                     if(ChecksumTracksChecked)
                         trackChecksum = new Checksum(enabledChecksums);
@@ -515,8 +514,8 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
                         if(sectors - doneSectors >= SECTORS_TO_READ)
                         {
-                            errno = opticalMediaImage.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                  currentTrack.Sequence, out sector);
+                            errno = opticalMediaImage.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.Sequence,
+                                                                  out sector);
 
                             if(errno != ErrorNumber.NoError)
                             {

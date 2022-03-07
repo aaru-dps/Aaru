@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Filesystems;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -39,8 +41,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
-
-namespace Aaru.Filesystems;
 
 // Information from the Linux kernel
 /// <inheritdoc />
@@ -71,14 +71,13 @@ public sealed class BFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic = BitConverter.ToUInt32(tmp, 0);
+        var magic = BitConverter.ToUInt32(tmp, 0);
 
         return magic == BFS_MAGIC;
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                               Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
@@ -89,7 +88,7 @@ public sealed class BFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        byte[] sbStrings = new byte[6];
+        var sbStrings = new byte[6];
 
         var bfsSb = new SuperBlock
         {

@@ -1,3 +1,5 @@
+namespace Aaru.Tests.Issues;
+
 using System;
 using System.IO;
 using Aaru.Checksums;
@@ -6,8 +8,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using NUnit.Framework;
-
-namespace Aaru.Tests.Issues;
 
 /// <summary>This class will test an issue that happens when reading an image completely, from start to end, crashes.</summary>
 public abstract class ImageReadIssueTest
@@ -29,7 +29,7 @@ public abstract class ImageReadIssueTest
 
         Assert.IsNotNull(inputFilter, "Filter for test file is not detected");
 
-        IMediaImage image = ImageFormat.Detect(inputFilter) as IMediaImage;
+        var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
         Assert.IsNotNull(image, "Image format for test file is not detected");
 

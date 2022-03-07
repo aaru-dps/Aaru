@@ -1,6 +1,6 @@
-using NUnit.Framework;
-
 namespace Aaru.Tests.Helpers;
+
+using NUnit.Framework;
 
 [TestFixture]
 public class Marshal
@@ -33,7 +33,7 @@ public class Marshal
     [Test]
     public void ConvertFromHexAscii()
     {
-        for(int i = 0; i < _testStrings.Length; i++)
+        for(var i = 0; i < _testStrings.Length; i++)
         {
             int count = Aaru.Helpers.Marshal.ConvertFromHexAscii(_testStrings[i], out byte[] buf);
 

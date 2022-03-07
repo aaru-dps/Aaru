@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class VMware
 {
@@ -47,7 +47,7 @@ public sealed partial class VMware
     /// <inheritdoc />
     public string Name => "VMware disk image";
     /// <inheritdoc />
-    public Guid Id => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+    public Guid Id => new("E314DE35-C103-48A3-AD36-990F68523C46");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />
@@ -72,8 +72,8 @@ public sealed partial class VMware
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
-        ("adapter_type", typeof(string),
-         "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.", "ide"),
+        ("adapter_type", typeof(string), "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.",
+         "ide"),
         ("hwversion", typeof(uint), "VDMK hardware version.", 4),
         ("sparse", typeof(bool), "Use sparse extents.", false),
         ("split", typeof(bool), "Split data file at 2GiB.", (object)false)

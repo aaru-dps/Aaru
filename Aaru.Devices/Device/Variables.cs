@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
-
-namespace Aaru.Devices;
 
 public sealed partial class Device
 {

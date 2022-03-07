@@ -30,6 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Gui.ViewModels.Windows;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -59,8 +61,6 @@ using ReactiveUI;
 using Schemas;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using MediaType = Aaru.CommonTypes.MediaType;
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MediaDumpViewModel : ViewModelBase
 {
@@ -691,7 +691,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         if(_resume           == null              ||
            _resume.NextBlock <= _resume.LastBlock ||
-           (_resume.BadBlocks.Count != 0 && !_resume.Tape))
+           _resume.BadBlocks.Count != 0 && !_resume.Tape)
             return;
 
         await MessageBoxManager.
@@ -769,7 +769,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
                 return;
             }
 
-        Dictionary<string, string> parsedOptions = new Dictionary<string, string>();
+        var parsedOptions = new Dictionary<string, string>();
 
         /* TODO: Options
         if(grpOptions.Content is StackLayout stkFormatOptions)
@@ -806,11 +806,11 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         var errorLog = new ErrorLog(_outputPrefix + ".error.log");
 
-        _dumper = new Dump(Resume, _dev, _devicePath, SelectedPlugin.Plugin, (ushort)Retries, Force, false,
-                           Persistent, StopOnError, _resume, dumpLog, encoding, _outputPrefix, Destination,
-                           parsedOptions, _sidecar, (uint)Skipped, ExistingMetadata == false, Trim == false,
-                           Track1Pregap, true, false, DumpSubchannel.Any, 0, false, false, false, false, false,
-                           true, errorLog, false, 64, true, true, false);
+        _dumper = new Dump(Resume, _dev, _devicePath, SelectedPlugin.Plugin, (ushort)Retries, Force, false, Persistent,
+                           StopOnError, _resume, dumpLog, encoding, _outputPrefix, Destination, parsedOptions, _sidecar,
+                           (uint)Skipped, ExistingMetadata == false, Trim == false, Track1Pregap, true, false,
+                           DumpSubchannel.Any, 0, false, false, false, false, false, true, errorLog, false, 64, true,
+                           true, false);
 
         new Thread(DoWork).Start();
     }
@@ -848,15 +848,14 @@ public sealed class MediaDumpViewModel : ViewModelBase
         Progress2Visible = false;
     });
 
-    async void UpdateProgress2(string text, long current, long maximum) =>
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            Progress2Text          = text;
-            Progress2Indeterminate = false;
+    async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
+    {
+        Progress2Text          = text;
+        Progress2Indeterminate = false;
 
-            Progress2MaxValue = maximum;
-            Progress2Value    = current;
-        });
+        Progress2MaxValue = maximum;
+        Progress2Value    = current;
+    });
 
     async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
     {
@@ -868,15 +867,14 @@ public sealed class MediaDumpViewModel : ViewModelBase
         Progress1Visible = false;
     });
 
-    async void UpdateProgress(string text, long current, long maximum) =>
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            ProgressText          = text;
-            ProgressIndeterminate = false;
+    async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
+    {
+        ProgressText          = text;
+        ProgressIndeterminate = false;
 
-            ProgressMaxValue = maximum;
-            ProgressValue    = current;
-        });
+        ProgressMaxValue = maximum;
+        ProgressValue    = current;
+    });
 
     async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
     {

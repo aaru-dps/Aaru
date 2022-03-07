@@ -27,11 +27,13 @@
 ### - Dumping
 
 - Fix detecting errors from OS buffered reads in Linux.
-- When dumping an SD/MMC card try to detect if OS buffered reads are failing, and max readable blocks using sequential commands, and downgrade accordingly. Now also detects cards that are totally unreadable.
+- When dumping an SD/MMC card try to detect if OS buffered reads are failing, and max readable blocks using sequential
+  commands, and downgrade accordingly. Now also detects cards that are totally unreadable.
 
 ### - ISO9660 filesystem
 
-- Do not break when an ISO9660/HighSierra/CD-i directory spans several sectors if we only have a partial last sector read.
+- Do not break when an ISO9660/HighSierra/CD-i directory spans several sectors if we only have a partial last sector
+  read.
 - Do not try to decode empty path table in ISO9660/CD-i/HighSierra.
 
 ### - Media detection

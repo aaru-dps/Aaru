@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
 using Schemas;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class Vhdx
 {
@@ -45,7 +45,7 @@ public sealed partial class Vhdx
     /// <inheritdoc />
     public string Name => "Microsoft VHDX";
     /// <inheritdoc />
-    public Guid Id => new Guid("536B141B-D09C-4799-AB70-34631286EB9D");
+    public Guid Id => new("536B141B-D09C-4799-AB70-34631286EB9D");
     /// <inheritdoc />
     public string Author => "Natalia Portillo";
     /// <inheritdoc />

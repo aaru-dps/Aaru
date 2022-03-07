@@ -1,10 +1,13 @@
-using Aaru.Helpers;
-using FluentAssertions.Execution;
-using NUnit.Framework;
+
 
 // ReSharper disable InconsistentNaming
 
 namespace Aaru.Tests.Devices.MultiMediaCard;
+
+using Aaru.Decoders.MMC;
+using Aaru.Helpers;
+using FluentAssertions.Execution;
+using NUnit.Framework;
 
 [TestFixture]
 public class CSD
@@ -177,15 +180,13 @@ public class CSD
     [Test]
     public void Test()
     {
-        for(int i = 0; i < cards.Length; i++)
-        {
+        for(var i = 0; i < cards.Length; i++)
             using(new AssertionScope())
-            {
                 Assert.Multiple(() =>
                 {
                     int count = Marshal.ConvertFromHexAscii(csds[i], out byte[] response);
                     Assert.AreEqual(16, count, $"Size - {cards[i]}");
-                    Decoders.MMC.CSD csd = Decoders.MMC.Decoders.DecodeCSD(response);
+                    Aaru.Decoders.MMC.CSD csd = Decoders.DecodeCSD(response);
                     Assert.IsNotNull(csd, $"Decoded - {cards[i]}");
                     Assert.AreEqual(structure_versions[i], csd.Structure, $"Structure version - {cards[i]}");
                     Assert.AreEqual(spec_versions[i], csd.Version, $"Specification version - {cards[i]}");
@@ -234,8 +235,7 @@ public class CSD
                     Assert.AreEqual(default_eccs[i], csd.DefaultECC, $"Default ECC - {cards[i]}");
                     Assert.AreEqual(r2w_factors[i], csd.WriteSpeedFactor, $"Read to write factor - {cards[i]}");
 
-                    Assert.AreEqual(write_block_lengths[i], csd.WriteBlockLength,
-                                    $"write block length - {cards[i]}");
+                    Assert.AreEqual(write_block_lengths[i], csd.WriteBlockLength, $"write block length - {cards[i]}");
 
                     Assert.AreEqual(write_partial_blocks[i], csd.WritesPartialBlocks,
                                     $"Writes partial blocks - {cards[i]}");
@@ -252,7 +252,5 @@ public class CSD
                     Assert.AreEqual(file_format[i], csd.FileFormat, $"File format - {cards[i]}");
                     Assert.AreEqual(ecc[i], csd.ECC, $"ECC - {cards[i]}");
                 });
-            }
-        }
     }
 }

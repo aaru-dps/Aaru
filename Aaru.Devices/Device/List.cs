@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Devices;
+
 using System;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Interop;
 using Aaru.Console;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
-
-namespace Aaru.Devices;
 
 /// <summary>Contains device information</summary>
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -90,10 +90,9 @@ public sealed partial class Device
     /// <param name="aaruRemote">Remote URI</param>
     /// <returns>List of devices</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static DeviceInfo[] ListDevices(out bool isRemote, out string serverApplication,
-                                           out string serverVersion, out string serverOperatingSystem,
-                                           out string serverOperatingSystemVersion, out string serverArchitecture,
-                                           string aaruRemote = null)
+    public static DeviceInfo[] ListDevices(out bool isRemote, out string serverApplication, out string serverVersion,
+                                           out string serverOperatingSystem, out string serverOperatingSystemVersion,
+                                           out string serverArchitecture, string aaruRemote = null)
     {
         isRemote                     = false;
         serverApplication            = null;
@@ -108,8 +107,7 @@ public sealed partial class Device
                 case PlatformID.Win32NT: return Windows.ListDevices.GetList();
                 case PlatformID.Linux:   return Linux.ListDevices.GetList();
                 default:
-                    throw new
-                        InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
+                    throw new InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
             }
 
         try

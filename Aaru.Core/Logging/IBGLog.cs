@@ -30,16 +30,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Core.Logging;
+
 using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using Aaru.Devices;
 
-namespace Aaru.Core.Logging;
-
 /// <summary>Implements a log in the format used by IMGBurn</summary>
-internal sealed class IbgLog
+sealed class IbgLog
 {
     readonly CultureInfo   _ibgCulture;
     readonly double        _ibgDivider;
@@ -328,8 +328,7 @@ internal sealed class IbgLog
         ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_START={0:0.00}", _ibgStartSpeed).AppendLine();
         ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_END={0:0.00}", currentSpeed / _ibgDivider).AppendLine();
 
-        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / _ibgDivider).
-                  AppendLine();
+        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / _ibgDivider).AppendLine();
 
         ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_MAX={0:0.00}", _ibgMaxSpeed).AppendLine();
         ibgHeader.AppendFormat(_ibgCulture, "VERIFY_TIME_TAKEN={0:0}", Math.Floor(totalSeconds)).AppendLine();

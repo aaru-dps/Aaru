@@ -26,15 +26,17 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+
+
+// ReSharper disable CheckNamespace
+
+namespace Aaru.Tests.Filesystems.HFSPlus;
+
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
-
-// ReSharper disable CheckNamespace
-
-namespace Aaru.Tests.Filesystems.HFSPlus;
 
 [TestFixture]
 public class GPT : FilesystemTest

@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.DiscImages;
+
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.DiscImages;
 
 public sealed partial class VMware
 {
@@ -44,12 +44,12 @@ public sealed partial class VMware
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        byte[] ddfMagic = new byte[0x15];
+        var ddfMagic = new byte[0x15];
 
         if(stream.Length > Marshal.SizeOf<ExtentHeader>())
         {
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] vmEHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
+            var vmEHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
             stream.Read(vmEHdrB, 0, Marshal.SizeOf<ExtentHeader>());
             _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(vmEHdrB);
 
@@ -63,7 +63,7 @@ public sealed partial class VMware
                        _vmCHdr.magic                                           == VMWARE_COW_MAGIC;
 
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
+            var vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
             stream.Read(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
             _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
 

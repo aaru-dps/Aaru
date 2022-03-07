@@ -38,13 +38,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Archives;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Aaru.CommonTypes.Interfaces;
-
-namespace Aaru.Archives;
 
 /// <inheritdoc />
 public sealed class Register : IPluginRegister
