@@ -32,17 +32,11 @@
 
 namespace Aaru.Dto;
 
-/// <summary>
-/// DTO for USB vendor field
-/// </summary>
+/// <summary>DTO for USB vendor field</summary>
 public class UsbVendorDto
 {
-    /// <summary>
-    /// Vendor ID
-    /// </summary>
+    /// <summary>Vendor ID</summary>
     public ushort VendorId { get; set; }
-    /// <summary>
-    /// Vendor
-    /// </summary>
+    /// <summary>Vendor</summary>
     public string Vendor { get; set; }
 }

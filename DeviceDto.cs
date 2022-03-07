@@ -30,26 +30,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
-using Aaru.CommonTypes.Metadata;
+
 
 // ReSharper disable VirtualMemberCallInConstructor
 
 namespace Aaru.Dto;
 
-/// <summary>
-/// DTO for known device
-/// </summary>
+using System.Collections.Generic;
+using Aaru.CommonTypes.Metadata;
+
+/// <summary>DTO for known device</summary>
 public class DeviceDto : DeviceReportV2
 {
-    /// <summary>
-    /// Build an empty DTO
-    /// </summary>
+    /// <summary>Build an empty DTO</summary>
     public DeviceDto() {}
 
-    /// <summary>
-    /// Build a DTO from a device report
-    /// </summary>
+    /// <summary>Build a DTO from a device report</summary>
     /// <param name="report">Device report</param>
     public DeviceDto(DeviceReportV2 report)
     {
@@ -69,9 +65,7 @@ public class DeviceDto : DeviceReportV2
         GdRomSwapDiscCapabilities = report.GdRomSwapDiscCapabilities;
     }
 
-    /// <summary>
-    /// Build a DTO from a device report with the specified parameters
-    /// </summary>
+    /// <summary>Build a DTO from a device report with the specified parameters</summary>
     /// <param name="report">Device report</param>
     /// <param name="id">Database ID</param>
     /// <param name="optimalMultipleSectorsRead">Optimal number of blocks for read</param>
@@ -187,19 +181,13 @@ public class DeviceDto : DeviceReportV2
         CanReadGdRomUsingSwapDisc  = canReadGdRomUsingSwapDisc;
     }
 
-    /// <summary>
-    /// Optimal maximum number of transfer blocks to read
-    /// </summary>
+    /// <summary>Optimal maximum number of transfer blocks to read</summary>
     public int OptimalMultipleSectorsRead { get; set; }
 
-    /// <summary>
-    /// Can read GD-ROM using disc swap trick?
-    /// </summary>
+    /// <summary>Can read GD-ROM using disc swap trick?</summary>
     public bool? CanReadGdRomUsingSwapDisc { get; set; }
 
-    /// <summary>
-    /// Database ID
-    /// </summary>
+    /// <summary>Database ID</summary>
     public new int Id { get; set; }
 
     static TestedMedia ClearBinaries(TestedMedia media)
