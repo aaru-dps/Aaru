@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Checksums;
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-
-namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements a CRC16 algorithm</summary>
@@ -61,11 +61,10 @@ public class Crc16Context : IChecksum
 
         _useNative = Native.IsSupported;
 
-        _useCcitt = polynomial == CRC16CCITTContext.CRC16_CCITT_POLY &&
-                    seed       == CRC16CCITTContext.CRC16_CCITT_SEED && inverse;
+        _useCcitt = polynomial == CRC16CCITTContext.CRC16_CCITT_POLY && seed == CRC16CCITTContext.CRC16_CCITT_SEED &&
+                    inverse;
 
-        _useIbm = polynomial == CRC16IBMContext.CRC16_IBM_POLY && seed == CRC16IBMContext.CRC16_IBM_SEED &&
-                  !inverse;
+        _useIbm = polynomial == CRC16IBMContext.CRC16_IBM_POLY && seed == CRC16IBMContext.CRC16_IBM_SEED && !inverse;
 
         if(_useCcitt && _useNative)
         {
@@ -181,7 +180,7 @@ public class Crc16Context : IChecksum
 
         byte[] finalBytes = BigEndianBitConverter.GetBytes(final);
 
-        for(int i = 0; i < finalBytes.Length; i++)
+        for(var i = 0; i < finalBytes.Length; i++)
             crc16Output.Append(finalBytes[i].ToString("x2"));
 
         return crc16Output.ToString();
@@ -218,7 +217,7 @@ public class Crc16Context : IChecksum
         // http://sourceforge.net/projects/slicing-by-8/
 
         ushort    crc;
-        int       current_pos   = 0;
+        var       current_pos   = 0;
         const int unroll        = 4;
         const int bytes_at_once = 8 * unroll;
 
@@ -233,7 +232,7 @@ public class Crc16Context : IChecksum
                 // TODO: What trick is Microsoft doing here that's faster than arithmetic conversion
                 uint one = BitConverter.ToUInt32(data, current_pos) ^ crc;
                 current_pos += 4;
-                uint two = BitConverter.ToUInt32(data, current_pos);
+                var two = BitConverter.ToUInt32(data, current_pos);
                 current_pos += 4;
 
                 crc = (ushort)(table[0][(two >> 24) & 0xFF] ^ table[1][(two >> 16) & 0xFF] ^
@@ -257,7 +256,7 @@ public class Crc16Context : IChecksum
         // http://sourceforge.net/projects/slicing-by-8/
 
         ushort    crc;
-        int       current_pos   = 0;
+        var       current_pos   = 0;
         const int unroll        = 4;
         const int bytes_at_once = 8 * unroll;
 
@@ -289,9 +288,9 @@ public class Crc16Context : IChecksum
 
     static ushort[][] GenerateTable(ushort polynomial, bool inverseTable)
     {
-        ushort[][] table = new ushort[8][];
+        var table = new ushort[8][];
 
-        for(int i = 0; i < 8; i++)
+        for(var i = 0; i < 8; i++)
             table[i] = new ushort[256];
 
         if(!inverseTable)
@@ -299,7 +298,7 @@ public class Crc16Context : IChecksum
             {
                 uint entry = i;
 
-                for(int j = 0; j < 8; j++)
+                for(var j = 0; j < 8; j++)
                     if((entry & 1) == 1)
                         entry = (entry >> 1) ^ polynomial;
                     else
@@ -308,7 +307,6 @@ public class Crc16Context : IChecksum
                 table[0][i] = (ushort)entry;
             }
         else
-        {
             for(uint i = 0; i < 256; i++)
             {
                 uint entry = i << 8;
@@ -323,16 +321,13 @@ public class Crc16Context : IChecksum
                     table[0][i] = (ushort)entry;
                 }
             }
-        }
 
-        for(int slice = 1; slice < 8; slice++)
-            for(int i = 0; i < 256; i++)
-            {
+        for(var slice = 1; slice < 8; slice++)
+            for(var i = 0; i < 256; i++)
                 if(inverseTable)
                     table[slice][i] = (ushort)((table[slice - 1][i] << 8) ^ table[0][table[slice - 1][i] >> 8]);
                 else
                     table[slice][i] = (ushort)((table[slice - 1][i] >> 8) ^ table[0][table[slice - 1][i] & 0xFF]);
-            }
 
         return table;
     }
@@ -377,8 +372,8 @@ public class Crc16Context : IChecksum
 
         ushort[][] localTable = table ?? GenerateTable(polynomial, inverse);
 
-        byte[] buffer = new byte[65536];
-        int    read   = fileStream.Read(buffer, 0, 65536);
+        var buffer = new byte[65536];
+        int read   = fileStream.Read(buffer, 0, 65536);
 
         while(read > 0)
         {
@@ -449,8 +444,8 @@ public class Crc16Context : IChecksum
     /// <param name="seed">CRC seed</param>
     /// <param name="table">CRC lookup table</param>
     /// <param name="inverse">Is CRC inverted?</param>
-    public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed,
-                              ushort[][] table, bool inverse)
+    public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed, ushort[][] table,
+                              bool inverse)
     {
         bool useNative = Native.IsSupported;
 

@@ -36,6 +36,8 @@
 // Copyright (C) Jean-loup Gailly
 // ****************************************************************************/
 
+namespace Aaru.Checksums;
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -45,8 +47,6 @@ using Aaru.Checksums.Adler32;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Ssse3 = System.Runtime.Intrinsics.X86.Ssse3;
-
-namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the Adler-32 algorithm</summary>
@@ -86,7 +86,7 @@ public sealed class Adler32Context : IChecksum
     /// <summary>Returns a byte array of the hash value.</summary>
     public byte[] Final()
     {
-        uint finalSum = (uint)((_sum2 << 16) | _sum1);
+        var finalSum = (uint)((_sum2 << 16) | _sum1);
 
         if(!_useNative)
             return BigEndianBitConverter.GetBytes(finalSum);
@@ -101,7 +101,7 @@ public sealed class Adler32Context : IChecksum
     /// <summary>Returns a hexadecimal representation of the hash value.</summary>
     public string End()
     {
-        uint finalSum = (uint)((_sum2 << 16) | _sum1);
+        var finalSum = (uint)((_sum2 << 16) | _sum1);
 
         if(_useNative)
         {
@@ -111,7 +111,7 @@ public sealed class Adler32Context : IChecksum
 
         var adlerOutput = new StringBuilder();
 
-        for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
+        for(var i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
             adlerOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
 
         return adlerOutput.ToString();
@@ -156,7 +156,7 @@ public sealed class Adler32Context : IChecksum
         uint sum1 = preSum1;
         uint sum2 = preSum2;
         uint n;
-        int  dataOff = 0;
+        var  dataOff = 0;
 
         /* in case user likes doing a byte at a time, keep it fast */
         if(len == 1)
@@ -332,8 +332,8 @@ public sealed class Adler32Context : IChecksum
         ushort localSum1 = 1;
         ushort localSum2 = 0;
 
-        byte[] buffer = new byte[65536];
-        int    read   = fileStream.Read(buffer, 0, 65536);
+        var buffer = new byte[65536];
+        int read   = fileStream.Read(buffer, 0, 65536);
 
         while(read > 0)
         {
@@ -341,7 +341,7 @@ public sealed class Adler32Context : IChecksum
             read = fileStream.Read(buffer, 0, 65536);
         }
 
-        uint finalSum = (uint)((localSum2 << 16) | localSum1);
+        var finalSum = (uint)((localSum2 << 16) | localSum1);
 
         if(useNative)
         {
@@ -383,7 +383,7 @@ public sealed class Adler32Context : IChecksum
 
         Step(ref localSum1, ref localSum2, data, len, useNative, nativeContext);
 
-        uint finalSum = (uint)((localSum2 << 16) | localSum1);
+        var finalSum = (uint)((localSum2 << 16) | localSum1);
 
         if(useNative)
         {

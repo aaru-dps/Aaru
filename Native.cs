@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System.Runtime.InteropServices;
-
 namespace Aaru.Checksums;
+
+using System.Runtime.InteropServices;
 
 public static class Native
 {

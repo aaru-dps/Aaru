@@ -39,12 +39,12 @@
 //      http://www.samba.org/ftp/unpacked/junkcode/spamsum/
 //      http://ssdeep.sf.net/
 
+namespace Aaru.Checksums;
+
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
-
-namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the SpamSum fuzzy hashing algorithm.</summary>
@@ -56,7 +56,7 @@ public sealed class SpamSumContext : IChecksum
     const uint HASH_INIT        = 0x28021967;
     const uint NUM_BLOCKHASHES  = 31;
     const uint SPAMSUM_LENGTH   = 64;
-    const uint FUZZY_MAX_RESULT = (2 * SPAMSUM_LENGTH) + 20;
+    const uint FUZZY_MAX_RESULT = 2 * SPAMSUM_LENGTH + 20;
 
     //"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     readonly byte[] _b64 =
@@ -77,7 +77,7 @@ public sealed class SpamSumContext : IChecksum
             Bh = new BlockhashContext[NUM_BLOCKHASHES]
         };
 
-        for(int i = 0; i < NUM_BLOCKHASHES; i++)
+        for(var i = 0; i < NUM_BLOCKHASHES; i++)
             _self.Bh[i].Digest = new byte[SPAMSUM_LENGTH];
 
         _self.Bhstart          = 0;
@@ -99,7 +99,7 @@ public sealed class SpamSumContext : IChecksum
     {
         _self.TotalSize += len;
 
-        for(int i = 0; i < len; i++)
+        for(var i = 0; i < len; i++)
             fuzzy_engine_step(data[i]);
     }
 
@@ -232,295 +232,295 @@ public sealed class SpamSumContext : IChecksum
                 /* Once this condition is false for one bs, it is
                  * automatically false for all further bs. I.e. if
                  * h === -1 (mod 2*bs) then h === -1 (mod bs). */
-                    break;
+                break;
 
-                /* We have hit a reset point. We now emit hashes which are
-                 * based on all characters in the piece of the message between
-                 * the last reset point and this one */
-                if(0 == _self.Bh[i].Dlen)
-                    fuzzy_try_fork_blockhash();
+            /* We have hit a reset point. We now emit hashes which are
+             * based on all characters in the piece of the message between
+             * the last reset point and this one */
+            if(0 == _self.Bh[i].Dlen)
+                fuzzy_try_fork_blockhash();
 
-                _self.Bh[i].Digest[_self.Bh[i].Dlen] = _b64[_self.Bh[i].H     % 64];
-                _self.Bh[i].Halfdigest               = _b64[_self.Bh[i].Halfh % 64];
+            _self.Bh[i].Digest[_self.Bh[i].Dlen] = _b64[_self.Bh[i].H     % 64];
+            _self.Bh[i].Halfdigest               = _b64[_self.Bh[i].Halfh % 64];
 
-                if(_self.Bh[i].Dlen < SPAMSUM_LENGTH - 1)
+            if(_self.Bh[i].Dlen < SPAMSUM_LENGTH - 1)
+            {
+                /* We can have a problem with the tail overflowing. The
+                 * easiest way to cope with this is to only reset the
+                 * normal hash if we have room for more characters in
+                 * our signature. This has the effect of combining the
+                 * last few pieces of the message into a single piece
+                 * */
+                _self.Bh[i].Digest[++_self.Bh[i].Dlen] = 0;
+                _self.Bh[i].H                          = HASH_INIT;
+
+                if(_self.Bh[i].Dlen >= SPAMSUM_LENGTH / 2)
+                    continue;
+
+                _self.Bh[i].Halfh      = HASH_INIT;
+                _self.Bh[i].Halfdigest = 0;
+            }
+            else
+                fuzzy_try_reduce_blockhash();
+        }
+    }
+
+    // CLAUNIA: Flags seems to never be used in ssdeep, so I just removed it for code simplicity
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    void FuzzyDigest(out byte[] result)
+    {
+        var  sb     = new StringBuilder();
+        uint bi     = _self.Bhstart;
+        uint h      = roll_sum();
+        var  remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
+        result = new byte[FUZZY_MAX_RESULT];
+
+        /* Verify that our elimination was not overeager. */
+        if(!(bi == 0 || (ulong)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < _self.TotalSize))
+            throw new Exception("Assertion failed");
+
+        int resultOff;
+
+        /* Initial blocksize guess. */
+        while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < _self.TotalSize)
+        {
+            ++bi;
+
+            if(bi >= NUM_BLOCKHASHES)
+                throw new OverflowException("The input exceeds data types.");
+        }
+
+        /* Adapt blocksize guess to actual digest length. */
+        while(bi >= _self.Bhend)
+            --bi;
+
+        while(bi                > _self.Bhstart &&
+              _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
+            --bi;
+
+        if(bi                > 0 &&
+           _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
+            throw new Exception("Assertion failed");
+
+        sb.AppendFormat("{0}:", SSDEEP_BS(bi));
+        int i = Encoding.ASCII.GetBytes(sb.ToString()).Length;
+
+        if(i <= 0)
+            /* Maybe snprintf has set errno here? */
+            throw new OverflowException("The input exceeds data types.");
+
+        if(i >= remain)
+            throw new Exception("Assertion failed");
+
+        remain -= i;
+
+        Array.Copy(Encoding.ASCII.GetBytes(sb.ToString()), 0, result, 0, i);
+
+        resultOff = i;
+
+        i = (int)_self.Bh[bi].Dlen;
+
+        if(i > remain)
+            throw new Exception("Assertion failed");
+
+        Array.Copy(_self.Bh[bi].Digest, 0, result, resultOff, i);
+        resultOff += i;
+        remain    -= i;
+
+        if(h != 0)
+        {
+            if(remain <= 0)
+                throw new Exception("Assertion failed");
+
+            result[resultOff] = _b64[_self.Bh[bi].H % 64];
+
+            if(i                 < 3                      ||
+               result[resultOff] != result[resultOff - 1] ||
+               result[resultOff] != result[resultOff - 2] ||
+               result[resultOff] != result[resultOff - 3])
+            {
+                ++resultOff;
+                --remain;
+            }
+        }
+        else if(_self.Bh[bi].Digest[i] != 0)
+        {
+            if(remain <= 0)
+                throw new Exception("Assertion failed");
+
+            result[resultOff] = _self.Bh[bi].Digest[i];
+
+            if(i                 < 3                      ||
+               result[resultOff] != result[resultOff - 1] ||
+               result[resultOff] != result[resultOff - 2] ||
+               result[resultOff] != result[resultOff - 3])
+            {
+                ++resultOff;
+                --remain;
+            }
+        }
+
+        if(remain <= 0)
+            throw new Exception("Assertion failed");
+
+        result[resultOff++] = 0x3A; // ':'
+        --remain;
+
+        if(bi < _self.Bhend - 1)
+        {
+            ++bi;
+            i = (int)_self.Bh[bi].Dlen;
+
+            if(i > remain)
+                throw new Exception("Assertion failed");
+
+            Array.Copy(_self.Bh[bi].Digest, 0, result, resultOff, i);
+            resultOff += i;
+            remain    -= i;
+
+            if(h != 0)
+            {
+                if(remain <= 0)
+                    throw new Exception("Assertion failed");
+
+                h                 = _self.Bh[bi].Halfh;
+                result[resultOff] = _b64[h % 64];
+
+                if(i                 < 3                      ||
+                   result[resultOff] != result[resultOff - 1] ||
+                   result[resultOff] != result[resultOff - 2] ||
+                   result[resultOff] != result[resultOff - 3])
                 {
-                    /* We can have a problem with the tail overflowing. The
-                     * easiest way to cope with this is to only reset the
-                     * normal hash if we have room for more characters in
-                     * our signature. This has the effect of combining the
-                     * last few pieces of the message into a single piece
-                     * */
-                    _self.Bh[i].Digest[++_self.Bh[i].Dlen] = 0;
-                    _self.Bh[i].H                          = HASH_INIT;
-
-                    if(_self.Bh[i].Dlen >= SPAMSUM_LENGTH / 2)
-                        continue;
-
-                    _self.Bh[i].Halfh      = HASH_INIT;
-                    _self.Bh[i].Halfdigest = 0;
+                    ++resultOff;
+                    --remain;
                 }
-                else
-                    fuzzy_try_reduce_blockhash();
-                }
-                }
+            }
+            else
+            {
+                i = _self.Bh[bi].Halfdigest;
 
-                // CLAUNIA: Flags seems to never be used in ssdeep, so I just removed it for code simplicity
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                void FuzzyDigest(out byte[] result)
+                if(i != 0)
                 {
-                    var  sb     = new StringBuilder();
-                    uint bi     = _self.Bhstart;
-                    uint h      = roll_sum();
-                    int  remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
-                    result = new byte[FUZZY_MAX_RESULT];
-
-                    /* Verify that our elimination was not overeager. */
-                    if(!(bi == 0 || (ulong)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < _self.TotalSize))
-                        throw new Exception("Assertion failed");
-
-                    int resultOff;
-
-                    /* Initial blocksize guess. */
-                    while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < _self.TotalSize)
-                    {
-                        ++bi;
-
-                        if(bi >= NUM_BLOCKHASHES)
-                            throw new OverflowException("The input exceeds data types.");
-                    }
-
-                    /* Adapt blocksize guess to actual digest length. */
-                    while(bi >= _self.Bhend)
-                        --bi;
-
-                    while(bi                > _self.Bhstart &&
-                          _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
-                        --bi;
-
-                    if(bi                > 0 &&
-                       _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
-                        throw new Exception("Assertion failed");
-
-                    sb.AppendFormat("{0}:", SSDEEP_BS(bi));
-                    int i = Encoding.ASCII.GetBytes(sb.ToString()).Length;
-
-                    if(i <= 0)
-                        /* Maybe snprintf has set errno here? */
-                        throw new OverflowException("The input exceeds data types.");
-
-                    if(i >= remain)
-                        throw new Exception("Assertion failed");
-
-                    remain -= i;
-
-                    Array.Copy(Encoding.ASCII.GetBytes(sb.ToString()), 0, result, 0, i);
-
-                    resultOff = i;
-
-                    i = (int)_self.Bh[bi].Dlen;
-
-                    if(i > remain)
-                        throw new Exception("Assertion failed");
-
-                    Array.Copy(_self.Bh[bi].Digest, 0, result, resultOff, i);
-                    resultOff += i;
-                    remain    -= i;
-
-                    if(h != 0)
-                    {
-                        if(remain <= 0)
-                            throw new Exception("Assertion failed");
-
-                        result[resultOff] = _b64[_self.Bh[bi].H % 64];
-
-                        if(i                 < 3                      ||
-                           result[resultOff] != result[resultOff - 1] ||
-                           result[resultOff] != result[resultOff - 2] ||
-                           result[resultOff] != result[resultOff - 3])
-                        {
-                            ++resultOff;
-                            --remain;
-                        }
-                    }
-                    else if(_self.Bh[bi].Digest[i] != 0)
-                    {
-                        if(remain <= 0)
-                            throw new Exception("Assertion failed");
-
-                        result[resultOff] = _self.Bh[bi].Digest[i];
-
-                        if(i                 < 3                      ||
-                           result[resultOff] != result[resultOff - 1] ||
-                           result[resultOff] != result[resultOff - 2] ||
-                           result[resultOff] != result[resultOff - 3])
-                        {
-                            ++resultOff;
-                            --remain;
-                        }
-                    }
-
                     if(remain <= 0)
                         throw new Exception("Assertion failed");
 
-                    result[resultOff++] = 0x3A; // ':'
-                    --remain;
+                    result[resultOff] = (byte)i;
 
-                    if(bi < _self.Bhend - 1)
+                    if(i                 < 3                      ||
+                       result[resultOff] != result[resultOff - 1] ||
+                       result[resultOff] != result[resultOff - 2] ||
+                       result[resultOff] != result[resultOff - 3])
                     {
-                        ++bi;
-                        i = (int)_self.Bh[bi].Dlen;
-
-                        if(i > remain)
-                            throw new Exception("Assertion failed");
-
-                        Array.Copy(_self.Bh[bi].Digest, 0, result, resultOff, i);
-                        resultOff += i;
-                        remain    -= i;
-
-                        if(h != 0)
-                        {
-                            if(remain <= 0)
-                                throw new Exception("Assertion failed");
-
-                            h                 = _self.Bh[bi].Halfh;
-                            result[resultOff] = _b64[h % 64];
-
-                            if(i                 < 3                      ||
-                               result[resultOff] != result[resultOff - 1] ||
-                               result[resultOff] != result[resultOff - 2] ||
-                               result[resultOff] != result[resultOff - 3])
-                            {
-                                ++resultOff;
-                                --remain;
-                            }
-                        }
-                        else
-                        {
-                            i = _self.Bh[bi].Halfdigest;
-
-                            if(i != 0)
-                            {
-                                if(remain <= 0)
-                                    throw new Exception("Assertion failed");
-
-                                result[resultOff] = (byte)i;
-
-                                if(i                 < 3                      ||
-                                   result[resultOff] != result[resultOff - 1] ||
-                                   result[resultOff] != result[resultOff - 2] ||
-                                   result[resultOff] != result[resultOff - 3])
-                                {
-                                    ++resultOff;
-                                    --remain;
-                                }
-                            }
-                        }
-                    }
-                    else if(h != 0)
-                    {
-                        if(_self.Bh[bi].Dlen != 0)
-                            throw new Exception("Assertion failed");
-
-                        if(remain <= 0)
-                            throw new Exception("Assertion failed");
-
-                        result[resultOff++] = _b64[_self.Bh[bi].H % 64];
-                        /* No need to bother with FUZZY_FLAG_ELIMSEQ, because this
-                         * digest has length 1. */
+                        ++resultOff;
                         --remain;
                     }
-
-                    result[resultOff] = 0;
                 }
+            }
+        }
+        else if(h != 0)
+        {
+            if(_self.Bh[bi].Dlen != 0)
+                throw new Exception("Assertion failed");
 
-                /// <summary>Gets the hash of a file</summary>
-                /// <param name="filename">File path.</param>
-                public static byte[] File(string filename) =>
-                    throw new NotImplementedException("SpamSum does not have a binary representation.");
+            if(remain <= 0)
+                throw new Exception("Assertion failed");
 
-                /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
-                /// <param name="filename">File path.</param>
-                /// <param name="hash">Byte array of the hash value.</param>
-                public static string File(string filename, out byte[] hash) =>
-                    throw new NotImplementedException("Not yet implemented.");
+            result[resultOff++] = _b64[_self.Bh[bi].H % 64];
+            /* No need to bother with FUZZY_FLAG_ELIMSEQ, because this
+             * digest has length 1. */
+            --remain;
+        }
 
-                /// <summary>Gets the hash of the specified data buffer.</summary>
-                /// <param name="data">Data buffer.</param>
-                /// <param name="len">Length of the data buffer to hash.</param>
-                /// <param name="hash">null</param>
-                /// <returns>Base64 representation of SpamSum $blocksize:$hash:$hash</returns>
-                public static string Data(byte[] data, uint len, out byte[] hash)
-                {
-                    var fuzzyContext = new SpamSumContext();
+        result[resultOff] = 0;
+    }
 
-                    fuzzyContext.Update(data, len);
+    /// <summary>Gets the hash of a file</summary>
+    /// <param name="filename">File path.</param>
+    public static byte[] File(string filename) =>
+        throw new NotImplementedException("SpamSum does not have a binary representation.");
 
-                    hash = null;
+    /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
+    /// <param name="filename">File path.</param>
+    /// <param name="hash">Byte array of the hash value.</param>
+    public static string File(string filename, out byte[] hash) =>
+        throw new NotImplementedException("Not yet implemented.");
 
-                    return fuzzyContext.End();
-                }
+    /// <summary>Gets the hash of the specified data buffer.</summary>
+    /// <param name="data">Data buffer.</param>
+    /// <param name="len">Length of the data buffer to hash.</param>
+    /// <param name="hash">null</param>
+    /// <returns>Base64 representation of SpamSum $blocksize:$hash:$hash</returns>
+    public static string Data(byte[] data, uint len, out byte[] hash)
+    {
+        var fuzzyContext = new SpamSumContext();
 
-                /// <summary>Gets the hash of the specified data buffer.</summary>
-                /// <param name="data">Data buffer.</param>
-                /// <param name="hash">null</param>
-                /// <returns>Base64 representation of SpamSum $blocksize:$hash:$hash</returns>
-                public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
+        fuzzyContext.Update(data, len);
 
-                // Converts an ASCII null-terminated string to .NET string
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                static string CToString(byte[] cString)
-                {
-                    int count = 0;
+        hash = null;
 
-                    // ReSharper disable once LoopCanBeConvertedToQuery
-                    // LINQ is six times slower
-                    foreach(byte c in cString)
-                    {
-                        if(c == 0)
-                            break;
+        return fuzzyContext.End();
+    }
 
-                        count++;
-                    }
+    /// <summary>Gets the hash of the specified data buffer.</summary>
+    /// <param name="data">Data buffer.</param>
+    /// <param name="hash">null</param>
+    /// <returns>Base64 representation of SpamSum $blocksize:$hash:$hash</returns>
+    public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
 
-                    return Encoding.ASCII.GetString(cString, 0, count);
-                }
+    // Converts an ASCII null-terminated string to .NET string
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static string CToString(byte[] cString)
+    {
+        var count = 0;
 
-                struct RollState
-                {
-                    public byte[] Window;
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        // LINQ is six times slower
+        foreach(byte c in cString)
+        {
+            if(c == 0)
+                break;
 
-                    // ROLLING_WINDOW
-                    public uint H1;
-                    public uint H2;
-                    public uint H3;
-                    public uint N;
-                }
+            count++;
+        }
 
-                /* A blockhash contains a signature state for a specific (implicit) blocksize.
-                 * The blocksize is given by SSDEEP_BS(index). The h and halfh members are the
-                 * FNV hashes, where halfh stops to be reset after digest is SPAMSUM_LENGTH/2
-                 * long. The halfh hash is needed be able to truncate digest for the second
-                 * output hash to stay compatible with ssdeep output. */
-                struct BlockhashContext
-                {
-                    public uint   H;
-                    public uint   Halfh;
-                    public byte[] Digest;
+        return Encoding.ASCII.GetString(cString, 0, count);
+    }
 
-                    // SPAMSUM_LENGTH
-                    public byte Halfdigest;
-                    public uint Dlen;
-                }
+    struct RollState
+    {
+        public byte[] Window;
 
-                struct FuzzyState
-                {
-                    public uint               Bhstart;
-                    public uint               Bhend;
-                    public BlockhashContext[] Bh;
+        // ROLLING_WINDOW
+        public uint H1;
+        public uint H2;
+        public uint H3;
+        public uint N;
+    }
 
-                    //NUM_BLOCKHASHES
-                    public ulong     TotalSize;
-                    public RollState Roll;
-                }
-                }
+    /* A blockhash contains a signature state for a specific (implicit) blocksize.
+     * The blocksize is given by SSDEEP_BS(index). The h and halfh members are the
+     * FNV hashes, where halfh stops to be reset after digest is SPAMSUM_LENGTH/2
+     * long. The halfh hash is needed be able to truncate digest for the second
+     * output hash to stay compatible with ssdeep output. */
+    struct BlockhashContext
+    {
+        public uint   H;
+        public uint   Halfh;
+        public byte[] Digest;
+
+        // SPAMSUM_LENGTH
+        public byte Halfdigest;
+        public uint Dlen;
+    }
+
+    struct FuzzyState
+    {
+        public uint               Bhstart;
+        public uint               Bhend;
+        public BlockhashContext[] Bh;
+
+        //NUM_BLOCKHASHES
+        public ulong     TotalSize;
+        public RollState Roll;
+    }
+}

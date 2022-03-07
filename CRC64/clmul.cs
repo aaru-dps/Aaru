@@ -21,14 +21,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Checksums.CRC64;
+
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
-namespace Aaru.Checksums.CRC64;
-
-internal static class Clmul
+static class Clmul
 {
     static readonly byte[] _shuffleMasks =
     {
@@ -42,14 +42,13 @@ internal static class Clmul
     {
         uint maskPos = 16 - n;
 
-        Vector128<byte> maskA = Vector128.Create(_shuffleMasks[maskPos], _shuffleMasks[maskPos + 1],
-                                                 _shuffleMasks[maskPos + 2], _shuffleMasks[maskPos + 3],
-                                                 _shuffleMasks[maskPos + 4], _shuffleMasks[maskPos + 5],
-                                                 _shuffleMasks[maskPos + 6], _shuffleMasks[maskPos + 7],
-                                                 _shuffleMasks[maskPos + 8], _shuffleMasks[maskPos + 9],
-                                                 _shuffleMasks[maskPos + 10], _shuffleMasks[maskPos + 11],
-                                                 _shuffleMasks[maskPos + 12], _shuffleMasks[maskPos + 13],
-                                                 _shuffleMasks[maskPos + 14], _shuffleMasks[maskPos + 15]);
+        var maskA = Vector128.Create(_shuffleMasks[maskPos], _shuffleMasks[maskPos + 1], _shuffleMasks[maskPos + 2],
+                                     _shuffleMasks[maskPos + 3], _shuffleMasks[maskPos + 4], _shuffleMasks[maskPos + 5],
+                                     _shuffleMasks[maskPos + 6], _shuffleMasks[maskPos + 7], _shuffleMasks[maskPos + 8],
+                                     _shuffleMasks[maskPos + 9], _shuffleMasks[maskPos + 10],
+                                     _shuffleMasks[maskPos + 11], _shuffleMasks[maskPos + 12],
+                                     _shuffleMasks[maskPos + 13], _shuffleMasks[maskPos + 14],
+                                     _shuffleMasks[maskPos + 15]);
 
         Vector128<byte> maskB = Sse2.Xor(maskA, Sse2.CompareEqual(Vector128<byte>.Zero, Vector128<byte>.Zero));
 
@@ -64,14 +63,14 @@ internal static class Clmul
 
     internal static ulong Step(ulong crc, byte[] data, uint length)
     {
-        int              bufPos         = 16;
-        const ulong      k1             = 0xe05dd497ca393ae4;
-        const ulong      k2             = 0xdabe95afc7875f40;
-        const ulong      mu             = 0x9c3e466c172963d5;
-        const ulong      pol            = 0x92d8af2baf0e1e85;
-        Vector128<ulong> foldConstants1 = Vector128.Create(k1, k2);
-        Vector128<ulong> foldConstants2 = Vector128.Create(mu, pol);
-        Vector128<ulong> initialCrc     = Vector128.Create(~crc, 0);
+        var         bufPos         = 16;
+        const ulong k1             = 0xe05dd497ca393ae4;
+        const ulong k2             = 0xdabe95afc7875f40;
+        const ulong mu             = 0x9c3e466c172963d5;
+        const ulong pol            = 0x92d8af2baf0e1e85;
+        var         foldConstants1 = Vector128.Create(k1, k2);
+        var         foldConstants2 = Vector128.Create(mu, pol);
+        var         initialCrc     = Vector128.Create(~crc, 0);
         length -= 16;
 
         // Initial CRC can simply be added to data

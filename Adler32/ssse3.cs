@@ -45,19 +45,19 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // ****************************************************************************/
 
+namespace Aaru.Checksums.Adler32;
+
 using System;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 
-namespace Aaru.Checksums.Adler32;
-
-internal static class Ssse3
+static class Ssse3
 {
     internal static void Step(ref ushort sum1, ref ushort sum2, byte[] buf, uint len)
     {
         uint s1     = sum1;
         uint s2     = sum2;
-        int  bufPos = 0;
+        var  bufPos = 0;
 
         /*
          * Process the data in blocks.
@@ -78,33 +78,33 @@ internal static class Ssse3
             Vector128<byte> tap1 = Vector128.Create(32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17).
                                              AsByte();
 
-            Vector128<byte>  tap2 = Vector128.Create(16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1).AsByte();
-            Vector128<byte>  zero = Vector128.Create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).AsByte();
-            Vector128<short> ones = Vector128.Create(1, 1, 1, 1, 1, 1, 1, 1);
+            Vector128<byte> tap2 = Vector128.Create(16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1).AsByte();
+            Vector128<byte> zero = Vector128.Create(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).AsByte();
+            var             ones = Vector128.Create(1, 1, 1, 1, 1, 1, 1, 1);
             /*
              * Process n blocks of data. At most NMAX data bytes can be
              * processed before s2 must be reduced modulo BASE.
              */
-            Vector128<uint> v_ps = Vector128.Create(s1 * n, 0, 0, 0);
-            Vector128<uint> v_s2 = Vector128.Create(s2, 0, 0, 0);
-            Vector128<uint> v_s1 = Vector128.Create(0u, 0, 0, 0);
+            var v_ps = Vector128.Create(s1 * n, 0, 0, 0);
+            var v_s2 = Vector128.Create(s2, 0, 0, 0);
+            var v_s1 = Vector128.Create(0u, 0, 0, 0);
 
             do
             {
                 /*
                  * Load 32 input bytes.
                  */
-                Vector128<uint> bytes1 = Vector128.Create(BitConverter.ToUInt32(buf, bufPos),
-                                                          BitConverter.ToUInt32(buf, bufPos + 4),
-                                                          BitConverter.ToUInt32(buf, bufPos + 8),
-                                                          BitConverter.ToUInt32(buf, bufPos + 12));
+                var bytes1 = Vector128.Create(BitConverter.ToUInt32(buf, bufPos),
+                                              BitConverter.ToUInt32(buf, bufPos + 4),
+                                              BitConverter.ToUInt32(buf, bufPos + 8),
+                                              BitConverter.ToUInt32(buf, bufPos + 12));
 
                 bufPos += 16;
 
-                Vector128<uint> bytes2 = Vector128.Create(BitConverter.ToUInt32(buf, bufPos),
-                                                          BitConverter.ToUInt32(buf, bufPos + 4),
-                                                          BitConverter.ToUInt32(buf, bufPos + 8),
-                                                          BitConverter.ToUInt32(buf, bufPos + 12));
+                var bytes2 = Vector128.Create(BitConverter.ToUInt32(buf, bufPos),
+                                              BitConverter.ToUInt32(buf, bufPos + 4),
+                                              BitConverter.ToUInt32(buf, bufPos + 8),
+                                              BitConverter.ToUInt32(buf, bufPos + 12));
 
                 bufPos += 16;
 

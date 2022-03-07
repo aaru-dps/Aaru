@@ -36,13 +36,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Checksums;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Aaru.CommonTypes.Interfaces;
-
-namespace Aaru.Checksums;
 
 /// <inheritdoc />
 public sealed class Register : IPluginRegister
