@@ -144,8 +144,7 @@ public static class AaruConsole
     /// </summary>
     /// <param name="format">A composite format string.</param>
     /// <param name="arg">An array of objects to write using <paramref name="format" />.</param>
-    public static void ErrorWriteLine(string format, params object[] arg) =>
-        ErrorWriteLineEvent?.Invoke(format, arg);
+    public static void ErrorWriteLine(string format, params object[] arg) => ErrorWriteLineEvent?.Invoke(format, arg);
 
     /// <summary>
     ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
