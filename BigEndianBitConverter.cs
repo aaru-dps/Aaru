@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Helpers;
+
 using System;
 using System.Linq;
-
-namespace Aaru.Helpers;
 
 /// <summary>
 ///     Converts base data types to an array of bytes, and an array of bytes to base data types. All info taken from
@@ -309,15 +309,12 @@ public static class BigEndianBitConverter
     /// <param name="value">Byte array containing a GUID in big endian</param>
     /// <param name="startIndex">Start of the byte array to process</param>
     /// <returns>Processed Guid</returns>
-    public static Guid ToGuid(byte[] value, int startIndex) => new Guid(ToUInt32(value, 0 + startIndex),
-                                                                        ToUInt16(value, 4 + startIndex),
-                                                                        ToUInt16(value, 6 + startIndex),
-                                                                        value[8           + startIndex + 0],
-                                                                        value[8           + startIndex + 1],
-                                                                        value[8           + startIndex + 2],
-                                                                        value[8           + startIndex + 3],
-                                                                        value[8           + startIndex + 5],
-                                                                        value[8           + startIndex + 5],
-                                                                        value[8           + startIndex + 6],
-                                                                        value[8           + startIndex + 7]);
+    public static Guid ToGuid(byte[] value, int startIndex) => new(ToUInt32(value, 0 + startIndex),
+                                                                   ToUInt16(value, 4 + startIndex),
+                                                                   ToUInt16(value, 6 + startIndex),
+                                                                   value[8 + startIndex + 0], value[8 + startIndex + 1],
+                                                                   value[8 + startIndex + 2], value[8 + startIndex + 3],
+                                                                   value[8 + startIndex + 5], value[8 + startIndex + 5],
+                                                                   value[8 + startIndex + 6],
+                                                                   value[8 + startIndex + 7]);
 }

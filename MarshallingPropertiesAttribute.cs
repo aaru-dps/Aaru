@@ -36,9 +36,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace Aaru.Helpers;
+
+using System;
 
 /// <inheritdoc />
 /// <summary>Defines properties to help marshalling structs from binary data</summary>

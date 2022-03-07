@@ -30,21 +30,21 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Helpers;
+
 using System;
 using System.Text;
 using Aaru.Console;
 
-namespace Aaru.Helpers;
-
 /// <summary>Helper operations for timestamp management (date and time)</summary>
 public static class DateHandlers
 {
-    static readonly DateTime _lisaEpoch = new DateTime(1901, 1, 1, 0, 0, 0);
-    static readonly DateTime _macEpoch  = new DateTime(1904, 1, 1, 0, 0, 0);
-    static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
+    static readonly DateTime _lisaEpoch = new(1901, 1, 1, 0, 0, 0);
+    static readonly DateTime _macEpoch  = new(1904, 1, 1, 0, 0, 0);
+    static readonly DateTime _unixEpoch = new(1970, 1, 1, 0, 0, 0);
     /// <summary>Day 0 of Julian Date system</summary>
-    static readonly DateTime _julianEpoch = new DateTime(1858, 11, 17, 0, 0, 0);
-    static readonly DateTime _amigaEpoch = new DateTime(1978, 1, 1, 0, 0, 0);
+    static readonly DateTime _julianEpoch = new(1858, 11, 17, 0, 0, 0);
+    static readonly DateTime _amigaEpoch = new(1978, 1, 1, 0, 0, 0);
 
     /// <summary>Converts a Macintosh timestamp to a .NET DateTime</summary>
     /// <param name="macTimeStamp">Macintosh timestamp (seconds since 1st Jan. 1904)</param>
@@ -88,7 +88,7 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime HighSierraToDateTime(byte[] vdDateTime)
     {
-        byte[] isoTime = new byte[17];
+        var isoTime = new byte[17];
         Array.Copy(vdDateTime, 0, isoTime, 0, 16);
 
         return Iso9660ToDateTime(isoTime);
@@ -100,8 +100,8 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime Iso9660ToDateTime(byte[] vdDateTime)
     {
-        byte[] twoCharValue  = new byte[2];
-        byte[] fourCharValue = new byte[4];
+        var twoCharValue  = new byte[2];
+        var fourCharValue = new byte[4];
 
         fourCharValue[0] = vdDateTime[0];
         fourCharValue[1] = vdDateTime[1];
@@ -172,7 +172,7 @@ public static class DateHandlers
                                    "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
                                    year, month, day, hour, minute, second, hundredths * 10);
 
-        sbyte difference = (sbyte)vdDateTime[16];
+        var difference = (sbyte)vdDateTime[16];
 
         var decodedDt = new DateTime(year, month, day, hour, minute, second, hundredths * 10, DateTimeKind.Utc);
 
@@ -213,8 +213,8 @@ public static class DateHandlers
         int month = dateRecord & 0x000F;
 
         AaruConsole.DebugWriteLine("UCSDPascalToDateTime handler",
-                                   "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year,
-                                   month, day);
+                                   "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year, month,
+                                   day);
 
         return new DateTime(year, month, day);
     }
@@ -232,12 +232,11 @@ public static class DateHandlers
         int minute = (time & 0x7E0)  >> 5;
         int second = (time & 0x1F) * 2;
 
-        AaruConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}",
-                                   date, year, month, day);
+        AaruConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}", date,
+                                   year, month, day);
 
-        AaruConsole.DebugWriteLine("DOSToDateTime handler",
-                                   "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time, hour, minute,
-                                   second);
+        AaruConsole.DebugWriteLine("DOSToDateTime handler", "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}",
+                                   time, hour, minute, second);
 
         DateTime dosDate;
 
@@ -258,9 +257,9 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime CpmToDateTime(byte[] timestamp)
     {
-        ushort days    = BitConverter.ToUInt16(timestamp, 0);
-        int    hours   = timestamp[2];
-        int    minutes = timestamp[3];
+        var days    = BitConverter.ToUInt16(timestamp, 0);
+        int hours   = timestamp[2];
+        int minutes = timestamp[3];
 
         DateTime temp = _amigaEpoch.AddDays(days);
         temp = temp.AddHours(hours);
@@ -285,16 +284,15 @@ public static class DateHandlers
                                           byte minute, byte second, byte centiseconds, byte hundredsOfMicroseconds,
                                           byte microseconds)
     {
-        byte specification = (byte)((typeAndTimeZone & 0xF000) >> 12);
+        var specification = (byte)((typeAndTimeZone & 0xF000) >> 12);
 
-        long ticks = ((long)centiseconds * 100000) + ((long)hundredsOfMicroseconds * 1000) +
-                     ((long)microseconds * 10);
+        long ticks = (long)centiseconds * 100000 + (long)hundredsOfMicroseconds * 1000 + (long)microseconds * 10;
 
         if(specification == 0)
             return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc).AddTicks(ticks);
 
-        ushort preOffset = (ushort)(typeAndTimeZone & 0xFFF);
-        short  offset;
+        var   preOffset = (ushort)(typeAndTimeZone & 0xFFF);
+        short offset;
 
         if((preOffset & 0x800) == 0x800)
             offset = (short)(preOffset | 0xF000);
@@ -308,15 +306,14 @@ public static class DateHandlers
            offset > 1440)
             offset = 0;
 
-        return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0)).
-               AddTicks(ticks).DateTime;
+        return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0)).AddTicks(ticks).
+            DateTime;
     }
 
     /// <summary>Converts a Solaris high resolution timestamp to .NET DateTime</summary>
     /// <param name="hrTimeStamp">Solaris high resolution timestamp</param>
     /// <returns>.NET DateTime</returns>
-    public static DateTime UnixHrTimeToDateTime(ulong hrTimeStamp) =>
-        _unixEpoch.AddTicks((long)(hrTimeStamp / 100));
+    public static DateTime UnixHrTimeToDateTime(ulong hrTimeStamp) => _unixEpoch.AddTicks((long)(hrTimeStamp / 100));
 
     /// <summary>Converts an OS-9 timestamp to .NET DateTime</summary>
     /// <param name="date">OS-9 timestamp</param>
@@ -324,7 +321,7 @@ public static class DateHandlers
     public static DateTime Os9ToDateTime(byte[] date)
     {
         if(date == null ||
-           (date.Length != 3 && date.Length != 5))
+           date.Length != 3 && date.Length != 5)
             return DateTime.MinValue;
 
         DateTime os9Date;
@@ -366,12 +363,12 @@ public static class DateHandlers
     {
         try
         {
-            int iyear   = ((year   >> 4) * 10) + (year   & 0xF);
-            int imonth  = ((month  >> 4) * 10) + (month  & 0xF);
-            int iday    = ((day    >> 4) * 10) + (day    & 0xF);
-            int iminute = ((minute >> 4) * 10) + (minute & 0xF);
-            int ihour   = ((hour   >> 4) * 10) + (hour   & 0xF);
-            int isecond = ((second >> 4) * 10) + (second & 0xF);
+            int iyear   = (year   >> 4) * 10 + (year   & 0xF);
+            int imonth  = (month  >> 4) * 10 + (month  & 0xF);
+            int iday    = (day    >> 4) * 10 + (day    & 0xF);
+            int iminute = (minute >> 4) * 10 + (minute & 0xF);
+            int ihour   = (hour   >> 4) * 10 + (hour   & 0xF);
+            int isecond = (second >> 4) * 10 + (second & 0xF);
 
             if(iyear >= 70)
                 iyear += 1900;

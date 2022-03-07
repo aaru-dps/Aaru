@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+namespace Aaru.Helpers;
+
 using System.Text;
 using Aaru.Console;
-
-namespace Aaru.Helpers;
 
 /// <summary>Helper operations to get hexadecimal representations of byte arrays</summary>
 public static class PrintHex
@@ -56,11 +56,11 @@ public static class PrintHex
 
         // TODO: Color list
         // TODO: Allow to change width
-        string str          = "Offset";
-        int    rows         = array.Length / 16;
-        int    last         = array.Length % 16;
-        int    offsetLength = $"{array.Length:X}".Length;
-        var    sb           = new StringBuilder();
+        var str          = "Offset";
+        int rows         = array.Length / 16;
+        int last         = array.Length % 16;
+        int offsetLength = $"{array.Length:X}".Length;
+        var sb           = new StringBuilder();
 
         if(last > 0)
             rows++;
@@ -80,21 +80,19 @@ public static class PrintHex
         sb.Append(str);
         sb.Append("  ");
 
-        for(int i = 0; i < 16; i++)
-        {
+        for(var i = 0; i < 16; i++)
             sb.AppendFormat(" {0:X2}", i);
-        }
 
         if(color)
             sb.Append("\u001b[0m");
 
         sb.AppendLine();
 
-        int b = 0;
+        var b = 0;
 
         string format = $"{{0:X{offsetLength}}}";
 
-        for(int i = 0; i < rows; i++)
+        for(var i = 0; i < rows; i++)
         {
             if(color)
                 sb.Append("\u001b[36m");
@@ -108,22 +106,22 @@ public static class PrintHex
             int lastBytes  = i == rows - 1 ? last : 16;
             int lastSpaces = 16 - lastBytes;
 
-            for(int j = 0; j < lastBytes; j++)
+            for(var j = 0; j < lastBytes; j++)
             {
                 sb.AppendFormat(" {0:X2}", array[b]);
                 b++;
             }
 
-            for(int j = 0; j < lastSpaces; j++)
+            for(var j = 0; j < lastSpaces; j++)
                 sb.Append("   ");
 
             b -= lastBytes;
             sb.Append("   ");
 
-            for(int j = 0; j < lastBytes; j++)
+            for(var j = 0; j < lastBytes; j++)
             {
                 int v = array[b];
-                sb.Append((v > 31 && v < 127) || v > 159 ? (char)v : '.');
+                sb.Append(v > 31 && v < 127 || v > 159 ? (char)v : '.');
                 b++;
             }
 
