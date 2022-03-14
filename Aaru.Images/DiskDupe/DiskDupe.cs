@@ -55,8 +55,6 @@
  * that DDI files are easy to recognize.
  */
 
-
-
 // ReSharper disable NotAccessedField.Local
 
 namespace Aaru.DiscImages;

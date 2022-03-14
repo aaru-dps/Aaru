@@ -63,8 +63,6 @@
  * diskette image. Fortunately, the HD-Copy header is highly recognizable.
  */
 
-
-
 // ReSharper disable NotAccessedField.Local
 
 namespace Aaru.DiscImages;

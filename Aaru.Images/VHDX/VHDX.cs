@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable NotAccessedField.Local
 
 namespace Aaru.DiscImages;
