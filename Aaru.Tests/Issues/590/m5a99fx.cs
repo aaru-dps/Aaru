@@ -5,6 +5,7 @@
 namespace Aaru.Tests.Issues._590;
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 /* https://github.com/aaru-dps/Aaru/issues/590
@@ -14,6 +15,7 @@ using System.IO;
  * When extracting the files from a specific image, Aaru hangs without crashing.
  */
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class m5a99fx : FsExtractHashIssueTest
 {
     protected override string DataFolder =>

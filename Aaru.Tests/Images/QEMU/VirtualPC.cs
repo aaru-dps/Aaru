@@ -39,7 +39,7 @@ public class VirtualPC : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VirtualPC");
-    public override IMediaImage _plugin => new Vhd();
+    public override IMediaImage Plugin => new Vhd();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -49,7 +49,7 @@ public class VirtualPC : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 512064,
             SectorSize = 512,
-            MD5        = "26d2745c1d614207b4bce4ee003c326d",
+            Md5        = "26d2745c1d614207b4bce4ee003c326d",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -65,7 +65,7 @@ public class VirtualPC : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 20536,
             SectorSize = 512,
-            MD5        = "adfad4fb019f157e868baa39e7753db7",
+            Md5        = "adfad4fb019f157e868baa39e7753db7",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -81,7 +81,7 @@ public class VirtualPC : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 251940,
             SectorSize = 512,
-            MD5        = "7126d647c1cefc5a81b4140e10f50269",
+            Md5        = "7126d647c1cefc5a81b4140e10f50269",
             Partitions = new[]
             {
                 new BlockPartitionVolumes

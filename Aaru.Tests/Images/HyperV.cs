@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class HyperV : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Hyper-V");
-    public override IMediaImage _plugin    => new Vhdx();
+    public override IMediaImage Plugin    => new Vhdx();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +48,7 @@ public class HyperV : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 409600,
             SectorSize = 512,
-            MD5        = "b3b3e6b89763ef45f6863d7fd1195778"
+            Md5        = "b3b3e6b89763ef45f6863d7fd1195778"
         },
         new BlockImageTestExpected
         {
@@ -56,7 +56,7 @@ public class HyperV : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 409600,
             SectorSize = 512,
-            MD5        = "f2a720176adb4cf70c04c56b58339024",
+            Md5        = "f2a720176adb4cf70c04c56b58339024",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -77,7 +77,7 @@ public class HyperV : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 409600,
             SectorSize = 512,
-            MD5        = "bc6be23bbb139bd6fcd928f212205ce1"
+            Md5        = "bc6be23bbb139bd6fcd928f212205ce1"
         },
         new BlockImageTestExpected
         {
@@ -85,7 +85,7 @@ public class HyperV : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 409600,
             SectorSize = 512,
-            MD5        = "cfc501f3bcc12a00aa08db30e80c25ae"
+            Md5        = "cfc501f3bcc12a00aa08db30e80c25ae"
         },
         new BlockImageTestExpected
         {
@@ -93,7 +93,7 @@ public class HyperV : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 409600,
             SectorSize = 512,
-            MD5        = "06e97867ff89301fef7e9451ad7aa4ed"
+            Md5        = "06e97867ff89301fef7e9451ad7aa4ed"
         },
         new BlockImageTestExpected
         {
@@ -101,7 +101,7 @@ public class HyperV : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 409600,
             SectorSize = 512,
-            MD5        = "d544a96ac1bd4431b884e244717d3dca"
+            Md5        = "d544a96ac1bd4431b884e244717d3dca"
         },
         new BlockImageTestExpected
         {
@@ -109,7 +109,7 @@ public class HyperV : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 409600,
             SectorSize = 512,
-            MD5        = "b10ed3ac22d882f7080b6f9859d1e646"
+            Md5        = "b10ed3ac22d882f7080b6f9859d1e646"
         },
         new BlockImageTestExpected
         {
@@ -117,7 +117,7 @@ public class HyperV : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 409600,
             SectorSize = 512,
-            MD5        = "338ba2043d7f9cb2693c35e3194e6c9c"
+            Md5        = "338ba2043d7f9cb2693c35e3194e6c9c"
         }
     };
 }

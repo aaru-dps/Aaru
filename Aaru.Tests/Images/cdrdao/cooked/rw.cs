@@ -28,6 +28,7 @@
 
 namespace Aaru.Tests.Images.cdrdao.cooked;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -35,11 +36,12 @@ using Aaru.DiscImages;
 using NUnit.Framework;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class rw : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "cdrdao", "cooked", "rw");
-    public override IMediaImage _plugin => new Cdrdao();
+    public override IMediaImage Plugin => new Cdrdao();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -49,9 +51,9 @@ public class rw : OpticalMediaImageTest
             MediaType     = MediaType.CDDA,
             Sectors       = 247073,
             SectorSize    = 2352,
-            MD5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            LongMD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            SubchannelMD5 = "d62fd0cdca05b4b42f7c17b316610e15",
+            Md5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            LongMd5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            SubchannelMd5 = "d62fd0cdca05b4b42f7c17b316610e15",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -174,9 +176,9 @@ public class rw : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
             SectorSize    = 2048,
-            MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            SubchannelMD5 = "e89c610fbf1093480603de7e4b5fe99b",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "e89c610fbf1093480603de7e4b5fe99b",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -213,9 +215,9 @@ public class rw : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
             SectorSize    = 2048,
-            MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            SubchannelMD5 = "7e67d6238f1cda44cb491e5f590f5794",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "7e67d6238f1cda44cb491e5f590f5794",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -252,9 +254,9 @@ public class rw : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 308224,
             SectorSize    = 2048,
-            MD5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-            LongMD5       = "3af5f943ddb9427d9c63a4ce3b704db9",
-            SubchannelMD5 = "2ec808f5618ef407ae1f49cb23648914",
+            Md5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5       = "3af5f943ddb9427d9c63a4ce3b704db9",
+            SubchannelMd5 = "2ec808f5618ef407ae1f49cb23648914",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -285,9 +287,9 @@ public class rw : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 329008,
             SectorSize    = 2048,
-            MD5           = "f09312ba25a479fb81912a2965babd22",
-            LongMD5       = "f48603d11883593f45ec4a3824681e4e",
-            SubchannelMD5 = "6841e5744d8301c219742ecd61fd9ac4",
+            Md5           = "f09312ba25a479fb81912a2965babd22",
+            LongMd5       = "f48603d11883593f45ec4a3824681e4e",
+            SubchannelMd5 = "6841e5744d8301c219742ecd61fd9ac4",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

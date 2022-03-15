@@ -33,24 +33,25 @@ using System.Runtime.InteropServices;
 using CUETools.Codecs;
 using CUETools.Codecs.Flake;
 
+// ReSharper disable once InconsistentNaming
 public class FLAC
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern nuint AARU_flac_decode_redbook_buffer(byte[] dst_buffer, nuint dst_size, byte[] src_buffer,
-                                                        nuint src_size);
+    static extern nuint AARU_flac_decode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
+                                                        nuint srcSize);
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern nuint AARU_flac_encode_redbook_buffer(byte[] dst_buffer, nuint dst_size, byte[] src_buffer,
-                                                        nuint src_size, uint blocksize, int do_mid_side_stereo,
-                                                        int loose_mid_side_stereo, string apodization,
-                                                        uint max_lpc_order, uint qlp_coeff_precision,
-                                                        int do_qlp_coeff_prec_search, int do_exhaustive_model_search,
-                                                        uint min_residual_partition_order,
-                                                        uint max_residual_partition_order, string application_id,
-                                                        uint application_id_len);
+    static extern nuint AARU_flac_encode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
+                                                        nuint srcSize, uint blocksize, int doMidSideStereo,
+                                                        int looseMidSideStereo, string apodization,
+                                                        uint maxLpcOrder, uint qlpCoeffPrecision,
+                                                        int doQlpCoeffPrecSearch, int doExhaustiveModelSearch,
+                                                        uint minResidualPartitionOrder,
+                                                        uint maxResidualPartitionOrder, string applicationID,
+                                                        uint applicationIDLen);
 
     /// <summary>Decodes a buffer compressed with FLAC</summary>
     /// <param name="source">Encoded buffer</param>
@@ -78,14 +79,14 @@ public class FLAC
     /// <param name="destination">Buffer to store the compressed data</param>
     /// <returns></returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, uint blockSize, bool doMidSideStereo,
-                                   bool looseMidSideStereo, string apodization, uint max_lpc_order,
+                                   bool looseMidSideStereo, string apodization, uint maxLpcOrder,
                                    uint qlpCoeffPrecision, bool doQlpCoeffPrecSearch, bool doExhaustiveModelSearch,
                                    uint minResidualPartitionOrder, uint maxResidualPartitionOrder, string applicationID)
     {
         if(Native.IsSupported)
             return (int)AARU_flac_encode_redbook_buffer(destination, (nuint)destination.Length, source,
                                                         (nuint)source.Length, blockSize, doMidSideStereo ? 1 : 0,
-                                                        looseMidSideStereo ? 1 : 0, apodization, max_lpc_order,
+                                                        looseMidSideStereo ? 1 : 0, apodization, maxLpcOrder,
                                                         qlpCoeffPrecision, doQlpCoeffPrecSearch ? 1 : 0,
                                                         doExhaustiveModelSearch ? 1 : 0, minResidualPartitionOrder,
                                                         maxResidualPartitionOrder, applicationID,

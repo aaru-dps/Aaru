@@ -69,6 +69,7 @@ public sealed partial class Chd
     const string REGEX_METADATA_GDROM =
         @"TRACK:(?<track>\d+) TYPE:(?<track_type>\S+) SUBTYPE:(?<sub_type>\S+) FRAMES:(?<frames>\d+) PAD:(?<pad>\d+) PREGAP:(?<pregap>\d+) PGTYPE:(?<pgtype>\S+) PGSUB:(?<pgsub>\S+) POSTGAP:(?<postgap>\d+)";
 
+    // ReSharper disable InconsistentNaming
     const string TRACK_TYPE_MODE1        = "MODE1";
     const string TRACK_TYPE_MODE1_2K     = "MODE1/2048";
     const string TRACK_TYPE_MODE1_RAW    = "MODE1_RAW";
@@ -83,6 +84,7 @@ public sealed partial class Chd
     const string TRACK_TYPE_MODE2_RAW    = "MODE2_RAW";
     const string TRACK_TYPE_MODE2_RAW_2K = "MODE2/2352";
     const string TRACK_TYPE_AUDIO        = "AUDIO";
+    // ReSharper restore InconsistentNaming
 
     const string SUB_TYPE_COOKED = "RW";
     const string SUB_TYPE_RAW    = "RW_RAW";

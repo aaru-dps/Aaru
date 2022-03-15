@@ -43,6 +43,7 @@ using Schemas;
 // Information from the Linux kernel
 /// <inheritdoc />
 /// <summary>Implements detection of the Linux extended filesystem</summary>
+// ReSharper disable once InconsistentNaming
 public sealed class extFS : IFilesystem
 {
     const int SB_POS = 0x400;

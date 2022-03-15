@@ -37,7 +37,7 @@ using NUnit.Framework;
 public class Dart : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DART");
-    public override IMediaImage _plugin    => new DiscImages.Dart();
+    public override IMediaImage Plugin    => new DiscImages.Dart();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -47,7 +47,7 @@ public class Dart : BlockMediaImageTest
             MediaType  = MediaType.AppleSonySS,
             Sectors    = 800,
             SectorSize = 512,
-            MD5        = "eae3a95671d077deb702b3549a769f56"
+            Md5        = "eae3a95671d077deb702b3549a769f56"
         },
         new BlockImageTestExpected
         {
@@ -55,7 +55,7 @@ public class Dart : BlockMediaImageTest
             MediaType  = MediaType.AppleSonySS,
             Sectors    = 800,
             SectorSize = 512,
-            MD5        = "c5d92544c3e78b7f0a9b4baaa9a64eec"
+            Md5        = "c5d92544c3e78b7f0a9b4baaa9a64eec"
         },
         new BlockImageTestExpected
         {
@@ -63,7 +63,7 @@ public class Dart : BlockMediaImageTest
             MediaType  = MediaType.AppleSonyDS,
             Sectors    = 1600,
             SectorSize = 512,
-            MD5        = "a99744348a70b62b57bce2dec9132ced"
+            Md5        = "a99744348a70b62b57bce2dec9132ced"
         },
         new BlockImageTestExpected
         {
@@ -71,7 +71,7 @@ public class Dart : BlockMediaImageTest
             MediaType  = MediaType.AppleSonyDS,
             Sectors    = 1600,
             SectorSize = 512,
-            MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
+            Md5        = "93e71b9ecdb39d3ec9245b4f451856d4"
         }
         #region Unsupported LZH compression
         /*

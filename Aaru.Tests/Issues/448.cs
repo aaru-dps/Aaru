@@ -9,7 +9,7 @@ using BlindWrite5 = Aaru.DiscImages.BlindWrite5;
 public class _448 : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Pending", "issue448");
-    public override IMediaImage _plugin    => new BlindWrite5();
+    public override IMediaImage Plugin    => new BlindWrite5();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -19,8 +19,8 @@ public class _448 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 255,
             SectorSize    = 2048,
-            LongMD5       = "1bea7f781be0fb3b878de96e965c53a0",
-            SubchannelMD5 = "01fef9f42fe53e6256ba713ad237dc8c",
+            LongMd5       = "1bea7f781be0fb3b878de96e965c53a0",
+            SubchannelMd5 = "01fef9f42fe53e6256ba713ad237dc8c",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

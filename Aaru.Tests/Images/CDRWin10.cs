@@ -28,16 +28,18 @@
 
 namespace Aaru.Tests.Images;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CDRWin10 : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CDRWin 10");
-    public override IMediaImage _plugin    => new DiscImages.Alcohol120();
+    public override IMediaImage Plugin    => new DiscImages.Alcohol120();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -46,9 +48,9 @@ public class CDRWin10 : OpticalMediaImageTest
             TestFile      = "report_audiocd.xmd",
             MediaType     = MediaType.CDROMXA,
             Sectors       = 247073,
-            MD5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            LongMD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            SubchannelMD5 = "d4075209391c6955f438d0fa6095c6e2",
+            Md5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            LongMd5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            SubchannelMd5 = "d4075209391c6955f438d0fa6095c6e2",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -170,9 +172,9 @@ public class CDRWin10 : OpticalMediaImageTest
             TestFile      = "report_cdrom.xmd",
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
-            MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            SubchannelMD5 = "811058470f33be5988ea1c2627200039",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "811058470f33be5988ea1c2627200039",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -208,9 +210,9 @@ public class CDRWin10 : OpticalMediaImageTest
             TestFile      = "report_cdrw_2x.xmd",
             MediaType     = MediaType.CDROM,
             Sectors       = 308224,
-            MD5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-            LongMD5       = "3af5f943ddb9427d9c63a4ce3b704db9",
-            SubchannelMD5 = "6d0cd8e56dada05a86a4abd10f77e054",
+            Md5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5       = "3af5f943ddb9427d9c63a4ce3b704db9",
+            SubchannelMd5 = "6d0cd8e56dada05a86a4abd10f77e054",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -240,9 +242,9 @@ public class CDRWin10 : OpticalMediaImageTest
             TestFile      = "report_cdr.xmd",
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
-            MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            SubchannelMD5 = "d814823071e3671fbf204e5bf063f432",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "d814823071e3671fbf204e5bf063f432",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -278,9 +280,9 @@ public class CDRWin10 : OpticalMediaImageTest
             TestFile      = "report_enhancedcd.xmd",
             MediaType     = MediaType.CDPLUS,
             Sectors       = 303316,
-            MD5           = "557b9658671c16602e635f157b7525db",
-            LongMD5       = "76454ac3a025857dc41e05c430783eab",
-            SubchannelMD5 = "5a33440f5c51acff1921e92269978645",
+            Md5           = "557b9658671c16602e635f157b7525db",
+            LongMd5       = "76454ac3a025857dc41e05c430783eab",
+            SubchannelMd5 = "5a33440f5c51acff1921e92269978645",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -413,9 +415,9 @@ public class CDRWin10 : OpticalMediaImageTest
             TestFile      = "test_karaoke_multi_sampler.xmd",
             MediaType     = MediaType.CDROMXA,
             Sectors       = 329158,
-            MD5           = "9a19aa0df066732a8ec34025e8160248",
-            LongMD5       = "f4adafc5f2bdda2e4d70dce667cf47c1",
-            SubchannelMD5 = "b349f26946197859f6a0ef5c3881b8ca",
+            Md5           = "9a19aa0df066732a8ec34025e8160248",
+            LongMd5       = "f4adafc5f2bdda2e4d70dce667cf47c1",
+            SubchannelMd5 = "b349f26946197859f6a0ef5c3881b8ca",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

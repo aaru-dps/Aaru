@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class Raw : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "VirtualPC");
-    public override IMediaImage _plugin    => new ZZZRawImage();
+    public override IMediaImage Plugin    => new ZZZRawImage();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +48,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 307024,
             SectorSize = 512,
-            MD5        = "56eb1b7a4ea849e93de35f48b8912cd1"
+            Md5        = "56eb1b7a4ea849e93de35f48b8912cd1"
         },
         new BlockImageTestExpected
         {
@@ -56,7 +56,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 102306,
             SectorSize = 512,
-            MD5        = "f05abd9ff39f6b7e39834724b52a49e1"
+            Md5        = "f05abd9ff39f6b7e39834724b52a49e1"
         },
         new BlockImageTestExpected
         {
@@ -64,7 +64,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 62356,
             SectorSize = 512,
-            MD5        = "46d5f39b1169a2721863b71e2944e3c2"
+            Md5        = "46d5f39b1169a2721863b71e2944e3c2"
         },
         new BlockImageTestExpected
         {
@@ -72,7 +72,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 61404,
             SectorSize = 512,
-            MD5        = "86b522d83ab057fa76eab0941357e1f6"
+            Md5        = "86b522d83ab057fa76eab0941357e1f6"
         },
         new BlockImageTestExpected
         {
@@ -80,7 +80,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 266016,
             SectorSize = 512,
-            MD5        = "5f4d4c4f268ea19c91bf4fb49f4894b6",
+            Md5        = "5f4d4c4f268ea19c91bf4fb49f4894b6",
             Partitions = new[]
             {
                 new BlockPartitionVolumes

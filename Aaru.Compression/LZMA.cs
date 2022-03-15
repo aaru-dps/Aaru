@@ -38,11 +38,11 @@ public class LZMA
     public static bool IsSupported => true;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzma_decode_buffer(byte[] dst_buffer, ref nuint dst_size, byte[] src_buffer,
-                                              ref nuint src_size, byte[] props, nuint propsSize);
+    static extern int AARU_lzma_decode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer,
+                                              ref nuint srcSize, byte[] props, nuint propsSize);
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzma_encode_buffer(byte[] dst_buffer, ref nuint dst_size, byte[] src_buffer, nuint src_size,
+    static extern int AARU_lzma_encode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer, nuint srcSize,
                                               byte[] outProps, ref nuint outPropsSize, int level, uint dictSize, int lc,
                                               int lp, int pb, int fb, int numThreads);
 
@@ -90,9 +90,9 @@ public class LZMA
             return (int)dstSize;
         }
 
-        var _lzmaEncoderProperties = new LzmaEncoderProperties(true, (int)dictSize, fb);
+        var lzmaEncoderProperties = new LzmaEncoderProperties(true, (int)dictSize, fb);
 
-        using var lzmaStream = new LzmaStream(_lzmaEncoderProperties, false, new MemoryStream(destination));
+        using var lzmaStream = new LzmaStream(lzmaEncoderProperties, false, new MemoryStream(destination));
 
         lzmaStream.Write(source, 0, source.Length);
         properties = new byte[lzmaStream.Properties.Length];

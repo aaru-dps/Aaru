@@ -39,7 +39,7 @@ public class Alcohol : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "UltraISO", "Alcohol");
-    public override IMediaImage _plugin => new Alcohol120();
+    public override IMediaImage Plugin => new Alcohol120();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -48,8 +48,8 @@ public class Alcohol : OpticalMediaImageTest
             TestFile  = "cdiready_the_apprentice.mds",
             MediaType = MediaType.CDROMXA,
             Sectors   = 279300,
-            MD5       = "556d7d32e3c01c2087cc56b25fe5f66d",
-            LongMD5   = "556d7d32e3c01c2087cc56b25fe5f66d",
+            Md5       = "556d7d32e3c01c2087cc56b25fe5f66d",
+            LongMd5   = "556d7d32e3c01c2087cc56b25fe5f66d",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -235,8 +235,8 @@ public class Alcohol : OpticalMediaImageTest
             TestFile  = "report_audiocd.mds",
             MediaType = MediaType.CDROMXA,
             Sectors   = 247073,
-            MD5       = "c96a7bf12427078bab252d941716cc32",
-            LongMD5   = "c96a7bf12427078bab252d941716cc32",
+            Md5       = "c96a7bf12427078bab252d941716cc32",
+            LongMd5   = "c96a7bf12427078bab252d941716cc32",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -358,8 +358,8 @@ public class Alcohol : OpticalMediaImageTest
             TestFile  = "report_cdrom.mds",
             MediaType = MediaType.CDROM,
             Sectors   = 254265,
-            MD5       = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            Md5       = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -395,8 +395,8 @@ public class Alcohol : OpticalMediaImageTest
             TestFile  = "report_cdrw.mds",
             MediaType = MediaType.CDROM,
             Sectors   = 308224,
-            MD5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-            LongMD5   = "3af5f943ddb9427d9c63a4ce3b704db9",
+            Md5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5   = "3af5f943ddb9427d9c63a4ce3b704db9",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -426,8 +426,8 @@ public class Alcohol : OpticalMediaImageTest
             TestFile  = "report_dvdram_v2.mds",
             MediaType = MediaType.DVDROM,
             Sectors   = 471090,
-            MD5       = "35cb08dd5fedfb8e9ad2918292e51791",
-            LongMD5   = "35cb08dd5fedfb8e9ad2918292e51791",
+            Md5       = "35cb08dd5fedfb8e9ad2918292e51791",
+            LongMd5   = "35cb08dd5fedfb8e9ad2918292e51791",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -456,8 +456,8 @@ public class Alcohol : OpticalMediaImageTest
             TestFile  = "report_dvd-r+dl.mds",
             MediaType = MediaType.DVDROM,
             Sectors   = 3455920,
-            MD5       = "1cd9b9be5c5e337c5e6576156b84b726",
-            LongMD5   = "1cd9b9be5c5e337c5e6576156b84b726",
+            Md5       = "1cd9b9be5c5e337c5e6576156b84b726",
+            LongMd5   = "1cd9b9be5c5e337c5e6576156b84b726",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -486,8 +486,8 @@ public class Alcohol : OpticalMediaImageTest
             TestFile  = "report_dvdrom.mds",
             MediaType = MediaType.DVDROM,
             Sectors   = 2146357,
-            MD5       = "5e1841b7cd6ac0a95b8ae6f110fd89f2",
-            LongMD5   = "5e1841b7cd6ac0a95b8ae6f110fd89f2",
+            Md5       = "5e1841b7cd6ac0a95b8ae6f110fd89f2",
+            LongMd5   = "5e1841b7cd6ac0a95b8ae6f110fd89f2",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -516,8 +516,8 @@ public class Alcohol : OpticalMediaImageTest
             TestFile  = "report_enhancedcd.mds",
             MediaType = MediaType.CDPLUS,
             Sectors   = 303316,
-            MD5       = "97e5bf1caf3998e818d40cd845c6ecc9",
-            LongMD5   = "07b4d88c8f38cc0168a2f5725b31c52e",
+            Md5       = "97e5bf1caf3998e818d40cd845c6ecc9",
+            LongMd5   = "07b4d88c8f38cc0168a2f5725b31c52e",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -650,8 +650,8 @@ public class Alcohol : OpticalMediaImageTest
             TestFile  = "test_multi_karaoke_sampler.mds",
             MediaType = MediaType.CDROMXA,
             Sectors   = 329158,
-            MD5       = "9a19aa0df066732a8ec34025e8160248",
-            LongMD5   = "e981f7dfdb522ba937fe75474e23a446",
+            Md5       = "9a19aa0df066732a8ec34025e8160248",
+            LongMd5   = "e981f7dfdb522ba937fe75474e23a446",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

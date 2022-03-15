@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class D64 : BlockMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Commodore D64");
-    public override IMediaImage _plugin => new ZZZRawImage();
+    public override IMediaImage Plugin => new ZZZRawImage();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +48,7 @@ public class D64 : BlockMediaImageTest
             MediaType  = MediaType.CBM_1540,
             Sectors    = 683,
             SectorSize = 256,
-            MD5        = "9205f7ccdb19cfbdb0b46d10e40b2a90"
+            Md5        = "9205f7ccdb19cfbdb0b46d10e40b2a90"
         }
     };
 }

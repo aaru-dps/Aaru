@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class VirtualPc : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "VirtualPC");
-    public override IMediaImage _plugin    => new Vhd();
+    public override IMediaImage Plugin    => new Vhd();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +48,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 261936,
             SectorSize = 512,
-            MD5        = "cc634bb9bbf2dcdd88cfe251390e2049",
+            Md5        = "cc634bb9bbf2dcdd88cfe251390e2049",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -64,7 +64,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 261936,
             SectorSize = 512,
-            MD5        = "0b6f655387e101c0249e922b1714a484",
+            Md5        = "0b6f655387e101c0249e922b1714a484",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -80,7 +80,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1052352,
             SectorSize = 512,
-            MD5        = "12ebc62199ecaae97efe406ee891d68f",
+            Md5        = "12ebc62199ecaae97efe406ee891d68f",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -96,7 +96,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1052352,
             SectorSize = 512,
-            MD5        = "4943fc799eddd6f386b2923847824ffc",
+            Md5        = "4943fc799eddd6f386b2923847824ffc",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -112,7 +112,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 511056,
             SectorSize = 512,
-            MD5        = "a6041066df8f52f5d14b8200766d6bb5"
+            Md5        = "a6041066df8f52f5d14b8200766d6bb5"
         },
         new BlockImageTestExpected
         {
@@ -120,7 +120,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 20468,
             SectorSize = 512,
-            MD5        = "1c843b778d48a67b78e4ca65ab602673"
+            Md5        = "1c843b778d48a67b78e4ca65ab602673"
         },
         new BlockImageTestExpected
         {
@@ -128,7 +128,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 511056,
             SectorSize = 512,
-            MD5        = "e924cd1bbb16f6a6056f81df410922ae"
+            Md5        = "e924cd1bbb16f6a6056f81df410922ae"
         },
         new BlockImageTestExpected
         {
@@ -136,7 +136,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 20468,
             SectorSize = 512,
-            MD5        = "b790693b1c94bed209ee1bb9d0b6a075"
+            Md5        = "b790693b1c94bed209ee1bb9d0b6a075"
         },
         new BlockImageTestExpected
         {
@@ -144,7 +144,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 511056,
             SectorSize = 512,
-            MD5        = "1f9e3dc39db37a9e01fede6a12844222"
+            Md5        = "1f9e3dc39db37a9e01fede6a12844222"
         },
         new BlockImageTestExpected
         {
@@ -152,7 +152,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 511056,
             SectorSize = 512,
-            MD5        = "943a9da318111f50a92c3f2314fad1e0"
+            Md5        = "943a9da318111f50a92c3f2314fad1e0"
         },
         new BlockImageTestExpected
         {
@@ -160,7 +160,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 20468,
             SectorSize = 512,
-            MD5        = "4b4e98a5bba2469382132f9289ae1c57"
+            Md5        = "4b4e98a5bba2469382132f9289ae1c57"
         },
         new BlockImageTestExpected
         {
@@ -168,7 +168,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 511056,
             SectorSize = 512,
-            MD5        = "1f9e3dc39db37a9e01fede6a12844222"
+            Md5        = "1f9e3dc39db37a9e01fede6a12844222"
         },
         new BlockImageTestExpected
         {
@@ -176,7 +176,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 20468,
             SectorSize = 512,
-            MD5        = "4b4e98a5bba2469382132f9289ae1c57"
+            Md5        = "4b4e98a5bba2469382132f9289ae1c57"
         },
         new BlockImageTestExpected
         {
@@ -184,7 +184,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 31456656,
             SectorSize = 512,
-            MD5        = "df41b76f8532fc8ef775f89212191244"
+            Md5        = "df41b76f8532fc8ef775f89212191244"
         },
         new BlockImageTestExpected
         {
@@ -192,7 +192,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 511056,
             SectorSize = 512,
-            MD5        = "1f9e3dc39db37a9e01fede6a12844222"
+            Md5        = "1f9e3dc39db37a9e01fede6a12844222"
         },
         new BlockImageTestExpected
         {
@@ -200,7 +200,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 20468,
             SectorSize = 512,
-            MD5        = "4b4e98a5bba2469382132f9289ae1c57"
+            Md5        = "4b4e98a5bba2469382132f9289ae1c57"
         }
     };
 }

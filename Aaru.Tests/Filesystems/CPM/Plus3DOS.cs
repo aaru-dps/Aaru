@@ -27,6 +27,7 @@
 
 namespace Aaru.Tests.Filesystems.CPM;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -34,6 +35,7 @@ using Aaru.Filesystems;
 using NUnit.Framework;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class Plus3DOS : FilesystemTest
 {
     public Plus3DOS() : base("CP/M") {}

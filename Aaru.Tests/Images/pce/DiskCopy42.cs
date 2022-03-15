@@ -38,7 +38,7 @@ public class DiskCopy42 : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "pce", "DiskCopy 4.2");
-    public override IMediaImage _plugin => new DiscImages.DiskCopy42();
+    public override IMediaImage Plugin => new DiscImages.DiskCopy42();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +48,7 @@ public class DiskCopy42 : BlockMediaImageTest
             MediaType  = MediaType.AppleSonySS,
             Sectors    = 800,
             SectorSize = 512,
-            MD5        = "c5d92544c3e78b7f0a9b4baaa9a64eec",
+            Md5        = "c5d92544c3e78b7f0a9b4baaa9a64eec",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -64,7 +64,7 @@ public class DiskCopy42 : BlockMediaImageTest
             MediaType  = MediaType.DOS_35_DS_DD_9,
             Sectors    = 1440,
             SectorSize = 512,
-            MD5        = "de3f85896f771b7e5bc4c9e3926d64e4",
+            Md5        = "de3f85896f771b7e5bc4c9e3926d64e4",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -80,7 +80,7 @@ public class DiskCopy42 : BlockMediaImageTest
             MediaType  = MediaType.AppleSonyDS,
             Sectors    = 1600,
             SectorSize = 512,
-            MD5        = "93e71b9ecdb39d3ec9245b4f451856d4",
+            Md5        = "93e71b9ecdb39d3ec9245b4f451856d4",
             Partitions = new[]
             {
                 new BlockPartitionVolumes

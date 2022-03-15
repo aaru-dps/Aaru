@@ -39,7 +39,7 @@ public class VirtualBox : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VirtualBox");
-    public override IMediaImage _plugin => new Vdi();
+    public override IMediaImage Plugin => new Vdi();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -49,7 +49,7 @@ public class VirtualBox : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 251904,
             SectorSize = 512,
-            MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
+            Md5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
             Partitions = new[]
             {
                 new BlockPartitionVolumes

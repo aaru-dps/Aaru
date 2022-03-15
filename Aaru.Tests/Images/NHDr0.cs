@@ -28,6 +28,7 @@
 
 namespace Aaru.Tests.Images;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -35,10 +36,11 @@ using Aaru.DiscImages;
 using NUnit.Framework;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class NHDr0 : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "T-98 Next");
-    public override IMediaImage _plugin    => new Nhdr0();
+    public override IMediaImage Plugin    => new Nhdr0();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +50,7 @@ public class NHDr0 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 261120,
             SectorSize = 512,
-            MD5        = "af7c3cfa315b6661300017f865bf26d6"
+            Md5        = "af7c3cfa315b6661300017f865bf26d6"
         },
         new BlockImageTestExpected
         {
@@ -56,7 +58,7 @@ public class NHDr0 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 40800,
             SectorSize = 512,
-            MD5        = "bcb390d0b4d12feac29dbadc1a623c99"
+            Md5        = "bcb390d0b4d12feac29dbadc1a623c99"
         },
         new BlockImageTestExpected
         {
@@ -64,7 +66,7 @@ public class NHDr0 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 522240,
             SectorSize = 512,
-            MD5        = "e50e78b3742f5f89dd1a5573ba3141c4"
+            Md5        = "e50e78b3742f5f89dd1a5573ba3141c4"
         },
         new BlockImageTestExpected
         {
@@ -72,7 +74,7 @@ public class NHDr0 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 83640,
             SectorSize = 512,
-            MD5        = "007acca6fb53f90728d78f7c40c2b094"
+            Md5        = "007acca6fb53f90728d78f7c40c2b094"
         },
         new BlockImageTestExpected
         {
@@ -80,7 +82,7 @@ public class NHDr0 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 1044480,
             SectorSize = 512,
-            MD5        = "42d1cb6fc2a9df39ecd53002edd978d6"
+            Md5        = "42d1cb6fc2a9df39ecd53002edd978d6"
         },
         new BlockImageTestExpected
         {
@@ -88,7 +90,7 @@ public class NHDr0 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 132600,
             SectorSize = 512,
-            MD5        = "b53f5b406234663de6c2bdffac88322d"
+            Md5        = "b53f5b406234663de6c2bdffac88322d"
         },
         new BlockImageTestExpected
         {
@@ -96,7 +98,7 @@ public class NHDr0 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 163200,
             SectorSize = 512,
-            MD5        = "fe9ecc6f0b5beb9635a1595155941925"
+            Md5        = "fe9ecc6f0b5beb9635a1595155941925"
         }
     };
 }

@@ -47,6 +47,7 @@ using Marshal = Aaru.Helpers.Marshal;
 /// <inheritdoc />
 /// <summary>Implements detection of the Linux extended filesystem v2, v3 and v4</summary>
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
+// ReSharper disable once InconsistentNaming
 public sealed class ext2FS : IFilesystem
 {
     const int SB_POS = 0x400;
@@ -147,6 +148,7 @@ public sealed class ext2FS : IFilesystem
     /// <summary>Volume use extents *ext4*</summary>
     const uint EXT4_FEATURE_INCOMPAT_EXTENTS = 0x00000040;
     /// <summary>Supports volumes bigger than 2^32 blocks *ext4*</summary>
+    // ReSharper disable once InconsistentNaming
     const uint EXT4_FEATURE_INCOMPAT_64BIT = 0x00000080;
     /// <summary>Multi-mount protection *ext4*</summary>
     const uint EXT4_FEATURE_INCOMPAT_MMP = 0x00000100;

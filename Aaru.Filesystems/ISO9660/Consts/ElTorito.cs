@@ -38,6 +38,7 @@
 namespace Aaru.Filesystems;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 public sealed partial class ISO9660
 {
@@ -53,6 +54,7 @@ public sealed partial class ISO9660
         LastHeader  = 0x91
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum ElToritoPlatform : byte
     {
         x86       = 0,

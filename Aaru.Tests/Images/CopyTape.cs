@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class CopyTape : TapeMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "copytape");
-    public override IMediaImage _plugin    => new DiscImages.CopyTape();
+    public override IMediaImage Plugin    => new DiscImages.CopyTape();
 
     public override TapeImageTestExpected[] Tests => new[]
     {
@@ -48,7 +48,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 1604,
             SectorSize = 10240,
-            MD5        = "a6334d975523b3422fea522b0cc118a9",
+            Md5        = "a6334d975523b3422fea522b0cc118a9",
             Partitions = new[]
             {
                 new TapePartition
@@ -75,7 +75,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 15485,
             SectorSize = 512,
-            MD5        = "17ef78d9e5c53b976f530d4ca44223fd",
+            Md5        = "17ef78d9e5c53b976f530d4ca44223fd",
             Partitions = new[]
             {
                 new TapePartition
@@ -102,7 +102,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 15,
             SectorSize = 32256,
-            MD5        = "76c0ae10f4ec70ef8681b212f02a71c8",
+            Md5        = "76c0ae10f4ec70ef8681b212f02a71c8",
             Partitions = new[]
             {
                 new TapePartition
@@ -129,7 +129,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 3298,
             SectorSize = 32256,
-            MD5        = "e331c9d0ae7c25c81c6580bc9965e2d0",
+            Md5        = "e331c9d0ae7c25c81c6580bc9965e2d0",
             Partitions = new[]
             {
                 new TapePartition
@@ -156,7 +156,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 3152,
             SectorSize = 32256,
-            MD5        = "018c37c40f8df91ab9b098d643c9ae6c",
+            Md5        = "018c37c40f8df91ab9b098d643c9ae6c",
             Partitions = new[]
             {
                 new TapePartition
@@ -183,7 +183,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 818,
             SectorSize = 32256,
-            MD5        = "eb3ce36b2c3afeeec59e5b8ed802a393",
+            Md5        = "eb3ce36b2c3afeeec59e5b8ed802a393",
             Partitions = new[]
             {
                 new TapePartition
@@ -210,7 +210,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 7,
             SectorSize = 32256,
-            MD5        = "b057656698a224187afb2bdbb8caf7f3",
+            Md5        = "b057656698a224187afb2bdbb8caf7f3",
             Partitions = new[]
             {
                 new TapePartition
@@ -237,7 +237,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 684,
             SectorSize = 32256,
-            MD5        = "8e48e388e7094f3170065718ab618b53",
+            Md5        = "8e48e388e7094f3170065718ab618b53",
             Partitions = new[]
             {
                 new TapePartition
@@ -264,7 +264,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 73525,
             SectorSize = 1024,
-            MD5        = "8861f8c06a2e93ca5a81d729ad3e1de1",
+            Md5        = "8861f8c06a2e93ca5a81d729ad3e1de1",
             Partitions = new[]
             {
                 new TapePartition
@@ -319,7 +319,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 290,
             SectorSize = 262144,
-            MD5        = "bfc402b23af0cf1ad22d9fb2ea29b58f",
+            Md5        = "bfc402b23af0cf1ad22d9fb2ea29b58f",
             Partitions = new[]
             {
                 new TapePartition
@@ -374,7 +374,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 37587,
             SectorSize = 8192,
-            MD5        = "e4a3e2fe26c72ca025ac0c017ec73ee9",
+            Md5        = "e4a3e2fe26c72ca025ac0c017ec73ee9",
             Partitions = new[]
             {
                 new TapePartition
@@ -625,7 +625,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 25046,
             SectorSize = 1024,
-            MD5        = "e625c03d7493dc22fe49f91f731446e8",
+            Md5        = "e625c03d7493dc22fe49f91f731446e8",
             Partitions = new[]
             {
                 new TapePartition
@@ -687,7 +687,7 @@ public class CopyTape : TapeMediaImageTest
             MediaType  = MediaType.UnknownTape,
             Sectors    = 102,
             SectorSize = 262144,
-            MD5        = "198464b1daf8e674debf8eda0fcbf016",
+            Md5        = "198464b1daf8e674debf8eda0fcbf016",
             Partitions = new[]
             {
                 new TapePartition

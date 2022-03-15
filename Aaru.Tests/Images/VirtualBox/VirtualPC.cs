@@ -39,7 +39,7 @@ public class VirtualPc : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "VirtualBox", "VirtualPC");
-    public override IMediaImage _plugin => new Vhd();
+    public override IMediaImage Plugin => new Vhd();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -49,7 +49,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 512000,
             SectorSize = 512,
-            MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
+            Md5        = "ab3248888d6f10ef30a084fac6a1e2fd"
         },
         new BlockImageTestExpected
         {
@@ -57,7 +57,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 20480,
             SectorSize = 512,
-            MD5        = "f1c9645dbc14efddc7d8a322685f26eb"
+            Md5        = "f1c9645dbc14efddc7d8a322685f26eb"
         },
         new BlockImageTestExpected
         {
@@ -65,7 +65,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 512000,
             SectorSize = 512,
-            MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
+            Md5        = "ab3248888d6f10ef30a084fac6a1e2fd"
         },
         new BlockImageTestExpected
         {
@@ -73,7 +73,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 20480,
             SectorSize = 512,
-            MD5        = "f1c9645dbc14efddc7d8a322685f26eb"
+            Md5        = "f1c9645dbc14efddc7d8a322685f26eb"
         },
         new BlockImageTestExpected
         {
@@ -81,7 +81,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 512000,
             SectorSize = 512,
-            MD5        = "ab3248888d6f10ef30a084fac6a1e2fd"
+            Md5        = "ab3248888d6f10ef30a084fac6a1e2fd"
         },
         new BlockImageTestExpected
         {
@@ -89,7 +89,7 @@ public class VirtualPc : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 20480,
             SectorSize = 512,
-            MD5        = "f1c9645dbc14efddc7d8a322685f26eb"
+            Md5        = "f1c9645dbc14efddc7d8a322685f26eb"
         }
     };
 }

@@ -40,7 +40,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 IFilter filter      = filtersList.GetFilter(testFile);
                 filter.Open(testFile);
 
-                var image = Activator.CreateInstance(_plugin.GetType()) as ITapeImage;
+                var image = Activator.CreateInstance(Plugin.GetType()) as ITapeImage;
                 Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                 ErrorNumber opened = image.Open(filter);
@@ -85,7 +85,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 IFilter filter      = filtersList.GetFilter(testFile);
                 filter.Open(testFile);
 
-                var image = Activator.CreateInstance(_plugin.GetType()) as IMediaImage;
+                var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
                 Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                 ErrorNumber opened = image.Open(filter);
@@ -129,7 +129,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 IFilter filter      = filtersList.GetFilter(testFile);
                 filter.Open(testFile);
 
-                var image = Activator.CreateInstance(_plugin.GetType()) as IMediaImage;
+                var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
                 Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                 ErrorNumber opened = image.Open(filter);
@@ -161,7 +161,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(test.MD5, ctx.End(), $"Hash: {testFile}");
+                Assert.AreEqual(test.Md5, ctx.End(), $"Hash: {testFile}");
             }
         });
     }

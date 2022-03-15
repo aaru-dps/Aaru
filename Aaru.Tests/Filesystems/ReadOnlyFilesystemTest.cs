@@ -260,7 +260,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                     data.LinkTarget = link;
             }
             else
-                data.MD5 = BuildFile(fs, childPath, stat.Length);
+                data.Md5 = BuildFile(fs, childPath, stat.Length);
 
             children[child] = data;
         }
@@ -342,7 +342,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             else
 
                 // This ensure the buffer does not hang for collection
-                TestFile(fs, childPath, child.Value.MD5, child.Value.Info.Length, testFile);
+                TestFile(fs, childPath, child.Value.Md5, child.Value.Info.Length, testFile);
 
             if(!testXattr)
                 continue;

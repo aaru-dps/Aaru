@@ -5,6 +5,7 @@
 namespace Aaru.Tests.Issues._542;
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 /* https://github.com/aaru-dps/Aaru/issues/542
@@ -14,6 +15,7 @@ using System.IO;
  * When extracting an image of a SafeDisc protected CD, most files aren't properly extracted.
  */
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class SimsEP : FsExtractHashIssueTest
 {
     protected override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue542", "exp");

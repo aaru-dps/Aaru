@@ -47,6 +47,7 @@ using Marshal = Aaru.Helpers.Marshal;
 /// <inheritdoc />
 /// <summary>Implements detection of the exFAT filesystem</summary>
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
+// ReSharper disable once InconsistentNaming
 public sealed class exFAT : IFilesystem
 {
     readonly Guid _oemFlashParameterGuid = new("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");

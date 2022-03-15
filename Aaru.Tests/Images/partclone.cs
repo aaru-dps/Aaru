@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class Partclone : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "partclone");
-    public override IMediaImage _plugin    => new PartClone();
+    public override IMediaImage Plugin    => new PartClone();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +48,7 @@ public class Partclone : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 127882,
             SectorSize = 4096,
-            MD5        = "ff239c91166b6b13fa826dd258b40666"
+            Md5        = "ff239c91166b6b13fa826dd258b40666"
         },
         new BlockImageTestExpected
         {
@@ -56,7 +56,7 @@ public class Partclone : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 1012032,
             SectorSize = 512,
-            MD5        = "f98b1a51ca2e7bf047d84969a2392a3d",
+            Md5        = "f98b1a51ca2e7bf047d84969a2392a3d",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -72,7 +72,7 @@ public class Partclone : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 1023057,
             SectorSize = 512,
-            MD5        = "1b0b5eb965a401f16fa8a07e303cd1c0"
+            Md5        = "1b0b5eb965a401f16fa8a07e303cd1c0"
             /* TODO: NullReferenceException
             Partitions = new[]
             {
@@ -90,7 +90,7 @@ public class Partclone : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 127882,
             SectorSize = 4096,
-            MD5        = "880a6777d05c496901e930684abbecff"
+            Md5        = "880a6777d05c496901e930684abbecff"
         },
         new BlockImageTestExpected
         {
@@ -98,7 +98,7 @@ public class Partclone : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 1023056,
             SectorSize = 512,
-            MD5        = "61cc3faa286364e7ad5bab18120c1151"
+            Md5        = "61cc3faa286364e7ad5bab18120c1151"
         }
     };
 }

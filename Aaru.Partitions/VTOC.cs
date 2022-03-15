@@ -451,6 +451,7 @@ public sealed class VTOC : IPartition
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    // ReSharper disable once InconsistentNaming
     struct PDInfo
     {
         public readonly uint driveid; /*identifies the device type*/
@@ -493,6 +494,7 @@ public sealed class VTOC : IPartition
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    // ReSharper disable once InconsistentNaming
     struct PDInfoOld
     {
         public readonly uint driveid; /*identifies the device type*/
@@ -520,6 +522,7 @@ public sealed class VTOC : IPartition
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    // ReSharper disable once InconsistentNaming
     struct vtocold
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
@@ -539,6 +542,7 @@ public sealed class VTOC : IPartition
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    // ReSharper disable once InconsistentNaming
     struct vtoc
     {
         public readonly uint v_sanity;  /*to verify vtoc sanity*/

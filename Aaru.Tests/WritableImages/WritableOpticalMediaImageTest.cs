@@ -586,7 +586,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         }
                     }
 
-                    Assert.AreEqual(@long ? test.LongMD5 : test.MD5, ctx.End(),
+                    Assert.AreEqual(@long ? test.LongMd5 : test.Md5, ctx.End(),
                                     $"{(@long ? "Long hash (output)" : "Hash (output)")}: {testFile}");
                 }
 
@@ -626,7 +626,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                     }
                 }
 
-                Assert.AreEqual(test.SubchannelMD5, ctx.End(), $"Subchannel hash (output): {testFile}");
+                Assert.AreEqual(test.SubchannelMd5, ctx.End(), $"Subchannel hash (output): {testFile}");
             }
         });
     }

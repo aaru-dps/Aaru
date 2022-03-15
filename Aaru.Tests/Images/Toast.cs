@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class Toast : OpticalMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Roxio Toast");
-    public override IMediaImage _plugin => new ZZZRawImage();
+    public override IMediaImage Plugin => new ZZZRawImage();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -47,9 +47,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_apple.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -67,9 +67,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_dos_apple.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -87,9 +87,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_dos.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -107,9 +107,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_ebook_eng.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -127,9 +127,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_ebook_fra.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -147,9 +147,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_joliet_apple.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -167,9 +167,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_joliet.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -187,9 +187,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_mac_apple.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -207,9 +207,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_mac.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -227,9 +227,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -247,9 +247,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_ver_apple.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -267,9 +267,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_ver_dos_apple.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -287,9 +287,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_ver_dos.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -307,9 +307,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_ver_joliet_apple.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -327,9 +327,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_ver_joliet.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -347,9 +347,9 @@ public class Toast : OpticalMediaImageTest
             TestFile      = "toast_3.5.7_iso9660_xa_ver.toast.lz",
             MediaType     = MediaType.CD,
             Sectors       = 0,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

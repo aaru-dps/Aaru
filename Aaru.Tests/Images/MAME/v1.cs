@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class V1 : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MAME", "v1");
-    public override IMediaImage _plugin    => new Chd();
+    public override IMediaImage Plugin    => new Chd();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +48,7 @@ public class V1 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 251904,
             SectorSize = 512,
-            MD5        = "43476343f53a177dd57b68dd769917aa"
+            Md5        = "43476343f53a177dd57b68dd769917aa"
         }
     };
 }

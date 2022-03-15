@@ -28,6 +28,7 @@
 
 namespace Aaru.Tests.Images.QEMU;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -35,11 +36,12 @@ using Aaru.DiscImages;
 using NUnit.Framework;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class QCOW : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "QEMU Copy On Write");
-    public override IMediaImage _plugin => new Qcow();
+    public override IMediaImage Plugin => new Qcow();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -49,7 +51,7 @@ public class QCOW : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 251904,
             SectorSize = 512,
-            MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
+            Md5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
             Partitions = new[]
             {
                 new BlockPartitionVolumes

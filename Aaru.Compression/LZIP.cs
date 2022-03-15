@@ -30,17 +30,18 @@ namespace Aaru.Compression;
 
 using System.Runtime.InteropServices;
 
+// ReSharper disable once InconsistentNaming
 public class LZIP
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => Native.IsSupported;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzip_decode_buffer(byte[] dst_buffer, int dst_size, byte[] src_buffer, int src_size);
+    static extern int AARU_lzip_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzip_encode_buffer(byte[] dst_buffer, int dst_size, byte[] src_buffer, int src_size,
-                                              int dictionary_size, int match_len_limit);
+    static extern int AARU_lzip_encode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize,
+                                              int dictionarySize, int matchLenLimit);
 
     /// <summary>Decodes a buffer compressed with LZIP</summary>
     /// <param name="source">Encoded buffer</param>

@@ -28,6 +28,7 @@
 
 namespace Aaru.Tests.Images.UltraISO;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -35,11 +36,12 @@ using Aaru.DiscImages;
 using NUnit.Framework;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CloneCD : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "UltraISO", "CloneCD");
-    public override IMediaImage _plugin => new CloneCd();
+    public override IMediaImage Plugin => new CloneCd();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -48,9 +50,9 @@ public class CloneCD : OpticalMediaImageTest
             TestFile      = "cdiready_the_apprentice.ccd",
             MediaType     = MediaType.CDDA,
             Sectors       = 279300,
-            MD5           = "e159c422cba79ce772437458c11c00d8",
-            LongMD5       = "e159c422cba79ce772437458c11c00d8",
-            SubchannelMD5 = "f43afdef9df3fc5b3d74494f0908223f",
+            Md5           = "e159c422cba79ce772437458c11c00d8",
+            LongMd5       = "e159c422cba79ce772437458c11c00d8",
+            SubchannelMd5 = "f43afdef9df3fc5b3d74494f0908223f",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -236,9 +238,9 @@ public class CloneCD : OpticalMediaImageTest
             TestFile      = "report_audiocd.ccd",
             MediaType     = MediaType.CDDA,
             Sectors       = 247073,
-            MD5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            LongMD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            SubchannelMD5 = "e6b61ad780c72d162c3ceb784de1fbd2",
+            Md5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            LongMd5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            SubchannelMd5 = "e6b61ad780c72d162c3ceb784de1fbd2",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -360,9 +362,9 @@ public class CloneCD : OpticalMediaImageTest
             TestFile      = "report_cdrom.ccd",
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
-            MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            SubchannelMD5 = "292b671b4b296a20511516557dbbd2b1",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "292b671b4b296a20511516557dbbd2b1",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -398,9 +400,9 @@ public class CloneCD : OpticalMediaImageTest
             TestFile      = "report_cdrw.ccd",
             MediaType     = MediaType.CDROM,
             Sectors       = 308224,
-            MD5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-            LongMD5       = "3af5f943ddb9427d9c63a4ce3b704db9",
-            SubchannelMD5 = "4b054ac37c290a91a47997c84c9978d6",
+            Md5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5       = "3af5f943ddb9427d9c63a4ce3b704db9",
+            SubchannelMd5 = "4b054ac37c290a91a47997c84c9978d6",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -430,9 +432,9 @@ public class CloneCD : OpticalMediaImageTest
             TestFile      = "report_enhancedcd.ccd",
             MediaType     = MediaType.CDPLUS,
             Sectors       = 303316,
-            MD5           = "97e5bf1caf3998e818d40cd845c6ecc9",
-            LongMD5       = "07b4d88c8f38cc0168a2f5725b31c52e",
-            SubchannelMD5 = "74910fc131a456fa3d39a666dcee3dcc",
+            Md5           = "97e5bf1caf3998e818d40cd845c6ecc9",
+            LongMd5       = "07b4d88c8f38cc0168a2f5725b31c52e",
+            SubchannelMd5 = "74910fc131a456fa3d39a666dcee3dcc",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -565,9 +567,9 @@ public class CloneCD : OpticalMediaImageTest
             TestFile      = "test_multi_karaoke_sampler.ccd",
             MediaType     = MediaType.CDROMXA,
             Sectors       = 329158,
-            MD5           = "8d8493eb8eba6c67be7a8f47d4fde971",
-            LongMD5       = "5a9eb4f35ecc39de5c011a2bac8549b5",
-            SubchannelMD5 = "159b910e0ec1a88e004b9bcebdbde747",
+            Md5           = "8d8493eb8eba6c67be7a8f47d4fde971",
+            LongMd5       = "5a9eb4f35ecc39de5c011a2bac8549b5",
+            SubchannelMd5 = "159b910e0ec1a88e004b9bcebdbde747",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

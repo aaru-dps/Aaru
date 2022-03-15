@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class V4 : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MAME", "v4");
-    public override IMediaImage _plugin    => new Chd();
+    public override IMediaImage Plugin    => new Chd();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -48,9 +48,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 469652,
             SectorSize    = 2048,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -69,7 +69,7 @@ public class V4 : OpticalMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 251904,
             SectorSize = 512,
-            MD5        = "43476343f53a177dd57b68dd769917aa"
+            Md5        = "43476343f53a177dd57b68dd769917aa"
         },
         new OpticalImageTestExpected
         {
@@ -77,9 +77,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 243587,
             SectorSize    = 2352,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -178,9 +178,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 160506,
             SectorSize    = 2352,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -319,9 +319,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 246380,
             SectorSize    = 2352,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -396,9 +396,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 247073,
             SectorSize    = 2352,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -521,9 +521,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
             SectorSize    = 2048,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -542,9 +542,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
             SectorSize    = 2048,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -563,9 +563,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 308224,
             SectorSize    = 2048,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -584,9 +584,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 277696,
             SectorSize    = 2352,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -685,9 +685,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 59206,
             SectorSize    = 2352,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -722,9 +722,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 350134,
             SectorSize    = 2336,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -743,9 +743,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 329158,
             SectorSize    = 2352,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -884,9 +884,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 65536,
             SectorSize    = 2352,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -937,9 +937,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 51168,
             SectorSize    = 2336,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -982,9 +982,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 230624,
             SectorSize    = 2048,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1011,9 +1011,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 257264,
             SectorSize    = 2048,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1040,9 +1040,9 @@ public class V4 : OpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 48794,
             SectorSize    = 2336,
-            MD5           = "UNKNOWN",
-            LongMD5       = "UNKNOWN",
-            SubchannelMD5 = "UNKNOWN",
+            Md5           = "UNKNOWN",
+            LongMd5       = "UNKNOWN",
+            SubchannelMd5 = "UNKNOWN",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

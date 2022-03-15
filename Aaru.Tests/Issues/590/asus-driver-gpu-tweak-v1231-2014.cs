@@ -5,6 +5,7 @@
 namespace Aaru.Tests.Issues._590;
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 /* https://github.com/aaru-dps/Aaru/issues/590
@@ -14,6 +15,7 @@ using System.IO;
  * Other images seemingly affected by the same bug
  */
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class asus_driver_gpu_tweak_v1231_2014 : FsExtractHashIssueTest
 {
     protected override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue590",

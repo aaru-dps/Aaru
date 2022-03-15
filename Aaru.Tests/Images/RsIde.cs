@@ -37,7 +37,7 @@ using NUnit.Framework;
 public class RsIde : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "RS-IDE");
-    public override IMediaImage _plugin    => new DiscImages.RsIde();
+    public override IMediaImage Plugin    => new DiscImages.RsIde();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -47,7 +47,7 @@ public class RsIde : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 20480,
             SectorSize = 512,
-            MD5        = "ee7b8fe07784f2ebacc18da1fc248f5a",
+            Md5        = "ee7b8fe07784f2ebacc18da1fc248f5a",
             Partitions = new[]
             {
                 new BlockPartitionVolumes

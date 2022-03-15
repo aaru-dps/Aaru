@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class DOS : BlockMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple DOS Order");
-    public override IMediaImage _plugin => new AppleDos();
+    public override IMediaImage Plugin => new AppleDos();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +48,7 @@ public class DOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "0ffcbd4180306192726926b43755db2f",
+            Md5        = "0ffcbd4180306192726926b43755db2f",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -64,7 +64,7 @@ public class DOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "ddd04ef378552c789f85382b4f49da06"
+            Md5        = "ddd04ef378552c789f85382b4f49da06"
         },
         new BlockImageTestExpected
         {
@@ -72,7 +72,7 @@ public class DOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "5158e2fe9d8e7ae1f7db73156478e4f4"
+            Md5        = "5158e2fe9d8e7ae1f7db73156478e4f4"
         },
         new BlockImageTestExpected
         {
@@ -80,7 +80,7 @@ public class DOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "4c4926103a32ac15f7e430ec3ced4be5"
+            Md5        = "4c4926103a32ac15f7e430ec3ced4be5"
         },
         new BlockImageTestExpected
         {
@@ -88,7 +88,7 @@ public class DOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "193c5cc22f07e5aeb96eb187cb59c2d9"
+            Md5        = "193c5cc22f07e5aeb96eb187cb59c2d9"
         },
         new BlockImageTestExpected
         {
@@ -96,7 +96,7 @@ public class DOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "23f42e529c9fde2a8033f1bc6a7bca93"
+            Md5        = "23f42e529c9fde2a8033f1bc6a7bca93"
         },
         new BlockImageTestExpected
         {
@@ -104,7 +104,7 @@ public class DOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "a7ec980472c320da5ea6f2f0aec0f502"
+            Md5        = "a7ec980472c320da5ea6f2f0aec0f502"
         }
     };
 }

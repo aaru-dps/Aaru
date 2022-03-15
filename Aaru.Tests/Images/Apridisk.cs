@@ -37,7 +37,7 @@ using NUnit.Framework;
 public class Apridisk : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apridisk");
-    public override IMediaImage _plugin    => new DiscImages.Apridisk();
+    public override IMediaImage Plugin    => new DiscImages.Apridisk();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -47,7 +47,7 @@ public class Apridisk : BlockMediaImageTest
             MediaType  = MediaType.DOS_35_DS_DD_9,
             Sectors    = 1440,
             SectorSize = 512,
-            MD5        = "6c264287a3260a6d89e36dfcb1c98dce",
+            Md5        = "6c264287a3260a6d89e36dfcb1c98dce",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -63,7 +63,7 @@ public class Apridisk : BlockMediaImageTest
             MediaType  = MediaType.DOS_35_DS_DD_9,
             Sectors    = 1440,
             SectorSize = 512,
-            MD5        = "dd8e04939baeb0fcdb11ddade60c9a93",
+            Md5        = "dd8e04939baeb0fcdb11ddade60c9a93",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -79,7 +79,7 @@ public class Apridisk : BlockMediaImageTest
             MediaType  = MediaType.DOS_35_DS_DD_9,
             Sectors    = 1440,
             SectorSize = 512,
-            MD5        = "89132d303ef6b0ff69f4cfd38e2a22a6",
+            Md5        = "89132d303ef6b0ff69f4cfd38e2a22a6",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -95,7 +95,7 @@ public class Apridisk : BlockMediaImageTest
             MediaType  = MediaType.DOS_35_DS_DD_9,
             Sectors    = 1440,
             SectorSize = 512,
-            MD5        = "cd34832ca3aa7f55e0dd8ba126372f97",
+            Md5        = "cd34832ca3aa7f55e0dd8ba126372f97",
             Partitions = new[]
             {
                 new BlockPartitionVolumes

@@ -38,7 +38,7 @@ public class Nero : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MagicISO", "Nero");
-    public override IMediaImage _plugin => new DiscImages.Nero();
+    public override IMediaImage Plugin => new DiscImages.Nero();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -47,8 +47,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "cdiready_the_apprentice.nrg",
             MediaType = MediaType.CDDA,
             Sectors   = 279300,
-            MD5       = "7557c72d4cf6df8bc1896388b863727a",
-            LongMD5   = "7557c72d4cf6df8bc1896388b863727a",
+            Md5       = "7557c72d4cf6df8bc1896388b863727a",
+            LongMd5   = "7557c72d4cf6df8bc1896388b863727a",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -234,8 +234,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_audiocd.nrg",
             MediaType = MediaType.CDDA,
             Sectors   = 247073,
-            MD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            LongMD5   = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            Md5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            LongMd5   = "c09f408a4416634d8ac1c1ffd0ed75a5",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -357,8 +357,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_cdrom.nrg",
             MediaType = MediaType.CDROM,
             Sectors   = 254265,
-            MD5       = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            Md5       = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -394,8 +394,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_cdrw.nrg",
             MediaType = MediaType.CDROM,
             Sectors   = 308224,
-            MD5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-            LongMD5   = "3af5f943ddb9427d9c63a4ce3b704db9",
+            Md5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5   = "3af5f943ddb9427d9c63a4ce3b704db9",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -425,8 +425,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_dvdram_v1.nrg",
             MediaType = MediaType.DVDROM,
             Sectors   = 1218811,
-            MD5       = "e2d40f64b4ae274c3ef55252fbda99cf",
-            LongMD5   = "e2d40f64b4ae274c3ef55252fbda99cf",
+            Md5       = "e2d40f64b4ae274c3ef55252fbda99cf",
+            LongMd5   = "e2d40f64b4ae274c3ef55252fbda99cf",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -455,8 +455,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_dvdram_v2.nrg",
             MediaType = MediaType.DVDROM,
             Sectors   = 2236555,
-            MD5       = "d46730ef92b0115505d9035f78d90ca3",
-            LongMD5   = "d46730ef92b0115505d9035f78d90ca3",
+            Md5       = "d46730ef92b0115505d9035f78d90ca3",
+            LongMd5   = "d46730ef92b0115505d9035f78d90ca3",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -485,8 +485,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_dvd+r-dl.nrg",
             MediaType = MediaType.DVDROM,
             Sectors   = 13099755,
-            MD5       = "3b36362c20c5a75cb4726d64a7e2729c",
-            LongMD5   = "3b36362c20c5a75cb4726d64a7e2729c",
+            Md5       = "3b36362c20c5a75cb4726d64a7e2729c",
+            LongMd5   = "3b36362c20c5a75cb4726d64a7e2729c",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -515,8 +515,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_dvd-rom.nrg",
             MediaType = MediaType.DVDROM,
             Sectors   = 2146219,
-            MD5       = "117c7207751e4d94d6b396f77d3ef367",
-            LongMD5   = "117c7207751e4d94d6b396f77d3ef367",
+            Md5       = "117c7207751e4d94d6b396f77d3ef367",
+            LongMd5   = "117c7207751e4d94d6b396f77d3ef367",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -545,8 +545,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_dvd+rw.nrg",
             MediaType = MediaType.DVDROM,
             Sectors   = 2294955,
-            MD5       = "3313752e2493fce618ced27aecffc79b",
-            LongMD5   = "3313752e2493fce618ced27aecffc79b",
+            Md5       = "3313752e2493fce618ced27aecffc79b",
+            LongMd5   = "3313752e2493fce618ced27aecffc79b",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -575,8 +575,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_enhancedcd.nrg",
             MediaType = MediaType.CDROMXA,
             Sectors   = 303316,
-            MD5       = "ca5698b203534de70dd82916d33aae99",
-            LongMD5   = "bf1cd9a3b5dca86ac03ffe51c962840e",
+            Md5       = "ca5698b203534de70dd82916d33aae99",
+            LongMd5   = "bf1cd9a3b5dca86ac03ffe51c962840e",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -709,8 +709,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "test_multi_karaoke_sampler.nrg",
             MediaType = MediaType.CDROMXA,
             Sectors   = 329158,
-            MD5       = "d22fde4f71e3faa8f048770ae9d7635e",
-            LongMD5   = "bced53ad182fe1b13ecd05caf1fe73a7",
+            Md5       = "d22fde4f71e3faa8f048770ae9d7635e",
+            LongMd5   = "bced53ad182fe1b13ecd05caf1fe73a7",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -859,8 +859,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_dvd-r.nrg",
             MediaType = MediaType.DVDROM,
             Sectors   = 2146219,
-            MD5       = "117c7207751e4d94d6b396f77d3ef367",
-            LongMD5   = "117c7207751e4d94d6b396f77d3ef367",
+            Md5       = "117c7207751e4d94d6b396f77d3ef367",
+            LongMd5   = "117c7207751e4d94d6b396f77d3ef367",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -889,8 +889,8 @@ public class Nero : OpticalMediaImageTest
             TestFile  = "report_dvd-rw.nrg",
             MediaType = MediaType.DVDROM,
             Sectors   = 2146219,
-            MD5       = "117c7207751e4d94d6b396f77d3ef367",
-            LongMD5   = "117c7207751e4d94d6b396f77d3ef367",
+            Md5       = "117c7207751e4d94d6b396f77d3ef367",
+            LongMd5   = "117c7207751e4d94d6b396f77d3ef367",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

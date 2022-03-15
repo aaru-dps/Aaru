@@ -28,6 +28,7 @@
 
 namespace Aaru.Tests.Filesystems.SFS;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -35,6 +36,7 @@ using Aaru.Filesystems;
 using NUnit.Framework;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class MBR_RDB : FilesystemTest
 {
     public MBR_RDB() : base("SmartFileSystem") {}

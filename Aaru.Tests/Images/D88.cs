@@ -37,7 +37,7 @@ using NUnit.Framework;
 public class D88 : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "D88");
-    public override IMediaImage _plugin    => new DiscImages.D88();
+    public override IMediaImage Plugin    => new DiscImages.D88();
     public override BlockImageTestExpected[] Tests => new[]
     {
         new BlockImageTestExpected
@@ -46,7 +46,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.NEC_525_SS,
             Sectors    = 1280,
             SectorSize = 256,
-            MD5        = "a4103c39cd7fd9fc3de8418dfcf22364"
+            Md5        = "a4103c39cd7fd9fc3de8418dfcf22364"
         },
         new BlockImageTestExpected
         {
@@ -54,7 +54,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.NEC_525_SS,
             Sectors    = 1280,
             SectorSize = 256,
-            MD5        = "b948048c03e0b3d34d77f5c9dced0b41"
+            Md5        = "b948048c03e0b3d34d77f5c9dced0b41"
         },
         new BlockImageTestExpected
         {
@@ -62,7 +62,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.NEC_525_SS,
             Sectors    = 1280,
             SectorSize = 256,
-            MD5        = "f91152fab791d4dc0677a289d90478a5"
+            Md5        = "f91152fab791d4dc0677a289d90478a5"
         },
         new BlockImageTestExpected
         {
@@ -70,7 +70,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 411,
             SectorSize = 256,
-            MD5        = "39b01df04a6312b09f1b83c9f3a46b22"
+            Md5        = "39b01df04a6312b09f1b83c9f3a46b22"
         },
         new BlockImageTestExpected
         {
@@ -78,7 +78,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1440,
             SectorSize = 256,
-            MD5        = "ef775ec1f41b8b725ea83ec8c5ca04e2"
+            Md5        = "ef775ec1f41b8b725ea83ec8c5ca04e2"
         },
         new BlockImageTestExpected
         {
@@ -86,7 +86,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.NEC_525_SS,
             Sectors    = 1280,
             SectorSize = 256,
-            MD5        = "5c2b22f824524cd6c539aaeb2ecb84cd"
+            Md5        = "5c2b22f824524cd6c539aaeb2ecb84cd"
         },
         new BlockImageTestExpected
         {
@@ -94,7 +94,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.NEC_525_SS,
             Sectors    = 1280,
             SectorSize = 256,
-            MD5        = "6bddf3dd32877f7b552cbf9da6b89f76"
+            Md5        = "6bddf3dd32877f7b552cbf9da6b89f76"
         },
         new BlockImageTestExpected
         {
@@ -102,7 +102,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 4033,
             SectorSize = 128,
-            MD5        = "003cd0292879733b6eab7ca79ab9cfeb"
+            Md5        = "003cd0292879733b6eab7ca79ab9cfeb"
         },
         new BlockImageTestExpected
         {
@@ -110,7 +110,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1440,
             SectorSize = 512,
-            MD5        = "acb738a5a945e4e2ba1504a14a529933"
+            Md5        = "acb738a5a945e4e2ba1504a14a529933"
         },
         new BlockImageTestExpected
         {
@@ -118,7 +118,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.SHARP_525,
             Sectors    = 1232,
             SectorSize = 1024,
-            MD5        = "106068dbdf13803979c7bbb63612f43d"
+            Md5        = "106068dbdf13803979c7bbb63612f43d"
         },
         new BlockImageTestExpected
         {
@@ -126,7 +126,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1440,
             SectorSize = 512,
-            MD5        = "be916f25847b9cfc9776d88cc150ae7e",
+            Md5        = "be916f25847b9cfc9776d88cc150ae7e",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -142,7 +142,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.SHARP_525,
             Sectors    = 1232,
             SectorSize = 1024,
-            MD5        = "ccc7f98e216db35c2b7a08634a9f3e20",
+            Md5        = "ccc7f98e216db35c2b7a08634a9f3e20",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -158,7 +158,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1440,
             SectorSize = 512,
-            MD5        = "7a3332e82b0fe8c5673a2615f6c0b9a2"
+            Md5        = "7a3332e82b0fe8c5673a2615f6c0b9a2"
         },
         new BlockImageTestExpected
         {
@@ -166,7 +166,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.SHARP_525,
             Sectors    = 1232,
             SectorSize = 1024,
-            MD5        = "62f5be96a8b8ccab9ee4aebf557cfcf7",
+            Md5        = "62f5be96a8b8ccab9ee4aebf557cfcf7",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -182,7 +182,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1440,
             SectorSize = 512,
-            MD5        = "07fb4c225d4b5a2e2a1046ae66fc153c"
+            Md5        = "07fb4c225d4b5a2e2a1046ae66fc153c"
         },
         new BlockImageTestExpected
         {
@@ -190,7 +190,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.SHARP_525,
             Sectors    = 1232,
             SectorSize = 1024,
-            MD5        = "1f73980e45a384bed331eaa33c9ef65b",
+            Md5        = "1f73980e45a384bed331eaa33c9ef65b",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -206,7 +206,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1284,
             SectorSize = 1024,
-            MD5        = "9d675e5147b55cee0b2bc05476eef825"
+            Md5        = "9d675e5147b55cee0b2bc05476eef825"
         },
         new BlockImageTestExpected
         {
@@ -214,7 +214,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.SHARP_525,
             Sectors    = 1232,
             SectorSize = 1024,
-            MD5        = "bb48546ced9c61462e1c89dca4987143",
+            Md5        = "bb48546ced9c61462e1c89dca4987143",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -230,7 +230,7 @@ public class D88 : BlockMediaImageTest
             MediaType  = MediaType.NEC_525_SS,
             Sectors    = 1280,
             SectorSize = 256,
-            MD5        = "c7df67f4e66dad658fe856d3c8b36c7a"
+            Md5        = "c7df67f4e66dad658fe856d3c8b36c7a"
         }
     };
 }

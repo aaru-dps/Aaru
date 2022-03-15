@@ -30,16 +30,17 @@ namespace Aaru.Compression;
 
 using System.Runtime.InteropServices;
 
+// ReSharper disable once InconsistentNaming
 public class ZSTD
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => Native.IsSupported;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern nuint AARU_zstd_decode_buffer(byte[] dst_buffer, nuint dst_size, byte[] src_buffer, nuint src_size);
+    static extern nuint AARU_zstd_decode_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer, nuint srcSize);
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern nuint AARU_zstd_encode_buffer(byte[] dst_buffer, nuint dst_size, byte[] src_buffer, nuint src_size,
+    static extern nuint AARU_zstd_encode_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer, nuint srcSize,
                                                 int compressionLevel);
 
     /// <summary>Decodes a buffer compressed with ZSTD</summary>

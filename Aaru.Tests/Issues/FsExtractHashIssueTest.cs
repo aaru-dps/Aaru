@@ -239,7 +239,7 @@ public abstract class FsExtractHashIssueTest
 
             string calculatedMd5 = Md5Context.Data(outBuf, out _);
 
-            Assert.AreEqual(fileData.MD5, calculatedMd5, $"Invalid checksum for file {path + "/" + entry}");
+            Assert.AreEqual(fileData.Md5, calculatedMd5, $"Invalid checksum for file {path + "/" + entry}");
         }
     }
 }

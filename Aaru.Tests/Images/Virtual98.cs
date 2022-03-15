@@ -37,7 +37,7 @@ using NUnit.Framework;
 public class Virtual98 : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Virtual98");
-    public override IMediaImage _plugin    => new DiscImages.Virtual98();
+    public override IMediaImage Plugin    => new DiscImages.Virtual98();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -47,7 +47,7 @@ public class Virtual98 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 524288,
             SectorSize = 256,
-            MD5        = "be3693b92a5242101e80087611b33092"
+            Md5        = "be3693b92a5242101e80087611b33092"
         },
         new BlockImageTestExpected
         {
@@ -55,7 +55,7 @@ public class Virtual98 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 81920,
             SectorSize = 256,
-            MD5        = "811b2a9d08abbecf4cb75531d5e51808"
+            Md5        = "811b2a9d08abbecf4cb75531d5e51808"
         },
         new BlockImageTestExpected
         {
@@ -63,7 +63,7 @@ public class Virtual98 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 1048576,
             SectorSize = 256,
-            MD5        = "cf4375422f50d62e163d697a18542eca"
+            Md5        = "cf4375422f50d62e163d697a18542eca"
         },
         new BlockImageTestExpected
         {
@@ -71,7 +71,7 @@ public class Virtual98 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 167936,
             SectorSize = 256,
-            MD5        = "fe4fc08015f1e3a4562e8e867107b561"
+            Md5        = "fe4fc08015f1e3a4562e8e867107b561"
         },
         new BlockImageTestExpected
         {
@@ -79,7 +79,7 @@ public class Virtual98 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 2097152,
             SectorSize = 256,
-            MD5        = "afb49485f0ef2b39e8377c1fe880e77b"
+            Md5        = "afb49485f0ef2b39e8377c1fe880e77b"
         },
         new BlockImageTestExpected
         {
@@ -87,7 +87,7 @@ public class Virtual98 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 266240,
             SectorSize = 256,
-            MD5        = "9e4c0bc8bc955b1a21a94df0f7bec3ab"
+            Md5        = "9e4c0bc8bc955b1a21a94df0f7bec3ab"
         },
         new BlockImageTestExpected
         {
@@ -95,7 +95,7 @@ public class Virtual98 : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 327680,
             SectorSize = 256,
-            MD5        = "f5906261c390ea5c5a0e46864fb066cd"
+            Md5        = "f5906261c390ea5c5a0e46864fb066cd"
         }
     };
 }

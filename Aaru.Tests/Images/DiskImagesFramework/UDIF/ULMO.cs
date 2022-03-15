@@ -28,17 +28,19 @@
 
 namespace Aaru.Tests.Images.DiskImagesFramework.UDIF;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class ULMO : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "UDIF", "ULMO");
-    public override IMediaImage _plugin => new Udif();
+    public override IMediaImage Plugin => new Udif();
 
     public override BlockImageTestExpected[] Tests => new BlockImageTestExpected[]
     {

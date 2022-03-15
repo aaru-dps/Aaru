@@ -38,7 +38,7 @@ public class Parallels : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "Parallels");
-    public override IMediaImage _plugin => new DiscImages.Parallels();
+    public override IMediaImage Plugin => new DiscImages.Parallels();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +48,7 @@ public class Parallels : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 251904,
             SectorSize = 512,
-            MD5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
+            Md5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
             Partitions = new[]
             {
                 new BlockPartitionVolumes

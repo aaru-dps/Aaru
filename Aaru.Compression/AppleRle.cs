@@ -43,7 +43,7 @@ public static class AppleRle
     public static bool IsSupported => true;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_apple_rle_decode_buffer(byte[] dst_buffer, int dst_size, byte[] src_buffer, int src_size);
+    static extern int AARU_apple_rle_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
 
     /// <summary>Decodes a buffer compressed with Apple RLE</summary>
     /// <param name="source">Encoded buffer</param>

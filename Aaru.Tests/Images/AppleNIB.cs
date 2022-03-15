@@ -37,7 +37,7 @@ using NUnit.Framework;
 public class AppleNib : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Nibbles");
-    public override IMediaImage _plugin    => new DiscImages.AppleNib();
+    public override IMediaImage Plugin    => new DiscImages.AppleNib();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -47,7 +47,7 @@ public class AppleNib : BlockMediaImageTest
             MediaType  = MediaType.Apple32SS,
             Sectors    = 455,
             SectorSize = 256,
-            MD5        = "76f8fe4c5bc1976f99641ad7cdf53109",
+            Md5        = "76f8fe4c5bc1976f99641ad7cdf53109",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -63,7 +63,7 @@ public class AppleNib : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "0ffcbd4180306192726926b43755db2f",
+            Md5        = "0ffcbd4180306192726926b43755db2f",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -79,7 +79,7 @@ public class AppleNib : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "4c4926103a32ac15f7e430ec3ced4be5"
+            Md5        = "4c4926103a32ac15f7e430ec3ced4be5"
         },
         new BlockImageTestExpected
         {
@@ -87,7 +87,7 @@ public class AppleNib : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "11ef56c80c94347d2e3f921d5c36c8de"
+            Md5        = "11ef56c80c94347d2e3f921d5c36c8de"
         }
     };
 }

@@ -20,8 +20,8 @@ public class _623 : WritableOpticalMediaImageTest
             MediaType     = MediaType.CDROM,
             Sectors       = 255,
             SectorSize    = 2048,
-            LongMD5       = "1bea7f781be0fb3b878de96e965c53a0",
-            SubchannelMD5 = "01fef9f42fe53e6256ba713ad237dc8c",
+            LongMd5       = "1bea7f781be0fb3b878de96e965c53a0",
+            SubchannelMd5 = "01fef9f42fe53e6256ba713ad237dc8c",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

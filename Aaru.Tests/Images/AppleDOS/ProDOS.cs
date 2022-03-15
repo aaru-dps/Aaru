@@ -39,7 +39,7 @@ public class ProDOS : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple ProDOS Order");
-    public override IMediaImage _plugin => new AppleDos();
+    public override IMediaImage Plugin => new AppleDos();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -49,7 +49,7 @@ public class ProDOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "0ffcbd4180306192726926b43755db2f",
+            Md5        = "0ffcbd4180306192726926b43755db2f",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -65,7 +65,7 @@ public class ProDOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "2c0b397aa3fe23a52cf7908340739f78"
+            Md5        = "2c0b397aa3fe23a52cf7908340739f78"
         },
         new BlockImageTestExpected
         {
@@ -73,7 +73,7 @@ public class ProDOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "ddd04ef378552c789f85382b4f49da06"
+            Md5        = "ddd04ef378552c789f85382b4f49da06"
         },
         new BlockImageTestExpected
         {
@@ -81,7 +81,7 @@ public class ProDOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "5158e2fe9d8e7ae1f7db73156478e4f4"
+            Md5        = "5158e2fe9d8e7ae1f7db73156478e4f4"
         },
         new BlockImageTestExpected
         {
@@ -89,7 +89,7 @@ public class ProDOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "4c4926103a32ac15f7e430ec3ced4be5"
+            Md5        = "4c4926103a32ac15f7e430ec3ced4be5"
         },
         new BlockImageTestExpected
         {
@@ -97,7 +97,7 @@ public class ProDOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "55ff5838139c0e8fa3f904397dc22fa5"
+            Md5        = "55ff5838139c0e8fa3f904397dc22fa5"
         },
         new BlockImageTestExpected
         {
@@ -105,7 +105,7 @@ public class ProDOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "137463bc1f758fb8f2c354b02603817b"
+            Md5        = "137463bc1f758fb8f2c354b02603817b"
         },
         new BlockImageTestExpected
         {
@@ -113,7 +113,7 @@ public class ProDOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "193c5cc22f07e5aeb96eb187cb59c2d9"
+            Md5        = "193c5cc22f07e5aeb96eb187cb59c2d9"
         },
         new BlockImageTestExpected
         {
@@ -121,7 +121,7 @@ public class ProDOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "26d9c57e262f61c4eb6c150eefafe4c0"
+            Md5        = "26d9c57e262f61c4eb6c150eefafe4c0"
         },
         new BlockImageTestExpected
         {
@@ -129,7 +129,7 @@ public class ProDOS : BlockMediaImageTest
             MediaType  = MediaType.Apple33SS,
             Sectors    = 560,
             SectorSize = 256,
-            MD5        = "11ef56c80c94347d2e3f921d5c36c8de"
+            Md5        = "11ef56c80c94347d2e3f921d5c36c8de"
         }
     };
 }

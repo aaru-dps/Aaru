@@ -42,6 +42,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 /// <summary>Implements the Apple version of RLE</summary>
+// ReSharper disable once InconsistentNaming
 public static class ADC
 {
     const int PLAIN      = 1;
@@ -51,7 +52,7 @@ public static class ADC
     public static bool IsSupported => true;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_adc_decode_buffer(byte[] dst_buffer, int dst_size, byte[] src_buffer, int src_size);
+    static extern int AARU_adc_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static int GetChunkType(byte byt) => (byt & 0x80) == 0x80

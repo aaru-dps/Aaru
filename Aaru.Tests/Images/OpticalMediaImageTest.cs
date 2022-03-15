@@ -47,7 +47,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 IFilter filter      = filtersList.GetFilter(testFile);
                 filter.Open(testFile);
 
-                var image = Activator.CreateInstance(_plugin.GetType()) as IOpticalMediaImage;
+                var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
                 Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                 ErrorNumber opened = image.Open(filter);
@@ -140,7 +140,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 IFilter filter      = filtersList.GetFilter(testFile);
                 filter.Open(testFile);
 
-                var image = Activator.CreateInstance(_plugin.GetType()) as IOpticalMediaImage;
+                var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
                 Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                 ErrorNumber opened = image.Open(filter);
@@ -304,7 +304,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 IFilter filter      = filtersList.GetFilter(testFile);
                 filter.Open(testFile);
 
-                var image = Activator.CreateInstance(_plugin.GetType()) as IOpticalMediaImage;
+                var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
                 Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
 
                 ErrorNumber opened = image.Open(filter);
@@ -358,7 +358,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                             }
                         }
 
-                        Assert.AreEqual(@long ? Tests[i].LongMD5 : Tests[i].MD5, ctx.End(),
+                        Assert.AreEqual(@long ? Tests[i].LongMd5 : Tests[i].Md5, ctx.End(),
                                         $"{(@long ? "Long hash" : "Hash")}: {testFile}");
                     }
 
@@ -397,7 +397,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                         }
                     }
 
-                    Assert.AreEqual(Tests[i].SubchannelMD5, ctx.End(), $"Subchannel hash: {testFile}");
+                    Assert.AreEqual(Tests[i].SubchannelMd5, ctx.End(), $"Subchannel hash: {testFile}");
                 }
                 else
                 {
@@ -425,7 +425,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                         ctx.Update(sector);
                     }
 
-                    Assert.AreEqual(Tests[i].MD5, ctx.End(), $"Hash: {testFile}");
+                    Assert.AreEqual(Tests[i].Md5, ctx.End(), $"Hash: {testFile}");
                 }
             });
         });

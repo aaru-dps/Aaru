@@ -39,7 +39,7 @@ public class Raw : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "disk-analyse", "raw");
-    public override IMediaImage _plugin => new ZZZRawImage();
+    public override IMediaImage Plugin => new ZZZRawImage();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -49,7 +49,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.AppleSonyDS,
             Sectors    = 1600,
             SectorSize = 512,
-            MD5        = "2626f65b49ec085253c41fa2e2a9e788"
+            Md5        = "2626f65b49ec085253c41fa2e2a9e788"
         },
         new BlockImageTestExpected
         {
@@ -57,7 +57,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.CBM_AMIGA_35_DD,
             Sectors    = 1760,
             SectorSize = 512,
-            MD5        = "7db6730656efb22695cdf0a49e2674c9"
+            Md5        = "7db6730656efb22695cdf0a49e2674c9"
         },
         new BlockImageTestExpected
         {
@@ -65,7 +65,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.FDFORMAT_35_DD,
             Sectors    = 1640,
             SectorSize = 512,
-            MD5        = "9d978dff1196b456b8372d78e6b17970"
+            Md5        = "9d978dff1196b456b8372d78e6b17970"
         },
         new BlockImageTestExpected
         {
@@ -73,7 +73,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 3605,
             SectorSize = 512,
-            MD5        = "7ee82cecd23b30cc9aa6f0ec59877851"
+            Md5        = "7ee82cecd23b30cc9aa6f0ec59877851"
         },
         new BlockImageTestExpected
         {
@@ -81,7 +81,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.GENERIC_HDD,
             Sectors    = 3768,
             SectorSize = 512,
-            MD5        = "c96c0be31797a0e6c9f23aad8ae38555"
+            Md5        = "c96c0be31797a0e6c9f23aad8ae38555"
         },
         new BlockImageTestExpected
         {
@@ -89,7 +89,7 @@ public class Raw : BlockMediaImageTest
             MediaType  = MediaType.FDFORMAT_35_HD,
             Sectors    = 3444,
             SectorSize = 512,
-            MD5        = "9dea1e119a73a21a38d134f36b2e5564"
+            Md5        = "9dea1e119a73a21a38d134f36b2e5564"
         }
         /* TODO: XDF reading is not implemented
         new BlockImageTestExpected

@@ -37,7 +37,7 @@ using NUnit.Framework;
 public class BlindWrite7 : OpticalMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "BlindWrite 7");
-    public override IMediaImage _plugin => new DiscImages.BlindWrite5();
+    public override IMediaImage Plugin => new DiscImages.BlindWrite5();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -47,8 +47,8 @@ public class BlindWrite7 : OpticalMediaImageTest
             MediaType  = MediaType.CDR,
             Sectors    = 254265,
             SectorSize = 2048,
-            MD5        = "86b8a763ef6522fccf97f743d7bf4fa3",
-            LongMD5    = "a292359cce05849dec1d06ae471ecf9e",
+            Md5        = "86b8a763ef6522fccf97f743d7bf4fa3",
+            LongMd5    = "a292359cce05849dec1d06ae471ecf9e",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -85,8 +85,8 @@ public class BlindWrite7 : OpticalMediaImageTest
             MediaType  = MediaType.CDROM,
             Sectors    = 254265,
             SectorSize = 2048,
-            MD5        = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5    = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            Md5        = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5    = "3d3f9cf7d1ba2249b1e7960071e5af46",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -123,8 +123,8 @@ public class BlindWrite7 : OpticalMediaImageTest
             MediaType  = MediaType.CDRW,
             Sectors    = 308224,
             SectorSize = 2048,
-            MD5        = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-            LongMD5    = "3af5f943ddb9427d9c63a4ce3b704db9",
+            Md5        = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5    = "3af5f943ddb9427d9c63a4ce3b704db9",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

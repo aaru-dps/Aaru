@@ -38,11 +38,11 @@ public class BZip2
     public static bool IsSupported => true;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_bzip2_decode_buffer(byte[] dst_buffer, ref uint dst_size, byte[] src_buffer, uint src_size);
+    static extern int AARU_bzip2_decode_buffer(byte[] dstBuffer, ref uint dstSize, byte[] srcBuffer, uint srcSize);
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_bzip2_encode_buffer(byte[] dst_buffer, ref uint dst_size, byte[] src_buffer, uint src_size,
-                                               int blockSize100k);
+    static extern int AARU_bzip2_encode_buffer(byte[] dstBuffer, ref uint dstSize, byte[] srcBuffer, uint srcSize,
+                                               int blockSize100K);
 
     /// <summary>Decodes a buffer compressed with BZIP2</summary>
     /// <param name="source">Encoded buffer</param>
@@ -68,21 +68,21 @@ public class BZip2
     /// <summary>Compresses a buffer using BZIP2</summary>
     /// <param name="source">Data to compress</param>
     /// <param name="destination">Buffer to store the compressed data</param>
-    /// <param name="blockSize100k">Block size in 100KiB units</param>
+    /// <param name="blockSize100K">Block size in 100KiB units</param>
     /// <returns></returns>
-    public static int EncodeBuffer(byte[] source, byte[] destination, int blockSize100k)
+    public static int EncodeBuffer(byte[] source, byte[] destination, int blockSize100K)
     {
         var destinationSize = (uint)destination.Length;
 
         if(Native.IsSupported)
         {
-            AARU_bzip2_encode_buffer(destination, ref destinationSize, source, (uint)source.Length, blockSize100k);
+            AARU_bzip2_encode_buffer(destination, ref destinationSize, source, (uint)source.Length, blockSize100K);
 
             return (int)destinationSize;
         }
 
         using var cmpMs     = new MemoryStream(source);
-        using var encStream = new BZip2OutputStream(new MemoryStream(destination), blockSize100k);
+        using var encStream = new BZip2OutputStream(new MemoryStream(destination), blockSize100K);
         encStream.Write(source, 0, source.Length);
 
         return source.Length;

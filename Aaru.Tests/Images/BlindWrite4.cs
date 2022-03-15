@@ -37,7 +37,7 @@ using NUnit.Framework;
 public class BlindWrite4 : OpticalMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "BlindWrite 4");
-    public override IMediaImage _plugin => new DiscImages.BlindWrite4();
+    public override IMediaImage Plugin => new DiscImages.BlindWrite4();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -46,9 +46,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "cdiready_the_apprentice.BWT",
             MediaType     = MediaType.CDDA,
             Sectors       = 279300,
-            MD5           = "e202d6851822b03b537f7b356e61ebcc",
-            LongMD5       = "e202d6851822b03b537f7b356e61ebcc",
-            SubchannelMD5 = "b158732e5396be73a25e2a12bce4ec28",
+            Md5           = "e202d6851822b03b537f7b356e61ebcc",
+            LongMd5       = "e202d6851822b03b537f7b356e61ebcc",
+            SubchannelMd5 = "b158732e5396be73a25e2a12bce4ec28",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -234,9 +234,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "report_audiocd.BWT",
             MediaType     = MediaType.CDDA,
             Sectors       = 247073,
-            MD5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            LongMD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            SubchannelMD5 = "2cf7f3f06c28032f7609aaab970c001f",
+            Md5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            LongMd5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            SubchannelMd5 = "2cf7f3f06c28032f7609aaab970c001f",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -358,9 +358,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "report_cdr.BWT",
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
-            MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            SubchannelMD5 = "00c0dd9095dcc8ac17246dd56d2a368c",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "00c0dd9095dcc8ac17246dd56d2a368c",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -396,9 +396,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "report_cdrom.BWT",
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
-            MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            SubchannelMD5 = "00c0dd9095dcc8ac17246dd56d2a368c",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "00c0dd9095dcc8ac17246dd56d2a368c",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -434,9 +434,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "report_cdrw.BWT",
             MediaType     = MediaType.CDROM,
             Sectors       = 308224,
-            MD5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-            LongMD5       = "3af5f943ddb9427d9c63a4ce3b704db9",
-            SubchannelMD5 = "3aa50e929756b926e7471255fd1aa894",
+            Md5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5       = "3af5f943ddb9427d9c63a4ce3b704db9",
+            SubchannelMd5 = "3aa50e929756b926e7471255fd1aa894",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -466,9 +466,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "report_enhancedcd.BWT",
             MediaType     = MediaType.CDPLUS,
             Sectors       = 303316,
-            MD5           = "c15f0beeed08f943cfc50c3246334dd2",
-            LongMD5       = "1aab899e2965a74763b1bb232ff8bf21",
-            SubchannelMD5 = "d5a424eedad28620468f215d5b24d453",
+            Md5           = "c15f0beeed08f943cfc50c3246334dd2",
+            LongMd5       = "1aab899e2965a74763b1bb232ff8bf21",
+            SubchannelMd5 = "d5a424eedad28620468f215d5b24d453",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -601,9 +601,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "test_audiocd_cdtext.BWT",
             MediaType     = MediaType.CDDA,
             Sectors       = 277696,
-            MD5           = "7c8fc7bb768cff15d702ac8cd10108d7",
-            LongMD5       = "7c8fc7bb768cff15d702ac8cd10108d7",
-            SubchannelMD5 = "4637654a333c5917232b343ba465fba0",
+            Md5           = "7c8fc7bb768cff15d702ac8cd10108d7",
+            LongMd5       = "7c8fc7bb768cff15d702ac8cd10108d7",
+            SubchannelMd5 = "4637654a333c5917232b343ba465fba0",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -701,9 +701,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "test_enhancedcd.BWT",
             MediaType     = MediaType.CDPLUS,
             Sectors       = 59206,
-            MD5           = "c0cdd94f1488226d37f0398eef75eb4c",
-            LongMD5       = "843302a664a074dc4c02b27e53eb228a",
-            SubchannelMD5 = "fd13f0194b8e141d4384abf1ad00fbf2",
+            Md5           = "c0cdd94f1488226d37f0398eef75eb4c",
+            LongMd5       = "843302a664a074dc4c02b27e53eb228a",
+            SubchannelMd5 = "fd13f0194b8e141d4384abf1ad00fbf2",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -748,9 +748,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "test_incd_udf200_finalized.BWT",
             MediaType     = MediaType.CDROMXA,
             Sectors       = 350134,
-            MD5           = "f95d6f978ddb4f98bbffda403f627fe1",
-            LongMD5       = "6751e0ae7821f92221672b1cd5a1ff36",
-            SubchannelMD5 = "d651d48c8839ad94f0a285660999db00",
+            Md5           = "f95d6f978ddb4f98bbffda403f627fe1",
+            LongMd5       = "6751e0ae7821f92221672b1cd5a1ff36",
+            SubchannelMd5 = "d651d48c8839ad94f0a285660999db00",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -787,9 +787,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "test_multi_karaoke_sampler.BWT",
             MediaType     = MediaType.CDROMXA,
             Sectors       = 329158,
-            MD5           = "a34e29e42b60023a6ae59f37d2bd4bea",
-            LongMD5       = "e981f7dfdb522ba937fe75474e23a446",
-            SubchannelMD5 = "00045e5e72d806f84fb363e4ae73cf46",
+            Md5           = "a34e29e42b60023a6ae59f37d2bd4bea",
+            LongMd5       = "e981f7dfdb522ba937fe75474e23a446",
+            SubchannelMd5 = "00045e5e72d806f84fb363e4ae73cf46",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -938,9 +938,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "test_multiple_indexes.BWT",
             MediaType     = MediaType.CDDA,
             Sectors       = 65536,
-            MD5           = "1b13a8f8aeb23f0b8bbc68518217e771",
-            LongMD5       = "1b13a8f8aeb23f0b8bbc68518217e771",
-            SubchannelMD5 = "2ff4170eafb73c4be3a81c35f37e9c3d",
+            Md5           = "1b13a8f8aeb23f0b8bbc68518217e771",
+            LongMd5       = "1b13a8f8aeb23f0b8bbc68518217e771",
+            SubchannelMd5 = "2ff4170eafb73c4be3a81c35f37e9c3d",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -990,9 +990,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "test_multisession.BWT",
             MediaType     = MediaType.CDROMXA,
             Sectors       = 51168,
-            MD5           = "e2e19cf38891e67a0829d01842b4052e",
-            LongMD5       = "3e646a04eb29a8e0ad892b6ac00ba962",
-            SubchannelMD5 = "b0b18100d5d38211f057bd3781407fc6",
+            Md5           = "e2e19cf38891e67a0829d01842b4052e",
+            LongMd5       = "3e646a04eb29a8e0ad892b6ac00ba962",
+            SubchannelMd5 = "b0b18100d5d38211f057bd3781407fc6",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1110,9 +1110,9 @@ public class BlindWrite4 : OpticalMediaImageTest
             TestFile      = "test_videocd.BWT",
             MediaType     = MediaType.CDROMXA,
             Sectors       = 48794,
-            MD5           = "67ed7ec2aac06b56b4d693146d64adb7",
-            LongMD5       = "84c5329e55e3cc8c125c636c71ba2c17",
-            SubchannelMD5 = "5027417c4cbb4975482b902c57232dfb",
+            Md5           = "67ed7ec2aac06b56b4d693146d64adb7",
+            LongMd5       = "84c5329e55e3cc8c125c636c71ba2c17",
+            SubchannelMd5 = "5027417c4cbb4975482b902c57232dfb",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

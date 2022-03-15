@@ -28,6 +28,7 @@
 
 namespace Aaru.Tests.Images.pce;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -35,10 +36,11 @@ using Aaru.DiscImages;
 using NUnit.Framework;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class XDF : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "pce", "XDF");
-    public override IMediaImage _plugin    => new ZZZRawImage();
+    public override IMediaImage Plugin    => new ZZZRawImage();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -48,7 +50,7 @@ public class XDF : BlockMediaImageTest
             MediaType  = MediaType.XDF_35,
             Sectors    = 3680,
             SectorSize = 512,
-            MD5        = "90e8f5022bff8fa90c5148ec35f5d64c"
+            Md5        = "90e8f5022bff8fa90c5148ec35f5d64c"
         },
         new BlockImageTestExpected
         {
@@ -56,7 +58,7 @@ public class XDF : BlockMediaImageTest
             MediaType  = MediaType.XDF_35,
             Sectors    = 3680,
             SectorSize = 512,
-            MD5        = "825ca9cdcb2f35ff8bbbda9cb0a27c4d"
+            Md5        = "825ca9cdcb2f35ff8bbbda9cb0a27c4d"
         }
     };
 }

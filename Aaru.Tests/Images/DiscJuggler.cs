@@ -37,7 +37,7 @@ using NUnit.Framework;
 public class DiscJuggler : OpticalMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiscJuggler");
-    public override IMediaImage _plugin => new DiscImages.DiscJuggler();
+    public override IMediaImage Plugin => new DiscImages.DiscJuggler();
     public override OpticalImageTestExpected[] Tests => new[]
     {
         new OpticalImageTestExpected
@@ -45,9 +45,9 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile      = "jaguarcd.cdi",
             MediaType     = MediaType.CDDA,
             Sectors       = 243587,
-            MD5           = "01de32dcb21ac62be269ddd3bc99ab3e",
-            LongMD5       = "01de32dcb21ac62be269ddd3bc99ab3e",
-            SubchannelMD5 = "214794f37c41d1e2727eba68efdd369d",
+            Md5           = "01de32dcb21ac62be269ddd3bc99ab3e",
+            LongMd5       = "01de32dcb21ac62be269ddd3bc99ab3e",
+            SubchannelMd5 = "214794f37c41d1e2727eba68efdd369d",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -145,9 +145,9 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile      = "make_audiocd.cdi",
             MediaType     = MediaType.CDDA,
             Sectors       = 277696,
-            MD5           = "0c355a31a7a488ec387c4508c498d6c0",
-            LongMD5       = "0c355a31a7a488ec387c4508c498d6c0",
-            SubchannelMD5 = "ac79fa4b07a042bcdd033a3e0319a0ae",
+            Md5           = "0c355a31a7a488ec387c4508c498d6c0",
+            LongMd5       = "0c355a31a7a488ec387c4508c498d6c0",
+            SubchannelMd5 = "ac79fa4b07a042bcdd033a3e0319a0ae",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -245,8 +245,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "make_data_mode1_joliet.cdi",
             MediaType = MediaType.CDROM,
             Sectors   = 83063,
-            MD5       = "9f1251feaed14a62326ab399b73342e3",
-            LongMD5   = "8ae1725d36537af9395ece058992e2b3",
+            Md5       = "9f1251feaed14a62326ab399b73342e3",
+            LongMd5   = "8ae1725d36537af9395ece058992e2b3",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -264,8 +264,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "make_data_mode2_joliet.cdi",
             MediaType = MediaType.CDROMXA,
             Sectors   = 83077,
-            MD5       = "68d39977149d3062b41dba6c1ff475cf",
-            LongMD5   = "382b5d7957ee7e19b0e9dd7db866e4c4",
+            Md5       = "68d39977149d3062b41dba6c1ff475cf",
+            LongMd5   = "382b5d7957ee7e19b0e9dd7db866e4c4",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -283,8 +283,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "make_dvd.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 84896,
-            MD5       = "5240b794f12174da73915e8c1f38b6a4",
-            LongMD5   = "5240b794f12174da73915e8c1f38b6a4",
+            Md5       = "5240b794f12174da73915e8c1f38b6a4",
+            LongMd5   = "5240b794f12174da73915e8c1f38b6a4",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -301,8 +301,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "make_enhancedcd.cdi",
             MediaType = MediaType.CD,
             Sectors   = 335666,
-            MD5       = "ce5de948ef5d1fccd1c1664451b1ba10",
-            LongMD5   = "fe4165656cc6023b999d9fbf05501b25",
+            Md5       = "ce5de948ef5d1fccd1c1664451b1ba10",
+            LongMd5   = "fe4165656cc6023b999d9fbf05501b25",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -408,8 +408,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "make_mixed_mode.cdi",
             MediaType = MediaType.CDROMXA,
             Sectors   = 360909,
-            MD5       = "a5eba1d1bfeae8d6eea6c8abfdf79be4",
-            LongMD5   = "b981912374fe50f91c91085e31028886",
+            Md5       = "a5eba1d1bfeae8d6eea6c8abfdf79be4",
+            LongMd5   = "b981912374fe50f91c91085e31028886",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -515,8 +515,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "make_multisession_dvd.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 86560,
-            MD5       = "95388d443073217e7cc4cf6b0391ec7f",
-            LongMD5   = "95388d443073217e7cc4cf6b0391ec7f",
+            Md5       = "95388d443073217e7cc4cf6b0391ec7f",
+            LongMd5   = "95388d443073217e7cc4cf6b0391ec7f",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -532,8 +532,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "make_pangram_mode1_joliet.cdi",
             MediaType = MediaType.CDROM,
             Sectors   = 642,
-            MD5       = "36477c851cd6184034c86cc61cdd0e60",
-            LongMD5   = "1b11183918ed5a2295f89272e2fa5810",
+            Md5       = "36477c851cd6184034c86cc61cdd0e60",
+            LongMd5   = "1b11183918ed5a2295f89272e2fa5810",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -551,8 +551,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "make_pangram_mode2_joliet.cdi",
             MediaType = MediaType.CDROMXA,
             Sectors   = 656,
-            MD5       = "ea2e0354dccd3dfdca6242154f024b59",
-            LongMD5   = "18c580f0621cabdd9fc81be6275c41f0",
+            Md5       = "ea2e0354dccd3dfdca6242154f024b59",
+            LongMd5   = "18c580f0621cabdd9fc81be6275c41f0",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -570,9 +570,9 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile      = "pcengine.cdi",
             MediaType     = MediaType.CD,
             Sectors       = 160956,
-            MD5           = "4fc2665cec77b289a68d35edbdd50730",
-            LongMD5       = "afabe77571db99e29cf4e6854b6f523e",
-            SubchannelMD5 = "c2026374c196855ee95f19de967f3ba1",
+            Md5           = "4fc2665cec77b289a68d35edbdd50730",
+            LongMd5       = "afabe77571db99e29cf4e6854b6f523e",
+            SubchannelMd5 = "c2026374c196855ee95f19de967f3ba1",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -720,8 +720,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "pcfx.cdi",
             MediaType = MediaType.CD,
             Sectors   = 246680,
-            MD5       = "2e872a5cfa43959183677398ede15c08",
-            LongMD5   = "a8939e0fd28ee0bd876101b218af3572",
+            Md5       = "2e872a5cfa43959183677398ede15c08",
+            LongMd5   = "a8939e0fd28ee0bd876101b218af3572",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -807,9 +807,9 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile      = "report_audiocd.cdi",
             MediaType     = MediaType.CDDA,
             Sectors       = 247073,
-            MD5           = "9f8abbb08746f86d7c3d0b1b22f1fcc2",
-            LongMD5       = "9f8abbb08746f86d7c3d0b1b22f1fcc2",
-            SubchannelMD5 = "1045e621183bf4c8a9d641f8a5767fec",
+            Md5           = "9f8abbb08746f86d7c3d0b1b22f1fcc2",
+            LongMd5       = "9f8abbb08746f86d7c3d0b1b22f1fcc2",
+            SubchannelMd5 = "1045e621183bf4c8a9d641f8a5767fec",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -931,9 +931,9 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile      = "report_cdr.cdi",
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
-            MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            SubchannelMD5 = "dc02efe9c59c0d0e72bb7d26d7f01bce",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "dc02efe9c59c0d0e72bb7d26d7f01bce",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -969,9 +969,9 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile      = "report_cdrom.cdi",
             MediaType     = MediaType.CDROM,
             Sectors       = 254265,
-            MD5           = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            SubchannelMD5 = "e0d121ac5c0e4e30a823ac445942feae",
+            Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            SubchannelMd5 = "e0d121ac5c0e4e30a823ac445942feae",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1007,9 +1007,9 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile      = "report_cdrw_2x.cdi",
             MediaType     = MediaType.CDROM,
             Sectors       = 308224,
-            MD5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-            LongMD5       = "3af5f943ddb9427d9c63a4ce3b704db9",
-            SubchannelMD5 = "82e9a16a532717d7b733258d674073c3",
+            Md5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5       = "3af5f943ddb9427d9c63a4ce3b704db9",
+            SubchannelMd5 = "82e9a16a532717d7b733258d674073c3",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1039,8 +1039,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "report_dvdram_v1.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 1218961,
-            MD5       = "b04c88635c5d493c250c289964018a7a",
-            LongMD5   = "b04c88635c5d493c250c289964018a7a",
+            Md5       = "b04c88635c5d493c250c289964018a7a",
+            LongMd5   = "b04c88635c5d493c250c289964018a7a",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1069,8 +1069,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "report_dvdram_v2.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 2236705,
-            MD5       = "c0823b070513d02c9f272986f23e74e8",
-            LongMD5   = "c0823b070513d02c9f272986f23e74e8",
+            Md5       = "c0823b070513d02c9f272986f23e74e8",
+            LongMd5   = "c0823b070513d02c9f272986f23e74e8",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1098,8 +1098,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "report_dvd-r.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 2146368,
-            MD5       = "106f141400355476b499213f36a363f9",
-            LongMD5   = "106f141400355476b499213f36a363f9",
+            Md5       = "106f141400355476b499213f36a363f9",
+            LongMd5   = "106f141400355476b499213f36a363f9",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1128,8 +1128,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "report_dvd+r-dl.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 3455936,
-            MD5       = "692148a01b4204160b088141fb52bd70",
-            LongMD5   = "692148a01b4204160b088141fb52bd70",
+            Md5       = "692148a01b4204160b088141fb52bd70",
+            LongMd5   = "692148a01b4204160b088141fb52bd70",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1158,8 +1158,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "report_dvdrom.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 2146368,
-            MD5       = "106f141400355476b499213f36a363f9",
-            LongMD5   = "106f141400355476b499213f36a363f9",
+            Md5       = "106f141400355476b499213f36a363f9",
+            LongMd5   = "106f141400355476b499213f36a363f9",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1188,8 +1188,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "report_dvd+rw.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 2295104,
-            MD5       = "759e9c19389aee07f88a994132b6f8d9",
-            LongMD5   = "759e9c19389aee07f88a994132b6f8d9",
+            Md5       = "759e9c19389aee07f88a994132b6f8d9",
+            LongMd5   = "759e9c19389aee07f88a994132b6f8d9",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1218,8 +1218,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "report_dvd-rw.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 2146368,
-            MD5       = "106f141400355476b499213f36a363f9",
-            LongMD5   = "106f141400355476b499213f36a363f9",
+            Md5       = "106f141400355476b499213f36a363f9",
+            LongMd5   = "106f141400355476b499213f36a363f9",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1248,9 +1248,9 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile      = "report_enhancedcd.cdi",
             MediaType     = MediaType.CDPLUS,
             Sectors       = 303316,
-            MD5           = "7a76c22590401d57b84396c9fc2925e4",
-            LongMD5       = "63a318522c436ccd6b3ac3959bdb417f",
-            SubchannelMD5 = "2581844f8192c719da44ba57e8e5512b",
+            Md5           = "7a76c22590401d57b84396c9fc2925e4",
+            LongMd5       = "63a318522c436ccd6b3ac3959bdb417f",
+            SubchannelMd5 = "2581844f8192c719da44ba57e8e5512b",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1383,8 +1383,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "test_audiocd_cdtext.cdi",
             MediaType = MediaType.CDDA,
             Sectors   = 277696,
-            MD5       = "52d7a2793b7600dc94d007f5e7dfd942",
-            LongMD5   = "52d7a2793b7600dc94d007f5e7dfd942",
+            Md5       = "52d7a2793b7600dc94d007f5e7dfd942",
+            LongMd5   = "52d7a2793b7600dc94d007f5e7dfd942",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1482,8 +1482,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "test_enhancedcd.cdi",
             MediaType = MediaType.CDPLUS,
             Sectors   = 59206,
-            MD5       = "31054e6b8f4d51fe502ac340490bcd46",
-            LongMD5   = "2fc4b8966350322ed3fd553b9e628164",
+            Md5       = "31054e6b8f4d51fe502ac340490bcd46",
+            LongMd5   = "2fc4b8966350322ed3fd553b9e628164",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1528,8 +1528,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "test_incd_udf200_finalized.cdi",
             MediaType = MediaType.CDROMXA,
             Sectors   = 350134,
-            MD5       = "d976a8d0131bf48926542160bb41fc13",
-            LongMD5   = "cd55978d00f1bc127a0e652259ba2418",
+            Md5       = "d976a8d0131bf48926542160bb41fc13",
+            LongMd5   = "cd55978d00f1bc127a0e652259ba2418",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1566,9 +1566,9 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile      = "test_karaoke_multi_sampler.cdi",
             MediaType     = MediaType.CDROMXA,
             Sectors       = 329158,
-            MD5           = "a34e29e42b60023a6ae59f37d2bd4bea",
-            LongMD5       = "e981f7dfdb522ba937fe75474e23a446",
-            SubchannelMD5 = "62164333675c194acbe14eed5213e4f4",
+            Md5           = "a34e29e42b60023a6ae59f37d2bd4bea",
+            LongMd5       = "e981f7dfdb522ba937fe75474e23a446",
+            SubchannelMd5 = "62164333675c194acbe14eed5213e4f4",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1717,8 +1717,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "test_multiple_indexes.cdi",
             MediaType = MediaType.CDDA,
             Sectors   = 65536,
-            MD5       = "9315c6fc3cf5371ae3795df2b624bd5e",
-            LongMD5   = "9315c6fc3cf5371ae3795df2b624bd5e",
+            Md5       = "9315c6fc3cf5371ae3795df2b624bd5e",
+            LongMd5   = "9315c6fc3cf5371ae3795df2b624bd5e",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1768,8 +1768,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "test_multisession.cdi",
             MediaType = MediaType.CDROMXA,
             Sectors   = 51168,
-            MD5       = "46e43ed4712e5ae61b653b4d19f27080",
-            LongMD5   = "cac33e71b4693b2902f086a0a433129d",
+            Md5       = "46e43ed4712e5ae61b653b4d19f27080",
+            LongMd5   = "cac33e71b4693b2902f086a0a433129d",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1868,8 +1868,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "test_multisession_dvd+r.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 230624,
-            MD5       = "020993315e49ab0d36bc7248819162ea",
-            LongMD5   = "020993315e49ab0d36bc7248819162ea",
+            Md5       = "020993315e49ab0d36bc7248819162ea",
+            LongMd5   = "020993315e49ab0d36bc7248819162ea",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1897,8 +1897,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "test_multisession_dvd-r.cdi",
             MediaType = MediaType.DVDROM,
             Sectors   = 257264,
-            MD5       = "dff8f2107a4ea9633a88ce38ff609b8e",
-            LongMD5   = "dff8f2107a4ea9633a88ce38ff609b8e",
+            Md5       = "dff8f2107a4ea9633a88ce38ff609b8e",
+            LongMd5   = "dff8f2107a4ea9633a88ce38ff609b8e",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1926,8 +1926,8 @@ public class DiscJuggler : OpticalMediaImageTest
             TestFile  = "test_videocd.cdi",
             MediaType = MediaType.CDROMXA,
             Sectors   = 48794,
-            MD5       = "e5b596e73f46f646a51e1315b59e7cb9",
-            LongMD5   = "acd1a8de676ebe6feeb9d6964ccd63ea",
+            Md5       = "e5b596e73f46f646a51e1315b59e7cb9",
+            LongMd5   = "acd1a8de676ebe6feeb9d6964ccd63ea",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

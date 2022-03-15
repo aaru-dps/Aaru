@@ -48,7 +48,7 @@ public class FileSystemTest : MediaInfoTest
 
 public class BlockImageTestExpected : MediaInfoTest
 {
-    public string                  MD5;
+    public string                  Md5;
     public BlockPartitionVolumes[] Partitions;
 }
 
@@ -65,8 +65,8 @@ public class TrackInfoTestExpected
 
 public class OpticalImageTestExpected : BlockImageTestExpected
 {
-    public string                  LongMD5;
-    public string                  SubchannelMD5;
+    public string                  LongMd5;
+    public string                  SubchannelMd5;
     public TrackInfoTestExpected[] Tracks;
 }
 
@@ -98,7 +98,7 @@ public class FileData
     public Dictionary<string, FileData> Children      { get; set; }
     public FileEntryInfo                Info          { get; set; }
     public string                       LinkTarget    { get; set; }
-    public string                       MD5           { get; set; }
+    public string                       Md5           { get; set; }
     public Dictionary<string, string>   XattrsWithMd5 { get; set; }
 }
 

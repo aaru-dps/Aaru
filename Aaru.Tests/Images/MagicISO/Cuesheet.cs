@@ -39,7 +39,7 @@ public class Cuesheet : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MagicISO", "Cuesheet");
-    public override IMediaImage _plugin => new CdrWin();
+    public override IMediaImage Plugin => new CdrWin();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -48,8 +48,8 @@ public class Cuesheet : OpticalMediaImageTest
             TestFile  = "cdiready_the_apprentice.cue",
             MediaType = MediaType.CDDA,
             Sectors   = 279299,
-            MD5       = "ab350df419f96d967f51d0161ebeba63",
-            LongMD5   = "ab350df419f96d967f51d0161ebeba63",
+            Md5       = "ab350df419f96d967f51d0161ebeba63",
+            LongMd5   = "ab350df419f96d967f51d0161ebeba63",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -235,8 +235,8 @@ public class Cuesheet : OpticalMediaImageTest
             TestFile  = "report_audiocd.cue",
             MediaType = MediaType.CDDA,
             Sectors   = 247072,
-            MD5       = "277e98295297f618cc63687e98288d7e",
-            LongMD5   = "277e98295297f618cc63687e98288d7e",
+            Md5       = "277e98295297f618cc63687e98288d7e",
+            LongMd5   = "277e98295297f618cc63687e98288d7e",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -358,8 +358,8 @@ public class Cuesheet : OpticalMediaImageTest
             TestFile  = "report_cdrom.cue",
             MediaType = MediaType.CDROM,
             Sectors   = 254264,
-            MD5       = "2de6dd5eaa71c1a97625bab68382da60",
-            LongMD5   = "222edd2c920b63aefe2087ed6278abe6",
+            Md5       = "2de6dd5eaa71c1a97625bab68382da60",
+            LongMd5   = "222edd2c920b63aefe2087ed6278abe6",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -395,8 +395,8 @@ public class Cuesheet : OpticalMediaImageTest
             TestFile  = "report_cdrw.cue",
             MediaType = MediaType.CDROM,
             Sectors   = 308223,
-            MD5       = "f1510c82ea4ff535415833242adddac6",
-            LongMD5   = "22bd168e59e075229821448b60d1820b",
+            Md5       = "f1510c82ea4ff535415833242adddac6",
+            LongMd5   = "22bd168e59e075229821448b60d1820b",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -426,8 +426,8 @@ public class Cuesheet : OpticalMediaImageTest
             TestFile  = "report_dvdram_v1.cue",
             MediaType = MediaType.DVDROM,
             Sectors   = 1218959,
-            MD5       = "fa58d5645e091cc3f0c87998c819955e",
-            LongMD5   = "fa58d5645e091cc3f0c87998c819955e",
+            Md5       = "fa58d5645e091cc3f0c87998c819955e",
+            LongMd5   = "fa58d5645e091cc3f0c87998c819955e",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -455,8 +455,8 @@ public class Cuesheet : OpticalMediaImageTest
             TestFile  = "report_dvdram_v2.cue",
             MediaType = MediaType.DVDROM,
             Sectors   = 2236703,
-            MD5       = "c02a2cf88af17ed8333af2e7d4560e40",
-            LongMD5   = "c02a2cf88af17ed8333af2e7d4560e40",
+            Md5       = "c02a2cf88af17ed8333af2e7d4560e40",
+            LongMd5   = "c02a2cf88af17ed8333af2e7d4560e40",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -484,8 +484,8 @@ public class Cuesheet : OpticalMediaImageTest
             TestFile  = "report_dvd+r-dl.cue",
             MediaType = MediaType.DVDROM,
             Sectors   = 3455935,
-            MD5       = "e71164a331f656e30025c39956e35372",
-            LongMD5   = "e71164a331f656e30025c39956e35372",
+            Md5       = "e71164a331f656e30025c39956e35372",
+            LongMd5   = "e71164a331f656e30025c39956e35372",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -501,8 +501,8 @@ public class Cuesheet : OpticalMediaImageTest
             TestFile  = "report_dvd-rom.cue",
             MediaType = MediaType.DVDROM,
             Sectors   = 2146367,
-            MD5       = "fa1beeef4c4f1493f306a13f4fd113b2",
-            LongMD5   = "fa1beeef4c4f1493f306a13f4fd113b2",
+            Md5       = "fa1beeef4c4f1493f306a13f4fd113b2",
+            LongMd5   = "fa1beeef4c4f1493f306a13f4fd113b2",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -530,8 +530,8 @@ public class Cuesheet : OpticalMediaImageTest
             TestFile  = "report_dvd+rw.cue",
             MediaType = MediaType.DVDROM,
             Sectors   = 2295103,
-            MD5       = "767692b526a7ea7020e7144d6d7cadab",
-            LongMD5   = "767692b526a7ea7020e7144d6d7cadab",
+            Md5       = "767692b526a7ea7020e7144d6d7cadab",
+            LongMd5   = "767692b526a7ea7020e7144d6d7cadab",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -683,8 +683,8 @@ public class Cuesheet : OpticalMediaImageTest
             TestFile  = "test_multi_karaoke_sampler.cue",
             MediaType = MediaType.CDROMXA,
             Sectors   = 329157,
-            MD5       = "cc6354d06b009b0446012842c7f94be7",
-            LongMD5   = "bb3ebf139ebb76fff1b229a379d289e4",
+            Md5       = "cc6354d06b009b0446012842c7f94be7",
+            LongMd5   = "bb3ebf139ebb76fff1b229a379d289e4",
             Tracks = new[]
             {
                 new TrackInfoTestExpected

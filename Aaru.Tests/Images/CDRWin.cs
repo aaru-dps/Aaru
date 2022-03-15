@@ -28,6 +28,7 @@
 
 namespace Aaru.Tests.Images;
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -35,10 +36,11 @@ using Aaru.DiscImages;
 using NUnit.Framework;
 
 [TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CDRWin : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CDRWin");
-    public override IMediaImage _plugin    => new CdrWin();
+    public override IMediaImage Plugin    => new CdrWin();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
@@ -47,8 +49,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "pcengine.cue",
             MediaType = MediaType.CD,
             Sectors   = 160956,
-            MD5       = "875ea735f0d10d6fa321fb222714117b",
-            LongMD5   = "0188cf74fdc367a8e370bbe236a5100c",
+            Md5       = "875ea735f0d10d6fa321fb222714117b",
+            LongMd5   = "0188cf74fdc367a8e370bbe236a5100c",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -206,8 +208,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "pcfx.cue",
             MediaType = MediaType.CD,
             Sectors   = 246680,
-            MD5       = "d2fbcb46735a5ac90c10f81ca564c9dd",
-            LongMD5   = "f10ae52c1a530ba3ed49447417d9451e",
+            Md5       = "d2fbcb46735a5ac90c10f81ca564c9dd",
+            LongMd5   = "f10ae52c1a530ba3ed49447417d9451e",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -293,8 +295,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "report_audiocd.cue",
             MediaType = MediaType.CDDA,
             Sectors   = 247073,
-            MD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            LongMD5   = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            Md5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            LongMd5   = "c09f408a4416634d8ac1c1ffd0ed75a5",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -416,8 +418,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "report_cdr.cue",
             MediaType = MediaType.CDROM,
             Sectors   = 254265,
-            MD5       = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            Md5       = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -453,8 +455,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "report_cdrw.cue",
             MediaType = MediaType.CDROM,
             Sectors   = 308224,
-            MD5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-            LongMD5   = "3af5f943ddb9427d9c63a4ce3b704db9",
+            Md5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5   = "3af5f943ddb9427d9c63a4ce3b704db9",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -484,8 +486,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "test_audiocd_cdtext.cue",
             MediaType = MediaType.CDDA,
             Sectors   = 277696,
-            MD5       = "7c8fc7bb768cff15d702ac8cd10108d7",
-            LongMD5   = "7c8fc7bb768cff15d702ac8cd10108d7",
+            Md5       = "7c8fc7bb768cff15d702ac8cd10108d7",
+            LongMd5   = "7c8fc7bb768cff15d702ac8cd10108d7",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -583,8 +585,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "test_incd_udf200_finalized.cue",
             MediaType = MediaType.CDROMXA,
             Sectors   = 350134,
-            MD5       = "13d4c3def37e968b2ddc5cf5a9f18fdc",
-            LongMD5   = "31e772f6997eb8dbf3ecf9aca9ea6bc6",
+            Md5       = "13d4c3def37e968b2ddc5cf5a9f18fdc",
+            LongMd5   = "31e772f6997eb8dbf3ecf9aca9ea6bc6",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -621,8 +623,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "test_multi_karaoke_sampler.cue",
             MediaType = MediaType.CDROMXA,
             Sectors   = 329158,
-            MD5       = "397d93a649a2a502cf831b49771a2c35",
-            LongMD5   = "c92ec0c7671b1b992d94a726ea10a238",
+            Md5       = "397d93a649a2a502cf831b49771a2c35",
+            LongMd5   = "c92ec0c7671b1b992d94a726ea10a238",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -771,8 +773,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "test_multiple_indexes.cue",
             MediaType = MediaType.CDDA,
             Sectors   = 65536,
-            MD5       = "1b13a8f8aeb23f0b8bbc68518217e771",
-            LongMD5   = "1b13a8f8aeb23f0b8bbc68518217e771",
+            Md5       = "1b13a8f8aeb23f0b8bbc68518217e771",
+            LongMd5   = "1b13a8f8aeb23f0b8bbc68518217e771",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -822,8 +824,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "test_videocd.cue",
             MediaType = MediaType.CDROMXA,
             Sectors   = 48794,
-            MD5       = "0d80890beeadf3f6e2cf2f88d0067afe",
-            LongMD5   = "96ac6c364e4c3cb2f043197a45a97183",
+            Md5       = "0d80890beeadf3f6e2cf2f88d0067afe",
+            LongMd5   = "96ac6c364e4c3cb2f043197a45a97183",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -860,9 +862,9 @@ public class CDRWin : OpticalMediaImageTest
             TestFile      = "cdg_report_audiocd.cue",
             MediaType     = MediaType.CDG,
             Sectors       = 247073,
-            MD5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            LongMD5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            SubchannelMD5 = "1d0e4118993a75311fe774e46326306a",
+            Md5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            LongMd5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
+            SubchannelMd5 = "1d0e4118993a75311fe774e46326306a",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -984,9 +986,9 @@ public class CDRWin : OpticalMediaImageTest
             TestFile      = "cdg_test_multi_karaoke_sampler.cue",
             MediaType     = MediaType.CDG,
             Sectors       = 329158,
-            MD5           = "be1bdbd55883dd53397ea21715107706",
-            LongMD5       = "3d3a8e2243f40201c6bdc5c10a65bb76",
-            SubchannelMD5 = "f9794c8d8ab2c7bf7815e740a77b12f4",
+            Md5           = "be1bdbd55883dd53397ea21715107706",
+            LongMd5       = "3d3a8e2243f40201c6bdc5c10a65bb76",
+            SubchannelMd5 = "f9794c8d8ab2c7bf7815e740a77b12f4",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1135,9 +1137,9 @@ public class CDRWin : OpticalMediaImageTest
             TestFile      = "cooked_cdg_test_multi_karaoke_sampler.cue",
             MediaType     = MediaType.CDG,
             Sectors       = 329158,
-            MD5           = "215c0b3efab1b04e4f2d35b323cdbc96",
-            LongMD5       = "296cfef5de90e1cfadaf2ecf41f2e184",
-            SubchannelMD5 = "536ebf5b21280a721dc0604739ca7db3",
+            Md5           = "215c0b3efab1b04e4f2d35b323cdbc96",
+            LongMd5       = "296cfef5de90e1cfadaf2ecf41f2e184",
+            SubchannelMd5 = "536ebf5b21280a721dc0604739ca7db3",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1286,8 +1288,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "cooked_report_cdrom.cue",
             MediaType = MediaType.CDROM,
             Sectors   = 254265,
-            MD5       = "bf4bbec517101d0d6f45d2e4d50cb875",
-            LongMD5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
+            Md5       = "bf4bbec517101d0d6f45d2e4d50cb875",
+            LongMd5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1323,8 +1325,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "cooked_report_cdrw.cue",
             MediaType = MediaType.CDROM,
             Sectors   = 308224,
-            MD5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
-            LongMD5   = "3af5f943ddb9427d9c63a4ce3b704db9",
+            Md5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
+            LongMd5   = "3af5f943ddb9427d9c63a4ce3b704db9",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1354,8 +1356,8 @@ public class CDRWin : OpticalMediaImageTest
             TestFile  = "cooked_test_multi_karaoke_sampler.cue",
             MediaType = MediaType.CDROMXA,
             Sectors   = 329158,
-            MD5       = "bb1ace550c0a22f18c32bd053739d6ce",
-            LongMD5   = "857b80195d1e29bd0bace2ef20b733ed",
+            Md5       = "bb1ace550c0a22f18c32bd053739d6ce",
+            LongMd5   = "857b80195d1e29bd0bace2ef20b733ed",
             Tracks = new[]
             {
                 new TrackInfoTestExpected
