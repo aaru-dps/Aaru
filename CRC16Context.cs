@@ -217,34 +217,34 @@ public class Crc16Context : IChecksum
         // http://sourceforge.net/projects/slicing-by-8/
 
         ushort    crc;
-        var       current_pos   = 0;
+        var       currentPos   = 0;
         const int unroll        = 4;
-        const int bytes_at_once = 8 * unroll;
+        const int bytesAtOnce = 8 * unroll;
 
         crc = previousCrc;
 
-        while(len >= bytes_at_once)
+        while(len >= bytesAtOnce)
         {
             int unrolling;
 
             for(unrolling = 0; unrolling < unroll; unrolling++)
             {
                 // TODO: What trick is Microsoft doing here that's faster than arithmetic conversion
-                uint one = BitConverter.ToUInt32(data, current_pos) ^ crc;
-                current_pos += 4;
-                var two = BitConverter.ToUInt32(data, current_pos);
-                current_pos += 4;
+                uint one = BitConverter.ToUInt32(data, currentPos) ^ crc;
+                currentPos += 4;
+                var two = BitConverter.ToUInt32(data, currentPos);
+                currentPos += 4;
 
                 crc = (ushort)(table[0][(two >> 24) & 0xFF] ^ table[1][(two >> 16) & 0xFF] ^
                                table[2][(two >> 8)  & 0xFF] ^ table[3][two & 0xFF] ^ table[4][(one >> 24) & 0xFF] ^
                                table[5][(one >> 16) & 0xFF] ^ table[6][(one >> 8) & 0xFF] ^ table[7][one & 0xFF]);
             }
 
-            len -= bytes_at_once;
+            len -= bytesAtOnce;
         }
 
         while(len-- != 0)
-            crc = (ushort)((crc >> 8) ^ table[0][(crc & 0xFF) ^ data[current_pos++]]);
+            crc = (ushort)((crc >> 8) ^ table[0][(crc & 0xFF) ^ data[currentPos++]]);
 
         previousCrc = crc;
     }
@@ -256,32 +256,32 @@ public class Crc16Context : IChecksum
         // http://sourceforge.net/projects/slicing-by-8/
 
         ushort    crc;
-        var       current_pos   = 0;
+        var       currentPos   = 0;
         const int unroll        = 4;
-        const int bytes_at_once = 8 * unroll;
+        const int bytesAtOnce = 8 * unroll;
 
         crc = previousCrc;
 
-        while(len >= bytes_at_once)
+        while(len >= bytesAtOnce)
         {
             int unrolling;
 
             for(unrolling = 0; unrolling < unroll; unrolling++)
             {
-                crc = (ushort)(table[7][data[current_pos + 0] ^ (crc >> 8)]   ^
-                               table[6][data[current_pos + 1] ^ (crc & 0xFF)] ^ table[5][data[current_pos + 2]] ^
-                               table[4][data[current_pos + 3]] ^ table[3][data[current_pos + 4]] ^
-                               table[2][data[current_pos + 5]] ^ table[1][data[current_pos + 6]] ^
-                               table[0][data[current_pos + 7]]);
+                crc = (ushort)(table[7][data[currentPos + 0] ^ (crc >> 8)]   ^
+                               table[6][data[currentPos + 1] ^ (crc & 0xFF)] ^ table[5][data[currentPos + 2]] ^
+                               table[4][data[currentPos + 3]] ^ table[3][data[currentPos + 4]] ^
+                               table[2][data[currentPos + 5]] ^ table[1][data[currentPos + 6]] ^
+                               table[0][data[currentPos + 7]]);
 
-                current_pos += 8;
+                currentPos += 8;
             }
 
-            len -= bytes_at_once;
+            len -= bytesAtOnce;
         }
 
         while(len-- != 0)
-            crc = (ushort)((crc << 8) ^ table[0][(crc >> 8) ^ data[current_pos++]]);
+            crc = (ushort)((crc << 8) ^ table[0][(crc >> 8) ^ data[currentPos++]]);
 
         previousCrc = crc;
     }

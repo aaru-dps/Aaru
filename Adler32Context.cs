@@ -148,7 +148,7 @@ public sealed class Adler32Context : IChecksum
 
         if(AdvSimd.IsSupported)
         {
-            neon.Step(ref preSum1, ref preSum2, data, len);
+            Neon.Step(ref preSum1, ref preSum2, data, len);
 
             return;
         }

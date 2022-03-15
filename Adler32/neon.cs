@@ -50,7 +50,7 @@ namespace Aaru.Checksums.Adler32;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.Arm;
 
-static class neon
+static class Neon
 {
     internal static void Step(ref ushort preSum1, ref ushort preSum2, byte[] buf, uint len)
     {
@@ -65,13 +65,13 @@ static class neon
         /*
          * Process the data in blocks.
          */
-        uint BLOCK_SIZE = 1 << 5;
-        uint blocks     = len / BLOCK_SIZE;
-        len -= blocks * BLOCK_SIZE;
+        uint blockSize = 1 << 5;
+        uint blocks     = len / blockSize;
+        len -= blocks * blockSize;
 
         while(blocks != 0)
         {
-            uint n = Adler32Context.NMAX / BLOCK_SIZE; /* The NMAX constraint. */
+            uint n = Adler32Context.NMAX / blockSize; /* The NMAX constraint. */
 
             if(n > blocks)
                 n = blocks;
@@ -81,12 +81,12 @@ static class neon
              * Process n blocks of data. At most NMAX data bytes can be
              * processed before s2 must be reduced modulo ADLER_MODULE.
              */
-            var               v_s2           = Vector128.Create(s1 * n, 0, 0, 0);
-            var               v_s1           = Vector128.Create(0u, 0, 0, 0);
-            Vector128<ushort> v_column_sum_1 = AdvSimd.DuplicateToVector128((ushort)0);
-            Vector128<ushort> v_column_sum_2 = AdvSimd.DuplicateToVector128((ushort)0);
-            Vector128<ushort> v_column_sum_3 = AdvSimd.DuplicateToVector128((ushort)0);
-            Vector128<ushort> v_column_sum_4 = AdvSimd.DuplicateToVector128((ushort)0);
+            var               vS2           = Vector128.Create(s1 * n, 0, 0, 0);
+            var               vS1           = Vector128.Create(0u, 0, 0, 0);
+            Vector128<ushort> vColumnSum1 = AdvSimd.DuplicateToVector128((ushort)0);
+            Vector128<ushort> vColumnSum2 = AdvSimd.DuplicateToVector128((ushort)0);
+            Vector128<ushort> vColumnSum3 = AdvSimd.DuplicateToVector128((ushort)0);
+            Vector128<ushort> vColumnSum4 = AdvSimd.DuplicateToVector128((ushort)0);
 
             do
             {
@@ -109,13 +109,13 @@ static class neon
                 /*
                  * Add previous block byte sum to v_s2.
                  */
-                v_s2 = AdvSimd.Add(v_s2, v_s1);
+                vS2 = AdvSimd.Add(vS2, vS1);
 
                 /*
                  * Horizontally add the bytes for s1.
                  */
-                v_s1 =
-                    AdvSimd.AddPairwiseWideningAndAdd(v_s1,
+                vS1 =
+                    AdvSimd.AddPairwiseWideningAndAdd(vS1,
                                                       AdvSimd.
                                                           AddPairwiseWideningAndAdd(AdvSimd.AddPairwiseWidening(bytes1),
                                                               bytes2));
@@ -123,49 +123,49 @@ static class neon
                 /*
                  * Vertically add the bytes for s2.
                  */
-                v_column_sum_1 = AdvSimd.AddWideningLower(v_column_sum_1, bytes1.GetLower());
-                v_column_sum_2 = AdvSimd.AddWideningLower(v_column_sum_2, bytes1.GetUpper());
-                v_column_sum_3 = AdvSimd.AddWideningLower(v_column_sum_3, bytes2.GetLower());
-                v_column_sum_4 = AdvSimd.AddWideningLower(v_column_sum_4, bytes2.GetUpper());
+                vColumnSum1 = AdvSimd.AddWideningLower(vColumnSum1, bytes1.GetLower());
+                vColumnSum2 = AdvSimd.AddWideningLower(vColumnSum2, bytes1.GetUpper());
+                vColumnSum3 = AdvSimd.AddWideningLower(vColumnSum3, bytes2.GetLower());
+                vColumnSum4 = AdvSimd.AddWideningLower(vColumnSum4, bytes2.GetUpper());
             } while(--n != 0);
 
-            v_s2 = AdvSimd.ShiftLeftLogical(v_s2, 5);
+            vS2 = AdvSimd.ShiftLeftLogical(vS2, 5);
 
             /*
              * Multiply-add bytes by [ 32, 31, 30, ... ] for s2.
              */
-            v_s2 = AdvSimd.MultiplyWideningLowerAndAdd(v_s2, v_column_sum_1.GetLower(),
+            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum1.GetLower(),
                                                        Vector64.Create((ushort)32, 31, 30, 29));
 
-            v_s2 = AdvSimd.MultiplyWideningLowerAndAdd(v_s2, v_column_sum_1.GetUpper(),
+            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum1.GetUpper(),
                                                        Vector64.Create((ushort)28, 27, 26, 25));
 
-            v_s2 = AdvSimd.MultiplyWideningLowerAndAdd(v_s2, v_column_sum_2.GetLower(),
+            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum2.GetLower(),
                                                        Vector64.Create((ushort)24, 23, 22, 21));
 
-            v_s2 = AdvSimd.MultiplyWideningLowerAndAdd(v_s2, v_column_sum_2.GetUpper(),
+            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum2.GetUpper(),
                                                        Vector64.Create((ushort)20, 19, 18, 17));
 
-            v_s2 = AdvSimd.MultiplyWideningLowerAndAdd(v_s2, v_column_sum_3.GetLower(),
+            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum3.GetLower(),
                                                        Vector64.Create((ushort)16, 15, 14, 13));
 
-            v_s2 = AdvSimd.MultiplyWideningLowerAndAdd(v_s2, v_column_sum_3.GetUpper(),
+            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum3.GetUpper(),
                                                        Vector64.Create((ushort)12, 11, 10, 9));
 
-            v_s2 = AdvSimd.MultiplyWideningLowerAndAdd(v_s2, v_column_sum_4.GetLower(),
+            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum4.GetLower(),
                                                        Vector64.Create((ushort)8, 7, 6, 5));
 
-            v_s2 = AdvSimd.MultiplyWideningLowerAndAdd(v_s2, v_column_sum_4.GetUpper(),
+            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum4.GetUpper(),
                                                        Vector64.Create((ushort)4, 3, 2, 1));
 
             /*
              * Sum epi32 ints v_s1(s2) and accumulate in s1(s2).
              */
-            Vector64<uint> sum1 = AdvSimd.AddPairwise(v_s1.GetLower(), v_s1.GetUpper());
-            Vector64<uint> sum2 = AdvSimd.AddPairwise(v_s2.GetLower(), v_s2.GetUpper());
-            Vector64<uint> s1s2 = AdvSimd.AddPairwise(sum1, sum2);
-            s1 += AdvSimd.Extract(s1s2, 0);
-            s2 += AdvSimd.Extract(s1s2, 1);
+            Vector64<uint> sum1 = AdvSimd.AddPairwise(vS1.GetLower(), vS1.GetUpper());
+            Vector64<uint> sum2 = AdvSimd.AddPairwise(vS2.GetLower(), vS2.GetUpper());
+            Vector64<uint> s1S2 = AdvSimd.AddPairwise(sum1, sum2);
+            s1 += AdvSimd.Extract(s1S2, 0);
+            s2 += AdvSimd.Extract(s1S2, 1);
             /*
              * Reduce.
              */
