@@ -394,6 +394,7 @@ public enum OpticalImageCapabilities : ulong
 }
 
 /// <summary>Enumeration of linear memory device types</summary>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum LinearMemoryType
 {
     /// <summary>Unknown device type</summary>

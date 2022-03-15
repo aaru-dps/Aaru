@@ -38,7 +38,10 @@
 
 namespace Aaru.CommonTypes.Enums;
 
+using System.Diagnostics.CodeAnalysis;
+
 /// <summary>Enumerates error codes. Negative for UNIX error number equivalents, positive for Aaru error numbers.</summary>
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum ErrorNumber
 {
     NotPermitted = -1,
