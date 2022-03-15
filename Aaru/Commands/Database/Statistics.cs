@@ -148,7 +148,7 @@ sealed class StatisticsCommand : Command
                 thereAreStats = true;
             }
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 
@@ -177,7 +177,7 @@ sealed class StatisticsCommand : Command
                 thereAreStats = true;
             }
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 
@@ -206,7 +206,7 @@ sealed class StatisticsCommand : Command
                 thereAreStats = true;
             }
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 
@@ -235,7 +235,7 @@ sealed class StatisticsCommand : Command
                 thereAreStats = true;
             }
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 
@@ -264,7 +264,7 @@ sealed class StatisticsCommand : Command
                 thereAreStats = true;
             }
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 
@@ -285,7 +285,7 @@ sealed class StatisticsCommand : Command
                 table.AddRow(Markup.Escape(ds.Manufacturer ?? ""), Markup.Escape(ds.Model ?? ""),
                              Markup.Escape(ds.Revision     ?? ""), Markup.Escape(ds.Bus   ?? ""));
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
             thereAreStats = true;
         }
@@ -316,7 +316,7 @@ sealed class StatisticsCommand : Command
                 thereAreStats = true;
             }
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 
@@ -346,7 +346,7 @@ sealed class StatisticsCommand : Command
                 thereAreStats = true;
             }
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 

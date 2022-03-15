@@ -100,7 +100,7 @@ sealed class ListEncodingsCommand : Command
         foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
             table.AddRow(info.Name, info.DisplayName);
 
-        AnsiConsole.Render(table);
+        AnsiConsole.Write(table);
 
         return (int)ErrorNumber.NoError;
     }

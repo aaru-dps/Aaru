@@ -820,7 +820,7 @@ public static class ImageInfo
                                  session.EndTrack.ToString(), session.StartSector.ToString(),
                                  session.EndSector.ToString());
 
-                AnsiConsole.Render(table);
+                AnsiConsole.Write(table);
                 AaruConsole.WriteLine();
             }
         }
@@ -853,7 +853,7 @@ public static class ImageInfo
                              track.RawBytesPerSector.ToString(), track.SubchannelType.ToString(),
                              track.Pregap.ToString(), track.StartSector.ToString(), track.EndSector.ToString());
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
 
             if(!opticalImage.Tracks.Any(t => t.Indexes.Any()))
                 return;
@@ -873,7 +873,7 @@ public static class ImageInfo
                 foreach(KeyValuePair<ushort, int> index in track.Indexes)
                     table.AddRow(track.Sequence.ToString(), index.Key.ToString(), index.Value.ToString());
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
         }
         catch
         {

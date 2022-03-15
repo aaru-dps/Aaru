@@ -118,7 +118,7 @@ sealed class ListDevicesCommand : Command
                              Markup.Escape(dev.Model ?? ""), Markup.Escape(dev.Serial ?? ""),
                              Markup.Escape(dev.Bus   ?? ""), dev.Supported ? "[green]✓[/]" : "[red]✗[/]");
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
         }
 
         return (int)ErrorNumber.NoError;

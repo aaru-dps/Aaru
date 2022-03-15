@@ -177,7 +177,7 @@ sealed class DeviceInfoCommand : Command
             table.AddRow("Product", $"{Markup.Escape(dev.UsbProductString           ?? "")}");
             table.AddRow("Serial number", $"{Markup.Escape(dev.UsbSerialString      ?? "")}");
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 
@@ -199,7 +199,7 @@ sealed class DeviceInfoCommand : Command
             table.AddRow("Model", $"{Markup.Escape(dev.FireWireModelName   ?? "")}");
             table.AddRow("GUID", $"{dev.FireWireGuid:X16}");
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 

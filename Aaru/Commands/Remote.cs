@@ -115,7 +115,7 @@ sealed class RemoteCommand : Command
 
             table.AddRow("Server maximum protocol", $"{remote.ServerProtocolVersion}");
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             remote.Disconnect();
         }
         catch(Exception)

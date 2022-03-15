@@ -504,7 +504,7 @@ sealed class CompareCommand : Command
         sb.AppendLine(imagesDiffer ? "Images differ" : "Images do not differ");
 
         if(verbose)
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
         else
             AaruConsole.WriteLine(sb.ToString());
 

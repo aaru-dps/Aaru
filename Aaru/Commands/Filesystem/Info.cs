@@ -282,7 +282,7 @@ sealed class FilesystemInfoCommand : Command
                         table.AddRow("Scheme", Markup.Escape(partitionsList[i].Scheme           ?? ""));
                         table.AddRow("Description", Markup.Escape(partitionsList[i].Description ?? ""));
 
-                        AnsiConsole.Render(table);
+                        AnsiConsole.Write(table);
 
                         if(!filesystems)
                             continue;

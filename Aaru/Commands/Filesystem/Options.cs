@@ -107,7 +107,7 @@ sealed class ListOptionsCommand : Command
                 table.AddRow(Markup.Escape(option.name), $"[italic]{TypeToString(option.type)}[/]",
                              Markup.Escape(option.description));
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 

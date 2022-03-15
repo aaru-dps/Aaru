@@ -99,7 +99,7 @@ sealed class ListNamespacesCommand : Command
             foreach(KeyValuePair<string, string> @namespace in kvp.Value.Namespaces.OrderBy(t => t.Key))
                 table.AddRow(@namespace.Key, @namespace.Value);
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 

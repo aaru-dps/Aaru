@@ -109,7 +109,7 @@ sealed class ListOptionsCommand : Command
                 table.AddRow(Markup.Escape(option.name), TypeToString(option.type), option.@default?.ToString() ?? "",
                              Markup.Escape(option.description));
 
-            AnsiConsole.Render(table);
+            AnsiConsole.Write(table);
             AaruConsole.WriteLine();
         }
 

@@ -102,7 +102,7 @@ sealed class FormatsCommand : Command
             else
                 table.AddRow(Markup.Escape(kvp.Value.Name));
 
-        AnsiConsole.Render(table);
+        AnsiConsole.Write(table);
 
         AaruConsole.WriteLine();
 
@@ -126,7 +126,7 @@ sealed class FormatsCommand : Command
             else
                 table.AddRow(Markup.Escape(kvp.Value.Name));
 
-        AnsiConsole.Render(table);
+        AnsiConsole.Write(table);
 
         AaruConsole.WriteLine();
 
@@ -146,7 +146,7 @@ sealed class FormatsCommand : Command
             else
                 table.AddRow(Markup.Escape(kvp.Value.Name));
 
-        AnsiConsole.Render(table);
+        AnsiConsole.Write(table);
 
         AaruConsole.WriteLine();
 
@@ -170,7 +170,7 @@ sealed class FormatsCommand : Command
             else
                 table.AddRow(Markup.Escape(kvp.Value.Name));
 
-        AnsiConsole.Render(table);
+        AnsiConsole.Write(table);
 
         AaruConsole.WriteLine();
 
@@ -191,7 +191,7 @@ sealed class FormatsCommand : Command
             else
                 table.AddRow(Markup.Escape(kvp.Value.Name));
 
-        AnsiConsole.Render(table);
+        AnsiConsole.Write(table);
 
         AaruConsole.WriteLine();
 
@@ -212,7 +212,7 @@ sealed class FormatsCommand : Command
             else
                 table.AddRow(Markup.Escape(kvp.Value.Name));
 
-        AnsiConsole.Render(table);
+        AnsiConsole.Write(table);
 
         AaruConsole.WriteLine();
 
@@ -232,7 +232,7 @@ sealed class FormatsCommand : Command
             else
                 table.AddRow(Markup.Escape(kvp.Value.Name));
 
-        AnsiConsole.Render(table);
+        AnsiConsole.Write(table);
 
         return (int)ErrorNumber.NoError;
     }
