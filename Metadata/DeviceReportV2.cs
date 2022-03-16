@@ -36,9 +36,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // TODO: Re-enable CS1591 in this file
+
 #pragma warning disable 1591
 
 // ReSharper disable VirtualMemberNeverOverridden.Global

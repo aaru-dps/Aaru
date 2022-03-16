@@ -36,9 +36,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // This is obsolete
+
 #pragma warning disable 1591
 
 // ReSharper disable InconsistentNaming

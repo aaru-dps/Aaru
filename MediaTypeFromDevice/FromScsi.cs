@@ -59,9 +59,7 @@ public static partial class MediaTypeFromDevice
             case 0x00:
             // Simplified access device
             case 0x0E:
-                if(mediumType == 0x03 ||
-                   mediumType == 0x05 ||
-                   mediumType == 0x07)
+                if(mediumType is 0x03 or 0x05 or 0x07)
                     goto case 0x07;
 
                 return GetFromSbc(vendor, model, mediumType, blocks, blockSize);

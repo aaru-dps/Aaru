@@ -36,8 +36,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 
 namespace Aaru.CommonTypes.Structs.Devices.ATA;

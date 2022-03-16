@@ -554,7 +554,7 @@ public static partial class MediaTypeFromDevice
                                                    "Drive model is LS (SuperDisk), media has 246528 blocks of 512 bytes, setting media type to LS-120.");
 
                         return MediaType.LS120;
-                    case 248826 when mediumType == 0x01 || mediumType == 0x02:
+                    case 248826 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-154 / ISO 10090 conforming 3½\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
@@ -581,13 +581,13 @@ public static partial class MediaTypeFromDevice
                                                    blocks, blockSize);
 
                         return MediaType.HiFD;
-                    case 429975 when mediumType == 0x01 || mediumType == 0x02:
+                    case 429975 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-201 / ISO 13963 conforming 3½\" embossed magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_201_ROM;
-                    case 446325 when mediumType == 0x01 || mediumType == 0x02:
+                    case 446325 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-201 / ISO 13963 conforming 3½\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
@@ -613,38 +613,38 @@ public static partial class MediaTypeFromDevice
                                                    "Drive manufacturer is SyQuest, media has 524288 blocks of 512 bytes, setting media type to SQ327.");
 
                         return MediaType.SQ327;
-                    case 694929 when mediumType == 0x01 || mediumType == 0x02:
+                    case 694929 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-223 conforming 3½\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_223_512;
-                    case 904995 when mediumType == 0x01 || mediumType == 0x02:
+                    case 904995 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-183 / ISO 13481 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_183_512;
-                    case 1041500 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1041500 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 15041 conforming 3½\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ISO_15041_512;
-                    case 1128772 when mediumType == 0x01 || mediumType == 0x02:
-                    case 1163337 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1128772 when mediumType is 0x01 or 0x02:
+                    case 1163337 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-184 / ISO 13549 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_184_512;
-                    case 1281856 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1281856 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to WORM PD-650.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.PD650_WORM;
-                    case 1298496 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1298496 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to PD-650.",
                                                    mediumType, blocks, blockSize);
@@ -655,8 +655,8 @@ public static partial class MediaTypeFromDevice
                                                    "Drive manufacturer is IOMEGA, drive model is ZIP, media has 489532 blocks of 512 bytes, setting media type to 250Mb ZIP.");
 
                         return MediaType.ZIP750;
-                    case 1644581 when mediumType == 0x01 || mediumType == 0x02:
-                    case 1647371 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1644581 when mediumType is 0x01 or 0x02:
+                    case 1647371 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-195 / ISO 13842 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
@@ -672,7 +672,7 @@ public static partial class MediaTypeFromDevice
                                                    "Drive manufacturer is IOMEGA, drive model is JAZ, media has 2091050 blocks of 512 bytes, setting media type to 1Gb JAZ.");
 
                         return MediaType.Jaz;
-                    case 2244958 when mediumType == 0x01 || mediumType == 0x02:
+                    case 2244958 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 14517 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
@@ -753,69 +753,69 @@ public static partial class MediaTypeFromDevice
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ACORN_35_DS_HD;
-                    case 314569 when mediumType == 0x01 || mediumType == 0x02:
+                    case 314569 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 10089 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ISO_10089;
-                    case 371371 when mediumType == 0x01 || mediumType == 0x02:
+                    case 371371 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-223 conforming 3½\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_223;
-                    case 498526 when mediumType == 0x01 || mediumType == 0x02:
+                    case 498526 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-183 / ISO 13481 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_183;
-                    case 603466 when mediumType == 0x01 || mediumType == 0x02:
-                    case 637041 when mediumType == 0x01 || mediumType == 0x02:
+                    case 603466 when mediumType is 0x01 or 0x02:
+                    case 637041 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-184 / ISO 13549 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_184;
-                    case 936921 when mediumType == 0x01 || mediumType == 0x02:
-                    case 948770 when mediumType == 0x01 || mediumType == 0x02:
+                    case 936921 when mediumType is 0x01 or 0x02:
+                    case 948770 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-195 / ISO 13842 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_195;
-                    case 1244621 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1244621 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-238 / ISO 15486 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_238;
-                    case 1273011 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1273011 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 14517 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ISO_14517;
-                    case 2319786 when mediumType == 0x01 || mediumType == 0x02:
+                    case 2319786 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 15286 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ISO_15286_1024;
-                    case 4383356 when mediumType == 0x01 || mediumType == 0x02:
+                    case 4383356 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-322 / ISO 22092 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_322_1k;
-                    case 14476734 when mediumType == 0x01 || mediumType == 0x02:
+                    case 14476734 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-260 / ISO 15898 conforming 356mm magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_260;
-                    case 24445990 when mediumType == 0x01 || mediumType == 0x02:
+                    case 24445990 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-260 / ISO 15898 conforming 356mm magneto-optical.",
                                                    mediumType, blocks, blockSize);
@@ -847,10 +847,10 @@ public static partial class MediaTypeFromDevice
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.MD80;
-                    case 310352 when mediumType == 0x01 || mediumType == 0x02: // Found in real media
-                    case 318988 when mediumType == 0x01 || mediumType == 0x02:
-                    case 320332 when mediumType == 0x01 || mediumType == 0x02:
-                    case 321100 when mediumType == 0x01 || mediumType == 0x02:
+                    case 310352 when mediumType is 0x01 or 0x02: // Found in real media
+                    case 318988 when mediumType is 0x01 or 0x02:
+                    case 320332 when mediumType is 0x01 or 0x02:
+                    case 321100 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-239 / ISO 15498 conforming 3½\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
@@ -862,37 +862,37 @@ public static partial class MediaTypeFromDevice
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.HiMD;
-                    case 605846 when mediumType == 0x01 || mediumType == 0x02:
+                    case 605846 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to GigaMO 3½\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.GigaMo;
-                    case 1063146 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1063146 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to GigaMO 2 3½\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.GigaMo2;
-                    case 1128134 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1128134 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-280 / ISO 18093 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_280;
-                    case 1263472 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1263472 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 15286 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ISO_15286;
-                    case 2043664 when mediumType == 0x01 || mediumType == 0x02:
+                    case 2043664 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-322 / ISO 22092 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_322_2k;
-                    case 7355716 when mediumType == 0x01 || mediumType == 0x02:
+                    case 7355716 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-317 / ISO 20162 conforming 300mm magneto-optical.",
                                                    mediumType, blocks, blockSize);
@@ -906,7 +906,7 @@ public static partial class MediaTypeFromDevice
             {
                 switch(blocks)
                 {
-                    case 1095840 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1095840 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-322 / ISO 22092 conforming 5¼\" magneto-optical.",
                                                    mediumType, blocks, blockSize);
@@ -920,19 +920,19 @@ public static partial class MediaTypeFromDevice
             {
                 switch(blocks)
                 {
-                    case 1834348 when mediumType == 0x01 || mediumType == 0x02:
+                    case 1834348 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to UDO.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.UDO;
-                    case 3668759 when mediumType == 0x01 || mediumType == 0x02:
+                    case 3668759 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to WORM UDO2.",
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.UDO2_WORM;
-                    case 3669724 when mediumType == 0x01 || mediumType == 0x02:
+                    case 3669724 when mediumType is 0x01 or 0x02:
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to UDO2.",
                                                    mediumType, blocks, blockSize);

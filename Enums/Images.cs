@@ -37,8 +37,6 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 
 namespace Aaru.CommonTypes.Enums;
