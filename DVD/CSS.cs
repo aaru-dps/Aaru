@@ -34,8 +34,6 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-
-
 // Based on information gathered from:
 //  ISO/IEC13818-1 Second Edition
 //  Mt. Fuji Commands for Multimedia Devices
@@ -697,8 +695,7 @@ public class CSS
     public static bool CheckRegion(CSS_CPRM.RegionalPlaybackControlState rpc, CSS_CPRM.LeadInCopyright cmi)
     {
         // if disc region is all or none, we cannot do anything but try to read it as is
-        if(cmi.RegionInformation == 0xFF ||
-           cmi.RegionInformation == 0x00)
+        if(cmi.RegionInformation is 0xFF or 0x00)
             return true;
 
         return (rpc.RegionMask & 0x01) == (cmi.RegionInformation & 0x01) && (rpc.RegionMask & 0x01) != 0x01 ||
