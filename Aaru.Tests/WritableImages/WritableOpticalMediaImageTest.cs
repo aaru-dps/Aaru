@@ -305,7 +305,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 }
 
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.OrderBy(t => t).
-                                                         TakeWhile(tag => useLong))
+                                                         TakeWhile(_ => useLong))
                 {
                     switch(tag)
                     {

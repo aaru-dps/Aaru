@@ -750,7 +750,7 @@ sealed class DumpMediaCommand : Command
                                 _progressTask2.MaxValue    =   maximum;
                             };
 
-                            Console.CancelKeyPress += (sender, e) =>
+                            Console.CancelKeyPress += (_, e) =>
                             {
                                 e.Cancel = true;
                                 dumper.Abort();

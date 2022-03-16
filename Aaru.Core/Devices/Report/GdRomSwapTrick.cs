@@ -1563,7 +1563,7 @@ public sealed partial class DeviceReport
                 subchannel = MmcSubchannel.Q16;
         }
 
-        Console.CancelKeyPress += (sender, e) =>
+        Console.CancelKeyPress += (_, e) =>
         {
             e.Cancel = true;
             aborted  = true;

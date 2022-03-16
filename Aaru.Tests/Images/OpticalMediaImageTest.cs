@@ -288,7 +288,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
         Assert.Multiple(() =>
         {
-            Parallel.For(0L, Tests.Length, (i, state) =>
+            Parallel.For(0L, Tests.Length, (i, _) =>
             {
                 string testFile = Tests[i].TestFile;
 

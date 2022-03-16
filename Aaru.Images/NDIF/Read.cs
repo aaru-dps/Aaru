@@ -84,7 +84,7 @@ public sealed partial class Ndif
 
         _imageInfo.Sectors = 0;
 
-        foreach(byte[] bcem in bcems.Select(id => rsrc.GetResource(NDIF_RESOURCEID)))
+        foreach(byte[] bcem in bcems.Select(_ => rsrc.GetResource(NDIF_RESOURCEID)))
         {
             if(bcem.Length < 128)
                 return ErrorNumber.InvalidArgument;
@@ -362,7 +362,6 @@ public sealed partial class Ndif
                 var cmpBuffer = new byte[currentChunk.length];
                 _imageStream.Seek(currentChunk.offset, SeekOrigin.Begin);
                 _imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
-                var cmpMs = new MemoryStream(cmpBuffer);
                 int realSize;
 
                 switch(currentChunk.type)

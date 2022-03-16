@@ -237,7 +237,7 @@ public abstract class OpticalImageConvertIssueTest
             subchannelExtents.Add((int)s);
         }
 
-        foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.OrderBy(t => t).TakeWhile(tag => UseLong))
+        foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.OrderBy(t => t).TakeWhile(_ => UseLong))
         {
             switch(tag)
             {

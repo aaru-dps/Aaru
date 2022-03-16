@@ -346,7 +346,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         var imageEntropyWindow = new ImageEntropy();
         imageEntropyWindow.DataContext = new ImageEntropyViewModel(imageModel.Image, imageEntropyWindow);
 
-        imageEntropyWindow.Closed += (sender, args) => imageEntropyWindow = null;
+        imageEntropyWindow.Closed += (_, _) => imageEntropyWindow = null;
 
         imageEntropyWindow.Show();
     }
@@ -359,7 +359,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         var imageVerifyWindow = new ImageVerify();
         imageVerifyWindow.DataContext = new ImageVerifyViewModel(imageModel.Image, imageVerifyWindow);
 
-        imageVerifyWindow.Closed += (sender, args) => imageVerifyWindow = null;
+        imageVerifyWindow.Closed += (_, _) => imageVerifyWindow = null;
 
         imageVerifyWindow.Show();
     }
@@ -372,7 +372,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         var imageChecksumWindow = new ImageChecksum();
         imageChecksumWindow.DataContext = new ImageChecksumViewModel(imageModel.Image, imageChecksumWindow);
 
-        imageChecksumWindow.Closed += (sender, args) => imageChecksumWindow = null;
+        imageChecksumWindow.Closed += (_, _) => imageChecksumWindow = null;
 
         imageChecksumWindow.Show();
     }
@@ -387,7 +387,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         imageConvertWindow.DataContext =
             new ImageConvertViewModel(imageModel.Image, imageModel.Path, imageConvertWindow);
 
-        imageConvertWindow.Closed += (sender, args) => imageConvertWindow = null;
+        imageConvertWindow.Closed += (_, _) => imageConvertWindow = null;
 
         imageConvertWindow.Show();
     }

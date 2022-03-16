@@ -842,6 +842,13 @@ public sealed partial class ISO9660
 
                     ErrorNumber errno = ReadSector(cl.child_dir_lba, out byte[] childSector);
 
+                    if(errno != ErrorNumber.NoError)
+                    {
+                        systemAreaOff = end;
+
+                        break;
+                    }
+
                     DirectoryRecord childRecord =
                         Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(childSector);
 
@@ -1053,6 +1060,9 @@ public sealed partial class ISO9660
         {
             ErrorNumber errno = ReadSector(tEntry.Extent, out byte[] sector);
 
+            if(errno != ErrorNumber.NoError)
+                continue;
+
             CdiDirectoryRecord record =
                 Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(sector, tEntry.XattrLength,
                                                                           _cdiDirectoryRecordSize);
@@ -1103,6 +1113,9 @@ public sealed partial class ISO9660
         {
             ErrorNumber errno = ReadSector(tEntry.Extent, out byte[] sector);
 
+            if(errno != ErrorNumber.NoError)
+                continue;
+
             DirectoryRecord record =
                 Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(sector, tEntry.XattrLength,
                                                                           _directoryRecordSize);
@@ -1152,6 +1165,9 @@ public sealed partial class ISO9660
         foreach(PathTableEntryInternal tEntry in tableEntries)
         {
             ErrorNumber errno = ReadSector(tEntry.Extent, out byte[] sector);
+
+            if(errno != ErrorNumber.NoError)
+                continue;
 
             HighSierraDirectoryRecord record =
                 Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, tEntry.XattrLength,

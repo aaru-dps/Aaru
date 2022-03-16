@@ -735,7 +735,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         _imageEntropy             = new ImageEntropy();
         _imageEntropy.DataContext = new ImageEntropyViewModel(_imageFormat, _imageEntropy);
 
-        _imageEntropy.Closed += (sender, args) => _imageEntropy = null;
+        _imageEntropy.Closed += (_, _) => _imageEntropy = null;
 
         _imageEntropy.Show();
     }
@@ -752,7 +752,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         _imageVerify             = new ImageVerify();
         _imageVerify.DataContext = new ImageVerifyViewModel(_imageFormat, _imageVerify);
 
-        _imageVerify.Closed += (sender, args) => _imageVerify = null;
+        _imageVerify.Closed += (_, _) => _imageVerify = null;
 
         _imageVerify.Show();
     }
@@ -769,7 +769,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         _imageChecksum             = new ImageChecksum();
         _imageChecksum.DataContext = new ImageChecksumViewModel(_imageFormat, _imageChecksum);
 
-        _imageChecksum.Closed += (sender, args) => _imageChecksum = null;
+        _imageChecksum.Closed += (_, _) => _imageChecksum = null;
 
         _imageChecksum.Show();
     }
@@ -786,7 +786,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         _imageConvert             = new ImageConvert();
         _imageConvert.DataContext = new ImageConvertViewModel(_imageFormat, _imagePath, _imageConvert);
 
-        _imageConvert.Closed += (sender, args) => _imageConvert = null;
+        _imageConvert.Closed += (_, _) => _imageConvert = null;
 
         _imageConvert.Show();
     }
@@ -806,7 +806,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         _imageSidecar.DataContext =
             new ImageSidecarViewModel(_imageFormat, _imagePath, _filter.Id, null, _imageSidecar);
 
-        _imageSidecar.Closed += (sender, args) => _imageSidecar = null;
+        _imageSidecar.Closed += (_, _) => _imageSidecar = null;
 
         _imageSidecar.Show();
     }
@@ -825,7 +825,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
             DataContext = new ViewSectorViewModel(_imageFormat)
         };
 
-        _viewSector.Closed += (sender, args) => _viewSector = null;
+        _viewSector.Closed += (_, _) => _viewSector = null;
 
         _viewSector.Show();
     }
@@ -844,7 +844,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
             DataContext = new DecodeMediaTagsViewModel(_imageFormat)
         };
 
-        _decodeMediaTags.Closed += (sender, args) => _decodeMediaTags = null;
+        _decodeMediaTags.Closed += (_, _) => _decodeMediaTags = null;
 
         _decodeMediaTags.Show();
     }

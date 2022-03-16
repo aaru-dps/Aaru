@@ -52,7 +52,6 @@ public sealed partial class FAT
         minBootNearJump = 0;
         andosOemCorrect = false;
         bootable        = false;
-        ErrorNumber errno;
 
         humanBpb = Marshal.ByteArrayToStructureBigEndian<HumanParameterBlock>(bpbSector);
         atariBpb = Marshal.ByteArrayToStructureLittleEndian<AtariParameterBlock>(bpbSector);

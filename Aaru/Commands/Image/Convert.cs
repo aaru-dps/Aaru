@@ -1013,7 +1013,7 @@ sealed class ConvertImageCommand : Command
                 subchannelExtents.Add((int)s);
             }
 
-            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.OrderBy(t => t).TakeWhile(tag => useLong))
+            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.OrderBy(t => t).TakeWhile(_ => useLong))
             {
                 switch(tag)
                 {
@@ -1411,7 +1411,7 @@ sealed class ConvertImageCommand : Command
 
                             mediaTask.StopTask();
 
-                            foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.TakeWhile(tag => useLong))
+                            foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.TakeWhile(_ => useLong))
                             {
                                 switch(tag)
                                 {

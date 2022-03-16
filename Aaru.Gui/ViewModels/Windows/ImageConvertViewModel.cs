@@ -844,7 +844,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         ErrorNumber errno;
 
-        foreach(MediaTagType mediaTag in _inputFormat.Info.ReadableMediaTags.TakeWhile(mediaTag => !_cancel))
+        foreach(MediaTagType mediaTag in _inputFormat.Info.ReadableMediaTags.TakeWhile(_ => !_cancel))
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -1100,7 +1100,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 subchannelExtents.Add((int)s);
             }
 
-            foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.TakeWhile(tag => useLong && !_cancel))
+            foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.TakeWhile(_ => useLong && !_cancel))
             {
                 switch(tag)
                 {
@@ -1310,7 +1310,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         }
         else
         {
-            foreach(Track track in tracks.TakeWhile(track => !_cancel))
+            foreach(Track track in tracks.TakeWhile(_ => !_cancel))
             {
                 doneSectors = 0;
                 ulong trackSectors = track.EndSector - track.StartSector + 1;
@@ -1451,7 +1451,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             });
 
             foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.OrderBy(t => t).
-                                                      TakeWhile(tag => useLong && !_cancel))
+                                                      TakeWhile(_ => useLong && !_cancel))
             {
                 switch(tag)
                 {
@@ -1470,7 +1470,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 if(ForceChecked && !outputFormat.SupportedSectorTags.Contains(tag))
                     continue;
 
-                foreach(Track track in tracks.TakeWhile(track => !_cancel))
+                foreach(Track track in tracks.TakeWhile(_ => !_cancel))
                 {
                     doneSectors = 0;
                     ulong  trackSectors = track.EndSector - track.StartSector + 1;

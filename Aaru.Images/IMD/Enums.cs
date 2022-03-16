@@ -32,8 +32,11 @@
 
 namespace Aaru.DiscImages;
 
+using System.Diagnostics.CodeAnalysis;
+
 public sealed partial class Imd
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     enum TransferRate : byte
     {
         /// <summary>500 kbps in FM mode</summary>

@@ -953,7 +953,7 @@ public sealed partial class CloneCd
         buffer = null;
 
         foreach(KeyValuePair<uint, ulong> kvp in _offsetMap.Where(kvp => sectorAddress >= kvp.Value).
-                                                            SelectMany(kvp => Tracks, (kvp, track) => new
+                                                            SelectMany(_ => Tracks, (kvp, track) => new
                                                             {
                                                                 kvp,
                                                                 track
