@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable MemberCanBePrivate.Global
 
 namespace Aaru.Decoders.SCSI.MMC;

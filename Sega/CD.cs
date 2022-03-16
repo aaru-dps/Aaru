@@ -116,7 +116,7 @@ public static class CD
 
         string id = Encoding.ASCII.GetString(ipbin.SegaHardwareID);
 
-        return id == "SEGADISCSYSTEM  " || id == "SEGADATADISC    " || id == "SEGAOS          " ? ipbin : null;
+        return id is "SEGADISCSYSTEM  " or "SEGADATADISC    " or "SEGAOS          " ? ipbin : null;
     }
 
     /// <summary>Pretty prints a decoded IP.BIN in SEGA CD / MEGA CD format</summary>

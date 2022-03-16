@@ -341,10 +341,8 @@ public static class PFI
         }
 
         // DVD+R, DVD+RW, DVD+R DL and DVD+RW DL
-        if(pfi.DiskCategory == DiskCategory.DVDPR   ||
-           pfi.DiskCategory == DiskCategory.DVDPRW  ||
-           pfi.DiskCategory == DiskCategory.DVDPRDL ||
-           pfi.DiskCategory == DiskCategory.DVDPRWDL)
+        if(pfi.DiskCategory is DiskCategory.DVDPR or DiskCategory.DVDPRW or DiskCategory.DVDPRDL
+                            or DiskCategory.DVDPRWDL)
         {
             pfi.VCPS                |= (response[20] & 0x40) == 0x40;
             pfi.ApplicationCode     =  response[21];

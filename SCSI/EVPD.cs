@@ -597,8 +597,7 @@ public static class EVPD
 
                     break;
                 case IdentificationTypes.EUI:
-                    if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
-                       descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                    if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                         sb.AppendFormat("\tIEEE EUI-64: {0}", descriptor.ASCII).AppendLine();
                     else
                     {
@@ -612,8 +611,7 @@ public static class EVPD
 
                     break;
                 case IdentificationTypes.NAA:
-                    if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
-                       descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                    if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                         sb.AppendFormat("\tNAA: {0}", descriptor.ASCII).AppendLine();
                     else
                     {
@@ -627,8 +625,7 @@ public static class EVPD
 
                     break;
                 case IdentificationTypes.Relative:
-                    if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
-                       descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                    if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                         sb.AppendFormat("\tRelative target port identifier: {0}", descriptor.ASCII).AppendLine();
                     else
                         sb.AppendFormat("\tRelative target port identifier: {0}",
@@ -636,8 +633,7 @@ public static class EVPD
 
                     break;
                 case IdentificationTypes.TargetPortGroup:
-                    if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
-                       descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                    if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                         sb.AppendFormat("\tTarget group identifier: {0}", descriptor.ASCII).AppendLine();
                     else
                         sb.AppendFormat("\tTarget group identifier: {0}",
@@ -645,8 +641,7 @@ public static class EVPD
 
                     break;
                 case IdentificationTypes.LogicalUnitGroup:
-                    if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
-                       descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                    if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                         sb.AppendFormat("\tLogical unit group identifier: {0}", descriptor.ASCII).AppendLine();
                     else
                         sb.AppendFormat("\tLogical unit group identifier: {0}",
@@ -654,8 +649,7 @@ public static class EVPD
 
                     break;
                 case IdentificationTypes.MD5:
-                    if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
-                       descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                    if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                         sb.AppendFormat("\tMD5 logical unit identifier: {0}", descriptor.ASCII).AppendLine();
                     else
                     {
@@ -669,8 +663,7 @@ public static class EVPD
 
                     break;
                 case IdentificationTypes.SCSI:
-                    if(descriptor.CodeSet == IdentificationCodeSet.ASCII ||
-                       descriptor.CodeSet == IdentificationCodeSet.UTF8)
+                    if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                         sb.AppendFormat("\tSCSI name string identifier: {0}", descriptor.ASCII).AppendLine();
                     else
                         sb.AppendFormat("\tSCSI name string identifier (hex): {0}",
