@@ -93,8 +93,7 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-        new (string name, Type type, string description)[]
-            {};
+        Array.Empty<(string name, Type type, string description)>();
 
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;

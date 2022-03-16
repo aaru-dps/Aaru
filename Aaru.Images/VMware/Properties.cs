@@ -57,11 +57,9 @@ public sealed partial class VMware
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
-        {};
+    public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
     /// <inheritdoc />
-    public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
-        {};
+    public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {

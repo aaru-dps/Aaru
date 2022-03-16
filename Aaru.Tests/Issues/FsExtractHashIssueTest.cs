@@ -119,8 +119,7 @@ public abstract class FsExtractHashIssueTest
 
                 Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
 
-                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                    {});
+                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
 
                 Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName}");
 

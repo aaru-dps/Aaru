@@ -57,11 +57,9 @@ public sealed partial class DriDiskCopy
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
-        {};
+    public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
     /// <inheritdoc />
-    public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
-        {};
+    public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     // TODO: Test with real hardware to see real supported media
     /// <inheritdoc />
@@ -77,8 +75,7 @@ public sealed partial class DriDiskCopy
     };
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-        new (string name, Type type, string description, object @default)[]
-            {};
+        Array.Empty<(string name, Type type, string description, object @default)>();
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {

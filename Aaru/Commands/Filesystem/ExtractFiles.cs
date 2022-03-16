@@ -335,8 +335,7 @@ sealed class ExtractFilesCommand : Command
                                 AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
 
                                 var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                                     Invoke(new object[]
-                                                                                {});
+                                                                     Invoke(Array.Empty<object>());
 
                                 Spectre.ProgressSingleSpinner(ctx =>
                                 {
@@ -369,8 +368,7 @@ sealed class ExtractFilesCommand : Command
                         AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
 
                         var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                             Invoke(new object[]
-                                                                        {});
+                                                             Invoke(Array.Empty<object>());
 
                         Spectre.ProgressSingleSpinner(ctx =>
                         {

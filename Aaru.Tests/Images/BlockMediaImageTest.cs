@@ -270,8 +270,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                                 Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
 
                                 var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                                     Invoke(new object[]
-                                                                                {});
+                                                                     Invoke(Array.Empty<object>());
 
                                 Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName} in {testFile}");
 

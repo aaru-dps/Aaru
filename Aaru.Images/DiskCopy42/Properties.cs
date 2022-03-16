@@ -56,8 +56,7 @@ public sealed partial class DiskCopy42
     /// <inheritdoc />
     public string Format => "Apple DiskCopy 4.2";
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
-        {};
+    public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => new[]
     {

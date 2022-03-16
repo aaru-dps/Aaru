@@ -100,8 +100,7 @@ public sealed partial class CloneCd
     };
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-        new (string name, Type type, string description, object @default)[]
-            {};
+        Array.Empty<(string name, Type type, string description, object @default)>();
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {

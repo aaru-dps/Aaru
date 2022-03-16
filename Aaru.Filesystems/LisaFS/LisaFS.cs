@@ -66,8 +66,7 @@ public sealed partial class LisaFS : IReadOnlyFilesystem
     // TODO: Implement Lisa 7/7 namespace (needs decoding {!CATALOG} file)
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-        new (string name, Type type, string description)[]
-            {};
+        Array.Empty<(string name, Type type, string description)>();
 
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => new()

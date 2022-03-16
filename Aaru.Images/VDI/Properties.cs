@@ -57,11 +57,9 @@ public sealed partial class Vdi
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
-        {};
+    public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
     /// <inheritdoc />
-    public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
-        {};
+    public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
@@ -73,8 +71,7 @@ public sealed partial class Vdi
     // TODO: Add cluster size option
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-        new (string name, Type type, string description, object @default)[]
-            {};
+        Array.Empty<(string name, Type type, string description, object @default)>();
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
