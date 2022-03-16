@@ -148,9 +148,7 @@ public sealed class SolarFS : IFilesystem
         sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();
         sb.AppendFormat("{0} bytes per sector", bpb.bps).AppendLine();
 
-        if(imagePlugin.Info.SectorSize == 2336 ||
-           imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448)
+        if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
         {
             if(bpb.bps != imagePlugin.Info.SectorSize)
                 sb.

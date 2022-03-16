@@ -55,9 +55,7 @@ public sealed partial class AppleHFS
         ushort      drSigWord;
         ErrorNumber errno;
 
-        if(imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448 ||
-           imagePlugin.Info.SectorSize == 2048)
+        if(imagePlugin.Info.SectorSize is 2352 or 2448 or 2048)
         {
             errno = imagePlugin.ReadSectors(partition.Start, 2, out mdbSector);
 
@@ -117,9 +115,7 @@ public sealed partial class AppleHFS
 
         var apmFromHddOnCd = false;
 
-        if(imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448 ||
-           imagePlugin.Info.SectorSize == 2048)
+        if(imagePlugin.Info.SectorSize is 2352 or 2448 or 2048)
         {
             errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] tmpSector);
 

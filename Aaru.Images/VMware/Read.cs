@@ -333,10 +333,7 @@ public sealed partial class VMware
                 return ErrorNumber.InvalidArgument;
             }
 
-            if(extent.Type == "FLAT" ||
-               extent.Type == "ZERO" ||
-               extent.Type == "VMFS" ||
-               cowD)
+            if(extent.Type is "FLAT" or "ZERO" or "VMFS" || cowD)
                 continue;
 
             Stream extentStream = extent.Filter.GetDataForkStream();
@@ -642,8 +639,7 @@ public sealed partial class VMware
         if(grainOff == 0 && _hasParent)
             return _parentImage.ReadSector(sectorAddress, out buffer);
 
-        if(grainOff == 0 ||
-           grainOff == 1)
+        if(grainOff is 0 or 1)
         {
             buffer = new byte[SECTOR_SIZE];
 

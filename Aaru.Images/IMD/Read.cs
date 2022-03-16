@@ -183,9 +183,7 @@ public sealed partial class Imd
 
         MediaEncoding mediaEncoding = MediaEncoding.MFM;
 
-        if(mode == TransferRate.TwoHundred   ||
-           mode == TransferRate.ThreeHundred ||
-           mode == TransferRate.FiveHundred)
+        if(mode is TransferRate.TwoHundred or TransferRate.ThreeHundred or TransferRate.FiveHundred)
             mediaEncoding = MediaEncoding.FM;
 
         _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedType.Local
 
 namespace Aaru.Filesystems;
@@ -85,8 +83,7 @@ public sealed class PFS : IFilesystem
 
         var magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
-        return magic == AFS_DISK || magic == PFS2_DISK || magic == PFS_DISK || magic == MUAF_DISK ||
-               magic == MUPFS_DISK;
+        return magic is AFS_DISK or PFS2_DISK or PFS_DISK or MUAF_DISK or MUPFS_DISK;
     }
 
     /// <inheritdoc />
@@ -125,8 +122,7 @@ public sealed class PFS : IFilesystem
                 break;
         }
 
-        if(rootBlock.diskType == MUAF_DISK ||
-           rootBlock.diskType == MUPFS_DISK)
+        if(rootBlock.diskType is MUAF_DISK or MUPFS_DISK)
             sbInformation.Append(", with multi-user support");
 
         sbInformation.AppendLine();

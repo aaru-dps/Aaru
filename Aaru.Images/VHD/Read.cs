@@ -342,8 +342,7 @@ public sealed partial class Vhd
         _imageInfo.Heads           = (_thisFooter.DiskGeometry & 0xFF00)     >> 8;
         _imageInfo.SectorsPerTrack = _thisFooter.DiskGeometry & 0xFF;
 
-        if(_thisFooter.DiskType == TYPE_DYNAMIC ||
-           _thisFooter.DiskType == TYPE_DIFFERENCING)
+        if(_thisFooter.DiskType is TYPE_DYNAMIC or TYPE_DIFFERENCING)
         {
             imageStream.Seek((long)_thisFooter.Offset, SeekOrigin.Begin);
             var dynamicBytes = new byte[1024];

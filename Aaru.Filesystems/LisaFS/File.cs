@@ -198,8 +198,7 @@ public sealed partial class LisaFS
            !_debug)
             return ErrorNumber.AccessDenied;
 
-        if(fileId > 4 ||
-           fileId <= 0)
+        if(fileId is > 4 or <= 0)
             if(fileId != FILEID_BOOT_SIGNED &&
                fileId != FILEID_LOADER_SIGNED)
                 return ErrorNumber.InvalidArgument;

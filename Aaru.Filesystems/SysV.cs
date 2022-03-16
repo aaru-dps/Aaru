@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable NotAccessedField.Local
 
 namespace Aaru.Filesystems;
@@ -128,22 +126,17 @@ public sealed class SysVfs : IFilesystem
 
             var magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
-            if(magic == XENIX_MAGIC ||
-               magic == XENIX_CIGAM ||
-               magic == SYSV_MAGIC  ||
-               magic == SYSV_CIGAM)
+            if(magic is XENIX_MAGIC or XENIX_CIGAM or SYSV_MAGIC or SYSV_CIGAM)
                 return true;
 
             magic = BitConverter.ToUInt32(sb_sector, 0x1F8); // System V magic location
 
-            if(magic == SYSV_MAGIC ||
-               magic == SYSV_CIGAM)
+            if(magic is SYSV_MAGIC or SYSV_CIGAM)
                 return true;
 
             magic = BitConverter.ToUInt32(sb_sector, 0x1F0); // XENIX 3 magic location
 
-            if(magic == XENIX_MAGIC ||
-               magic == XENIX_CIGAM)
+            if(magic is XENIX_MAGIC or XENIX_CIGAM)
                 return true;
 
             var coherent_string = new byte[6];
@@ -162,12 +155,9 @@ public sealed class SysVfs : IFilesystem
             var s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
             var s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
 
-            if(s_fsize  <= 0          ||
-               s_fsize  >= 0xFFFFFFFF ||
-               s_nfree  <= 0          ||
-               s_nfree  >= 0xFFFF     ||
-               s_ninode <= 0          ||
-               s_ninode >= 0xFFFF)
+            if(s_fsize is <= 0 or >= 0xFFFFFFFF ||
+               s_nfree is <= 0 or >= 0xFFFF     ||
+               s_ninode is <= 0 or >= 0xFFFF)
                 continue;
 
             if((s_fsize  & 0xFF) == 0x00 &&
@@ -247,8 +237,7 @@ public sealed class SysVfs : IFilesystem
 
             var magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
-            if(magic == XENIX_MAGIC ||
-               magic == SYSV_MAGIC)
+            if(magic is XENIX_MAGIC or SYSV_MAGIC)
             {
                 if(magic == SYSV_MAGIC)
                 {
@@ -263,8 +252,7 @@ public sealed class SysVfs : IFilesystem
                 break;
             }
 
-            if(magic == XENIX_CIGAM ||
-               magic == SYSV_CIGAM)
+            if(magic is XENIX_CIGAM or SYSV_CIGAM)
             {
                 bigEndian = true; // Big endian
 
@@ -340,12 +328,9 @@ public sealed class SysVfs : IFilesystem
             var s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
             var s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
 
-            if(s_fsize  <= 0          ||
-               s_fsize  >= 0xFFFFFFFF ||
-               s_nfree  <= 0          ||
-               s_nfree  >= 0xFFFF     ||
-               s_ninode <= 0          ||
-               s_ninode >= 0xFFFF)
+            if(s_fsize is <= 0 or >= 0xFFFFFFFF ||
+               s_nfree is <= 0 or >= 0xFFFF     ||
+               s_ninode is <= 0 or >= 0xFFFF)
                 continue;
 
             if((s_fsize  & 0xFF) == 0x00 &&
@@ -495,9 +480,7 @@ public sealed class SysVfs : IFilesystem
                     break;
             }
 
-            if(imagePlugin.Info.SectorSize == 2336 ||
-               imagePlugin.Info.SectorSize == 2352 ||
-               imagePlugin.Info.SectorSize == 2448)
+            if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
             {
                 if(bs != 2048)
                     sb.

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 
 namespace Aaru.Core.Devices.Dumping;
@@ -112,7 +110,7 @@ partial class Dump
                 _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
                 decSense = Sense.Decode(senseBuf);
             } while(decSense is { ASC: 0x00 } &&
-                    (decSense.Value.ASCQ == 0x1A || decSense.Value.ASCQ != 0x04 || decSense.Value.ASCQ != 0x00));
+                    decSense.Value.ASCQ is 0x1A or not (0x04 and 0x00));
 
             _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
             decSense = Sense.Decode(senseBuf);
@@ -191,7 +189,7 @@ partial class Dump
                     _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
                     decSense = Sense.Decode(senseBuf);
                 } while(decSense is { ASC: 0x00 } &&
-                        (decSense.Value.ASCQ == 0x1A || decSense.Value.ASCQ == 0x19));
+                        decSense.Value.ASCQ is 0x1A or 0x19);
 
                 // And yet, did not rewind!
                 if(decSense.HasValue &&
@@ -737,7 +735,7 @@ partial class Dump
                 _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
                 decSense = Sense.Decode(senseBuf);
             } while(decSense is { ASC: 0x00 } &&
-                    (decSense.Value.ASCQ == 0x1A || decSense.Value.ASCQ == 0x19));
+                    decSense.Value.ASCQ is 0x1A or 0x19);
 
             // And yet, did not rewind!
             if(decSense.HasValue &&
@@ -963,7 +961,7 @@ partial class Dump
 
                     // For sure this is an end-of-tape/partition
                     case SenseKeys.BlankCheck when decSense.Value.ASC == 0x00 &&
-                                                   (decSense.Value.ASCQ == 0x02 || decSense.Value.ASCQ == 0x05 || eom):
+                                                   (decSense.Value.ASCQ is 0x02 or 0x05 || eom):
                         // TODO: Detect end of partition
                         endOfMedia = true;
                         UpdateStatus?.Invoke("Found end-of-tape/partition...");
@@ -978,9 +976,8 @@ partial class Dump
                         continue;
                 }
 
-                if((decSense.Value.SenseKey == SenseKeys.NoSense ||
-                    decSense.Value.SenseKey == SenseKeys.RecoveredError) &&
-                   (decSense.Value.ASCQ == 0x02 || decSense.Value.ASCQ == 0x05 || eom))
+                if(decSense.Value.SenseKey is SenseKeys.NoSense or SenseKeys.RecoveredError &&
+                   (decSense.Value.ASCQ is 0x02 or 0x05 || eom))
                 {
                     // TODO: Detect end of partition
                     endOfMedia = true;
@@ -990,8 +987,7 @@ partial class Dump
                     continue;
                 }
 
-                if((decSense.Value.SenseKey == SenseKeys.NoSense ||
-                    decSense.Value.SenseKey == SenseKeys.RecoveredError) &&
+                if(decSense.Value.SenseKey is SenseKeys.NoSense or SenseKeys.RecoveredError &&
                    (decSense.Value.ASCQ == 0x01 || filemark))
                 {
                     currentTapeFile.LastBlock = currentBlock - 1;

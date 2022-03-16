@@ -71,8 +71,7 @@ public sealed class F2FS : IFilesystem
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < F2FS_MIN_SECTOR ||
-           imagePlugin.Info.SectorSize > F2FS_MAX_SECTOR)
+        if(imagePlugin.Info.SectorSize is < F2FS_MIN_SECTOR or > F2FS_MAX_SECTOR)
             return false;
 
         uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.Info.SectorSize;
@@ -107,8 +106,7 @@ public sealed class F2FS : IFilesystem
         Encoding    = Encoding.Unicode;
         information = "";
 
-        if(imagePlugin.Info.SectorSize < F2FS_MIN_SECTOR ||
-           imagePlugin.Info.SectorSize > F2FS_MAX_SECTOR)
+        if(imagePlugin.Info.SectorSize is < F2FS_MIN_SECTOR or > F2FS_MAX_SECTOR)
             return;
 
         uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.Info.SectorSize;

@@ -52,8 +52,7 @@ public sealed partial class SaveDskF
 
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
-        return (_header.magic == SDF_MAGIC || _header.magic == SDF_MAGIC_COMPRESSED ||
-                _header.magic == SDF_MAGIC_OLD) && _header.fatCopies <= 2 && _header.padding == 0 &&
-               _header.commentOffset < stream.Length && _header.dataOffset < stream.Length;
+        return _header.magic is SDF_MAGIC or SDF_MAGIC_COMPRESSED or SDF_MAGIC_OLD && _header.fatCopies <= 2 &&
+               _header.padding == 0 && _header.commentOffset < stream.Length && _header.dataOffset < stream.Length;
     }
 }

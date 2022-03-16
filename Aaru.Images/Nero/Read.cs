@@ -302,8 +302,7 @@ public sealed partial class Nero
                                     corruptedTrackMode = true;
                                     entry.Mode         = 0x0005;
                                 }
-                                else if(entry.Mode == 0x0002 ||
-                                        entry.Mode == 0x0003)
+                                else if(entry.Mode is 0x0002 or 0x0003)
                                 {
                                     corruptedTrackMode = true;
                                     entry.Mode         = 0x0006;
@@ -418,8 +417,7 @@ public sealed partial class Nero
                                     corruptedTrackMode = true;
                                     entry.Mode         = 0x0005;
                                 }
-                                else if(entry.Mode == 0x0002 ||
-                                        entry.Mode == 0x0003)
+                                else if(entry.Mode is 0x0002 or 0x0003)
                                 {
                                     corruptedTrackMode = true;
                                     entry.Mode         = 0x0006;
@@ -935,7 +933,7 @@ public sealed partial class Nero
 
             AaruConsole.DebugWriteLine("Nero plugin", "Building offset, track and session maps");
 
-            bool onlyOneSession = currentSession == 1 || currentSession == 2;
+            bool onlyOneSession = currentSession is 1 or 2;
             currentSession = 1;
             _neroSessions.TryGetValue(1, out uint currentSessionMaxTrack);
             uint  currentSessionCurrentTrack = 1;
@@ -1425,8 +1423,7 @@ public sealed partial class Nero
 
             _neroFilter = imageFilter;
 
-            if(_imageInfo.MediaType == CommonTypes.MediaType.Unknown ||
-               _imageInfo.MediaType == CommonTypes.MediaType.CD)
+            if(_imageInfo.MediaType is CommonTypes.MediaType.Unknown or CommonTypes.MediaType.CD)
             {
                 var data       = false;
                 var mode2      = false;
@@ -1489,46 +1486,45 @@ public sealed partial class Nero
 
             _sectorBuilder = new SectorBuilder();
 
-            _isCd = _imageInfo.MediaType == CommonTypes.MediaType.CD            ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDDA          ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDG           ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDEG          ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDI           ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDROM         ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDROMXA       ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDPLUS        ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDMO          ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDR           ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDRW          ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDMRW         ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.VCD           ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.SVCD          ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.PCD           ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.DTSCD         ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDMIDI        ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDV           ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDIREADY      ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.FMTOWNS       ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.PS1CD         ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.PS2CD         ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.MEGACD        ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.SATURNCD      ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.GDROM         ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.GDR           ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.MilCD         ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.SuperCDROM2   ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.JaguarCD      ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.ThreeDO       ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.PCFX          ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.NeoGeoCD      ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CDTV          ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CD32          ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.Playdia       ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.Pippin        ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.VideoNow      ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.VideoNowColor ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.VideoNowXp    ||
-                    _imageInfo.MediaType == CommonTypes.MediaType.CVD;
+            _isCd = _imageInfo.MediaType is CommonTypes.MediaType.CD or CommonTypes.MediaType.CDDA
+                                                                     or CommonTypes.MediaType.CDG
+                                                                     or CommonTypes.MediaType.CDEG
+                                                                     or CommonTypes.MediaType.CDI
+                                                                     or CommonTypes.MediaType.CDROM
+                                                                     or CommonTypes.MediaType.CDROMXA
+                                                                     or CommonTypes.MediaType.CDPLUS
+                                                                     or CommonTypes.MediaType.CDMO
+                                                                     or CommonTypes.MediaType.CDR
+                                                                     or CommonTypes.MediaType.CDRW
+                                                                     or CommonTypes.MediaType.CDMRW
+                                                                     or CommonTypes.MediaType.VCD
+                                                                     or CommonTypes.MediaType.SVCD
+                                                                     or CommonTypes.MediaType.PCD
+                                                                     or CommonTypes.MediaType.DTSCD
+                                                                     or CommonTypes.MediaType.CDMIDI
+                                                                     or CommonTypes.MediaType.CDV
+                                                                     or CommonTypes.MediaType.CDIREADY
+                                                                     or CommonTypes.MediaType.FMTOWNS
+                                                                     or CommonTypes.MediaType.PS1CD
+                                                                     or CommonTypes.MediaType.PS2CD
+                                                                     or CommonTypes.MediaType.MEGACD
+                                                                     or CommonTypes.MediaType.SATURNCD
+                                                                     or CommonTypes.MediaType.GDROM
+                                                                     or CommonTypes.MediaType.GDR
+                                                                     or CommonTypes.MediaType.MilCD
+                                                                     or CommonTypes.MediaType.SuperCDROM2
+                                                                     or CommonTypes.MediaType.JaguarCD
+                                                                     or CommonTypes.MediaType.ThreeDO
+                                                                     or CommonTypes.MediaType.PCFX
+                                                                     or CommonTypes.MediaType.NeoGeoCD
+                                                                     or CommonTypes.MediaType.CDTV
+                                                                     or CommonTypes.MediaType.CD32
+                                                                     or CommonTypes.MediaType.Playdia
+                                                                     or CommonTypes.MediaType.Pippin
+                                                                     or CommonTypes.MediaType.VideoNow
+                                                                     or CommonTypes.MediaType.VideoNowColor
+                                                                     or CommonTypes.MediaType.VideoNowXp
+                                                                     or CommonTypes.MediaType.CVD;
 
             if(_isCd)
                 return ErrorNumber.NoError;
@@ -1760,8 +1756,7 @@ public sealed partial class Nero
     {
         buffer = null;
 
-        if(tag == SectorTagType.CdTrackFlags ||
-           tag == SectorTagType.CdTrackIsrc)
+        if(tag is SectorTagType.CdTrackFlags or SectorTagType.CdTrackIsrc)
             track = (uint)sectorAddress;
 
         if(!_neroTracks.TryGetValue(track, out NeroTrack aaruTrack))

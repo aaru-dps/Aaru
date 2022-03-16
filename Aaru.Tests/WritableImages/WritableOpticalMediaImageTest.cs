@@ -429,46 +429,19 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                     outputFormat.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
 
                 // TODO: Progress
-                if(inputFormat.Info.MediaType == MediaType.CD            ||
-                   inputFormat.Info.MediaType == MediaType.CDDA          ||
-                   inputFormat.Info.MediaType == MediaType.CDG           ||
-                   inputFormat.Info.MediaType == MediaType.CDEG          ||
-                   inputFormat.Info.MediaType == MediaType.CDI           ||
-                   inputFormat.Info.MediaType == MediaType.CDROM         ||
-                   inputFormat.Info.MediaType == MediaType.CDROMXA       ||
-                   inputFormat.Info.MediaType == MediaType.CDPLUS        ||
-                   inputFormat.Info.MediaType == MediaType.CDMO          ||
-                   inputFormat.Info.MediaType == MediaType.CDR           ||
-                   inputFormat.Info.MediaType == MediaType.CDRW          ||
-                   inputFormat.Info.MediaType == MediaType.CDMRW         ||
-                   inputFormat.Info.MediaType == MediaType.VCD           ||
-                   inputFormat.Info.MediaType == MediaType.SVCD          ||
-                   inputFormat.Info.MediaType == MediaType.PCD           ||
-                   inputFormat.Info.MediaType == MediaType.DTSCD         ||
-                   inputFormat.Info.MediaType == MediaType.CDMIDI        ||
-                   inputFormat.Info.MediaType == MediaType.CDV           ||
-                   inputFormat.Info.MediaType == MediaType.CDIREADY      ||
-                   inputFormat.Info.MediaType == MediaType.FMTOWNS       ||
-                   inputFormat.Info.MediaType == MediaType.PS1CD         ||
-                   inputFormat.Info.MediaType == MediaType.PS2CD         ||
-                   inputFormat.Info.MediaType == MediaType.MEGACD        ||
-                   inputFormat.Info.MediaType == MediaType.SATURNCD      ||
-                   inputFormat.Info.MediaType == MediaType.GDROM         ||
-                   inputFormat.Info.MediaType == MediaType.GDR           ||
-                   inputFormat.Info.MediaType == MediaType.MilCD         ||
-                   inputFormat.Info.MediaType == MediaType.SuperCDROM2   ||
-                   inputFormat.Info.MediaType == MediaType.JaguarCD      ||
-                   inputFormat.Info.MediaType == MediaType.ThreeDO       ||
-                   inputFormat.Info.MediaType == MediaType.PCFX          ||
-                   inputFormat.Info.MediaType == MediaType.NeoGeoCD      ||
-                   inputFormat.Info.MediaType == MediaType.CDTV          ||
-                   inputFormat.Info.MediaType == MediaType.CD32          ||
-                   inputFormat.Info.MediaType == MediaType.Playdia       ||
-                   inputFormat.Info.MediaType == MediaType.Pippin        ||
-                   inputFormat.Info.MediaType == MediaType.VideoNow      ||
-                   inputFormat.Info.MediaType == MediaType.VideoNowColor ||
-                   inputFormat.Info.MediaType == MediaType.VideoNowXp    ||
-                   inputFormat.Info.MediaType == MediaType.CVD)
+                if(inputFormat.Info.MediaType is MediaType.CD or MediaType.CDDA or MediaType.CDG or MediaType.CDEG
+                                              or MediaType.CDI or MediaType.CDROM or MediaType.CDROMXA
+                                              or MediaType.CDPLUS or MediaType.CDMO or MediaType.CDR or MediaType.CDRW
+                                              or MediaType.CDMRW or MediaType.VCD or MediaType.SVCD or MediaType.PCD
+                                              or MediaType.DTSCD or MediaType.CDMIDI or MediaType.CDV
+                                              or MediaType.CDIREADY or MediaType.FMTOWNS or MediaType.PS1CD
+                                              or MediaType.PS2CD or MediaType.MEGACD or MediaType.SATURNCD
+                                              or MediaType.GDROM or MediaType.GDR or MediaType.MilCD
+                                              or MediaType.SuperCDROM2 or MediaType.JaguarCD or MediaType.ThreeDO
+                                              or MediaType.PCFX or MediaType.NeoGeoCD or MediaType.CDTV
+                                              or MediaType.CD32 or MediaType.Playdia or MediaType.Pippin
+                                              or MediaType.VideoNow or MediaType.VideoNowColor or MediaType.VideoNowXp
+                                              or MediaType.CVD)
                     CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, inputFormat.Info.Sectors,
                                                     null, null, null, null, null, outputFormat);
 

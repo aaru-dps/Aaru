@@ -62,16 +62,13 @@ public sealed partial class WCDiskImage
         if(fheader.version > 1)
             return false;
 
-        if(fheader.heads < 1 ||
-           fheader.heads > 2)
+        if(fheader.heads is < 1 or > 2)
             return false;
 
-        if(fheader.sectorsPerTrack < 8 ||
-           fheader.sectorsPerTrack > 18)
+        if(fheader.sectorsPerTrack is < 8 or > 18)
             return false;
 
-        if(fheader.cylinders < 1 ||
-           fheader.cylinders > 80)
+        if(fheader.cylinders is < 1 or > 80)
             return false;
 
         if(fheader.extraTracks[0] > 1 ||

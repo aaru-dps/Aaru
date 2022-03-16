@@ -337,7 +337,7 @@ public sealed class ImageVerifyViewModel : ViewModelBase
         ProgressVisible      = true;
         Progress2Visible     = false;
 
-        VerifySectorsVisible = _inputFormat is IOpticalMediaImage || _inputFormat is IVerifiableSectorsImage;
+        VerifySectorsVisible = _inputFormat is IOpticalMediaImage or IVerifiableSectorsImage;
 
         // TODO: Do not offer the option to use this form if the image does not support any kind of verification
         new Thread(DoWork).Start();

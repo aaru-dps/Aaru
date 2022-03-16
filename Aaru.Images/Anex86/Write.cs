@@ -199,11 +199,9 @@ public sealed partial class Anex86
             return false;
         }
 
-        if((_imageInfo.MediaType == MediaType.Unknown           || _imageInfo.MediaType == MediaType.GENERIC_HDD   ||
-            _imageInfo.MediaType == MediaType.FlashDrive        || _imageInfo.MediaType == MediaType.CompactFlash  ||
-            _imageInfo.MediaType == MediaType.CompactFlashType2 || _imageInfo.MediaType == MediaType.PCCardTypeI   ||
-            _imageInfo.MediaType == MediaType.PCCardTypeII      || _imageInfo.MediaType == MediaType.PCCardTypeIII ||
-            _imageInfo.MediaType == MediaType.PCCardTypeIV) &&
+        if(_imageInfo.MediaType is MediaType.Unknown or MediaType.GENERIC_HDD or MediaType.FlashDrive
+                                or MediaType.CompactFlash or MediaType.CompactFlashType2 or MediaType.PCCardTypeI
+                                or MediaType.PCCardTypeII or MediaType.PCCardTypeIII or MediaType.PCCardTypeIV &&
            _header.cylinders == 0)
         {
             _header.cylinders = (int)(_imageInfo.Sectors / 8 / 33);

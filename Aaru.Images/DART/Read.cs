@@ -111,8 +111,7 @@ public sealed partial class Dart
 
         short[] bLength;
 
-        if(header.srcType == DISK_MAC_HD ||
-           header.srcType == DISK_DOS_HD)
+        if(header.srcType is DISK_MAC_HD or DISK_DOS_HD)
             bLength = new short[BLOCK_ARRAY_LEN_HIGH];
         else
             bLength = new short[BLOCK_ARRAY_LEN_LOW];
@@ -167,9 +166,7 @@ public sealed partial class Dart
 
         _dataCache = dataMs.ToArray();
 
-        if(header.srcType == DISK_LISA ||
-           header.srcType == DISK_MAC  ||
-           header.srcType == DISK_APPLE2)
+        if(header.srcType is DISK_LISA or DISK_MAC or DISK_APPLE2)
         {
             _imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
             _tagCache = tagMs.ToArray();

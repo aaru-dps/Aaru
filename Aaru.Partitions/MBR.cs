@@ -359,22 +359,13 @@ public sealed class MBR : IPartition
 
             valid &= entry.type != 0x00;
 
-            if(entry.type == 0x05 ||
-               entry.type == 0x0F ||
-               entry.type == 0x15 ||
-               entry.type == 0x1F ||
-               entry.type == 0x85 ||
-               entry.type == 0x91 ||
-               entry.type == 0x9B ||
-               entry.type == 0xC5 ||
-               entry.type == 0xCF ||
-               entry.type == 0xD5)
+            if(entry.type is 0x05 or 0x0F or 0x15 or 0x1F or 0x85 or 0x91 or 0x9B or 0xC5 or 0xCF or 0xD5)
             {
                 valid    = false;
                 extended = true; // Extended partition
             }
 
-            minix |= entry.type == 0x81 || entry.type == 0x80; // MINIX partition
+            minix |= entry.type is 0x81 or 0x80; // MINIX partition
 
             valid &= entry.lba_start  != 0 || entry.lba_sectors  != 0 || entry.start_cylinder != 0 ||
                      entry.start_head != 0 || entry.start_sector != 0 || entry.end_cylinder   != 0 ||
@@ -506,7 +497,7 @@ public sealed class MBR : IPartition
                     AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_sector {0}", endSector);
 
                     // Let's start the fun...
-                    extValid &= ebrEntry.status == 0x00 || ebrEntry.status == 0x80;
+                    extValid &= ebrEntry.status is 0x00 or 0x80;
                     extValid &= ebrEntry.type != 0x00;
 
                     extValid &= ebrEntry.lba_start  != 0 || ebrEntry.lba_sectors != 0 || ebrEntry.start_cylinder != 0 ||
@@ -524,7 +515,7 @@ public sealed class MBR : IPartition
                                                imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack) - extStart;
                     }
 
-                    extMinix |= ebrEntry.type == 0x81 || ebrEntry.type == 0x80;
+                    extMinix |= ebrEntry.type is 0x81 or 0x80;
 
                     // For optical media
                     extStart   /= divider;
@@ -533,16 +524,7 @@ public sealed class MBR : IPartition
                     AaruConsole.DebugWriteLine("MBR plugin", "ext_start {0}", extStart);
                     AaruConsole.DebugWriteLine("MBR plugin", "ext_sectors {0}", extSectors);
 
-                    if(ebrEntry.type == 0x05 ||
-                       ebrEntry.type == 0x0F ||
-                       ebrEntry.type == 0x15 ||
-                       ebrEntry.type == 0x1F ||
-                       ebrEntry.type == 0x85 ||
-                       ebrEntry.type == 0x91 ||
-                       ebrEntry.type == 0x9B ||
-                       ebrEntry.type == 0xC5 ||
-                       ebrEntry.type == 0xCF ||
-                       ebrEntry.type == 0xD5)
+                    if(ebrEntry.type is 0x05 or 0x0F or 0x15 or 0x1F or 0x85 or 0x91 or 0x9B or 0xC5 or 0xCF or 0xD5)
                     {
                         extValid  = false;
                         nextStart = chainStart + extStart;
@@ -642,8 +624,8 @@ public sealed class MBR : IPartition
             AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_head {0}", mnxEntry.end_head);
             AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_sector {0}", endSector);
 
-            mnxValid &= mnxEntry.status == 0x00 || mnxEntry.status == 0x80;
-            mnxValid &= mnxEntry.type   == 0x81 || mnxEntry.type   == 0x80;
+            mnxValid &= mnxEntry.status is 0x00 or 0x80;
+            mnxValid &= mnxEntry.type is 0x81 or 0x80;
 
             mnxValid &= mnxEntry.lba_start  != 0 || mnxEntry.lba_sectors  != 0 || mnxEntry.start_cylinder != 0 ||
                         mnxEntry.start_head != 0 || mnxEntry.start_sector != 0 || mnxEntry.end_cylinder   != 0 ||

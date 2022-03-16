@@ -258,9 +258,8 @@ partial class Dump
         if(decMode.HasValue  &&
            _dev.IsUsb        &&
            !gotConfiguration &&
-           (decMode.Value.Header.MediumType == MediumTypes.UnknownBlockDevice  ||
-            decMode.Value.Header.MediumType == MediumTypes.ReadOnlyBlockDevice ||
-            decMode.Value.Header.MediumType == MediumTypes.ReadWriteBlockDevice))
+           decMode.Value.Header.MediumType is MediumTypes.UnknownBlockDevice or MediumTypes.ReadOnlyBlockDevice
+            or MediumTypes.ReadWriteBlockDevice)
         {
             _speedMultiplier = -1;
             Sbc(null, MediaType.Unknown, false);
@@ -495,8 +494,7 @@ partial class Dump
         #endregion All DVD and HD DVD types
 
         #region DVD-ROM
-        if(dskType == MediaType.DVDDownload ||
-           dskType == MediaType.DVDROM)
+        if(dskType is MediaType.DVDDownload or MediaType.DVDROM)
         {
             _dumpLog.WriteLine("Reading Lead-in Copyright Information.");
 

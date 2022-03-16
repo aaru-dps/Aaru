@@ -70,8 +70,7 @@ public sealed partial class MaxiDisk
         //    return false;
 
         // Only floppies supported
-        if(tmpHeader.heads == 0 ||
-           tmpHeader.heads > 2)
+        if(tmpHeader.heads is 0 or > 2)
             return false;
 
         // No floppies with more than this?

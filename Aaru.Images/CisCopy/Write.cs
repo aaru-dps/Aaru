@@ -139,8 +139,7 @@ public sealed partial class CisCopy
 
         var headStep = 1;
 
-        if(diskType == DiskType.MD1DD ||
-           diskType == DiskType.MD1DD8)
+        if(diskType is DiskType.MD1DD or DiskType.MD1DD8)
             headStep = 2;
 
         for(var i = 0; i < tracks; i += headStep)

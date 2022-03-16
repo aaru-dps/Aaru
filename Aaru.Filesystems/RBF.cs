@@ -101,9 +101,8 @@ public sealed class RBF : IFilesystem
                                        "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})", location,
                                        rbfSb.dd_sync, rbf9000Sb.rid_sync, RBF_SYNC, RBF_CNYS);
 
-            if(rbfSb.dd_sync      == RBF_SYNC ||
-               rbf9000Sb.rid_sync == RBF_SYNC ||
-               rbf9000Sb.rid_sync == RBF_CNYS)
+            if(rbfSb.dd_sync == RBF_SYNC ||
+               rbf9000Sb.rid_sync is RBF_SYNC or RBF_CNYS)
                 return true;
         }
 
@@ -148,9 +147,8 @@ public sealed class RBF : IFilesystem
                                        "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})", location,
                                        rbfSb.dd_sync, rbf9000Sb.rid_sync, RBF_SYNC, RBF_CNYS);
 
-            if(rbfSb.dd_sync      == RBF_SYNC ||
-               rbf9000Sb.rid_sync == RBF_SYNC ||
-               rbf9000Sb.rid_sync == RBF_CNYS)
+            if(rbfSb.dd_sync == RBF_SYNC ||
+               rbf9000Sb.rid_sync is RBF_SYNC or RBF_CNYS)
                 break;
         }
 

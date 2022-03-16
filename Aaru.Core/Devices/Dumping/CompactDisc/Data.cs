@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
@@ -253,8 +251,7 @@ partial class Dump
 
                 _speed *= _speedMultiplier;
 
-                if(_speed == 0 ||
-                   _speed > 0xFFFF)
+                if(_speed is 0 or > 0xFFFF)
                     _speed = 0xFFFF;
 
                 currentReadSpeed = _speed;

@@ -55,6 +55,6 @@ public sealed partial class Qcow2
         AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", _qHdr.magic);
         AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}", _qHdr.version);
 
-        return _qHdr.magic == QCOW_MAGIC && (_qHdr.version == QCOW_VERSION2 || _qHdr.version == QCOW_VERSION3);
+        return _qHdr.magic == QCOW_MAGIC && _qHdr.version is QCOW_VERSION2 or QCOW_VERSION3;
     }
 }

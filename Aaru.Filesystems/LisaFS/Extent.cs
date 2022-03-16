@@ -75,8 +75,7 @@ public sealed partial class LisaFS
         ulong ptr = _srecords[fileId].extent_ptr;
 
         // An invalid pointer denotes file does not exist
-        if(ptr == 0xFFFFFFFF ||
-           ptr == 0x00000000)
+        if(ptr is 0xFFFFFFFF or 0x00000000)
             return ErrorNumber.NoSuchFile;
 
         // Pointers are relative to MDDF

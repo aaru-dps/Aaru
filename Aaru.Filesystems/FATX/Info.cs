@@ -54,7 +54,7 @@ public sealed partial class XboxFatPlugin
 
         Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-        return sb.magic == FATX_MAGIC || sb.magic == FATX_CIGAM;
+        return sb.magic is FATX_MAGIC or FATX_CIGAM;
     }
 
     /// <inheritdoc />

@@ -99,9 +99,9 @@ public sealed class CBM : IFilesystem
 
             BAM cbmBam = Marshal.ByteArrayToStructureLittleEndian<BAM>(sector);
 
-            if(cbmBam.dosVersion == 0x41                                  &&
-               (cbmBam.doubleSided == 0x00 || cbmBam.doubleSided == 0x80) &&
-               cbmBam.unused1        == 0x00                              &&
+            if(cbmBam.dosVersion == 0x41          &&
+               cbmBam.doubleSided is 0x00 or 0x80 &&
+               cbmBam.unused1        == 0x00      &&
                cbmBam.directoryTrack == 0x12)
                 return true;
         }

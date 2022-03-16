@@ -144,7 +144,7 @@ public sealed partial class FAT
         if(imagePlugin.Info.SectorSize >= 512)
             bootable = BitConverter.ToUInt16(bpbSector, 0x1FE);
 
-        bool   correctSpc  = spc == 1 || spc == 2 || spc == 4 || spc == 8 || spc == 16 || spc == 32 || spc == 64;
+        bool   correctSpc  = spc is 1 or 2 or 4 or 8 or 16 or 32 or 64;
         string msxString   = Encoding.ASCII.GetString(msxId);
         string fat32String = Encoding.ASCII.GetString(fat32Id);
 
@@ -185,8 +185,7 @@ public sealed partial class FAT
         byte apricotMediaDescriptor = bpbSector[0x5A];
         var  apricotFatSectors      = BitConverter.ToUInt16(bpbSector, 0x5B);
 
-        bool apricotCorrectSpc = apricotSpc == 1  || apricotSpc == 2  || apricotSpc == 4 || apricotSpc == 8 ||
-                                 apricotSpc == 16 || apricotSpc == 32 || apricotSpc == 64;
+        bool apricotCorrectSpc = apricotSpc is 1 or 2 or 4 or 8 or 16 or 32 or 64;
 
         int  bitsInApricotBps  = CountBits.Count(apricotBps);
         byte apricotPartitions = bpbSector[0x0C];
@@ -258,7 +257,7 @@ public sealed partial class FAT
 
             // EBPB
             case 1 when correctSpc && numberOfFats <= 2 && rootEntries > 0 && fatSectors > 0 &&
-                        (bpbSignature == 0x28 || bpbSignature == 0x29):
+                        bpbSignature is 0x28 or 0x29:
                 return sectors       == 0 ? bigSectors <= partition.End - partition.Start + 1
                            : sectors <= partition.End                   - partition.Start + 1;
 
@@ -905,8 +904,7 @@ public sealed partial class FAT
                         XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name, Encoding, start: 1);
                 }
 
-                if(fakeBpb.signature == 0x28 ||
-                   fakeBpb.signature == 0x29)
+                if(fakeBpb.signature is 0x28 or 0x29)
                     XmlFsType.VolumeSerial = $"{fakeBpb.serial_no:X8}";
             }
 
@@ -952,9 +950,7 @@ public sealed partial class FAT
             if(fakeBpb.hsectors <= partition.Start)
                 sb.AppendFormat("{0} hidden sectors before BPB.", fakeBpb.hsectors).AppendLine();
 
-            if(fakeBpb.signature == 0x28 ||
-               fakeBpb.signature == 0x29 ||
-               andosOemCorrect)
+            if(fakeBpb.signature is 0x28 or 0x29 || andosOemCorrect)
             {
                 sb.AppendFormat("Drive number: 0x{0:X2}", fakeBpb.drive_no).AppendLine();
 

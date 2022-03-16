@@ -778,9 +778,7 @@ public sealed partial class Sidecar
         {
             ulong blocks = sidecar.OpticalDisc[0].Track[0].EndSector - sidecar.OpticalDisc[0].Track[0].StartSector + 1;
 
-            if(blocks == 25063   || // Locked (or non compatible drive)
-               blocks == 4229664 || // Xtreme unlock
-               blocks == 4246304)   // Wxripper unlock
+            if(blocks is 25063 or 4229664 or 4246304) // Wxripper unlock
                 dskType = MediaType.XGD3;
         }
 

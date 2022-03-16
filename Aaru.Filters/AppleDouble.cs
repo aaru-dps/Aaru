@@ -189,7 +189,7 @@ public sealed class AppleDouble : IFilter
                 prodosStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     return true;
             }
         }
@@ -207,7 +207,7 @@ public sealed class AppleDouble : IFilter
                 unixStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     return true;
             }
         }
@@ -225,7 +225,7 @@ public sealed class AppleDouble : IFilter
                 dosStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     return true;
             }
         }
@@ -243,7 +243,7 @@ public sealed class AppleDouble : IFilter
                 doslStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     return true;
             }
         }
@@ -261,7 +261,7 @@ public sealed class AppleDouble : IFilter
                 netatalkStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     return true;
             }
         }
@@ -279,7 +279,7 @@ public sealed class AppleDouble : IFilter
                 daveStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     return true;
             }
         }
@@ -297,7 +297,7 @@ public sealed class AppleDouble : IFilter
                 osxStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     return true;
             }
         }
@@ -316,7 +316,7 @@ public sealed class AppleDouble : IFilter
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(unarB);
         unarStream.Close();
 
-        return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
+        return _header.magic == MAGIC && _header.version is VERSION or VERSION2;
     }
 
     // Now way to have two files in a single byte array
@@ -377,7 +377,7 @@ public sealed class AppleDouble : IFilter
                 prodosStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     _headerPath = proDosAppleDouble;
             }
         }
@@ -395,7 +395,7 @@ public sealed class AppleDouble : IFilter
                 unixStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     _headerPath = unixAppleDouble;
             }
         }
@@ -413,7 +413,7 @@ public sealed class AppleDouble : IFilter
                 dosStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     _headerPath = dosAppleDouble;
             }
         }
@@ -431,7 +431,7 @@ public sealed class AppleDouble : IFilter
                 doslStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     _headerPath = dosAppleDoubleLower;
             }
         }
@@ -449,7 +449,7 @@ public sealed class AppleDouble : IFilter
                 netatalkStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     _headerPath = netatalkAppleDouble;
             }
         }
@@ -467,7 +467,7 @@ public sealed class AppleDouble : IFilter
                 daveStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     _headerPath = daveAppleDouble;
             }
         }
@@ -485,7 +485,7 @@ public sealed class AppleDouble : IFilter
                 osxStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     _headerPath = osxAppleDouble;
             }
         }
@@ -503,7 +503,7 @@ public sealed class AppleDouble : IFilter
                 unarStream.Close();
 
                 if(_header.magic == MAGIC &&
-                   (_header.version == VERSION || _header.version == VERSION2))
+                   _header.version is VERSION or VERSION2)
                     _headerPath = unArAppleDouble;
             }
         }

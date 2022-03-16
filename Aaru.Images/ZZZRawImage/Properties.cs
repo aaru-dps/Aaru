@@ -86,9 +86,7 @@ public sealed partial class ZZZRawImage
                 Session = 1
             };
 
-            if(_imageInfo.MediaType == MediaType.CD   ||
-               _imageInfo.MediaType == MediaType.CDRW ||
-               _imageInfo.MediaType == MediaType.CDR)
+            if(_imageInfo.MediaType is MediaType.CD or MediaType.CDRW or MediaType.CDR)
             {
                 trk.Pregap     = 150;
                 trk.Indexes[0] = -150;
@@ -153,7 +151,7 @@ public sealed partial class ZZZRawImage
                            ? _mode2
                                  ? "MODE2/2352"
                                  : "MODE1/2352"
-                           : _imageInfo.MediaType == MediaType.PD650 || _imageInfo.MediaType == MediaType.PD650_WORM
+                           : _imageInfo.MediaType is MediaType.PD650 or MediaType.PD650_WORM
                                ? "DATA/512"
                                : "MODE1/2048",
                 Size = _imageInfo.Sectors * _imageInfo.SectorSize

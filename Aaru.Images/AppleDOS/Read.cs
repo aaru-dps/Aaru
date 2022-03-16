@@ -51,7 +51,7 @@ public sealed partial class AppleDos
 
         _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
 
-        if((_extension == ".d13" || _extension == ".do") &&
+        if(_extension is ".d13" or ".do" &&
            tmp.Length == 116480)
         {
             _dos32         = true;

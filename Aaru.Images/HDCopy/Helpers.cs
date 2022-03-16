@@ -74,12 +74,10 @@ public sealed partial class HdCopy
          * We know the image is from a DOS floppy disk, so assume
          * some sane cylinder and sectors-per-track count.
          */
-        if(fheader.sectorsPerTrack < 8 ||
-           fheader.sectorsPerTrack > 40)
+        if(fheader.sectorsPerTrack is < 8 or > 40)
             return false;
 
-        if(fheader.lastCylinder < 37 ||
-           fheader.lastCylinder >= 84)
+        if(fheader.lastCylinder is < 37 or >= 84)
             return false;
 
         // Validate the trackmap. First two tracks need to be present

@@ -69,9 +69,7 @@ public sealed partial class OperaFS
         if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC)
             return ErrorNumber.InvalidArgument;
 
-        if(imagePlugin.Info.SectorSize == 2336 ||
-           imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448)
+        if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
             _volumeBlockSizeRatio = sb.block_size / 2048;
         else
             _volumeBlockSizeRatio = sb.block_size / imagePlugin.Info.SectorSize;

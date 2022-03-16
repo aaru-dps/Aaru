@@ -271,8 +271,7 @@ public sealed class AcornADFS : IFilesystem
         AaruConsole.DebugWriteLine("ADFS Plugin", "IsNullOrEmpty(drSb.reserved) = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(drSb.reserved));
 
-        if(drSb.log2secsize < 8 ||
-           drSb.log2secsize > 10)
+        if(drSb.log2secsize is < 8 or > 10)
             return false;
 
         if(drSb.idlen < drSb.log2secsize + 3 ||
@@ -540,8 +539,7 @@ public sealed class AcornADFS : IFilesystem
         AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.format_version = {0}", drSb.format_version);
         AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.root_size = {0}", drSb.root_size);
 
-        if(drSb.log2secsize < 8 ||
-           drSb.log2secsize > 10)
+        if(drSb.log2secsize is < 8 or > 10)
             return;
 
         if(drSb.idlen < drSb.log2secsize + 3 ||

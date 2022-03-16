@@ -93,8 +93,7 @@ public sealed class EFS : IFilesystem
             AaruConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
                                        0x200, sb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
 
-            if(sb.sb_magic == EFS_MAGIC ||
-               sb.sb_magic == EFS_MAGIC_NEW)
+            if(sb.sb_magic is EFS_MAGIC or EFS_MAGIC_NEW)
                 return true;
         }
         else
@@ -117,8 +116,7 @@ public sealed class EFS : IFilesystem
             AaruConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
                                        sb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
 
-            if(sb.sb_magic == EFS_MAGIC ||
-               sb.sb_magic == EFS_MAGIC_NEW)
+            if(sb.sb_magic is EFS_MAGIC or EFS_MAGIC_NEW)
                 return true;
         }
 

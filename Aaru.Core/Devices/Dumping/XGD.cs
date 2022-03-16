@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 
 namespace Aaru.Core.Devices.Dumping;
@@ -412,8 +410,7 @@ partial class Dump
 
             _speed *= _speedMultiplier;
 
-            if(_speed == 0 ||
-               _speed > 0xFFFF)
+            if(_speed is 0 or > 0xFFFF)
                 _speed = 0xFFFF;
 
             _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);

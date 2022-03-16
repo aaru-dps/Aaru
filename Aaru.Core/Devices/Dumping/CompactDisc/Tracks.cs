@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
@@ -102,7 +100,7 @@ partial class Dump
             FullTOC.TrackDataDescriptor[] sortedTracks =
                 toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
 
-            foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR == 1 || trk.ADR == 4))
+            foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR is 1 or 4))
                 if(trk.POINT >= 0x01 &&
                    trk.POINT <= 0x63)
                 {
@@ -190,7 +188,7 @@ partial class Dump
 
             if(oldToc.HasValue)
                 foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.OrderBy(t => t.TrackNumber).
-                                                                   Where(trk => trk.ADR == 1 || trk.ADR == 4))
+                                                                   Where(trk => trk.ADR is 1 or 4))
                     if(trk.TrackNumber >= 0x01 &&
                        trk.TrackNumber <= 0x63)
                     {

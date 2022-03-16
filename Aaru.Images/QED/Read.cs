@@ -83,8 +83,7 @@ public sealed partial class Qed
             return ErrorNumber.InvalidArgument;
         }
 
-        if(_qHdr.cluster_size < 4096 ||
-           _qHdr.cluster_size > 67108864)
+        if(_qHdr.cluster_size is < 4096 or > 67108864)
         {
             AaruConsole.ErrorWriteLine("Cluster size must be between 4 Kbytes and 64 Mbytes");
 
@@ -98,8 +97,7 @@ public sealed partial class Qed
             return ErrorNumber.InvalidArgument;
         }
 
-        if(_qHdr.table_size < 1 ||
-           _qHdr.table_size > 16)
+        if(_qHdr.table_size is < 1 or > 16)
         {
             AaruConsole.ErrorWriteLine("Table size must be between 1 and 16 clusters");
 

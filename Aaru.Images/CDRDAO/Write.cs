@@ -461,8 +461,7 @@ public sealed partial class Cdrdao
 
         foreach(Track track in tracks.OrderBy(t => t.Sequence))
         {
-            if(track.SubchannelType == TrackSubchannelType.Q16 ||
-               track.SubchannelType == TrackSubchannelType.Q16Interleaved)
+            if(track.SubchannelType is TrackSubchannelType.Q16 or TrackSubchannelType.Q16Interleaved)
             {
                 ErrorMessage = $"Unsupported subchannel type {track.SubchannelType} for track {track.Sequence}";
 
@@ -526,8 +525,9 @@ public sealed partial class Cdrdao
 
         bool data = _writingTracks.Count(t => t.Type != TrackType.Audio) > 0;
 
-        bool mode2 = _writingTracks.Count(t => t.Type == TrackType.CdMode2Form1 || t.Type == TrackType.CdMode2Form2 ||
-                                               t.Type == TrackType.CdMode2Formless) > 0;
+        bool mode2 =
+            _writingTracks.Count(t => t.Type is TrackType.CdMode2Form1 or TrackType.CdMode2Form2
+                                                                       or TrackType.CdMode2Formless) > 0;
 
         if(mode2)
             _descriptorStream.WriteLine("CD_ROM_XA");

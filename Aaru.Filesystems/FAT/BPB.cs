@@ -145,26 +145,17 @@ public sealed partial class FAT
             int bitsInBpsFat32      = CountBits.Count(fat32Bpb.bps);
             int bitsInBpsApricot    = CountBits.Count(apricotBpb.mainBPB.bps);
 
-            bool correctSpcMsx = msxBpb.spc == 1  || msxBpb.spc == 2  || msxBpb.spc == 4 || msxBpb.spc == 8 ||
-                                 msxBpb.spc == 16 || msxBpb.spc == 32 || msxBpb.spc == 64;
+            bool correctSpcMsx = msxBpb.spc is 1 or 2 or 4 or 8 or 16 or 32 or 64;
 
-            bool correctSpcDos33 = dos33Bpb.spc == 1  || dos33Bpb.spc == 2  || dos33Bpb.spc == 4 || dos33Bpb.spc == 8 ||
-                                   dos33Bpb.spc == 16 || dos33Bpb.spc == 32 || dos33Bpb.spc == 64;
+            bool correctSpcDos33 = dos33Bpb.spc is 1 or 2 or 4 or 8 or 16 or 32 or 64;
 
-            bool correctSpcDos40 = ebpb.spc == 1 || ebpb.spc == 2 || ebpb.spc == 4 || ebpb.spc == 8 || ebpb.spc == 16 ||
-                                   ebpb.spc == 32 || ebpb.spc == 64;
+            bool correctSpcDos40 = ebpb.spc is 1 or 2 or 4 or 8 or 16 or 32 or 64;
 
-            bool correctSpcFat32Short = shortFat32Bpb.spc == 1 || shortFat32Bpb.spc == 2  || shortFat32Bpb.spc == 4  ||
-                                        shortFat32Bpb.spc == 8 || shortFat32Bpb.spc == 16 || shortFat32Bpb.spc == 32 ||
-                                        shortFat32Bpb.spc == 64;
+            bool correctSpcFat32Short = shortFat32Bpb.spc is 1 or 2 or 4 or 8 or 16 or 32 or 64;
 
-            bool correctSpcFat32 = fat32Bpb.spc == 1  || fat32Bpb.spc == 2  || fat32Bpb.spc == 4 || fat32Bpb.spc == 8 ||
-                                   fat32Bpb.spc == 16 || fat32Bpb.spc == 32 || fat32Bpb.spc == 64;
+            bool correctSpcFat32 = fat32Bpb.spc is 1 or 2 or 4 or 8 or 16 or 32 or 64;
 
-            bool correctSpcApricot = apricotBpb.mainBPB.spc == 1  || apricotBpb.mainBPB.spc == 2  ||
-                                     apricotBpb.mainBPB.spc == 4  || apricotBpb.mainBPB.spc == 8  ||
-                                     apricotBpb.mainBPB.spc == 16 || apricotBpb.mainBPB.spc == 32 ||
-                                     apricotBpb.mainBPB.spc == 64;
+            bool correctSpcApricot = apricotBpb.mainBPB.spc is 1 or 2 or 4 or 8 or 16 or 32 or 64;
 
             // This is to support FAT partitions on hybrid ISO/USB images
             if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
@@ -247,7 +238,7 @@ public sealed partial class FAT
                     ebpb.fats_no  <= 2  &&
                     ebpb.root_ent > 0   &&
                     ebpb.spfat    > 0   &&
-                    (ebpb.signature == 0x28 || ebpb.signature == 0x29 || andosOemCorrect))
+                    (ebpb.signature is 0x28 or 0x29 || andosOemCorrect))
             {
                 if(ebpb.sectors == 0)
                 {
@@ -301,8 +292,7 @@ public sealed partial class FAT
                     if(atariBpb.jump[0] == 0x60 ||
                        atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
                        Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    " ||
-                       partition.Type == "GEM"                                   ||
-                       partition.Type == "BGM")
+                       partition.Type is "GEM" or "BGM")
                     {
                         AaruConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
                         useAtariBpb = true;

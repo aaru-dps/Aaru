@@ -488,8 +488,7 @@ public sealed partial class ISO9660
         Saturn.IPBin?    saturn    = Saturn.DecodeIPBin(ipbinSector);
         Dreamcast.IPBin? dreamcast = Dreamcast.DecodeIPBin(ipbinSector);
 
-        if(_namespace == Namespace.Joliet ||
-           _namespace == Namespace.Rrip)
+        if(_namespace is Namespace.Joliet or Namespace.Rrip)
         {
             _usePathTable = false;
             _useTransTbl  = false;
@@ -509,7 +508,7 @@ public sealed partial class ISO9660
         XmlFsType.Type = fsFormat;
 
         if(jolietvd != null &&
-           (_namespace == Namespace.Joliet || _namespace == Namespace.Rrip))
+           _namespace is Namespace.Joliet or Namespace.Rrip)
         {
             rootLocation    = jolietvd.Value.root_directory_record.extent;
             rootXattrLength = jolietvd.Value.root_directory_record.xattr_len;

@@ -75,8 +75,7 @@ partial class Dump
 
         uint subSize = supportedPlextorSubchannel == PlextorSubchannel.Q16 ? 16u : 96u;
 
-        if(supportedPlextorSubchannel == PlextorSubchannel.Q16 ||
-           supportedPlextorSubchannel == PlextorSubchannel.Pack)
+        if(supportedPlextorSubchannel is PlextorSubchannel.Q16 or PlextorSubchannel.Pack)
         {
             sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, firstSectorToRead, 2352 + subSize, blocksToRead,
                                          supportedPlextorSubchannel, _dev.Timeout, out cmdDuration);

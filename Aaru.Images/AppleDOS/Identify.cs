@@ -42,6 +42,6 @@ public sealed partial class AppleDos
     {
         _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
 
-        return imageFilter.DataForkLength == 143360 && (_extension == ".po" || _extension == ".do");
+        return imageFilter.DataForkLength == 143360 && _extension is ".po" or ".do";
     }
 }

@@ -1097,8 +1097,7 @@ public sealed partial class Cdrdao
     {
         buffer = null;
 
-        if(tag == SectorTagType.CdTrackFlags ||
-           tag == SectorTagType.CdTrackIsrc)
+        if(tag is SectorTagType.CdTrackFlags or SectorTagType.CdTrackIsrc)
             track = (uint)sectorAddress;
 
         var aaruTrack = new CdrdaoTrack

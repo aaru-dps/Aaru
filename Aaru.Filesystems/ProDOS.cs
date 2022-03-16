@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable NotAccessedField.Local
 
 namespace Aaru.Filesystems;
@@ -111,9 +109,7 @@ public sealed class ProDOSPlugin : IFilesystem
 
         var apmFromHddOnCd = false;
 
-        if(imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448 ||
-           imagePlugin.Info.SectorSize == 2048)
+        if(imagePlugin.Info.SectorSize is 2352 or 2448 or 2048)
         {
             errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] tmp);
 
@@ -192,9 +188,7 @@ public sealed class ProDOSPlugin : IFilesystem
 
         var apmFromHddOnCd = false;
 
-        if(imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448 ||
-           imagePlugin.Info.SectorSize == 2048)
+        if(imagePlugin.Info.SectorSize is 2352 or 2448 or 2048)
         {
             errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] tmp);
 

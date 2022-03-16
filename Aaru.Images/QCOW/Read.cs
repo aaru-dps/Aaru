@@ -79,16 +79,14 @@ public sealed partial class Qcow
             return ErrorNumber.InvalidArgument;
         }
 
-        if(_qHdr.cluster_bits < 9 ||
-           _qHdr.cluster_bits > 16)
+        if(_qHdr.cluster_bits is < 9 or > 16)
         {
             AaruConsole.ErrorWriteLine("Cluster size must be between 512 bytes and 64 Kbytes");
 
             return ErrorNumber.InvalidArgument;
         }
 
-        if(_qHdr.l2_bits < 9  - 3 ||
-           _qHdr.l2_bits > 16 - 3)
+        if(_qHdr.l2_bits is < 9 - 3 or > 16 - 3)
         {
             AaruConsole.ErrorWriteLine("L2 size must be between 512 bytes and 64 Kbytes");
 

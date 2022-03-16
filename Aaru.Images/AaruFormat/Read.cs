@@ -212,8 +212,8 @@ public sealed partial class AaruFormat
                                                GC.GetTotalMemory(false));
 
                     // Decompress media tag
-                    if(blockHeader.compression == CompressionType.Lzma ||
-                       blockHeader.compression == CompressionType.LzmaClauniaSubchannelTransform)
+                    if(blockHeader.compression is CompressionType.Lzma
+                                               or CompressionType.LzmaClauniaSubchannelTransform)
                     {
                         if(blockHeader.compression == CompressionType.LzmaClauniaSubchannelTransform &&
                            entry.dataType          != DataType.CdSectorSubchannel)
@@ -1191,7 +1191,7 @@ public sealed partial class AaruFormat
                         Dictionary<int, long> leadOutStarts = new(); // Lead-out starts
 
                         foreach(FullTOC.TrackDataDescriptor trk in
-                                decodedFullToc.Value.TrackDescriptors.Where(trk => (trk.ADR == 1 || trk.ADR == 4) &&
+                                decodedFullToc.Value.TrackDescriptors.Where(trk => trk.ADR is 1 or 4 &&
                                                                                 trk.POINT == 0xA2))
                         {
                             int phour, pmin, psec, pframe;
@@ -1430,46 +1430,16 @@ public sealed partial class AaruFormat
         if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
             return ErrorNumber.NoError;
 
-        if(_imageInfo.MediaType == MediaType.CD            ||
-           _imageInfo.MediaType == MediaType.CDDA          ||
-           _imageInfo.MediaType == MediaType.CDG           ||
-           _imageInfo.MediaType == MediaType.CDEG          ||
-           _imageInfo.MediaType == MediaType.CDI           ||
-           _imageInfo.MediaType == MediaType.CDROM         ||
-           _imageInfo.MediaType == MediaType.CDROMXA       ||
-           _imageInfo.MediaType == MediaType.CDPLUS        ||
-           _imageInfo.MediaType == MediaType.CDMO          ||
-           _imageInfo.MediaType == MediaType.CDR           ||
-           _imageInfo.MediaType == MediaType.CDRW          ||
-           _imageInfo.MediaType == MediaType.CDMRW         ||
-           _imageInfo.MediaType == MediaType.VCD           ||
-           _imageInfo.MediaType == MediaType.SVCD          ||
-           _imageInfo.MediaType == MediaType.PCD           ||
-           _imageInfo.MediaType == MediaType.DTSCD         ||
-           _imageInfo.MediaType == MediaType.CDMIDI        ||
-           _imageInfo.MediaType == MediaType.CDV           ||
-           _imageInfo.MediaType == MediaType.CDIREADY      ||
-           _imageInfo.MediaType == MediaType.FMTOWNS       ||
-           _imageInfo.MediaType == MediaType.PS1CD         ||
-           _imageInfo.MediaType == MediaType.PS2CD         ||
-           _imageInfo.MediaType == MediaType.MEGACD        ||
-           _imageInfo.MediaType == MediaType.SATURNCD      ||
-           _imageInfo.MediaType == MediaType.GDROM         ||
-           _imageInfo.MediaType == MediaType.GDR           ||
-           _imageInfo.MediaType == MediaType.MilCD         ||
-           _imageInfo.MediaType == MediaType.SuperCDROM2   ||
-           _imageInfo.MediaType == MediaType.JaguarCD      ||
-           _imageInfo.MediaType == MediaType.ThreeDO       ||
-           _imageInfo.MediaType == MediaType.PCFX          ||
-           _imageInfo.MediaType == MediaType.NeoGeoCD      ||
-           _imageInfo.MediaType == MediaType.CDTV          ||
-           _imageInfo.MediaType == MediaType.CD32          ||
-           _imageInfo.MediaType == MediaType.Playdia       ||
-           _imageInfo.MediaType == MediaType.Pippin        ||
-           _imageInfo.MediaType == MediaType.VideoNow      ||
-           _imageInfo.MediaType == MediaType.VideoNowColor ||
-           _imageInfo.MediaType == MediaType.VideoNowXp    ||
-           _imageInfo.MediaType == MediaType.CVD)
+        if(_imageInfo.MediaType is MediaType.CD or MediaType.CDDA or MediaType.CDG or MediaType.CDEG or MediaType.CDI
+                                or MediaType.CDROM or MediaType.CDROMXA or MediaType.CDPLUS or MediaType.CDMO
+                                or MediaType.CDR or MediaType.CDRW or MediaType.CDMRW or MediaType.VCD or MediaType.SVCD
+                                or MediaType.PCD or MediaType.DTSCD or MediaType.CDMIDI or MediaType.CDV
+                                or MediaType.CDIREADY or MediaType.FMTOWNS or MediaType.PS1CD or MediaType.PS2CD
+                                or MediaType.MEGACD or MediaType.SATURNCD or MediaType.GDROM or MediaType.GDR
+                                or MediaType.MilCD or MediaType.SuperCDROM2 or MediaType.JaguarCD or MediaType.ThreeDO
+                                or MediaType.PCFX or MediaType.NeoGeoCD or MediaType.CDTV or MediaType.CD32
+                                or MediaType.Playdia or MediaType.Pippin or MediaType.VideoNow
+                                or MediaType.VideoNowColor or MediaType.VideoNowXp or MediaType.CVD)
             return ErrorNumber.NoError;
 
         {

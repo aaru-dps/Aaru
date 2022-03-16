@@ -111,8 +111,7 @@ public sealed partial class CisCopy
 
         var headStep = 1;
 
-        if(type == DiskType.MD1DD ||
-           type == DiskType.MD1DD8)
+        if(type is DiskType.MD1DD or DiskType.MD1DD8)
             headStep = 2;
 
         var decodedImage = new MemoryStream();

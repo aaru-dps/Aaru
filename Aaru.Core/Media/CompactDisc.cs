@@ -332,8 +332,7 @@ public static class CompactDisc
                 {
                     string isrc = Subchannel.DecodeIsrc(q);
 
-                    if(isrc == null ||
-                       isrc == "000000000000")
+                    if(isrc is null or "000000000000")
                         continue;
 
                     if(!crcOk)
@@ -363,8 +362,7 @@ public static class CompactDisc
                 {
                     string newMcn = Subchannel.DecodeMcn(q);
 
-                    if(newMcn == null ||
-                       newMcn == "0000000000000")
+                    if(newMcn is null or "0000000000000")
                         continue;
 
                     if(!crcOk)

@@ -91,7 +91,7 @@ public sealed partial class DriDiskCopy
            _imageInfo.Heads           == 2   &&
            _imageInfo.SectorsPerTrack == 16  &&
            _imageInfo.SectorSize      == 512 &&
-           (_footer.bpb._driveCode == DriveCode.md2hd || _footer.bpb._driveCode == DriveCode.mf2hd))
+           _footer.bpb._driveCode is DriveCode.md2hd or DriveCode.mf2hd)
         {
             _imageInfo.SectorsPerTrack = 8;
             _imageInfo.SectorSize      = 1024;
@@ -103,18 +103,15 @@ public sealed partial class DriDiskCopy
 
         switch(_imageInfo.MediaType)
         {
-            case MediaType.NEC_525_HD when _footer.bpb._driveCode == DriveCode.mf2hd ||
-                                           _footer.bpb._driveCode == DriveCode.mf2ed:
+            case MediaType.NEC_525_HD when _footer.bpb._driveCode is DriveCode.mf2hd or DriveCode.mf2ed:
                 _imageInfo.MediaType = MediaType.NEC_35_HD_8;
 
                 break;
-            case MediaType.DOS_525_HD when _footer.bpb._driveCode == DriveCode.mf2hd ||
-                                           _footer.bpb._driveCode == DriveCode.mf2ed:
+            case MediaType.DOS_525_HD when _footer.bpb._driveCode is DriveCode.mf2hd or DriveCode.mf2ed:
                 _imageInfo.MediaType = MediaType.NEC_35_HD_15;
 
                 break;
-            case MediaType.RX50 when _footer.bpb._driveCode == DriveCode.md2dd ||
-                                     _footer.bpb._driveCode == DriveCode.md2hd:
+            case MediaType.RX50 when _footer.bpb._driveCode is DriveCode.md2dd or DriveCode.md2hd:
                 _imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
 
                 break;

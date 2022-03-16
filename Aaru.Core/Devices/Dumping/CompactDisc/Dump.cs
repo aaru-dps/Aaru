@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
@@ -646,8 +644,7 @@ sealed partial class Dump
                     break;
                 case 2:
                 case 0x62: // Scrambled
-                    if(dskType == MediaType.CDI ||
-                       dskType == MediaType.CDIREADY)
+                    if(dskType is MediaType.CDI or MediaType.CDIREADY)
                     {
                         UpdateStatus?.Invoke($"Track {trk.Sequence} is MODE2");
                         _dumpLog.WriteLine("Track {0} is MODE2", trk.Sequence);
@@ -670,9 +667,7 @@ sealed partial class Dump
                     trk.Type = TrackType.CdMode2Form1;
 
                     // These media type specifications do not legally allow mode 2 tracks to be present
-                    if(dskType == MediaType.CDROM  ||
-                       dskType == MediaType.CDPLUS ||
-                       dskType == MediaType.CDV)
+                    if(dskType is MediaType.CDROM or MediaType.CDPLUS or MediaType.CDV)
                         dskType = MediaType.CD;
 
                     break;
@@ -925,9 +920,7 @@ sealed partial class Dump
             {
                 sense = _dev.ReadIsrc((byte)trk.Sequence, out string isrc, out _, out _, _dev.Timeout, out _);
 
-                if(sense        ||
-                   isrc == null ||
-                   isrc == "000000000000")
+                if(sense || isrc is null or "000000000000")
                     continue;
 
                 isrcs[(byte)trk.Sequence] = isrc;
@@ -1097,8 +1090,7 @@ sealed partial class Dump
 
             _speed *= _speedMultiplier;
 
-            if(_speed == 0 ||
-               _speed > 0xFFFF)
+            if(_speed is 0 or > 0xFFFF)
                 _speed = 0xFFFF;
 
             _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);

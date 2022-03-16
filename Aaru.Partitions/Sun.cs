@@ -108,13 +108,10 @@ public sealed class SunDisklabel : IPartition
         AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_sanity = 0x{0:X8}", dkl8.dkl_vtoc.v_sanity);
         AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_sanity = 0x{0:X8}", dkl16.dkl_vtoc.v_sanity);
 
-        if(dkl.dkl_magic == DKL_MAGIC ||
-           dkl.dkl_magic == DKL_CIGAM)
-            if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE ||
-               dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
+        if(dkl.dkl_magic is DKL_MAGIC or DKL_CIGAM)
+            if(dkl16.dkl_vtoc.v_sanity is VTOC_SANE or VTOC_ENAS)
                 useDkl16 = true;
-            else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE ||
-                    dkl8.dkl_vtoc.v_sanity == VTOC_ENAS)
+            else if(dkl8.dkl_vtoc.v_sanity is VTOC_SANE or VTOC_ENAS)
                 useDkl8 = true;
             else
                 useDkl = true;
@@ -131,13 +128,10 @@ public sealed class SunDisklabel : IPartition
                 dkl8  = Marshal.ByteArrayToStructureLittleEndian<dk_label8>(sunSector);
                 dkl16 = Marshal.ByteArrayToStructureLittleEndian<dk_label16>(sunSector);
 
-                if(dkl.dkl_magic == DKL_MAGIC ||
-                   dkl.dkl_magic == DKL_CIGAM)
-                    if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE ||
-                       dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
+                if(dkl.dkl_magic is DKL_MAGIC or DKL_CIGAM)
+                    if(dkl16.dkl_vtoc.v_sanity is VTOC_SANE or VTOC_ENAS)
                         useDkl16 = true;
-                    else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE ||
-                            dkl8.dkl_vtoc.v_sanity == VTOC_ENAS)
+                    else if(dkl8.dkl_vtoc.v_sanity is VTOC_SANE or VTOC_ENAS)
                         useDkl8 = true;
                     else
                         useDkl = true;

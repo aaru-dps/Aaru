@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 
 namespace Aaru.Core.Media.Detection;
@@ -444,9 +442,7 @@ public static class MMC
             secondSessionFirstTrack = decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == 2).
                                                  Min(t => t.POINT);
 
-        if(mediaType == MediaType.CD      ||
-           mediaType == MediaType.CDROMXA ||
-           mediaType == MediaType.CDI)
+        if(mediaType is MediaType.CD or MediaType.CDROMXA or MediaType.CDI)
         {
             sense = dev.ReadAtip(out cmdBuf, out _, dev.Timeout, out _);
 
@@ -461,8 +457,7 @@ public static class MMC
             }
         }
 
-        if(mediaType == MediaType.CD ||
-           mediaType == MediaType.CDROMXA)
+        if(mediaType is MediaType.CD or MediaType.CDROMXA)
         {
             var hasDataTrack                  = false;
             var hasAudioTrack                 = false;
@@ -560,7 +555,7 @@ public static class MMC
                 }
             }
 
-            if((mediaType == MediaType.CD || mediaType == MediaType.CDROM) && hasDataTrack)
+            if(mediaType is MediaType.CD or MediaType.CDROM && hasDataTrack)
                 foreach(uint startAddress in decodedToc.Value.TrackDescriptors.
                                                         Where(t => t.POINT > 0 && t.POINT <= 0x99 &&
                                                                    ((TocControl)(t.CONTROL & 0x0D) ==
@@ -1016,8 +1011,7 @@ public static class MMC
             case MediaType.BDROM:
             case MediaType.UHDBD:
             case MediaType.Unknown:
-                if(mediaType == MediaType.BDROM ||
-                   mediaType == MediaType.UHDBD)
+                if(mediaType is MediaType.BDROM or MediaType.UHDBD)
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
                                                   MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out _);
@@ -1210,9 +1204,7 @@ public static class MMC
                         if(DMI.IsXbox360(cmdBuf))
                         {
                             // All XGD3 all have the same number of blocks
-                            if(blocks == 25063   || // Locked (or non compatible drive)
-                               blocks == 4229664 || // Xtreme unlock
-                               blocks == 4246304)   // Wxripper unlock
+                            if(blocks is 25063 or 4229664 or 4246304) // Wxripper unlock
                             {
                                 AaruConsole.DebugWriteLine("Media detection",
                                                            "Found Xbox 360 DMI with {0} blocks, setting disc type to Xbox 360 Game Disc 3 (XGD3).");
@@ -1511,9 +1503,7 @@ public static class MMC
                     AaruConsole.DebugWriteLine("Media-info Command", "PlayStation 2 boot sectors SHA256: {0}",
                                                ps2BootSectorsHash);
 
-                    if(ps2BootSectorsHash == PS2_PAL_HASH  ||
-                       ps2BootSectorsHash == PS2_NTSC_HASH ||
-                       ps2BootSectorsHash == PS2_JAPANESE_HASH)
+                    if(ps2BootSectorsHash is PS2_PAL_HASH or PS2_NTSC_HASH or PS2_JAPANESE_HASH)
                     {
                         mediaType = MediaType.PS2CD;
 
@@ -1992,8 +1982,7 @@ public static class MMC
                             }
 
                             // Third part must be bigger or equal to 1 and smaller or equal to 8
-                            if(split[2].Length < 1 ||
-                               split[2].Length > 8)
+                            if(split[2].Length is < 1 or > 8)
                             {
                                 correctNeoGeoCd = false;
 
@@ -2071,8 +2060,7 @@ public static class MMC
                             if(name.EndsWith(";1", StringComparison.InvariantCulture))
                                 name = name.Substring(0, name.Length - 2);
 
-                            if(name == "INFO.VCD" ||
-                               name == "INFO.SVD")
+                            if(name is "INFO.VCD" or "INFO.SVD")
                             {
                                 infoPos = BitConverter.ToUInt32(isoSector, vcdPos + 2);
 
@@ -2329,9 +2317,7 @@ public static class MMC
                     AaruConsole.DebugWriteLine("Media-info Command", "PlayStation 2 boot sectors SHA256: {0}",
                                                ps2BootSectorsHash);
 
-                    if(ps2BootSectorsHash == PS2_PAL_HASH  ||
-                       ps2BootSectorsHash == PS2_NTSC_HASH ||
-                       ps2BootSectorsHash == PS2_JAPANESE_HASH)
+                    if(ps2BootSectorsHash is PS2_PAL_HASH or PS2_NTSC_HASH or PS2_JAPANESE_HASH)
                     {
                         AaruConsole.DebugWriteLine("Media detection",
                                                    "Found Sony PlayStation 2 boot sectors, setting disc type to PS2 DVD.");

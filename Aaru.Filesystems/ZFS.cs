@@ -111,8 +111,7 @@ public sealed class ZFS : IFilesystem
 
             magic = BitConverter.ToUInt64(sector, 0x1D8);
 
-            if(magic == ZEC_MAGIC ||
-               magic == ZEC_CIGAM)
+            if(magic is ZEC_MAGIC or ZEC_CIGAM)
                 return true;
         }
 
@@ -126,7 +125,7 @@ public sealed class ZFS : IFilesystem
 
         magic = BitConverter.ToUInt64(sector, 0x1D8);
 
-        return magic == ZEC_MAGIC || magic == ZEC_CIGAM;
+        return magic is ZEC_MAGIC or ZEC_CIGAM;
     }
 
     /// <inheritdoc />
@@ -155,8 +154,7 @@ public sealed class ZFS : IFilesystem
 
             magic = BitConverter.ToUInt64(sector, 0x1D8);
 
-            if(magic == ZEC_MAGIC ||
-               magic == ZEC_CIGAM)
+            if(magic is ZEC_MAGIC or ZEC_CIGAM)
                 nvlistOff = 32;
         }
 
@@ -169,8 +167,7 @@ public sealed class ZFS : IFilesystem
 
             magic = BitConverter.ToUInt64(sector, 0x1D8);
 
-            if(magic == ZEC_MAGIC ||
-               magic == ZEC_CIGAM)
+            if(magic is ZEC_MAGIC or ZEC_CIGAM)
                 nvlistOff = 17;
         }
 

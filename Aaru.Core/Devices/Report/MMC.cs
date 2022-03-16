@@ -934,8 +934,7 @@ public sealed partial class DeviceReport
             mediaTest.BluSaiData = buffer;
         }
 
-        if(mediaType == "DVD-R" ||
-           mediaType == "DVD-RW")
+        if(mediaType is "DVD-R" or "DVD-RW")
         {
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -952,9 +951,7 @@ public sealed partial class DeviceReport
             mediaTest.PriData = buffer;
         }
 
-        if(mediaType == "DVD-R"  ||
-           mediaType == "DVD-RW" ||
-           mediaType == "HD DVD-R")
+        if(mediaType is "DVD-R" or "DVD-RW" or "HD DVD-R")
         {
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -1048,12 +1045,8 @@ public sealed partial class DeviceReport
         }
 
         if(mediaType.StartsWith("BD-R", StringComparison.Ordinal) ||
-           mediaType == "Ultra HD Blu-ray movie"                  ||
-           mediaType == "PlayStation 3 game"                      ||
-           mediaType == "PlayStation 4 game"                      ||
-           mediaType == "PlayStation 5 game"                      ||
-           mediaType == "Xbox One game"                           ||
-           mediaType == "Nintendo Wii game")
+           mediaType is "Ultra HD Blu-ray movie" or "PlayStation 3 game" or "PlayStation 4 game" or "PlayStation 5 game"
+                     or "Xbox One game" or "Nintendo Wii game")
         {
             Spectre.ProgressSingleSpinner(ctx =>
             {

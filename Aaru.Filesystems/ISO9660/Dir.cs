@@ -1014,8 +1014,7 @@ public sealed partial class ISO9660
         IEnumerable<PathTableEntryInternal> tableEntries;
         List<PathTableEntryInternal>        pathTableList = new(_pathTable);
 
-        if(path == "" ||
-           path == "/")
+        if(path is "" or "/")
             tableEntries = _pathTable.Where(p => p.Parent == 1 && p != _pathTable[0]);
         else
         {

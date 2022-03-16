@@ -163,15 +163,15 @@ public sealed partial class CopyQm
 
         switch(_imageInfo.MediaType)
         {
-            case MediaType.NEC_525_HD when _header.drive == COPYQM_35_HD || _header.drive == COPYQM_35_ED:
+            case MediaType.NEC_525_HD when _header.drive is COPYQM_35_HD or COPYQM_35_ED:
                 _imageInfo.MediaType = MediaType.NEC_35_HD_8;
 
                 break;
-            case MediaType.DOS_525_HD when _header.drive == COPYQM_35_HD || _header.drive == COPYQM_35_ED:
+            case MediaType.DOS_525_HD when _header.drive is COPYQM_35_HD or COPYQM_35_ED:
                 _imageInfo.MediaType = MediaType.NEC_35_HD_15;
 
                 break;
-            case MediaType.RX50 when _header.drive == COPYQM_525_DD || _header.drive == COPYQM_525_HD:
+            case MediaType.RX50 when _header.drive is COPYQM_525_DD or COPYQM_525_HD:
                 _imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
 
                 break;

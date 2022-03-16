@@ -87,7 +87,7 @@ public sealed class HAMMER : IFilesystem
 
         var magic = BitConverter.ToUInt64(sbSector, 0);
 
-        return magic == HAMMER_FSBUF_VOLUME || magic == HAMMER_FSBUF_VOLUME_REV;
+        return magic is HAMMER_FSBUF_VOLUME or HAMMER_FSBUF_VOLUME_REV;
     }
 
     /// <inheritdoc />

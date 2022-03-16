@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Local
 
 namespace Aaru.Filesystems;
@@ -80,7 +78,7 @@ public sealed class Cram : IFilesystem
 
         var magic = BitConverter.ToUInt32(sector, 0x00);
 
-        return magic == CRAM_MAGIC || magic == CRAM_CIGAM;
+        return magic is CRAM_MAGIC or CRAM_CIGAM;
     }
 
     /// <inheritdoc />

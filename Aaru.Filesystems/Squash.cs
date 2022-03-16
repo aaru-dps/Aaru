@@ -74,7 +74,7 @@ public sealed class Squash : IFilesystem
 
         var magic = BitConverter.ToUInt32(sector, 0x00);
 
-        return magic == SQUASH_MAGIC || magic == SQUASH_CIGAM;
+        return magic is SQUASH_MAGIC or SQUASH_CIGAM;
     }
 
     /// <inheritdoc />

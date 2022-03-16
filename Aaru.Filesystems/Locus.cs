@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 // Commit count
+
 using commitcnt_t = System.Int32;
 
 // Disk address
@@ -121,10 +122,7 @@ public sealed class Locus : IFilesystem
 
             AaruConsole.DebugWriteLine("Locus plugin", "magic at {1} = 0x{0:X8}", locusSb.s_magic, location);
 
-            if(locusSb.s_magic == LOCUS_MAGIC     ||
-               locusSb.s_magic == LOCUS_CIGAM     ||
-               locusSb.s_magic == LOCUS_MAGIC_OLD ||
-               locusSb.s_magic == LOCUS_CIGAM_OLD)
+            if(locusSb.s_magic is LOCUS_MAGIC or LOCUS_CIGAM or LOCUS_MAGIC_OLD or LOCUS_CIGAM_OLD)
                 return true;
         }
 
@@ -160,10 +158,7 @@ public sealed class Locus : IFilesystem
 
             locusSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-            if(locusSb.s_magic == LOCUS_MAGIC     ||
-               locusSb.s_magic == LOCUS_CIGAM     ||
-               locusSb.s_magic == LOCUS_MAGIC_OLD ||
-               locusSb.s_magic == LOCUS_CIGAM_OLD)
+            if(locusSb.s_magic is LOCUS_MAGIC or LOCUS_CIGAM or LOCUS_MAGIC_OLD or LOCUS_CIGAM_OLD)
                 break;
         }
 
@@ -175,8 +170,7 @@ public sealed class Locus : IFilesystem
             return;
 
         // Numerical arrays are not important for information so no need to swap them
-        if(locusSb.s_magic == LOCUS_CIGAM ||
-           locusSb.s_magic == LOCUS_CIGAM_OLD)
+        if(locusSb.s_magic is LOCUS_CIGAM or LOCUS_CIGAM_OLD)
         {
             locusSb         = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
             locusSb.s_flags = (Flags)Swapping.Swap((ushort)locusSb.s_flags);

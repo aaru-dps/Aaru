@@ -87,8 +87,7 @@ public sealed class ODS : IFilesystem
 
         AaruConsole.DebugWriteLine("Files-11 plugin", "magic: \"{0}\"", magic);
 
-        if(magic == "DECFILE11A  " ||
-           magic == "DECFILE11B  ")
+        if(magic is "DECFILE11A  " or "DECFILE11B  ")
             return true;
 
         // Optical disc
@@ -108,7 +107,7 @@ public sealed class ODS : IFilesystem
 
         AaruConsole.DebugWriteLine("Files-11 plugin", "unaligned magic: \"{0}\"", magic);
 
-        return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
+        return magic is "DECFILE11A  " or "DECFILE11B  ";
     }
 
     /// <inheritdoc />

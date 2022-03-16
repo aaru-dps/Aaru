@@ -150,7 +150,7 @@ public sealed partial class XboxFatPlugin
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(_debug && (string.IsNullOrEmpty(path) || path == "$" || path == "/"))
+        if(_debug && (string.IsNullOrEmpty(path) || path is "$" or "/"))
         {
             stat = new FileEntryInfo
             {

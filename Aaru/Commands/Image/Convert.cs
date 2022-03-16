@@ -1261,29 +1261,18 @@ sealed class ConvertImageCommand : Command
                 outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
 
             // TODO: Progress
-            if((inputOptical.Info.MediaType == MediaType.CD || inputOptical.Info.MediaType == MediaType.CDDA ||
-                inputOptical.Info.MediaType == MediaType.CDG || inputOptical.Info.MediaType == MediaType.CDEG ||
-                inputOptical.Info.MediaType == MediaType.CDI || inputOptical.Info.MediaType == MediaType.CDROM ||
-                inputOptical.Info.MediaType == MediaType.CDROMXA || inputOptical.Info.MediaType == MediaType.CDPLUS ||
-                inputOptical.Info.MediaType == MediaType.CDMO || inputOptical.Info.MediaType == MediaType.CDR ||
-                inputOptical.Info.MediaType == MediaType.CDRW || inputOptical.Info.MediaType == MediaType.CDMRW ||
-                inputOptical.Info.MediaType == MediaType.VCD || inputOptical.Info.MediaType == MediaType.SVCD ||
-                inputOptical.Info.MediaType == MediaType.PCD || inputOptical.Info.MediaType == MediaType.DTSCD ||
-                inputOptical.Info.MediaType == MediaType.CDMIDI || inputOptical.Info.MediaType == MediaType.CDV ||
-                inputOptical.Info.MediaType == MediaType.CDIREADY || inputOptical.Info.MediaType == MediaType.FMTOWNS ||
-                inputOptical.Info.MediaType == MediaType.PS1CD || inputOptical.Info.MediaType == MediaType.PS2CD ||
-                inputOptical.Info.MediaType == MediaType.MEGACD || inputOptical.Info.MediaType == MediaType.SATURNCD ||
-                inputOptical.Info.MediaType == MediaType.GDROM || inputOptical.Info.MediaType == MediaType.GDR ||
-                inputOptical.Info.MediaType == MediaType.MilCD ||
-                inputOptical.Info.MediaType == MediaType.SuperCDROM2 ||
-                inputOptical.Info.MediaType == MediaType.JaguarCD || inputOptical.Info.MediaType == MediaType.ThreeDO ||
-                inputOptical.Info.MediaType == MediaType.PCFX || inputOptical.Info.MediaType == MediaType.NeoGeoCD ||
-                inputOptical.Info.MediaType == MediaType.CDTV || inputOptical.Info.MediaType == MediaType.CD32 ||
-                inputOptical.Info.MediaType == MediaType.Playdia || inputOptical.Info.MediaType == MediaType.Pippin ||
-                inputOptical.Info.MediaType == MediaType.VideoNow ||
-                inputOptical.Info.MediaType == MediaType.VideoNowColor ||
-                inputOptical.Info.MediaType == MediaType.VideoNowXp || inputOptical.Info.MediaType == MediaType.CVD) &&
-               generateSubchannels)
+            if(inputOptical.Info.MediaType is MediaType.CD or MediaType.CDDA or MediaType.CDG or MediaType.CDEG
+                                           or MediaType.CDI or MediaType.CDROM or MediaType.CDROMXA or MediaType.CDPLUS
+                                           or MediaType.CDMO or MediaType.CDR or MediaType.CDRW or MediaType.CDMRW
+                                           or MediaType.VCD or MediaType.SVCD or MediaType.PCD or MediaType.DTSCD
+                                           or MediaType.CDMIDI or MediaType.CDV or MediaType.CDIREADY
+                                           or MediaType.FMTOWNS or MediaType.PS1CD or MediaType.PS2CD
+                                           or MediaType.MEGACD or MediaType.SATURNCD or MediaType.GDROM or MediaType.GDR
+                                           or MediaType.MilCD or MediaType.SuperCDROM2 or MediaType.JaguarCD
+                                           or MediaType.ThreeDO or MediaType.PCFX or MediaType.NeoGeoCD
+                                           or MediaType.CDTV or MediaType.CD32 or MediaType.Playdia or MediaType.Pippin
+                                           or MediaType.VideoNow or MediaType.VideoNowColor or MediaType.VideoNowXp
+                                           or MediaType.CVD && generateSubchannels)
                 Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Generating subchannels...").IsIndeterminate();

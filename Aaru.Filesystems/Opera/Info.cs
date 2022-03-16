@@ -101,9 +101,7 @@ public sealed partial class OperaFS
         superBlockMetadata.AppendFormat("Volume identifier: 0x{0:X8}", sb.volume_id).AppendLine();
         superBlockMetadata.AppendFormat("Block size: {0} bytes", sb.block_size).AppendLine();
 
-        if(imagePlugin.Info.SectorSize == 2336 ||
-           imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448)
+        if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
         {
             if(sb.block_size != 2048)
                 superBlockMetadata.

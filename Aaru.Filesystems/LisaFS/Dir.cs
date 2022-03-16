@@ -105,8 +105,7 @@ public sealed partial class LisaFS
         _catalogCache = new List<CatalogEntry>();
 
         // Do differently for V1 and V2
-        if(_mddf.fsversion == LISA_V2 ||
-           _mddf.fsversion == LISA_V1)
+        if(_mddf.fsversion is LISA_V2 or LISA_V1)
         {
             ErrorNumber error = ReadFile((short)FILEID_CATALOG, out byte[] buf);
 

@@ -528,15 +528,14 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     evpdPageTitle   = "IBM Drive Serial Numbers page";
                     evpdDecodedPage = EVPD.PrettifyPage_C1_IBM(page.Value);
                 }
-                else if((page.Key == 0xC0 || page.Key == 0xC1) &&
+                else if(page.Key is 0xC0 or 0xC1 &&
                         StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
                         "certance")
                 {
                     evpdPageTitle   = "Certance Drive Component Revision Levels page";
                     evpdDecodedPage = EVPD.PrettifyPage_C0_C1_Certance(page.Value);
                 }
-                else if((page.Key == 0xC2 || page.Key == 0xC3 || page.Key == 0xC4 || page.Key == 0xC5 ||
-                         page.Key == 0xC6) &&
+                else if(page.Key is 0xC2 or 0xC3 or 0xC4 or 0xC5 or 0xC6 &&
                         StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
                         "certance")
                 {
@@ -566,8 +565,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
                     evpdDecodedPage = EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(page.Value);
                 }
-                else if((page.Key == 0xC0 || page.Key == 0xC1 || page.Key == 0xC2 || page.Key == 0xC3 ||
-                         page.Key == 0xC4 || page.Key == 0xC5) &&
+                else if(page.Key is 0xC0 or 0xC1 or 0xC2 or 0xC3 or 0xC4 or 0xC5 &&
                         StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
                         "hp")
                 {

@@ -100,8 +100,7 @@ public sealed partial class Qcow2
             return ErrorNumber.InvalidArgument;
         }
 
-        if(_qHdr.cluster_bits < 9 ||
-           _qHdr.cluster_bits > 16)
+        if(_qHdr.cluster_bits is < 9 or > 16)
         {
             AaruConsole.ErrorWriteLine("Cluster size must be between 512 bytes and 64 Kbytes");
 

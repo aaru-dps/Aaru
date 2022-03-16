@@ -91,7 +91,7 @@ public sealed partial class Qcow2
         }
 
         string extension = Path.GetExtension(path);
-        bool   version3  = extension == ".qcow3" || extension == ".qc3";
+        bool   version3  = extension is ".qcow3" or ".qc3";
 
         _qHdr = new Header
         {

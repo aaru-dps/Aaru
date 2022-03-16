@@ -75,7 +75,7 @@ public sealed class SFS : IFilesystem
 
         var magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
-        return magic == SFS_MAGIC || magic == SFS2_MAGIC;
+        return magic is SFS_MAGIC or SFS2_MAGIC;
     }
 
     /// <inheritdoc />

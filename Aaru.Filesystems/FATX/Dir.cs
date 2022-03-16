@@ -132,12 +132,10 @@ public sealed partial class XboxFatPlugin
 
                 pos += Marshal.SizeOf<DirectoryEntry>();
 
-                if(dirent.filenameSize == UNUSED_DIRENTRY ||
-                   dirent.filenameSize == FINISHED_DIRENTRY)
+                if(dirent.filenameSize is UNUSED_DIRENTRY or FINISHED_DIRENTRY)
                     break;
 
-                if(dirent.filenameSize == DELETED_DIRENTRY ||
-                   dirent.filenameSize > MAX_FILENAME)
+                if(dirent.filenameSize is DELETED_DIRENTRY or > MAX_FILENAME)
                     continue;
 
                 string filename = Encoding.GetString(dirent.filename, 0, dirent.filenameSize);

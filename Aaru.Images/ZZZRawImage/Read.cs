@@ -137,11 +137,10 @@ public sealed partial class ZZZRawImage
 
                 break;
             default:
-                if((_extension == ".adf" || _extension == ".adl" || _extension == ".ssd" || _extension == ".dsd") &&
-                   (imageFilter.DataForkLength == 163840 || imageFilter.DataForkLength == 327680 ||
-                    imageFilter.DataForkLength == 655360))
+                if(_extension is ".adf" or ".adl" or ".ssd" or ".dsd" &&
+                   imageFilter.DataForkLength is 163840 or 327680 or 655360)
                     _imageInfo.SectorSize = 256;
-                else if((_extension == ".adf" || _extension == ".adl") &&
+                else if(_extension is ".adf" or ".adl" &&
                         imageFilter.DataForkLength == 819200)
                     _imageInfo.SectorSize = 1024;
                 else
@@ -489,8 +488,7 @@ public sealed partial class ZZZRawImage
                     break;
             }
 
-            if((_imageInfo.MediaType == MediaType.DVDR || _imageInfo.MediaType == MediaType.DVDRW ||
-                _imageInfo.MediaType == MediaType.HDDVDR) &&
+            if(_imageInfo.MediaType is MediaType.DVDR or MediaType.DVDRW or MediaType.HDDVDR &&
                _mediaTags.TryGetValue(MediaTagType.DVD_MediaIdentifier, out byte[] mid))
             {
                 _mediaTags.Remove(MediaTagType.DVD_MediaIdentifier);
@@ -508,9 +506,7 @@ public sealed partial class ZZZRawImage
                         _imageInfo.MediaType = MediaType.XGD2;
 
                         // All XGD3 all have the same number of blocks
-                        if(_imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
-                           _imageInfo.Sectors == 4229664 || // Xtreme unlock
-                           _imageInfo.Sectors == 4246304)   // Wxripper unlock
+                        if(_imageInfo.Sectors is 25063 or 4229664 or 4246304) // Wxripper unlock
                             _imageInfo.MediaType = MediaType.XGD3;
                     }
         }

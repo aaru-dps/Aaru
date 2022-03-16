@@ -123,9 +123,7 @@ public sealed partial class OperaFS
 
         uint fileBlockSizeRatio;
 
-        if(_image.Info.SectorSize == 2336 ||
-           _image.Info.SectorSize == 2352 ||
-           _image.Info.SectorSize == 2448)
+        if(_image.Info.SectorSize is 2336 or 2352 or 2448)
             fileBlockSizeRatio = entry.Entry.block_size / 2048;
         else
             fileBlockSizeRatio = entry.Entry.block_size / _image.Info.SectorSize;

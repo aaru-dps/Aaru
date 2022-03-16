@@ -110,20 +110,13 @@ public sealed class MinixFS : IFilesystem
 
         var magic = BitConverter.ToUInt16(minixSbSector, 0x010);
 
-        if(magic == MINIX_MAGIC   ||
-           magic == MINIX_MAGIC2  ||
-           magic == MINIX2_MAGIC  ||
-           magic == MINIX2_MAGIC2 ||
-           magic == MINIX_CIGAM   ||
-           magic == MINIX_CIGAM2  ||
-           magic == MINIX2_CIGAM  ||
-           magic == MINIX2_CIGAM2)
+        if(magic is MINIX_MAGIC or MINIX_MAGIC2 or MINIX2_MAGIC or MINIX2_MAGIC2 or MINIX_CIGAM or MINIX_CIGAM2
+                 or MINIX2_CIGAM or MINIX2_CIGAM2)
             return true;
 
         magic = BitConverter.ToUInt16(minixSbSector, 0x018); // Here should reside magic number on Minix v3
 
-        return magic == MINIX_MAGIC  || magic == MINIX2_MAGIC || magic == MINIX3_MAGIC || magic == MINIX_CIGAM ||
-               magic == MINIX2_CIGAM || magic == MINIX3_CIGAM;
+        return magic is MINIX_MAGIC or MINIX2_MAGIC or MINIX3_MAGIC or MINIX_CIGAM or MINIX2_CIGAM or MINIX3_CIGAM;
     }
 
     /// <inheritdoc />
@@ -165,15 +158,10 @@ public sealed class MinixFS : IFilesystem
 
         bool littleEndian;
 
-        if(magic == MINIX3_MAGIC ||
-           magic == MINIX3_CIGAM ||
-           magic == MINIX2_MAGIC ||
-           magic == MINIX2_CIGAM ||
-           magic == MINIX_MAGIC  ||
-           magic == MINIX_CIGAM)
+        if(magic is MINIX3_MAGIC or MINIX3_CIGAM or MINIX2_MAGIC or MINIX2_CIGAM or MINIX_MAGIC or MINIX_CIGAM)
         {
             filenamesize = 60;
-            littleEndian = magic != MINIX3_CIGAM || magic == MINIX2_CIGAM || magic == MINIX_CIGAM;
+            littleEndian = magic is not MINIX3_CIGAM or MINIX2_CIGAM or MINIX_CIGAM;
 
             switch(magic)
             {

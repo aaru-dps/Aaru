@@ -387,8 +387,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
     async void ExecuteDumpCommand()
     {
-        if(_scsiInfo.MediaType == CommonTypes.MediaType.GDR ||
-           _scsiInfo.MediaType == CommonTypes.MediaType.GDROM)
+        if(_scsiInfo.MediaType is CommonTypes.MediaType.GDR or CommonTypes.MediaType.GDROM)
         {
             await MessageBoxManager.
                   GetMessageBoxStandardWindow("Error", "GD-ROM dump support is not yet implemented.", ButtonEnum.Ok,
@@ -397,8 +396,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
             return;
         }
 
-        if((_scsiInfo.MediaType == CommonTypes.MediaType.XGD || _scsiInfo.MediaType == CommonTypes.MediaType.XGD2 ||
-            _scsiInfo.MediaType == CommonTypes.MediaType.XGD3) &&
+        if(_scsiInfo.MediaType is CommonTypes.MediaType.XGD or CommonTypes.MediaType.XGD2
+                                                            or CommonTypes.MediaType.XGD3 &&
            _scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true)
         {
             await MessageBoxManager.

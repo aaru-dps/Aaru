@@ -87,17 +87,15 @@ public sealed partial class RayDim
 
         switch(_imageInfo.MediaType)
         {
-            case MediaType.NEC_525_HD
-                when header.diskType == RayDiskTypes.Mf2hd || header.diskType == RayDiskTypes.Mf2ed:
+            case MediaType.NEC_525_HD when header.diskType is RayDiskTypes.Mf2hd or RayDiskTypes.Mf2ed:
                 _imageInfo.MediaType = MediaType.NEC_35_HD_8;
 
                 break;
-            case MediaType.DOS_525_HD
-                when header.diskType == RayDiskTypes.Mf2hd || header.diskType == RayDiskTypes.Mf2ed:
+            case MediaType.DOS_525_HD when header.diskType is RayDiskTypes.Mf2hd or RayDiskTypes.Mf2ed:
                 _imageInfo.MediaType = MediaType.NEC_35_HD_15;
 
                 break;
-            case MediaType.RX50 when header.diskType == RayDiskTypes.Md2dd || header.diskType == RayDiskTypes.Md2hd:
+            case MediaType.RX50 when header.diskType is RayDiskTypes.Md2dd or RayDiskTypes.Md2hd:
                 _imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
 
                 break;

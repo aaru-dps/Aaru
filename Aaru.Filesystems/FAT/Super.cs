@@ -466,8 +466,7 @@ public sealed partial class FAT
                         XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name, Encoding, start: 1);
                 }
 
-                if(fakeBpb.signature == 0x28 ||
-                   fakeBpb.signature == 0x29)
+                if(fakeBpb.signature is 0x28 or 0x29)
                 {
                     XmlFsType.VolumeSerial = $"{fakeBpb.serial_no:X8}";
 
@@ -485,9 +484,7 @@ public sealed partial class FAT
             _reservedSectors      = fakeBpb.rsectors;
             _sectorsPerFat        = fakeBpb.spfat;
 
-            if(fakeBpb.signature == 0x28 ||
-               fakeBpb.signature == 0x29 ||
-               andosOemCorrect)
+            if(fakeBpb.signature is 0x28 or 0x29 || andosOemCorrect)
             {
                 if((fakeBpb.flags & 0xF8) == 0x00)
                     if((fakeBpb.flags & 0x01) == 0x01)
@@ -702,7 +699,7 @@ public sealed partial class FAT
                 Dirent = entry
             };
 
-            if((_namespace == Namespace.Lfn || _namespace == Namespace.Ecs) &&
+            if(_namespace is Namespace.Lfn or Namespace.Ecs &&
                lastLfnName != null)
             {
                 byte calculatedLfnChecksum = LfnChecksum(entry.filename, entry.extension);
@@ -1004,8 +1001,8 @@ public sealed partial class FAT
             _eaCache = new Dictionary<string, Dictionary<string, byte[]>>();
 
         // Check OS/2 .LONGNAME
-        if(_eaCache != null                                             &&
-           (_namespace == Namespace.Os2 || _namespace == Namespace.Ecs) &&
+        if(_eaCache != null                             &&
+           _namespace is Namespace.Os2 or Namespace.Ecs &&
            !_fat32)
         {
             var rootFilesWithEas = _rootDirectoryCache.Where(t => t.Value.Dirent.ea_handle != 0).ToList();

@@ -518,7 +518,7 @@ sealed class DeviceInfoCommand : Command
                         DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
                                          $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
                     }
-                    else if((page.Key == 0xC0 || page.Key == 0xC1) &&
+                    else if(page.Key is 0xC0 or 0xC1 &&
                             StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                            Trim() == "certance")
                     {
@@ -527,8 +527,7 @@ sealed class DeviceInfoCommand : Command
                         DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
                                          $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
                     }
-                    else if((page.Key == 0xC2 || page.Key == 0xC3 || page.Key == 0xC4 || page.Key == 0xC5 ||
-                             page.Key == 0xC6) &&
+                    else if(page.Key is 0xC2 or 0xC3 or 0xC4 or 0xC5 or 0xC6 &&
                             StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                            Trim() == "certance")
                     {
@@ -537,8 +536,7 @@ sealed class DeviceInfoCommand : Command
                         DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
                                          $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
                     }
-                    else if((page.Key == 0xC0 || page.Key == 0xC1 || page.Key == 0xC2 || page.Key == 0xC3 ||
-                             page.Key == 0xC4 || page.Key == 0xC5) &&
+                    else if(page.Key is 0xC0 or 0xC1 or 0xC2 or 0xC3 or 0xC4 or 0xC5 &&
                             StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                            Trim() == "hp")
                     {

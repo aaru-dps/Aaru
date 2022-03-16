@@ -426,11 +426,9 @@ public sealed partial class ISO9660
                                         break;
                                 }
 
-                                rrip |= nextSignature == RRIP_MAGIC        || nextSignature == RRIP_POSIX_ATTRIBUTES ||
-                                        nextSignature == RRIP_POSIX_DEV_NO || nextSignature == RRIP_SYMLINK          ||
-                                        nextSignature == RRIP_NAME         || nextSignature == RRIP_CHILDLINK        ||
-                                        nextSignature == RRIP_PARENTLINK   || nextSignature == RRIP_RELOCATED_DIR    ||
-                                        nextSignature == RRIP_TIMESTAMPS   || nextSignature == RRIP_SPARSE;
+                                rrip |= nextSignature is RRIP_MAGIC or RRIP_POSIX_ATTRIBUTES or RRIP_POSIX_DEV_NO
+                                                      or RRIP_SYMLINK or RRIP_NAME or RRIP_CHILDLINK or RRIP_PARENTLINK
+                                                      or RRIP_RELOCATED_DIR or RRIP_TIMESTAMPS or RRIP_SPARSE;
 
                                 ziso  |= nextSignature == ZISO_MAGIC;
                                 amiga |= nextSignature == AMIGA_MAGIC;
@@ -499,11 +497,9 @@ public sealed partial class ISO9660
                         break;
                 }
 
-                rrip |= nextSignature == RRIP_MAGIC        || nextSignature == RRIP_POSIX_ATTRIBUTES ||
-                        nextSignature == RRIP_POSIX_DEV_NO || nextSignature == RRIP_SYMLINK          ||
-                        nextSignature == RRIP_NAME         || nextSignature == RRIP_CHILDLINK        ||
-                        nextSignature == RRIP_PARENTLINK   || nextSignature == RRIP_RELOCATED_DIR    ||
-                        nextSignature == RRIP_TIMESTAMPS   || nextSignature == RRIP_SPARSE;
+                rrip |= nextSignature is RRIP_MAGIC or RRIP_POSIX_ATTRIBUTES or RRIP_POSIX_DEV_NO or RRIP_SYMLINK
+                                      or RRIP_NAME or RRIP_CHILDLINK or RRIP_PARENTLINK or RRIP_RELOCATED_DIR
+                                      or RRIP_TIMESTAMPS or RRIP_SPARSE;
 
                 ziso  |= nextSignature == ZISO_MAGIC;
                 amiga |= nextSignature == AMIGA_MAGIC;

@@ -343,8 +343,7 @@ public sealed partial class BlindWrite5
                 stream.Read(trk, 0, 72);
                 session.Tracks[tSeq] = Marshal.ByteArrayToStructureLittleEndian<TrackDescriptor>(trk);
 
-                if(session.Tracks[tSeq].type == TrackType.Dvd ||
-                   session.Tracks[tSeq].type == TrackType.NotData)
+                if(session.Tracks[tSeq].type is TrackType.Dvd or TrackType.NotData)
                 {
                     session.Tracks[tSeq].unknown9[0] = 0;
                     session.Tracks[tSeq].unknown9[1] = 0;
@@ -426,8 +425,7 @@ public sealed partial class BlindWrite5
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown8 = 0x{2:X4}", ses,
                                            tSeq, session.Tracks[tSeq].unknown8);
 
-                if(session.Tracks[tSeq].type == TrackType.Dvd ||
-                   session.Tracks[tSeq].type == TrackType.NotData)
+                if(session.Tracks[tSeq].type is TrackType.Dvd or TrackType.NotData)
                     continue;
 
                 {
@@ -1173,8 +1171,7 @@ public sealed partial class BlindWrite5
                     _imageInfo.MediaType = MediaType.XGD2;
             }
         }
-        else if(_imageInfo.MediaType == MediaType.CD ||
-                _imageInfo.MediaType == MediaType.CDROM)
+        else if(_imageInfo.MediaType is MediaType.CD or MediaType.CDROM)
         {
             var data       = false;
             var mode2      = false;
@@ -1271,9 +1268,7 @@ public sealed partial class BlindWrite5
 
         var isBd = false;
 
-        if(_imageInfo.MediaType == MediaType.BDR  ||
-           _imageInfo.MediaType == MediaType.BDRE ||
-           _imageInfo.MediaType == MediaType.BDROM)
+        if(_imageInfo.MediaType is MediaType.BDR or MediaType.BDRE or MediaType.BDROM)
         {
             isDvd = false;
             isBd  = true;
@@ -1334,9 +1329,7 @@ public sealed partial class BlindWrite5
             _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
 
         if(_imageInfo.MediaType == MediaType.XGD2)
-            if(_imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
-               _imageInfo.Sectors == 4229664 || // Xtreme unlock
-               _imageInfo.Sectors == 4246304)   // Wxripper unlock
+            if(_imageInfo.Sectors is 25063 or 4229664 or 4246304) // Wxripper unlock
                 _imageInfo.MediaType = MediaType.XGD3;
 
         AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", _imageInfo.MediaType);

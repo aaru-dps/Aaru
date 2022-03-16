@@ -72,8 +72,7 @@ public sealed class AppleMap : IPartition
     {
         uint sectorSize;
 
-        if(imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448)
+        if(imagePlugin.Info.SectorSize is 2352 or 2448)
             sectorSize = 2048;
         else
             sectorSize = imagePlugin.Info.SectorSize;

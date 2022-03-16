@@ -155,9 +155,8 @@ public sealed class SGI : IPartition
                 Scheme   = Name
             };
 
-            if(part.Size              <= 0              ||
-               dvh.partitions[i].type == SGIType.Header ||
-               dvh.partitions[i].type == SGIType.Volume)
+            if(part.Size <= 0 ||
+               dvh.partitions[i].type is SGIType.Header or SGIType.Volume)
                 continue;
 
             partitions.Add(part);

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 
 namespace Aaru.Devices;
@@ -193,7 +191,7 @@ static class Command
             case PlatformID.Win32NT:
             {
                 if(Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
-                   (Environment.OSVersion.ServicePack == "Service Pack 1" || Environment.OSVersion.ServicePack == "") ||
+                   Environment.OSVersion.ServicePack is "Service Pack 1" or "" ||
                    Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
                     throw new InvalidOperationException("Windows XP or earlier is not supported.");
 
@@ -261,7 +259,7 @@ static class Command
             case PlatformID.Win32NT:
             {
                 if(Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
-                   (Environment.OSVersion.ServicePack == "Service Pack 1" || Environment.OSVersion.ServicePack == "") ||
+                   Environment.OSVersion.ServicePack is "Service Pack 1" or "" ||
                    Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
                     throw new InvalidOperationException("Windows XP or earlier is not supported.");
 

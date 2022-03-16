@@ -204,9 +204,8 @@ public sealed class ScsiInfo
                 if(!sense)
                     ReadCapacity16 = cmdBuf;
 
-                if(ReadCapacity == null       ||
-                   Blocks       == 0xFFFFFFFF ||
-                   Blocks       == 0)
+                if(ReadCapacity == null ||
+                   Blocks is 0xFFFFFFFF or 0)
                 {
                     if(ReadCapacity16 == null &&
                        Blocks         == 0)
@@ -301,7 +300,7 @@ public sealed class ScsiInfo
                                            Sense.PrettifySense(senseBuf));
 
                 if(dev.IsUsb &&
-                   (scsiMediumType == 0x40 || scsiMediumType == 0x41 || scsiMediumType == 0x42))
+                   scsiMediumType is 0x40 or 0x41 or 0x42)
                     MediaType = MediaType.FlashDrive;
             }
             else
@@ -496,23 +495,11 @@ public sealed class ScsiInfo
             */
 
             #region All DVD and HD DVD types
-            if(MediaType == MediaType.DVDDownload ||
-               MediaType == MediaType.DVDPR       ||
-               MediaType == MediaType.DVDPRDL     ||
-               MediaType == MediaType.DVDPRW      ||
-               MediaType == MediaType.DVDPRWDL    ||
-               MediaType == MediaType.DVDR        ||
-               MediaType == MediaType.DVDRAM      ||
-               MediaType == MediaType.DVDRDL      ||
-               MediaType == MediaType.DVDROM      ||
-               MediaType == MediaType.DVDRW       ||
-               MediaType == MediaType.DVDRWDL     ||
-               MediaType == MediaType.HDDVDR      ||
-               MediaType == MediaType.HDDVDRAM    ||
-               MediaType == MediaType.HDDVDRDL    ||
-               MediaType == MediaType.HDDVDROM    ||
-               MediaType == MediaType.HDDVDRW     ||
-               MediaType == MediaType.HDDVDRWDL)
+            if(MediaType is MediaType.DVDDownload or MediaType.DVDPR or MediaType.DVDPRDL or MediaType.DVDPRW
+                         or MediaType.DVDPRWDL or MediaType.DVDR or MediaType.DVDRAM or MediaType.DVDRDL
+                         or MediaType.DVDROM or MediaType.DVDRW or MediaType.DVDRWDL or MediaType.HDDVDR
+                         or MediaType.HDDVDRAM or MediaType.HDDVDRDL or MediaType.HDDVDROM or MediaType.HDDVDRW
+                         or MediaType.HDDVDRWDL)
             {
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out _);
@@ -608,9 +595,7 @@ public sealed class ScsiInfo
                         MediaType = MediaType.XGD2;
 
                         // All XGD3 all have the same number of blocks
-                        if(Blocks == 25063   || // Locked (or non compatible drive)
-                           Blocks == 4229664 || // Xtreme unlock
-                           Blocks == 4246304)   // Wxripper unlock
+                        if(Blocks is 25063 or 4229664 or 4246304) // Wxripper unlock
                             MediaType = MediaType.XGD3;
                     }
                 }
@@ -618,8 +603,7 @@ public sealed class ScsiInfo
             #endregion All DVD and HD DVD types
 
             #region DVD-ROM
-            if(MediaType == MediaType.DVDDownload ||
-               MediaType == MediaType.DVDROM)
+            if(MediaType is MediaType.DVDDownload or MediaType.DVDROM)
             {
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout, out _);
@@ -786,10 +770,7 @@ public sealed class ScsiInfo
             #endregion Require drive authentication, won't work
 
             #region DVD-R and DVD-RW
-            if(MediaType == MediaType.DVDR   ||
-               MediaType == MediaType.DVDRW  ||
-               MediaType == MediaType.DVDRDL ||
-               MediaType == MediaType.DVDRWDL)
+            if(MediaType is MediaType.DVDR or MediaType.DVDRW or MediaType.DVDRDL or MediaType.DVDRWDL)
             {
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.PreRecordedInfo, 0, dev.Timeout, out _);
@@ -906,10 +887,7 @@ public sealed class ScsiInfo
             #endregion HD DVD-R
 
             #region DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
-            if(MediaType == MediaType.DVDPRDL ||
-               MediaType == MediaType.DVDRDL  ||
-               MediaType == MediaType.DVDRWDL ||
-               MediaType == MediaType.DVDPRWDL)
+            if(MediaType is MediaType.DVDPRDL or MediaType.DVDRDL or MediaType.DVDRWDL or MediaType.DVDPRWDL)
             {
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.DvdrLayerCapacity, 0, dev.Timeout, out _);
@@ -1423,7 +1401,7 @@ public sealed class ScsiInfo
             MediaType = MediaType.GENERIC_HDD;
 
         if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice ||
-           dev.IsUsb && (scsiMediumType == 0x40 || scsiMediumType == 0x41 || scsiMediumType == 0x42))
+           dev.IsUsb && scsiMediumType is 0x40 or 0x41 or 0x42)
             return;
 
         sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,

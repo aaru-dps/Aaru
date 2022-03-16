@@ -85,8 +85,7 @@ public sealed partial class Device
             aaruUri = null;
         }
 
-        if(aaruUri?.Scheme == "dic" ||
-           aaruUri?.Scheme == "aaru")
+        if(aaruUri?.Scheme is "dic" or "aaru")
         {
             devicePath = aaruUri.AbsolutePath;
 
@@ -128,8 +127,7 @@ public sealed partial class Device
                     {
                         LastError = Marshal.GetLastWin32Error();
 
-                        if(LastError == 13 ||
-                           LastError == 30) // EACCES or EROFS
+                        if(LastError is 13 or 30) // EACCES or EROFS
                         {
                             FileHandle = Linux.Extern.open(devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
 

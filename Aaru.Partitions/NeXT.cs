@@ -30,9 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // Information learnt from XNU source and testing against real disks
+
 namespace Aaru.Partitions;
 
 using System;
@@ -79,8 +78,7 @@ public sealed class NeXTDisklabel : IPartition
 
         uint sectorSize;
 
-        if(imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448)
+        if(imagePlugin.Info.SectorSize is 2352 or 2448)
             sectorSize = 2048;
         else
             sectorSize = imagePlugin.Info.SectorSize;

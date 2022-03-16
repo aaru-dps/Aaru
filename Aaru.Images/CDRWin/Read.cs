@@ -1071,8 +1071,7 @@ public sealed partial class CdrWin
             else if(_discImage.MediaType == MediaType.Unknown)
                 _discImage.MediaType = CdrWinIsoBusterDiscTypeToMediaType(_discImage.OriginalMediaType);
 
-            if(_discImage.MediaType == MediaType.Unknown ||
-               _discImage.MediaType == MediaType.CD)
+            if(_discImage.MediaType is MediaType.Unknown or MediaType.CD)
             {
                 var data       = false;
                 var cdg        = false;
@@ -1553,8 +1552,8 @@ public sealed partial class CdrWin
 
             var mediaTypeAsInt = (int)_discImage.MediaType;
 
-            _isCd = mediaTypeAsInt >= 10  && mediaTypeAsInt <= 39  || mediaTypeAsInt == 112 || mediaTypeAsInt == 113 ||
-                    mediaTypeAsInt >= 150 && mediaTypeAsInt <= 152 || mediaTypeAsInt == 154 || mediaTypeAsInt == 155 ||
+            _isCd = mediaTypeAsInt >= 10  && mediaTypeAsInt <= 39  || mediaTypeAsInt is 112 or 113 ||
+                    mediaTypeAsInt >= 150 && mediaTypeAsInt <= 152 || mediaTypeAsInt is 154 or 155 ||
                     mediaTypeAsInt >= 171 && mediaTypeAsInt <= 179 || mediaTypeAsInt >= 740 && mediaTypeAsInt <= 749;
 
             if(currentSession > 1           &&
@@ -1670,8 +1669,7 @@ public sealed partial class CdrWin
     {
         buffer = null;
 
-        if(tag == SectorTagType.CdTrackFlags ||
-           tag == SectorTagType.CdTrackIsrc)
+        if(tag is SectorTagType.CdTrackFlags or SectorTagType.CdTrackIsrc)
             return ReadSectorsTag(sectorAddress, length, 0, tag, out buffer);
 
         foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
@@ -1863,8 +1861,7 @@ public sealed partial class CdrWin
     {
         buffer = null;
 
-        if(tag == SectorTagType.CdTrackFlags ||
-           tag == SectorTagType.CdTrackIsrc)
+        if(tag is SectorTagType.CdTrackFlags or SectorTagType.CdTrackIsrc)
             track = (uint)sectorAddress;
 
         CdrWinTrack? aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);

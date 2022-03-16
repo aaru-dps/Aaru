@@ -96,9 +96,7 @@ public sealed partial class TeleDisk
            _header.DataRate != DATA_RATE_500_KBPS)
             return false;
 
-        return _header.DriveType == DRIVE_TYPE_35_DD  || _header.DriveType == DRIVE_TYPE_35_ED          ||
-               _header.DriveType == DRIVE_TYPE_35_HD  || _header.DriveType == DRIVE_TYPE_525_DD         ||
-               _header.DriveType == DRIVE_TYPE_525_HD || _header.DriveType == DRIVE_TYPE_525_HD_DD_DISK ||
-               _header.DriveType == DRIVE_TYPE_8_INCH;
+        return _header.DriveType is DRIVE_TYPE_35_DD or DRIVE_TYPE_35_ED or DRIVE_TYPE_35_HD or DRIVE_TYPE_525_DD
+                                 or DRIVE_TYPE_525_HD or DRIVE_TYPE_525_HD_DD_DISK or DRIVE_TYPE_8_INCH;
     }
 }

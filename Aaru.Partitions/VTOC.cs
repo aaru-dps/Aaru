@@ -172,8 +172,7 @@ public sealed class VTOC : IPartition
         var vtocOld = new vtocold();
         magic = BitConverter.ToUInt32(vtocsector, 0);
 
-        if(magic == VTOC_SANE ||
-           magic == VTOC_ENAS)
+        if(magic is VTOC_SANE or VTOC_ENAS)
         {
             magicFound = true;
             AaruConsole.DebugWriteLine("VTOC plugin", "New VTOC found at {0}", pdloc + sectorOffset + 1);
@@ -200,8 +199,7 @@ public sealed class VTOC : IPartition
         {
             magic = BitConverter.ToUInt32(vtocsector, 12);
 
-            if(magic == VTOC_SANE ||
-               magic == VTOC_ENAS)
+            if(magic is VTOC_SANE or VTOC_ENAS)
             {
                 magicFound = true;
                 useOld     = true;
@@ -255,8 +253,7 @@ public sealed class VTOC : IPartition
             Array.Copy(tmp, relSecOff, vtocsector, 0, pd.vtoc_len);
             magic = BitConverter.ToUInt32(vtocsector, 0);
 
-            if(magic == VTOC_SANE ||
-               magic == VTOC_ENAS)
+            if(magic is VTOC_SANE or VTOC_ENAS)
             {
                 magicFound = true;
                 AaruConsole.DebugWriteLine("VTOC plugin", "New VTOC found.");
@@ -451,6 +448,7 @@ public sealed class VTOC : IPartition
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
     // ReSharper disable once InconsistentNaming
     struct PDInfo
     {
@@ -494,6 +492,7 @@ public sealed class VTOC : IPartition
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
     // ReSharper disable once InconsistentNaming
     struct PDInfoOld
     {
@@ -522,6 +521,7 @@ public sealed class VTOC : IPartition
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
     // ReSharper disable once InconsistentNaming
     struct vtocold
     {
@@ -542,6 +542,7 @@ public sealed class VTOC : IPartition
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
     // ReSharper disable once InconsistentNaming
     struct vtoc
     {

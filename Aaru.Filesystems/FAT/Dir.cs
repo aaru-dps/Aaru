@@ -224,7 +224,7 @@ public sealed partial class FAT
                     Dirent = dirent
                 };
 
-                if((_namespace == Namespace.Lfn || _namespace == Namespace.Ecs) &&
+                if(_namespace is Namespace.Lfn or Namespace.Ecs &&
                    lastLfnName != null)
                 {
                     byte calculatedLfnChecksum = LfnChecksum(dirent.filename, dirent.extension);
@@ -316,8 +316,8 @@ public sealed partial class FAT
             }
 
             // Check OS/2 .LONGNAME
-            if(_eaCache != null                                             &&
-               (_namespace == Namespace.Os2 || _namespace == Namespace.Ecs) &&
+            if(_eaCache != null                             &&
+               _namespace is Namespace.Os2 or Namespace.Ecs &&
                !_fat32)
             {
                 var filesWithEas = currentDirectory.Where(t => t.Value.Dirent.ea_handle != 0).ToList();

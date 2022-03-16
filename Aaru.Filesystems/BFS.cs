@@ -132,8 +132,7 @@ public sealed class BeFS : IFilesystem
 
         besb.magic1 = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
-        if(besb.magic1 == BEFS_MAGIC1 ||
-           besb.magic1 == BEFS_CIGAM1) // Magic is at offset
+        if(besb.magic1 is BEFS_MAGIC1 or BEFS_CIGAM1) // Magic is at offset
             littleEndian = besb.magic1 == BEFS_CIGAM1;
         else
         {
@@ -144,8 +143,7 @@ public sealed class BeFS : IFilesystem
 
             besb.magic1 = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
-            if(besb.magic1 == BEFS_MAGIC1 ||
-               besb.magic1 == BEFS_CIGAM1) // There is a boot sector
+            if(besb.magic1 is BEFS_MAGIC1 or BEFS_CIGAM1) // There is a boot sector
                 littleEndian = besb.magic1 == BEFS_CIGAM1;
             else if(sbSector.Length >= 0x400)
             {
@@ -156,8 +154,7 @@ public sealed class BeFS : IFilesystem
 
                 besb.magic1 = BigEndianBitConverter.ToUInt32(temp, 0x220);
 
-                if(besb.magic1 == BEFS_MAGIC1 ||
-                   besb.magic1 == BEFS_CIGAM1) // There is a boot sector
+                if(besb.magic1 is BEFS_MAGIC1 or BEFS_CIGAM1) // There is a boot sector
                 {
                     littleEndian = besb.magic1 == BEFS_CIGAM1;
                     sbSector     = new byte[0x200];

@@ -178,7 +178,7 @@ public sealed class AppleSingle : IFilter
         Array.Copy(buffer, 0, hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
+        return _header.magic == MAGIC && _header.version is VERSION or VERSION2;
     }
 
     /// <inheritdoc />
@@ -193,7 +193,7 @@ public sealed class AppleSingle : IFilter
         stream.Read(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
+        return _header.magic == MAGIC && _header.version is VERSION or VERSION2;
     }
 
     /// <inheritdoc />
@@ -213,7 +213,7 @@ public sealed class AppleSingle : IFilter
 
         fstream.Close();
 
-        return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
+        return _header.magic == MAGIC && _header.version is VERSION or VERSION2;
     }
 
     /// <inheritdoc />

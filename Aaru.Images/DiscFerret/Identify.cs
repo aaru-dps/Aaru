@@ -46,6 +46,6 @@ public sealed partial class DiscFerret
         stream.Read(magicB, 0, 4);
         var magic = BitConverter.ToUInt32(magicB, 0);
 
-        return magic == DFI_MAGIC || magic == DFI_MAGIC2;
+        return magic is DFI_MAGIC or DFI_MAGIC2;
     }
 }

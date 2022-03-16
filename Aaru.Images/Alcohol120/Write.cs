@@ -685,9 +685,9 @@ public sealed partial class Alcohol120
                         unknown2 = new byte[24],
                         psec = (byte)(_imageInfo.MediaType == MediaType.CDI
                                           ? 0x10
-                                          : _writingTracks.Any(t => t.Type == TrackType.CdMode2Form1 ||
-                                                                    t.Type == TrackType.CdMode2Form2 ||
-                                                                    t.Type == TrackType.CdMode2Formless)
+                                          : _writingTracks.Any(t => t.Type is TrackType.CdMode2Form1
+                                                                           or TrackType.CdMode2Form2
+                                                                           or TrackType.CdMode2Formless)
                                               ? 0x20
                                               : 0),
                         extraOffset = (uint)currentExtraOffset

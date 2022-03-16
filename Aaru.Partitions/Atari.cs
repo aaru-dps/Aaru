@@ -180,8 +180,7 @@ public sealed class AtariPartitions : IPartition
 
                         ulong sectorSize = imagePlugin.Info.SectorSize;
 
-                        if(sectorSize == 2448 ||
-                           sectorSize == 2352)
+                        if(sectorSize is 2448 or 2352)
                             sectorSize = 2048;
 
                         var partType = new byte[3];
@@ -304,8 +303,7 @@ public sealed class AtariPartitions : IPartition
 
                         ulong sectorSize = imagePlugin.Info.SectorSize;
 
-                        if(sectorSize == 2448 ||
-                           sectorSize == 2352)
+                        if(sectorSize is 2448 or 2352)
                             sectorSize = 2048;
 
                         var partType = new byte[3];
@@ -411,8 +409,7 @@ public sealed class AtariPartitions : IPartition
 
             ulong sectorSize = imagePlugin.Info.SectorSize;
 
-            if(sectorSize == 2448 ||
-               sectorSize == 2352)
+            if(sectorSize is 2448 or 2352)
                 sectorSize = 2048;
 
             var partType = new byte[3];

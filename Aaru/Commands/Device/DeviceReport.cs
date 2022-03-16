@@ -408,9 +408,8 @@ sealed class DeviceReportCommand : Command
                     case PeripheralDeviceTypes.MultiMediaDevice:
                     {
                         if(dev.IsUsb &&
-                           (mediumType == MediumTypes.UnknownBlockDevice  ||
-                            mediumType == MediumTypes.ReadOnlyBlockDevice ||
-                            mediumType == MediumTypes.ReadWriteBlockDevice))
+                           mediumType is MediumTypes.UnknownBlockDevice or MediumTypes.ReadOnlyBlockDevice
+                                                                        or MediumTypes.ReadWriteBlockDevice)
                             goto default;
 
                         bool iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" && dev.Model.

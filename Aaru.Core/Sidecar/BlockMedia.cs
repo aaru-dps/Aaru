@@ -1000,7 +1000,7 @@ public sealed partial class Sidecar
                 catch(NotImplementedException) {}
 
                 if(image.Info.Heads == 2 && scpImage.Header.heads == 0 ||
-                   image.Info.Heads == 1 && (scpImage.Header.heads == 1 || scpImage.Header.heads == 2))
+                   image.Info.Heads == 1 && scpImage.Header.heads is 1 or 2)
                     if(scpImage.Header.end + 1 >= image.Info.Cylinders)
                     {
                         List<BlockTrackType> scpBlockTrackTypes = new();

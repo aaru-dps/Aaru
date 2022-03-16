@@ -116,9 +116,7 @@ public sealed class FFSPlugin : IFilesystem
 
         uint sbSizeInSectors;
 
-        if(imagePlugin.Info.SectorSize == 2336 ||
-           imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448)
+        if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
             sbSizeInSectors = block_size / 2048;
         else
             sbSizeInSectors = block_size / imagePlugin.Info.SectorSize;
@@ -143,14 +141,8 @@ public sealed class FFSPlugin : IFilesystem
 
                     var magic = BitConverter.ToUInt32(ufsSbSectors, 0x055C);
 
-                    if(magic == UFS_MAGIC     ||
-                       magic == UFS_CIGAM     ||
-                       magic == UFS_MAGIC_BW  ||
-                       magic == UFS_CIGAM_BW  ||
-                       magic == UFS2_MAGIC    ||
-                       magic == UFS2_CIGAM    ||
-                       magic == UFS_BAD_MAGIC ||
-                       magic == UFS_BAD_CIGAM)
+                    if(magic is UFS_MAGIC or UFS_CIGAM or UFS_MAGIC_BW or UFS_CIGAM_BW or UFS2_MAGIC or UFS2_CIGAM
+                             or UFS_BAD_MAGIC or UFS_BAD_CIGAM)
                         return true;
                 }
 
@@ -181,9 +173,7 @@ public sealed class FFSPlugin : IFilesystem
         var    fs_type_sun   = false;
         var    fs_type_sun86 = false;
 
-        if(imagePlugin.Info.SectorSize == 2336 ||
-           imagePlugin.Info.SectorSize == 2352 ||
-           imagePlugin.Info.SectorSize == 2448)
+        if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
             sb_size_in_sectors = block_size / 2048;
         else
             sb_size_in_sectors = block_size / imagePlugin.Info.SectorSize;
@@ -206,14 +196,8 @@ public sealed class FFSPlugin : IFilesystem
 
             magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-            if(magic == UFS_MAGIC     ||
-               magic == UFS_CIGAM     ||
-               magic == UFS_MAGIC_BW  ||
-               magic == UFS_CIGAM_BW  ||
-               magic == UFS2_MAGIC    ||
-               magic == UFS2_CIGAM    ||
-               magic == UFS_BAD_MAGIC ||
-               magic == UFS_BAD_CIGAM)
+            if(magic is UFS_MAGIC or UFS_CIGAM or UFS_MAGIC_BW or UFS_CIGAM_BW or UFS2_MAGIC or UFS2_CIGAM
+                     or UFS_BAD_MAGIC or UFS_BAD_CIGAM)
             {
                 sb_offset = partition.Start + loc;
 

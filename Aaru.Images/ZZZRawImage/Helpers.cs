@@ -117,7 +117,7 @@ public sealed partial class ZZZRawImage
                 if(_imageInfo.SectorSize == 256)
                     return MediaType.CBM_35_DD;
 
-                if((_extension == ".adf" || _extension == ".adl") &&
+                if(_extension is ".adf" or ".adl" &&
                    _imageInfo.SectorSize == 1024)
                     return MediaType.ACORN_35_DS_DD;
 

@@ -110,7 +110,7 @@ public sealed class AppleHFSPlus : IFilesystem
 
         drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
-        return drSigWord == AppleCommon.HFSP_MAGIC || drSigWord == AppleCommon.HFSX_MAGIC;
+        return drSigWord is AppleCommon.HFSP_MAGIC or AppleCommon.HFSX_MAGIC;
     }
 
     /// <inheritdoc />
@@ -193,8 +193,7 @@ public sealed class AppleHFSPlus : IFilesystem
 
         vh = Marshal.ByteArrayToStructureBigEndian<VolumeHeader>(vhSector);
 
-        if(vh.version == 4 ||
-           vh.version == 5)
+        if(vh.version is 4 or 5)
         {
             sb.AppendFormat("Filesystem version is {0}.", vh.version).AppendLine();
 

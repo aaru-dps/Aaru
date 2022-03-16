@@ -150,8 +150,7 @@ public sealed partial class Alcohol120
                 stream.Read(trkHdr, 0, 80);
                 Track track = Marshal.ByteArrayToStructureLittleEndian<Track>(trkHdr);
 
-                if(track.mode == TrackMode.Mode2F1Alt ||
-                   track.mode == TrackMode.Mode2F1Alt)
+                if(track.mode is TrackMode.Mode2F1Alt or TrackMode.Mode2F1Alt)
                     oldIncorrectImage = true;
 
                 // Solve our own mistake here, sorry, but anyway seems Alcohol doesn't support DDCD
@@ -495,20 +494,17 @@ public sealed partial class Alcohol120
             foreach(Track alcoholTrack in _alcTracks.Values)
             {
                 // First track is audio
-                firstAudio |= alcoholTrack.point == 1 &&
-                              (alcoholTrack.mode == TrackMode.Audio || alcoholTrack.mode == TrackMode.AudioAlt);
+                firstAudio |= alcoholTrack.point == 1 && alcoholTrack.mode is TrackMode.Audio or TrackMode.AudioAlt;
 
                 // First track is data
                 firstData |= alcoholTrack.point == 1 &&
-                             (alcoholTrack.mode != TrackMode.Audio || alcoholTrack.mode != TrackMode.AudioAlt);
+                             alcoholTrack.mode is not (TrackMode.Audio and TrackMode.AudioAlt);
 
                 // Any non first track is data
-                data |= alcoholTrack.point != 1 &&
-                        (alcoholTrack.mode != TrackMode.Audio || alcoholTrack.mode != TrackMode.AudioAlt);
+                data |= alcoholTrack.point != 1 && alcoholTrack.mode is not (TrackMode.Audio and TrackMode.AudioAlt);
 
                 // Any non first track is audio
-                audio |= alcoholTrack.point != 1 &&
-                         (alcoholTrack.mode == TrackMode.Audio || alcoholTrack.mode == TrackMode.AudioAlt);
+                audio |= alcoholTrack.point != 1 && alcoholTrack.mode is TrackMode.Audio or TrackMode.AudioAlt;
 
                 switch(alcoholTrack.mode)
                 {
@@ -726,9 +722,7 @@ public sealed partial class Alcohol120
         }
 
         if(_imageInfo.MediaType == MediaType.XGD2)
-            if(_imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
-               _imageInfo.Sectors == 4229664 || // Xtreme unlock
-               _imageInfo.Sectors == 4246304)   // Wxripper unlock
+            if(_imageInfo.Sectors is 25063 or 4229664 or 4246304) // Wxripper unlock
                 _imageInfo.MediaType = MediaType.XGD3;
 
         AaruConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", _imageInfo.MediaType);
