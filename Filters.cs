@@ -62,8 +62,7 @@ public sealed class FiltersList
         foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilter))))
             try
             {
-                var filter = (IFilter)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                    {});
+                var filter = (IFilter)type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
 
                 if(filter != null &&
                    !Filters.ContainsKey(filter.Name.ToLower()))
@@ -90,8 +89,7 @@ public sealed class FiltersList
                     if(!filter.Identify(path))
                         continue;
 
-                    var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                        {});
+                    var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
 
                     if(foundFilter?.Open(path) == ErrorNumber.NoError)
                         return foundFilter;
