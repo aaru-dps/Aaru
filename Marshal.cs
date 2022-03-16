@@ -439,8 +439,7 @@ public static class Marshal
     {
         outBuf = null;
 
-        if(hex is null ||
-           hex == "")
+        if(hex is null or "")
             return -1;
 
         var off = 0;

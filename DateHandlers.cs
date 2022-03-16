@@ -302,8 +302,7 @@ public static class DateHandlers
         if(offset == -2047)
             return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified).AddTicks(ticks);
 
-        if(offset < -1440 ||
-           offset > 1440)
+        if(offset is < -1440 or > 1440)
             offset = 0;
 
         return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0)).AddTicks(ticks).
