@@ -38,6 +38,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
+/// <inheritdoc />
 /// <summary>Wraps up .NET MD5 implementation to a Init(), Update(), Final() context.</summary>
 public sealed class Md5Context : IChecksum
 {

@@ -41,6 +41,7 @@ using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
+/// <inheritdoc />
 /// <summary>Implements the Fletcher-32 algorithm</summary>
 public sealed class Fletcher32Context : IChecksum
 {
