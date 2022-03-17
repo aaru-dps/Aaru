@@ -56,7 +56,8 @@ public static class Marshal
     {
         var ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 
-        var str = (T)System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
+        var str = (T)(System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T)) ??
+                      default(T));
 
         ptr.Free();
 
@@ -86,7 +87,8 @@ public static class Marshal
     {
         var ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 
-        object str = (T)System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
+        object str = (T)(System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T)) ??
+                         default(T));
 
         ptr.Free();
 
@@ -117,7 +119,9 @@ public static class Marshal
         {
             var ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 
-            object str = (T)System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
+            object str =
+                (T)(System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T)) ??
+                    default(T));
 
             ptr.Free();
 
@@ -275,20 +279,20 @@ public static class Marshal
             if(fi.FieldType == typeof(short) ||
                fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(short))
             {
-                var x = (short)fi.GetValue(str);
+                var x = (short)(fi.GetValue(str) ?? default(short));
                 fi.SetValue(str, (short)((x << 8) | ((x >> 8) & 0xFF)));
             }
             else if(fi.FieldType == typeof(int) ||
                     fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(int))
             {
-                var x = (int)fi.GetValue(str);
+                var x = (int)(fi.GetValue(str) ?? default(int));
                 x = (int)(((x                   << 8) & 0xFF00FF00) | (((uint)x >> 8) & 0xFF00FF));
                 fi.SetValue(str, (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF)));
             }
             else if(fi.FieldType == typeof(long) ||
                     fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(long))
             {
-                var x = (long)fi.GetValue(str);
+                var x = (long)(fi.GetValue(str) ?? default(long));
                 x = ((x & 0x00000000FFFFFFFF) << 32) | (long)(((ulong)x & 0xFFFFFFFF00000000) >> 32);
                 x = ((x & 0x0000FFFF0000FFFF) << 16) | (long)(((ulong)x & 0xFFFF0000FFFF0000) >> 16);
                 x = ((x & 0x00FF00FF00FF00FF) << 8)  | (long)(((ulong)x & 0xFF00FF00FF00FF00) >> 8);
@@ -298,20 +302,20 @@ public static class Marshal
             else if(fi.FieldType == typeof(ushort) ||
                     fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(ushort))
             {
-                var x = (ushort)fi.GetValue(str);
+                var x = (ushort)(fi.GetValue(str) ?? default(ushort));
                 fi.SetValue(str, (ushort)((x << 8) | (x >> 8)));
             }
             else if(fi.FieldType == typeof(uint) ||
                     fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(uint))
             {
-                var x = (uint)fi.GetValue(str);
+                var x = (uint)(fi.GetValue(str) ?? default(uint));
                 x = ((x             << 8) & 0xFF00FF00) | ((x >> 8) & 0xFF00FF);
                 fi.SetValue(str, (x << 16) | (x               >> 16));
             }
             else if(fi.FieldType == typeof(ulong) ||
                     fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(ulong))
             {
-                var x = (ulong)fi.GetValue(str);
+                var x = (ulong)(fi.GetValue(str) ?? default(ulong));
                 x = ((x & 0x00000000FFFFFFFF) << 32) | ((x & 0xFFFFFFFF00000000) >> 32);
                 x = ((x & 0x0000FFFF0000FFFF) << 16) | ((x & 0xFFFF0000FFFF0000) >> 16);
                 x = ((x & 0x00FF00FF00FF00FF) << 8)  | ((x & 0xFF00FF00FF00FF00) >> 8);
@@ -319,7 +323,7 @@ public static class Marshal
             }
             else if(fi.FieldType == typeof(float))
             {
-                var    flt   = (float)fi.GetValue(str);
+                var    flt   = (float)(fi.GetValue(str) ?? default(float));
                 byte[] flt_b = BitConverter.GetBytes(flt);
 
                 fi.SetValue(str, BitConverter.ToSingle(new[]
@@ -329,7 +333,7 @@ public static class Marshal
             }
             else if(fi.FieldType == typeof(double))
             {
-                var    dbl   = (double)fi.GetValue(str);
+                var    dbl   = (double)(fi.GetValue(str) ?? default(double));
                 byte[] dbl_b = BitConverter.GetBytes(dbl);
 
                 fi.SetValue(str, BitConverter.ToDouble(new[]
@@ -385,13 +389,13 @@ public static class Marshal
             else if(fi.FieldType == typeof(int) ||
                     fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(int))
             {
-                var x = (int)fi.GetValue(str);
+                var x = (int)(fi.GetValue(str) ?? default(int));
                 fi.SetValue(str, ((x & 0xffffu) << 16) | ((x & 0xffff0000u) >> 16));
             }
             else if(fi.FieldType == typeof(uint) ||
                     fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(uint))
             {
-                var x = (uint)fi.GetValue(str);
+                var x = (uint)(fi.GetValue(str) ?? default(uint));
                 fi.SetValue(str, ((x & 0xffffu) << 16) | ((x & 0xffff0000u) >> 16));
             }
 
