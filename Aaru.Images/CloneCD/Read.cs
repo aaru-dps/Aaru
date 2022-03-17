@@ -961,11 +961,7 @@ public sealed partial class CloneCd
                                                             Where(t => sectorAddress - t.kvp.Value <
                                                                        t.track.EndSector - t.track.StartSector + 1).
                                                             Select(t => t.kvp))
-        {
             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
-
-            return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
-        }
 
         return ErrorNumber.SectorNotFound;
     }
@@ -974,7 +970,7 @@ public sealed partial class CloneCd
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, uint track, out byte[] buffer)
     {
         buffer = null;
-        Track? aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -1064,7 +1060,7 @@ public sealed partial class CloneCd
         if(tag == SectorTagType.CdTrackFlags)
             track = (uint)sectorAddress;
 
-        Track? aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -1352,7 +1348,7 @@ public sealed partial class CloneCd
     public ErrorNumber ReadSectorsLong(ulong sectorAddress, uint length, uint track, out byte[] buffer)
     {
         buffer = null;
-        Track? aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;

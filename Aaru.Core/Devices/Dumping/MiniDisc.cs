@@ -121,8 +121,7 @@ partial class Dump
             return;
         }
 
-        if(blocks    != 0 &&
-           blockSize != 0)
+        if(blocks != 0)
         {
             blocks++;
 

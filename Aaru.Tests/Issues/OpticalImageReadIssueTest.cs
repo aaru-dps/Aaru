@@ -43,8 +43,6 @@ public abstract class OpticalImageReadIssueTest
 
         var ctx = new Crc32Context();
 
-        Checksum trackChecksum = null;
-
         ulong previousTrackEnd = 0;
 
         List<Track> inputTracks = opticalInput.Tracks;

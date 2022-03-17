@@ -1685,7 +1685,7 @@ public sealed partial class CdrWin
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, uint track, out byte[] buffer)
     {
         buffer = null;
-        CdrWinTrack? aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
+        CdrWinTrack aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -1864,7 +1864,7 @@ public sealed partial class CdrWin
         if(tag is SectorTagType.CdTrackFlags or SectorTagType.CdTrackIsrc)
             track = (uint)sectorAddress;
 
-        CdrWinTrack? aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
+        CdrWinTrack aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -2140,7 +2140,7 @@ public sealed partial class CdrWin
         if(!_isCd)
             return ReadSectors(sectorAddress, length, track, out buffer);
 
-        CdrWinTrack? aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
+        CdrWinTrack aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;

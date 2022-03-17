@@ -2455,7 +2455,7 @@ public sealed partial class AaruFormat
             var cmpCrc64Context = new Crc64Context();
 
             byte[] lzmaProperties   = Array.Empty<byte>();
-            var    compressedLength = 0;
+            int    compressedLength;
 
             switch(_currentBlockHeader.compression)
             {

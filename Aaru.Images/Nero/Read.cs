@@ -1604,11 +1604,7 @@ public sealed partial class Nero
                                                  from track in Tracks where track.Sequence == kvp.Key
                                                  where sectorAddress - kvp.Value <= track.EndSector - track.StartSector
                                                  select kvp)
-        {
             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
-
-            return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
-        }
 
         return ErrorNumber.SectorNotFound;
     }

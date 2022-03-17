@@ -654,9 +654,9 @@ public sealed class AcornADFS : IFilesystem
                 Don't add the check byte when calculating its value
         */
         sumVector0 += sumVector3 >> 8;
-        sumVector1 += mapBase[rover + 1] + (sumVector0 >> 8);
-        sumVector2 += mapBase[rover + 2] + (sumVector1 >> 8);
-        sumVector3 += mapBase[rover + 3] + (sumVector2 >> 8);
+        sumVector1 += mapBase[1] + (sumVector0 >> 8);
+        sumVector2 += mapBase[2] + (sumVector1 >> 8);
+        sumVector3 += mapBase[3] + (sumVector2 >> 8);
 
         return (byte)((sumVector0 ^ sumVector1 ^ sumVector2 ^ sumVector3) & 0xff);
     }

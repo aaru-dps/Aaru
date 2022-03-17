@@ -221,7 +221,7 @@ public sealed class BlockMap : ItemsControl
         }
     }
 
-    public override void Render([NotNull] DrawingContext context)
+    public override void Render(DrawingContext context)
     {
         if((int?)_bitmap?.Size.Height != (int)Height ||
            (int?)_bitmap?.Size.Width  != (int)Width)

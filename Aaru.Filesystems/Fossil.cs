@@ -128,7 +128,7 @@ public sealed class Fossil : IFilesystem
 
         if(sbLocation <= partition.End)
         {
-            errno = imagePlugin.ReadSector(sbLocation, out sector);
+            imagePlugin.ReadSector(sbLocation, out sector);
             SuperBlock fsb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sector);
 
             AaruConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic,

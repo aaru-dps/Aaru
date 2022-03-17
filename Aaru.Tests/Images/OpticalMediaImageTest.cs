@@ -223,7 +223,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                     if(track.FileSystems[i].Contents     != null ||
                                        track.FileSystems[i].ContentsJson != null ||
                                        File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
-                                        Assert.NotNull(rofs,
+                                        Assert.NotNull(null,
                                                        $"Could not instantiate filesystem for {testFile}, track {track.Number}, filesystem {i}");
 
                                     continue;

@@ -61,7 +61,7 @@ public sealed partial class FAT
     public ErrorNumber ReadDir(string path, out List<string> contents)
     {
         contents = null;
-        ErrorNumber errno = ErrorNumber.NoError;
+        ErrorNumber errno;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;

@@ -110,10 +110,7 @@ public partial class Dump
 
         ulong totalSize = blocks * blockSize;
 
-        if(totalSize > 1099511627776)
-            UpdateStatus?.
-                Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)");
-        else if(totalSize > 1073741824)
+        if(totalSize > 1073741824)
             UpdateStatus?.
                 Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)");
         else if(totalSize > 1048576)

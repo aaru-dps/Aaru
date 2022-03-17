@@ -98,11 +98,4 @@ public sealed partial class CPM : IReadOnlyFilesystem
 
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
-
-    static Dictionary<string, string> GetDefaultOptions() => new()
-    {
-        {
-            "debug", false.ToString()
-        }
-    };
 }

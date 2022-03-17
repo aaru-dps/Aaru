@@ -48,7 +48,7 @@ public sealed partial class CPM
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        ErrorNumber errno = ErrorNumber.NoError;
+        ErrorNumber errno;
 
         // This will only continue on devices with a chance to have ever been used by CP/M while failing on all others
         // It's ugly, but will stop a lot of false positives
@@ -245,8 +245,8 @@ public sealed partial class CPM
                             _dpb.spt = (ushort)(amsSb.spt * (sectorSize             / 128));
                             var directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
 
-                            errno = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
-                                                            out directory);
+                            imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
+                                                    out directory);
 
                             // Build a CP/M disk definition
                             _workingDefinition = new CpmDefinition

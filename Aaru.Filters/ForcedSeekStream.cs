@@ -134,8 +134,8 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
         var    fullBufferReads = (int)(toPosition / BUFFER_LEN);
         var    restToRead      = (int)(toPosition % BUFFER_LEN);
         byte[] buffer;
-        var    bufPos = 0;
-        int    left   = BUFFER_LEN;
+        int    bufPos;
+        int    left;
 
         for(var i = 0; i < fullBufferReads; i++)
         {

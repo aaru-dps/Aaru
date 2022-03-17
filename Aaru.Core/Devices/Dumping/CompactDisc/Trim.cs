@@ -157,8 +157,6 @@ partial class Dump
                 sectorsToTrim = (byte)(sectorsForOffset + 1);
             }
 
-            var forceFixOffset = false;
-
             if(_supportsPlextorD8 && audioExtents.Contains(badSector))
                 sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
                                                   supportedPlextorSubchannel, out cmdDuration);

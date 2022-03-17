@@ -115,7 +115,7 @@ public sealed partial class ISO9660
 
         ulong counter = 0;
 
-        ErrorNumber errno = imagePlugin.ReadSector(16 + counter + partition.Start, out byte[] vdSector);
+        ErrorNumber errno = imagePlugin.ReadSector(16 + partition.Start, out byte[] vdSector);
 
         if(errno != ErrorNumber.NoError)
             return;

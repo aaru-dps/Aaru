@@ -498,10 +498,10 @@ public sealed partial class Alcohol120
 
                 // First track is data
                 firstData |= alcoholTrack.point == 1 &&
-                             alcoholTrack.mode is not (TrackMode.Audio and TrackMode.AudioAlt);
+                             alcoholTrack.mode != TrackMode.Audio && alcoholTrack.mode != TrackMode.AudioAlt;
 
                 // Any non first track is data
-                data |= alcoholTrack.point != 1 && alcoholTrack.mode is not (TrackMode.Audio and TrackMode.AudioAlt);
+                data |= alcoholTrack.point != 1 && alcoholTrack.mode != TrackMode.Audio && alcoholTrack.mode != TrackMode.AudioAlt;
 
                 // Any non first track is audio
                 audio |= alcoholTrack.point != 1 && alcoholTrack.mode is TrackMode.Audio or TrackMode.AudioAlt;
@@ -1446,7 +1446,7 @@ public sealed partial class Alcohol120
             sectorAddress -= alcExtra.pregap - 150;
         }
 
-        uint pregapBytes = alcExtra.pregap * (sectorOffset + sectorSize + sectorSkip);
+        uint pregapBytes = alcExtra.pregap * (sectorSize + sectorSkip);
         var  fileOffset  = (long)alcTrack.startOffset;
 
         if(alcTrack.startOffset >= pregapBytes)
@@ -1455,11 +1455,10 @@ public sealed partial class Alcohol120
         _imageStream = _alcImage.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.Seek(fileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+        br.BaseStream.Seek(fileOffset + (long)(sectorAddress * (sectorSize + sectorSkip)),
                            SeekOrigin.Begin);
 
-        if(sectorOffset == 0 &&
-           sectorSkip   == 0)
+        if(sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
             for(var i = 0; i < length; i++)

@@ -661,8 +661,6 @@ public sealed partial class Vhd
 
                     return ErrorNumber.InvalidArgument;
                 }
-
-                return ErrorNumber.NoError;
             }
 
             case TYPE_DEPRECATED1:

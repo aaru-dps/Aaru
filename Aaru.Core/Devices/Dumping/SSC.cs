@@ -63,8 +63,8 @@ partial class Dump
         DecodedSense? decSense;
         bool          sense;
         uint          blockSize;
-        ulong         blocks  = 0;
-        MediaType     dskType = MediaType.Unknown;
+        ulong         blocks = 0;
+        MediaType     dskType;
         DateTime      start;
         DateTime      end;
         double        totalDuration = 0;
@@ -109,8 +109,7 @@ partial class Dump
                 PulseProgress?.Invoke("Rewinding, please wait...");
                 _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
                 decSense = Sense.Decode(senseBuf);
-            } while(decSense is { ASC: 0x00 } &&
-                    decSense.Value.ASCQ is 0x1A or not (0x04 and 0x00));
+            } while(decSense is { ASC: 0x00, ASCQ: 0x1A or not (0x04 and 0x00) });
 
             _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
             decSense = Sense.Decode(senseBuf);
@@ -286,7 +285,7 @@ partial class Dump
 
             blockSize = decMode.Value.Header.BlockDescriptors?[0].BlockLength ?? 0;
 
-            UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
+            UpdateStatus?.Invoke($"Device reports {blocks} blocks.");
         }
         else
             blockSize = 1;
@@ -302,10 +301,9 @@ partial class Dump
         if(blockSize == 0)
             blockSize = 1;
 
-        if(dskType == MediaType.Unknown)
-            dskType = MediaTypeFromDevice.GetFromScsi((byte)_dev.ScsiType, _dev.Manufacturer, _dev.Model,
-                                                      scsiMediumTypeTape, scsiDensityCodeTape, blocks, blockSize,
-                                                      _dev.IsUsb, false);
+        dskType = MediaTypeFromDevice.GetFromScsi((byte)_dev.ScsiType, _dev.Manufacturer, _dev.Model,
+                                                  scsiMediumTypeTape, scsiDensityCodeTape, blocks, blockSize,
+                                                  _dev.IsUsb, false);
 
         if(dskType == MediaType.Unknown)
             dskType = MediaType.UnknownTape;

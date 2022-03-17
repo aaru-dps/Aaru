@@ -345,14 +345,14 @@ sealed class VerifyCommand : Command
 
             TimeSpan checkTime = endCheck - startCheck;
 
-            if(unknownSectors > 0)
+            if(unknownLbas.Count > 0)
                 AaruConsole.WriteLine("There is at least one sector that does not contain a checksum");
 
-            if(errorSectors > 0)
+            if(failingLbas.Count > 0)
                 AaruConsole.WriteLine("There is at least one sector with incorrect checksum or errors");
 
-            if(unknownSectors == 0 &&
-               errorSectors   == 0)
+            if(unknownLbas.Count == 0 &&
+               failingLbas.Count == 0)
                 AaruConsole.WriteLine("All sector checksums are correct");
 
             AaruConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
@@ -391,15 +391,13 @@ sealed class VerifyCommand : Command
         {
             case null when correctSectors is null:   return (int)ErrorNumber.NotVerifiable;
             case null when correctSectors == false:  return (int)ErrorNumber.BadSectorsImageNotVerified;
-            case null when correctSectors == true:   return (int)ErrorNumber.CorrectSectorsImageNotVerified;
+            case null:                               return (int)ErrorNumber.CorrectSectorsImageNotVerified;
             case false when correctSectors is null:  return (int)ErrorNumber.BadImageSectorsNotVerified;
             case false when correctSectors == false: return (int)ErrorNumber.BadImageBadSectors;
-            case false when correctSectors == true:  return (int)ErrorNumber.CorrectSectorsBadImage;
+            case false:                              return (int)ErrorNumber.CorrectSectorsBadImage;
             case true when correctSectors is null:   return (int)ErrorNumber.CorrectImageSectorsNotVerified;
             case true when correctSectors == false:  return (int)ErrorNumber.CorrectImageBadSectors;
-            case true when correctSectors == true:   return (int)ErrorNumber.NoError;
+            case true:                               return (int)ErrorNumber.NoError;
         }
-
-        return (int)ErrorNumber.NoError;
     }
 }

@@ -167,12 +167,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
 
                 foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
                             outputFormat.SupportedMediaTags.Contains(mediaTag)))
-                {
-                    ErrorNumber errno = inputFormat.ReadMediaTag(mediaTag, out byte[] buffer);
-
-                    if(errno == ErrorNumber.NoError)
+                    if(inputFormat.ReadMediaTag(mediaTag, out byte[] buffer) == ErrorNumber.NoError)
                         outputFormat.WriteMediaTag(buffer, mediaTag);
-                }
 
                 Assert.IsTrue(outputFormat.SetTracks(inputFormat.Tracks),
                               $"Error {outputFormat.ErrorMessage} sending tracks list to output image.");

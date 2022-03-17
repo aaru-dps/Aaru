@@ -333,7 +333,7 @@ public partial class Dump
 
                 // Device is in timeout, reopen to reset
                 if(_dev.LastError == 110)
-                    sense = _dev.ReOpen();
+                    _dev.ReOpen();
             }
 
             if(error)
@@ -359,7 +359,7 @@ public partial class Dump
 
                 // Device is in timeout, reopen to reset
                 if(_dev.LastError == 110)
-                    sense = _dev.ReOpen();
+                    _dev.ReOpen();
 
                 if(!error ||
                    blocksToRead == 1)

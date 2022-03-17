@@ -107,6 +107,9 @@ public sealed class ProDOSPlugin : IFilesystem
         ErrorNumber errno = imagePlugin.ReadSectors(2 * multiplier + partition.Start, multiplier,
                                                     out byte[] rootDirectoryKeyBlock);
 
+        if(errno != ErrorNumber.NoError)
+            return false;
+
         var apmFromHddOnCd = false;
 
         if(imagePlugin.Info.SectorSize is 2352 or 2448 or 2048)

@@ -940,11 +940,7 @@ public sealed partial class Cdrdao
                                                  from cdrdaoTrack in _discimage.Tracks
                                                  where cdrdaoTrack.Sequence      == kvp.Key
                                                  where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp)
-        {
             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
-
-            return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
-        }
 
         return ErrorNumber.SectorNotFound;
     }

@@ -325,7 +325,7 @@ public sealed partial class DeviceReport
             Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Trying READ SECTOR(S) in LBA48 mode...").IsIndeterminate();
-                sense = _dev.Read(out readBuf, out AtaErrorRegistersLba48 errorLba48, 0, 1, _dev.Timeout, out _);
+                sense = _dev.Read(out readBuf, out AtaErrorRegistersLba28 _, 0, 1, _dev.Timeout, out _);
             });
 
             mediaTest.SupportsReadLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&

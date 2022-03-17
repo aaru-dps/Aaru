@@ -113,7 +113,7 @@ public sealed partial class ISO9660
 
         ulong counter = 0;
 
-        ErrorNumber errno = imagePlugin.ReadSector(16 + counter + partition.Start, out byte[] vdSector);
+        ErrorNumber errno = imagePlugin.ReadSector(16 + partition.Start, out byte[] vdSector);
 
         if(errno != ErrorNumber.NoError)
             return errno;
@@ -393,7 +393,7 @@ public sealed partial class ISO9660
 
                     rootLocation = _pathTable[0].Extent;
 
-                    errno = ReadSector(_pathTable[0].Extent, out firstRootSector);
+                    ReadSector(_pathTable[0].Extent, out firstRootSector);
 
                     if(_highSierra)
                     {
