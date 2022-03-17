@@ -38,6 +38,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading KryoFlux flux images</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class KryoFlux : IMediaImage, IVerifiableSectorsImage

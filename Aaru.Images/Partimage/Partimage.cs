@@ -41,6 +41,7 @@ using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading partimage disk images</summary>
 public sealed partial class Partimage : IMediaImage, IVerifiableImage
 {

@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
 // Checked using several images and strings inside Apple's DiskImages.framework
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IWritableImage" />
 /// <summary>Implements reading and writing Apple DiskCopy 4.2 disk images</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class DiskCopy42 : IWritableImage, IVerifiableImage

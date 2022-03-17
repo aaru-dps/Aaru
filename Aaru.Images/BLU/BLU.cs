@@ -38,6 +38,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IWritableImage" />
 /// <summary>Implements reading Basic Lisa Utility disk images</summary>
 public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage
 {

@@ -37,6 +37,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading DiscFerret flux images</summary>
 public sealed partial class DiscFerret : IMediaImage, IVerifiableSectorsImage
 {

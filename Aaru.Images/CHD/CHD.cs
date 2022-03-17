@@ -42,6 +42,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 
 // TODO: Implement PCMCIA support
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IOpticalMediaImage" />
 /// <summary>Implements reading MAME CHD disk images</summary>
 [SuppressMessage("ReSharper", "NotAccessedField.Local")]
 public sealed partial class Chd : IOpticalMediaImage, IVerifiableImage

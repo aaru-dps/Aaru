@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Aaru.CommonTypes.Enums;
 
+/// <inheritdoc />
 /// <summary>Information needed to rebuild an iNES/NES 2.0 header from a ROM hash</summary>
 public class NesHeaderInfo : BaseModel
 {

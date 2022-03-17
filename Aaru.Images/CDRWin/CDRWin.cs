@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 
 // TODO: Implement track flags
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IWritableOpticalImage" />
 /// <summary>Implements reading and writing CDRWin cuesheet disc images</summary>
 public sealed partial class CdrWin : IWritableOpticalImage, IVerifiableImage
 {

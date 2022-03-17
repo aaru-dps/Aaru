@@ -38,6 +38,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading CopyQM disk images</summary>
 public sealed partial class CopyQm : IMediaImage, IVerifiableImage
 {
