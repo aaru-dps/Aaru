@@ -74,6 +74,9 @@ public sealed class Md5Context : IChecksum
         _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
         var md5Output = new StringBuilder();
 
+        if(_provider.Hash is null)
+            return null;
+
         foreach(byte h in _provider.Hash)
             md5Output.Append(h.ToString("x2"));
 

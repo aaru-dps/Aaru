@@ -74,6 +74,9 @@ public sealed class Sha384Context : IChecksum
         _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
         var sha384Output = new StringBuilder();
 
+        if(_provider.Hash is null)
+            return null;
+
         foreach(byte h in _provider.Hash)
             sha384Output.Append(h.ToString("x2"));
 
