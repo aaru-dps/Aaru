@@ -304,10 +304,9 @@ public static class CdChecksums
 
                 uint calculatedEdc = ComputeEdc(0, mode2Sector, 0x91C);
 
-                correctEdc = calculatedEdc == storedEdc || storedEdc == 0;
+                correctEdc = calculatedEdc == storedEdc;
 
-                if(calculatedEdc == storedEdc ||
-                   storedEdc     == 0x00000000)
+                if(calculatedEdc == storedEdc)
                     return true;
 
                 AaruConsole.DebugWriteLine("CD checksums",
