@@ -42,6 +42,7 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
+/// <inheritdoc />
 /// <summary>Interface defining linear media (chips, game carts, etc) images</summary>
 public interface IByteAddressableImage : IBaseWritableImage
 {

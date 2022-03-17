@@ -40,6 +40,7 @@ namespace Aaru.CommonTypes.Interfaces;
 
 using Aaru.CommonTypes.Enums;
 
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>
 ///     Abstract class to implement disk image writing plugins. TODO: This interface is subject to change until
 ///     notice.

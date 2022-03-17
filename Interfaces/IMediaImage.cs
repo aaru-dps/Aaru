@@ -41,6 +41,7 @@ namespace Aaru.CommonTypes.Interfaces;
 
 using Aaru.CommonTypes.Enums;
 
+/// <inheritdoc />
 /// <summary>Abstract class to implement disk image reading plugins.</summary>
 public interface IMediaImage : IBaseImage
 {

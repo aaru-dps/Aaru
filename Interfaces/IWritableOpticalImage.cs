@@ -42,6 +42,7 @@ using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IOpticalMediaImage" />
 /// <summary>Defines an image that is writable and can store an optical disc (CD, DVD, etc)</summary>
 public interface IWritableOpticalImage : IWritableImage, IOpticalMediaImage
 {

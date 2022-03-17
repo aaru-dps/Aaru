@@ -41,6 +41,7 @@ namespace Aaru.CommonTypes.Interfaces;
 
 using Aaru.CommonTypes.Structs;
 
+/// <inheritdoc cref="Aaru.CommonTypes.Interfaces.ITapeImage" />
 /// <summary>Defines an image that is writable and can store information about a streaming, digital, tape</summary>
 public interface IWritableTapeImage : ITapeImage, IWritableImage
 {

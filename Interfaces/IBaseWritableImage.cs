@@ -44,6 +44,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
+/// <inheritdoc />
 /// <summary>Base interface for all writable images</summary>
 public interface IBaseWritableImage : IBaseImage
 {
