@@ -58,7 +58,13 @@ public partial class Dump
     void Ata()
     {
         bool recoveredError;
-        var  outputFormat = _outputPlugin as IWritableImage;
+
+        if(_outputPlugin is not IWritableImage outputFormat)
+        {
+            StoppingErrorMessage?.Invoke("Image is not writable, aborting...");
+
+            return;
+        }
 
         if(_dumpRaw)
         {

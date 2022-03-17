@@ -56,6 +56,9 @@ public sealed partial class CPM
             var defsSerializer = new XmlSerializer(typeof(CpmDefinitions));
             _definitions = (CpmDefinitions)defsSerializer.Deserialize(defsReader);
 
+            if(_definitions is null)
+                return false;
+
             // Patch definitions
             foreach(CpmDefinition def in _definitions.definitions)
             {

@@ -337,6 +337,9 @@ sealed class ExtractFilesCommand : Command
                                 var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
                                                                      Invoke(Array.Empty<object>());
 
+                                if(fs is null)
+                                    continue;
+
                                 Spectre.ProgressSingleSpinner(ctx =>
                                 {
                                     ctx.AddTask("Mounting filesystem...").IsIndeterminate();
@@ -369,6 +372,9 @@ sealed class ExtractFilesCommand : Command
 
                         var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
                                                              Invoke(Array.Empty<object>());
+
+                        if(fs is null)
+                            continue;
 
                         Spectre.ProgressSingleSpinner(ctx =>
                         {

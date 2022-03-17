@@ -70,7 +70,13 @@ public partial class Dump
         MediaType    dskType;
         bool         sense;
         byte[]       senseBuf;
-        var          outputFormat = _outputPlugin as IWritableImage;
+
+        if(_outputPlugin is not IWritableImage outputFormat)
+        {
+            StoppingErrorMessage?.Invoke("Image is not writable, aborting...");
+
+            return;
+        }
 
         sense = _dev.ReadCapacity(out byte[] readBuffer, out _, _dev.Timeout, out _);
 

@@ -161,6 +161,10 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             var         filtersList = new FiltersList();
             IFilter     inputFilter = filtersList.GetFilter(testFile);
             var         image       = ImageFormat.Detect(inputFilter) as IMediaImage;
+
+            if(image is null)
+                continue;
+
             ErrorNumber opened      = image.Open(inputFilter);
 
             if(opened != ErrorNumber.NoError)

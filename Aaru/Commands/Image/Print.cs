@@ -214,7 +214,12 @@ sealed class PrintHexCommand : Command
         else
             for(ulong i = 0; i < length; i++)
             {
-                var blockImage = inputFormat as IMediaImage;
+                if(inputFormat is not IMediaImage blockImage)
+                {
+                    AaruConsole.ErrorWriteLine("Cannot open image file, aborting...");
+
+                    break;
+                }
 
                 AaruConsole.WriteLine("[bold][italic]Sector {0}[/][/]", start + i);
 

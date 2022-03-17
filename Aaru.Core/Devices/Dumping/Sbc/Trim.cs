@@ -51,7 +51,13 @@ partial class Dump
         bool    blankCheck;
         byte[]  buffer;
         var     newBlank     = false;
-        var     outputFormat = _outputPlugin as IWritableImage;
+
+        if(_outputPlugin is not IWritableImage outputFormat)
+        {
+            StoppingErrorMessage?.Invoke("Image is not writable, aborting...");
+
+            return;
+        }
 
         foreach(ulong badSector in tmpArray)
         {

@@ -75,7 +75,13 @@ partial class Dump
         Dictionary<MediaTagType, byte[]> mediaTags = new();
         byte[]                           cmdBuf;
         bool                             ret;
-        var                              outputFormat = _outputPlugin as IWritableImage;
+
+        if(_outputPlugin is not IWritableImage outputFormat)
+        {
+            StoppingErrorMessage?.Invoke("Image is not writable, aborting...");
+
+            return;
+        }
 
         _dumpLog.WriteLine("Initializing reader.");
         var   scsiReader = new Reader(_dev, _dev.Timeout, null, _errorLog);

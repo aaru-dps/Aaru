@@ -62,8 +62,15 @@ partial class Dump
         _dumpLog.WriteLine("Creating sidecar.");
         var     filters     = new FiltersList();
         IFilter filter      = filters.GetFilter(_outputPath);
-        var     inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
         totalChkDuration = 0;
+
+        if(ImageFormat.Detect(filter) is not IMediaImage inputPlugin)
+        {
+            StoppingErrorMessage?.Invoke("Could not detect image format.");
+
+            return;
+        }
+
         ErrorNumber opened = inputPlugin.Open(filter);
 
         if(opened != ErrorNumber.NoError)

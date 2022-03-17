@@ -301,7 +301,8 @@ static partial class Usb
             if(DeviceIoControl(h, IOCTL_USB_GET_ROOT_HUB_NAME, ptrHubName, nBytes, ptrHubName, nBytes, out _,
                                IntPtr.Zero))
             {
-                hubName            = (UsbRootHubName)Marshal.PtrToStructure(ptrHubName, typeof(UsbRootHubName));
+                hubName = (UsbRootHubName)(Marshal.PtrToStructure(ptrHubName, typeof(UsbRootHubName)) ??
+                                           default(UsbRootHubName));
                 root.HubDevicePath = @"\\.\" + hubName.RootHubName;
             }
 
@@ -428,8 +429,9 @@ static partial class Usb
                     continue;
 
                 nodeConnection =
-                    (UsbNodeConnectionInformationEx)Marshal.PtrToStructure(ptrNodeConnection,
-                                                                           typeof(UsbNodeConnectionInformationEx));
+                    (UsbNodeConnectionInformationEx)(Marshal.PtrToStructure(ptrNodeConnection,
+                                                                            typeof(UsbNodeConnectionInformationEx)) ??
+                                                     default(UsbNodeConnectionInformationEx));
 
                 // load up the USBPort class
                 var port = new UsbPort
@@ -556,7 +558,8 @@ static partial class Usb
                     var ptrStringDesc = IntPtr.Add(ptrRequest, Marshal.SizeOf(request));
 
                     var stringDesc =
-                        (UsbStringDescriptor)Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor));
+                        (UsbStringDescriptor)(Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor)) ??
+                                              default(UsbStringDescriptor));
 
                     device.DeviceManufacturer = stringDesc.bString;
                 }
@@ -592,7 +595,8 @@ static partial class Usb
                     var ptrStringDesc = IntPtr.Add(ptrRequest, Marshal.SizeOf(request));
 
                     var stringDesc =
-                        (UsbStringDescriptor)Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor));
+                        (UsbStringDescriptor)(Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor)) ??
+                                              default(UsbStringDescriptor));
 
                     device.DeviceProduct = stringDesc.bString;
                 }
@@ -628,7 +632,8 @@ static partial class Usb
                     var ptrStringDesc = IntPtr.Add(ptrRequest, Marshal.SizeOf(request));
 
                     var stringDesc =
-                        (UsbStringDescriptor)Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor));
+                        (UsbStringDescriptor)(Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor)) ??
+                                              default(UsbStringDescriptor));
 
                     device.DeviceSerialNumber = stringDesc.bString;
                 }
@@ -678,8 +683,9 @@ static partial class Usb
             if(DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_DRIVERKEY_NAME, ptrDriverKey, nBytes, ptrDriverKey,
                                nBytes, out nBytesReturned, IntPtr.Zero))
             {
-                driverKey = (UsbNodeConnectionDriverkeyName)Marshal.PtrToStructure(ptrDriverKey,
-                    typeof(UsbNodeConnectionDriverkeyName));
+                driverKey = (UsbNodeConnectionDriverkeyName)(Marshal.PtrToStructure(ptrDriverKey,
+                                                                 typeof(UsbNodeConnectionDriverkeyName)) ??
+                                                             default(UsbNodeConnectionDriverkeyName));
 
                 device.DeviceDriverKey = driverKey.DriverKeyName;
 
@@ -727,7 +733,8 @@ static partial class Usb
             if(DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_NAME, ptrNodeName, nBytes, ptrNodeName, nBytes, out _,
                                IntPtr.Zero))
             {
-                nodeName = (UsbNodeConnectionName)Marshal.PtrToStructure(ptrNodeName, typeof(UsbNodeConnectionName));
+                nodeName = (UsbNodeConnectionName)(Marshal.PtrToStructure(ptrNodeName, typeof(UsbNodeConnectionName)) ??
+                                                   default(UsbNodeConnectionName));
 
                 hub.HubDevicePath = @"\\.\" + nodeName.NodeName;
             }
@@ -751,7 +758,8 @@ static partial class Usb
                 if(DeviceIoControl(h2, IOCTL_USB_GET_NODE_INFORMATION, ptrNodeInfo, nBytes, ptrNodeInfo, nBytes, out _,
                                    IntPtr.Zero))
                 {
-                    nodeInfo = (UsbNodeInformation)Marshal.PtrToStructure(ptrNodeInfo, typeof(UsbNodeInformation));
+                    nodeInfo = (UsbNodeInformation)(Marshal.PtrToStructure(ptrNodeInfo, typeof(UsbNodeInformation)) ??
+                                                    default(UsbNodeInformation));
 
                     hub.HubIsBusPowered = Convert.ToBoolean(nodeInfo.HubInformation.HubIsBusPowered);
                     hub.HubPortCount    = nodeInfo.HubInformation.HubDescriptor.bNumberOfPorts;

@@ -2000,7 +2000,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             var sr     = new StreamReader(result[0]);
             var resume = (Resume)sidecarXs.Deserialize(sr);
 
-            if(resume.Tries?.Any() == false)
+            if(resume?.Tries?.Any() == false)
             {
                 _dumpHardware  = resume.Tries;
                 ResumeFileText = result[0];

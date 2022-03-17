@@ -65,7 +65,13 @@ public partial class Dump
         DateTime        start;
         DateTime        end;
         byte[]          senseBuf;
-        var             outputOptical = _outputPlugin as IWritableOpticalImage;
+
+        if(_outputPlugin is not IWritableOpticalImage outputOptical)
+        {
+            StoppingErrorMessage?.Invoke("Image is not writable, aborting...");
+
+            return;
+        }
 
         bool sense = _dev.Read12(out byte[] readBuffer, out _, 0, false, true, false, false, 0, 512, 0, 1, false,
                                  _dev.Timeout, out _);

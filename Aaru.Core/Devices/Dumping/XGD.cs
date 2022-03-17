@@ -72,7 +72,13 @@ partial class Dump
         double     currentSpeed  = 0;
         double     maxSpeed      = double.MinValue;
         double     minSpeed      = double.MaxValue;
-        var        outputFormat  = _outputPlugin as IWritableImage;
+
+        if(_outputPlugin is not IWritableImage outputFormat)
+        {
+            StoppingErrorMessage?.Invoke("Image is not writable, aborting...");
+
+            return;
+        }
 
         if(DetectOS.GetRealPlatformID() != PlatformID.Win32NT)
         {

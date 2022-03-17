@@ -97,7 +97,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
         var mediaResource = new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{scsiInfo.MediaType}.png");
 
-        MediaLogo = assets.Exists(mediaResource) ? new Bitmap(assets.Open(mediaResource)) : null;
+        MediaLogo = assets?.Exists(mediaResource) == true ? new Bitmap(assets.Open(mediaResource)) : null;
 
         MediaType = scsiInfo.MediaType.ToString();
 
