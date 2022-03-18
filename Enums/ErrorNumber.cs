@@ -41,27 +41,46 @@ namespace Aaru.CommonTypes.Enums;
 using System.Diagnostics.CodeAnalysis;
 
 /// <summary>Enumerates error codes. Negative for UNIX error number equivalents, positive for Aaru error numbers.</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Global"),
+ SuppressMessage("ReSharper", "IdentifierTypo")]
 public enum ErrorNumber
 {
+    /// <summary>Operation not permitted</summary>
     NotPermitted = -1,
     /// <summary>No such file or directory</summary>
-    NoSuchFile = -2, NoSuchProcess = -3,
-    InterruptedSyscall             = -4,
+    NoSuchFile = -2,
+    /// <summary>No such process</summary>
+    NoSuchProcess = -3,
+    /// <summary>System call interrupted</summary>
+    InterruptedSyscall = -4,
     /// <summary>I/O error</summary>
-    InOutError = -5, NoSuchDeviceOrAddress = -6,
-    ArgumentListTooLong                    = -7,
-    ExecutableFormatError                  = -8,
-    BadFileNumber                          = -9,
-    NoChildProcess                         = -10,
-    TryAgain                               = -11,
-    OutOfMemory                            = -12,
+    InOutError = -5,
+    /// <summary>No such device or address</summary>
+    NoSuchDeviceOrAddress = -6,
+    /// <summary>The argument list is too long</summary>
+    ArgumentListTooLong = -7,
+    /// <summary>Error loading the executable format</summary>
+    ExecutableFormatError = -8,
+    /// <summary>Bad file descriptor</summary>
+    BadFileNumber = -9,
+    /// <summary>No child process</summary>
+    NoChildProcess = -10,
+    /// <summary>Try again</summary>
+    TryAgain = -11,
+    /// <summary>Process ran out of memory</summary>
+    OutOfMemory = -12,
     /// <summary>Access denied</summary>
-    AccessDenied = -13, BadAddress = -14,
-    NotABlockDevice                = -15,
+    AccessDenied = -13,
+    /// <summary>Bad address</summary>
+    BadAddress = -14,
+    /// <summary>File is not a block device</summary>
+    NotABlockDevice = -15,
     /// <summary>Busy, cannot complete</summary>
-    Busy = -16, FileExists = -17,
-    CrossDeviceLink        = -18,
+    Busy = -16,
+    /// <summary>File already exists</summary>
+    FileExists = -17,
+    /// <summary>Tried to create a link that crosses devices</summary>
+    CrossDeviceLink = -18,
     /// <summary>No such device</summary>
     NoSuchDevice = -19,
     /// <summary>Is not a directory (e.g.: trying to ReadDir() a file)</summary>
@@ -69,21 +88,37 @@ public enum ErrorNumber
     /// <summary>Is a directory (e.g.: trying to Read() a dir)</summary>
     IsDirectory = -21,
     /// <summary>Invalid argument</summary>
-    InvalidArgument = -22, FileTableOverflow = -23,
-    TooManyOpenFiles                         = -24,
-    NotTypewriter                            = -25,
-    TextFileBusy                             = -26,
+    InvalidArgument = -22,
+    /// <summary>File table overflow</summary>
+    FileTableOverflow = -23,
+    /// <summary>Too many open files</summary>
+    TooManyOpenFiles = -24,
+    /// <summary>Destination is not a TTY</summary>
+    NotTypewriter = -25,
+    /// <summary>Text file busy</summary>
+    TextFileBusy = -26,
     /// <summary>File is too large</summary>
-    FileTooLarge = -27, NoSpaceLeft = -28,
-    IllegalSeek                     = -29,
-    ReadOnly                        = -30,
-    TooManyLinks                    = -31,
-    BrokenPipe                      = -32,
-    OutOfDomain                     = -33,
-    OutOfRange                      = -34,
-    DeadlockWouldOccur              = -35,
+    FileTooLarge = -27,
+    /// <summary>No space left on volume</summary>
+    NoSpaceLeft = -28,
+    /// <summary>Illegal seek requested</summary>
+    IllegalSeek = -29,
+    /// <summary>Tried a write operation on a read-only device</summary>
+    ReadOnly = -30,
+    /// <summary>Too many links</summary>
+    TooManyLinks = -31,
+    /// <summary>Broken pipe</summary>
+    BrokenPipe = -32,
+    /// <summary>Out of domain</summary>
+    OutOfDomain = -33,
+    /// <summary>Out of range</summary>
+    OutOfRange = -34,
+    /// <summary>Operation would incur in a deadlock</summary>
+    DeadlockWouldOccur = -35,
     /// <summary>Name is too long</summary>
-    NameTooLong = -36, NoLocksAvailable = -37,
+    NameTooLong = -36,
+    /// <summary>There are no available locks</summary>
+    NoLocksAvailable = -37,
     /// <summary>Not implemented</summary>
     NotImplemented = -38,
     /// <summary>There is no data available</summary>
@@ -93,24 +128,43 @@ public enum ErrorNumber
     /// <summary>There is no such attribute</summary>
     NoSuchExtendedAttribute = NoData,
     /// <summary>Not supported</summary>
-    NotSupported = -252, EPERM = NotPermitted,
+    NotSupported = -252,
+    /// <summary>Operation not permitted</summary>
+    EPERM = NotPermitted,
     /// <summary>No such file or directory</summary>
-    ENOENT = NoSuchFile, ESRCH = NoSuchProcess,
-    EINTR                      = InterruptedSyscall,
+    ENOENT = NoSuchFile,
+    /// <summary>No such process</summary>
+    ESRCH = NoSuchProcess,
+    /// <summary>System call interrupted</summary>
+    EINTR = InterruptedSyscall,
     /// <summary>I/O error</summary>
-    EIO = InOutError, ENXIO = NoSuchDeviceOrAddress,
-    E2BIG                   = ArgumentListTooLong,
-    ENOEXEC                 = ExecutableFormatError,
-    EBADF                   = BadFileNumber,
-    ECHILD                  = NoChildProcess,
-    EAGAIN                  = TryAgain,
-    ENOMEM                  = OutOfMemory,
+    EIO = InOutError,
+    /// <summary>No such device or address</summary>
+    ENXIO = NoSuchDeviceOrAddress,
+    /// <summary>The argument list is too long</summary>
+    E2BIG = ArgumentListTooLong,
+    /// <summary>Error loading the executable format</summary>
+    ENOEXEC = ExecutableFormatError,
+    /// <summary>Bad file descriptor</summary>
+    EBADF = BadFileNumber,
+    /// <summary>No child process</summary>
+    ECHILD = NoChildProcess,
+    /// <summary>Try again</summary>
+    EAGAIN = TryAgain,
+    /// <summary>Process ran out of memory</summary>
+    ENOMEM = OutOfMemory,
     /// <summary>Access denied</summary>
-    EACCES = AccessDenied, EFAULT = BadAddress,
-    ENOTBLK                       = NotABlockDevice,
+    EACCES = AccessDenied,
+    /// <summary>Bad address</summary>
+    EFAULT = BadAddress,
+    /// <summary>File is not a block device</summary>
+    ENOTBLK = NotABlockDevice,
     /// <summary>Busy, cannot complete</summary>
-    EBUSY = Busy, EEXIST = FileExists,
-    EXDEV                = CrossDeviceLink,
+    EBUSY = Busy,
+    /// <summary>File already exists</summary>
+    EEXIST = FileExists,
+    /// <summary>Tried to create a link that crosses devices</summary>
+    EXDEV = CrossDeviceLink,
     /// <summary>No such device</summary>
     ENODEV = NoSuchDevice,
     /// <summary>Is not a directory (e.g.: trying to ReadDir() a file)</summary>
@@ -118,30 +172,51 @@ public enum ErrorNumber
     /// <summary>Is a directory (e.g.: trying to Read() a dir)</summary>
     EISDIR = IsDirectory,
     /// <summary>Invalid argument</summary>
-    EINVAL = InvalidArgument, ENFILE = FileTableOverflow,
-    EMFILE                           = TooManyOpenFiles,
-    ENOTTY                           = NotTypewriter,
-    ETXTBSY                          = TextFileBusy,
+    EINVAL = InvalidArgument,
+    /// <summary>File table overflow</summary>
+    ENFILE = FileTableOverflow,
+    /// <summary>Too many open files</summary>
+    EMFILE = TooManyOpenFiles,
+    /// <summary>Destination is not a TTY</summary>
+    ENOTTY = NotTypewriter,
+    /// <summary>Text file busy</summary>
+    ETXTBSY = TextFileBusy,
     /// <summary>File is too large</summary>
-    EFBIG = FileTooLarge, ENOSPC = NoSpaceLeft,
-    ESPIPE                       = IllegalSeek,
-    EROFS                        = ReadOnly,
-    EMLINK                       = TooManyLinks,
-    EPIPE                        = BrokenPipe,
-    EDOM                         = OutOfDomain,
-    ERANGE                       = OutOfRange,
-    EDEADLK                      = DeadlockWouldOccur,
+    EFBIG = FileTooLarge,
+    /// <summary>No space left on volume</summary>
+    ENOSPC = NoSpaceLeft,
+    /// <summary>Illegal seek requested</summary>
+    ESPIPE = IllegalSeek,
+    /// <summary>Tried a write operation on a read-only device</summary>
+    EROFS = ReadOnly,
+    /// <summary>Too many links</summary>
+    EMLINK = TooManyLinks,
+    /// <summary>Broken pipe</summary>
+    EPIPE = BrokenPipe,
+    /// <summary>Out of domain</summary>
+    EDOM = OutOfDomain,
+    /// <summary>Out of range</summary>
+    ERANGE = OutOfRange,
+    /// <summary>Operation would incur in a deadlock</summary>
+    EDEADLK = DeadlockWouldOccur,
     /// <summary>Name is too long</summary>
-    ENAMETOOLONG = NameTooLong, ENOLCK = NoLocksAvailable,
+    ENAMETOOLONG = NameTooLong,
+    /// <summary>There are no available locks</summary>
+    ENOLCK = NoLocksAvailable,
     /// <summary>Not implemented</summary>
     ENOSYS = NotImplemented,
     /// <summary>Link is severed</summary>
     ENOLINK = SeveredLink,
     /// <summary>Not supported</summary>
-    ENOTSUP = NotSupported, DirectoryNotEmpty = -39,
-    TooManySymbolicLinks                      = -40,
-    ENOTEMPTY                                 = DirectoryNotEmpty,
-    ELOOP                                     = TooManySymbolicLinks,
+    ENOTSUP = NotSupported,
+    /// <summary>Directory is not empty</summary>
+    DirectoryNotEmpty = -39,
+    /// <summary>Too many symbolic links encountered</summary>
+    TooManySymbolicLinks = -40,
+    /// <summary>Directory is not empty</summary>
+    ENOTEMPTY = DirectoryNotEmpty,
+    /// <summary>Too many symbolic links encountered</summary>
+    ELOOP = TooManySymbolicLinks,
     /// <summary>There is no such attribute</summary>
     ENOATTR = NoSuchExtendedAttribute,
     /// <summary>There is no data available</summary>
@@ -203,6 +278,9 @@ public enum ErrorNumber
     /// <summary>Cannot open device</summary>
     CannotOpenDevice = 27,
     /// <summary>Cannot remove the existing database</summary>
-    CannotRemoveDatabase = 28, SectorNotFound = 29,
-    NotOpened                                 = 30
+    CannotRemoveDatabase = 28,
+    /// <summary>Specified sector could not be found</summary>
+    SectorNotFound = 29,
+    /// <summary>Image or device has not been opened</summary>
+    NotOpened = 30
 }

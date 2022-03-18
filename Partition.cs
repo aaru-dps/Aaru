@@ -36,6 +36,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+#pragma warning disable CS1591
 namespace Aaru.CommonTypes;
 
 using System;

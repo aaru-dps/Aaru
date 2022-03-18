@@ -181,6 +181,7 @@ public interface IArchive
     /// <returns>Error number.</returns>
     /// <param name="entryNumber">The entry in the archive for which to retrieve the XAttr.</param>
     /// <param name="xattr">Extended attribute, alternate data stream or fork name.</param>
+    /// <param name="buffer">Buffer where the extended attribute data will be stored.</param>
     /// <returns>Buffer with the XAttr data.</returns>
     ErrorNumber GetXattr(int entryNumber, string xattr, out byte[] buffer);
 

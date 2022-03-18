@@ -68,6 +68,7 @@ public interface IFloppyImage : IMediaImage
     /// <param name="head">Physical head (0-based).</param>
     /// <param name="sector">Logical sector ID.</param>
     /// <param name="status">Status of request.</param>
+    /// <param name="buffer">Buffer where the sector data will be stored.</param>
     ErrorNumber ReadSector(ushort track, byte head, ushort sector, out FloppySectorStatus status, out byte[] buffer);
 
     /// <summary>Reads a sector's tag.</summary>
@@ -83,6 +84,7 @@ public interface IFloppyImage : IMediaImage
     /// <param name="sector">Logical sector ID.</param>
     /// <param name="status">Status of request.</param>
     /// <param name="tag">Sector tag</param>
+    /// <param name="buffer">Buffer where the sector tag data will be stored.</param>
     ErrorNumber ReadSectorTag(ushort track, byte head, ushort sector, out FloppySectorStatus status, SectorTagType tag,
                               out byte[] buffer);
 
@@ -90,6 +92,7 @@ public interface IFloppyImage : IMediaImage
     /// <returns>The track data.</returns>
     /// <param name="track">Physical track (position of the heads over the floppy media, 0-based).</param>
     /// <param name="head">Physical head (0-based).</param>
+    /// <param name="buffer">Buffer where the track data will be stored.</param>
     ErrorNumber ReadTrack(ushort track, byte head, out byte[] buffer);
 
     /// <summary>Reads a sector's data including all tags, address mark, and so, in a format dependent of represented media.</summary>
@@ -104,6 +107,7 @@ public interface IFloppyImage : IMediaImage
     /// <param name="head">Physical head (0-based).</param>
     /// <param name="sector">Logical sector ID.</param>
     /// <param name="status">Status of request.</param>
+    /// <param name="buffer">Buffer where the sector data will be stored.</param>
     ErrorNumber ReadSectorLong(ushort track, byte head, ushort sector, out FloppySectorStatus status,
                                out byte[] buffer);
 
