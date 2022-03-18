@@ -32,6 +32,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Ionic.BZip2;
 
+/// <summary>
+/// Implements the BZIP2 compression algorithm
+/// </summary>
 public class BZip2
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>

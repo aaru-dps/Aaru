@@ -1020,7 +1020,7 @@ public sealed partial class FAT
             {
                 var rootMs = new MemoryStream();
 
-                foreach(ulong rootSector in new[]
+                foreach(ulong rootSector in new ulong[]
                         {
                             0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
                         })

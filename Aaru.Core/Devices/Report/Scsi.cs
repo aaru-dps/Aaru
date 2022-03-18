@@ -418,7 +418,7 @@ public sealed partial class DeviceReport
 
         cdromMode = null;
 
-        if(!decMode.HasValue)
+        if(decMode == null)
             return;
 
         mediumType = decMode.Value.Header.MediumType;

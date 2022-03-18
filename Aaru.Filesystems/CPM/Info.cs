@@ -375,8 +375,8 @@ public sealed partial class CPM
 
                             var directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / sectorSize);
 
-                            errno = imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
-                                                            out directory);
+                            imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
+                                                    out directory);
 
                             AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
 
@@ -902,8 +902,8 @@ public sealed partial class CPM
                     {
                         var directoryLength = (uint)(((ulong)_dpb.drm + 1) * 32 / imagePlugin.Info.SectorSize);
 
-                        errno = imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength,
-                                                        out directory);
+                        imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength,
+                                                out directory);
 
                         AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
                     }

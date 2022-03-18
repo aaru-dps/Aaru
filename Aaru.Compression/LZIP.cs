@@ -31,6 +31,9 @@ namespace Aaru.Compression;
 using System.Runtime.InteropServices;
 
 // ReSharper disable once InconsistentNaming
+/// <summary>
+/// Implements the LZIP compression algorithm
+/// </summary>
 public class LZIP
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
@@ -53,7 +56,9 @@ public class LZIP
     /// <summary>Compresses a buffer using LZIP</summary>
     /// <param name="source">Data to compress</param>
     /// <param name="destination">Buffer to store the compressed data</param>
-    /// <returns></returns>
+    /// <param name="dictionarySize">Dictionary size in bytes</param>
+    /// <param name="matchLengthLimit">Match length limit</param>
+    /// <returns>The size of the compressed data</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int dictionarySize, int matchLengthLimit) =>
         Native.IsSupported ? AARU_lzip_encode_buffer(destination, destination.Length, source, source.Length,
                                                      dictionarySize, matchLengthLimit) : 0;

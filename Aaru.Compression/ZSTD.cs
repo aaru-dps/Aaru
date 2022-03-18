@@ -31,6 +31,9 @@ namespace Aaru.Compression;
 using System.Runtime.InteropServices;
 
 // ReSharper disable once InconsistentNaming
+/// <summary>
+/// Implements the zstandard compression algorithm
+/// </summary>
 public class ZSTD
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
@@ -54,7 +57,8 @@ public class ZSTD
     /// <summary>Compresses a buffer using ZSTD</summary>
     /// <param name="source">Data to compress</param>
     /// <param name="destination">Buffer to store the compressed data</param>
-    /// <returns></returns>
+    /// <param name="compressionLevel">Compression level</param>
+    /// <returns>Length of the compressed data</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int compressionLevel) =>
         (int)(Native.IsSupported
                   ? AARU_zstd_encode_buffer(destination, (nuint)destination.Length, source, (nuint)source.Length,

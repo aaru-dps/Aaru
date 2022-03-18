@@ -50,10 +50,10 @@ static class ListDevices
     static string HexStringToString(string hex)
     {
         var          result   = new StringBuilder();
-        const string HEXTABLE = "0123456789abcdef";
+        const string hexTable = "0123456789abcdef";
 
         for(var i = 0; i < hex.Length / 2; i++)
-            result.Append((char)(16 * HEXTABLE.IndexOf(hex[2 * i]) + HEXTABLE.IndexOf(hex[2 * i + 1])));
+            result.Append((char)(16 * hexTable.IndexOf(hex[2 * i]) + hexTable.IndexOf(hex[2 * i + 1])));
 
         return result.ToString();
     }

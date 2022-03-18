@@ -531,8 +531,8 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} known iNES/NES 2.0 headers", addedDevices);
-                AaruConsole.WriteLine("Modified {0} known iNES/NES 2.0 headers", modifiedDevices);
+                AaruConsole.WriteLine("Added {0} known iNES/NES 2.0 headers", addedNesHeaders);
+                AaruConsole.WriteLine("Modified {0} known iNES/NES 2.0 headers", modifiedNesHeaders);
             }
         }
         catch(Exception ex)

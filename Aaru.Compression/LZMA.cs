@@ -32,6 +32,9 @@ using System.IO;
 using System.Runtime.InteropServices;
 using SharpCompress.Compressors.LZMA;
 
+/// <summary>
+/// Implements the LZMA compression algorithm
+/// </summary>
 public class LZMA
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
@@ -49,6 +52,7 @@ public class LZMA
     /// <summary>Decodes a buffer compressed with LZMA</summary>
     /// <param name="source">Encoded buffer</param>
     /// <param name="destination">Buffer where to write the decoded data</param>
+    /// <param name="properties">LZMA stream properties</param>
     /// <returns>The number of decoded bytes</returns>
     public static int DecodeBuffer(byte[] source, byte[] destination, byte[] properties)
     {
@@ -73,6 +77,12 @@ public class LZMA
     /// <summary>Compresses a buffer using BZIP2</summary>
     /// <param name="source">Data to compress</param>
     /// <param name="destination">Buffer to store the compressed data</param>
+    /// <param name="properties">LZMA stream properties</param>
+    /// <param name="level">Compression level</param>
+    /// <param name="dictSize">Dictionary size</param>
+    /// <param name="lc">Literal context bits</param>
+    /// <param name="lp">Literal position bits</param>
+    /// <param name="pb">Position bits</param>
     /// <returns></returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, out byte[] properties, int level, uint dictSize,
                                    int lc, int lp, int pb, int fb)

@@ -34,6 +34,9 @@ using CUETools.Codecs;
 using CUETools.Codecs.Flake;
 
 // ReSharper disable once InconsistentNaming
+/// <summary>
+/// Implements the FLAC lossless audio compression algorithm
+/// </summary>
 public class FLAC
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
@@ -77,7 +80,18 @@ public class FLAC
     /// <summary>Compresses a buffer using FLAC</summary>
     /// <param name="source">Data to compress</param>
     /// <param name="destination">Buffer to store the compressed data</param>
-    /// <returns></returns>
+    /// <param name="blockSize">Block size</param>
+    /// <param name="doMidSideStereo">Do mid side stereo</param>
+    /// <param name="looseMidSideStereo">Loose mid side stereo</param>
+    /// <param name="apodization">Apodization algorithm</param>
+    /// <param name="maxLpcOrder">Maximum LPC order</param>
+    /// <param name="qlpCoeffPrecision">QLP coefficient precision</param>
+    /// <param name="doQlpCoeffPrecSearch">Do precise search for QLP coefficient</param>
+    /// <param name="doExhaustiveModelSearch">Do exhaustive model search</param>
+    /// <param name="minResidualPartitionOrder">Minimum residual partition order</param>
+    /// <param name="maxResidualPartitionOrder">Maximum residual partition order</param>
+    /// <param name="applicationID">Application ID</param>
+    /// <returns>The size of the compressed data</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, uint blockSize, bool doMidSideStereo,
                                    bool looseMidSideStereo, string apodization, uint maxLpcOrder,
                                    uint qlpCoeffPrecision, bool doQlpCoeffPrecSearch, bool doExhaustiveModelSearch,

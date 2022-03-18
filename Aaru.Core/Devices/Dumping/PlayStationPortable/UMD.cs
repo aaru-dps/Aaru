@@ -159,7 +159,7 @@ public partial class Dump
         start = DateTime.UtcNow;
         double imageWriteDuration = 0;
 
-        outputOptical?.SetTracks(new List<Track>
+        outputOptical.SetTracks(new List<Track>
         {
             new()
             {

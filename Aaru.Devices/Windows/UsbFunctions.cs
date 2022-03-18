@@ -46,10 +46,10 @@ using System.Runtime.InteropServices;
 static partial class Usb
 {
     const          int    IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
-    internal const string GuidDevinterfaceDisk            = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-    internal const string GuidDevinterfaceCdrom           = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
-    internal const string GuidDevinterfaceFloppy          = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
-    internal const string GuidDevinterfaceTape            = "53f5630b-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_DISK            = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_CDROM           = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_FLOPPY          = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_TAPE            = "53f5630b-b6bf-11d0-94f2-00a0c91efb8b";
 
     /// <summary>Get a list of all connected devices</summary>
     /// <returns>List of usb devices</returns>
@@ -112,7 +112,7 @@ static partial class Usb
 
                 UsbDevice device = port.GetDevice();
 
-                if(device.DeviceDriverKey != driverKeyName)
+                if(device._deviceDriverKey != driverKeyName)
                     continue;
 
                 foundDevice = device;
@@ -213,7 +213,7 @@ static partial class Usb
         // devices that match the interface GUID of a disk
         IntPtr h = SetupDiGetClassDevs(ref diskGuid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
-        if(h != INVALID_HANDLE_VALUE)
+        if(h != _invalidHandleValue)
         {
             bool success;
             var  i = 0;
@@ -241,9 +241,9 @@ static partial class Usb
 
                     // now we can get some more detailed information
                     var       nRequiredSize = 0;
-                    const int N_BYTES       = BUFFER_SIZE;
+                    const int nBytes       = BUFFER_SIZE;
 
-                    if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, N_BYTES, ref nRequiredSize, ref da))
+                    if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, nBytes, ref nRequiredSize, ref da))
                         if(GetDeviceNumber(didd.DevicePath) == devNum)
                         {
                             // current InstanceID is at the "USBSTOR" level, so we
@@ -251,8 +251,8 @@ static partial class Usb
                             CM_Get_Parent(out IntPtr ptrPrevious, da.DevInst, 0);
 
                             // Now we get the InstanceID of the USB level device
-                            IntPtr ptrInstanceBuf = Marshal.AllocHGlobal(N_BYTES);
-                            CM_Get_Device_ID(ptrPrevious, ptrInstanceBuf, N_BYTES, 0);
+                            IntPtr ptrInstanceBuf = Marshal.AllocHGlobal(nBytes);
+                            CM_Get_Device_ID(ptrPrevious, ptrInstanceBuf, nBytes, 0);
                             instanceId = Marshal.PtrToStringAuto(ptrInstanceBuf);
 
                             Marshal.FreeHGlobal(ptrInstanceBuf);
@@ -284,7 +284,7 @@ static partial class Usb
 
         IntPtr h = CreateFile(devicePath.TrimEnd('\\'), 0, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
 
-        if(h == INVALID_HANDLE_VALUE)
+        if(h == _invalidHandleValue)
             return ans;
 
         var    sdn    = new StorageDeviceNumber();
@@ -293,7 +293,8 @@ static partial class Usb
 
         if(DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, ptrSdn, nBytes, out _, IntPtr.Zero))
         {
-            sdn = (StorageDeviceNumber)Marshal.PtrToStructure(ptrSdn, typeof(StorageDeviceNumber));
+            sdn = (StorageDeviceNumber)(Marshal.PtrToStructure(ptrSdn, typeof(StorageDeviceNumber)) ??
+                                        default(StorageDeviceNumber));
 
             // just my way of combining the relevant parts of the
             // STORAGE_DEVICE_NUMBER into a single number

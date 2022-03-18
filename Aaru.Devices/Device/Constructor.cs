@@ -551,8 +551,8 @@ public sealed partial class Device
                     // I have to search for USB disks, floppies and CD-ROMs as separate device types
                     foreach(string devGuid in new[]
                             {
-                                Usb.GuidDevinterfaceFloppy, Usb.GuidDevinterfaceCdrom, Usb.GuidDevinterfaceDisk,
-                                Usb.GuidDevinterfaceTape
+                                Usb.GUID_DEVINTERFACE_FLOPPY, Usb.GUID_DEVINTERFACE_CDROM, Usb.GUID_DEVINTERFACE_DISK,
+                                Usb.GUID_DEVINTERFACE_TAPE
                             })
                     {
                         usbDevice = Usb.FindDrivePath(devicePath, devGuid);
@@ -564,8 +564,8 @@ public sealed partial class Device
                     if(usbDevice != null)
                     {
                         UsbDescriptors        = usbDevice.BinaryDescriptors;
-                        _usbVendor            = (ushort)usbDevice.DeviceDescriptor.idVendor;
-                        _usbProduct           = (ushort)usbDevice.DeviceDescriptor.idProduct;
+                        _usbVendor            = (ushort)usbDevice._deviceDescriptor.idVendor;
+                        _usbProduct           = (ushort)usbDevice._deviceDescriptor.idProduct;
                         UsbManufacturerString = usbDevice.Manufacturer;
                         UsbProductString      = usbDevice.Product;
 
