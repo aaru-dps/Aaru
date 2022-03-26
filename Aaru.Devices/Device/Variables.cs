@@ -36,28 +36,28 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 
-public sealed partial class Device
+public partial class Device
 {
-    ushort _usbVendor;
-    ushort _usbProduct;
-    ulong  _firewireGuid;
-    uint   _firewireModel;
-    uint   _firewireVendor;
+    private protected ushort _usbVendor;
+    private protected ushort _usbProduct;
+    private protected ulong  _firewireGuid;
+    private protected uint   _firewireModel;
+    private protected uint   _firewireVendor;
 
     // MMC and SecureDigital, values that need to be get with card idle, something that may
     // not be possible to do but usually is already done by the SDHCI driver.
-    byte[] _cachedCsd;
-    byte[] _cachedCid;
-    byte[] _cachedScr;
-    byte[] _cachedOcr;
+    private protected byte[] _cachedCsd;
+    private protected byte[] _cachedCid;
+    private protected byte[] _cachedScr;
+    private protected byte[] _cachedOcr;
 
     /// <summary>Gets the Platform ID for this device</summary>
     /// <value>The Platform ID</value>
-    public PlatformID PlatformId { get; private set; }
+    public PlatformID PlatformId { get; private protected set; }
 
     /// <summary>Gets the file handle representing this device</summary>
     /// <value>The file handle</value>
-    public object FileHandle { get; private set; }
+    public object FileHandle { get; private protected set; }
 
     /// <summary>Gets or sets the standard timeout for commands sent to this device</summary>
     /// <value>The timeout in seconds</value>
@@ -65,43 +65,43 @@ public sealed partial class Device
 
     /// <summary>Gets a value indicating whether this <see cref="Device" /> is in error.</summary>
     /// <value><c>true</c> if error; otherwise, <c>false</c>.</value>
-    public bool Error { get; private set; }
+    public bool Error { get; private protected set; }
 
     /// <summary>Gets the last error number.</summary>
     /// <value>The last error.</value>
-    public int LastError { get; private set; }
+    public int LastError { get; private protected set; }
 
     /// <summary>Gets the device type.</summary>
     /// <value>The device type.</value>
-    public DeviceType Type { get; private set; }
+    public DeviceType Type { get; private protected set; }
 
     /// <summary>Gets the device's manufacturer</summary>
     /// <value>The manufacturer.</value>
-    public string Manufacturer { get; private set; }
+    public string Manufacturer { get; private protected set; }
 
     /// <summary>Gets the device model</summary>
     /// <value>The model.</value>
-    public string Model { get; private set; }
+    public string Model { get; private protected set; }
 
     /// <summary>Gets the device's firmware version.</summary>
     /// <value>The firmware version.</value>
-    public string FirmwareRevision { get; private set; }
+    public string FirmwareRevision { get; private protected set; }
 
     /// <summary>Gets the device's serial number.</summary>
     /// <value>The serial number.</value>
-    public string Serial { get; private set; }
+    public string Serial { get; private protected set; }
 
     /// <summary>Gets the device's SCSI peripheral device type</summary>
     /// <value>The SCSI peripheral device type.</value>
-    public PeripheralDeviceTypes ScsiType { get; private set; }
+    public PeripheralDeviceTypes ScsiType { get; private protected set; }
 
     /// <summary>Gets a value indicating whether this device's media is removable.</summary>
     /// <value><c>true</c> if this device's media is removable; otherwise, <c>false</c>.</value>
-    public bool IsRemovable { get; private set; }
+    public bool IsRemovable { get; private protected set; }
 
     /// <summary>Gets a value indicating whether this device is attached via USB.</summary>
     /// <value><c>true</c> if this device is attached via USB; otherwise, <c>false</c>.</value>
-    public bool IsUsb { get; private set; }
+    public bool IsUsb { get; private protected set; }
 
     /// <summary>Gets the USB vendor ID.</summary>
     /// <value>The USB vendor ID.</value>
@@ -113,23 +113,23 @@ public sealed partial class Device
 
     /// <summary>Gets the USB descriptors.</summary>
     /// <value>The USB descriptors.</value>
-    public byte[] UsbDescriptors { get; private set; }
+    public byte[] UsbDescriptors { get; private protected set; }
 
     /// <summary>Gets the USB manufacturer string.</summary>
     /// <value>The USB manufacturer string.</value>
-    public string UsbManufacturerString { get; private set; }
+    public string UsbManufacturerString { get; private protected set; }
 
     /// <summary>Gets the USB product string.</summary>
     /// <value>The USB product string.</value>
-    public string UsbProductString { get; private set; }
+    public string UsbProductString { get; private protected set; }
 
     /// <summary>Gets the USB serial string.</summary>
     /// <value>The USB serial string.</value>
-    public string UsbSerialString { get; private set; }
+    public string UsbSerialString { get; private protected set; }
 
     /// <summary>Gets a value indicating whether this device is attached via FireWire.</summary>
     /// <value><c>true</c> if this device is attached via FireWire; otherwise, <c>false</c>.</value>
-    public bool IsFireWire { get; private set; }
+    public bool IsFireWire { get; private protected set; }
 
     /// <summary>Gets the FireWire GUID</summary>
     /// <value>The FireWire GUID.</value>
@@ -141,7 +141,7 @@ public sealed partial class Device
 
     /// <summary>Gets the FireWire model name.</summary>
     /// <value>The FireWire model name.</value>
-    public string FireWireModelName { get; private set; }
+    public string FireWireModelName { get; private protected set; }
 
     /// <summary>Gets the FireWire vendor number.</summary>
     /// <value>The FireWire vendor number.</value>
@@ -149,7 +149,7 @@ public sealed partial class Device
 
     /// <summary>Gets the FireWire vendor name.</summary>
     /// <value>The FireWire vendor name.</value>
-    public string FireWireVendorName { get; private set; }
+    public string FireWireVendorName { get; private protected set; }
 
     /// <summary>Gets a value indicating whether this device is a CompactFlash device.</summary>
     /// <value><c>true</c> if this device is a CompactFlash device; otherwise, <c>false</c>.</value>
@@ -157,14 +157,14 @@ public sealed partial class Device
 
     /// <summary>Gets a value indicating whether this device is a PCMCIA device.</summary>
     /// <value><c>true</c> if this device is a PCMCIA device; otherwise, <c>false</c>.</value>
-    public bool IsPcmcia { get; private set; }
+    public bool IsPcmcia { get; private protected set; }
 
     /// <summary>Contains the PCMCIA CIS if applicable</summary>
-    public byte[] Cis { get; private set; }
+    public byte[] Cis { get; private protected set; }
 
-    Remote.Remote _remote;
-    bool?         _isRemoteAdmin;
-    string        _devicePath;
+    private protected Remote.Remote _remote;
+    bool?                           _isRemoteAdmin;
+    private protected string        _devicePath;
 
     /// <summary>Returns if remote is running under administrative (aka root) privileges</summary>
     public bool IsRemoteAdmin

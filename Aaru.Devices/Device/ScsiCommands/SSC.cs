@@ -35,7 +35,7 @@ namespace Aaru.Devices;
 using System;
 using Aaru.Console;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Prepares the medium for reading</summary>
     /// <returns><c>true</c>, if load was successful, <c>false</c> otherwise.</returns>

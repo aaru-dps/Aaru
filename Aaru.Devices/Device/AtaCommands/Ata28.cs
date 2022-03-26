@@ -36,7 +36,7 @@ using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Reads the drive buffer using PIO transfer</summary>
     /// <param name="buffer">Buffer that contains the read data</param>

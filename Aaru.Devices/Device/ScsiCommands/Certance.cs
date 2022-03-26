@@ -37,7 +37,7 @@ using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Parks the load arm in preparation for transport</summary>
     /// <param name="senseBuffer">Sense buffer.</param>

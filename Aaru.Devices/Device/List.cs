@@ -73,7 +73,7 @@ public struct DeviceInfo
     public readonly byte[] Padding;
 }
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Lists devices attached to current machine</summary>
     /// <returns>List of devices</returns>

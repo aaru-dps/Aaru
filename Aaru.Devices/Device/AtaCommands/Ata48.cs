@@ -36,7 +36,7 @@ using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Gets native max address using 48-bit addressing</summary>
     /// <param name="lba">Maximum addressable block</param>

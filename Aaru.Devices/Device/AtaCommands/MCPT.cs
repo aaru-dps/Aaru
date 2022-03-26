@@ -36,7 +36,7 @@ using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Enables media card pass through</summary>
     /// <param name="statusRegisters">Status registers.</param>

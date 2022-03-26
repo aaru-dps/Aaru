@@ -36,7 +36,7 @@ using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Disables S.M.A.R.T.</summary>
     /// <param name="statusRegisters">Returned status registers</param>

@@ -34,7 +34,7 @@ namespace Aaru.Devices;
 
 using Aaru.Console;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Reads a "raw" sector from DVD on HL-DT-ST drives.</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>

@@ -35,7 +35,7 @@ namespace Aaru.Devices;
 using System;
 using Aaru.Console;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Reads the CSD register from a SecureDigital or MultiMediaCard device</summary>
     /// <param name="buffer">Data buffer</param>
@@ -206,7 +206,7 @@ public sealed partial class Device
         return sense;
     }
 
-    static bool _readMultipleBlockCannotSetBlockCount;
+    protected static bool _readMultipleBlockCannotSetBlockCount;
 
     /// <summary>Reads multiple blocks from a SecureDigital or MultiMediaCard device</summary>
     /// <param name="buffer">Data buffer</param>

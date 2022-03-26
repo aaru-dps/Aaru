@@ -39,7 +39,7 @@ namespace Aaru.Devices;
 using System;
 using Aaru.Console;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Reads the data TOC from an MD-DATA</summary>
     /// <param name="buffer">Buffer where the response will be stored</param>

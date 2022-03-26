@@ -37,7 +37,7 @@ using System.Diagnostics.CodeAnalysis;
 using Aaru.Decoders.ATA;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Sends a SCSI command to this device</summary>
     /// <returns>0 if no error occurred, otherwise, errno</returns>

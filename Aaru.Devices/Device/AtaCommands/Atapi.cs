@@ -35,7 +35,7 @@ namespace Aaru.Devices;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Sends the ATA IDENTIFY PACKET DEVICE command to the device, using default device timeout</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>

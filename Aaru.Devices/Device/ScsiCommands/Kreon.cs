@@ -35,7 +35,7 @@ namespace Aaru.Devices;
 using System;
 using Aaru.Console;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Sets the drive to the xtreme unlocked state</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>

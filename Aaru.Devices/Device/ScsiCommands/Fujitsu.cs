@@ -37,7 +37,7 @@ using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Sets the data for the integrated display</summary>
     /// <param name="senseBuffer">Returned SENSE buffer</param>

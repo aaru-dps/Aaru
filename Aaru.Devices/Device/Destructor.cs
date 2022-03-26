@@ -32,11 +32,7 @@
 
 namespace Aaru.Devices;
 
-using Aaru.CommonTypes.Interop;
-using Aaru.Devices.Linux;
-using Microsoft.Win32.SafeHandles;
-
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>
     ///     Releases unmanaged resources and performs other cleanup operations before the <see cref="Device" /> is
@@ -45,31 +41,5 @@ public sealed partial class Device
     ~Device() => Close();
 
     /// <summary>Closes a device</summary>
-    public void Close()
-    {
-        if(_remote != null)
-        {
-            _remote.Close();
-            _remote.Disconnect();
-
-            return;
-        }
-
-        if(FileHandle == null)
-            return;
-
-        switch(PlatformId)
-        {
-            case PlatformID.Win32NT:
-                (FileHandle as SafeFileHandle)?.Close();
-
-                break;
-            case PlatformID.Linux:
-                Extern.close((int)FileHandle);
-
-                break;
-        }
-
-        FileHandle = null;
-    }
+    public virtual void Close() {}
 }

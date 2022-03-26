@@ -34,7 +34,7 @@ namespace Aaru.Devices;
 
 using Aaru.Console;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Reads the status register from a SecureDigital device</summary>
     /// <param name="buffer">Data buffer</param>

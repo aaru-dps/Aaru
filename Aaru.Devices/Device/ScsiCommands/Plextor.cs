@@ -35,7 +35,7 @@ namespace Aaru.Devices;
 using Aaru.Console;
 using Aaru.Helpers;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Sends the Plextor READ CD-DA command</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>

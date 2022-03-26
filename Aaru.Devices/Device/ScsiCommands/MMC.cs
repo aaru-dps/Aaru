@@ -37,7 +37,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Sends the MMC GET CONFIGURATION command for all Features</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>

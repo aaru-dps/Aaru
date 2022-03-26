@@ -35,7 +35,7 @@ namespace Aaru.Devices;
 using System;
 using Aaru.Console;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.</summary>
     /// <param name="buffer">Buffer.</param>

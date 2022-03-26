@@ -34,7 +34,7 @@ namespace Aaru.Devices;
 
 using Aaru.Console;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Sends the HP READ LONG vendor command</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>

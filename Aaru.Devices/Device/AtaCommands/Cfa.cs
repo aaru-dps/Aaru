@@ -36,7 +36,7 @@ using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
-public sealed partial class Device
+public partial class Device
 {
     /// <summary>Requests to translate an LBA to a card physical address</summary>
     /// <param name="buffer">Data buffer</param>
