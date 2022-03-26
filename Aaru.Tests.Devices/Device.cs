@@ -30,7 +30,6 @@ namespace Aaru.Tests.Devices;
 
 using System;
 using Aaru.Console;
-using Aaru.Devices;
 using Aaru.Helpers;
 
 static partial class MainClass
@@ -40,7 +39,7 @@ static partial class MainClass
         AaruConsole.WriteLine("Going to open {0}. Press any key to continue...", devPath);
         Console.ReadKey();
 
-        var dev = new Device(devPath);
+        var dev = Aaru.Devices.Device.Create(devPath);
 
         while(true)
         {

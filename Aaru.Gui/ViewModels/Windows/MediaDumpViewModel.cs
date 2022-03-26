@@ -726,7 +726,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         try
         {
-            _dev = new Device(_devicePath);
+            _dev = Device.Create(_devicePath);
 
             if(_dev.IsRemote)
                 Statistics.AddRemote(_dev.RemoteApplication, _dev.RemoteVersion, _dev.RemoteOperatingSystem,

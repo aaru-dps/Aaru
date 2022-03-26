@@ -154,18 +154,15 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         _usbIcon =
             new
-                Bitmap(_assets.Open(new
-                                        Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
+                Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
 
         _removableIcon =
-            new
-                Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
+            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
 
         _sdIcon =
             new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-flash-sd-mmc.png")));
 
-        _ejectIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
+        _ejectIcon = new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
     }
 
     public bool DevicesSupported
@@ -251,7 +248,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                     if(deviceModel.ViewModel is null)
                         try
                         {
-                            var dev = new Device(deviceModel.Path);
+                            var dev = Device.Create(deviceModel.Path);
 
                             if(dev.IsRemote)
                                 Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion,
@@ -790,7 +787,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                 try
                 {
-                    var dev = new Device(device.Path);
+                    var dev = Device.Create(device.Path);
 
                     if(dev.IsRemote)
                         Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,

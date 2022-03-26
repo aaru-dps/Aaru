@@ -128,7 +128,7 @@ sealed class DeviceReportCommand : Command
 
         try
         {
-            dev = new Device(devicePath);
+            dev = Device.Create(devicePath);
 
             if(dev.IsRemote)
                 Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,

@@ -328,7 +328,7 @@ public sealed class MediaScanViewModel : ViewModelBase
            char.IsLetter(_devicePath[0]))
             _devicePath = "\\\\.\\" + char.ToUpper(_devicePath[0]) + ':';
 
-        var dev = new Device(_devicePath);
+        var dev = Device.Create(_devicePath);
 
         if(dev.IsRemote)
             Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,

@@ -136,7 +136,7 @@ sealed class MediaInfoCommand : Command
             Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Opening device...").IsIndeterminate();
-                dev = new Device(devicePath);
+                dev = Device.Create(devicePath);
             });
 
             if(dev.IsRemote)
