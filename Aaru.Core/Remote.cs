@@ -38,6 +38,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using Aaru.CommonTypes.Metadata;
@@ -72,26 +73,27 @@ public static class Remote
                         NullValueHandling = NullValueHandling.Ignore
                     });
 
-                    byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
-                    var    request   = WebRequest.Create("https://www.aaru.app/api/uploadreportv2");
-                    ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
-                    request.Method                      = "POST";
-                    request.ContentLength               = jsonBytes.Length;
-                    request.ContentType                 = "application/json";
-                    Stream reqStream = request.GetRequestStream();
-                    reqStream.Write(jsonBytes, 0, jsonBytes.Length);
-                    reqStream.Close();
-                    WebResponse response = request.GetResponse();
+                    var httpClient = new HttpClient();
 
-                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+                    httpClient.DefaultRequestHeaders.Add("User-Agent",
+                                                         $"Aaru {typeof(Version).Assembly.GetName().Version}");
+
+                    httpClient.BaseAddress = new Uri("https://www.aaru.app");
+
+                    HttpResponseMessage response = httpClient.
+                                                   PostAsync("/api/uploadreportv2",
+                                                             new StringContent(json, Encoding.UTF8,
+                                                                               "application/json")).GetAwaiter().
+                                                   GetResult();
+
+                    if(!response.IsSuccessStatusCode)
                         return;
 
-                    Stream data   = response.GetResponseStream();
-                    var    reader = new StreamReader(data ?? throw new InvalidOperationException());
+                    Stream data   = response.Content.ReadAsStream();
+                    var    reader = new StreamReader(data);
 
                     reader.ReadToEnd();
                     data.Close();
-                    response.Close();
                 }
                 catch(WebException)
                 {
@@ -175,22 +177,22 @@ public static class Remote
 
             DateTime updateStart = DateTime.UtcNow;
 
-            var request = WebRequest.Create($"https://www.aaru.app/api/update?timestamp={lastUpdate}");
-            ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
-            request.Method                      = "GET";
-            request.ContentType                 = "application/json";
-            WebResponse response = request.GetResponse();
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("User-Agent", $"Aaru {typeof(Version).Assembly.GetName().Version}");
+            httpClient.BaseAddress = new Uri("https://www.aaru.app");
 
-            if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+            HttpResponseMessage response =
+                httpClient.GetAsync($"/api/update?timestamp={lastUpdate}").GetAwaiter().GetResult();
+
+            if(!response.IsSuccessStatusCode)
             {
-                AaruConsole.ErrorWriteLine("Error {0} when trying to get updated entities.",
-                                           ((HttpWebResponse)response).StatusCode);
+                AaruConsole.ErrorWriteLine("Error {0} when trying to get updated entities.", response.StatusCode);
 
                 return;
             }
 
-            Stream  data   = response.GetResponseStream();
-            var     reader = new StreamReader(data ?? throw new InvalidOperationException());
+            Stream  data   = response.Content.ReadAsStream();
+            var     reader = new StreamReader(data);
             SyncDto sync   = JsonConvert.DeserializeObject<SyncDto>(reader.ReadToEnd()) ?? new SyncDto();
 
             if(create)
