@@ -35,6 +35,7 @@ namespace Aaru.Gui.ViewModels.Tabs;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.CommonTypes;
 using Aaru.Decoders.DVD;
 using Avalonia.Controls;
@@ -215,24 +216,24 @@ public sealed class DvdWritableInfoViewModel
     public bool                        SaveDvdrDlRemapAnchorPointVisible        { get; }
     public bool                        SaveDvdPlusAdipVisible                   { get; }
     public bool                        SaveDvdPlusDcbVisible                    { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdRamDdsCommand                     { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdRamCartridgeStatusCommand         { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdRamSpareAreaInformationCommand    { get; }
-    public ReactiveCommand<Unit, Unit> SaveLastBorderOutRmdCommand              { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdPreRecordedInfoCommand            { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdrMediaIdentifierCommand           { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdrPhysicalInformationCommand       { get; }
-    public ReactiveCommand<Unit, Unit> SaveHddvdrMediumStatusCommand            { get; }
-    public ReactiveCommand<Unit, Unit> SaveHddvdrLastRmdCommand                 { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdrLayerCapacityCommand             { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdrDlMiddleZoneStartCommand         { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdrDlJumpIntervalSizeCommand        { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdrDlManualLayerJumpStartLbaCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdrDlRemapAnchorPointCommand        { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdPlusAdipCommand                   { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdPlusDcbCommand                    { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdRamDdsCommand                     { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdRamCartridgeStatusCommand         { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdRamSpareAreaInformationCommand    { get; }
+    public ReactiveCommand<Unit, Task> SaveLastBorderOutRmdCommand              { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdPreRecordedInfoCommand            { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdrMediaIdentifierCommand           { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdrPhysicalInformationCommand       { get; }
+    public ReactiveCommand<Unit, Task> SaveHddvdrMediumStatusCommand            { get; }
+    public ReactiveCommand<Unit, Task> SaveHddvdrLastRmdCommand                 { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdrLayerCapacityCommand             { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdrDlMiddleZoneStartCommand         { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdrDlJumpIntervalSizeCommand        { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdrDlManualLayerJumpStartLbaCommand { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdrDlRemapAnchorPointCommand        { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdPlusAdipCommand                   { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdPlusDcbCommand                    { get; }
 
-    async void SaveElement(byte[] data)
+    async Task SaveElement(byte[] data)
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -256,35 +257,35 @@ public sealed class DvdWritableInfoViewModel
         saveFs.Close();
     }
 
-    void ExecuteSaveDvdRamDdsCommand() => SaveElement(_dvdRamDds);
+    async Task ExecuteSaveDvdRamDdsCommand() => await SaveElement(_dvdRamDds);
 
-    void ExecuteSaveDvdRamCartridgeStatusCommand() => SaveElement(_dvdRamCartridgeStatus);
+    async Task ExecuteSaveDvdRamCartridgeStatusCommand() => await SaveElement(_dvdRamCartridgeStatus);
 
-    void ExecuteSaveDvdRamSpareAreaInformationCommand() => SaveElement(_dvdRamSpareArea);
+    async Task ExecuteSaveDvdRamSpareAreaInformationCommand() => await SaveElement(_dvdRamSpareArea);
 
-    void ExecuteSaveLastBorderOutRmdCommand() => SaveElement(_dvdLastBorderOutRmd);
+    async Task ExecuteSaveLastBorderOutRmdCommand() => await SaveElement(_dvdLastBorderOutRmd);
 
-    void ExecuteSaveDvdPreRecordedInfoCommand() => SaveElement(_dvdPreRecordedInfo);
+    async Task ExecuteSaveDvdPreRecordedInfoCommand() => await SaveElement(_dvdPreRecordedInfo);
 
-    void ExecuteSaveDvdrMediaIdentifierCommand() => SaveElement(_dvdrMediaIdentifier);
+    async Task ExecuteSaveDvdrMediaIdentifierCommand() => await SaveElement(_dvdrMediaIdentifier);
 
-    void ExecuteSaveDvdrPhysicalInformationCommand() => SaveElement(_dvdrPhysicalInformation);
+    async Task ExecuteSaveDvdrPhysicalInformationCommand() => await SaveElement(_dvdrPhysicalInformation);
 
-    void ExecuteSaveHddvdrMediumStatusCommand() => SaveElement(_hddvdrMediumStatus);
+    async Task ExecuteSaveHddvdrMediumStatusCommand() => await SaveElement(_hddvdrMediumStatus);
 
-    void ExecuteSaveHddvdrLastRmdCommand() => SaveElement(_hddvdrLastRmd);
+    async Task ExecuteSaveHddvdrLastRmdCommand() => await SaveElement(_hddvdrLastRmd);
 
-    void ExecuteSaveDvdrLayerCapacityCommand() => SaveElement(_dvdrLayerCapacity);
+    async Task ExecuteSaveDvdrLayerCapacityCommand() => await SaveElement(_dvdrLayerCapacity);
 
-    void ExecuteSaveDvdrDlMiddleZoneStartCommand() => SaveElement(_dvdrDlMiddleZoneStart);
+    async Task ExecuteSaveDvdrDlMiddleZoneStartCommand() => await SaveElement(_dvdrDlMiddleZoneStart);
 
-    void ExecuteSaveDvdrDlJumpIntervalSizeCommand() => SaveElement(_dvdrDlJumpIntervalSize);
+    async Task ExecuteSaveDvdrDlJumpIntervalSizeCommand() => await SaveElement(_dvdrDlJumpIntervalSize);
 
-    void ExecuteSaveDvdrDlManualLayerJumpStartLbaCommand() => SaveElement(_dvdrDlManualLayerJumpStartLba);
+    async Task ExecuteSaveDvdrDlManualLayerJumpStartLbaCommand() => await SaveElement(_dvdrDlManualLayerJumpStartLba);
 
-    void ExecuteSaveDvdrDlRemapAnchorPointCommand() => SaveElement(_dvdrDlRemapAnchorPoint);
+    async Task ExecuteSaveDvdrDlRemapAnchorPointCommand() => await SaveElement(_dvdrDlRemapAnchorPoint);
 
-    void ExecuteSaveDvdPlusAdipCommand() => SaveElement(_dvdPlusAdip);
+    async Task ExecuteSaveDvdPlusAdipCommand() => await SaveElement(_dvdPlusAdip);
 
-    void ExecuteSaveDvdPlusDcbCommand() => SaveElement(_dvdPlusDcb);
+    async Task ExecuteSaveDvdPlusDcbCommand() => await SaveElement(_dvdPlusDcb);
 }

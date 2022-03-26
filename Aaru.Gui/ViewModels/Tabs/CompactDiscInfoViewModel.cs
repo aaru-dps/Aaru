@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Gui.Models;
@@ -120,16 +121,16 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
     public bool                            MiscellaneousVisible     { get; }
     public string                          McnText                  { get; }
     public bool                            CdPmaVisible             { get; }
-    public ReactiveCommand<Unit, Unit>     SaveCdInformationCommand { get; }
-    public ReactiveCommand<Unit, Unit>     SaveCdTocCommand         { get; }
-    public ReactiveCommand<Unit, Unit>     SaveCdFullTocCommand     { get; }
-    public ReactiveCommand<Unit, Unit>     SaveCdSessionCommand     { get; }
-    public ReactiveCommand<Unit, Unit>     SaveCdTextCommand        { get; }
-    public ReactiveCommand<Unit, Unit>     SaveCdAtipCommand        { get; }
-    public ReactiveCommand<Unit, Unit>     SaveCdPmaCommand         { get; }
+    public ReactiveCommand<Unit, Task>     SaveCdInformationCommand { get; }
+    public ReactiveCommand<Unit, Task>     SaveCdTocCommand         { get; }
+    public ReactiveCommand<Unit, Task>     SaveCdFullTocCommand     { get; }
+    public ReactiveCommand<Unit, Task>     SaveCdSessionCommand     { get; }
+    public ReactiveCommand<Unit, Task>     SaveCdTextCommand        { get; }
+    public ReactiveCommand<Unit, Task>     SaveCdAtipCommand        { get; }
+    public ReactiveCommand<Unit, Task>     SaveCdPmaCommand         { get; }
     public ObservableCollection<IsrcModel> IsrcList                 { get; }
 
-    async void ExecuteSaveCdInformationCommand()
+    async Task ExecuteSaveCdInformationCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -153,7 +154,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveCdTocCommand()
+    async Task ExecuteSaveCdTocCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -177,7 +178,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveCdFullTocCommand()
+    async Task ExecuteSaveCdFullTocCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -201,7 +202,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveCdSessionCommand()
+    async Task ExecuteSaveCdSessionCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -225,7 +226,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveCdTextCommand()
+    async Task ExecuteSaveCdTextCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -249,7 +250,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveCdAtipCommand()
+    async Task ExecuteSaveCdAtipCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -273,7 +274,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveCdPmaCommand()
+    async Task ExecuteSaveCdPmaCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 

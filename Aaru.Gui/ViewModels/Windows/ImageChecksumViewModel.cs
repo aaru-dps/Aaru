@@ -36,6 +36,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;

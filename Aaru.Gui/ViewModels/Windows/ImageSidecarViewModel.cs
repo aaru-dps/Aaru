@@ -38,6 +38,7 @@ using System.IO;
 using System.Reactive;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
@@ -97,7 +98,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
     }
 
     public string                      Title              { get; }
-    public ReactiveCommand<Unit, Unit> DestinationCommand { get; }
+    public ReactiveCommand<Unit, Task> DestinationCommand { get; }
     public ReactiveCommand<Unit, Unit> StartCommand       { get; }
     public ReactiveCommand<Unit, Unit> CloseCommand       { get; }
     public ReactiveCommand<Unit, Unit> StopCommand        { get; }
@@ -313,7 +314,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         _sidecarClass.Abort();
     }
 
-    async void ExecuteDestinationCommand()
+    async Task ExecuteDestinationCommand()
     {
         var dlgDestination = new SaveFileDialog
         {

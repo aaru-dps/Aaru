@@ -37,6 +37,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
@@ -898,12 +899,12 @@ public sealed class ScsiInfoViewModel : ViewModelBase
     public ObservableCollection<ScsiPageModel> ModeSensePages           { get; }
     public ObservableCollection<ScsiPageModel> EvpdPages                { get; }
     public ObservableCollection<ScsiPageModel> MmcFeatures              { get; }
-    public ReactiveCommand<Unit, Unit>         SaveInquiryBinaryCommand { get; }
-    public ReactiveCommand<Unit, Unit>         SaveInquiryTextCommand   { get; }
-    public ReactiveCommand<Unit, Unit>         SaveModeSense6Command    { get; }
-    public ReactiveCommand<Unit, Unit>         SaveModeSense10Command   { get; }
-    public ReactiveCommand<Unit, Unit>         SaveEvpdPageCommand      { get; }
-    public ReactiveCommand<Unit, Unit>         SaveMmcFeaturesCommand   { get; }
+    public ReactiveCommand<Unit, Task>         SaveInquiryBinaryCommand { get; }
+    public ReactiveCommand<Unit, Task>         SaveInquiryTextCommand   { get; }
+    public ReactiveCommand<Unit, Task>         SaveModeSense6Command    { get; }
+    public ReactiveCommand<Unit, Task>         SaveModeSense10Command   { get; }
+    public ReactiveCommand<Unit, Task>         SaveEvpdPageCommand      { get; }
+    public ReactiveCommand<Unit, Task>         SaveMmcFeaturesCommand   { get; }
 
     public object SelectedModeSensePage
     {
@@ -968,7 +969,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _mmcFeatureText, value);
     }
 
-    async void ExecuteSaveInquiryBinaryCommand()
+    async Task ExecuteSaveInquiryBinaryCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -992,7 +993,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveInquiryTextCommand()
+    async Task ExecuteSaveInquiryTextCommand()
     {
         var dlgSaveText = new SaveFileDialog();
 
@@ -1016,7 +1017,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveModeSense6Command()
+    async Task ExecuteSaveModeSense6Command()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -1040,7 +1041,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveModeSense10Command()
+    async Task ExecuteSaveModeSense10Command()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -1064,7 +1065,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveEvpdPageCommand()
+    async Task ExecuteSaveEvpdPageCommand()
     {
         if(!(SelectedEvpdPage is ScsiPageModel pageModel))
             return;
@@ -1091,7 +1092,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveMmcFeaturesCommand()
+    async Task ExecuteSaveMmcFeaturesCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 

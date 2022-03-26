@@ -38,6 +38,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs;
@@ -111,9 +112,9 @@ public sealed class SubdirectoryViewModel
 
     public ObservableCollection<FileModel> Entries             { get; }
     public List<FileModel>                 SelectedEntries     { get; }
-    public ReactiveCommand<Unit, Unit>     ExtractFilesCommand { get; }
+    public ReactiveCommand<Unit, Task>     ExtractFilesCommand { get; }
 
-    async void ExecuteExtractFilesCommand()
+    async Task ExecuteExtractFilesCommand()
     {
         if(SelectedEntries.Count == 0)
             return;

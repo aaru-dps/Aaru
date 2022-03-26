@@ -40,6 +40,7 @@ using System.Linq;
 using System.Reactive;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -241,7 +242,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> StartCommand       { get; }
     public ReactiveCommand<Unit, Unit> CloseCommand       { get; }
     public ReactiveCommand<Unit, Unit> StopCommand        { get; }
-    public ReactiveCommand<Unit, Unit> DestinationCommand { get; }
+    public ReactiveCommand<Unit, Task> DestinationCommand { get; }
 
     public ObservableCollection<ImagePluginModel> PluginsList { get; }
     public ObservableCollection<EncodingModel>    Encodings   { get; }
@@ -631,7 +632,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _stopEnabled, value);
     }
 
-    async void ExecuteDestinationCommand()
+    async Task ExecuteDestinationCommand()
     {
         if(SelectedPlugin is null)
             return;
@@ -667,7 +668,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
         Resume = true;
     }
 
-    async void CheckResumeFile()
+    async Task CheckResumeFile()
     {
         _resume = null;
         var xs = new XmlSerializer(typeof(Resume));
@@ -815,7 +816,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
         new Thread(DoWork).Start();
     }
 
-    void DoWork()
+    async void DoWork()
     {
         _dumper.UpdateStatus         += UpdateStatus;
         _dumper.ErrorMessage         += ErrorMessage;
@@ -832,10 +833,10 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         _dev.Close();
 
-        WorkFinished();
+        await WorkFinished();
     }
 
-    async void WorkFinished() => await Dispatcher.UIThread.InvokeAsync(() =>
+    async Task WorkFinished() => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         CloseVisible     = true;
         StopVisible      = false;
@@ -894,7 +895,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
         await MessageBoxManager.GetMessageBoxStandardWindow("Error", $"{text}", ButtonEnum.Ok, Icon.Error).
                                 ShowDialog(_view);
 
-        WorkFinished();
+        await WorkFinished();
     });
 
     async void ErrorMessage(string text) => await Dispatcher.UIThread.InvokeAsync(() =>

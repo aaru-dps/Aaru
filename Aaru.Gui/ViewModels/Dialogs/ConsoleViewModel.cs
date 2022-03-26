@@ -38,6 +38,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive;
 using System.Reflection;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Interop;
 using Aaru.Console;
 using Avalonia.Controls;
@@ -64,7 +65,7 @@ public sealed class ConsoleViewModel : ViewModelBase
     [NotNull]
     public string Title => "Console";
     public ReactiveCommand<Unit, Unit>    ClearCommand { get; }
-    public ReactiveCommand<Unit, Unit>    SaveCommand  { get; }
+    public ReactiveCommand<Unit, Task>    SaveCommand  { get; }
     public ObservableCollection<LogEntry> Entries      => ConsoleHandler.Entries;
     [NotNull]
     public string DebugText => "Enable debug console";
@@ -83,7 +84,7 @@ public sealed class ConsoleViewModel : ViewModelBase
         }
     }
 
-    async void ExecuteSaveCommand()
+    async Task ExecuteSaveCommand()
     {
         var dlgSave = new SaveFileDialog();
 

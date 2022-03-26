@@ -39,6 +39,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -186,8 +187,8 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>     PluginsCommand              { get; }
     public ReactiveCommand<Unit, Unit>     StatisticsCommand           { get; }
     public ReactiveCommand<Unit, Unit>     ExitCommand                 { get; }
-    public ReactiveCommand<Unit, Unit>     SettingsCommand             { get; }
-    public ReactiveCommand<Unit, Unit>     OpenCommand                 { get; }
+    public ReactiveCommand<Unit, Task>     SettingsCommand             { get; }
+    public ReactiveCommand<Unit, Task>     OpenCommand                 { get; }
     public ReactiveCommand<Unit, Unit>     CalculateEntropyCommand     { get; }
     public ReactiveCommand<Unit, Unit>     VerifyImageCommand          { get; }
     public ReactiveCommand<Unit, Unit>     ChecksumImageCommand        { get; }
@@ -478,7 +479,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         dialog.ShowDialog(_view);
     }
 
-    internal async void ExecuteSettingsCommand()
+    internal async Task ExecuteSettingsCommand()
     {
         var dialog = new SettingsDialog();
         dialog.DataContext = new SettingsViewModel(dialog, false);
@@ -499,7 +500,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         _console.Show();
     }
 
-    async void ExecuteOpenCommand()
+    async Task ExecuteOpenCommand()
     {
         // TODO: Extensions
         var dlgOpenImage = new OpenFileDialog

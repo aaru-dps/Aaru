@@ -40,6 +40,7 @@ using System.Linq;
 using System.Reactive;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -520,7 +521,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _destinationEnabled, value);
     }
 
-    public ReactiveCommand<Unit, Unit> DestinationCommand           { get; }
+    public ReactiveCommand<Unit, Task> DestinationCommand           { get; }
     public ReactiveCommand<Unit, Unit> CreatorCommand               { get; }
     public ReactiveCommand<Unit, Unit> MediaTitleCommand            { get; }
     public ReactiveCommand<Unit, Unit> MediaManufacturerCommand     { get; }
@@ -536,10 +537,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> DriveFirmwareRevisionCommand { get; }
     public ReactiveCommand<Unit, Unit> CommentsCommand              { get; }
     public ReactiveCommand<Unit, Unit> CicmXmlFromImageCommand      { get; }
-    public ReactiveCommand<Unit, Unit> CicmXmlCommand               { get; }
+    public ReactiveCommand<Unit, Task> CicmXmlCommand               { get; }
     public ReactiveCommand<Unit, Unit> ResumeFileFromImageCommand   { get; }
-    public ReactiveCommand<Unit, Unit> ResumeFileCommand            { get; }
-    public ReactiveCommand<Unit, Unit> StartCommand                 { get; }
+    public ReactiveCommand<Unit, Task> ResumeFileCommand            { get; }
+    public ReactiveCommand<Unit, Task> StartCommand                 { get; }
     public ReactiveCommand<Unit, Unit> CloseCommand                 { get; }
     public ReactiveCommand<Unit, Unit> StopCommand                  { get; }
 
@@ -555,7 +556,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _destinationVisible, value);
     }
 
-    async void ExecuteStartCommand()
+    async Task ExecuteStartCommand()
     {
         if(SelectedPlugin is null)
         {
@@ -1855,7 +1856,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 grpOptions.Content = stkImageOptions;
             }
     */
-    async void ExecuteDestinationCommand()
+    async Task ExecuteDestinationCommand()
     {
         if(SelectedPlugin is null)
             return;
@@ -1921,7 +1922,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         _cicmMetadata = _inputFormat.CicmMetadata;
     }
 
-    async void ExecuteCicmXmlCommand()
+    async Task ExecuteCicmXmlCommand()
     {
         _cicmMetadata = null;
         CicmXmlText   = "";
@@ -1968,7 +1969,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         _dumpHardware  = _inputFormat.DumpHardware;
     }
 
-    async void ExecuteResumeFileCommand()
+    async Task ExecuteResumeFileCommand()
     {
         _dumpHardware  = null;
         ResumeFileText = "";

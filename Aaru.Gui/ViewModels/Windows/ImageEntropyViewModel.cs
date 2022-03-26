@@ -37,6 +37,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reactive;
 using System.Threading;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;

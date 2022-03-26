@@ -35,6 +35,7 @@ namespace Aaru.Gui.ViewModels.Windows;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading;
+using System.Threading.Tasks;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
 using Aaru.Devices;
@@ -399,7 +400,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         Statistics.AddCommand("media-scan");
 
         dev.Close();
-        WorkFinished();
+        await WorkFinished();
     }
 
     async void ScanSpeed(ulong sector, double currentSpeed) => await Dispatcher.UIThread.InvokeAsync(() =>
@@ -518,7 +519,7 @@ public sealed class MediaScanViewModel : ViewModelBase
             }
         });
 
-    async void WorkFinished() => await Dispatcher.UIThread.InvokeAsync(() =>
+    async Task WorkFinished() => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         StopVisible     = false;
         StartVisible    = true;

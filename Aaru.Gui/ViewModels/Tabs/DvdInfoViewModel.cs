@@ -35,6 +35,7 @@ namespace Aaru.Gui.ViewModels.Tabs;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.CommonTypes;
 using Aaru.Decoders.DVD;
 using Avalonia.Controls;
@@ -102,12 +103,12 @@ public sealed class DvdInfoViewModel
         SaveDvdAacsVisible  = aacs                   != null;
     }
 
-    public ReactiveCommand<Unit, Unit> SaveDvdPfiCommand   { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdDmiCommand   { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdCmiCommand   { get; }
-    public ReactiveCommand<Unit, Unit> SaveHdDvdCmiCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdBcaCommand   { get; }
-    public ReactiveCommand<Unit, Unit> SaveDvdAacsCommand  { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdPfiCommand   { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdDmiCommand   { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdCmiCommand   { get; }
+    public ReactiveCommand<Unit, Task> SaveHdDvdCmiCommand { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdBcaCommand   { get; }
+    public ReactiveCommand<Unit, Task> SaveDvdAacsCommand  { get; }
     public string                      DvdPfiText          { get; }
     public string                      DvdCmiText          { get; }
     public bool                        SaveDvdPfiVisible   { get; }
@@ -117,7 +118,7 @@ public sealed class DvdInfoViewModel
     public bool                        SaveDvdBcaVisible   { get; }
     public bool                        SaveDvdAacsVisible  { get; }
 
-    async void SaveElement(byte[] data)
+    async Task SaveElement(byte[] data)
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -141,15 +142,15 @@ public sealed class DvdInfoViewModel
         saveFs.Close();
     }
 
-    void ExecuteSaveDvdPfiCommand() => SaveElement(_dvdPfi);
+    async Task ExecuteSaveDvdPfiCommand() => await SaveElement(_dvdPfi);
 
-    void ExecuteSaveDvdDmiCommand() => SaveElement(_dvdDmi);
+    async Task ExecuteSaveDvdDmiCommand() => await SaveElement(_dvdDmi);
 
-    void ExecuteSaveDvdCmiCommand() => SaveElement(_dvdCmi);
+    async Task ExecuteSaveDvdCmiCommand() => await SaveElement(_dvdCmi);
 
-    void ExecuteSaveHdDvdCmiCommand() => SaveElement(_hddvdCopyrightInformation);
+    async Task ExecuteSaveHdDvdCmiCommand() => await SaveElement(_hddvdCopyrightInformation);
 
-    void ExecuteSaveDvdBcaCommand() => SaveElement(_dvdBca);
+    async Task ExecuteSaveDvdBcaCommand() => await SaveElement(_dvdBca);
 
-    void ExecuteSaveDvdAacsCommand() => SaveElement(_dvdAacs);
+    async Task ExecuteSaveDvdAacsCommand() => await SaveElement(_dvdAacs);
 }

@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Text;
+using System.Threading.Tasks;
 using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.ViewModels.Windows;
 using Aaru.Gui.Views.Tabs;
@@ -202,16 +203,16 @@ public sealed class MediaInfoViewModel : ViewModelBase
         };
     }
 
-    public ReactiveCommand<Unit, Unit> SaveReadMediaSerialCommand        { get; }
-    public ReactiveCommand<Unit, Unit> SaveReadCapacityCommand           { get; }
-    public ReactiveCommand<Unit, Unit> SaveReadCapacity16Command         { get; }
-    public ReactiveCommand<Unit, Unit> SaveGetConfigurationCommand       { get; }
-    public ReactiveCommand<Unit, Unit> SaveRecognizedFormatLayersCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveWriteProtectionStatusCommand  { get; }
-    public ReactiveCommand<Unit, Unit> SaveDensitySupportCommand         { get; }
-    public ReactiveCommand<Unit, Unit> SaveMediumSupportCommand          { get; }
-    public ReactiveCommand<Unit, Unit> DumpCommand                       { get; }
-    public ReactiveCommand<Unit, Unit> ScanCommand                       { get; }
+    public ReactiveCommand<Unit, Task> SaveReadMediaSerialCommand        { get; }
+    public ReactiveCommand<Unit, Task> SaveReadCapacityCommand           { get; }
+    public ReactiveCommand<Unit, Task> SaveReadCapacity16Command         { get; }
+    public ReactiveCommand<Unit, Task> SaveGetConfigurationCommand       { get; }
+    public ReactiveCommand<Unit, Task> SaveRecognizedFormatLayersCommand { get; }
+    public ReactiveCommand<Unit, Task> SaveWriteProtectionStatusCommand  { get; }
+    public ReactiveCommand<Unit, Task> SaveDensitySupportCommand         { get; }
+    public ReactiveCommand<Unit, Task> SaveMediumSupportCommand          { get; }
+    public ReactiveCommand<Unit, Task> DumpCommand                       { get; }
+    public ReactiveCommand<Unit, Task> ScanCommand                       { get; }
 
     public Bitmap MediaLogo
     {
@@ -345,7 +346,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _blurayInfo, value);
     }
 
-    async void SaveElement(byte[] data)
+    async Task SaveElement(byte[] data)
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -369,23 +370,23 @@ public sealed class MediaInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    void ExecuteSaveReadMediaSerialCommand() => SaveElement(_scsiInfo.MediaSerialNumber);
+    async Task ExecuteSaveReadMediaSerialCommand() => await SaveElement(_scsiInfo.MediaSerialNumber);
 
-    void ExecuteSaveReadCapacityCommand() => SaveElement(_scsiInfo.ReadCapacity);
+    async Task ExecuteSaveReadCapacityCommand() => await SaveElement(_scsiInfo.ReadCapacity);
 
-    void ExecuteSaveReadCapacity16Command() => SaveElement(_scsiInfo.ReadCapacity16);
+    async Task ExecuteSaveReadCapacity16Command() => await SaveElement(_scsiInfo.ReadCapacity16);
 
-    void ExecuteSaveGetConfigurationCommand() => SaveElement(_scsiInfo.MmcConfiguration);
+    async Task ExecuteSaveGetConfigurationCommand() => await SaveElement(_scsiInfo.MmcConfiguration);
 
-    void ExecuteSaveRecognizedFormatLayersCommand() => SaveElement(_scsiInfo.RecognizedFormatLayers);
+    async Task ExecuteSaveRecognizedFormatLayersCommand() => await SaveElement(_scsiInfo.RecognizedFormatLayers);
 
-    void ExecuteSaveWriteProtectionStatusCommand() => SaveElement(_scsiInfo.WriteProtectionStatus);
+    async Task ExecuteSaveWriteProtectionStatusCommand() => await SaveElement(_scsiInfo.WriteProtectionStatus);
 
-    void ExecuteSaveDensitySupportCommand() => SaveElement(_scsiInfo.DensitySupport);
+    async Task ExecuteSaveDensitySupportCommand() => await SaveElement(_scsiInfo.DensitySupport);
 
-    void ExecuteSaveMediumSupportCommand() => SaveElement(_scsiInfo.MediaTypeSupport);
+    async Task ExecuteSaveMediumSupportCommand() => await SaveElement(_scsiInfo.MediaTypeSupport);
 
-    async void ExecuteDumpCommand()
+    async Task ExecuteDumpCommand()
     {
         if(_scsiInfo.MediaType is CommonTypes.MediaType.GDR or CommonTypes.MediaType.GDROM)
         {
@@ -415,7 +416,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
         mediaDumpWindow.Show();
     }
 
-    async void ExecuteScanCommand()
+    async Task ExecuteScanCommand()
     {
         switch(_scsiInfo.MediaType)
         {

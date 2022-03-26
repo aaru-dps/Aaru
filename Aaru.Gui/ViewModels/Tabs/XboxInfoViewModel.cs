@@ -35,6 +35,7 @@ namespace Aaru.Gui.ViewModels.Tabs;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.Core.Media.Info;
 using Aaru.Decoders.Xbox;
 using Avalonia.Controls;
@@ -78,7 +79,7 @@ public sealed class XboxInfoViewModel
         SaveXboxSsVisible = securitySector != null;
     }
 
-    public ReactiveCommand<Unit, Unit> SaveXboxSsCommand      { get; }
+    public ReactiveCommand<Unit, Task> SaveXboxSsCommand      { get; }
     public bool                        XboxInformationVisible { get; }
     public bool                        SaveXboxSsVisible      { get; }
     public string                      XboxL0VideoText        { get; }
@@ -90,7 +91,7 @@ public sealed class XboxInfoViewModel
     public string                      XboxDmiText            { get; }
     public string                      XboxSsText             { get; }
 
-    async void SaveElement(byte[] data)
+    async Task SaveElement(byte[] data)
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -114,5 +115,5 @@ public sealed class XboxInfoViewModel
         saveFs.Close();
     }
 
-    public void ExecuteSaveXboxSsCommand() => SaveElement(_xboxSecuritySector);
+    public async Task ExecuteSaveXboxSsCommand() => await SaveElement(_xboxSecuritySector);
 }

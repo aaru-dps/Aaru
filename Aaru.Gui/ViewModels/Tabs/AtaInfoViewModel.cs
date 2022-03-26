@@ -35,6 +35,7 @@ namespace Aaru.Gui.ViewModels.Tabs;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.Decoders.ATA;
 using Avalonia.Controls;
 using JetBrains.Annotations;
@@ -118,12 +119,12 @@ public sealed class AtaInfoViewModel : ViewModelBase
     public bool                        AtaMcptChecked                { get; }
     public bool                        AtaMcptWriteProtectionChecked { get; }
     public bool                        AtaMcptVisible                { get; }
-    public ReactiveCommand<Unit, Unit> SaveAtaBinaryCommand          { get; }
-    public ReactiveCommand<Unit, Unit> SaveAtaTextCommand            { get; }
+    public ReactiveCommand<Unit, Task> SaveAtaBinaryCommand          { get; }
+    public ReactiveCommand<Unit, Task> SaveAtaTextCommand            { get; }
 
     public string AtaOrAtapiText { get; }
 
-    async void ExecuteSaveAtaBinaryCommand()
+    async Task ExecuteSaveAtaBinaryCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -151,7 +152,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
         saveFs.Close();
     }
 
-    async void ExecuteSaveAtaTextCommand()
+    async Task ExecuteSaveAtaTextCommand()
     {
         var dlgSaveText = new SaveFileDialog();
 

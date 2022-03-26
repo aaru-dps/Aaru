@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.Console;
 using Aaru.Decoders.PCMCIA;
 using Aaru.Gui.Models;
@@ -165,9 +166,9 @@ public class PcmciaInfoViewModel : ViewModelBase
         }
     }
 
-    public ReactiveCommand<Unit, Unit> SavePcmciaCisCommand { get; }
+    public ReactiveCommand<Unit, Task> SavePcmciaCisCommand { get; }
 
-    async void ExecuteSavePcmciaCisCommand()
+    async Task ExecuteSavePcmciaCisCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 

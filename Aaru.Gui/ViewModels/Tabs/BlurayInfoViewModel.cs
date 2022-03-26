@@ -35,6 +35,7 @@ namespace Aaru.Gui.ViewModels.Tabs;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.Decoders.Bluray;
 using Aaru.Decoders.SCSI.MMC;
 using Avalonia.Controls;
@@ -135,15 +136,15 @@ public sealed class BlurayInfoViewModel
     public string                      BluraySpareAreaInformationText        { get; }
     public string                      BlurayPowResourcesText                { get; }
     public string                      BlurayTrackResourcesText              { get; }
-    public ReactiveCommand<Unit, Unit> SaveBlurayDiscInformationCommand      { get; }
-    public ReactiveCommand<Unit, Unit> SaveBlurayBurstCuttingAreaCommand     { get; }
-    public ReactiveCommand<Unit, Unit> SaveBlurayDdsCommand                  { get; }
-    public ReactiveCommand<Unit, Unit> SaveBlurayCartridgeStatusCommand      { get; }
-    public ReactiveCommand<Unit, Unit> SaveBluraySpareAreaInformationCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveBlurayPowResourcesCommand         { get; }
-    public ReactiveCommand<Unit, Unit> SaveBlurayTrackResourcesCommand       { get; }
-    public ReactiveCommand<Unit, Unit> SaveBlurayRawDflCommand               { get; }
-    public ReactiveCommand<Unit, Unit> SaveBlurayPacCommand                  { get; }
+    public ReactiveCommand<Unit, Task> SaveBlurayDiscInformationCommand      { get; }
+    public ReactiveCommand<Unit, Task> SaveBlurayBurstCuttingAreaCommand     { get; }
+    public ReactiveCommand<Unit, Task> SaveBlurayDdsCommand                  { get; }
+    public ReactiveCommand<Unit, Task> SaveBlurayCartridgeStatusCommand      { get; }
+    public ReactiveCommand<Unit, Task> SaveBluraySpareAreaInformationCommand { get; }
+    public ReactiveCommand<Unit, Task> SaveBlurayPowResourcesCommand         { get; }
+    public ReactiveCommand<Unit, Task> SaveBlurayTrackResourcesCommand       { get; }
+    public ReactiveCommand<Unit, Task> SaveBlurayRawDflCommand               { get; }
+    public ReactiveCommand<Unit, Task> SaveBlurayPacCommand                  { get; }
     public bool                        SaveBlurayDiscInformationVisible      { get; }
     public bool                        SaveBlurayBurstCuttingAreaVisible     { get; }
     public bool                        SaveBlurayDdsVisible                  { get; }
@@ -154,7 +155,7 @@ public sealed class BlurayInfoViewModel
     public bool                        SaveBlurayRawDflVisible               { get; }
     public bool                        SaveBlurayPacVisible                  { get; }
 
-    async void SaveElement(byte[] data)
+    async Task SaveElement(byte[] data)
     {
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -178,21 +179,21 @@ public sealed class BlurayInfoViewModel
         saveFs.Close();
     }
 
-    void ExecuteSaveBlurayDiscInformationCommand() => SaveElement(_discInformation);
+    async Task ExecuteSaveBlurayDiscInformationCommand() => await SaveElement(_discInformation);
 
-    void ExecuteSaveBlurayBurstCuttingAreaCommand() => SaveElement(_burstCuttingArea);
+    async Task ExecuteSaveBlurayBurstCuttingAreaCommand() => await SaveElement(_burstCuttingArea);
 
-    void ExecuteSaveBlurayDdsCommand() => SaveElement(_dds);
+    async Task ExecuteSaveBlurayDdsCommand() => await SaveElement(_dds);
 
-    void ExecuteSaveBlurayCartridgeStatusCommand() => SaveElement(_cartridgeStatus);
+    async Task ExecuteSaveBlurayCartridgeStatusCommand() => await SaveElement(_cartridgeStatus);
 
-    void ExecuteSaveBluraySpareAreaInformationCommand() => SaveElement(_spareAreaInformation);
+    async Task ExecuteSaveBluraySpareAreaInformationCommand() => await SaveElement(_spareAreaInformation);
 
-    void ExecuteSaveBlurayPowResourcesCommand() => SaveElement(_powResources);
+    async Task ExecuteSaveBlurayPowResourcesCommand() => await SaveElement(_powResources);
 
-    void ExecuteSaveBlurayTrackResourcesCommand() => SaveElement(_trackResources);
+    async Task ExecuteSaveBlurayTrackResourcesCommand() => await SaveElement(_trackResources);
 
-    void ExecuteSaveBlurayRawDflCommand() => SaveElement(_rawDfl);
+    async Task ExecuteSaveBlurayRawDflCommand() => await SaveElement(_rawDfl);
 
-    void ExecuteSaveBlurayPacCommand() => SaveElement(_pac);
+    async Task ExecuteSaveBlurayPacCommand() => await SaveElement(_pac);
 }

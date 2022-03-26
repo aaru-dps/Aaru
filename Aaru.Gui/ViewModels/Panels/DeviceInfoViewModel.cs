@@ -36,6 +36,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
+using System.Threading.Tasks;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Aaru.Gui.ViewModels.Tabs;
@@ -375,7 +376,7 @@ public sealed class DeviceInfoViewModel : ViewModelBase
         };
     }
 
-    public ReactiveCommand<Unit, Unit> SaveUsbDescriptorsCommand { get; }
+    public ReactiveCommand<Unit, Task> SaveUsbDescriptorsCommand { get; }
 
     public string DeviceType
     {
@@ -911,7 +912,7 @@ public sealed class DeviceInfoViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _sdMmcInfo, value);
     }
 
-    async void ExecuteSaveUsbDescriptorsCommand()
+    async Task ExecuteSaveUsbDescriptorsCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();
 
