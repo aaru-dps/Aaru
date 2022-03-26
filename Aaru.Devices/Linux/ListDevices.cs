@@ -36,6 +36,7 @@ using System;
 using System.IO;
 using System.Text;
 
+[System.Runtime.Versioning.SupportedOSPlatform("linux")]
 static class ListDevices
 {
     const string PATH_SYS_DEVBLOCK = "/sys/block/";

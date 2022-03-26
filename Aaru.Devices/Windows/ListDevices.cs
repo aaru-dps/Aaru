@@ -42,6 +42,7 @@ using Aaru.Helpers;
 using Microsoft.Win32.SafeHandles;
 using Marshal = System.Runtime.InteropServices.Marshal;
 
+[System.Runtime.Versioning.SupportedOSPlatform("windows")]
 static class ListDevices
 {
     /// <summary>Converts a hex dump string to the ASCII string it represents</summary>

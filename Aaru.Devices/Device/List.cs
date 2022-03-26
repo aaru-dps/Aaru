@@ -36,7 +36,6 @@ using System;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Interop;
 using Aaru.Console;
-using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 /// <summary>Contains device information</summary>
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -102,13 +101,15 @@ public sealed partial class Device
         serverArchitecture           = null;
 
         if(aaruRemote is null)
-            switch(DetectOS.GetRealPlatformID())
-            {
-                case PlatformID.Win32NT: return Windows.ListDevices.GetList();
-                case PlatformID.Linux:   return Linux.ListDevices.GetList();
-                default:
-                    throw new InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
-            }
+        {
+            if(OperatingSystem.IsWindows())
+                return Windows.ListDevices.GetList();
+
+            if(OperatingSystem.IsLinux())
+                return Linux.ListDevices.GetList();
+
+            throw new InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
+        }
 
         try
         {
