@@ -40,30 +40,40 @@ using Aaru.Decoders.ATA;
 using Microsoft.Win32.SafeHandles;
 
 [SuppressMessage("ReSharper", "UnusedParameter.Global")]
-static class Command
+partial class Device
 {
-    /// <summary>Sends a SCSI command</summary>
-    /// <returns>0 if no error occurred, otherwise, errno</returns>
-    /// <param name="fd">File handle</param>
-    /// <param name="cdb">SCSI CDB</param>
-    /// <param name="buffer">Buffer for SCSI command response</param>
-    /// <param name="senseBuffer">Buffer with the SCSI sense</param>
-    /// <param name="timeout">Timeout in seconds</param>
-    /// <param name="direction">SCSI command transfer direction</param>
-    /// <param name="duration">Time it took to execute the command in milliseconds</param>
-    /// <param name="sense">
-    ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
-    ///     sense
-    /// </param>
-    internal static int SendScsiCommand(SafeFileHandle fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
-                                        uint timeout, ScsiIoctlDirection direction, out double duration, out bool sense)
+    /// <inheritdoc />
+    public override int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
+                                        ScsiDirection direction, out double duration, out bool sense)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
         senseBuffer = null;
         duration    = 0;
         sense       = false;
 
         if(buffer == null)
             return -1;
+
+        ScsiIoctlDirection dir;
+
+        switch(direction)
+        {
+            case ScsiDirection.In:
+                dir = ScsiIoctlDirection.In;
+
+                break;
+            case ScsiDirection.Out:
+                dir = ScsiIoctlDirection.Out;
+
+                break;
+            default:
+                dir = ScsiIoctlDirection.Unspecified;
+
+                break;
+        }
 
         var sptdSb = new ScsiPassThroughDirectAndSenseBuffer
         {
@@ -73,7 +83,7 @@ static class Command
                 Cdb                = new byte[16],
                 CdbLength          = (byte)cdb.Length,
                 SenseInfoLength    = 32,
-                DataIn             = direction,
+                DataIn             = dir,
                 DataTransferLength = (uint)buffer.Length,
                 TimeOutValue       = timeout,
                 DataBuffer         = Marshal.AllocHGlobal(buffer.Length)
@@ -91,7 +101,7 @@ static class Command
 
         DateTime start = DateTime.Now;
 
-        bool hasError = !Extern.DeviceIoControlScsi(fd, WindowsIoctl.IoctlScsiPassThroughDirect, ref sptdSb,
+        bool hasError = !Extern.DeviceIoControlScsi(_fileHandle, WindowsIoctl.IoctlScsiPassThroughDirect, ref sptdSb,
                                                     (uint)Marshal.SizeOf(sptdSb), ref sptdSb,
                                                     (uint)Marshal.SizeOf(sptdSb), ref k, IntPtr.Zero);
 
@@ -114,20 +124,15 @@ static class Command
         return error;
     }
 
-    /// <summary>Sends an ATA command in CHS mode</summary>
-    /// <returns>0 if no error occurred, otherwise, errno</returns>
-    /// <param name="fd">File handle</param>
-    /// <param name="buffer">Buffer for SCSI command response</param>
-    /// <param name="timeout">Timeout in seconds</param>
-    /// <param name="duration">Time it took to execute the command in milliseconds</param>
-    /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
-    /// <param name="registers">Registers to send to drive</param>
-    /// <param name="errorRegisters">Registers returned by drive</param>
-    /// <param name="protocol">ATA protocol to use</param>
-    internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersChs registers,
-                                       out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol, ref byte[] buffer,
-                                       uint timeout, out double duration, out bool sense)
+    /// <inheritdoc />
+    public override int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
+                                       AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                       uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersChs();
@@ -191,7 +196,7 @@ static class Command
 
         DateTime start = DateTime.Now;
 
-        sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
+        sense = !Extern.DeviceIoControlAta(_fileHandle, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
                                            (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
                                            IntPtr.Zero);
 
@@ -219,20 +224,15 @@ static class Command
         return error;
     }
 
-    /// <summary>Sends an ATA command in 28-bit LBA mode</summary>
-    /// <returns>0 if no error occurred, otherwise, errno</returns>
-    /// <param name="fd">File handle</param>
-    /// <param name="buffer">Buffer for SCSI command response</param>
-    /// <param name="timeout">Timeout in seconds</param>
-    /// <param name="duration">Time it took to execute the command in milliseconds</param>
-    /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
-    /// <param name="registers">Registers to send to drive</param>
-    /// <param name="errorRegisters">Registers returned by drive</param>
-    /// <param name="protocol">ATA protocol to use</param>
-    internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLba28 registers,
-                                       out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
-                                       ref byte[] buffer, uint timeout, out double duration, out bool sense)
+    /// <inheritdoc />
+    public override int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
+                                       AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                       uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersLba28();
@@ -296,7 +296,7 @@ static class Command
 
         DateTime start = DateTime.Now;
 
-        sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
+        sense = !Extern.DeviceIoControlAta(_fileHandle, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
                                            (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
                                            IntPtr.Zero);
 
@@ -324,20 +324,15 @@ static class Command
         return error;
     }
 
-    /// <summary>Sends an ATA command in 48-bit LBA mode</summary>
-    /// <returns>0 if no error occurred, otherwise, errno</returns>
-    /// <param name="fd">File handle</param>
-    /// <param name="buffer">Buffer for SCSI command response</param>
-    /// <param name="timeout">Timeout in seconds</param>
-    /// <param name="duration">Time it took to execute the command in milliseconds</param>
-    /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
-    /// <param name="registers">Registers to send to drive</param>
-    /// <param name="errorRegisters">Registers returned by drive</param>
-    /// <param name="protocol">ATA protocol to use</param>
-    internal static int SendAtaCommand(SafeFileHandle fd, AtaRegistersLba48 registers,
-                                       out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
-                                       ref byte[] buffer, uint timeout, out double duration, out bool sense)
+    /// <inheritdoc />
+    public override int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
+                                       AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                       uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersLba48();
@@ -410,7 +405,7 @@ static class Command
 
         DateTime start = DateTime.Now;
 
-        sense = !Extern.DeviceIoControlAta(fd, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
+        sense = !Extern.DeviceIoControlAta(_fileHandle, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
                                            (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
                                            IntPtr.Zero);
 
@@ -458,25 +453,67 @@ static class Command
                queryData1.protocolGuid.Equals(Consts.GuidSffProtocolMmc);
     }
 
-    /// <summary>Sends a MMC/SD command</summary>
-    /// <returns>The result of the command.</returns>
-    /// <param name="fd">File handle</param>
-    /// <param name="command">MMC/SD opcode</param>
-    /// <param name="buffer">Buffer for MMC/SD command response</param>
-    /// <param name="timeout">Timeout in seconds</param>
-    /// <param name="duration">Time it took to execute the command in milliseconds</param>
-    /// <param name="sense"><c>True</c> if MMC/SD returned non-OK status</param>
-    /// <param name="write"><c>True</c> if data is sent from host to card</param>
-    /// <param name="isApplication"><c>True</c> if command should be preceded with CMD55</param>
-    /// <param name="flags">Flags indicating kind and place of response</param>
-    /// <param name="blocks">How many blocks to transfer</param>
-    /// <param name="argument">Command argument</param>
-    /// <param name="response">Response registers</param>
-    /// <param name="blockSize">Size of block in bytes</param>
-    internal static int SendMmcCommand(SafeFileHandle fd, MmcCommands command, bool write, bool isApplication,
-                                       MmcFlags flags, uint argument, uint blockSize, uint blocks, ref byte[] buffer,
-                                       out uint[] response, out double duration, out bool sense, uint timeout = 0)
+    /// <inheritdoc />
+    public override int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
+                                       uint argument, uint blockSize, uint blocks, ref byte[] buffer,
+                                       out uint[] response, out double duration, out bool sense, uint timeout = 15)
     {
+        DateTime start;
+        DateTime end;
+
+        switch(command)
+        {
+            case MmcCommands.SendCid when _cachedCid != null:
+            {
+                start  = DateTime.Now;
+                buffer = new byte[_cachedCid.Length];
+                Array.Copy(_cachedCid, buffer, buffer.Length);
+                response = new uint[4];
+                sense    = false;
+                end      = DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+
+                return 0;
+            }
+            case MmcCommands.SendCsd when _cachedCid != null:
+            {
+                start  = DateTime.Now;
+                buffer = new byte[_cachedCsd.Length];
+                Array.Copy(_cachedCsd, buffer, buffer.Length);
+                response = new uint[4];
+                sense    = false;
+                end      = DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+
+                return 0;
+            }
+            case (MmcCommands)SecureDigitalCommands.SendScr when _cachedScr != null:
+            {
+                start  = DateTime.Now;
+                buffer = new byte[_cachedScr.Length];
+                Array.Copy(_cachedScr, buffer, buffer.Length);
+                response = new uint[4];
+                sense    = false;
+                end      = DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+
+                return 0;
+            }
+            case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when _cachedOcr != null:
+            case MmcCommands.SendOpCond when _cachedOcr                                    != null:
+            {
+                start  = DateTime.Now;
+                buffer = new byte[_cachedOcr.Length];
+                Array.Copy(_cachedOcr, buffer, buffer.Length);
+                response = new uint[4];
+                sense    = false;
+                end      = DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+
+                return 0;
+            }
+        }
+
         var commandData       = new SffdiskDeviceCommandData();
         var commandDescriptor = new SdCmdDescriptor();
         commandData.size                    = (ushort)Marshal.SizeOf(commandData);
@@ -531,13 +568,13 @@ static class Command
         Marshal.Copy(hBuf, commandB, 0, commandB.Length);
         Marshal.FreeHGlobal(hBuf);
 
-        var      error = 0;
-        DateTime start = DateTime.Now;
+        var error = 0;
+        start = DateTime.Now;
 
-        sense = !Extern.DeviceIoControl(fd, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB, (uint)commandB.Length,
-                                        commandB, (uint)commandB.Length, out _, IntPtr.Zero);
+        sense = !Extern.DeviceIoControl(_fileHandle, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB,
+                                        (uint)commandB.Length, commandB, (uint)commandB.Length, out _, IntPtr.Zero);
 
-        DateTime end = DateTime.Now;
+        end = DateTime.Now;
 
         if(sense)
             error = Marshal.GetLastWin32Error();
@@ -551,9 +588,14 @@ static class Command
         return error;
     }
 
-    internal static int SendMultipleMmcCommands(SafeFileHandle fd, Device.MmcSingleCommand[] commands,
-                                                out double duration, out bool sense, uint timeout = 0)
+    /// <inheritdoc />
+    public override int SendMultipleMmcCommands(MmcSingleCommand[] commands, out double duration, out bool sense,
+                                                uint timeout = 15)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
         var error = 0;
         duration = 0;
         sense    = false;
@@ -562,13 +604,13 @@ static class Command
            commands[0].command == MmcCommands.SetBlocklen       &&
            commands[1].command == MmcCommands.ReadMultipleBlock &&
            commands[2].command == MmcCommands.StopTransmission)
-            return SendMmcCommand(fd, commands[1].command, commands[1].write, commands[1].isApplication,
-                                  commands[1].flags, commands[1].argument, commands[1].blockSize, commands[1].blocks,
+            return SendMmcCommand(commands[1].command, commands[1].write, commands[1].isApplication, commands[1].flags,
+                                  commands[1].argument, commands[1].blockSize, commands[1].blocks,
                                   ref commands[1].buffer, out commands[1].response, out duration, out sense, timeout);
 
-        foreach(Device.MmcSingleCommand command in commands)
+        foreach(MmcSingleCommand command in commands)
         {
-            int singleError = SendMmcCommand(fd, command.command, command.write, command.isApplication, command.flags,
+            int singleError = SendMmcCommand(command.command, command.write, command.isApplication, command.flags,
                                              command.argument, command.blockSize, command.blocks, ref command.buffer,
                                              out command.response, out double cmdDuration, out bool cmdSense, timeout);
 
@@ -585,25 +627,36 @@ static class Command
         return error;
     }
 
-    internal static int ReOpen(string devicePath, SafeFileHandle fd, out object newFd)
+    /// <inheritdoc />
+    public override bool ReOpen()
     {
-        Extern.CloseHandle(fd);
+        Extern.CloseHandle(_fileHandle);
 
-        newFd = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
-                                  FileShare.Read | FileShare.Write, IntPtr.Zero, FileMode.OpenExisting,
-                                  FileAttributes.Normal, IntPtr.Zero);
+        SafeFileHandle newFd = Extern.CreateFile(_devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
+                                                 FileShare.Read | FileShare.Write, IntPtr.Zero, FileMode.OpenExisting,
+                                                 FileAttributes.Normal, IntPtr.Zero);
 
-        return ((SafeFileHandle)newFd).IsInvalid ? Marshal.GetLastWin32Error() : 0;
+        if(newFd.IsInvalid)
+        {
+            LastError = Marshal.GetLastWin32Error();
+            Error     = true;
+
+            return true;
+        }
+
+        _fileHandle = newFd;
+
+        return false;
     }
 
-    internal static int BufferedOsRead(SafeFileHandle fd, out byte[] buffer, long offset, uint length,
-                                       out double duration)
+    /// <inheritdoc />
+    public override bool BufferedOsRead(out byte[] buffer, long offset, uint length, out double duration)
     {
         buffer = new byte[length];
 
         DateTime start = DateTime.Now;
 
-        bool sense = !Extern.SetFilePointerEx(fd, offset, out _, MoveMethod.Begin);
+        bool sense = !Extern.SetFilePointerEx(_fileHandle, offset, out _, MoveMethod.Begin);
 
         DateTime end = DateTime.Now;
 
@@ -611,14 +664,27 @@ static class Command
         {
             duration = (end - start).TotalMilliseconds;
 
-            return Marshal.GetLastWin32Error();
+            LastError = Marshal.GetLastWin32Error();
+            Error     = true;
+
+            return true;
         }
 
-        sense = !Extern.ReadFile(fd, buffer, length, out _, IntPtr.Zero);
+        sense = !Extern.ReadFile(_fileHandle, buffer, length, out _, IntPtr.Zero);
 
         end      = DateTime.Now;
         duration = (end - start).TotalMilliseconds;
 
-        return sense ? Marshal.GetLastWin32Error() : 0;
+        if(sense)
+        {
+            Error     = true;
+            LastError = Marshal.GetLastWin32Error();
+
+            return true;
+        }
+
+        Error = false;
+
+        return false;
     }
 }

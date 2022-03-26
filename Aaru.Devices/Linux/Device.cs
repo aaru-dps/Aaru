@@ -46,31 +46,34 @@ using VendorString = Aaru.Decoders.MMC.VendorString;
 
 /// <inheritdoc />
 [SupportedOSPlatform("linux")]
-public class Device : Devices.Device
+partial class Device : Devices.Device
 {
+    /// <summary>Gets the file handle representing this device</summary>
+    /// <value>The file handle</value>
+    int _fileDescriptor;
+
     Device() {}
 
-    public new static Device Create(string devicePath)
+    internal new static Device Create(string devicePath)
     {
         var dev = new Device
         {
-            PlatformId  = DetectOS.GetRealPlatformID(),
-            Timeout     = 15,
-            Error       = false,
-            IsRemovable = false
+            PlatformId      = DetectOS.GetRealPlatformID(),
+            Timeout         = 15,
+            Error           = false,
+            IsRemovable     = false,
+            _fileDescriptor = Extern.open(devicePath, FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew)
         };
 
-        dev.FileHandle = Extern.open(devicePath, FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew);
-
-        if((int)dev.FileHandle < 0)
+        if(dev._fileDescriptor < 0)
         {
             dev.LastError = Marshal.GetLastWin32Error();
 
             if(dev.LastError is 13 or 30) // EACCES or EROFS
             {
-                dev.FileHandle = Extern.open(devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
+                dev._fileDescriptor = Extern.open(devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
 
-                if((int)dev.FileHandle < 0)
+                if(dev._fileDescriptor < 0)
                 {
                     dev.Error     = true;
                     dev.LastError = Marshal.GetLastWin32Error();
@@ -92,23 +95,22 @@ public class Device : Devices.Device
         dev.Type     = DeviceType.Unknown;
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
 
-        byte[] ataBuf;
-        byte[] inqBuf = null;
-
         if(dev.Error)
             throw new DeviceException(dev.LastError);
+
+        string devPath;
 
         if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/st", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/sg", StringComparison.Ordinal))
-            if(!dev.ScsiInquiry(out inqBuf, out _))
+            if(!dev.ScsiInquiry(out byte[] _, out _))
                 dev.Type = DeviceType.SCSI;
 
             // MultiMediaCard and SecureDigital go here
             else if(devicePath.StartsWith("/dev/mmcblk", StringComparison.Ordinal))
             {
-                string devPath = devicePath.Substring(5);
+                devPath = devicePath[5..];
 
                 if(File.Exists("/sys/block/" + devPath + "/device/csd"))
                 {
@@ -179,21 +181,23 @@ public class Device : Devices.Device
         #endregion SecureDigital / MultiMediaCard
 
         #region USB
+        string resolvedLink;
+
         if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
         {
-            string devPath = devicePath.Substring(5);
+            devPath = devicePath[5..];
 
             if(Directory.Exists("/sys/block/" + devPath))
             {
-                string resolvedLink = Command.ReadLink("/sys/block/" + devPath);
+                resolvedLink = ReadLink("/sys/block/" + devPath);
 
                 if(!string.IsNullOrEmpty(resolvedLink))
                 {
-                    resolvedLink = "/sys" + resolvedLink.Substring(2);
+                    resolvedLink = "/sys" + resolvedLink[2..];
 
-                    while(resolvedLink.Contains("usb"))
+                    while(resolvedLink?.Contains("usb") == true)
                     {
                         resolvedLink = Path.GetDirectoryName(resolvedLink);
 
@@ -257,127 +261,120 @@ public class Device : Devices.Device
         #endregion USB
 
         #region FireWire
-        {
-            if(true)
-            {
-                if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
-                   devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
-                   devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
-                {
-                    string devPath = devicePath.Substring(5);
-
-                    if(Directory.Exists("/sys/block/" + devPath))
-                    {
-                        string resolvedLink = Command.ReadLink("/sys/block/" + devPath);
-                        resolvedLink = "/sys" + resolvedLink.Substring(2);
-
-                        if(!string.IsNullOrEmpty(resolvedLink))
-                            while(resolvedLink.Contains("firewire"))
-                            {
-                                resolvedLink = Path.GetDirectoryName(resolvedLink);
-
-                                if(!File.Exists(resolvedLink + "/model")  ||
-                                   !File.Exists(resolvedLink + "/vendor") ||
-                                   !File.Exists(resolvedLink + "/guid"))
-                                    continue;
-
-                                var    fwSr   = new StreamReader(resolvedLink + "/model");
-                                string fwTemp = fwSr.ReadToEnd();
-
-                                uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                              out dev._firewireModel);
-
-                                fwSr.Close();
-
-                                fwSr   = new StreamReader(resolvedLink + "/vendor");
-                                fwTemp = fwSr.ReadToEnd();
-
-                                uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                              out dev._firewireVendor);
-
-                                fwSr.Close();
-
-                                fwSr   = new StreamReader(resolvedLink + "/guid");
-                                fwTemp = fwSr.ReadToEnd();
-
-                                ulong.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                               out dev._firewireGuid);
-
-                                fwSr.Close();
-
-                                if(File.Exists(resolvedLink + "/model_name"))
-                                {
-                                    fwSr                  = new StreamReader(resolvedLink + "/model_name");
-                                    dev.FireWireModelName = fwSr.ReadToEnd().Trim();
-                                    fwSr.Close();
-                                }
-
-                                if(File.Exists(resolvedLink + "/vendor_name"))
-                                {
-                                    fwSr                   = new StreamReader(resolvedLink + "/vendor_name");
-                                    dev.FireWireVendorName = fwSr.ReadToEnd().Trim();
-                                    fwSr.Close();
-                                }
-
-                                dev.IsFireWire = true;
-
-                                break;
-                            }
-                    }
-                }
-            }
-
-            // TODO: Implement for other operating systems
-            else
-                dev.IsFireWire = false;
-        }
-        #endregion FireWire
-
-        #region PCMCIA
         if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
         {
-            string devPath = devicePath.Substring(5);
+            devPath = devicePath[5..];
 
             if(Directory.Exists("/sys/block/" + devPath))
             {
-                string resolvedLink = Command.ReadLink("/sys/block/" + devPath);
-                resolvedLink = "/sys" + resolvedLink.Substring(2);
+                resolvedLink = ReadLink("/sys/block/" + devPath);
+                resolvedLink = "/sys" + resolvedLink[2..];
 
                 if(!string.IsNullOrEmpty(resolvedLink))
-                    while(resolvedLink.Contains("/sys/devices"))
+                    while(resolvedLink?.Contains("firewire") == true)
                     {
                         resolvedLink = Path.GetDirectoryName(resolvedLink);
 
-                        if(!Directory.Exists(resolvedLink + "/pcmcia_socket"))
+                        if(!File.Exists(resolvedLink + "/model")  ||
+                           !File.Exists(resolvedLink + "/vendor") ||
+                           !File.Exists(resolvedLink + "/guid"))
                             continue;
 
-                        string[] subdirs = Directory.GetDirectories(resolvedLink + "/pcmcia_socket", "pcmcia_socket*",
-                                                                    SearchOption.TopDirectoryOnly);
+                        var    fwSr   = new StreamReader(resolvedLink + "/model");
+                        string fwTemp = fwSr.ReadToEnd();
 
-                        if(subdirs.Length <= 0)
-                            continue;
+                        uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                                      out dev._firewireModel);
 
-                        string possibleDir = Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
+                        fwSr.Close();
 
-                        if(!File.Exists(possibleDir + "/card_type") ||
-                           !File.Exists(possibleDir + "/cis"))
-                            continue;
+                        fwSr   = new StreamReader(resolvedLink + "/vendor");
+                        fwTemp = fwSr.ReadToEnd();
 
-                        var cisFs = new FileStream(possibleDir + "/cis", FileMode.Open, FileAccess.Read);
+                        uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                                      out dev._firewireVendor);
 
-                        var cisBuf   = new byte[65536];
-                        int cisCount = cisFs.Read(cisBuf, 0, 65536);
-                        dev.Cis = new byte[cisCount];
-                        Array.Copy(cisBuf, 0, dev.Cis, 0, cisCount);
-                        cisFs.Close();
+                        fwSr.Close();
 
-                        dev.IsPcmcia = true;
+                        fwSr   = new StreamReader(resolvedLink + "/guid");
+                        fwTemp = fwSr.ReadToEnd();
+
+                        ulong.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                                       out dev._firewireGuid);
+
+                        fwSr.Close();
+
+                        if(File.Exists(resolvedLink + "/model_name"))
+                        {
+                            fwSr                  = new StreamReader(resolvedLink + "/model_name");
+                            dev.FireWireModelName = fwSr.ReadToEnd().Trim();
+                            fwSr.Close();
+                        }
+
+                        if(File.Exists(resolvedLink + "/vendor_name"))
+                        {
+                            fwSr                   = new StreamReader(resolvedLink + "/vendor_name");
+                            dev.FireWireVendorName = fwSr.ReadToEnd().Trim();
+                            fwSr.Close();
+                        }
+
+                        dev.IsFireWire = true;
 
                         break;
                     }
             }
+        }
+        #endregion FireWire
+
+        #region PCMCIA
+        if(!devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) &&
+           !devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) &&
+           !devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+            return dev;
+
+        devPath = devicePath[5..];
+
+        if(!Directory.Exists("/sys/block/" + devPath))
+            return dev;
+
+        resolvedLink = ReadLink("/sys/block/" + devPath);
+        resolvedLink = "/sys" + resolvedLink[2..];
+
+        if(string.IsNullOrEmpty(resolvedLink))
+            return dev;
+
+        while(resolvedLink.Contains("/sys/devices"))
+        {
+            resolvedLink = Path.GetDirectoryName(resolvedLink);
+
+            if(!Directory.Exists(resolvedLink + "/pcmcia_socket"))
+                continue;
+
+            string[] subdirs = Directory.GetDirectories(resolvedLink + "/pcmcia_socket", "pcmcia_socket*",
+                                                        SearchOption.TopDirectoryOnly);
+
+            if(subdirs.Length <= 0)
+                continue;
+
+            string possibleDir = Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
+
+            if(!File.Exists(possibleDir + "/card_type") ||
+               !File.Exists(possibleDir + "/cis"))
+                continue;
+
+            var cisFs = new FileStream(possibleDir + "/cis", FileMode.Open, FileAccess.Read);
+
+            var cisBuf   = new byte[65536];
+            int cisCount = cisFs.Read(cisBuf, 0, 65536);
+            dev.Cis = new byte[cisCount];
+            Array.Copy(cisBuf, 0, dev.Cis, 0, cisCount);
+            cisFs.Close();
+
+            dev.IsPcmcia = true;
+
+            break;
         }
         #endregion PCMCIA
 
@@ -399,11 +396,11 @@ public class Device : Devices.Device
     /// <inheritdoc />
     public override void Close()
     {
-        if(FileHandle == null)
+        if(_fileDescriptor == 0)
             return;
 
-        Extern.close((int)FileHandle);
+        Extern.close(_fileDescriptor);
 
-        FileHandle = null;
+        _fileDescriptor = 0;
     }
 }

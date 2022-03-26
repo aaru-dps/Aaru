@@ -39,14 +39,43 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.SecureDigital;
 
 /// <inheritdoc />
-public sealed class Device : Devices.Device
+public sealed partial class Device : Devices.Device
 {
+    Remote _remote;
+
+    /// <summary>Returns if remote is running under administrative (aka root) privileges</summary>
+    public bool IsAdmin
+    {
+        get
+        {
+            _isRemoteAdmin ??= _remote.IsRoot;
+
+            return _isRemoteAdmin == true;
+        }
+    }
+
+    /// <summary>Current device is remote</summary>
+    public bool IsRemote => _remote != null;
+    /// <summary>Remote application</summary>
+    public string RemoteApplication => _remote?.ServerApplication;
+    /// <summary>Remote application server</summary>
+    public string RemoteVersion => _remote?.ServerVersion;
+    /// <summary>Remote operating system name</summary>
+    public string RemoteOperatingSystem => _remote?.ServerOperatingSystem;
+    /// <summary>Remote operating system version</summary>
+    public string RemoteOperatingSystemVersion => _remote?.ServerOperatingSystemVersion;
+    /// <summary>Remote architecture</summary>
+    public string RemoteArchitecture => _remote?.ServerArchitecture;
+    /// <summary>Remote protocol version</summary>
+    public int RemoteProtocolVersion => _remote?.ServerProtocolVersion ?? 0;
+    bool? _isRemoteAdmin;
+
     Device() {}
 
     /// <summary>Opens the device for sending direct commands</summary>
     /// <param name="aaruUri">AaruRemote URI</param>
     /// <returns>Device</returns>
-    public static Device Create(Uri aaruUri)
+    internal static Device Create(Uri aaruUri)
     {
         var dev = new Device
         {
@@ -83,9 +112,6 @@ public sealed class Device : Devices.Device
         dev.Type     = DeviceType.Unknown;
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
 
-        byte[] ataBuf;
-        byte[] inqBuf = null;
-
         if(dev.Error)
             throw new DeviceException(dev.LastError);
 
@@ -93,11 +119,6 @@ public sealed class Device : Devices.Device
 
         switch(dev.Type)
         {
-            case DeviceType.ATAPI:
-            case DeviceType.SCSI:
-                bool scsiSense = dev.ScsiInquiry(out inqBuf, out _);
-
-                break;
             case DeviceType.SecureDigital:
             case DeviceType.MMC:
                 if(!dev._remote.GetSdhciRegisters(out dev._cachedCsd, out dev._cachedCid, out dev._cachedOcr,

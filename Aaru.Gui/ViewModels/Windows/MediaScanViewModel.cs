@@ -330,9 +330,9 @@ public sealed class MediaScanViewModel : ViewModelBase
 
         var dev = Device.Create(_devicePath);
 
-        if(dev.IsRemote)
-            Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
-                                 dev.RemoteOperatingSystemVersion, dev.RemoteArchitecture);
+        if(dev is Devices.Remote.Device remoteDev)
+            Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion, remoteDev.RemoteOperatingSystem,
+                                 remoteDev.RemoteOperatingSystemVersion, remoteDev.RemoteArchitecture);
 
         if(dev.Error)
         {

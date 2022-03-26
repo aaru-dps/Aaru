@@ -43,25 +43,28 @@ using Microsoft.Win32.SafeHandles;
 
 /// <inheritdoc />
 [SupportedOSPlatform("windows")]
-public class Device : Devices.Device
+partial class Device : Devices.Device
 {
+    /// <summary>Gets the file handle representing this device</summary>
+    /// <value>The file handle</value>
+    SafeFileHandle _fileHandle;
+
     Device() {}
 
-    public new static Device Create(string devicePath)
+    internal new static Device Create(string devicePath)
     {
         var dev = new Device
         {
-            PlatformId  = DetectOS.GetRealPlatformID(),
-            Timeout     = 15,
-            Error       = false,
-            IsRemovable = false
+            PlatformId = DetectOS.GetRealPlatformID(),
+            Timeout = 15,
+            Error = false,
+            IsRemovable = false,
+            _fileHandle = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
+                                            FileShare.Read | FileShare.Write, IntPtr.Zero, FileMode.OpenExisting,
+                                            FileAttributes.Normal, IntPtr.Zero)
         };
 
-        dev.FileHandle = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
-                                           FileShare.Read | FileShare.Write, IntPtr.Zero, FileMode.OpenExisting,
-                                           FileAttributes.Normal, IntPtr.Zero);
-
-        if(((SafeFileHandle)dev.FileHandle).IsInvalid)
+        if(dev._fileHandle.IsInvalid)
         {
             dev.Error     = true;
             dev.LastError = Marshal.GetLastWin32Error();
@@ -72,9 +75,6 @@ public class Device : Devices.Device
 
         dev.Type     = DeviceType.Unknown;
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
-
-        byte[] ataBuf;
-        byte[] inqBuf = null;
 
         if(dev.Error)
             throw new DeviceException(dev.LastError);
@@ -91,9 +91,8 @@ public class Device : Devices.Device
         uint returned = 0;
         var  error    = 0;
 
-        bool hasError = !Extern.DeviceIoControlStorageQuery((SafeFileHandle)dev.FileHandle,
-                                                            WindowsIoctl.IoctlStorageQueryProperty, ref query,
-                                                            (uint)Marshal.SizeOf(query), descriptorPtr, 1000,
+        bool hasError = !Extern.DeviceIoControlStorageQuery(dev._fileHandle, WindowsIoctl.IoctlStorageQueryProperty,
+                                                            ref query, (uint)Marshal.SizeOf(query), descriptorPtr, 1000,
                                                             ref returned, IntPtr.Zero);
 
         if(hasError)
@@ -170,7 +169,7 @@ public class Device : Devices.Device
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    bool atapiSense = dev.AtapiIdentify(out ataBuf, out _);
+                    bool atapiSense = dev.AtapiIdentify(out byte[] _, out _);
 
                     if(!atapiSense)
                         dev.Type = DeviceType.ATAPI;
@@ -183,13 +182,13 @@ public class Device : Devices.Device
 
         Marshal.FreeHGlobal(descriptorPtr);
 
-        if(Command.IsSdhci((SafeFileHandle)dev.FileHandle))
+        if(IsSdhci(dev._fileHandle))
         {
             var sdBuffer = new byte[16];
 
-            dev.LastError = Command.SendMmcCommand((SafeFileHandle)dev.FileHandle, MmcCommands.SendCsd, false, false,
-                                                   MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0,
-                                                   16, 1, ref sdBuffer, out _, out _, out bool sense);
+            dev.LastError = dev.SendMmcCommand(MmcCommands.SendCsd, false, false,
+                                               MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16,
+                                               1, ref sdBuffer, out _, out _, out bool sense);
 
             if(!sense)
             {
@@ -199,9 +198,9 @@ public class Device : Devices.Device
 
             sdBuffer = new byte[16];
 
-            dev.LastError = Command.SendMmcCommand((SafeFileHandle)dev.FileHandle, MmcCommands.SendCid, false, false,
-                                                   MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0,
-                                                   16, 1, ref sdBuffer, out _, out _, out sense);
+            dev.LastError = dev.SendMmcCommand(MmcCommands.SendCid, false, false,
+                                               MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16,
+                                               1, ref sdBuffer, out _, out _, out sense);
 
             if(!sense)
             {
@@ -211,10 +210,9 @@ public class Device : Devices.Device
 
             sdBuffer = new byte[8];
 
-            dev.LastError = Command.SendMmcCommand((SafeFileHandle)dev.FileHandle,
-                                                   (MmcCommands)SecureDigitalCommands.SendScr, false, true,
-                                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc,
-                                                   0, 8, 1, ref sdBuffer, out _, out _, out sense);
+            dev.LastError = dev.SendMmcCommand((MmcCommands)SecureDigitalCommands.SendScr, false, true,
+                                               MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0,
+                                               8, 1, ref sdBuffer, out _, out _, out sense);
 
             if(!sense)
             {
@@ -224,12 +222,10 @@ public class Device : Devices.Device
 
             sdBuffer = new byte[4];
 
-            dev.LastError = Command.SendMmcCommand((SafeFileHandle)dev.FileHandle,
-                                                   dev._cachedScr != null
-                                                       ? (MmcCommands)SecureDigitalCommands.SendOperatingCondition
-                                                       : MmcCommands.SendOpCond, false, true,
-                                                   MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr,
-                                                   0, 4, 1, ref sdBuffer, out _, out _, out sense);
+            dev.LastError =
+                dev.SendMmcCommand(dev._cachedScr != null ? (MmcCommands)SecureDigitalCommands.SendOperatingCondition : MmcCommands.SendOpCond,
+                                   false, true, MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0,
+                                   4, 1, ref sdBuffer, out _, out _, out sense);
 
             if(!sense)
             {
@@ -318,11 +314,11 @@ public class Device : Devices.Device
     /// <inheritdoc />
     public override void Close()
     {
-        if(FileHandle == null)
+        if(_fileHandle == null)
             return;
 
-        (FileHandle as SafeFileHandle)?.Close();
+        _fileHandle?.Close();
 
-        FileHandle = null;
+        _fileHandle = null;
     }
 }

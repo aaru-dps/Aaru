@@ -39,30 +39,48 @@ using System.Text;
 using Aaru.CommonTypes.Interop;
 using Aaru.Decoders.ATA;
 
-static class Command
+partial class Device
 {
-    /// <summary>Sends a SCSI command</summary>
-    /// <returns>0 if no error occurred, otherwise, errno</returns>
-    /// <param name="fd">File handle</param>
-    /// <param name="cdb">SCSI CDB</param>
-    /// <param name="buffer">Buffer for SCSI command response</param>
-    /// <param name="senseBuffer">Buffer with the SCSI sense</param>
-    /// <param name="timeout">Timeout in seconds</param>
-    /// <param name="direction">SCSI command transfer direction</param>
-    /// <param name="duration">Time it took to execute the command in milliseconds</param>
-    /// <param name="sense">
-    ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
-    ///     sense
-    /// </param>
-    internal static int SendScsiCommand(int fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
-                                        ScsiIoctlDirection direction, out double duration, out bool sense)
+    /// <inheritdoc />
+    public override int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
+                                        ScsiDirection direction, out double duration, out bool sense)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
         senseBuffer = null;
         duration    = 0;
         sense       = false;
 
         if(buffer == null)
             return -1;
+
+        ScsiIoctlDirection dir;
+
+        switch(direction)
+        {
+            case ScsiDirection.In:
+                dir = ScsiIoctlDirection.In;
+
+                break;
+            case ScsiDirection.Out:
+                dir = ScsiIoctlDirection.Out;
+
+                break;
+            case ScsiDirection.Bidirectional:
+                dir = ScsiIoctlDirection.Unspecified;
+
+                break;
+            case ScsiDirection.None:
+                dir = ScsiIoctlDirection.None;
+
+                break;
+            default:
+                dir = ScsiIoctlDirection.Unknown;
+
+                break;
+        }
 
         var ioHdr = new SgIoHdrT();
 
@@ -71,7 +89,7 @@ static class Command
         ioHdr.interface_id    = 'S';
         ioHdr.cmd_len         = (byte)cdb.Length;
         ioHdr.mx_sb_len       = (byte)senseBuffer.Length;
-        ioHdr.dxfer_direction = direction;
+        ioHdr.dxfer_direction = dir;
         ioHdr.dxfer_len       = (uint)buffer.Length;
         ioHdr.dxferp          = Marshal.AllocHGlobal(buffer.Length);
         ioHdr.cmdp            = Marshal.AllocHGlobal(cdb.Length);
@@ -84,7 +102,7 @@ static class Command
         Marshal.Copy(senseBuffer, 0, ioHdr.sbp, senseBuffer.Length);
 
         DateTime start = DateTime.UtcNow;
-        int      error = Extern.ioctlSg(fd, LinuxIoctl.SgIo, ref ioHdr);
+        int      error = Extern.ioctlSg(_fileDescriptor, LinuxIoctl.SgIo, ref ioHdr);
         DateTime end   = DateTime.UtcNow;
 
         if(error < 0)
@@ -108,7 +126,7 @@ static class Command
     /// <summary>Converts ATA protocol to SG_IO direction</summary>
     /// <param name="protocol">ATA protocol</param>
     /// <returns>SG_IO direction</returns>
-    static ScsiIoctlDirection AtaProtocolToScsiDirection(AtaProtocol protocol)
+    static ScsiDirection AtaProtocolToScsiDirection(AtaProtocol protocol)
     {
         switch(protocol)
         {
@@ -117,31 +135,24 @@ static class Command
             case AtaProtocol.HardReset:
             case AtaProtocol.NonData:
             case AtaProtocol.SoftReset:
-            case AtaProtocol.ReturnResponse: return ScsiIoctlDirection.None;
+            case AtaProtocol.ReturnResponse: return ScsiDirection.None;
             case AtaProtocol.PioIn:
-            case AtaProtocol.UDmaIn: return ScsiIoctlDirection.In;
+            case AtaProtocol.UDmaIn: return ScsiDirection.In;
             case AtaProtocol.PioOut:
-            case AtaProtocol.UDmaOut: return ScsiIoctlDirection.Out;
-            default: return ScsiIoctlDirection.Unspecified;
+            case AtaProtocol.UDmaOut: return ScsiDirection.Out;
+            default: return ScsiDirection.Unspecified;
         }
     }
 
-    /// <summary>Sends an ATA command in CHS mode</summary>
-    /// <returns>0 if no error occurred, otherwise, errno</returns>
-    /// <param name="fd">File handle</param>
-    /// <param name="buffer">Buffer for SCSI command response</param>
-    /// <param name="timeout">Timeout in seconds</param>
-    /// <param name="duration">Time it took to execute the command in milliseconds</param>
-    /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
-    /// <param name="registers">Registers to send to drive</param>
-    /// <param name="errorRegisters">Registers returned by drive</param>
-    /// <param name="protocol">ATA protocol to use</param>
-    /// <param name="transferRegister">Which register contains the transfer count</param>
-    /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
-    internal static int SendAtaCommand(int fd, AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
+    /// <inheritdoc />
+    public override int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
                                        AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersChs();
@@ -185,7 +196,7 @@ static class Command
         cdb[13] = registers.DeviceHead;
         cdb[14] = registers.Command;
 
-        int error = SendScsiCommand(fd, cdb, ref buffer, out byte[] senseBuffer, timeout,
+        int error = SendScsiCommand(cdb, ref buffer, out byte[] senseBuffer, timeout,
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
         if(senseBuffer.Length < 22 ||
@@ -206,22 +217,15 @@ static class Command
         return error;
     }
 
-    /// <summary>Sends an ATA command in 28-bit LBA mode</summary>
-    /// <returns>0 if no error occurred, otherwise, errno</returns>
-    /// <param name="fd">File handle</param>
-    /// <param name="buffer">Buffer for SCSI command response</param>
-    /// <param name="timeout">Timeout in seconds</param>
-    /// <param name="duration">Time it took to execute the command in milliseconds</param>
-    /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
-    /// <param name="registers">Registers to send to drive</param>
-    /// <param name="errorRegisters">Registers returned by drive</param>
-    /// <param name="protocol">ATA protocol to use</param>
-    /// <param name="transferRegister">Which register contains the transfer count</param>
-    /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
-    internal static int SendAtaCommand(int fd, AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
+    /// <inheritdoc />
+    public override int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
                                        AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersLba28();
@@ -265,7 +269,7 @@ static class Command
         cdb[13] = registers.DeviceHead;
         cdb[14] = registers.Command;
 
-        int error = SendScsiCommand(fd, cdb, ref buffer, out byte[] senseBuffer, timeout,
+        int error = SendScsiCommand(cdb, ref buffer, out byte[] senseBuffer, timeout,
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
         if(senseBuffer.Length < 22 ||
@@ -286,22 +290,15 @@ static class Command
         return error;
     }
 
-    /// <summary>Sends an ATA command in 48-bit LBA mode</summary>
-    /// <returns>0 if no error occurred, otherwise, errno</returns>
-    /// <param name="fd">File handle</param>
-    /// <param name="buffer">Buffer for SCSI command response</param>
-    /// <param name="timeout">Timeout in seconds</param>
-    /// <param name="duration">Time it took to execute the command in milliseconds</param>
-    /// <param name="sense"><c>True</c> if ATA error returned non-OK status</param>
-    /// <param name="registers">Registers to send to drive</param>
-    /// <param name="errorRegisters">Registers returned by drive</param>
-    /// <param name="protocol">ATA protocol to use</param>
-    /// <param name="transferRegister">Which register contains the transfer count</param>
-    /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
-    internal static int SendAtaCommand(int fd, AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
+    /// <inheritdoc />
+    public override int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
                                        AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersLba48();
@@ -351,7 +348,7 @@ static class Command
         cdb[13] = registers.DeviceHead;
         cdb[14] = registers.Command;
 
-        int error = SendScsiCommand(fd, cdb, ref buffer, out byte[] senseBuffer, timeout,
+        int error = SendScsiCommand(cdb, ref buffer, out byte[] senseBuffer, timeout,
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
         if(senseBuffer.Length < 22 ||
@@ -377,25 +374,71 @@ static class Command
         return error;
     }
 
-    /// <summary>Sends a MMC/SD command</summary>
-    /// <returns>The result of the command.</returns>
-    /// <param name="fd">File handle</param>
-    /// <param name="command">MMC/SD opcode</param>
-    /// <param name="buffer">Buffer for MMC/SD command response</param>
-    /// <param name="timeout">Timeout in seconds</param>
-    /// <param name="duration">Time it took to execute the command in milliseconds</param>
-    /// <param name="sense"><c>True</c> if MMC/SD returned non-OK status</param>
-    /// <param name="write"><c>True</c> if data is sent from host to card</param>
-    /// <param name="isApplication"><c>True</c> if command should be preceded with CMD55</param>
-    /// <param name="flags">Flags indicating kind and place of response</param>
-    /// <param name="blocks">How many blocks to transfer</param>
-    /// <param name="argument">Command argument</param>
-    /// <param name="response">Response registers</param>
-    /// <param name="blockSize">Size of block in bytes</param>
-    internal static int SendMmcCommand(int fd, MmcCommands command, bool write, bool isApplication, MmcFlags flags,
+    /// <inheritdoc />
+    public override int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
                                        uint argument, uint blockSize, uint blocks, ref byte[] buffer,
-                                       out uint[] response, out double duration, out bool sense, uint timeout = 0)
+                                       out uint[] response, out double duration, out bool sense, uint timeout = 15)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
+        DateTime start;
+        DateTime end;
+
+        switch(command)
+        {
+            case MmcCommands.SendCid when _cachedCid != null:
+            {
+                start  = DateTime.Now;
+                buffer = new byte[_cachedCid.Length];
+                Array.Copy(_cachedCid, buffer, buffer.Length);
+                response = new uint[4];
+                sense    = false;
+                end      = DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+
+                return 0;
+            }
+            case MmcCommands.SendCsd when _cachedCid != null:
+            {
+                start  = DateTime.Now;
+                buffer = new byte[_cachedCsd.Length];
+                Array.Copy(_cachedCsd, buffer, buffer.Length);
+                response = new uint[4];
+                sense    = false;
+                end      = DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+
+                return 0;
+            }
+            case (MmcCommands)SecureDigitalCommands.SendScr when _cachedScr != null:
+            {
+                start  = DateTime.Now;
+                buffer = new byte[_cachedScr.Length];
+                Array.Copy(_cachedScr, buffer, buffer.Length);
+                response = new uint[4];
+                sense    = false;
+                end      = DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+
+                return 0;
+            }
+            case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when _cachedOcr != null:
+            case MmcCommands.SendOpCond when _cachedOcr                                    != null:
+            {
+                start  = DateTime.Now;
+                buffer = new byte[_cachedOcr.Length];
+                Array.Copy(_cachedOcr, buffer, buffer.Length);
+                response = new uint[4];
+                sense    = false;
+                end      = DateTime.Now;
+                duration = (end - start).TotalMilliseconds;
+
+                return 0;
+            }
+        }
+
         response = null;
         duration = 0;
         sense    = false;
@@ -425,9 +468,9 @@ static class Command
 
         Marshal.Copy(buffer, 0, bufPtr, buffer.Length);
 
-        DateTime start = DateTime.UtcNow;
-        int      error = Extern.ioctlMmc(fd, LinuxIoctl.MmcIocCmd, ref ioCmd);
-        DateTime end   = DateTime.UtcNow;
+        start = DateTime.UtcNow;
+        int error = Extern.ioctlMmc(_fileDescriptor, LinuxIoctl.MmcIocCmd, ref ioCmd);
+        end = DateTime.UtcNow;
 
         sense |= error < 0;
 
@@ -444,9 +487,14 @@ static class Command
         return error;
     }
 
-    internal static int SendMultipleMmcCommands(int fd, Device.MmcSingleCommand[] commands, out double duration,
-                                                out bool sense, uint timeout = 0)
+    /// <inheritdoc />
+    public override int SendMultipleMmcCommands(MmcSingleCommand[] commands, out double duration, out bool sense,
+                                                uint timeout = 15)
     {
+        // We need a timeout
+        if(timeout == 0)
+            timeout = Timeout > 0 ? Timeout : 15;
+
         duration = 0;
         sense    = false;
         int off;
@@ -506,7 +554,7 @@ static class Command
 
         // Send command
         DateTime start = DateTime.UtcNow;
-        int      error = Extern.ioctlMmcMulti(fd, LinuxIoctl.MmcIocMultiCmd, ioMultiCmdPtr);
+        int      error = Extern.ioctlMmcMulti(_fileDescriptor, LinuxIoctl.MmcIocMultiCmd, ioMultiCmdPtr);
         DateTime end   = DateTime.UtcNow;
 
         sense |= error < 0;
@@ -549,35 +597,61 @@ static class Command
         return error;
     }
 
-    internal static int ReOpen(string devicePath, int fd, out object newFd)
-    {
-        newFd = -1;
+    /// <inheritdoc />
+    public override bool ReOpen()
 
-        int ret = Extern.close(fd);
+    {
+        int ret = Extern.close(_fileDescriptor);
 
         if(ret < 0)
-            return Marshal.GetLastWin32Error();
+        {
+            LastError = Marshal.GetLastWin32Error();
+            Error     = true;
 
-        newFd = Extern.open(devicePath, FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew);
+            return true;
+        }
 
-        if((int)newFd >= 0)
-            return 0;
+        int newFd = Extern.open(_devicePath, FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew);
+
+        if(newFd >= 0)
+        {
+            Error           = false;
+            _fileDescriptor = newFd;
+
+            return false;
+        }
 
         int error = Marshal.GetLastWin32Error();
 
         if(error != 13 &&
            error != 30)
-            return Marshal.GetLastWin32Error();
+        {
+            LastError = Marshal.GetLastWin32Error();
+            Error     = true;
 
-        newFd = Extern.open(devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
+            return true;
+        }
 
-        return (int)newFd < 0 ? Marshal.GetLastWin32Error() : 0;
+        newFd = Extern.open(_devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
+
+        if(newFd < 0)
+        {
+            LastError = Marshal.GetLastWin32Error();
+            Error     = true;
+
+            return true;
+        }
+
+        Error           = false;
+        _fileDescriptor = newFd;
+
+        return false;
     }
 
     /// <summary>Reads the contents of a symbolic link</summary>
     /// <param name="path">Path to the symbolic link</param>
     /// <returns>Contents of the symbolic link</returns>
-    internal static string ReadLink(string path)
+    static string ReadLink(string path)
     {
         IntPtr buf = Marshal.AllocHGlobal(4096);
         int    resultSize;
@@ -608,13 +682,15 @@ static class Command
         return Encoding.ASCII.GetString(resultString);
     }
 
-    internal static int BufferedOsRead(int fd, out byte[] buffer, long offset, uint length, out double duration)
+    /// <inheritdoc />
+    public override bool BufferedOsRead(out byte[] buffer, long offset, uint length, out double duration)
+
     {
         buffer = new byte[length];
 
         DateTime start = DateTime.Now;
 
-        long sense = Extern.lseek(fd, offset, SeekWhence.Begin);
+        long sense = Extern.lseek(_fileDescriptor, offset, SeekWhence.Begin);
 
         DateTime end = DateTime.Now;
 
@@ -622,10 +698,14 @@ static class Command
         {
             duration = (end - start).TotalMilliseconds;
 
-            return Marshal.GetLastWin32Error();
+            Error     = true;
+            LastError = Marshal.GetLastWin32Error();
+
+            return true;
         }
 
-        sense = DetectOS.Is64Bit ? Extern.read64(fd, buffer, length) : Extern.read(fd, buffer, (int)length);
+        sense = DetectOS.Is64Bit ? Extern.read64(_fileDescriptor, buffer, length)
+                    : Extern.read(_fileDescriptor, buffer, (int)length);
 
         end      = DateTime.Now;
         duration = (end - start).TotalMilliseconds;
@@ -637,6 +717,9 @@ static class Command
         else if(errno == 0)
             errno = -22;
 
-        return errno;
+        LastError = errno;
+        Error     = errno == 0;
+
+        return errno != 0;
     }
 }

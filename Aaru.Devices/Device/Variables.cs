@@ -55,10 +55,6 @@ public partial class Device
     /// <value>The Platform ID</value>
     public PlatformID PlatformId { get; private protected set; }
 
-    /// <summary>Gets the file handle representing this device</summary>
-    /// <value>The file handle</value>
-    public object FileHandle { get; private protected set; }
-
     /// <summary>Gets or sets the standard timeout for commands sent to this device</summary>
     /// <value>The timeout in seconds</value>
     public uint Timeout { get; set; }
@@ -162,33 +158,5 @@ public partial class Device
     /// <summary>Contains the PCMCIA CIS if applicable</summary>
     public byte[] Cis { get; private protected set; }
 
-    private protected Remote.Remote _remote;
-    bool?                           _isRemoteAdmin;
     private protected string        _devicePath;
-
-    /// <summary>Returns if remote is running under administrative (aka root) privileges</summary>
-    public bool IsRemoteAdmin
-    {
-        get
-        {
-            _isRemoteAdmin ??= _remote.IsRoot;
-
-            return _isRemoteAdmin == true;
-        }
-    }
-
-    /// <summary>Current device is remote</summary>
-    public bool IsRemote => _remote != null;
-    /// <summary>Remote application</summary>
-    public string RemoteApplication => _remote?.ServerApplication;
-    /// <summary>Remote application server</summary>
-    public string RemoteVersion => _remote?.ServerVersion;
-    /// <summary>Remote operating system name</summary>
-    public string RemoteOperatingSystem => _remote?.ServerOperatingSystem;
-    /// <summary>Remote operating system version</summary>
-    public string RemoteOperatingSystemVersion => _remote?.ServerOperatingSystemVersion;
-    /// <summary>Remote architecture</summary>
-    public string RemoteArchitecture => _remote?.ServerArchitecture;
-    /// <summary>Remote protocol version</summary>
-    public int RemoteProtocolVersion => _remote?.ServerProtocolVersion ?? 0;
 }

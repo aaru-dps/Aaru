@@ -44,7 +44,6 @@ static partial class MainClass
         while(true)
         {
             AaruConsole.WriteLine("dev.PlatformID = {0}", dev.PlatformId);
-            AaruConsole.WriteLine("dev.FileHandle = {0}", dev.FileHandle);
             AaruConsole.WriteLine("dev.Timeout = {0}", dev.Timeout);
             AaruConsole.WriteLine("dev.Error = {0}", dev.Error);
             AaruConsole.WriteLine("dev.LastError = {0}", dev.LastError);

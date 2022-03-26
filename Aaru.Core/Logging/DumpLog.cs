@@ -114,17 +114,18 @@ public sealed class DumpLog
 
         _logSw.WriteLine();
 
-        if(dev.IsRemote)
+        if(dev is Aaru.Devices.Remote.Device remoteDev)
         {
             _logSw.WriteLine("################# Remote information #################");
-            _logSw.WriteLine("Server: {0}", dev.RemoteApplication);
-            _logSw.WriteLine("Version: {0}", dev.RemoteVersion);
+            _logSw.WriteLine("Server: {0}", remoteDev.RemoteApplication);
+            _logSw.WriteLine("Version: {0}", remoteDev.RemoteVersion);
 
-            _logSw.WriteLine("Operating system: {0} {1}", dev.RemoteOperatingSystem, dev.RemoteOperatingSystemVersion);
+            _logSw.WriteLine("Operating system: {0} {1}", remoteDev.RemoteOperatingSystem,
+                             remoteDev.RemoteOperatingSystemVersion);
 
-            _logSw.WriteLine("Architecture: {0}", dev.RemoteArchitecture);
-            _logSw.WriteLine("Protocol version: {0}", dev.RemoteProtocolVersion);
-            _logSw.WriteLine("Running as superuser: {0}", dev.IsRemoteAdmin ? "Yes" : "No");
+            _logSw.WriteLine("Architecture: {0}", remoteDev.RemoteArchitecture);
+            _logSw.WriteLine("Protocol version: {0}", remoteDev.RemoteProtocolVersion);
+            _logSw.WriteLine("Running as superuser: {0}", remoteDev.IsAdmin ? "Yes" : "No");
             _logSw.WriteLine("######################################################");
         }
 

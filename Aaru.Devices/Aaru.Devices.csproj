@@ -65,6 +65,7 @@
         <Compile Include="Linux\Structs.cs" />
         <Compile Include="Linux\Enums.cs" />
         <Compile Include="Enums.cs" />
+        <Compile Include="Remote\Command.cs" />
         <Compile Include="Remote\Consts.cs" />
         <Compile Include="Remote\Device.cs" />
         <Compile Include="Remote\Enums.cs" />
@@ -77,7 +78,6 @@
         <Compile Include="Windows\Enums.cs" />
         <Compile Include="Windows\Command.cs" />
         <Compile Include="Linux\Command.cs" />
-        <Compile Include="Command.cs" />
         <Compile Include="Device\Constructor.cs" />
         <Compile Include="Device\Variables.cs" />
         <Compile Include="Device\Destructor.cs" />

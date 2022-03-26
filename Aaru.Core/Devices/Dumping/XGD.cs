@@ -51,6 +51,7 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.Xbox;
 using Aaru.Devices;
 using Schemas;
+using Device = Aaru.Devices.Remote.Device;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -82,7 +83,7 @@ partial class Dump
 
         if(DetectOS.GetRealPlatformID() != PlatformID.Win32NT)
         {
-            bool isAdmin = _dev.IsRemote ? _dev.IsRemoteAdmin : DetectOS.IsAdmin;
+            bool isAdmin = _dev is Device remoteDev ? remoteDev.IsAdmin : DetectOS.IsAdmin;
 
             if(!isAdmin)
             {

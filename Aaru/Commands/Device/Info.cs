@@ -134,9 +134,10 @@ sealed class DeviceInfoCommand : Command
         {
             dev = Device.Create(devicePath);
 
-            if(dev.IsRemote)
-                Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
-                                     dev.RemoteOperatingSystemVersion, dev.RemoteArchitecture);
+            if(dev is Devices.Remote.Device remoteDev)
+                Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
+                                     remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
+                                     remoteDev.RemoteArchitecture);
 
             if(dev.Error)
             {
