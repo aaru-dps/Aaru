@@ -128,27 +128,25 @@ sealed class DeviceInfoCommand : Command
            char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-        Device dev;
+        var dev = Device.Create(devicePath, out ErrorNumber devErrno);
 
-        try
+        switch(dev)
         {
-            dev = Device.Create(devicePath);
+            case null:
+                AaruConsole.ErrorWriteLine($"Could not open device, error {devErrno}.");
 
-            if(dev is Devices.Remote.Device remoteDev)
+                return (int)devErrno;
+            case Devices.Remote.Device remoteDev:
                 Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
                                      remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
                                      remoteDev.RemoteArchitecture);
 
-            if(dev.Error)
-            {
-                AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
-
-                return (int)ErrorNumber.CannotOpenDevice;
-            }
+                break;
         }
-        catch(DeviceException e)
+
+        if(dev.Error)
         {
-            AaruConsole.ErrorWriteLine(e.Message);
+            AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
 
             return (int)ErrorNumber.CannotOpenDevice;
         }

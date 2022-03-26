@@ -130,31 +130,32 @@ sealed class MediaScanCommand : Command
            char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-        Device dev = null;
+        Device      dev      = null;
+        ErrorNumber devErrno = ErrorNumber.NoError;
 
-        try
+        Spectre.ProgressSingleSpinner(ctx =>
         {
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Opening device...").IsIndeterminate();
-                dev = Device.Create(devicePath);
-            });
+            ctx.AddTask("Opening device...").IsIndeterminate();
+            dev = Device.Create(devicePath, out devErrno);
+        });
 
-            if(dev is Devices.Remote.Device remoteDev)
+        switch(dev)
+        {
+            case null:
+                AaruConsole.ErrorWriteLine($"Could not open device, error {devErrno}.");
+
+                return (int)devErrno;
+            case Devices.Remote.Device remoteDev:
                 Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
                                      remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
                                      remoteDev.RemoteArchitecture);
 
-            if(dev.Error)
-            {
-                AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
-
-                return (int)ErrorNumber.CannotOpenDevice;
-            }
+                break;
         }
-        catch(DeviceException e)
+
+        if(dev.Error)
         {
-            AaruConsole.ErrorWriteLine(e.Message);
+            AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
 
             return (int)ErrorNumber.CannotOpenDevice;
         }

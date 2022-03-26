@@ -54,8 +54,10 @@ partial class Device : Devices.Device
 
     Device() {}
 
-    internal new static Device Create(string devicePath)
+    internal new static Device Create(string devicePath, out ErrorNumber errno)
     {
+        errno = ErrorNumber.NoError;
+
         var dev = new Device
         {
             PlatformId      = DetectOS.GetRealPlatformID(),
@@ -86,7 +88,11 @@ partial class Device : Devices.Device
         }
 
         if(dev.Error)
-            throw new DeviceException(dev.LastError);
+        {
+            errno = (ErrorNumber)dev.LastError;
+
+            return null;
+        }
 
         // Seems ioctl(2) does not allow the atomicity needed
         if(dev.PlatformId == PlatformID.Linux)
@@ -96,7 +102,11 @@ partial class Device : Devices.Device
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
 
         if(dev.Error)
-            throw new DeviceException(dev.LastError);
+        {
+            errno = (ErrorNumber)dev.LastError;
+
+            return null;
+        }
 
         string devPath;
 

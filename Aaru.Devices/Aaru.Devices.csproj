@@ -56,7 +56,6 @@
         <ConsolePause>false</ConsolePause>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="Device\DeviceException.cs" />
         <Compile Include="Device\ScsiCommands\MediaTek.cs" />
         <Compile Include="Device\ScsiCommands\MiniDisc.cs" />
         <Compile Include="Device\ScsiCommands\Optical.cs" />

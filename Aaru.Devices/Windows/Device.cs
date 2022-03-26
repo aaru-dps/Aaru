@@ -51,8 +51,10 @@ partial class Device : Devices.Device
 
     Device() {}
 
-    internal new static Device Create(string devicePath)
+    internal new static Device Create(string devicePath, out ErrorNumber errno)
     {
+        errno = ErrorNumber.NoError;
+
         var dev = new Device
         {
             PlatformId = DetectOS.GetRealPlatformID(),
@@ -71,13 +73,21 @@ partial class Device : Devices.Device
         }
 
         if(dev.Error)
-            throw new DeviceException(dev.LastError);
+        {
+            errno = (ErrorNumber)dev.LastError;
+
+            return null;
+        }
 
         dev.Type     = DeviceType.Unknown;
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
 
         if(dev.Error)
-            throw new DeviceException(dev.LastError);
+        {
+            errno = (ErrorNumber)dev.LastError;
+
+            return null;
+        }
 
         // Windows is answering SCSI INQUIRY for all device types so it needs to be detected first
         var query = new StoragePropertyQuery();

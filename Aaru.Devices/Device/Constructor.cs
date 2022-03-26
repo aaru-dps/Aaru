@@ -50,10 +50,11 @@ public partial class Device
 {
     /// <summary>Opens the device for sending direct commands</summary>
     /// <param name="devicePath">Device path</param>
-    public static Device Create(string devicePath)
+    public static Device Create(string devicePath, out ErrorNumber errno)
     {
         Device dev = null;
         Uri    aaruUri;
+        errno = ErrorNumber.NoError;
 
         try
         {
@@ -61,18 +62,20 @@ public partial class Device
         }
         catch(Exception)
         {
-            return null;
+            aaruUri = null;
         }
 
-        if(aaruUri.Scheme is "dic" or "aaru")
-            dev = Remote.Device.Create(aaruUri);
+        if(aaruUri?.Scheme is "dic" or "aaru")
+            dev = Remote.Device.Create(aaruUri, out errno);
         else if(OperatingSystem.IsLinux())
-            dev = Linux.Device.Create(devicePath);
+            dev = Linux.Device.Create(devicePath, out errno);
         else if(OperatingSystem.IsWindows())
-            dev = Windows.Device.Create(devicePath);
+            dev = Windows.Device.Create(devicePath, out errno);
+        else
+            errno = ErrorNumber.NotSupported;
 
         if(dev is null)
-            throw new DeviceException("Platform not supported.");
+            return null;
 
         if(dev.Type == DeviceType.SCSI ||
            dev.Type == DeviceType.ATAPI)

@@ -36,6 +36,7 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
+using Aaru.CommonTypes.Enums;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
 using Aaru.Devices;
@@ -328,11 +329,28 @@ public sealed class MediaScanViewModel : ViewModelBase
            char.IsLetter(_devicePath[0]))
             _devicePath = "\\\\.\\" + char.ToUpper(_devicePath[0]) + ':';
 
-        var dev = Device.Create(_devicePath);
+        var dev = Device.Create(_devicePath, out ErrorNumber devErrno);
 
-        if(dev is Devices.Remote.Device remoteDev)
-            Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion, remoteDev.RemoteOperatingSystem,
-                                 remoteDev.RemoteOperatingSystemVersion, remoteDev.RemoteArchitecture);
+        switch(dev)
+        {
+            case null:
+                await MessageBoxManager.
+                      GetMessageBoxStandardWindow("Error", $"Error {devErrno} opening device.", ButtonEnum.Ok,
+                                                  Icon.Error).ShowDialog(_view);
+
+                StopVisible     = false;
+                StartVisible    = true;
+                CloseVisible    = true;
+                ProgressVisible = false;
+
+                return;
+            case Devices.Remote.Device remoteDev:
+                Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
+                                     remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
+                                     remoteDev.RemoteArchitecture);
+
+                break;
+        }
 
         if(dev.Error)
         {

@@ -35,7 +35,6 @@ namespace Aaru.Gui.ViewModels.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -246,73 +245,71 @@ public sealed class MainWindowViewModel : ViewModelBase
                 case DeviceModel deviceModel:
                 {
                     if(deviceModel.ViewModel is null)
-                        try
-                        {
-                            var dev = Device.Create(deviceModel.Path);
+                    {
+                        var dev = Device.Create(deviceModel.Path, out ErrorNumber devErrno);
 
-                            if(dev is Devices.Remote.Device remoteDev)
+                        switch(dev)
+                        {
+                            case null:
+                                ContentPanel = $"Error {devErrno} opening device";
+
+                                return;
+                            case Devices.Remote.Device remoteDev:
                                 Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
                                                      remoteDev.RemoteOperatingSystem,
                                                      remoteDev.RemoteOperatingSystemVersion,
                                                      remoteDev.RemoteArchitecture);
 
-                            if(dev.Error)
-                            {
-                                ContentPanel = $"Error {dev.LastError} opening device";
-
-                                return;
-                            }
-
-                            var devInfo = new DeviceInfo(dev);
-
-                            deviceModel.ViewModel = new DeviceInfoViewModel(devInfo, _view);
-
-                            if(!dev.IsRemovable)
-                                deviceModel.Media.Add(new MediaModel
-                                {
-                                    NonRemovable = true,
-                                    Name         = "Non-removable device commands not yet implemented"
-                                });
-                            else
-                            {
-                                // TODO: Removable non-SCSI?
-                                var scsiInfo = new ScsiInfo(dev);
-
-                                if(!scsiInfo.MediaInserted)
-                                    deviceModel.Media.Add(new MediaModel
-                                    {
-                                        NoMediaInserted = true,
-                                        Icon            = _ejectIcon,
-                                        Name            = "No media inserted"
-                                    });
-                                else
-                                {
-                                    var mediaResource =
-                                        new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{scsiInfo.MediaType}.png");
-
-                                    deviceModel.Media.Add(new MediaModel
-                                    {
-                                        DevicePath = deviceModel.Path,
-                                        Icon = _assets.Exists(mediaResource) ? new Bitmap(_assets.Open(mediaResource))
-                                                   : null,
-                                        Name      = $"{scsiInfo.MediaType}",
-                                        ViewModel = new MediaInfoViewModel(scsiInfo, deviceModel.Path, _view)
-                                    });
-                                }
-                            }
-
-                            dev.Close();
+                                break;
                         }
-                        catch(SystemException ex)
-                        {
-                            if(Debugger.IsAttached)
-                                throw;
 
-                            ContentPanel = ex.Message;
-                            AaruConsole.ErrorWriteLine(ex.Message);
+                        if(dev.Error)
+                        {
+                            ContentPanel = $"Error {dev.LastError} opening device";
 
                             return;
                         }
+
+                        var devInfo = new DeviceInfo(dev);
+
+                        deviceModel.ViewModel = new DeviceInfoViewModel(devInfo, _view);
+
+                        if(!dev.IsRemovable)
+                            deviceModel.Media.Add(new MediaModel
+                            {
+                                NonRemovable = true,
+                                Name         = "Non-removable device commands not yet implemented"
+                            });
+                        else
+                        {
+                            // TODO: Removable non-SCSI?
+                            var scsiInfo = new ScsiInfo(dev);
+
+                            if(!scsiInfo.MediaInserted)
+                                deviceModel.Media.Add(new MediaModel
+                                {
+                                    NoMediaInserted = true,
+                                    Icon            = _ejectIcon,
+                                    Name            = "No media inserted"
+                                });
+                            else
+                            {
+                                var mediaResource =
+                                    new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{scsiInfo.MediaType}.png");
+
+                                deviceModel.Media.Add(new MediaModel
+                                {
+                                    DevicePath = deviceModel.Path,
+                                    Icon = _assets.Exists(mediaResource) ? new Bitmap(_assets.Open(mediaResource))
+                                               : null,
+                                    Name      = $"{scsiInfo.MediaType}",
+                                    ViewModel = new MediaInfoViewModel(scsiInfo, deviceModel.Path, _view)
+                                });
+                            }
+                        }
+
+                        dev.Close();
+                    }
 
                     ContentPanel = new Views.Panels.DeviceInfo
                     {
@@ -786,10 +783,10 @@ public sealed class MainWindowViewModel : ViewModelBase
                     Path = device.Path
                 };
 
-                try
-                {
-                    var dev = Device.Create(device.Path);
+                var dev = Device.Create(device.Path, out _);
 
+                if(dev != null)
+                {
                     if(dev is Devices.Remote.Device remoteDev)
                         Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
                                              remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
@@ -838,10 +835,6 @@ public sealed class MainWindowViewModel : ViewModelBase
                     }
 
                     dev.Close();
-                }
-                catch
-                {
-                    // ignored
                 }
 
                 _devicesRoot.Devices.Add(deviceModel);

@@ -75,8 +75,10 @@ public sealed partial class Device : Devices.Device
     /// <summary>Opens the device for sending direct commands</summary>
     /// <param name="aaruUri">AaruRemote URI</param>
     /// <returns>Device</returns>
-    internal static Device Create(Uri aaruUri)
+    internal static Device Create(Uri aaruUri, out ErrorNumber errno)
     {
+        errno = ErrorNumber.NoError;
+
         var dev = new Device
         {
             PlatformId  = DetectOS.GetRealPlatformID(),
@@ -100,11 +102,16 @@ public sealed partial class Device : Devices.Device
 
         dev._remote = new Remote(aaruUri);
 
-        dev.Error     = !dev._remote.Open(devicePath, out int errno);
-        dev.LastError = errno;
+        dev.Error     = !dev._remote.Open(devicePath, out int remoteErrno);
+        dev.LastError = remoteErrno;
 
+        // TODO: Convert error codes
         if(dev.Error)
-            throw new DeviceException(dev.LastError);
+        {
+            errno = (ErrorNumber)remoteErrno;
+
+            return null;
+        }
 
         if(dev._remote.ServerOperatingSystem == "Linux")
             _readMultipleBlockCannotSetBlockCount = true;
@@ -113,7 +120,12 @@ public sealed partial class Device : Devices.Device
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
 
         if(dev.Error)
-            throw new DeviceException(dev.LastError);
+            if(dev.Error)
+            {
+                errno = (ErrorNumber)dev.LastError;
+
+                return null;
+            }
 
         dev.Type = dev._remote.GetDeviceType();
 

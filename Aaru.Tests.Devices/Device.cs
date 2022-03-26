@@ -39,7 +39,7 @@ static partial class MainClass
         AaruConsole.WriteLine("Going to open {0}. Press any key to continue...", devPath);
         Console.ReadKey();
 
-        var dev = Aaru.Devices.Device.Create(devPath);
+        var dev = Aaru.Devices.Device.Create(devPath, out _);
 
         while(true)
         {
