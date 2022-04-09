@@ -34,9 +34,7 @@ using CUETools.Codecs;
 using CUETools.Codecs.Flake;
 
 // ReSharper disable once InconsistentNaming
-/// <summary>
-/// Implements the FLAC lossless audio compression algorithm
-/// </summary>
+/// <summary>Implements the FLAC lossless audio compression algorithm</summary>
 public class FLAC
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
@@ -49,10 +47,9 @@ public class FLAC
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern nuint AARU_flac_encode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
                                                         nuint srcSize, uint blocksize, int doMidSideStereo,
-                                                        int looseMidSideStereo, string apodization,
-                                                        uint maxLpcOrder, uint qlpCoeffPrecision,
-                                                        int doQlpCoeffPrecSearch, int doExhaustiveModelSearch,
-                                                        uint minResidualPartitionOrder,
+                                                        int looseMidSideStereo, string apodization, uint maxLpcOrder,
+                                                        uint qlpCoeffPrecision, int doQlpCoeffPrecSearch,
+                                                        int doExhaustiveModelSearch, uint minResidualPartitionOrder,
                                                         uint maxResidualPartitionOrder, string applicationID,
                                                         uint applicationIDLen);
 
@@ -135,13 +132,15 @@ public class FLAC
         if(flakeWriterSettings.BlockSize < 256)
             flakeWriterSettings.BlockSize = 256;
 
-        var flacMs      = new MemoryStream(destination);
+        var flacMs      = new NonClosableStream(destination);
         var flakeWriter = new AudioEncoder(flakeWriterSettings, "", flacMs);
         var audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, source, source.Length / 4);
         flakeWriter.Write(audioBuffer);
         flakeWriter.Close();
-        flacMs.Close();
 
-        return (int)flacMs.Length;
+        var len = (int)flacMs.Length;
+        flacMs.ReallyClose();
+
+        return len;
     }
 }

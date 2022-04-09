@@ -64,24 +64,25 @@
         </DefaultItemExcludes>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="ADC.cs"/>
-        <Compile Include="AppleRle.cs"/>
-        <Compile Include="BZip2.cs"/>
-        <Compile Include="FLAC.cs"/>
-        <Compile Include="LZFSE.cs"/>
-        <Compile Include="LZIP.cs"/>
-        <Compile Include="LZMA.cs"/>
-        <Compile Include="Native.cs"/>
-        <Compile Include="TeleDiskLzh.cs"/>
-        <Compile Include="cuetools.net/CUETools.Codecs/*.cs"/>
-        <Compile Include="cuetools.net/CUETools.Codecs/CommandLine/*.cs"/>
-        <Compile Include="cuetools.net/CUETools.Codecs/CRC/*.cs"/>
-        <Compile Include="cuetools.net/CUETools.Codecs/NULL/*.cs"/>
-        <Compile Include="cuetools.net/CUETools.Codecs/ViewModel/*.cs"/>
-        <Compile Include="cuetools.net/CUETools.Codecs/WAV/*.cs"/>
-        <Compile Include="cuetools.net/CUETools.Codecs.Flake/*.cs"/>
-        <Compile Include="cuetools.net/CUETools.Codecs.Flake/Properties/*.cs"/>
-        <Compile Include="ZSTD.cs"/>
+        <Compile Include="ADC.cs" />
+        <Compile Include="AppleRle.cs" />
+        <Compile Include="BZip2.cs" />
+        <Compile Include="FLAC.cs" />
+        <Compile Include="LZFSE.cs" />
+        <Compile Include="LZIP.cs" />
+        <Compile Include="LZMA.cs" />
+        <Compile Include="Native.cs" />
+        <Compile Include="NonClosableStream.cs" />
+        <Compile Include="TeleDiskLzh.cs" />
+        <Compile Include="cuetools.net/CUETools.Codecs/*.cs" />
+        <Compile Include="cuetools.net/CUETools.Codecs/CommandLine/*.cs" />
+        <Compile Include="cuetools.net/CUETools.Codecs/CRC/*.cs" />
+        <Compile Include="cuetools.net/CUETools.Codecs/NULL/*.cs" />
+        <Compile Include="cuetools.net/CUETools.Codecs/ViewModel/*.cs" />
+        <Compile Include="cuetools.net/CUETools.Codecs/WAV/*.cs" />
+        <Compile Include="cuetools.net/CUETools.Codecs.Flake/*.cs" />
+        <Compile Include="cuetools.net/CUETools.Codecs.Flake/Properties/*.cs" />
+        <Compile Include="ZSTD.cs" />
     </ItemGroup>
     <ItemGroup>
         <Content Include="..\LICENSE.LGPL">
@@ -89,12 +90,12 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha8"/>
-        <PackageReference Include="DotNetZip" Version="1.16.0"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-        <PackageReference Include="SharpCompress" Version="0.30.1"/>
-        <PackageReference Include="System.Resources.Extensions" Version="6.0.0"/>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all"/>
+        <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha8" />
+        <PackageReference Include="DotNetZip" Version="1.16.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="SharpCompress" Version="0.30.1" />
+        <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all" />
     </ItemGroup>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
            Other similar extension points exist, see Microsoft.Common.targets.
