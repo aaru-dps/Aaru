@@ -1745,8 +1745,8 @@ public sealed partial class AaruFormat
 
             var cmpCrc64Context = new Crc64Context();
 
-            byte[] lzmaProperties = Array.Empty<byte>();
-            int    compressedLength;
+            byte[] lzmaProperties   = Array.Empty<byte>();
+            var    compressedLength = 0;
 
             switch(_currentBlockHeader.compression)
             {
@@ -1788,7 +1788,8 @@ public sealed partial class AaruFormat
 
                     break;
                 }
-                default: throw new ArgumentOutOfRangeException();
+                case CompressionType.None: break; // Do nothing
+                default:                   throw new ArgumentOutOfRangeException();
             }
 
             if(_currentBlockHeader.compression == CompressionType.None)
@@ -2455,7 +2456,7 @@ public sealed partial class AaruFormat
             var cmpCrc64Context = new Crc64Context();
 
             byte[] lzmaProperties   = Array.Empty<byte>();
-            int    compressedLength;
+            var    compressedLength = 0;
 
             switch(_currentBlockHeader.compression)
             {
@@ -2497,7 +2498,8 @@ public sealed partial class AaruFormat
 
                     break;
                 }
-                default: throw new ArgumentOutOfRangeException();
+                case CompressionType.None: break; // Do nothing
+                default:                   throw new ArgumentOutOfRangeException();
             }
 
             if(_currentBlockHeader.compression == CompressionType.None)
@@ -3170,12 +3172,22 @@ public sealed partial class AaruFormat
 
                         var cmpBuffer = new byte[_sectorPrefix.Length + 262144];
 
-                        int cmpLen = _compressionAlgorithm switch
-                                     {
-                                         CompressionType.Lzma => LZMA.EncodeBuffer(_sectorPrefix, cmpBuffer,
-                                             out lzmaProperties, 9, _dictionarySize, 4, 0, 2, 273),
-                                         _ => throw new ArgumentOutOfRangeException()
-                                     };
+                        int cmpLen;
+
+                        switch(_compressionAlgorithm)
+                        {
+                            case CompressionType.Lzma:
+                                cmpLen = LZMA.EncodeBuffer(_sectorPrefix, cmpBuffer, out lzmaProperties, 9,
+                                                           _dictionarySize, 4, 0, 2, 273);
+
+                                break;
+                            case CompressionType.None:
+                                cmpBuffer = _sectorPrefix;
+                                cmpLen    = cmpBuffer.Length;
+
+                                break;
+                            default: throw new ArgumentOutOfRangeException();
+                        }
 
                         blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
@@ -3248,12 +3260,22 @@ public sealed partial class AaruFormat
 
                         var cmpBuffer = new byte[_sectorSuffix.Length + 262144];
 
-                        int cmpLen = _compressionAlgorithm switch
-                                     {
-                                         CompressionType.Lzma => LZMA.EncodeBuffer(_sectorSuffix, cmpBuffer,
-                                             out lzmaProperties, 9, _dictionarySize, 4, 0, 2, 273),
-                                         _ => throw new ArgumentOutOfRangeException()
-                                     };
+                        int cmpLen;
+
+                        switch(_compressionAlgorithm)
+                        {
+                            case CompressionType.Lzma:
+                                cmpLen = LZMA.EncodeBuffer(_sectorSuffix, cmpBuffer, out lzmaProperties, 9,
+                                                           _dictionarySize, 4, 0, 2, 273);
+
+                                break;
+                            case CompressionType.None:
+                                cmpBuffer = _sectorSuffix;
+                                cmpLen    = cmpBuffer.Length;
+
+                                break;
+                            default: throw new ArgumentOutOfRangeException();
+                        }
 
                         blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
@@ -3376,14 +3398,22 @@ public sealed partial class AaruFormat
                     var cmpBuffer = new byte[ddtEntries.Length + 262144];
 
                     int    cmpLen;
-                    byte[] lzmaProperties;
+                    byte[] lzmaProperties = Array.Empty<byte>();
 
-                    cmpLen = _compressionAlgorithm switch
-                             {
-                                 CompressionType.Lzma => LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out lzmaProperties, 9,
-                                                                           _dictionarySize, 4, 0, 2, 273),
-                                 _ => throw new ArgumentOutOfRangeException()
-                             };
+                    switch(_compressionAlgorithm)
+                    {
+                        case CompressionType.Lzma:
+                            cmpLen = LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 4,
+                                                       0, 2, 273);
+
+                            break;
+                        case CompressionType.None:
+                            cmpBuffer = ddtEntries;
+                            cmpLen    = cmpBuffer.Length;
+
+                            break;
+                        default: throw new ArgumentOutOfRangeException();
+                    }
 
                     blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
@@ -3442,12 +3472,20 @@ public sealed partial class AaruFormat
 
                     cmpBuffer = new byte[ddtEntries.Length + 262144];
 
-                    cmpLen = _compressionAlgorithm switch
-                             {
-                                 CompressionType.Lzma => LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out lzmaProperties, 9,
-                                                                           _dictionarySize, 4, 0, 2, 273),
-                                 _ => throw new ArgumentOutOfRangeException()
-                             };
+                    switch(_compressionAlgorithm)
+                    {
+                        case CompressionType.Lzma:
+                            cmpLen = LZMA.EncodeBuffer(ddtEntries, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 4,
+                                                       0, 2, 273);
+
+                            break;
+                        case CompressionType.None:
+                            cmpBuffer = ddtEntries;
+                            cmpLen    = cmpBuffer.Length;
+
+                            break;
+                        default: throw new ArgumentOutOfRangeException();
+                    }
 
                     blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
@@ -3518,13 +3556,20 @@ public sealed partial class AaruFormat
                         byte[] sectorPrefixBuffer = _sectorPrefixMs.ToArray();
                         cmpBuffer = new byte[sectorPrefixBuffer.Length + 262144];
 
-                        cmpLen = _compressionAlgorithm switch
-                                 {
-                                     CompressionType.Lzma => LZMA.EncodeBuffer(sectorPrefixBuffer, cmpBuffer,
-                                                                               out lzmaProperties, 9, _dictionarySize,
-                                                                               4, 0, 2, 273),
-                                     _ => throw new ArgumentOutOfRangeException()
-                                 };
+                        switch(_compressionAlgorithm)
+                        {
+                            case CompressionType.Lzma:
+                                cmpLen = LZMA.EncodeBuffer(sectorPrefixBuffer, cmpBuffer, out lzmaProperties, 9,
+                                                           _dictionarySize, 4, 0, 2, 273);
+
+                                break;
+                            case CompressionType.None:
+                                cmpBuffer = sectorPrefixBuffer;
+                                cmpLen    = cmpBuffer.Length;
+
+                                break;
+                            default: throw new ArgumentOutOfRangeException();
+                        }
 
                         blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
@@ -3602,13 +3647,20 @@ public sealed partial class AaruFormat
                         byte[] sectorSuffixBuffer = _sectorPrefixMs.ToArray();
                         cmpBuffer = new byte[sectorSuffixBuffer.Length + 262144];
 
-                        cmpLen = _compressionAlgorithm switch
-                                 {
-                                     CompressionType.Lzma => LZMA.EncodeBuffer(sectorSuffixBuffer, cmpBuffer,
-                                                                               out lzmaProperties, 9, _dictionarySize,
-                                                                               4, 0, 2, 273),
-                                     _ => throw new ArgumentOutOfRangeException()
-                                 };
+                        switch(_compressionAlgorithm)
+                        {
+                            case CompressionType.Lzma:
+                                cmpLen = LZMA.EncodeBuffer(sectorSuffixBuffer, cmpBuffer, out lzmaProperties, 9,
+                                                           _dictionarySize, 4, 0, 2, 273);
+
+                                break;
+                            case CompressionType.None:
+                                cmpBuffer = sectorSuffixBuffer;
+                                cmpLen    = cmpBuffer.Length;
+
+                                break;
+                            default: throw new ArgumentOutOfRangeException();
+                        }
 
                         blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
@@ -3687,12 +3739,22 @@ public sealed partial class AaruFormat
 
                         var cmpBuffer = new byte[_mode2Subheaders.Length + 262144];
 
-                        int cmpLen = _compressionAlgorithm switch
-                                     {
-                                         CompressionType.Lzma => LZMA.EncodeBuffer(_mode2Subheaders, cmpBuffer,
-                                             out lzmaProperties, 9, _dictionarySize, 4, 0, 2, 273),
-                                         _ => throw new ArgumentOutOfRangeException()
-                                     };
+                        int cmpLen;
+
+                        switch(_compressionAlgorithm)
+                        {
+                            case CompressionType.Lzma:
+                                cmpLen = LZMA.EncodeBuffer(_mode2Subheaders, cmpBuffer, out lzmaProperties, 9,
+                                                           _dictionarySize, 4, 0, 2, 273);
+
+                                break;
+                            case CompressionType.None:
+                                cmpBuffer = _mode2Subheaders;
+                                cmpLen    = cmpBuffer.Length;
+
+                                break;
+                            default: throw new ArgumentOutOfRangeException();
+                        }
 
                         blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
@@ -3773,12 +3835,22 @@ public sealed partial class AaruFormat
 
                         var cmpBuffer = new byte[transformedSubchannel.Length + 262144];
 
-                        int cmpLen = _compressionAlgorithm switch
-                                     {
-                                         CompressionType.Lzma => LZMA.EncodeBuffer(transformedSubchannel, cmpBuffer,
-                                             out lzmaProperties, 9, _dictionarySize, 4, 0, 2, 273),
-                                         _ => throw new ArgumentOutOfRangeException()
-                                     };
+                        int cmpLen;
+
+                        switch(_compressionAlgorithm)
+                        {
+                            case CompressionType.Lzma:
+                                cmpLen = LZMA.EncodeBuffer(transformedSubchannel, cmpBuffer, out lzmaProperties, 9,
+                                                           _dictionarySize, 4, 0, 2, 273);
+
+                                break;
+                            case CompressionType.None:
+                                cmpBuffer = transformedSubchannel;
+                                cmpLen    = cmpBuffer.Length;
+
+                                break;
+                            default: throw new ArgumentOutOfRangeException();
+                        }
 
                         blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
@@ -3862,12 +3934,22 @@ public sealed partial class AaruFormat
 
                         var cmpBuffer = new byte[_sectorCpiMai.Length + 262144];
 
-                        int cmpLen = _compressionAlgorithm switch
-                                     {
-                                         CompressionType.Lzma => LZMA.EncodeBuffer(_sectorCpiMai, cmpBuffer,
-                                             out lzmaProperties, 9, _dictionarySize, 4, 0, 2, 273),
-                                         _ => throw new ArgumentOutOfRangeException()
-                                     };
+                        int cmpLen;
+
+                        switch(_compressionAlgorithm)
+                        {
+                            case CompressionType.Lzma:
+                                cmpLen = LZMA.EncodeBuffer(_sectorCpiMai, cmpBuffer, out lzmaProperties, 9,
+                                                           _dictionarySize, 4, 0, 2, 273);
+
+                                break;
+                            case CompressionType.None:
+                                cmpBuffer = _sectorCpiMai;
+                                cmpLen    = cmpBuffer.Length;
+
+                                break;
+                            default: throw new ArgumentOutOfRangeException();
+                        }
 
                         blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
@@ -3947,12 +4029,22 @@ public sealed partial class AaruFormat
 
                         var cmpBuffer = new byte[_sectorDecryptedTitleKey.Length + 262144];
 
-                        int cmpLen = _compressionAlgorithm switch
-                                     {
-                                         CompressionType.Lzma => LZMA.EncodeBuffer(_sectorDecryptedTitleKey, cmpBuffer,
-                                             out lzmaProperties, 9, _dictionarySize, 4, 0, 2, 273),
-                                         _ => throw new ArgumentOutOfRangeException()
-                                     };
+                        int cmpLen;
+
+                        switch(_compressionAlgorithm)
+                        {
+                            case CompressionType.Lzma:
+                                cmpLen = LZMA.EncodeBuffer(_sectorDecryptedTitleKey, cmpBuffer, out lzmaProperties, 9,
+                                                           _dictionarySize, 4, 0, 2, 273);
+
+                                break;
+                            case CompressionType.None:
+                                cmpBuffer = _sectorDecryptedTitleKey;
+                                cmpLen    = cmpBuffer.Length;
+
+                                break;
+                            default: throw new ArgumentOutOfRangeException();
+                        }
 
                         blockStream = new MemoryStream(cmpBuffer, 0, cmpLen);
 
