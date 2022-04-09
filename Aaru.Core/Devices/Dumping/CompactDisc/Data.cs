@@ -348,6 +348,32 @@ partial class Dump
 
                                 continue;
                             }
+
+                            // Drive definitively didn't like to read everything so just do something clever...
+
+                            // Try again
+                            sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
+                                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                                true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                                out cmdDuration);
+
+                            if(sense)
+
+                                // Try reading one less every time
+                                for(uint bi = blocksToRead; bi > 0; bi--)
+                                {
+                                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, bi,
+                                                        MmcSectorTypes.AllTypes, false, false, true,
+                                                        MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                                        supportedSubchannel, _dev.Timeout, out cmdDuration);
+
+                                    if(sense)
+                                        continue;
+
+                                    blocksToRead = bi;
+
+                                    break;
+                                }
                         }
                     }
                 }
