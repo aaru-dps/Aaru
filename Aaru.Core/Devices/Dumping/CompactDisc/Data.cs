@@ -50,6 +50,7 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 partial class Dump
 {
@@ -513,13 +514,26 @@ partial class Dump
                                 desiredSubchannel, sub, i + r, 1, subLog, isrcs, (byte)track.Sequence, ref mcn,
                                 tracks, subchannelExtents, _fixSubchannelPosition,
                                 outputFormat as IWritableOpticalImage, _fixSubchannel, _fixSubchannelCrc, _dumpLog,
-                                UpdateStatus, smallestPregapLbaPerTrack, true);
+                                UpdateStatus, smallestPregapLbaPerTrack, true, out List<ulong> newPregapSectors);
 
                             // Set tracks and go back
                             if(indexesChanged)
                             {
                                 (outputFormat as IWritableOpticalImage).SetTracks(tracks.ToList());
-                                i -= blocksToRead;
+
+                                foreach(ulong newPregapSector in newPregapSectors)
+                                    _resume.BadBlocks.Add(newPregapSector);
+
+                                if(i >= blocksToRead)
+                                    i -= blocksToRead;
+                                else
+                                    i = 0;
+
+                                if(i > 0)
+                                    i--;
+
+                                foreach(Track aTrack in tracks.Where(aTrack => aTrack.Type == TrackType.Audio))
+                                    audioExtents.Add(aTrack.StartSector, aTrack.EndSector);
 
                                 continue;
                             }
@@ -656,14 +670,27 @@ partial class Dump
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                         desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.Sequence, ref mcn,
                         tracks, subchannelExtents, _fixSubchannelPosition, outputFormat as IWritableOpticalImage,
-                        _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack,
-                        true);
+                        _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
+                        out List<ulong> newPregapSectors);
 
                     // Set tracks and go back
                     if(indexesChanged)
                     {
                         (outputFormat as IWritableOpticalImage).SetTracks(tracks.ToList());
-                        i -= blocksToRead;
+
+                        foreach(ulong newPregapSector in newPregapSectors)
+                            _resume.BadBlocks.Add(newPregapSector);
+
+                        if(i >= blocksToRead)
+                            i -= blocksToRead;
+                        else
+                            i = 0;
+
+                        if(i > 0)
+                            i--;
+
+                        foreach(Track aTrack in tracks.Where(aTrack => aTrack.Type == TrackType.Audio))
+                            audioExtents.Add(aTrack.StartSector, aTrack.EndSector);
 
                         continue;
                     }

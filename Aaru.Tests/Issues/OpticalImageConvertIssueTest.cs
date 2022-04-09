@@ -298,7 +298,7 @@ public abstract class OpticalImageConvertIssueTest
                             bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                 MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1, null, isrcs,
                                 (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true, outputOptical,
-                                true, true, null, null, smallestPregapLbaPerTrack, false);
+                                true, true, null, null, smallestPregapLbaPerTrack, false, out _);
 
                             if(indexesChanged)
                                 outputOptical.SetTracks(tracks.ToList());
@@ -320,7 +320,7 @@ public abstract class OpticalImageConvertIssueTest
                             bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                 MmcSubchannel.Raw, sector, doneSectors + track.StartSector, sectorsToDo, null,
                                 isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true,
-                                outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false);
+                                outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false, out _);
 
                             if(indexesChanged)
                                 outputOptical.SetTracks(tracks.ToList());

@@ -1136,7 +1136,7 @@ sealed class ConvertImageCommand : Command
                                                             (byte)track.Sequence, ref mcn, tracks,
                                                             subchannelExtents, fixSubchannelPosition,
                                                             outputOptical, fixSubchannel, fixSubchannelCrc, null,
-                                                            null, smallestPregapLbaPerTrack, false);
+                                                            null, smallestPregapLbaPerTrack, false, out _);
 
                                                     if(indexesChanged)
                                                         outputOptical.SetTracks(tracks.ToList());
@@ -1182,7 +1182,7 @@ sealed class ConvertImageCommand : Command
                                                             isrcs, (byte)track.Sequence, ref mcn, tracks,
                                                             subchannelExtents, fixSubchannelPosition,
                                                             outputOptical, fixSubchannel, fixSubchannelCrc, null,
-                                                            null, smallestPregapLbaPerTrack, false);
+                                                            null, smallestPregapLbaPerTrack, false, out _);
 
                                                     if(indexesChanged)
                                                         outputOptical.SetTracks(tracks.ToList());

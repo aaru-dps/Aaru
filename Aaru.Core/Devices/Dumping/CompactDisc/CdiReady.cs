@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
@@ -268,7 +266,8 @@ partial class Dump
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                 desiredSubchannel, sub, i + r, 1, subLog, isrcs, 1, ref mcn, tracks,
                                 subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                                _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                                _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
+                                out List<ulong> newPregapSectors);
 
                             // Set tracks and go back
                             if(indexesChanged)
@@ -350,13 +349,24 @@ partial class Dump
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                         desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, 1, ref mcn, tracks,
                         subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                        _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                        _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
+                        out List<ulong> newPregapSectors);
 
                     // Set tracks and go back
                     if(indexesChanged)
                     {
                         outputOptical.SetTracks(tracks.ToList());
-                        i -= blocksToRead;
+
+                        foreach(ulong newPregapSector in newPregapSectors)
+                            _resume.BadBlocks.Add(newPregapSector);
+
+                        if(i >= blocksToRead)
+                            i -= blocksToRead;
+                        else
+                            i = 0;
+
+                        if(i > 0)
+                            i--;
 
                         continue;
                     }

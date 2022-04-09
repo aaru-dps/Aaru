@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
@@ -271,7 +269,7 @@ partial class Dump
                                                                                _fixSubchannelPosition, outputOptical,
                                                                                _fixSubchannel, _fixSubchannelCrc,
                                                                                _dumpLog, UpdateStatus,
-                                                                               smallestPregapLbaPerTrack, true);
+                                                                               smallestPregapLbaPerTrack, true, out _);
 
                 // Set tracks and go back
                 if(!indexesChanged)

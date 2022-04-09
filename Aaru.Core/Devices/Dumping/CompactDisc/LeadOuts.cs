@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
@@ -165,7 +163,7 @@ partial class Dump
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                             desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
                             subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true, out _);
 
                         // Set tracks and go back
                         if(indexesChanged)
@@ -333,7 +331,7 @@ partial class Dump
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                             desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
                             subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true, out _);
 
                         // Set tracks and go back
                         if(indexesChanged)

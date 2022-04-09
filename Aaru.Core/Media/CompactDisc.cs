@@ -72,7 +72,7 @@ public static class CompactDisc
                                               bool fixSubchannelPosition, IWritableOpticalImage outputPlugin,
                                               bool fixSubchannel, bool fixSubchannelCrc, DumpLog dumpLog,
                                               UpdateStatusHandler updateStatus,
-                                              Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping)
+                                              Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping, out List<ulong> newPregapSectors)
     {
         // We need to work in PW raw subchannels
         if(supportedSubchannel == MmcSubchannel.Q16)
@@ -88,7 +88,7 @@ public static class CompactDisc
         byte[] deSub = Subchannel.Deinterleave(sub);
 
         bool indexesChanged = CheckIndexesFromSubchannel(deSub, isrcs, currentTrack, ref mcn, tracks, dumpLog,
-                                                         updateStatus, smallestPregapLbaPerTrack, dumping);
+                                                         updateStatus, smallestPregapLbaPerTrack, dumping, out newPregapSectors);
 
         if(!fixSubchannelPosition ||
            desiredSubchannel == MmcSubchannel.None)
@@ -312,9 +312,10 @@ public static class CompactDisc
     static bool CheckIndexesFromSubchannel(byte[] deSub, Dictionary<byte, string> isrcs, byte currentTrack,
                                            ref string mcn, Track[] tracks, DumpLog dumpLog,
                                            UpdateStatusHandler updateStatus,
-                                           Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping)
+                                           Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping, out List<ulong> newPregapSectors)
     {
         var status = false;
+        newPregapSectors = new List<ulong>();
 
         // Check subchannel
         for(var subPos = 0; subPos < deSub.Length; subPos += 96)
@@ -431,6 +432,9 @@ public static class CompactDisc
 
                                 updateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
 
+                                for(var p = 0; p < dif; p++)
+                                    newPregapSectors.Add(tracks[i].StartSector+(ulong)p);
+                                
                                 status = true;
                             }
 
@@ -450,6 +454,9 @@ public static class CompactDisc
 
                             updateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
 
+                            for(var p = 0; p < (int)(tracks[i].Pregap - oldPregap); p++)
+                                newPregapSectors.Add(tracks[i].StartSector +(ulong)p);
+                                
                             status = true;
 
                             continue;

@@ -365,7 +365,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                                     bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                         MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1, null, isrcs,
                                         (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true,
-                                        outputFormat, true, true, null, null, smallestPregapLbaPerTrack, false);
+                                        outputFormat, true, true, null, null, smallestPregapLbaPerTrack, false,
+                                        out _);
 
                                     if(indexesChanged)
                                         outputFormat.SetTracks(tracks.ToList());
@@ -389,7 +390,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                                         MmcSubchannel.Raw, sector, doneSectors + track.StartSector, sectorsToDo,
                                         null, isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents,
                                         true, outputFormat, true, true, null, null, smallestPregapLbaPerTrack,
-                                        false);
+                                        false, out _);
 
                                     if(indexesChanged)
                                         outputFormat.SetTracks(tracks.ToList());

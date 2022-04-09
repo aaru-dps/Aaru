@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
@@ -367,7 +365,7 @@ partial class Dump
                                                                                _fixSubchannelPosition, outputOptical,
                                                                                _fixSubchannel, _fixSubchannelCrc,
                                                                                _dumpLog, UpdateStatus,
-                                                                               smallestPregapLbaPerTrack, true);
+                                                                               smallestPregapLbaPerTrack, true, out _);
 
                 // Set tracks and go back
                 if(!indexesChanged)
@@ -497,14 +495,14 @@ partial class Dump
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                             desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.Sequence, ref mcn,
                             tracks, subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true, out _);
 
                         // Set tracks and go back
-                        if(indexesChanged)
-                        {
-                            outputOptical.SetTracks(tracks.ToList());
-                            i--;
-                        }
+                        if(!indexesChanged)
+                            continue;
+
+                        outputOptical.SetTracks(tracks.ToList());
+                        i--;
                     }
                     else
                     {
@@ -660,7 +658,7 @@ partial class Dump
                                                      subLog, isrcs, (byte)track.Sequence, ref mcn, tracks,
                                                      subchannelExtents, _fixSubchannelPosition, outputOptical,
                                                      _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
-                                                     smallestPregapLbaPerTrack, true);
+                                                     smallestPregapLbaPerTrack, true, out _);
 
             if(subchannelExtents.Contains(bs))
                 continue;

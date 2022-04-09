@@ -1172,7 +1172,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                     MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs, (byte)track.Sequence,
                                     ref mcn, tracks.ToArray(), subchannelExtents, false,
                                     outputFormat as IWritableOpticalImage, false, false, null, null,
-                                    smallestPregapLbaPerTrack, false);
+                                    smallestPregapLbaPerTrack, false, out _);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
@@ -1224,7 +1224,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                     MmcSubchannel.Raw, sector, doneSectors, sectorsToDo, null, isrcs,
                                     (byte)track.Sequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
                                     outputFormat as IWritableOpticalImage, false, false, null, null,
-                                    smallestPregapLbaPerTrack, false);
+                                    smallestPregapLbaPerTrack, false, out _);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
