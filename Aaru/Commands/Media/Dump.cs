@@ -239,11 +239,8 @@ sealed class DumpMediaCommand : Command
                     AnsiConsole.Markup(format, objects);
             };
 
-        if(fixSubchannelCrc)
-            fixSubchannel = true;
-
-        if(retrySubchannel || fixSubchannel)
-            fixSubchannelPosition = true;
+        fixSubchannel         |= fixSubchannelCrc;
+        fixSubchannelPosition |= retrySubchannel || fixSubchannel;
 
         if(maxBlocks == 0)
             maxBlocks = 64;
