@@ -342,7 +342,10 @@ public static class DetectOS
                 if(version.StartsWith("10.0", StringComparison.Ordinal))
                     return "Windows 10";
 
-                return "Windows NT/2000/XP/Vista/7/10";
+                if(version.StartsWith("11.0", StringComparison.Ordinal))
+                    return "Windows 11";
+
+                return "Windows NT/2000/XP/Vista/7/10/11";
             case PlatformID.Win32S: return "Windows 3.x with win32s";
             case PlatformID.Win32Windows:
                 if(string.IsNullOrEmpty(version))
