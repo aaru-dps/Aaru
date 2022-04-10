@@ -79,7 +79,7 @@ public static class DetectOS
     {
         get
         {
-            if(!IsWindows)
+            if(!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 return Environment.UserName == "root";
 
             bool            isAdmin;
@@ -223,6 +223,9 @@ public static class DetectOS
         switch(GetRealPlatformID())
         {
             case PlatformID.MacOSX:
+                if(Environment.OSVersion.Version.Major >= 11)
+                    return environ;
+
                 if(Environment.OSVersion.Version.Major != 1)
                     return $"10.{Environment.OSVersion.Version.Major - 4}.{Environment.OSVersion.Version.Minor}";
 
@@ -281,13 +284,13 @@ public static class DetectOS
                    !int.TryParse(pieces[1], out int minor))
                     return "macOS";
 
-                if(minor >= 12)
+                int.TryParse(pieces[0], out int major);
+
+                if(minor >= 12 ||
+                   major >= 11)
                     return "macOS";
 
-                if(minor >= 8)
-                    return "OS X";
-
-                return "Mac OS X";
+                return minor >= 8 ? "OS X" : "Mac OS X";
 
             case PlatformID.Minix:        return "MINIX";
             case PlatformID.NetBSD:       return "NetBSD";
