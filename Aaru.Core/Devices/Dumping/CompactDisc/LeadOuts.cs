@@ -163,7 +163,7 @@ namespace Aaru.Core.Devices.Dumping
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                 desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
                                 subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
-                                _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                                _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true, out _);
 
                             // Set tracks and go back
                             if(indexesChanged)
@@ -331,7 +331,7 @@ namespace Aaru.Core.Devices.Dumping
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                 desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
                                 subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
-                                _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                                _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true, out _);
 
                             // Set tracks and go back
                             if(indexesChanged)

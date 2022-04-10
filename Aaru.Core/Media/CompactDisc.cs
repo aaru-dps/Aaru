@@ -72,7 +72,8 @@ namespace Aaru.Core.Media
                                                   bool fixSubchannelPosition, IWritableImage outputPlugin,
                                                   bool fixSubchannel, bool fixSubchannelCrc, DumpLog dumpLog,
                                                   UpdateStatusHandler updateStatus,
-                                                  Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping)
+                                                  Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping,
+                                                  out List<ulong> newPregapSectors)
         {
             // We need to work in PW raw subchannels
             if(supportedSubchannel == MmcSubchannel.Q16)
@@ -88,8 +89,9 @@ namespace Aaru.Core.Media
 
             byte[] deSub = Subchannel.Deinterleave(sub);
 
-            bool indexesChanged = CheckIndexesFromSubchannel(deSub, isrcs, currentTrack, ref mcn, tracks, dumpLog,
-                                                             updateStatus, smallestPregapLbaPerTrack, dumping);
+        bool indexesChanged = CheckIndexesFromSubchannel(deSub, isrcs, currentTrack, ref mcn, tracks, dumpLog,
+                                                         updateStatus, smallestPregapLbaPerTrack, dumping,
+                                                         out newPregapSectors);
 
             if(!fixSubchannelPosition ||
                desiredSubchannel == MmcSubchannel.None)
@@ -313,9 +315,11 @@ namespace Aaru.Core.Media
         static bool CheckIndexesFromSubchannel(byte[] deSub, Dictionary<byte, string> isrcs, byte currentTrack,
                                                ref string mcn, Track[] tracks, DumpLog dumpLog,
                                                UpdateStatusHandler updateStatus,
-                                               Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping)
+                                               Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping,
+                                               out List<ulong> newPregapSectors)
         {
             bool status = false;
+            newPregapSectors = new List<ulong>();
 
             // Check subchannel
             for(int subPos = 0; subPos < deSub.Length; subPos += 96)
@@ -437,6 +441,9 @@ namespace Aaru.Core.Media
                                     updateStatus?.
                                         Invoke($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
 
+                                    for(var p = 0; p < dif; p++)
+                                        newPregapSectors.Add(tracks[i].TrackStartSector + (ulong)p);
+
                                     status = true;
                                 }
 
@@ -458,6 +465,9 @@ namespace Aaru.Core.Media
                                 updateStatus?.
                                     Invoke($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
 
+                                for(var p = 0; p < (int)(tracks[i].TrackPregap - oldPregap); p++)
+                                    newPregapSectors.Add(tracks[i].TrackStartSector + (ulong)p);
+
                                 status = true;
 
                                 continue;
@@ -470,6 +480,11 @@ namespace Aaru.Core.Media
                             byte asec   = (byte)((q[8] / 16 * 10) + (q[8] & 0x0F));
                             byte aframe = (byte)((q[9] / 16 * 10) + (q[9] & 0x0F));
                             int  aPos   = (amin * 60 * 75) + (asec * 75) + aframe - 150;
+
+                            // Do not set INDEX 1 to a value higher than what the TOC already said.
+                            if(q[2] == 1 &&
+                               aPos > (int)tracks[i].TrackStartSector)
+                                continue;
 
                             if(tracks[i].Indexes.ContainsKey(q[2]) &&
                                aPos >= tracks[i].Indexes[q[2]])

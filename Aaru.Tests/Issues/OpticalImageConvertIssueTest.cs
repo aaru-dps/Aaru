@@ -301,7 +301,7 @@ namespace Aaru.Tests.Issues
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                     MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector, 1, null,
                                     isrcs, (byte)track.TrackSequence, ref mcn, tracks, subchannelExtents, true,
-                                    outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false);
+                                    outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false, out _);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
@@ -321,7 +321,7 @@ namespace Aaru.Tests.Issues
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                     MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector, sectorsToDo,
                                     null, isrcs, (byte)track.TrackSequence, ref mcn, tracks, subchannelExtents,
-                                    true, outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false);
+                                    true, outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false, out _);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());

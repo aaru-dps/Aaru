@@ -359,7 +359,7 @@ namespace Aaru.Tests.WritableImages
                                             MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector, 1,
                                             null, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
                                             subchannelExtents, true, outputFormat, true, true, null, null,
-                                            smallestPregapLbaPerTrack, false);
+                                            smallestPregapLbaPerTrack, false, out _);
 
                                         if(indexesChanged)
                                             outputFormat.SetTracks(tracks.ToList());
@@ -382,7 +382,7 @@ namespace Aaru.Tests.WritableImages
                                             MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector,
                                             sectorsToDo, null, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
                                             subchannelExtents, true, outputFormat, true, true, null, null,
-                                            smallestPregapLbaPerTrack, false);
+                                            smallestPregapLbaPerTrack, false, out _);
 
                                         if(indexesChanged)
                                             outputFormat.SetTracks(tracks.ToList());

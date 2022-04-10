@@ -949,7 +949,7 @@ namespace Aaru.Commands.Image
                                         MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector, 1, null,
                                         isrcs, (byte)track.TrackSequence, ref mcn, tracks, subchannelExtents,
                                         fixSubchannelPosition, outputFormat, fixSubchannel, fixSubchannelCrc, null,
-                                        null, smallestPregapLbaPerTrack, false);
+                                        null, smallestPregapLbaPerTrack, false, out _);
 
                                     if(indexesChanged)
                                         outputOptical.SetTracks(tracks.ToList());
@@ -971,7 +971,7 @@ namespace Aaru.Commands.Image
                                         MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector,
                                         sectorsToDo, null, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
                                         subchannelExtents, fixSubchannelPosition, outputFormat, fixSubchannel,
-                                        fixSubchannelCrc, null, null, smallestPregapLbaPerTrack, false);
+                                        fixSubchannelCrc, null, null, smallestPregapLbaPerTrack, false, out _);
 
                                     if(indexesChanged)
                                         outputOptical.SetTracks(tracks.ToList());

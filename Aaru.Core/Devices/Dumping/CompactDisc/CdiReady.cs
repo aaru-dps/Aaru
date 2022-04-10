@@ -270,7 +270,8 @@ namespace Aaru.Core.Devices.Dumping
                                 bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                     desiredSubchannel, sub, i + r, 1, subLog, isrcs, 1, ref mcn, tracks,
                                     subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
-                                    _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                                    _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
+                                    out List<ulong> _);
 
                                 // Set tracks and go back
                                 if(indexesChanged)
@@ -355,12 +356,17 @@ namespace Aaru.Core.Devices.Dumping
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                             desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, 1, ref mcn, tracks,
                             subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
-                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
+                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
+                            out List<ulong> newPregapSectors);
 
                         // Set tracks and go back
                         if(indexesChanged)
                         {
                             (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+
+                            foreach(ulong newPregapSector in newPregapSectors)
+                                _resume.BadBlocks.Add(newPregapSector);
+
                             i -= blocksToRead;
 
                             continue;
