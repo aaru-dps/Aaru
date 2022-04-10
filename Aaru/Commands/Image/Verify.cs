@@ -35,7 +35,7 @@ namespace Aaru.Commands.Image;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -48,23 +48,15 @@ sealed class VerifyCommand : Command
 {
     public VerifyCommand() : base("verify", "Verifies a disc image integrity, and if supported, sector integrity.")
     {
-        Add(new Option(new[]
-            {
-                "--verify-disc", "-w"
-            }, "Verify disc image if supported.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--verify-disc", "-w"
+        }, () => true, "Verify disc image if supported."));
 
-        Add(new Option(new[]
-            {
-                "--verify-sectors", "-s"
-            }, "Verify all sectors if supported.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--verify-sectors", "-s"
+        }, () => true, "Verify all sectors if supported."));
 
         AddArgument(new Argument<string>
         {

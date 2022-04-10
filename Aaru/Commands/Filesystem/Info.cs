@@ -35,7 +35,7 @@ namespace Aaru.Commands.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -49,32 +49,20 @@ sealed class FilesystemInfoCommand : Command
     public FilesystemInfoCommand() : base("info",
                                           "Opens a disc image and prints info on the found partitions and/or filesystems.")
     {
-        Add(new Option(new[]
-            {
-                "--encoding", "-e"
-            }, "Name of character encoding to use.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--encoding", "-e"
+        }, () => null, "Name of character encoding to use."));
 
-        Add(new Option(new[]
-            {
-                "--filesystems", "-f"
-            }, "Searches and prints information about filesystems.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--filesystems", "-f"
+        }, () => true, "Searches and prints information about filesystems."));
 
-        Add(new Option(new[]
-            {
-                "--partitions", "-p"
-            }, "Searches and interprets partitions.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--partitions", "-p"
+        }, () => true, "Searches and interprets partitions."));
 
         AddArgument(new Argument<string>
         {

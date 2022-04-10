@@ -36,7 +36,7 @@ namespace Aaru.Commands.Device;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -67,14 +67,10 @@ sealed class DeviceInfoCommand : Command
 {
     public DeviceInfoCommand() : base("info", "Gets information about a device.")
     {
-        Add(new Option(new[]
-            {
-                "--output-prefix", "-w"
-            }, "Prefix for saving binary information from device.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--output-prefix", "-w"
+        }, () => null, "Prefix for saving binary information from device."));
 
         AddArgument(new Argument<string>
         {

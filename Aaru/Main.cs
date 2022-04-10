@@ -201,29 +201,22 @@ class MainClass
 
         var rootCommand = new RootCommand();
 
-        rootCommand.AddGlobalOption(new Option(new[]
-                                    {
-                                        "--verbose", "-v"
-                                    }, "Shows verbose output.")
-                                    {
-                                        Argument = new Argument<bool>(() => false)
-                                    });
+        rootCommand.AddGlobalOption(new Option<bool>(new[]
+        {
+            "--verbose", "-v"
+        }, () => false, "Shows verbose output."));
 
-        rootCommand.AddGlobalOption(new Option(new[]
-                                    {
-                                        "--debug", "-d"
-                                    }, "Shows debug output from plugins.")
-                                    {
-                                        Argument = new Argument<bool>(() => false)
-                                    });
+        rootCommand.AddGlobalOption(new Option<bool>(new[]
+        {
+            "--debug", "-d"
+        }, () => false, "Shows debug output from plugins."));
 
-        rootCommand.AddGlobalOption(new Option(new[]
-                                    {
-                                        "--pause"
-                                    }, "Pauses before exiting.")
-                                    {
-                                        Argument = new Argument<bool>(() => false)
-                                    });
+        var pauseOption = new Option<bool>(new[]
+        {
+            "--pause"
+        }, () => false, "Pauses before exiting.");
+
+        rootCommand.AddGlobalOption(pauseOption);
 
         rootCommand.Description = $"{_assemblyTitle} {_assemblyVersion?.InformationalVersion}\n{_assemblyCopyright}";
 
@@ -244,7 +237,7 @@ class MainClass
 
         Statistics.SaveStats();
 
-        if(rootCommand.Parse(args).RootCommandResult.ValueForOption("--pause")?.Equals(true) != true)
+        if(!rootCommand.Parse(args).RootCommandResult.GetValueForOption(pauseOption))
             return ret;
 
         AaruConsole.WriteLine("Press any key to exit.");

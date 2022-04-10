@@ -34,7 +34,7 @@ namespace Aaru.Commands.Image;
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -47,41 +47,25 @@ sealed class PrintHexCommand : Command
 {
     public PrintHexCommand() : base("print", "Prints a sector, in hexadecimal values, to the console.")
     {
-        Add(new Option(new[]
-            {
-                "--length", "-l"
-            }, "How many sectors to print.")
-            {
-                Argument = new Argument<ulong>(() => 1),
-                Required = false
-            });
+        Add(new Option<ulong>(new[]
+        {
+            "--length", "-l"
+        }, () => 1, "How many sectors to print."));
 
-        Add(new Option(new[]
-            {
-                "--long-sectors", "-r"
-            }, "Print sectors with tags included.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--long-sectors", "-r"
+        }, () => false, "Print sectors with tags included."));
 
-        Add(new Option(new[]
-            {
-                "--start", "-s"
-            }, "Starting sector.")
-            {
-                Argument = new Argument<ulong>(),
-                Required = true
-            });
+        Add(new Option<ulong>(new[]
+        {
+            "--start", "-s"
+        }, "Starting sector."));
 
-        Add(new Option(new[]
-            {
-                "--width", "-w"
-            }, "How many bytes to print per line.")
-            {
-                Argument = new Argument<ushort>(() => 32),
-                Required = false
-            });
+        Add(new Option<ushort>(new[]
+        {
+            "--width", "-w"
+        }, () => 32, "How many bytes to print per line."));
 
         AddArgument(new Argument<string>
         {

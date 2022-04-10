@@ -34,7 +34,7 @@ namespace Aaru.Commands;
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Enums;

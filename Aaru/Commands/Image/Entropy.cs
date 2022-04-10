@@ -34,7 +34,7 @@ namespace Aaru.Commands.Image;
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -49,32 +49,20 @@ sealed class EntropyCommand : Command
 
     public EntropyCommand() : base("entropy", "Calculates entropy and/or duplicated sectors of an image.")
     {
-        Add(new Option(new[]
-            {
-                "--duplicated-sectors", "-p"
-            }, "Calculates how many sectors are duplicated (have same exact data in user area).")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--duplicated-sectors", "-p"
+        }, () => true, "Calculates how many sectors are duplicated (have same exact data in user area)."));
 
-        Add(new Option(new[]
-            {
-                "--separated-tracks", "-t"
-            }, "Calculates entropy for each track separately.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--separated-tracks", "-t"
+        }, () => true, "Calculates entropy for each track separately."));
 
-        Add(new Option(new[]
-            {
-                "--whole-disc", "-w"
-            }, "Calculates entropy for the whole disc.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--whole-disc", "-w"
+        }, () => true, "Calculates entropy for the whole disc."));
 
         AddArgument(new Argument<string>
         {

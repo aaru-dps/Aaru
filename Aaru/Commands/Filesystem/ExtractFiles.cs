@@ -35,7 +35,7 @@ namespace Aaru.Commands.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes;
@@ -54,41 +54,25 @@ sealed class ExtractFilesCommand : Command
 
     public ExtractFilesCommand() : base("extract", "Extracts all files in disc image.")
     {
-        Add(new Option(new[]
-            {
-                "--encoding", "-e"
-            }, "Name of character encoding to use.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--encoding", "-e"
+        }, () => null, "Name of character encoding to use."));
 
-        Add(new Option(new[]
-            {
-                "--options", "-O"
-            }, "Comma separated name=value pairs of options to pass to filesystem plugin.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--options", "-O"
+        }, () => null, "Comma separated name=value pairs of options to pass to filesystem plugin."));
 
-        Add(new Option(new[]
-            {
-                "--xattrs", "-x"
-            }, "Extract extended attributes if present.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--xattrs", "-x"
+        }, () => false, "Extract extended attributes if present."));
 
-        Add(new Option(new[]
-            {
-                "--namespace", "-n"
-            }, "Namespace to use for filenames.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--namespace", "-n"
+        }, () => null, "Namespace to use for filenames."));
 
         AddArgument(new Argument<string>
         {

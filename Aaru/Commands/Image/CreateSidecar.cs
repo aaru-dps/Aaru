@@ -34,7 +34,7 @@ namespace Aaru.Commands.Image;
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -55,34 +55,22 @@ sealed class CreateSidecarCommand : Command
 
     public CreateSidecarCommand() : base("create-sidecar", "Creates CICM Metadata XML sidecar.")
     {
-        Add(new Option(new[]
-                       {
-                           "--block-size", "-b"
-                       },
-                       "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored.")
-        {
-            Argument = new Argument<int>(() => 512),
-            Required = false
-        });
+        Add(new Option<int>(new[]
+                            {
+                                "--block-size", "-b"
+                            }, () => 512,
+                            "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored."));
 
-        Add(new Option(new[]
-            {
-                "--encoding", "-e"
-            }, "Name of character encoding to use.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
-
-        Add(new Option(new[]
-                       {
-                           "--tape", "-t"
-                       },
-                       "When used indicates that input is a folder containing alphabetically sorted files extracted from a linear block-based tape with fixed block size (e.g. a SCSI tape device).")
+        Add(new Option<string>(new[]
         {
-            Argument = new Argument<bool>(() => false),
-            Required = false
-        });
+            "--encoding", "-e"
+        }, () => null, "Name of character encoding to use."));
+
+        Add(new Option<bool>(new[]
+                             {
+                                 "--tape", "-t"
+                             }, () => false,
+                             "When used indicates that input is a folder containing alphabetically sorted files extracted from a linear block-based tape with fixed block size (e.g. a SCSI tape device)."));
 
         AddArgument(new Argument<string>
         {

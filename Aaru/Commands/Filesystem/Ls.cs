@@ -35,7 +35,7 @@ namespace Aaru.Commands.Filesystem;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
@@ -53,41 +53,25 @@ sealed class LsCommand : Command
     {
         AddAlias("ls");
 
-        Add(new Option(new[]
-            {
-                "--encoding", "-e"
-            }, "Name of character encoding to use.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--encoding", "-e"
+        }, () => null, "Name of character encoding to use."));
 
-        Add(new Option(new[]
-            {
-                "--long-format", "-l"
-            }, "Uses long format.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--long-format", "-l"
+        }, () => true, "Uses long format."));
 
-        Add(new Option(new[]
-            {
-                "--options", "-O"
-            }, "Comma separated name=value pairs of options to pass to filesystem plugin.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--options", "-O"
+        }, () => null, "Comma separated name=value pairs of options to pass to filesystem plugin."));
 
-        Add(new Option(new[]
-            {
-                "--namespace", "-n"
-            }, "Namespace to use for filenames.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--namespace", "-n"
+        }, () => null, "Namespace to use for filenames."));
 
         AddArgument(new Argument<string>
         {

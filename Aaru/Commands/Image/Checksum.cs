@@ -35,7 +35,7 @@ namespace Aaru.Commands.Image;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -57,110 +57,50 @@ sealed class ChecksumCommand : Command
     {
         AddAlias("chk");
 
-        Add(new Option(new[]
-            {
-                "--adler32", "-a"
-            }, "Calculates Adler32.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
-
-        Add(new Option("--crc16", "Calculates CRC16.")
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<bool>(() => true),
-            Required = false
-        });
+            "--adler32", "-a"
+        }, () => false, "Calculates Adler32."));
 
-        Add(new Option(new[]
-            {
-                "--crc32", "-c"
-            }, "Calculates CRC32.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>("--crc16", () => true, "Calculates CRC16."));
 
-        Add(new Option("--crc64", "Calculates CRC64.")
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<bool>(() => true),
-            Required = false
-        });
+            "--crc32", "-c"
+        }, () => true, "Calculates CRC32."));
 
-        Add(new Option("--fletcher16", "Calculates Fletcher-16.")
+        Add(new Option<bool>("--crc64", () => true, "Calculates CRC64."));
+        Add(new Option<bool>("--fletcher16", () => false, "Calculates Fletcher-16."));
+        Add(new Option<bool>("--fletcher32", () => false, "Calculates Fletcher-32."));
+
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<bool>(() => false),
-            Required = false
-        });
+            "--md5", "-m"
+        }, () => true, "Calculates MD5."));
 
-        Add(new Option("--fletcher32", "Calculates Fletcher-32.")
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<bool>(() => false),
-            Required = false
-        });
+            "--separated-tracks", "-t"
+        }, () => true, "Checksums each track separately."));
 
-        Add(new Option(new[]
-            {
-                "--md5", "-m"
-            }, "Calculates MD5.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--separated-tracks", "-t"
-            }, "Checksums each track separately.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--sha1", "-s"
-            }, "Calculates SHA1.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
-
-        Add(new Option("--sha256", "Calculates SHA256.")
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<bool>(() => false),
-            Required = false
-        });
+            "--sha1", "-s"
+        }, () => true, "Calculates SHA1."));
 
-        Add(new Option("--sha384", "Calculates SHA384.")
+        Add(new Option<bool>("--sha256", () => false, "Calculates SHA256."));
+        Add(new Option<bool>("--sha384", () => false, "Calculates SHA384."));
+        Add(new Option<bool>("--sha512", () => true, "Calculates SHA512."));
+
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<bool>(() => false),
-            Required = false
-        });
+            "--spamsum", "-f"
+        }, () => true, "Calculates SpamSum fuzzy hash."));
 
-        Add(new Option("--sha512", "Calculates SHA512.")
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<bool>(() => true),
-            Required = false
-        });
-
-        Add(new Option(new[]
-            {
-                "--spamsum", "-f"
-            }, "Calculates SpamSum fuzzy hash.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--whole-disc", "-w"
-            }, "Checksums the whole disc.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+            "--whole-disc", "-w"
+        }, () => true, "Checksums the whole disc."));
 
         AddArgument(new Argument<string>
         {

@@ -34,7 +34,7 @@ namespace Aaru.Commands.Image;
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -49,41 +49,25 @@ sealed class DecodeCommand : Command
 {
     public DecodeCommand() : base("decode", "Decodes and pretty prints disk and/or sector tags.")
     {
-        Add(new Option(new[]
-            {
-                "--disk-tags", "-f"
-            }, "Decode disk tags.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--disk-tags", "-f"
+        }, () => true, "Decode disk tags."));
 
-        Add(new Option(new[]
-            {
-                "--length", "-l"
-            }, "How many sectors to decode, or \"all\".")
-            {
-                Argument = new Argument<string>(() => "all"),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--length", "-l"
+        }, () => "all", "How many sectors to decode, or \"all\"."));
 
-        Add(new Option(new[]
-            {
-                "--sector-tags", "-p"
-            }, "Decode sector tags.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--sector-tags", "-p"
+        }, () => true, "Decode sector tags."));
 
-        Add(new Option(new[]
-            {
-                "--start", "-s"
-            }, "Sector to start decoding from.")
-            {
-                Argument = new Argument<ulong>(() => 0),
-                Required = false
-            });
+        Add(new Option<ulong>(new[]
+        {
+            "--start", "-s"
+        }, () => 0, "Sector to start decoding from."));
 
         AddArgument(new Argument<string>
         {

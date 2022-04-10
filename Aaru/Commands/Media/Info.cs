@@ -35,7 +35,7 @@ namespace Aaru.Commands.Media;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
@@ -67,14 +67,10 @@ sealed class MediaInfoCommand : Command
 {
     public MediaInfoCommand() : base("info", "Gets information about the media inserted on a device.")
     {
-        Add(new Option(new[]
-            {
-                "--output-prefix", "-w"
-            }, "Write binary responses from device with that prefix.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--output-prefix", "-w"
+        }, () => null, "Write binary responses from device with that prefix."));
 
         AddArgument(new Argument<string>
         {

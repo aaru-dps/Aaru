@@ -35,7 +35,7 @@ namespace Aaru.Commands.Image;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -59,192 +59,91 @@ sealed class ConvertImageCommand : Command
 {
     public ConvertImageCommand() : base("convert", "Converts one image to another format.")
     {
-        Add(new Option(new[]
-            {
-                "--cicm-xml", "-x"
-            }, "Take metadata from existing CICM XML sidecar.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
-
-        Add(new Option("--comments", "Image comments.")
+        Add(new Option<string>(new[]
         {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
+            "--cicm-xml", "-x"
+        }, () => null, "Take metadata from existing CICM XML sidecar."));
 
-        Add(new Option(new[]
-            {
-                "--count", "-c"
-            }, "How many sectors to convert at once.")
-            {
-                Argument = new Argument<int>(() => 64),
-                Required = false
-            });
+        Add(new Option<string>("--comments", () => null, "Image comments."));
 
-        Add(new Option("--creator", "Who (person) created the image?.")
+        Add(new Option<int>(new[]
         {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
+            "--count", "-c"
+        }, () => 64, "How many sectors to convert at once."));
 
-        Add(new Option("--drive-manufacturer",
-                       "Manufacturer of the drive used to read the media represented by the image.")
+        Add(new Option<string>("--creator", () => null, "Who (person) created the image?."));
+
+        Add(new Option<string>("--drive-manufacturer", () => null,
+                               "Manufacturer of the drive used to read the media represented by the image."));
+
+        Add(new Option<string>("--drive-model", () => null,
+                               "Model of the drive used to read the media represented by the image."));
+
+        Add(new Option<string>("--drive-revision", () => null,
+                               "Firmware revision of the drive used to read the media represented by the image."));
+
+        Add(new Option<string>("--drive-serial", () => null,
+                               "Serial number of the drive used to read the media represented by the image."));
+
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
+            "--force", "-f"
+        }, "Continue conversion even if sector or media tags will be lost in the process."));
 
-        Add(new Option("--drive-model", "Model of the drive used to read the media represented by the image.")
+        Add(new Option<string>(new[]
+                               {
+                                   "--format", "-p"
+                               }, () => null,
+                               "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension."));
+
+        Add(new Option<string>("--media-barcode", () => null, "Barcode of the media represented by the image."));
+
+        Add(new Option<int>("--media-lastsequence", () => 0,
+                            "Last media of the sequence the media represented by the image corresponds to."));
+
+        Add(new Option<string>("--media-manufacturer", () => null,
+                               "Manufacturer of the media represented by the image."));
+
+        Add(new Option<string>("--media-model", () => null, "Model of the media represented by the image."));
+        Add(new Option<string>("--media-partnumber", () => null, "Part number of the media represented by the image."));
+        Add(new Option<int>("--media-sequence", () => 0, "Number in sequence for the media represented by the image."));
+        Add(new Option<string>("--media-serial", () => null, "Serial number of the media represented by the image."));
+        Add(new Option<string>("--media-title", () => null, "Title of the media represented by the image."));
+
+        Add(new Option<string>(new[]
         {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
+            "--options", "-O"
+        }, () => null, "Comma separated name=value pairs of options to pass to output image plugin."));
 
-        Add(new Option("--drive-revision",
-                       "Firmware revision of the drive used to read the media represented by the image.")
+        Add(new Option<string>(new[]
         {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
+            "--resume-file", "-r"
+        }, () => null, "Take list of dump hardware from existing resume file."));
 
-        Add(new Option("--drive-serial", "Serial number of the drive used to read the media represented by the image.")
+        Add(new Option<string>(new[]
         {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
+            "--geometry", "-g"
+        }, () => null, "Force geometry, only supported in not tape block media. Specify as C/H/S."));
 
-        Add(new Option(new[]
-            {
-                "--force", "-f"
-            }, "Continue conversion even if sector or media tags will be lost in the process.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
-
-        Add(new Option(new[]
-                       {
-                           "--format", "-p"
-                       },
-                       "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.")
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
+            "--fix-subchannel-position"
+        }, () => true, "Store subchannel according to the sector they describe."));
 
-        Add(new Option("--media-barcode", "Barcode of the media represented by the image.")
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
+            "--fix-subchannel"
+        }, () => false, "Try to fix subchannel. Implies fixing subchannel position."));
 
-        Add(new Option("--media-lastsequence",
-                       "Last media of the sequence the media represented by the image corresponds to.")
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<int>(() => 0),
-            Required = false
-        });
+            "--fix-subchannel-crc"
+        }, () => false, "If subchannel looks OK but CRC fails, rewrite it. Implies fixing subchannel."));
 
-        Add(new Option("--media-manufacturer", "Manufacturer of the media represented by the image.")
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
-
-        Add(new Option("--media-model", "Model of the media represented by the image.")
-        {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
-
-        Add(new Option("--media-partnumber", "Part number of the media represented by the image.")
-        {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
-
-        Add(new Option("--media-sequence", "Number in sequence for the media represented by the image.")
-        {
-            Argument = new Argument<int>(() => 0),
-            Required = false
-        });
-
-        Add(new Option("--media-serial", "Serial number of the media represented by the image.")
-        {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
-
-        Add(new Option("--media-title", "Title of the media represented by the image.")
-        {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
-
-        Add(new Option(new[]
-            {
-                "--options", "-O"
-            }, "Comma separated name=value pairs of options to pass to output image plugin.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--resume-file", "-r"
-            }, "Take list of dump hardware from existing resume file.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--geometry", "-g"
-            }, "Force geometry, only supported in not tape block media. Specify as C/H/S.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--fix-subchannel-position"
-            }, "Store subchannel according to the sector they describe.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--fix-subchannel"
-            }, "Try to fix subchannel. Implies fixing subchannel position.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--fix-subchannel-crc"
-            }, "If subchannel looks OK but CRC fails, rewrite it. Implies fixing subchannel.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--generate-subchannels"
-            }, "Generates missing subchannels.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
+            "--generate-subchannels"
+        }, () => false, "Generates missing subchannels."));
 
         AddArgument(new Argument<string>
         {

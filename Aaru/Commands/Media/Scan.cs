@@ -34,7 +34,7 @@ namespace Aaru.Commands.Media;
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
@@ -48,32 +48,20 @@ sealed class MediaScanCommand : Command
 
     public MediaScanCommand() : base("scan", "Scans the media inserted on a device.")
     {
-        Add(new Option(new[]
-            {
-                "--mhdd-log", "-m"
-            }, "Write a log of the scan in the format used by MHDD.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--mhdd-log", "-m"
+        }, () => null, "Write a log of the scan in the format used by MHDD."));
 
-        Add(new Option(new[]
-            {
-                "--ibg-log", "-b"
-            }, "Write a log of the scan in the format used by ImgBurn.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
+        Add(new Option<string>(new[]
+        {
+            "--ibg-log", "-b"
+        }, () => null, "Write a log of the scan in the format used by ImgBurn."));
 
-        Add(new Option(new[]
-            {
-                "--use-buffered-reads"
-            }, "For MMC/SD, use OS buffered reads if CMD23 is not supported.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--use-buffered-reads"
+        }, () => true, "For MMC/SD, use OS buffered reads if CMD23 is not supported."));
 
         AddArgument(new Argument<string>
         {

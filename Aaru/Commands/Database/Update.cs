@@ -34,7 +34,7 @@ namespace Aaru.Commands.Database;
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.Diagnostics;
 using System.IO;
 using Aaru.CommonTypes.Enums;
@@ -53,17 +53,8 @@ sealed class UpdateCommand : Command
     {
         _mainDbUpdate = mainDbUpdate;
 
-        Add(new Option("--clear", "Clear existing main database.")
-        {
-            Argument = new Argument<bool>(() => false),
-            Required = false
-        });
-
-        Add(new Option("--clear-all", "Clear existing main and local database.")
-        {
-            Argument = new Argument<bool>(() => false),
-            Required = false
-        });
+        Add(new Option<bool>("--clear", () => false, "Clear existing main database."));
+        Add(new Option<bool>("--clear-all", () => false, "Clear existing main and local database."));
 
         Handler = CommandHandler.Create((Func<bool, bool, bool, bool, int>)Invoke);
     }

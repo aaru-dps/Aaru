@@ -33,7 +33,7 @@
 namespace Aaru.Commands.Database;
 
 using System;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;

@@ -36,7 +36,7 @@ namespace Aaru.Commands.Media;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -64,130 +64,67 @@ sealed class DumpMediaCommand : Command
 
     public DumpMediaCommand() : base("dump", "Dumps the media inserted on a device to a media image.")
     {
-        Add(new Option(new[]
-            {
-                "--cicm-xml", "-x"
-            }, "Take metadata from existing CICM XML sidecar.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--encoding", "-e"
-            }, "Name of character encoding to use.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
-
-        Add(new Option("--first-pregap", "Try to read first track pregap. Only applicable to CD/DDCD/GD.")
+        Add(new Option<string>(new[]
         {
-            Argument = new Argument<bool>(() => false),
-            Required = false
-        });
+            "--cicm-xml", "-x"
+        }, () => null, "Take metadata from existing CICM XML sidecar."));
 
-        Add(new Option("--fix-offset", "Fix audio tracks offset. Only applicable to CD/GD.")
+        Add(new Option<string>(new[]
         {
-            Argument = new Argument<bool>(() => true),
-            Required = false
-        });
+            "--encoding", "-e"
+        }, () => null, "Name of character encoding to use."));
 
-        Add(new Option(new[]
-            {
-                "--force", "-f"
-            }, "Continue dump whatever happens.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
+        Add(new Option<bool>("--first-pregap", () => false,
+                             "Try to read first track pregap. Only applicable to CD/DDCD/GD."));
 
-        Add(new Option(new[]
-                       {
-                           "--format", "-t"
-                       },
-                       "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.")
+        Add(new Option<bool>("--fix-offset", () => true, "Fix audio tracks offset. Only applicable to CD/GD."));
+
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<string>(() => null),
-            Required = false
-        });
+            "--force", "-f"
+        }, () => false, "Continue dump whatever happens."));
 
-        Add(new Option("--metadata", "Enables creating CICM XML sidecar.")
+        Add(new Option<string>(new[]
+                               {
+                                   "--format", "-t"
+                               }, () => null,
+                               "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension."));
+
+        Add(new Option<bool>("--metadata", () => true, "Enables creating CICM XML sidecar."));
+
+        Add(new Option<bool>("--trim", () => true, "Enables trimming errored from skipped sectors."));
+
+        Add(new Option<string>(new[]
         {
-            Argument = new Argument<bool>(() => true),
-            Required = false
-        });
+            "--options", "-O"
+        }, () => null, "Comma separated name=value pairs of options to pass to output image plugin."));
 
-        Add(new Option("--trim", "Enables trimming errored from skipped sectors.")
+        Add(new Option<bool>("--persistent", () => false, "Try to recover partial or incorrect data."));
+
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<bool>(() => true),
-            Required = false
-        });
+            "--resume", "-r"
+        }, () => true, "Create/use resume mapfile."));
 
-        Add(new Option(new[]
-            {
-                "--options", "-O"
-            }, "Comma separated name=value pairs of options to pass to output image plugin.")
-            {
-                Argument = new Argument<string>(() => null),
-                Required = false
-            });
-
-        Add(new Option("--persistent", "Try to recover partial or incorrect data.")
+        Add(new Option<ushort>(new[]
         {
-            Argument = new Argument<bool>(() => false),
-            Required = false
-        });
+            "--retry-passes", "-p"
+        }, () => 5, "How many retry passes to do."));
 
-        Add(new Option(new[]
-            {
-                "--resume", "-r"
-            }, "Create/use resume mapfile.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--retry-passes", "-p"
-            }, "How many retry passes to do.")
-            {
-                Argument = new Argument<ushort>(() => 5),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--skip", "-k"
-            }, "When an unreadable sector is found skip this many sectors.")
-            {
-                Argument = new Argument<uint>(() => 512),
-                Required = false
-            });
-
-        Add(new Option(new[]
-            {
-                "--stop-on-error", "-s"
-            }, "Stop media dump on first error.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
-
-        Add(new Option("--subchannel",
-                       "Subchannel to dump. Only applicable to CD/GD. Values: any, rw, rw-or-pq, pq, none.")
+        Add(new Option<uint>(new[]
         {
-            Argument = new Argument<string>(() => "any"),
-            Required = false
-        });
+            "--skip", "-k"
+        }, () => 512, "When an unreadable sector is found skip this many sectors."));
 
-        Add(new Option("--speed", "Speed to dump. Only applicable to optical drives, 0 for maximum.")
+        Add(new Option<bool>(new[]
         {
-            Argument = new Argument<byte>(() => 0),
-            Required = false
-        });
+            "--stop-on-error", "-s"
+        }, () => false, "Stop media dump on first error."));
+
+        Add(new Option<string>("--subchannel", () => "any",
+                               "Subchannel to dump. Only applicable to CD/GD. Values: any, rw, rw-or-pq, pq, none."));
+
+        Add(new Option<byte>("--speed", () => 0, "Speed to dump. Only applicable to optical drives, 0 for maximum."));
 
         AddArgument(new Argument<string>
         {
@@ -204,113 +141,65 @@ sealed class DumpMediaCommand : Command
             Name = "output-path"
         });
 
-        Add(new Option(new[]
-            {
-                "--private"
-            }, "Do not store paths and serial numbers in log or metadata.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--private"
+        }, () => false, "Do not store paths and serial numbers in log or metadata."));
 
-        Add(new Option(new[]
-            {
-                "--fix-subchannel-position"
-            }, "Store subchannel according to the sector they describe.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--fix-subchannel-position"
+        }, () => true, "Store subchannel according to the sector they describe."));
 
-        Add(new Option(new[]
-            {
-                "--retry-subchannel"
-            }, "Retry subchannel. Implies fixing subchannel position.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--retry-subchannel"
+        }, () => true, "Retry subchannel. Implies fixing subchannel position."));
 
-        Add(new Option(new[]
-            {
-                "--fix-subchannel"
-            }, "Try to fix subchannel. Implies fixing subchannel position.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--fix-subchannel"
+        }, () => false, "Try to fix subchannel. Implies fixing subchannel position."));
 
-        Add(new Option(new[]
-            {
-                "--fix-subchannel-crc"
-            }, "If subchannel looks OK but CRC fails, rewrite it. Implies fixing subchannel.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--fix-subchannel-crc"
+        }, () => false, "If subchannel looks OK but CRC fails, rewrite it. Implies fixing subchannel."));
 
-        Add(new Option(new[]
-            {
-                "--generate-subchannels"
-            }, "Generates missing subchannels (they don't count as dumped in resume file).")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--generate-subchannels"
+        }, () => false, "Generates missing subchannels (they don't count as dumped in resume file)."));
 
-        Add(new Option(new[]
-            {
-                "--skip-cdiready-hole"
-            }, "Skip the hole between data and audio in a CD-i Ready disc.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--skip-cdiready-hole"
+        }, () => true, "Skip the hole between data and audio in a CD-i Ready disc."));
 
-        Add(new Option(new[]
-            {
-                "--eject"
-            }, "Eject media after dump finishes.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--eject"
+        }, () => false, "Eject media after dump finishes."));
 
-        Add(new Option(new[]
-            {
-                "--max-blocks"
-            }, "Maximum number of blocks to read at once.")
-            {
-                Argument = new Argument<uint>(() => 64),
-                Required = false
-            });
+        Add(new Option<uint>(new[]
+        {
+            "--max-blocks"
+        }, () => 64, "Maximum number of blocks to read at once."));
 
-        Add(new Option(new[]
-            {
-                "--use-buffered-reads"
-            }, "For MMC/SD, use OS buffered reads if CMD23 is not supported.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--use-buffered-reads"
+        }, () => true, "For MMC/SD, use OS buffered reads if CMD23 is not supported."));
 
-        Add(new Option(new[]
-            {
-                "--store-encrypted"
-            }, "Store encrypted data as is.")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--store-encrypted"
+        }, () => true, "Store encrypted data as is."));
 
-        Add(new Option(new[]
-            {
-                "--title-keys"
-            }, "Try to read the title keys from CSS encrypted DVDs (very slow).")
-            {
-                Argument = new Argument<bool>(() => true),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--title-keys"
+        }, () => true, "Try to read the title keys from CSS encrypted DVDs (very slow)."));
 
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }

@@ -35,7 +35,7 @@ namespace Aaru.Commands.Device;
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
+using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -70,14 +70,10 @@ sealed class DeviceReportCommand : Command
             Name        = "device-path"
         });
 
-        Add(new Option(new[]
-            {
-                "--trap-disc", "-t"
-            }, "Does a device report using a trap disc.")
-            {
-                Argument = new Argument<bool>(() => false),
-                Required = false
-            });
+        Add(new Option<bool>(new[]
+        {
+            "--trap-disc", "-t"
+        }, () => false, "Does a device report using a trap disc."));
 
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
