@@ -151,7 +151,7 @@ public sealed partial class AaruFormat
 
                     while(readBytes + verifySize < ddtHeader.cmpLength)
                     {
-                        verifyBytes = new byte[readBytes];
+                        verifyBytes = new byte[verifySize];
                         _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
                         crcVerify.Update(verifyBytes);
                         readBytes += (ulong)verifyBytes.LongLength;
