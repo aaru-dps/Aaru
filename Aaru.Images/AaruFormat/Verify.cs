@@ -151,13 +151,13 @@ namespace Aaru.DiscImages
                                                    "Verifying deduplication table type {0} at position {1}",
                                                    entry.dataType, entry.offset);
 
-                        while(readBytes + verifySize < ddtHeader.cmpLength)
-                        {
-                            verifyBytes = new byte[readBytes];
-                            _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
-                            crcVerify.Update(verifyBytes);
-                            readBytes += (ulong)verifyBytes.LongLength;
-                        }
+                    while(readBytes + verifySize < ddtHeader.cmpLength)
+                    {
+                        verifyBytes = new byte[verifySize];
+                        _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
+                        crcVerify.Update(verifyBytes);
+                        readBytes += (ulong)verifyBytes.LongLength;
+                    }
 
                         verifyBytes = new byte[ddtHeader.cmpLength - readBytes];
                         _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
