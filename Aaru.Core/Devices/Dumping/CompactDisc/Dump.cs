@@ -1234,6 +1234,12 @@ sealed partial class Dump
                        ref totalDuration, subLog, desiredSubchannel, tracks, isrcs, ref mcn, subchannelExtents,
                        smallestPregapLbaPerTrack);
 
+        if(dskType is MediaType.CDR or MediaType.CDRW &&
+           _resume.BadBlocks.Count > 0                &&
+           _ignoreCdrRunOuts       > 0)
+            HandleCdrRunOutSectors(blocks, desiredSubchannel, extents, subchannelExtents, subLog, supportsLongSectors,
+                                   trackFlags, tracks);
+
         RetryCdUserData(audioExtents, blockSize, currentTry, extents, offsetBytes, readcd, sectorsForOffset, subSize,
                         supportedSubchannel, ref totalDuration, subLog, desiredSubchannel, tracks, isrcs, ref mcn,
                         subchannelExtents, smallestPregapLbaPerTrack, supportsLongSectors);

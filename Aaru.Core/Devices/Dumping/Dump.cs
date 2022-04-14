@@ -99,6 +99,7 @@ public partial class Dump
     Database.Models.Device              _dbDev; // Device database entry
     bool                                _dumpFirstTrackPregap;
     bool                                _fixOffset;
+    readonly uint                       _ignoreCdrRunOuts;
     uint                                _maximumReadable; // Maximum number of sectors drive can read at once
     Resume                              _resume;
     Sidecar                             _sidecarClass;
@@ -149,6 +150,7 @@ public partial class Dump
     /// </param>
     /// <param name="storeEncrypted">Store encrypted data as is</param>
     /// <param name="titleKeys">Dump DVD CSS title keys</param>
+    /// <param name="ignoreCdrRunOuts">How many CD-R(W) run end sectors to ignore and regenerate</param>
     public Dump(bool doResume, Device dev, string devicePath, IBaseWritableImage outputPlugin, ushort retryPasses,
                 bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                 Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
@@ -156,7 +158,7 @@ public partial class Dump
                 bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
                 bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc,
                 bool skipCdireadyHole, ErrorLog errorLog, bool generateSubchannels, uint maximumReadable,
-                bool useBufferedReads, bool storeEncrypted, bool titleKeys)
+                bool useBufferedReads, bool storeEncrypted, bool titleKeys, uint ignoreCdrRunOuts)
     {
         _doResume              = doResume;
         _dev                   = dev;
@@ -196,6 +198,7 @@ public partial class Dump
         _useBufferedReads      = useBufferedReads;
         _storeEncrypted        = storeEncrypted;
         _titleKeys             = titleKeys;
+        _ignoreCdrRunOuts      = ignoreCdrRunOuts;
     }
 
     /// <summary>Starts dumping with the established fields and autodetecting the device type</summary>

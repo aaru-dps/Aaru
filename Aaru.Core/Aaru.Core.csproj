@@ -54,100 +54,101 @@
         <ConsolePause>false</ConsolePause>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="Devices\Dumping\CompactDisc\CdiReady.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\Data.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\Dump.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\Error.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\LeadOuts.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\Offset.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\Plextor.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\Pregap.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\Subchannel.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\Tags.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\Tracks.cs"/>
-        <Compile Include="Devices\Dumping\CompactDisc\Trim.cs"/>
-        <Compile Include="Devices\Dumping\Dump.cs"/>
-        <Compile Include="Devices\Dumping\LinearMemory\Retrode.cs"/>
-        <Compile Include="Devices\Dumping\Metadata.cs"/>
-        <Compile Include="Devices\Dumping\MiniDisc.cs"/>
-        <Compile Include="Devices\Dumping\PlayStationPortable\MemoryStick.cs"/>
-        <Compile Include="Devices\Dumping\PlayStationPortable\PlayStationPortable.cs"/>
-        <Compile Include="Devices\Dumping\PlayStationPortable\UMD.cs"/>
-        <Compile Include="Devices\Dumping\Sbc\Data.cs"/>
-        <Compile Include="Devices\Dumping\Sbc\Error.cs"/>
-        <Compile Include="Devices\Dumping\Sbc\Dump.cs"/>
-        <Compile Include="Devices\Dumping\Sbc\Optical.cs"/>
-        <Compile Include="Devices\Dumping\Sbc\Trim.cs"/>
-        <Compile Include="Devices\Info\DeviceInfo.cs"/>
-        <Compile Include="Devices\Info\Plextor.cs"/>
-        <Compile Include="Devices\Info\Properties.cs"/>
-        <Compile Include="Devices\Report\DeviceReport.cs"/>
-        <Compile Include="Devices\Report\GdRomSwapTrick.cs"/>
-        <Compile Include="Devices\Report\Scsi.cs"/>
-        <Compile Include="Devices\Report\MMC.cs"/>
-        <Compile Include="Devices\Report\SSC.cs"/>
-        <Compile Include="Devices\Scanning\MediaScan.cs"/>
-        <Compile Include="Entropy.cs"/>
-        <Compile Include="GetPluginBase.cs"/>
-        <Compile Include="ImageInfo.cs"/>
-        <Compile Include="Logging\ErrorLog.cs"/>
-        <Compile Include="Logging\SubchannelLog.cs"/>
-        <Compile Include="Media\CompactDisc.cs"/>
-        <Compile Include="Media\Detection\MMC.cs"/>
-        <Compile Include="Media\Info\CompactDisc.cs"/>
-        <Compile Include="Media\Info\ScsiInfo.cs"/>
-        <Compile Include="Media\Info\XgdInfo.cs"/>
-        <Compile Include="Options.cs"/>
-        <Compile Include="ImageFormat.cs"/>
-        <Compile Include="Error.cs"/>
-        <Compile Include="PrintScsiModePages.cs"/>
-        <Compile Include="Sidecar\Files.cs"/>
-        <Compile Include="Spectre.cs"/>
-        <Compile Include="Statistics.cs"/>
-        <Compile Include="Checksum.cs"/>
-        <Compile Include="Logging\IBGLog.cs"/>
-        <Compile Include="Logging\MHDDLog.cs"/>
-        <Compile Include="Devices\Scanning\ATA.cs"/>
-        <Compile Include="Devices\Scanning\SecureDigital.cs"/>
-        <Compile Include="Devices\Scanning\NVMe.cs"/>
-        <Compile Include="Devices\Scanning\SCSI.cs"/>
-        <Compile Include="Devices\Dumping\ATA.cs"/>
-        <Compile Include="Devices\Dumping\NVMe.cs"/>
-        <Compile Include="Devices\Dumping\SCSI.cs"/>
-        <Compile Include="Devices\Dumping\SecureDigital.cs"/>
-        <Compile Include="DataFile.cs"/>
-        <Compile Include="Filesystems.cs"/>
-        <Compile Include="Devices\Scanning\ScanResults.cs"/>
-        <Compile Include="Devices\Report\ATA.cs"/>
-        <Compile Include="Devices\Report\FireWire.cs"/>
-        <Compile Include="Devices\Report\USB.cs"/>
-        <Compile Include="Devices\Report\SecureDigital.cs"/>
-        <Compile Include="Remote.cs"/>
-        <Compile Include="Devices\Report\PCMCIA.cs"/>
-        <Compile Include="Devices\Reader.cs"/>
-        <Compile Include="Devices\ReaderATA.cs"/>
-        <Compile Include="Devices\ReaderSCSI.cs"/>
-        <Compile Include="Devices\Dumping\SSC.cs"/>
-        <Compile Include="Devices\Dumping\MMC.cs"/>
-        <Compile Include="Devices\Dumping\XGD.cs"/>
-        <Compile Include="Devices\Dumping\ResumeSupport.cs"/>
-        <Compile Include="Partitions.cs"/>
-        <Compile Include="Sidecar\Events.cs"/>
-        <Compile Include="Sidecar\Helpers.cs"/>
-        <Compile Include="Sidecar\Sidecar.cs"/>
-        <Compile Include="Sidecar\OpticalDisc.cs"/>
-        <Compile Include="Sidecar\BlockMedia.cs"/>
-        <Compile Include="Sidecar\LinearMedia.cs"/>
-        <Compile Include="Sidecar\AudioMedia.cs"/>
-        <Compile Include="Sidecar\BlockTape.cs"/>
-        <Compile Include="Logging\DumpLog.cs"/>
+        <Compile Include="Devices\Dumping\CompactDisc\CdiReady.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Data.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Dump.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Error.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\LeadOuts.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Offset.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Plextor.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Pregap.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Recordable.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Subchannel.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Tags.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Tracks.cs" />
+        <Compile Include="Devices\Dumping\CompactDisc\Trim.cs" />
+        <Compile Include="Devices\Dumping\Dump.cs" />
+        <Compile Include="Devices\Dumping\LinearMemory\Retrode.cs" />
+        <Compile Include="Devices\Dumping\Metadata.cs" />
+        <Compile Include="Devices\Dumping\MiniDisc.cs" />
+        <Compile Include="Devices\Dumping\PlayStationPortable\MemoryStick.cs" />
+        <Compile Include="Devices\Dumping\PlayStationPortable\PlayStationPortable.cs" />
+        <Compile Include="Devices\Dumping\PlayStationPortable\UMD.cs" />
+        <Compile Include="Devices\Dumping\Sbc\Data.cs" />
+        <Compile Include="Devices\Dumping\Sbc\Error.cs" />
+        <Compile Include="Devices\Dumping\Sbc\Dump.cs" />
+        <Compile Include="Devices\Dumping\Sbc\Optical.cs" />
+        <Compile Include="Devices\Dumping\Sbc\Trim.cs" />
+        <Compile Include="Devices\Info\DeviceInfo.cs" />
+        <Compile Include="Devices\Info\Plextor.cs" />
+        <Compile Include="Devices\Info\Properties.cs" />
+        <Compile Include="Devices\Report\DeviceReport.cs" />
+        <Compile Include="Devices\Report\GdRomSwapTrick.cs" />
+        <Compile Include="Devices\Report\Scsi.cs" />
+        <Compile Include="Devices\Report\MMC.cs" />
+        <Compile Include="Devices\Report\SSC.cs" />
+        <Compile Include="Devices\Scanning\MediaScan.cs" />
+        <Compile Include="Entropy.cs" />
+        <Compile Include="GetPluginBase.cs" />
+        <Compile Include="ImageInfo.cs" />
+        <Compile Include="Logging\ErrorLog.cs" />
+        <Compile Include="Logging\SubchannelLog.cs" />
+        <Compile Include="Media\CompactDisc.cs" />
+        <Compile Include="Media\Detection\MMC.cs" />
+        <Compile Include="Media\Info\CompactDisc.cs" />
+        <Compile Include="Media\Info\ScsiInfo.cs" />
+        <Compile Include="Media\Info\XgdInfo.cs" />
+        <Compile Include="Options.cs" />
+        <Compile Include="ImageFormat.cs" />
+        <Compile Include="Error.cs" />
+        <Compile Include="PrintScsiModePages.cs" />
+        <Compile Include="Sidecar\Files.cs" />
+        <Compile Include="Spectre.cs" />
+        <Compile Include="Statistics.cs" />
+        <Compile Include="Checksum.cs" />
+        <Compile Include="Logging\IBGLog.cs" />
+        <Compile Include="Logging\MHDDLog.cs" />
+        <Compile Include="Devices\Scanning\ATA.cs" />
+        <Compile Include="Devices\Scanning\SecureDigital.cs" />
+        <Compile Include="Devices\Scanning\NVMe.cs" />
+        <Compile Include="Devices\Scanning\SCSI.cs" />
+        <Compile Include="Devices\Dumping\ATA.cs" />
+        <Compile Include="Devices\Dumping\NVMe.cs" />
+        <Compile Include="Devices\Dumping\SCSI.cs" />
+        <Compile Include="Devices\Dumping\SecureDigital.cs" />
+        <Compile Include="DataFile.cs" />
+        <Compile Include="Filesystems.cs" />
+        <Compile Include="Devices\Scanning\ScanResults.cs" />
+        <Compile Include="Devices\Report\ATA.cs" />
+        <Compile Include="Devices\Report\FireWire.cs" />
+        <Compile Include="Devices\Report\USB.cs" />
+        <Compile Include="Devices\Report\SecureDigital.cs" />
+        <Compile Include="Remote.cs" />
+        <Compile Include="Devices\Report\PCMCIA.cs" />
+        <Compile Include="Devices\Reader.cs" />
+        <Compile Include="Devices\ReaderATA.cs" />
+        <Compile Include="Devices\ReaderSCSI.cs" />
+        <Compile Include="Devices\Dumping\SSC.cs" />
+        <Compile Include="Devices\Dumping\MMC.cs" />
+        <Compile Include="Devices\Dumping\XGD.cs" />
+        <Compile Include="Devices\Dumping\ResumeSupport.cs" />
+        <Compile Include="Partitions.cs" />
+        <Compile Include="Sidecar\Events.cs" />
+        <Compile Include="Sidecar\Helpers.cs" />
+        <Compile Include="Sidecar\Sidecar.cs" />
+        <Compile Include="Sidecar\OpticalDisc.cs" />
+        <Compile Include="Sidecar\BlockMedia.cs" />
+        <Compile Include="Sidecar\LinearMedia.cs" />
+        <Compile Include="Sidecar\AudioMedia.cs" />
+        <Compile Include="Sidecar\BlockTape.cs" />
+        <Compile Include="Logging\DumpLog.cs" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.Archives\Aaru.Archives.csproj"/>
+        <ProjectReference Include="..\Aaru.Archives\Aaru.Archives.csproj" />
         <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj"/>
-        <ProjectReference Include="..\Aaru.Decryption\Aaru.Decryption.csproj"/>
-        <ProjectReference Include="..\Aaru.Dto\Aaru.Dto.csproj"/>
+        <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
+        <ProjectReference Include="..\Aaru.Decryption\Aaru.Decryption.csproj" />
+        <ProjectReference Include="..\Aaru.Dto\Aaru.Dto.csproj" />
         <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"></ProjectReference>
         <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"></ProjectReference>
         <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"></ProjectReference>
@@ -160,12 +161,12 @@
         <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"></ProjectReference>
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Logging\"/>
-        <Folder Include="Devices\"/>
-        <Folder Include="Devices\Scanning\"/>
-        <Folder Include="Devices\Dumping\"/>
-        <Folder Include="Devices\Report\"/>
-        <Folder Include="Sidecar\"/>
+        <Folder Include="Logging\" />
+        <Folder Include="Devices\" />
+        <Folder Include="Devices\Scanning\" />
+        <Folder Include="Devices\Dumping\" />
+        <Folder Include="Devices\Report\" />
+        <Folder Include="Sidecar\" />
     </ItemGroup>
     <ItemGroup></ItemGroup>
     <ItemGroup>
@@ -174,23 +175,23 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Spectre.Console" Version="0.43.0"/>
-        <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all"/>
-        <PackageReference Include="System.Collections" Version="4.3.0"/>
-        <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0"/>
-        <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0"/>
-        <PackageReference Include="System.Runtime.Extensions" Version="4.3.1"/>
-        <PackageReference Include="System.Runtime.Handles" Version="4.3.0"/>
-        <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0"/>
+        <PackageReference Include="Spectre.Console" Version="0.43.0" />
+        <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all" />
+        <PackageReference Include="System.Collections" Version="4.3.0" />
+        <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+        <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+        <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
+        <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
+        <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
     </ItemGroup>
     <ProjectExtensions>
         <MonoDevelop>
             <Properties>
                 <Policies>
-                    <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp"/>
-                    <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" NewLineForMembersInObjectInit="False" NewLineForMembersInAnonymousTypes="False" NewLineForClausesInQuery="False" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp"/>
-                    <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild"/>
+                    <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp" />
+                    <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" NewLineForMembersInObjectInit="False" NewLineForMembersInAnonymousTypes="False" NewLineForClausesInQuery="False" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp" />
+                    <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
                 </Policies>
             </Properties>
         </MonoDevelop>

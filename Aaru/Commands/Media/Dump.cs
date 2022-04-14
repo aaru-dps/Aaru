@@ -201,6 +201,11 @@ sealed class DumpMediaCommand : Command
             "--title-keys"
         }, () => true, "Try to read the title keys from CSS encrypted DVDs (very slow)."));
 
+        Add(new Option<uint>(new[]
+        {
+            "--ignore-cdr-runouts"
+        }, () => 10, "How many CD-R(W) run-out sectors to ignore and regenerate (0 for none)."));
+
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
@@ -210,7 +215,8 @@ sealed class DumpMediaCommand : Command
                              bool stopOnError, string format, string subchannel, bool @private,
                              bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
                              bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject,
-                             uint maxBlocks, bool useBufferedReads, bool storeEncrypted, bool titleKeys)
+                             uint maxBlocks, bool useBufferedReads, bool storeEncrypted, bool titleKeys,
+                             uint ignoreCdrRunOuts)
     {
         MainClass.PrintCopyright();
 
@@ -278,6 +284,7 @@ sealed class DumpMediaCommand : Command
         AaruConsole.DebugWriteLine("Dump-Media command", "--use-buffered-reads={0}", useBufferedReads);
         AaruConsole.DebugWriteLine("Dump-Media command", "--store-encrypted={0}", storeEncrypted);
         AaruConsole.DebugWriteLine("Dump-Media command", "--title-keys={0}", titleKeys);
+        AaruConsole.DebugWriteLine("Dump-Media command", "--ignore-cdr-runouts={0}", ignoreCdrRunOuts);
 
         // TODO: Disabled temporarily
         //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -570,7 +577,8 @@ sealed class DumpMediaCommand : Command
                                   outputPrefix + extension, parsedOptions, sidecar, skip, metadata, trim, firstPregap,
                                   fixOffset, debug, wantedSubchannel, speed, @private, fixSubchannelPosition,
                                   retrySubchannel, fixSubchannel, fixSubchannelCrc, skipCdiReadyHole, errorLog,
-                                  generateSubchannels, maxBlocks, useBufferedReads, storeEncrypted, titleKeys);
+                                  generateSubchannels, maxBlocks, useBufferedReads, storeEncrypted, titleKeys,
+                                  ignoreCdrRunOuts);
 
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).

@@ -812,7 +812,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
                            StopOnError, _resume, dumpLog, encoding, _outputPrefix, Destination, parsedOptions, _sidecar,
                            (uint)Skipped, ExistingMetadata == false, Trim == false, Track1Pregap, true, false,
                            DumpSubchannel.Any, 0, false, false, false, false, false, true, errorLog, false, 64, true,
-                           true, false);
+                           true, false, 10);
 
         new Thread(DoWork).Start();
     }
