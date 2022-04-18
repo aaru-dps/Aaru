@@ -33,6 +33,7 @@
 namespace Aaru.Devices.Remote;
 
 using System;
+using System.Net.Sockets;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
@@ -100,7 +101,19 @@ public sealed partial class Device : Devices.Device
 
         dev._devicePath = devicePath;
 
-        dev._remote = new Remote(aaruUri);
+        try
+        {
+            dev._remote = new Remote(aaruUri);
+        }
+        catch(Exception ex)
+        {
+            if(ex is SocketException sockEx)
+                errno = (ErrorNumber)(-1 * sockEx.ErrorCode);
+            else
+                errno = ErrorNumber.NoSuchDeviceOrAddress;
+
+            return null;
+        }
 
         dev.Error     = !dev._remote.Open(devicePath, out int remoteErrno);
         dev.LastError = remoteErrno;
