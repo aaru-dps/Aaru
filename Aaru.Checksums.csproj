@@ -17,7 +17,7 @@
         <Product>Aaru Data Preservation Suite</Product>
         <Title>Aaru.Checksums</Title>
         <ApplicationVersion>$(Version)</ApplicationVersion>
-        <TargetFramework>net6</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <LangVersion>10</LangVersion>
         <Description>C# implementation of CRC16, CRC32, CRC64, Fletcher, MD5, SHA1, SHA2 and SpamSum.</Description>
         <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
