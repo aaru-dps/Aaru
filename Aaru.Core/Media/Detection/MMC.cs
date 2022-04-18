@@ -670,9 +670,11 @@ public static class MMC
             Array.Copy(cmdBuf, 0, videoNowColorFrame, i * 2352, 2352);
         }
 
-        FullTOC.TrackDataDescriptor? firstTrack = decodedToc?.TrackDescriptors.FirstOrDefault(t => t.POINT == 1);
+        FullTOC.TrackDataDescriptor? firstTrack =
+            decodedToc?.TrackDescriptors.FirstOrDefault(t => t.POINT ==
+                                                             decodedToc.Value.TrackDescriptors.Min(m => m.POINT));
 
-        if(firstTrack?.POINT == 1)
+        if(firstTrack?.POINT is >= 1 and < 0xA0)
         {
             var firstTrackSector = (uint)(firstTrack.Value.PHOUR * 3600 * 75 + firstTrack.Value.PMIN * 60 * 75 +
                                           firstTrack.Value.PSEC  * 75        + firstTrack.Value.PFRAME - 150);

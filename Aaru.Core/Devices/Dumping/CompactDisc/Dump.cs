@@ -562,14 +562,14 @@ sealed partial class Dump
             {
                 new Track
                 {
-                    Sequence          = 0,
+                    Sequence          = (uint)(tracks.Any(t => t.Sequence == 1) ? 0 : 1),
                     Session           = 1,
                     Type              = hiddenData ? TrackType.Data : TrackType.Audio,
                     StartSector       = 0,
                     BytesPerSector    = (int)sectorSize,
                     RawBytesPerSector = (int)sectorSize,
                     SubchannelType    = subType,
-                    EndSector         = tracks.First(t => t.Sequence == 1).StartSector - 1
+                    EndSector         = tracks.First(t => t.Sequence >= 1).StartSector - 1
                 }
             };
 
@@ -783,6 +783,15 @@ sealed partial class Dump
         {
             _dumpLog.WriteLine("Device error {0} trying to guess ideal transfer length.", _dev.LastError);
             StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+        }
+
+        var cdiWithHiddenTrack1 = false;
+
+        if(dskType is MediaType.CDIREADY &&
+           tracks.Min(t => t.Sequence) == 1)
+        {
+            cdiWithHiddenTrack1 = true;
+            dskType             = MediaType.CDI;
         }
 
         // Try to read the first track pregap
@@ -1099,9 +1108,9 @@ sealed partial class Dump
         // Start reading
         start = DateTime.UtcNow;
 
-        if(dskType == MediaType.CDIREADY)
+        if(dskType == MediaType.CDIREADY || cdiWithHiddenTrack1)
         {
-            Track track0 = tracks.FirstOrDefault(t => t.Sequence == 0);
+            Track track0 = tracks.FirstOrDefault(t => t.Sequence is 0 or 1);
 
             track0.Type = TrackType.CdMode2Formless;
 

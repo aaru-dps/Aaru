@@ -161,7 +161,7 @@ partial class Dump
         byte[]     senseBuf;                           // Sense buffer
         double     cmdDuration;                        // Command execution time
         const uint sectorSize = 2352;                  // Full sector size
-        Track      firstTrack = tracks.FirstOrDefault(t => t.Sequence == 1);
+        Track      firstTrack = tracks.FirstOrDefault();
         uint       blocksToRead; // How many sectors to read at once
         var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
@@ -178,7 +178,7 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        for(ulong i = _resume.NextBlock; i < firstTrack.StartSector; i += blocksToRead)
+        for(ulong i = _resume.NextBlock; i <= firstTrack.EndSector; i += blocksToRead)
         {
             if(_aborted)
             {
@@ -287,13 +287,13 @@ partial class Dump
                     {
                         _errorLog?.WriteLine(i + r, _dev.Error, _dev.LastError, senseBuf);
 
-                        leadOutExtents.Add(i + r, firstTrack.StartSector - 1);
+                        leadOutExtents.Add(i + r, firstTrack.EndSector);
 
                         UpdateStatus?.
-                            Invoke($"Adding CD-i Ready hole from LBA {i + r} to {firstTrack.StartSector - 1} inclusive.");
+                            Invoke($"Adding CD-i Ready hole from LBA {i + r} to {firstTrack.EndSector} inclusive.");
 
                         _dumpLog.WriteLine("Adding CD-i Ready hole from LBA {0} to {1} inclusive.", i + r,
-                                           firstTrack.StartSector                                     - 1);
+                                           firstTrack.EndSector);
 
                         break;
                     }
@@ -397,7 +397,7 @@ partial class Dump
             {
                 _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
 
-                _resume.NextBlock = firstTrack.StartSector;
+                _resume.NextBlock = firstTrack.EndSector + 1;
 
                 break;
             }
