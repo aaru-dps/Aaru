@@ -90,7 +90,7 @@ public static class CompactDisc
 
         bool indexesChanged = CheckIndexesFromSubchannel(deSub, isrcs, currentTrack, ref mcn, tracks, dumpLog,
                                                          updateStatus, smallestPregapLbaPerTrack, dumping,
-                                                         out newPregapSectors);
+                                                         out newPregapSectors, sectorAddress);
 
         if(!fixSubchannelPosition ||
            desiredSubchannel == MmcSubchannel.None)
@@ -303,7 +303,7 @@ public static class CompactDisc
     /// <summary>Check subchannel for indexes</summary>
     /// <param name="deSub">De-interleaved subchannel</param>
     /// <param name="isrcs">List of ISRCs</param>
-    /// <param name="currentTrack">Current track number</param>
+    /// <param name="currentTrackNumber">Current track number</param>
     /// <param name="mcn">Disc's MCN</param>
     /// <param name="tracks">List of tracks</param>
     /// <param name="dumpLog">Dumping log</param>
@@ -311,11 +311,11 @@ public static class CompactDisc
     /// <param name="smallestPregapLbaPerTrack">List of smallest known pregap per track</param>
     /// <param name="dumping">Set if we are dumping, otherwise converting</param>
     /// <returns><c>true</c> if indexes have changed, <c>false</c> otherwise</returns>
-    static bool CheckIndexesFromSubchannel(byte[] deSub, Dictionary<byte, string> isrcs, byte currentTrack,
+    static bool CheckIndexesFromSubchannel(byte[] deSub, Dictionary<byte, string> isrcs, byte currentTrackNumber,
                                            ref string mcn, Track[] tracks, DumpLog dumpLog,
                                            UpdateStatusHandler updateStatus,
                                            Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping,
-                                           out List<ulong> newPregapSectors)
+                                           out List<ulong> newPregapSectors, ulong sectorAddress)
     {
         var status = false;
         newPregapSectors = new List<ulong>();
@@ -342,21 +342,29 @@ public static class CompactDisc
                     if(!crcOk)
                         continue;
 
-                    if(!isrcs.ContainsKey(currentTrack))
+                    if(!isrcs.ContainsKey(currentTrackNumber))
                     {
-                        dumpLog?.WriteLine($"Found new ISRC {isrc} for track {currentTrack}.");
-                        updateStatus?.Invoke($"Found new ISRC {isrc} for track {currentTrack}.");
+                        dumpLog?.WriteLine($"Found new ISRC {isrc} for track {currentTrackNumber}.");
+                        updateStatus?.Invoke($"Found new ISRC {isrc} for track {currentTrackNumber}.");
+
+                        isrcs[currentTrackNumber] = isrc;
                     }
-                    else if(isrcs[currentTrack] != isrc)
+                    else if(isrcs[currentTrackNumber] != isrc)
                     {
-                        dumpLog?.
-                            WriteLine($"ISRC for track {currentTrack} changed from {isrcs[currentTrack]} to {isrc}.");
+                        Track currentTrack =
+                            tracks.FirstOrDefault(t => sectorAddress + (ulong)subPos / 96 >= t.StartSector);
 
-                        updateStatus?.
-                            Invoke($"ISRC for track {currentTrack} changed from {isrcs[currentTrack]} to {isrc}.");
+                        if(currentTrack?.Sequence == currentTrackNumber)
+                        {
+                            dumpLog?.
+                                WriteLine($"ISRC for track {currentTrackNumber} changed from {isrcs[currentTrackNumber]} to {isrc}.");
+
+                            updateStatus?.
+                                Invoke($"ISRC for track {currentTrackNumber} changed from {isrcs[currentTrackNumber]} to {isrc}.");
+
+                            isrcs[currentTrackNumber] = isrc;
+                        }
                     }
-
-                    isrcs[currentTrack] = isrc;
 
                     break;
                 }
