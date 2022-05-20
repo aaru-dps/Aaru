@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -425,6 +426,11 @@ sealed class ExtractFilesCommand : Command
                 {
                     outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path, entry);
 
+                    if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                        outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
+                                                Replace('\"', '\uFF02').Replace('|', '\uFF5C').Replace('?', '\uFF1F').
+                                                Replace('*', '\uFF0A').Replace('/', '\\');
+
                     Directory.CreateDirectory(outputPath);
 
                     AaruConsole.WriteLine("Created subdirectory at {0}", Markup.Escape(outputPath));
@@ -496,9 +502,24 @@ sealed class ExtractFilesCommand : Command
 
                             outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, ".xattrs", path, xattr);
 
+                            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                                outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').
+                                                        Replace(':', '\uFF1A').Replace('\"', '\uFF02').
+                                                        Replace('|', '\uFF5C').Replace('?', '\uFF1F').
+                                                        Replace('*', '\uFF0A').Replace('/', '\\');
+
                             Directory.CreateDirectory(outputPath);
 
-                            outputPath = Path.Combine(outputPath, entry);
+                            outputPath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                                             ? Path.Combine(outputPath,
+                                                            entry.Replace('/', '\uFF0F').Replace('\\', '\uFF3C'))
+                                             : Path.Combine(outputPath, entry);
+
+                            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                                outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').
+                                                        Replace(':', '\uFF1A').Replace('\"', '\uFF02').
+                                                        Replace('|', '\uFF5C').Replace('?', '\uFF1F').
+                                                        Replace('*', '\uFF0A').Replace('/', '\\');
 
                             if(!File.Exists(outputPath))
                             {
@@ -556,9 +577,21 @@ sealed class ExtractFilesCommand : Command
 
                 outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path);
 
+                if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
+                                            Replace('\"', '\uFF02').Replace('|', '\uFF5C').Replace('?', '\uFF1F').
+                                            Replace('*', '\uFF0A').Replace('/', '\\');
+
                 Directory.CreateDirectory(outputPath);
 
-                outputPath = Path.Combine(outputPath, entry);
+                outputPath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                                 ? Path.Combine(outputPath, entry.Replace('/', '\uFF0F').Replace('\\', '\uFF3C'))
+                                 : Path.Combine(outputPath, entry);
+
+                if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
+                                            Replace('\"', '\uFF02').Replace('|', '\uFF5C').Replace('?', '\uFF1F').
+                                            Replace('*', '\uFF0A').Replace('/', '\\');
 
                 if(!File.Exists(outputPath))
                 {
