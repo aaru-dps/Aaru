@@ -246,7 +246,7 @@ public sealed partial class AaruFormat
         /// <summary>TODO: Block containing a snapshot index</summary>
         SnapshotBlock = 0x50414E53,
         /// <summary>TODO: Block containing how to locate the parent image</summary>
-        ParentBlock = 0x50524E54,
+        ParentBlock = 0x544E5250,
         /// <summary>Block containing an array of hardware used to create the image</summary>
         DumpHardwareBlock = 0x2A504D44,
         /// <summary>Block containing list of files for a tape image</summary>
