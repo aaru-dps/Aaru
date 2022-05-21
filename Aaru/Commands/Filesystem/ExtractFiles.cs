@@ -606,6 +606,7 @@ sealed class ExtractFilesCommand : Command
                                     ProgressTask task = ctx.AddTask($"Reading file {Markup.Escape(entry)}...");
 
                                     task.MaxValue = stat.Length;
+                                    byte[] outBuf = null;
 
                                     while(position < stat.Length)
                                     {
@@ -616,12 +617,10 @@ sealed class ExtractFilesCommand : Command
                                         else
                                             bytesToRead = stat.Length - position;
 
-                                        byte[] outBuf = Array.Empty<byte>();
-
                                         error = fs.Read(path + "/" + entry, position, bytesToRead, ref outBuf);
 
                                         if(error == ErrorNumber.NoError)
-                                            outputFile.Write(outBuf, 0, outBuf.Length);
+                                            outputFile.Write(outBuf, 0, (int)bytesToRead);
                                         else
                                         {
                                             AaruConsole.ErrorWriteLine("Error {0} reading file {1}", error, entry);
