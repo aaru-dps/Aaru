@@ -164,7 +164,10 @@ public sealed partial class ISO9660
         Dictionary<string, DecodedDirectoryEntry> entries  = new();
         var                                       entryOff = 0;
 
-        byte[] data = ReadSingleExtent(size, (uint)start);
+        ErrorNumber errno = ReadSingleExtent(size, (uint)start, out byte[] data);
+
+        if(errno != ErrorNumber.NoError)
+            return entries;
 
         while(entryOff + _cdiDirectoryRecordSize < data.Length)
         {
@@ -241,7 +244,10 @@ public sealed partial class ISO9660
         Dictionary<string, DecodedDirectoryEntry> entries  = new();
         var                                       entryOff = 0;
 
-        byte[] data = ReadSingleExtent(size, (uint)start);
+        ErrorNumber errno = ReadSingleExtent(size, (uint)start, out byte[] data);
+
+        if(errno != ErrorNumber.NoError)
+            return entries;
 
         while(entryOff + _directoryRecordSize < data.Length)
         {
@@ -312,7 +318,10 @@ public sealed partial class ISO9660
         Dictionary<string, DecodedDirectoryEntry> entries  = new();
         var                                       entryOff = 0;
 
-        byte[] data = ReadSingleExtent(size, (uint)start);
+        ErrorNumber errno = ReadSingleExtent(size, (uint)start, out byte[] data);
+
+        if(errno != ErrorNumber.NoError)
+            return entries;
 
         while(entryOff + _directoryRecordSize < data.Length)
         {
@@ -477,10 +486,13 @@ public sealed partial class ISO9660
         if(transTblEntry.Value == null)
             return;
 
-        byte[] transTbl = ReadWithExtents(0, (long)transTblEntry.Value.Size, transTblEntry.Value.Extents,
-                                          transTblEntry.Value.XA?.signature == XA_MAGIC &&
-                                          transTblEntry.Value.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
-                                          transTblEntry.Value.XA?.filenumber ?? 0);
+        ErrorNumber errno = ReadWithExtents(0, (long)transTblEntry.Value.Size, transTblEntry.Value.Extents,
+                                            transTblEntry.Value.XA?.signature == XA_MAGIC &&
+                                            transTblEntry.Value.XA?.attributes.HasFlag(XaAttributes.Interleaved) ==
+                                            true, transTblEntry.Value.XA?.filenumber ?? 0, out byte[] transTbl);
+
+        if(errno != ErrorNumber.NoError)
+            return;
 
         var mr = new MemoryStream(transTbl, 0, (int)transTblEntry.Value.Size, false);
         var sr = new StreamReader(mr, Encoding);
@@ -957,9 +969,10 @@ public sealed partial class ISO9660
                         Marshal.ByteArrayToStructureLittleEndian<ContinuationArea>(data, systemAreaOff,
                             Marshal.SizeOf<ContinuationArea>());
 
-                    byte[] caData = ReadSingleExtent(ca.offset, ca.ca_length, ca.block);
+                    errno = ReadSingleExtent(ca.offset, ca.ca_length, ca.block, out byte[] caData);
 
-                    DecodeSystemArea(caData, 0, (int)ca.ca_length, ref entry, out hasResourceFork);
+                    if(errno == ErrorNumber.NoError)
+                        DecodeSystemArea(caData, 0, (int)ca.ca_length, ref entry, out hasResourceFork);
 
                     systemAreaOff += ceLength;
 

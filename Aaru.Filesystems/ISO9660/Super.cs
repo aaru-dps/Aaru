@@ -288,8 +288,11 @@ public sealed partial class ISO9660
         {
             _blockSize = hsvd.Value.logical_block_size;
 
-            pathTableData = ReadSingleExtent(hsvd.Value.path_table_size,
-                                             Swapping.Swap(hsvd.Value.mandatory_path_table_msb));
+            errno = ReadSingleExtent(hsvd.Value.path_table_size, Swapping.Swap(hsvd.Value.mandatory_path_table_msb),
+                                     out pathTableData);
+
+            if(errno != ErrorNumber.NoError)
+                pathTableData = null;
 
             fsFormat = "High Sierra Format";
 
@@ -300,7 +303,10 @@ public sealed partial class ISO9660
         {
             _blockSize = fsvd.Value.logical_block_size;
 
-            pathTableData = ReadSingleExtent(fsvd.Value.path_table_size, fsvd.Value.path_table_addr);
+            errno = ReadSingleExtent(fsvd.Value.path_table_size, fsvd.Value.path_table_addr, out pathTableData);
+
+            if(errno != ErrorNumber.NoError)
+                pathTableData = null;
 
             fsFormat = "CD-i";
 
@@ -313,7 +319,11 @@ public sealed partial class ISO9660
         {
             _blockSize = pvd.Value.logical_block_size;
 
-            pathTableData = ReadSingleExtent(pvd.Value.path_table_size, Swapping.Swap(pvd.Value.type_m_path_table));
+            errno = ReadSingleExtent(pvd.Value.path_table_size, Swapping.Swap(pvd.Value.type_m_path_table),
+                                     out pathTableData);
+
+            if(errno != ErrorNumber.NoError)
+                pathTableData = null;
 
             fsFormat = "ISO9660";
 
@@ -325,7 +335,7 @@ public sealed partial class ISO9660
 
         if(_pathTable is null)
         {
-            pathTableData = ReadSingleExtent(pathTableData.Length, pathTableLsbLocation);
+            ReadSingleExtent(pathTableData.Length, pathTableLsbLocation, out pathTableData);
 
             _pathTable = _highSierra ? DecodeHighSierraPathTable(pathTableData) : DecodePathTable(pathTableData);
         }
@@ -472,7 +482,7 @@ public sealed partial class ISO9660
 
         try
         {
-            _ = ReadSingleExtent(rootSize, rootLocation);
+            ReadSingleExtent(rootSize, rootLocation, out byte[] _);
         }
         catch
         {
@@ -748,12 +758,10 @@ public sealed partial class ISO9660
 
         _statfs = new FileSystemInfo
         {
-            Blocks = decodedVd.Blocks,
-            FilenameLength = (ushort)(jolietvd != null ? _namespace == Namespace.Joliet
-                                                             ? 110
-                                                             : 255 : 255),
-            PluginId = Id,
-            Type     = fsFormat
+            Blocks         = decodedVd.Blocks,
+            FilenameLength = (ushort)(jolietvd != null ? _namespace == Namespace.Joliet ? 110 : 255 : 255),
+            PluginId       = Id,
+            Type           = fsFormat
         };
 
         _directoryCache = new Dictionary<string, Dictionary<string, DecodedDirectoryEntry>>();

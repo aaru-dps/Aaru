@@ -157,12 +157,10 @@ public sealed partial class ISO9660
                 return ErrorNumber.UnexpectedException;
             }
 
-        buf = ReadWithExtents(offset, size, entry.Extents,
-                              entry.XA?.signature                                    == XA_MAGIC &&
-                              entry.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
-                              entry.XA?.filenumber ?? 0);
-
-        return ErrorNumber.NoError;
+        return ReadWithExtents(offset, size, entry.Extents,
+                               entry.XA?.signature                                    == XA_MAGIC &&
+                               entry.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
+                               entry.XA?.filenumber ?? 0, out buf);
     }
 
     /// <inheritdoc />
@@ -384,7 +382,10 @@ public sealed partial class ISO9660
                 stat.Mode |= 256;
         }
 
-        byte[] ea = ReadSingleExtent(entry.XattrLength * _blockSize, entry.Extents[0].extent);
+        ErrorNumber errno = ReadSingleExtent(entry.XattrLength * _blockSize, entry.Extents[0].extent, out byte[] ea);
+
+        if(errno != ErrorNumber.NoError)
+            return ErrorNumber.NoError;
 
         ExtendedAttributeRecord ear = Marshal.ByteArrayToStructureLittleEndian<ExtendedAttributeRecord>(ea);
 
@@ -491,22 +492,23 @@ public sealed partial class ISO9660
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    byte[] ReadSingleExtent(long size, uint startingSector, bool interleaved = false, byte fileNumber = 0) =>
-        ReadWithExtents(0, size, new List<(uint extent, uint size)>
-        {
-            (startingSector, (uint)size)
-        }, interleaved, fileNumber);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    byte[] ReadSingleExtent(long offset, long size, uint startingSector, bool interleaved = false,
-                            byte fileNumber = 0) => ReadWithExtents(offset, size, new List<(uint extent, uint size)>
+    ErrorNumber ReadSingleExtent(long size, uint startingSector, out byte[] buffer, bool interleaved = false,
+                                 byte fileNumber = 0) => ReadWithExtents(0, size, new List<(uint extent, uint size)>
     {
         (startingSector, (uint)size)
-    }, interleaved, fileNumber);
+    }, interleaved, fileNumber, out buffer);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    ErrorNumber ReadSingleExtent(long offset, long size, uint startingSector, out byte[] buffer,
+                                 bool interleaved = false, byte fileNumber = 0) => ReadWithExtents(offset, size,
+        new List<(uint extent, uint size)>
+        {
+            (startingSector, (uint)size)
+        }, interleaved, fileNumber, out buffer);
 
     // Cannot think how to make this faster, as we don't know the mode sector until it is read, but we have size in bytes
-    byte[] ReadWithExtents(long offset, long size, List<(uint extent, uint size)> extents, bool interleaved,
-                           byte fileNumber)
+    ErrorNumber ReadWithExtents(long offset, long size, List<(uint extent, uint size)> extents, bool interleaved,
+                                byte fileNumber, out byte[] buffer)
     {
         var  ms             = new MemoryStream();
         long currentFilePos = 0;
@@ -528,10 +530,18 @@ public sealed partial class ISO9660
                 ErrorNumber errno = ReadSector(extents[i].extent + currentExtentSector, out byte[] sector, interleaved,
                                                fileNumber);
 
-                if(errno != ErrorNumber.NoError ||
-                   sector is null)
+                if(errno != ErrorNumber.NoError)
+                {
+                    buffer = ms.ToArray();
+
+                    return errno;
+                }
+
+                if(sector is null)
                 {
                     currentExtentSector++;
+                    leftExtentSize -= 2048;
+                    currentFilePos += 2048;
 
                     continue;
                 }
@@ -565,7 +575,9 @@ public sealed partial class ISO9660
         if(ms.Length >= size)
             ms.SetLength(size);
 
-        return ms.ToArray();
+        buffer = ms.ToArray();
+
+        return ErrorNumber.NoError;
     }
 
     byte[] ReadSubheaderWithExtents(List<(uint extent, uint size)> extents, bool copy)

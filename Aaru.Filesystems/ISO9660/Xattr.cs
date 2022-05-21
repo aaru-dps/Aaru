@@ -114,15 +114,12 @@ public sealed partial class ISO9660
         switch(xattr)
         {
             case "org.iso.9660.ea":
-                if(entry.XattrLength == 0)
-                    return ErrorNumber.NoSuchExtendedAttribute;
+                return entry.XattrLength == 0
+                           ? ErrorNumber.NoSuchExtendedAttribute
+                           : entry.Extents is null
+                               ? ErrorNumber.InvalidArgument
+                               : ReadSingleExtent(entry.XattrLength * _blockSize, entry.Extents[0].extent, out buf);
 
-                if(entry.Extents is null)
-                    return ErrorNumber.InvalidArgument;
-
-                buf = ReadSingleExtent(entry.XattrLength * _blockSize, entry.Extents[0].extent);
-
-                return ErrorNumber.NoError;
             case "org.iso.9660.AssociatedFile":
                 if(entry.AssociatedFile is null)
                     return ErrorNumber.NoSuchExtendedAttribute;
@@ -137,12 +134,10 @@ public sealed partial class ISO9660
                     return ErrorNumber.NoError;
                 }
 
-                buf = ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents,
-                                      entry.AssociatedFile.XA?.signature == XA_MAGIC &&
-                                      entry.AssociatedFile.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
-                                      entry.AssociatedFile.XA?.filenumber ?? 0);
-
-                return ErrorNumber.NoError;
+                return ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents,
+                                       entry.AssociatedFile.XA?.signature == XA_MAGIC &&
+                                       entry.AssociatedFile.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
+                                       entry.AssociatedFile.XA?.filenumber ?? 0, out buf);
             case "com.apple.dos.type":
                 if(entry.AppleDosType is null)
                     return ErrorNumber.NoSuchExtendedAttribute;
@@ -172,12 +167,10 @@ public sealed partial class ISO9660
                     return ErrorNumber.NoError;
                 }
 
-                buf = ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents,
-                                      entry.ResourceFork.XA?.signature                                    == XA_MAGIC &&
-                                      entry.ResourceFork.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
-                                      entry.ResourceFork.XA?.filenumber ?? 0);
-
-                return ErrorNumber.NoError;
+                return ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents,
+                                       entry.ResourceFork.XA?.signature == XA_MAGIC &&
+                                       entry.ResourceFork.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
+                                       entry.ResourceFork.XA?.filenumber ?? 0, out buf);
             case "com.apple.FinderInfo":
                 if(entry.FinderInfo is null)
                     return ErrorNumber.NoSuchExtendedAttribute;
