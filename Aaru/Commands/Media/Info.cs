@@ -704,16 +704,15 @@ sealed class MediaInfoCommand : Command
                         AaruConsole.
                             WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
 
-                        AaruConsole.WriteLine($"Combined offset is {offsetBytes} bytes ({offsetBytes / 4} samples)");
+                        AaruConsole.WriteLine($"Combined offset is {offsetBytes} bytes ({offsetBytes / 4} samples).");
 
                         int? discOffset = offsetBytes - driveOffset;
 
-                        AaruConsole.WriteLine($"Disc offset is {discOffset} bytes ({discOffset / 4} samples)");
+                        AaruConsole.WriteLine($"Disc offset is {discOffset} bytes ({discOffset / 4} samples).");
                     }
                 }
             }
         }
-
         dev.Close();
     }
 }
