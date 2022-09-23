@@ -1,5 +1,5 @@
 name: General Bug Report
-description: Bugs report on other commands.
+description: Bugs report on other commands. Use this to submit device reports.
 labels: ["bug", "needs triage"]
 assignees:
   - silaslaspada
