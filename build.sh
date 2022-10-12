@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 AARU_VERSION=6.0.0-alpha6
-OS_NAME=`uname`
+OS_NAME=$(uname)
 
 mkdir -p build
 
@@ -30,7 +30,7 @@ cd ..
 
 # If we are compiling on Linux check if we are on Arch Linux and then create the Arch Linux package as well
 if [[ ${OS_NAME} == Linux ]]; then
- OS_RELEASE=`pcregrep -o1 -e "^ID=(?<distro_id>\w+)" /etc/os-release`
+ OS_RELEASE=$(pcregrep -o1 -e "^ID=(?<distro_id>\w+)" /etc/os-release)
 
  if [[ ${OS_RELEASE} != arch ]]; then
   exit 0
