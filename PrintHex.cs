@@ -57,8 +57,8 @@ public static class PrintHex
         // TODO: Color list
         // TODO: Allow to change width
         var str          = "Offset";
-        int rows         = array.Length / 16;
-        int last         = array.Length % 16;
+        int rows         = array.Length / width;
+        int last         = array.Length % width;
         int offsetLength = $"{array.Length:X}".Length;
         var sb           = new StringBuilder();
 
@@ -66,7 +66,7 @@ public static class PrintHex
             rows++;
 
         if(last == 0)
-            last = 16;
+            last = width;
 
         if(offsetLength < str.Length)
             offsetLength = str.Length;
@@ -80,7 +80,7 @@ public static class PrintHex
         sb.Append(str);
         sb.Append("  ");
 
-        for(var i = 0; i < 16; i++)
+        for(var i = 0; i < width; i++)
             sb.AppendFormat(" {0:X2}", i);
 
         if(color)
@@ -103,8 +103,8 @@ public static class PrintHex
                 sb.Append("\u001b[0m");
 
             sb.Append("  ");
-            int lastBytes  = i == rows - 1 ? last : 16;
-            int lastSpaces = 16 - lastBytes;
+            int lastBytes  = i == rows - 1 ? last : width;
+            int lastSpaces = width - lastBytes;
 
             for(var j = 0; j < lastBytes; j++)
             {
@@ -121,7 +121,7 @@ public static class PrintHex
             for(var j = 0; j < lastBytes; j++)
             {
                 int v = array[b];
-                sb.Append(v > 31 && v < 127 || v > 159 ? (char)v : '.');
+                sb.Append(v is > 31 and < 127 or > 159 ? (char)v : '.');
                 b++;
             }
 
