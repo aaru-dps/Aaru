@@ -143,11 +143,13 @@ sealed partial class Dump
             return;
         }
 
-        firstLba = (uint)tracks.Min(t => t.StartSector);
+        firstLba = (uint) tracks.Min(t => t.StartSector);
 
         // Check subchannels support
-        supportsPqSubchannel = SupportsPqSubchannel(_dev, _dumpLog, UpdateStatus, firstLba);
-        supportsRwSubchannel = SupportsRwSubchannel(_dev, _dumpLog, UpdateStatus, firstLba);
+        supportsPqSubchannel = SupportsPqSubchannel(_dev, _dumpLog, UpdateStatus, firstLba) ||
+                               SupportsPqSubchannel(_dev, _dumpLog, UpdateStatus, firstLba + 5);
+        supportsRwSubchannel = SupportsRwSubchannel(_dev, _dumpLog, UpdateStatus, firstLba) ||
+                               SupportsRwSubchannel(_dev, _dumpLog, UpdateStatus, firstLba + 5);
 
         if(supportsRwSubchannel)
             supportedSubchannel = MmcSubchannel.Raw;
@@ -249,6 +251,9 @@ sealed partial class Dump
 
                 readcd = !_dev.ReadCd(out cmdBuf, out _, firstLba, sectorSize, 1, MmcSectorTypes.AllTypes, false, false,
                                       true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                      supportedSubchannel, _dev.Timeout, out _) ||
+                         !_dev.ReadCd(out cmdBuf, out _, firstLba + 5, sectorSize, 1, MmcSectorTypes.AllTypes, false,
+                                      false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                       supportedSubchannel, _dev.Timeout, out _);
 
                 if(!readcd)
@@ -263,18 +268,24 @@ sealed partial class Dump
                     UpdateStatus?.Invoke("Checking if drive supports READ(10)...");
 
                     read10 = !_dev.Read10(out cmdBuf, out _, 0, false, true, false, false, firstLba, 2048, 0, 1,
+                                          _dev.Timeout, out _) ||
+                             !_dev.Read10(out cmdBuf, out _, 0, false, true, false, false, firstLba + 5, 2048, 0, 1,
                                           _dev.Timeout, out _);
 
                     _dumpLog.WriteLine("Checking if drive supports READ(12)...");
                     UpdateStatus?.Invoke("Checking if drive supports READ(12)...");
 
                     read12 = !_dev.Read12(out cmdBuf, out _, 0, false, true, false, false, firstLba, 2048, 0, 1, false,
-                                          _dev.Timeout, out _);
+                                          _dev.Timeout, out _) ||
+                             !_dev.Read12(out cmdBuf, out _, 0, false, true, false, false, firstLba + 5, 2048, 0, 1,
+                                          false, _dev.Timeout, out _);
 
                     _dumpLog.WriteLine("Checking if drive supports READ(16)...");
                     UpdateStatus?.Invoke("Checking if drive supports READ(16)...");
 
                     read16 = !_dev.Read16(out cmdBuf, out _, 0, false, true, false, firstLba, 2048, 0, 1, false,
+                                          _dev.Timeout, out _) ||
+                             !_dev.Read16(out cmdBuf, out _, 0, false, true, false, firstLba + 5, 2048, 0, 1, false,
                                           _dev.Timeout, out _);
 
                     if(!read6  &&
@@ -468,8 +479,8 @@ sealed partial class Dump
         for(var t = 1; t < tracks.Length; t++)
             tracks[t - 1].EndSector = tracks[t].StartSector - 1;
 
-        tracks[^1].EndSector = (ulong)lastSector;
-        blocks               = (ulong)(lastSector + 1);
+        tracks[^1].EndSector = (ulong) lastSector;
+        blocks               = (ulong) (lastSector + 1);
 
         if(blocks == 0)
         {
@@ -533,8 +544,8 @@ sealed partial class Dump
 
             foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
                 foreach(Track trk in tracks.Where(trk => trk.Session   == leadOuts.Key).
-                                            Where(trk => trk.EndSector >= (ulong)leadOuts.Value))
-                    trk.EndSector = (ulong)leadOuts.Value - 1;
+                                            Where(trk => trk.EndSector >= (ulong) leadOuts.Value))
+                    trk.EndSector = (ulong) leadOuts.Value - 1;
 
             var dataExtents = new ExtentsULong();
 
@@ -562,12 +573,12 @@ sealed partial class Dump
             {
                 new Track
                 {
-                    Sequence          = (uint)(tracks.Any(t => t.Sequence == 1) ? 0 : 1),
+                    Sequence          = (uint) (tracks.Any(t => t.Sequence == 1) ? 0 : 1),
                     Session           = 1,
                     Type              = hiddenData ? TrackType.Data : TrackType.Audio,
                     StartSector       = 0,
-                    BytesPerSector    = (int)sectorSize,
-                    RawBytesPerSector = (int)sectorSize,
+                    BytesPerSector    = (int) sectorSize,
+                    RawBytesPerSector = (int) sectorSize,
                     SubchannelType    = subType,
                     EndSector         = tracks.First(t => t.Sequence >= 1).StartSector - 1
                 }
@@ -599,7 +610,7 @@ sealed partial class Dump
             _dumpLog.WriteLine("Checking mode for track {0}...", trk.Sequence);
             UpdateStatus?.Invoke($"Checking mode for track {trk.Sequence}...");
 
-            sense = _dev.ReadCd(out cmdBuf, out _, (uint)(trk.StartSector + trk.Pregap), blockSize, 1,
+            sense = _dev.ReadCd(out cmdBuf, out _, (uint) (trk.StartSector + trk.Pregap), blockSize, 1,
                                 MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                 MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
 
@@ -761,14 +772,15 @@ sealed partial class Dump
             else if(read10)
             {
                 sense = _dev.Read10(out cmdBuf, out _, 0, false, true, false, false, firstLba, blockSize, 0,
-                                    (ushort)_maximumReadable, _dev.Timeout, out _);
+                                    (ushort) _maximumReadable, _dev.Timeout, out _);
 
                 if(_dev.Error || sense)
                     _maximumReadable /= 2;
             }
             else if(read6)
             {
-                sense = _dev.Read6(out cmdBuf, out _, firstLba, blockSize, (byte)_maximumReadable, _dev.Timeout, out _);
+                sense = _dev.Read6(out cmdBuf, out _, firstLba, blockSize, (byte) _maximumReadable, _dev.Timeout,
+                                   out _);
 
                 if(_dev.Error || sense)
                     _maximumReadable /= 2;
@@ -838,7 +850,7 @@ sealed partial class Dump
                 errno = outputOptical.ReadSectorTag(imgTrack.Sequence, SectorTagType.CdTrackIsrc, out byte[] isrcBytes);
 
                 if(errno == ErrorNumber.NoError)
-                    isrcs[(byte)imgTrack.Sequence] = Encoding.ASCII.GetString(isrcBytes);
+                    isrcs[(byte) imgTrack.Sequence] = Encoding.ASCII.GetString(isrcBytes);
 
                 Track trk = tracks.FirstOrDefault(t => t.Sequence == imgTrack.Sequence);
 
@@ -927,12 +939,12 @@ sealed partial class Dump
         if(supportedSubchannel == MmcSubchannel.None)
             foreach(Track trk in tracks)
             {
-                sense = _dev.ReadIsrc((byte)trk.Sequence, out string isrc, out _, out _, _dev.Timeout, out _);
+                sense = _dev.ReadIsrc((byte) trk.Sequence, out string isrc, out _, out _, _dev.Timeout, out _);
 
                 if(sense || isrc is null or "000000000000")
                     continue;
 
-                isrcs[(byte)trk.Sequence] = isrc;
+                isrcs[(byte) trk.Sequence] = isrc;
 
                 UpdateStatus?.Invoke($"Found ISRC for track {trk.Sequence}: {isrc}");
                 _dumpLog.WriteLine($"Found ISRC for track {trk.Sequence}: {isrc}");
@@ -950,7 +962,7 @@ sealed partial class Dump
 
             if(_resume.NextBlock < blocks)
                 for(ulong i = _resume.NextBlock; i < blocks; i++)
-                    subchannelExtents.Add((int)i);
+                    subchannelExtents.Add((int) i);
         }
 
         if(_resume.NextBlock > 0)
@@ -1034,7 +1046,7 @@ sealed partial class Dump
 
                 offsetBytes = driveOffset.Value;
 
-                sectorsForOffset = offsetBytes / (int)sectorSize;
+                sectorsForOffset = offsetBytes / (int) sectorSize;
 
                 if(sectorsForOffset < 0)
                     sectorsForOffset *= -1;
@@ -1046,7 +1058,7 @@ sealed partial class Dump
         else
         {
             offsetBytes      = combinedOffset.Value;
-            sectorsForOffset = offsetBytes / (int)sectorSize;
+            sectorsForOffset = offsetBytes / (int) sectorSize;
 
             if(sectorsForOffset < 0)
                 sectorsForOffset *= -1;
@@ -1102,7 +1114,7 @@ sealed partial class Dump
             if(_speed is 0 or > 0xFFFF)
                 _speed = 0xFFFF;
 
-            _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
+            _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort) _speed, 0, _dev.Timeout, out _);
         }
 
         // Start reading
@@ -1146,7 +1158,7 @@ sealed partial class Dump
                 if(cdiReadyReadAsAudio)
                 {
                     offsetBytes      = combinedOffset.Value;
-                    sectorsForOffset = offsetBytes / (int)sectorSize;
+                    sectorsForOffset = offsetBytes / (int) sectorSize;
 
                     if(sectorsForOffset < 0)
                         sectorsForOffset *= -1;
@@ -1220,23 +1232,23 @@ sealed partial class Dump
         mhddLog.Close();
 
         ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                     blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
+                     blockSize * (double) (blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
         UpdateStatus?.
-            Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+            Invoke($"Average dump speed {blockSize * (double) (blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
         UpdateStatus?.
-            Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+            Invoke($"Average write speed {blockSize * (double) (blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
 
         _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
         _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                           blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
+                           blockSize * (double) (blocks + 1) / 1024 / (totalDuration / 1000));
 
         _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                           blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
+                           blockSize * (double) (blocks + 1) / 1024 / imageWriteDuration);
 
         TrimCdUserData(audioExtents, blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
                        read16, readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors,
@@ -1255,7 +1267,7 @@ sealed partial class Dump
 
         foreach(Tuple<ulong, ulong> leadoutExtent in leadOutExtents.ToArray())
             for(ulong e = leadoutExtent.Item1; e <= leadoutExtent.Item2; e++)
-                subchannelExtents.Remove((int)e);
+                subchannelExtents.Remove((int) e);
 
         if(subchannelExtents.Count > 0 &&
            _retryPasses            > 0 &&
@@ -1346,7 +1358,7 @@ sealed partial class Dump
                     continue;
 
                 trk.StartSector -= trk.Pregap;
-                trk.Indexes[0]  =  (int)trk.StartSector;
+                trk.Indexes[0]  =  (int) trk.StartSector;
 
                 continue;
             }
@@ -1388,7 +1400,7 @@ sealed partial class Dump
             Invoke($"Took a total of {(end - dumpStart).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
 
         UpdateStatus?.
-            Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+            Invoke($"Average speed: {blockSize * (double) (blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
         if(maxSpeed > 0)
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
