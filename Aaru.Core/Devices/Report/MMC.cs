@@ -1268,15 +1268,22 @@ namespace Aaru.Core.Devices.Report
 
                     mediaTest.RWSubchannelData = buffer;
 
-                    mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2448, 1,
-                                                                        MmcSectorTypes.Cdda, false, false, false,
-                                                                        MmcHeaderCodes.None, true, false,
-                                                                        MmcErrorField.None, MmcSubchannel.Rw,
-                                                                        _dev.Timeout, out _);
+                    // AccessTek/Optorite DD0203 returns OK but then the firmware dies
+                    if(_dev.Model.StartsWith("DVD RW 4XMax", StringComparison.Ordinal))
+                        mediaTest.CanReadCorrectedSubchannel = false;
+                    else
+                    {
+                        mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2448, 1,
+                                                                            MmcSectorTypes.Cdda, false, false, false,
+                                                                            MmcHeaderCodes.None, true, false,
+                                                                            MmcErrorField.None, MmcSubchannel.Rw,
+                                                                            _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                   !mediaTest.CanReadCorrectedSubchannel);
 
-                    mediaTest.CorrectedSubchannelData = buffer;
+                        mediaTest.CorrectedSubchannelData = buffer;
+                    }
 
                     AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
@@ -1393,15 +1400,22 @@ namespace Aaru.Core.Devices.Report
 
                     mediaTest.RWSubchannelData = buffer;
 
-                    mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2448, 1,
-                                                                        MmcSectorTypes.AllTypes, false, false, true,
-                                                                        MmcHeaderCodes.AllHeaders, true, true,
-                                                                        MmcErrorField.None, MmcSubchannel.Rw,
-                                                                        _dev.Timeout, out _);
+                    // AccessTek/Optorite DD0203 returns OK but then the firmware dies
+                    if(_dev.Model.StartsWith("DVD RW 4XMax", StringComparison.Ordinal))
+                        mediaTest.CanReadCorrectedSubchannel = false;
+                    else
+                    {
+                        mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2448, 1,
+                                                                            MmcSectorTypes.AllTypes, false, false, true,
+                                                                            MmcHeaderCodes.AllHeaders, true, true,
+                                                                            MmcErrorField.None, MmcSubchannel.Rw,
+                                                                            _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                   !mediaTest.CanReadCorrectedSubchannel);
 
-                    mediaTest.CorrectedSubchannelData = buffer;
+                        mediaTest.CorrectedSubchannelData = buffer;
+                    }
 
                     AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
@@ -1453,19 +1467,27 @@ namespace Aaru.Core.Devices.Report
                                                                          true, MmcErrorField.C2Pointers,
                                                                          MmcSubchannel.Rw, _dev.Timeout, out _);
 
-                        if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
-                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16,
-                                                                             2714, 1, MmcSectorTypes.AllTypes,
-                                                                             false, false, true,
-                                                                             MmcHeaderCodes.AllHeaders, true, true,
-                                                                             MmcErrorField.C2PointersAndBlock,
-                                                                             MmcSubchannel.Rw, _dev.Timeout,
-                                                                             out _);
+                        // AccessTek/Optorite DD0203 returns OK but then the firmware dies
+                        if(_dev.Model.StartsWith("DVD RW 4XMax", StringComparison.Ordinal))
+                            mediaTest.CanReadCorrectedSubchannel = false;
+                        else
+                        {
+                            if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
+                                mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer,
+                                                                                 16, 2714, 1,
+                                                                                 MmcSectorTypes.AllTypes, false,
+                                                                                 false, true,
+                                                                                 MmcHeaderCodes.AllHeaders, true,
+                                                                                 true,
+                                                                                 MmcErrorField.C2PointersAndBlock,
+                                                                                 MmcSubchannel.Rw, _dev.Timeout,
+                                                                                 out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                   !mediaTest.CanReadCorrectedSubchannelWithC2);
+                            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                       !mediaTest.CanReadCorrectedSubchannelWithC2);
 
-                        mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                            mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                        }
                     }
                 }
                 else
@@ -1514,15 +1536,22 @@ namespace Aaru.Core.Devices.Report
 
                     mediaTest.RWSubchannelData = buffer;
 
-                    mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2144, 1,
-                                                                        MmcSectorTypes.AllTypes, false, false, false,
-                                                                        MmcHeaderCodes.None, true, false,
-                                                                        MmcErrorField.None, MmcSubchannel.Rw,
-                                                                        _dev.Timeout, out _);
+                    // AccessTek/Optorite DD0203 returns OK but then the firmware dies
+                    if(_dev.Model.StartsWith("DVD RW 4XMax", StringComparison.Ordinal))
+                        mediaTest.CanReadCorrectedSubchannel = false;
+                    else
+                    {
+                        mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2144, 1,
+                                                                            MmcSectorTypes.AllTypes, false, false,
+                                                                            false, MmcHeaderCodes.None, true, false,
+                                                                            MmcErrorField.None, MmcSubchannel.Rw,
+                                                                            _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                   !mediaTest.CanReadCorrectedSubchannel);
 
-                    mediaTest.CorrectedSubchannelData = buffer;
+                        mediaTest.CorrectedSubchannelData = buffer;
+                    }
 
                     AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
