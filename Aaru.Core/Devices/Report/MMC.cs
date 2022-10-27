@@ -1381,7 +1381,6 @@ public sealed partial class DeviceReport
                 Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Trying to read C2 Pointers...").IsIndeterminate();
-                    mediaTest.CanReadPMA = !_dev.ReadPma(out buffer, out senseBuffer, _dev.Timeout, out _);
 
                     // They return OK, but then all following commands make the drive fail miserably.
                     if(_dev.Model.StartsWith("iHOS104", StringComparison.Ordinal))
@@ -1450,7 +1449,6 @@ public sealed partial class DeviceReport
                 Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Trying to read subchannels with C2 Pointers...").IsIndeterminate();
-                    mediaTest.CanReadPMA = !_dev.ReadPma(out buffer, out senseBuffer, _dev.Timeout, out _);
 
                     // They return OK, but then all following commands make the drive fail miserably.
                     if(_dev.Model.StartsWith("iHOS104", StringComparison.Ordinal))
@@ -1697,7 +1695,6 @@ public sealed partial class DeviceReport
                 Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Trying to read subchannels...").IsIndeterminate();
-                    mediaTest.CanReadPMA = !_dev.ReadPma(out buffer, out senseBuffer, _dev.Timeout, out _);
 
                     mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2064, 1,
                                                                  MmcSectorTypes.AllTypes, false, false, false,
