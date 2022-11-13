@@ -64,7 +64,6 @@ public static class PRI
             return null;
 
         var    pri = new PreRecordedInformation();
-        byte[] tmp;
 
         pri.DataLength = (ushort)((response[0] << 8) + response[1]);
         pri.Reserved1  = response[2];
@@ -109,7 +108,7 @@ public static class PRI
         Array.Copy(response, 37, pri.ManufacturerId3, 0, 6);
         Array.Copy(response, 44, pri.Reserved8, 0, pri.Reserved8.Length);
 
-        tmp = new byte[18];
+        var tmp = new byte[18];
 
         Array.Copy(response, 21, tmp, 0, 6);
         Array.Copy(response, 29, tmp, 6, 6);

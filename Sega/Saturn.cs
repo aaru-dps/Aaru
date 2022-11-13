@@ -116,9 +116,8 @@ public static class Saturn
         IPBinInformation.AppendLine("--------------------------------");
 
         // Decoding all data
-        DateTime    ipbindate;
-        CultureInfo provider = CultureInfo.InvariantCulture;
-        ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
+        CultureInfo provider  = CultureInfo.InvariantCulture;
+        var         ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
 
         IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name)).AppendLine();
 
