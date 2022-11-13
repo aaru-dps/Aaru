@@ -168,7 +168,7 @@ public sealed class BTRFS : IFilesystem
 
         AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.seek_speed = {0}", btrfsSb.dev_item.seek_speed);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bandwitdh = {0}", btrfsSb.dev_item.bandwitdh);
+        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bandwidth = {0}", btrfsSb.dev_item.bandwidth);
 
         AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.device_uuid = {0}", btrfsSb.dev_item.device_uuid);
 
@@ -269,7 +269,7 @@ public sealed class BTRFS : IFilesystem
         public readonly ulong start_offset;
         public readonly uint  dev_group;
         public readonly byte  seek_speed;
-        public readonly byte  bandwitdh;
+        public readonly byte  bandwidth;
         public readonly Guid  device_uuid;
         public readonly Guid  uuid;
     }

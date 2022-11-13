@@ -54,6 +54,7 @@ public sealed class MBR : IPartition
     const ushort NEC_MAGIC = 0xA55A;
     const ushort DM_MAGIC  = 0x55AA;
 
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     static readonly string[] _mbrTypes =
     {
         // 0x00

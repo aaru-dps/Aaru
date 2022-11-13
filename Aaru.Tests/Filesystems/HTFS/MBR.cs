@@ -40,7 +40,7 @@ public class MBR : FilesystemTest
     public MBR() : base("HTFS") {}
 
     public override string DataFolder =>
-        Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Throughtput File System (MBR)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Throughput File System (MBR)");
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => true;
 

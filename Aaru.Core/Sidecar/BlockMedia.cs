@@ -1158,11 +1158,11 @@ public sealed partial class Sidecar
                     }
                     else
                         AaruConsole.
-                            ErrorWriteLine("KryoFlux image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
+                            ErrorWriteLine("KryoFlux image does not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
                                            kfImage.Info.Cylinders, image.Info.Cylinders);
                 else
                     AaruConsole.
-                        ErrorWriteLine("KryoFluximage do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
+                        ErrorWriteLine("KryoFlux image does not contain same number of heads ({0}) than disk image ({1}), ignoring...",
                                        kfImage.Info.Heads, image.Info.Heads);
             }
         }

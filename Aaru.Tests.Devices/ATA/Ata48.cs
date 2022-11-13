@@ -47,7 +47,7 @@ static class Ata48
             AaruConsole.WriteLine("2.- Send READ DMA EXT command.");
             AaruConsole.WriteLine("3.- Send READ LOG DMA EXT command.");
             AaruConsole.WriteLine("4.- Send READ LOG EXT command.");
-            AaruConsole.WriteLine("5.- Send READ MATIVE MAX ADDRESS EXT command.");
+            AaruConsole.WriteLine("5.- Send READ NATIVE MAX ADDRESS EXT command.");
             AaruConsole.WriteLine("6.- Send READ MULTIPLE EXT command.");
             AaruConsole.WriteLine("7.- Send READ SECTORS EXT command.");
             AaruConsole.WriteLine("0.- Return to ATA commands menu.");

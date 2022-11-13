@@ -158,7 +158,7 @@ static class Plasmon
 
                     if(!uint.TryParse(strDev, out address))
                     {
-                        AaruConsole.WriteLine("Not a numbr. Press any key to continue...");
+                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         address = 0;
                         Console.ReadKey();
 
@@ -196,7 +196,7 @@ static class Plasmon
 
                         if(!ushort.TryParse(strDev, out bps))
                         {
-                            AaruConsole.WriteLine("Not a numbr. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             bps = 512;
                             Console.ReadKey();
                         }
@@ -354,7 +354,7 @@ static class Plasmon
 
                     if(!uint.TryParse(strDev, out address))
                     {
-                        AaruConsole.WriteLine("Not a numbr. Press any key to continue...");
+                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         address = 0;
                         Console.ReadKey();
                     }

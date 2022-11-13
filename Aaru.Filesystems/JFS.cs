@@ -163,7 +163,7 @@ public sealed class JFS : IFilesystem
             sb.AppendLine("Volume is in a big-endian system");
 
         if(jfsSb.s_flags.HasFlag(Flags.DirIndex))
-            sb.AppendLine("Volume has presistent indexes");
+            sb.AppendLine("Volume has persistent indexes");
 
         if(jfsSb.s_flags.HasFlag(Flags.Linux))
             sb.AppendLine("Volume supports Linux");

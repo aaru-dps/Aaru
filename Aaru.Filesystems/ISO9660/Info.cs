@@ -582,7 +582,7 @@ public sealed partial class ISO9660
             isoMetadata.AppendLine("zisofs compression present.");
 
         if(evd)
-            isoMetadata.AppendLine("Contains Enhanved Volume Descriptor.");
+            isoMetadata.AppendLine("Contains Enhanced Volume Descriptor.");
 
         if(vpd)
             isoMetadata.AppendLine("Contains Volume Partition Descriptor.");

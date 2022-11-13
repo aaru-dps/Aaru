@@ -1292,7 +1292,7 @@ static class Plextor
 
                     if(!uint.TryParse(strDev, out count))
                     {
-                        AaruConsole.WriteLine("Not a numbr. Press any key to continue...");
+                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         count = 1;
                         Console.ReadKey();
 

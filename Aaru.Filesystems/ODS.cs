@@ -215,7 +215,7 @@ public sealed class ODS : IFilesystem
         sb.AppendFormat("Checksums: 0x{0:X4} and 0x{1:X4}", homeblock.checksum1, homeblock.checksum2).AppendLine();
         sb.AppendLine("Flags:");
         sb.AppendFormat("Window: {0}", homeblock.window).AppendLine();
-        sb.AppendFormat("Cached directores: {0}", homeblock.lru_lim).AppendLine();
+        sb.AppendFormat("Cached directories: {0}", homeblock.lru_lim).AppendLine();
         sb.AppendFormat("Default allocation: {0} blocks", homeblock.extend).AppendLine();
 
         if((homeblock.volchar & 0x01) == 0x01)

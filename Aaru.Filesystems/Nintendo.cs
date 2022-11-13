@@ -33,6 +33,7 @@
 namespace Aaru.Filesystems;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -392,6 +393,7 @@ public sealed class NintendoPlugin : IFilesystem
         return $"unknown code '{regionCode}'";
     }
 
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     static string PublisherCodeToString(string publisherCode)
     {
         switch(publisherCode)
