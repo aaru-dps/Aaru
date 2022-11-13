@@ -198,158 +198,70 @@ public static class CdChecksums
         //AaruConsole.DebugWriteLine("CD checksums", "Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C],
         //                          channel[0x00D], channel[0x00E]);
 
-        if((channel[0x00F] & 0x03) == 0x00) // mode (1 byte)
+        switch(channel[0x00F] & 0x03)
         {
-            //AaruConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
-            //                          channel[0x00C], channel[0x00D], channel[0x00E]);
-            for(var i = 0x010; i < 0x930; i++)
-                if(channel[i] != 0x00)
-                {
-                    AaruConsole.DebugWriteLine("CD checksums",
-                                               "Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}",
-                                               channel[0x00C], channel[0x00D], channel[0x00E]);
+            // mode (1 byte)
+            case 0x00:
+            {
+                //AaruConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
+                //                          channel[0x00C], channel[0x00D], channel[0x00E]);
+                for(var i = 0x010; i < 0x930; i++)
+                    if(channel[i] != 0x00)
+                    {
+                        AaruConsole.DebugWriteLine("CD checksums",
+                                                   "Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}",
+                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                    return false;
-                }
+                        return false;
+                    }
 
-            return true;
-        }
+                return true;
+            }
 
-        if((channel[0x00F] & 0x03) == 0x01) // mode (1 byte)
-        {
+            // mode (1 byte)
             //AaruConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
             //                          channel[0x00C], channel[0x00D], channel[0x00E]);
-
-            if(channel[0x814] != 0x00 || // reserved (8 bytes)
-               channel[0x815] != 0x00 ||
-               channel[0x816] != 0x00 ||
-               channel[0x817] != 0x00 ||
-               channel[0x818] != 0x00 ||
-               channel[0x819] != 0x00 ||
-               channel[0x81A] != 0x00 ||
-               channel[0x81B] != 0x00)
-            {
+            case 0x01 when channel[0x814] != 0x00 || // reserved (8 bytes)
+                           channel[0x815] != 0x00 || channel[0x816] != 0x00 || channel[0x817] != 0x00 ||
+                           channel[0x818] != 0x00 || channel[0x819] != 0x00 || channel[0x81A] != 0x00 ||
+                           channel[0x81B] != 0x00:
                 AaruConsole.DebugWriteLine("CD checksums",
                                            "Mode 1 sector with data in reserved bytes at address: {0:X2}:{1:X2}:{2:X2}",
                                            channel[0x00C], channel[0x00D], channel[0x00E]);
 
                 return false;
-            }
-
-            var address = new byte[4];
-            var data    = new byte[2060];
-            var data2   = new byte[2232];
-            var eccP    = new byte[172];
-            var eccQ    = new byte[104];
-
-            Array.Copy(channel, 0x0C, address, 0, 4);
-            Array.Copy(channel, 0x10, data, 0, 2060);
-            Array.Copy(channel, 0x10, data2, 0, 2232);
-            Array.Copy(channel, 0x81C, eccP, 0, 172);
-            Array.Copy(channel, 0x8C8, eccQ, 0, 104);
-
-            bool failedEccP = !CheckEcc(address, data, 86, 24, 2, 86, eccP);
-            bool failedEccQ = !CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
-
-            correctEccP = !failedEccP;
-            correctEccQ = !failedEccQ;
-
-            if(failedEccP)
-                AaruConsole.DebugWriteLine("CD checksums",
-                                           "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
-                                           channel[0x00C], channel[0x00D], channel[0x00E]);
-
-            if(failedEccQ)
-                AaruConsole.DebugWriteLine("CD checksums",
-                                           "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
-                                           channel[0x00C], channel[0x00D], channel[0x00E]);
-
-            var  storedEdc     = BitConverter.ToUInt32(channel, 0x810);
-            uint calculatedEdc = ComputeEdc(0, channel, 0x810);
-
-            correctEdc = calculatedEdc == storedEdc;
-
-            if(calculatedEdc == storedEdc)
-                return !failedEccP && !failedEccQ;
-
-            AaruConsole.DebugWriteLine("CD checksums",
-                                       "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
-                                       channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc);
-
-            return false;
-        }
-
-        if((channel[0x00F] & 0x03) == 0x02) // mode (1 byte)
-        {
-            //AaruConsole.DebugWriteLine("CD checksums", "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
-            //                          channel[0x00C], channel[0x00D], channel[0x00E]);
-            var mode2Sector = new byte[channel.Length - 0x10];
-            Array.Copy(channel, 0x10, mode2Sector, 0, mode2Sector.Length);
-
-            if((channel[0x012] & 0x20) == 0x20) // mode 2 form 2
+            case 0x01:
             {
-                if(channel[0x010] != channel[0x014] ||
-                   channel[0x011] != channel[0x015] ||
-                   channel[0x012] != channel[0x016] ||
-                   channel[0x013] != channel[0x017])
-                    AaruConsole.DebugWriteLine("CD checksums",
-                                               "Subheader copies differ in mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}",
-                                               channel[0x00C], channel[0x00D], channel[0x00E]);
-
-                var storedEdc = BitConverter.ToUInt32(mode2Sector, 0x91C);
-
-                // No CRC stored!
-                if(storedEdc == 0x00000000)
-                    return true;
-
-                uint calculatedEdc = ComputeEdc(0, mode2Sector, 0x91C);
-
-                correctEdc = calculatedEdc == storedEdc;
-
-                if(calculatedEdc == storedEdc)
-                    return true;
-
-                AaruConsole.DebugWriteLine("CD checksums",
-                                           "Mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
-                                           channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc);
-
-                return false;
-            }
-            else
-            {
-                if(channel[0x010] != channel[0x014] ||
-                   channel[0x011] != channel[0x015] ||
-                   channel[0x012] != channel[0x016] ||
-                   channel[0x013] != channel[0x017])
-                    AaruConsole.DebugWriteLine("CD checksums",
-                                               "Subheader copies differ in mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}",
-                                               channel[0x00C], channel[0x00D], channel[0x00E]);
-
                 var address = new byte[4];
+                var data    = new byte[2060];
+                var data2   = new byte[2232];
                 var eccP    = new byte[172];
                 var eccQ    = new byte[104];
 
-                Array.Copy(mode2Sector, 0x80C, eccP, 0, 172);
-                Array.Copy(mode2Sector, 0x8B8, eccQ, 0, 104);
+                Array.Copy(channel, 0x0C, address, 0, 4);
+                Array.Copy(channel, 0x10, data, 0, 2060);
+                Array.Copy(channel, 0x10, data2, 0, 2232);
+                Array.Copy(channel, 0x81C, eccP, 0, 172);
+                Array.Copy(channel, 0x8C8, eccQ, 0, 104);
 
-                bool failedEccP = !CheckEcc(address, mode2Sector, 86, 24, 2, 86, eccP);
-                bool failedEccQ = !CheckEcc(address, mode2Sector, 52, 43, 86, 88, eccQ);
+                bool failedEccP = !CheckEcc(address, data, 86, 24, 2, 86, eccP);
+                bool failedEccQ = !CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
 
                 correctEccP = !failedEccP;
                 correctEccQ = !failedEccQ;
 
                 if(failedEccP)
                     AaruConsole.DebugWriteLine("CD checksums",
-                                               "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
+                                               "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
                                                channel[0x00C], channel[0x00D], channel[0x00E]);
 
                 if(failedEccQ)
                     AaruConsole.DebugWriteLine("CD checksums",
-                                               "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
+                                               "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
                                                channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                var  storedEdc     = BitConverter.ToUInt32(mode2Sector, 0x808);
-                uint calculatedEdc = ComputeEdc(0, mode2Sector, 0x808);
+                var  storedEdc     = BitConverter.ToUInt32(channel, 0x810);
+                uint calculatedEdc = ComputeEdc(0, channel, 0x810);
 
                 correctEdc = calculatedEdc == storedEdc;
 
@@ -357,17 +269,105 @@ public static class CdChecksums
                     return !failedEccP && !failedEccQ;
 
                 AaruConsole.DebugWriteLine("CD checksums",
-                                           "Mode 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
+                                           "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
                                            channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc);
 
                 return false;
             }
+
+            // mode (1 byte)
+            case 0x02:
+            {
+                //AaruConsole.DebugWriteLine("CD checksums", "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
+                //                          channel[0x00C], channel[0x00D], channel[0x00E]);
+                var mode2Sector = new byte[channel.Length - 0x10];
+                Array.Copy(channel, 0x10, mode2Sector, 0, mode2Sector.Length);
+
+                if((channel[0x012] & 0x20) == 0x20) // mode 2 form 2
+                {
+                    if(channel[0x010] != channel[0x014] ||
+                       channel[0x011] != channel[0x015] ||
+                       channel[0x012] != channel[0x016] ||
+                       channel[0x013] != channel[0x017])
+                        AaruConsole.DebugWriteLine("CD checksums",
+                                                   "Subheader copies differ in mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}",
+                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
+
+                    var storedEdc = BitConverter.ToUInt32(mode2Sector, 0x91C);
+
+                    // No CRC stored!
+                    if(storedEdc == 0x00000000)
+                        return true;
+
+                    uint calculatedEdc = ComputeEdc(0, mode2Sector, 0x91C);
+
+                    correctEdc = calculatedEdc == storedEdc;
+
+                    if(calculatedEdc == storedEdc)
+                        return true;
+
+                    AaruConsole.DebugWriteLine("CD checksums",
+                                               "Mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
+                                               channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc,
+                                               storedEdc);
+
+                    return false;
+                }
+                else
+                {
+                    if(channel[0x010] != channel[0x014] ||
+                       channel[0x011] != channel[0x015] ||
+                       channel[0x012] != channel[0x016] ||
+                       channel[0x013] != channel[0x017])
+                        AaruConsole.DebugWriteLine("CD checksums",
+                                                   "Subheader copies differ in mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}",
+                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
+
+                    var address = new byte[4];
+                    var eccP    = new byte[172];
+                    var eccQ    = new byte[104];
+
+                    Array.Copy(mode2Sector, 0x80C, eccP, 0, 172);
+                    Array.Copy(mode2Sector, 0x8B8, eccQ, 0, 104);
+
+                    bool failedEccP = !CheckEcc(address, mode2Sector, 86, 24, 2, 86, eccP);
+                    bool failedEccQ = !CheckEcc(address, mode2Sector, 52, 43, 86, 88, eccQ);
+
+                    correctEccP = !failedEccP;
+                    correctEccQ = !failedEccQ;
+
+                    if(failedEccP)
+                        AaruConsole.DebugWriteLine("CD checksums",
+                                                   "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
+                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
+
+                    if(failedEccQ)
+                        AaruConsole.DebugWriteLine("CD checksums",
+                                                   "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
+                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
+
+                    var  storedEdc     = BitConverter.ToUInt32(mode2Sector, 0x808);
+                    uint calculatedEdc = ComputeEdc(0, mode2Sector, 0x808);
+
+                    correctEdc = calculatedEdc == storedEdc;
+
+                    if(calculatedEdc == storedEdc)
+                        return !failedEccP && !failedEccQ;
+
+                    AaruConsole.DebugWriteLine("CD checksums",
+                                               "Mode 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
+                                               channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc,
+                                               storedEdc);
+
+                    return false;
+                }
+            }
+            default:
+                AaruConsole.DebugWriteLine("CD checksums", "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
+                                           channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
+
+                return null;
         }
-
-        AaruConsole.DebugWriteLine("CD checksums", "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
-                                   channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
-
-        return null;
     }
 
     static uint ComputeEdc(uint edc, IReadOnlyList<byte> src, int size)

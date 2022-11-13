@@ -136,42 +136,44 @@ public sealed class Fletcher32Context : IChecksum
         uint sum2    = previousSum2;
         var  dataOff = 0;
 
-        /* in case user likes doing a byte at a time, keep it fast */
-        if(len == 1)
+        switch(len)
         {
-            sum1 += data[dataOff];
-
-            if(sum1 >= FLETCHER_MODULE)
-                sum1 -= FLETCHER_MODULE;
-
-            sum2 += sum1;
-
-            if(sum2 >= FLETCHER_MODULE)
-                sum2 -= FLETCHER_MODULE;
-
-            previousSum1 = (ushort)(sum1 & 0xFFFF);
-            previousSum2 = (ushort)(sum2 & 0xFFFF);
-
-            return;
-        }
-
-        /* in case short lengths are provided, keep it somewhat fast */
-        if(len < 16)
-        {
-            while(len-- > 0)
+            /* in case user likes doing a byte at a time, keep it fast */
+            case 1:
             {
-                sum1 += data[dataOff++];
+                sum1 += data[dataOff];
+
+                if(sum1 >= FLETCHER_MODULE)
+                    sum1 -= FLETCHER_MODULE;
+
                 sum2 += sum1;
+
+                if(sum2 >= FLETCHER_MODULE)
+                    sum2 -= FLETCHER_MODULE;
+
+                previousSum1 = (ushort)(sum1 & 0xFFFF);
+                previousSum2 = (ushort)(sum2 & 0xFFFF);
+
+                return;
             }
+            /* in case short lengths are provided, keep it somewhat fast */
+            case < 16:
+            {
+                while(len-- > 0)
+                {
+                    sum1 += data[dataOff++];
+                    sum2 += sum1;
+                }
 
-            if(sum1 >= FLETCHER_MODULE)
-                sum1 -= FLETCHER_MODULE;
+                if(sum1 >= FLETCHER_MODULE)
+                    sum1 -= FLETCHER_MODULE;
 
-            sum2         %= FLETCHER_MODULE; /* only added so many FLETCHER_MODULE's */
-            previousSum1 =  (ushort)(sum1 & 0xFFFF);
-            previousSum2 =  (ushort)(sum2 & 0xFFFF);
+                sum2         %= FLETCHER_MODULE; /* only added so many FLETCHER_MODULE's */
+                previousSum1 =  (ushort)(sum1 & 0xFFFF);
+                previousSum2 =  (ushort)(sum2 & 0xFFFF);
 
-            return;
+                return;
+            }
         }
 
         /* do length NMAX blocks -- requires just one modulo operation */
@@ -482,42 +484,44 @@ public sealed class Fletcher16Context : IChecksum
         uint sum2    = previousSum2;
         var  dataOff = 0;
 
-        /* in case user likes doing a byte at a time, keep it fast */
-        if(len == 1)
+        switch(len)
         {
-            sum1 += data[dataOff];
-
-            if(sum1 >= FLETCHER_MODULE)
-                sum1 -= FLETCHER_MODULE;
-
-            sum2 += sum1;
-
-            if(sum2 >= FLETCHER_MODULE)
-                sum2 -= FLETCHER_MODULE;
-
-            previousSum1 = (byte)(sum1 & 0xFF);
-            previousSum2 = (byte)(sum2 & 0xFF);
-
-            return;
-        }
-
-        /* in case short lengths are provided, keep it somewhat fast */
-        if(len < 11)
-        {
-            while(len-- > 0)
+            /* in case user likes doing a byte at a time, keep it fast */
+            case 1:
             {
-                sum1 += data[dataOff++];
+                sum1 += data[dataOff];
+
+                if(sum1 >= FLETCHER_MODULE)
+                    sum1 -= FLETCHER_MODULE;
+
                 sum2 += sum1;
+
+                if(sum2 >= FLETCHER_MODULE)
+                    sum2 -= FLETCHER_MODULE;
+
+                previousSum1 = (byte)(sum1 & 0xFF);
+                previousSum2 = (byte)(sum2 & 0xFF);
+
+                return;
             }
+            /* in case short lengths are provided, keep it somewhat fast */
+            case < 11:
+            {
+                while(len-- > 0)
+                {
+                    sum1 += data[dataOff++];
+                    sum2 += sum1;
+                }
 
-            if(sum1 >= FLETCHER_MODULE)
-                sum1 -= FLETCHER_MODULE;
+                if(sum1 >= FLETCHER_MODULE)
+                    sum1 -= FLETCHER_MODULE;
 
-            sum2         %= FLETCHER_MODULE; /* only added so many FLETCHER_MODULE's */
-            previousSum1 =  (byte)(sum1 & 0xFF);
-            previousSum2 =  (byte)(sum2 & 0xFF);
+                sum2         %= FLETCHER_MODULE; /* only added so many FLETCHER_MODULE's */
+                previousSum1 =  (byte)(sum1 & 0xFF);
+                previousSum2 =  (byte)(sum2 & 0xFF);
 
-            return;
+                return;
+            }
         }
 
         /* do length NMAX blocks -- requires just one modulo operation */

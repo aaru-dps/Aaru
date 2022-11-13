@@ -169,11 +169,13 @@ public sealed class SpamSumContext : IChecksum
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void fuzzy_try_fork_blockhash()
     {
-        if(_self.Bhend >= NUM_BLOCKHASHES)
-            return;
+        switch(_self.Bhend)
+        {
+            case >= NUM_BLOCKHASHES: return;
 
-        if(_self.Bhend == 0) // assert
-            throw new Exception("Assertion failed");
+            // assert
+            case 0: throw new Exception("Assertion failed");
+        }
 
         uint obh = _self.Bhend - 1;
         uint nbh = _self.Bhend;

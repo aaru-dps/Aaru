@@ -157,42 +157,44 @@ public sealed class Adler32Context : IChecksum
         uint sum2    = preSum2;
         var  dataOff = 0;
 
-        /* in case user likes doing a byte at a time, keep it fast */
-        if(len == 1)
+        switch(len)
         {
-            sum1 += data[dataOff];
-
-            if(sum1 >= ADLER_MODULE)
-                sum1 -= ADLER_MODULE;
-
-            sum2 += sum1;
-
-            if(sum2 >= ADLER_MODULE)
-                sum2 -= ADLER_MODULE;
-
-            preSum1 = (ushort)(sum1 & 0xFFFF);
-            preSum2 = (ushort)(sum2 & 0xFFFF);
-
-            return;
-        }
-
-        /* in case short lengths are provided, keep it somewhat fast */
-        if(len < 16)
-        {
-            while(len-- > 0)
+            /* in case user likes doing a byte at a time, keep it fast */
+            case 1:
             {
-                sum1 += data[dataOff++];
+                sum1 += data[dataOff];
+
+                if(sum1 >= ADLER_MODULE)
+                    sum1 -= ADLER_MODULE;
+
                 sum2 += sum1;
+
+                if(sum2 >= ADLER_MODULE)
+                    sum2 -= ADLER_MODULE;
+
+                preSum1 = (ushort)(sum1 & 0xFFFF);
+                preSum2 = (ushort)(sum2 & 0xFFFF);
+
+                return;
             }
+            /* in case short lengths are provided, keep it somewhat fast */
+            case < 16:
+            {
+                while(len-- > 0)
+                {
+                    sum1 += data[dataOff++];
+                    sum2 += sum1;
+                }
 
-            if(sum1 >= ADLER_MODULE)
-                sum1 -= ADLER_MODULE;
+                if(sum1 >= ADLER_MODULE)
+                    sum1 -= ADLER_MODULE;
 
-            sum2    %= ADLER_MODULE; /* only added so many ADLER_MODULE's */
-            preSum1 =  (ushort)(sum1 & 0xFFFF);
-            preSum2 =  (ushort)(sum2 & 0xFFFF);
+                sum2    %= ADLER_MODULE; /* only added so many ADLER_MODULE's */
+                preSum1 =  (ushort)(sum1 & 0xFFFF);
+                preSum2 =  (ushort)(sum2 & 0xFFFF);
 
-            return;
+                return;
+            }
         }
 
         /* do length NMAX blocks -- requires just one modulo operation */
