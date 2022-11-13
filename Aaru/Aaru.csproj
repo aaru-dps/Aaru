@@ -93,20 +93,20 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
         <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
         <ProjectReference Include="..\Aaru.Gui\Aaru.Gui.csproj" />
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
-        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
-        <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"/>
-        <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"/>
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
-        <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"/>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
-        <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj"/>
-        <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"/>
-        <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj"/>
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
+        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj" />
+        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
+        <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj" />
+        <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj" />
+        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj" />
+        <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj" />
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
+        <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj" />
+        <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj" />
+        <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.MIT">
@@ -117,7 +117,7 @@
             <Link>LICENSE.LGPL</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <Folder Include="..\LICENSE"/>
+        <Folder Include="..\LICENSE" />
     </ItemGroup>
     <ItemGroup>
         <None Include="..\.github\CODE_OF_CONDUCT.md" />
@@ -126,13 +126,13 @@
         <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Spectre.Console" Version="0.43.0" />
         <PackageReference Include="Spectre.Console.Analyzer" Version="0.43.0" />
         <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />
         <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta3.22114.1" />
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
         <PackageReference Include="System.ValueTuple" Version="4.5.0" />
         <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2">
             <PrivateAssets>all</PrivateAssets>
@@ -146,7 +146,7 @@
         <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
         <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
         <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
-        <PackageReference Update="Packaging.Targets" Version="0.1.189"/>
+        <PackageReference Update="Packaging.Targets" Version="0.1.189" />
         <PackageReference Include="Packaging.Targets" Version="0.1.220" />
     </ItemGroup>
 

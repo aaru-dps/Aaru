@@ -114,14 +114,14 @@
         <Compile Include="Windows\UsbFunctions.cs" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="System.Management" Version="6.0.0" />
+        <PackageReference Include="System.Management" Version="7.0.0" />
         <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
+        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj" />
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.LGPL">

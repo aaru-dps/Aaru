@@ -75,7 +75,7 @@
         <PackageReference Include="DotNetZip" Version="1.16.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="SharpCompress" Version="0.30.1" />
-        <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
+        <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
         <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all" />
     </ItemGroup>
 </Project>
