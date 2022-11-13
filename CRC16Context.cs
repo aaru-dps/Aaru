@@ -180,8 +180,8 @@ public class Crc16Context : IChecksum
 
         byte[] finalBytes = BigEndianBitConverter.GetBytes(final);
 
-        for(var i = 0; i < finalBytes.Length; i++)
-            crc16Output.Append(finalBytes[i].ToString("x2"));
+        foreach(byte t in finalBytes)
+            crc16Output.Append(t.ToString("x2"));
 
         return crc16Output.ToString();
     }
