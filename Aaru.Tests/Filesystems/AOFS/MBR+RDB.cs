@@ -42,7 +42,7 @@ public class MBR_RDB : FilesystemTest
     public MBR_RDB() : base("Amiga OFS") {}
 
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System (MBR+RDB)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (MBR+RDB)");
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 

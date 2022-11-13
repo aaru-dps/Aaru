@@ -15,7 +15,7 @@ public class Roadsters : OpticalImageConvertIssueTest
 {
     public override Dictionary<string, string> ParsedOptions => new();
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue288", "roadsters");
+        Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue288", "roadsters");
     public override string         InputPath               => "Roadsters (USA).cue";
     public override string         SuggestedOutputFilename => "AaruTestIssue288_roadsters.aif";
     public override IWritableImage OutputFormat            => new AaruFormat();

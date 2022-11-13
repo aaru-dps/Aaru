@@ -16,7 +16,7 @@ using System.IO;
 
 public class Sims : FsExtractHashIssueTest
 {
-    protected override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue542", "sims");
+    protected override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue542", "sims");
     protected override string TestFile => "The Sims.aaruf";
     protected override Dictionary<string, string> ParsedOptions => new();
     protected override bool Debug => false;

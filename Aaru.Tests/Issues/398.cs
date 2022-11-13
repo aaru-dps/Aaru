@@ -17,7 +17,7 @@ using Aaru.DiscImages;
 public class _398 : OpticalImageConvertIssueTest
 {
     public override Dictionary<string, string> ParsedOptions => new();
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue398");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue398");
     public override string InputPath => "sonycdi.cdi.xz";
     public override string SuggestedOutputFilename => "AaruIssue398Output.aif";
     public override IWritableImage OutputFormat => new AaruFormat();

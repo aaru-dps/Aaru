@@ -39,7 +39,7 @@ public class Btrfs : FilesystemTest
 {
     public Btrfs() : base("B-tree file system") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "btrfs");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "btrfs");
     public override IFilesystem Plugin     => new BTRFS();
     public override bool        Partitions => true;
 

@@ -37,7 +37,7 @@ using NUnit.Framework;
 [TestFixture]
 public class RdWr : BlockMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "ShrinkWrap 3",
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "ShrinkWrap 3",
                                                       "NDIF", "No compression", "No encryption");
     public override IMediaImage Plugin => new Ndif();
 

@@ -38,7 +38,7 @@ public class Excalibur64 : FilesystemTest
 {
     public Excalibur64() : base("CP/M") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Excalibur 64");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Excalibur 64");
 
     public override IFilesystem Plugin     => new CPM();
     public override bool        Partitions => false;

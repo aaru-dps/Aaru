@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class Ext : FilesystemTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Linux extended File System");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Linux extended File System");
     public override IFilesystem Plugin     => new extFS();
     public override bool        Partitions => true;
 

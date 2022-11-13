@@ -39,7 +39,7 @@ public class Jfs2 : FilesystemTest
 {
     public Jfs2() : base("JFS filesystem") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "JFS2");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "JFS2");
     public override IFilesystem Plugin     => new JFS();
     public override bool        Partitions => true;
 

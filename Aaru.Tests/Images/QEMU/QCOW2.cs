@@ -40,7 +40,7 @@ using NUnit.Framework;
 public class QCOW2 : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "QEMU Copy On Write 2");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "QEMU Copy On Write 2");
     public override IMediaImage Plugin => new Qcow2();
 
     public override BlockImageTestExpected[] Tests => new[]

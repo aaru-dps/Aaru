@@ -36,7 +36,7 @@ using NUnit.Framework;
 [TestFixture]
 public class DriDiskCopy : BlockMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DRI DISKCOPY");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DRI DISKCOPY");
     public override IMediaImage Plugin => new DiscImages.DriDiskCopy();
 
     public override BlockImageTestExpected[] Tests => new[]

@@ -37,7 +37,7 @@ using NUnit.Framework;
 [TestFixture]
 public class APM : FilesystemTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (APM)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem (APM)");
     public override IFilesystem Plugin => new FFSPlugin();
     public override bool Partitions => true;
 

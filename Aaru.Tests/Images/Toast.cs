@@ -37,7 +37,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Toast : OpticalMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Roxio Toast");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Roxio Toast");
     public override IMediaImage Plugin => new ZZZRawImage();
 
     public override OpticalImageTestExpected[] Tests => new[]

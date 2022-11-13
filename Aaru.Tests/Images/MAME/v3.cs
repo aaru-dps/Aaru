@@ -37,7 +37,7 @@ using NUnit.Framework;
 [TestFixture]
 public class V3 : OpticalMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MAME", "v3");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "MAME", "v3");
     public override IMediaImage Plugin    => new Chd();
 
     public override OpticalImageTestExpected[] Tests => new[]

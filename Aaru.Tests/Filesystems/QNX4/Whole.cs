@@ -39,7 +39,7 @@ public class Whole : FilesystemTest
 {
     public Whole() : base("QNX4 filesystem") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem");
 
     public override IFilesystem Plugin     => new QNX4();
     public override bool        Partitions => false;

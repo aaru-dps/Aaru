@@ -39,7 +39,7 @@ public class APM : FilesystemTest
 {
     public APM() : base("HFS") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS (APM)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (APM)");
     public override IFilesystem Plugin     => new AppleHFS();
     public override bool        Partitions => true;
 

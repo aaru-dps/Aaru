@@ -35,7 +35,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Vtoc : PartitionSchemeTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "UNIX VTOC");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "UNIX VTOC");
 
     public override PartitionTest[] Tests => new[]
     {

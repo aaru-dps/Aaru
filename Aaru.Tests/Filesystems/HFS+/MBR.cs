@@ -43,7 +43,7 @@ public class MBR : FilesystemTest
 {
     public MBR() : base("HFS+") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS+ (MBR)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS+ (MBR)");
 
     public override IFilesystem Plugin     => new AppleHFSPlus();
     public override bool        Partitions => true;

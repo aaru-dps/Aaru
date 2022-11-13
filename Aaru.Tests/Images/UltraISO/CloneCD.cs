@@ -40,7 +40,7 @@ using NUnit.Framework;
 public class CloneCD : OpticalMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "UltraISO", "CloneCD");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "UltraISO", "CloneCD");
     public override IMediaImage Plugin => new CloneCd();
 
     public override OpticalImageTestExpected[] Tests => new[]

@@ -39,7 +39,7 @@ public class Zfs : FilesystemTest
 {
     public Zfs() : base("ZFS filesystem") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Zettabyte File System");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Zettabyte File System");
 
     public override IFilesystem Plugin     => new ZFS();
     public override bool        Partitions => false;

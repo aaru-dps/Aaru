@@ -39,7 +39,7 @@ public class MBR : ReadOnlyFilesystemTest
 {
     public MBR() : base("FAT12") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (MBR)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT12 (MBR)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 

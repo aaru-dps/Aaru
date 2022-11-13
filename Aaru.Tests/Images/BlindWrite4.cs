@@ -36,7 +36,7 @@ using NUnit.Framework;
 [TestFixture]
 public class BlindWrite4 : OpticalMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "BlindWrite 4");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "BlindWrite 4");
     public override IMediaImage Plugin => new DiscImages.BlindWrite4();
 
     public override OpticalImageTestExpected[] Tests => new[]

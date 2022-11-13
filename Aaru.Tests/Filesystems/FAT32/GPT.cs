@@ -39,7 +39,7 @@ public class GPT : ReadOnlyFilesystemTest
 {
     public GPT() : base("FAT32") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT32 (GPT)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT32 (GPT)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 

@@ -39,7 +39,7 @@ public class Atheos : FilesystemTest
 {
     public Atheos() : base("AtheOS filesystem") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "AtheOS (MBR)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "AtheOS (MBR)");
     public override IFilesystem Plugin     => new AtheOS();
     public override bool        Partitions => true;
 

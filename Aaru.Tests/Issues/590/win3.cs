@@ -18,7 +18,7 @@ using System.IO;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class win3 : FsExtractHashIssueTest
 {
-    protected override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue590", "win3");
+    protected override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue590", "win3");
     protected override string TestFile => "microsoft-windows-3.0-international-versions-promotional-copy.aif";
     protected override Dictionary<string, string> ParsedOptions => new();
     protected override bool Debug => false;

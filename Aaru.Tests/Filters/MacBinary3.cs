@@ -43,7 +43,7 @@ public class MacBinary3
     const    string EXPECTED_RESOURCE = "c689c58945169065483d94e39583d416";
     readonly string _location;
 
-    public MacBinary3() => _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "MacBinary", "macbinary3.bin");
+    public MacBinary3() => _location = Path.Combine(Consts.TestFilesRoot, "Filters", "MacBinary", "macbinary3.bin");
 
     [Test]
     public void CheckContents()

@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class MBR : FilesystemTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v3 filesystem (MBR)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "MINIX v3 filesystem (MBR)");
     public override IFilesystem Plugin     => new MinixFS();
     public override bool        Partitions => true;
 

@@ -47,8 +47,8 @@ public class AppleDoubleDos
 
     public AppleDoubleDos()
     {
-        _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleDouble", "dos", "DOS_720.dmg");
-        _sidecar  = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleDouble", "dos", "DOS_720.adf");
+        _location = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "dos", "DOS_720.dmg");
+        _sidecar  = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "dos", "DOS_720.adf");
     }
 
     [Test]

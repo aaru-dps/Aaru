@@ -37,7 +37,7 @@ using NUnit.Framework;
 [TestFixture]
 public class D64 : BlockMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Commodore D64");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Commodore D64");
     public override IMediaImage Plugin => new ZZZRawImage();
 
     public override BlockImageTestExpected[] Tests => new[]

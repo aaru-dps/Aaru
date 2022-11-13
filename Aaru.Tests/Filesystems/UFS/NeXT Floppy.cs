@@ -39,7 +39,7 @@ using NUnit.Framework;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class NeXT_Floppy : FilesystemTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (NeXT)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem (NeXT)");
     public override IFilesystem Plugin => new FFSPlugin();
     public override bool Partitions => true;
 

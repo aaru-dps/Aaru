@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class V1 : OpticalMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
     public override IMediaImage Plugin => new AaruFormat();
 
     public override OpticalImageTestExpected[] Tests => new[]

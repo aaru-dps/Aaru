@@ -39,7 +39,7 @@ public class ReFsMbr : FilesystemTest
 {
     public ReFsMbr() : base("Resilient File System") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
                                                       "Resilient File System (MBR)");
     public override IFilesystem Plugin     => new ReFS();
     public override bool        Partitions => true;

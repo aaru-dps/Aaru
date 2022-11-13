@@ -36,7 +36,7 @@ using NUnit.Framework;
 public class Mbr : PartitionSchemeTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Master Boot Record");
+        Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Master Boot Record");
 
     public override PartitionTest[] Tests => new[]
     {

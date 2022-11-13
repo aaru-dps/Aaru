@@ -39,7 +39,7 @@ public class Optical : FilesystemTest
 {
     public Optical() : base("HFS") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS (CD-ROM)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (CD-ROM)");
     public override IFilesystem Plugin     => new AppleHFS();
     public override bool        Partitions => true;
 

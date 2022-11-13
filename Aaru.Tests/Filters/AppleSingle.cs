@@ -42,7 +42,7 @@ public class AppleSingle
     const    string EXPECTED_RESOURCE = "c689c58945169065483d94e39583d416";
     readonly string _location;
 
-    public AppleSingle() => _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleSingle", "DOS_720.ASF");
+    public AppleSingle() => _location = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleSingle", "DOS_720.ASF");
 
     [Test]
     public void CheckContents()

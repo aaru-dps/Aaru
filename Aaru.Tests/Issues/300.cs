@@ -23,7 +23,7 @@ using System.IO;
 // 20200309 CLAUNIA: Fixed in 48f067d79ff30cfd10e084085ff479bbb0939512
 public class _300 : FsExtractHashIssueTest
 {
-    protected override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue300");
+    protected override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue300");
     protected override string TestFile => "sony.dicf";
     protected override Dictionary<string, string> ParsedOptions => new();
     protected override bool Debug => true;

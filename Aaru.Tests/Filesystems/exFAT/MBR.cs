@@ -39,7 +39,7 @@ public class MBR : FilesystemTest
 {
     public MBR() : base("exFAT") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (MBR)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (MBR)");
 
     public override IFilesystem Plugin     => new exFAT();
     public override bool        Partitions => true;

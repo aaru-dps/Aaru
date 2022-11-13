@@ -39,7 +39,7 @@ public class MBR : FilesystemTest
 {
     public MBR() : base("QNX4 filesystem") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem (MBR)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem (MBR)");
     public override IFilesystem Plugin => new QNX4();
     public override bool Partitions => true;
 

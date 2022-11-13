@@ -37,7 +37,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Ext2 : FilesystemTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ext2");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "ext2");
     public override IFilesystem Plugin     => new ext2FS();
     public override bool        Partitions => true;
 

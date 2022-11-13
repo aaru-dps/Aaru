@@ -55,7 +55,7 @@ public class Sha384
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
@@ -68,7 +68,7 @@ public class Sha384
     [Test]
     public void EmptyFile()
     {
-        byte[] result = Sha384Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
+        byte[] result = Sha384Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"));
         result.Should().BeEquivalentTo(_expectedEmpty);
     }
 
@@ -77,7 +77,7 @@ public class Sha384
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
@@ -94,7 +94,7 @@ public class Sha384
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
@@ -107,7 +107,7 @@ public class Sha384
     [Test]
     public void RandomFile()
     {
-        byte[] result = Sha384Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
+        byte[] result = Sha384Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"));
         result.Should().BeEquivalentTo(_expectedRandom);
     }
 
@@ -116,7 +116,7 @@ public class Sha384
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 1048576);

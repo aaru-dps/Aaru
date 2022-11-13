@@ -39,7 +39,7 @@ public class LisaFs : ReadOnlyFilesystemTest
 {
     public LisaFs() : base("LisaFS") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple Lisa filesystem");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple Lisa filesystem");
     public override IFilesystem Plugin => new LisaFS();
     public override bool Partitions => false;
 

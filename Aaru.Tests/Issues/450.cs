@@ -13,7 +13,7 @@ using Aaru.DiscImages;
 public class _450 : OpticalImageConvertIssueTest
 {
     public override Dictionary<string, string> ParsedOptions => new();
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue450");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue450");
     public override string InputPath => "NRG-Nero_Burning_ROM7.nrg";
     public override string SuggestedOutputFilename => "AaruTestIssue450.aif";
     public override IWritableImage OutputFormat => new AaruFormat();

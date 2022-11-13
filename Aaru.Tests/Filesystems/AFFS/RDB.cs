@@ -40,7 +40,7 @@ public class RDB : FilesystemTest
     public RDB() : base("Amiga FFS") {}
 
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System (RDB)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System (RDB)");
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 

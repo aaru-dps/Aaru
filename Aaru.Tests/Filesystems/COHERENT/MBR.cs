@@ -40,7 +40,7 @@ public class MBR : FilesystemTest
     public MBR() : base("Coherent fs") {}
 
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "COHERENT filesystem (MBR)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "COHERENT filesystem (MBR)");
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => true;
 

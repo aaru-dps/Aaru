@@ -39,7 +39,7 @@ public class Mfs : ReadOnlyFilesystemTest
 {
     public Mfs() : base("MFS") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Macintosh File System");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Macintosh File System");
     public override IFilesystem Plugin => new AppleMFS();
     public override bool Partitions => false;
 

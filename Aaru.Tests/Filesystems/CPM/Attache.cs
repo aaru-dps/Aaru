@@ -38,7 +38,7 @@ public class Attache : FilesystemTest
 {
     public Attache() : base("CP/M") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Otrona Attaché");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Otrona Attaché");
 
     public override IFilesystem Plugin     => new CPM();
     public override bool        Partitions => false;

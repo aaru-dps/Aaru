@@ -40,7 +40,7 @@ using NUnit.Framework;
 public class Sun_i86 : FilesystemTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (SunOS x86)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem (SunOS x86)");
     public override IFilesystem Plugin     => new FFSPlugin();
     public override bool        Partitions => true;
 

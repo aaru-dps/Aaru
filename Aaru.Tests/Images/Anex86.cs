@@ -36,7 +36,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Anex86 : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Anex86");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Anex86");
     public override IMediaImage Plugin    => new DiscImages.Anex86();
 
     public override BlockImageTestExpected[] Tests => new[]

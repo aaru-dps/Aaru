@@ -40,7 +40,7 @@ using NUnit.Framework;
 public class ROCo : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "NDIF", "ROCo");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskImagesFramework", "NDIF", "ROCo");
     public override IMediaImage Plugin => new Ndif();
 
     public override BlockImageTestExpected[] Tests => new[]

@@ -39,7 +39,7 @@ public class MBR : FilesystemTest
 {
     public MBR() : base("SmartFileSystem") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Smart File System (MBR)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (MBR)");
     public override IFilesystem Plugin => new SFS();
     public override bool Partitions => true;
 

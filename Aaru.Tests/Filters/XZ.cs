@@ -48,7 +48,7 @@ public class Xz
     };
     readonly string _location;
 
-    public Xz() => _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "xz.xz");
+    public Xz() => _location = Path.Combine(Consts.TestFilesRoot, "Filters", "xz.xz");
 
     [Test]
     public void CheckContents()

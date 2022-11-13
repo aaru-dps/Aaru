@@ -47,7 +47,7 @@ public class BZip2
     };
     readonly string _location;
 
-    public BZip2() => _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "bzip2.bz2");
+    public BZip2() => _location = Path.Combine(Consts.TestFilesRoot, "Filters", "bzip2.bz2");
 
     [Test]
     public void CheckContents()

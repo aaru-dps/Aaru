@@ -28,7 +28,9 @@
 
 namespace Aaru.Tests;
 
+using System;
+
 static class Consts
 {
-    public const string TEST_FILES_ROOT = "/mnt/DiscImageChef";
+    public static string TestFilesRoot = OperatingSystem.IsMacOS() ? "/Volumes/AaruTests" : "/mnt/AaruTests";
 }

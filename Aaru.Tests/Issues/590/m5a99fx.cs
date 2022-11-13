@@ -19,7 +19,7 @@ using System.IO;
 public class m5a99fx : FsExtractHashIssueTest
 {
     protected override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue590", "m5a99fx");
+        Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue590", "m5a99fx");
     protected override string                     TestFile         => "MB Support CD.aaruf";
     protected override Dictionary<string, string> ParsedOptions    => new();
     protected override bool                       Debug            => false;

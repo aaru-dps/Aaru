@@ -39,7 +39,7 @@ public class Whole : FilesystemTest
 {
     public Whole() : base("XENIX fs") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "XENIX filesystem");
 
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => false;

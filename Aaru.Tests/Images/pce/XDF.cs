@@ -39,7 +39,7 @@ using NUnit.Framework;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class XDF : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "pce", "XDF");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "pce", "XDF");
     public override IMediaImage Plugin    => new ZZZRawImage();
 
     public override BlockImageTestExpected[] Tests => new[]

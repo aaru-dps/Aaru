@@ -39,7 +39,7 @@ public class Whole : FilesystemTest
 {
     public Whole() : base("SVR4 fs") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "System V filesystem");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem");
 
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => false;

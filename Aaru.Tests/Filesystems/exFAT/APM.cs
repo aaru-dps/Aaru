@@ -39,7 +39,7 @@ public class APM : FilesystemTest
 {
     public APM() : base("exFAT") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (APM)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (APM)");
     public override IFilesystem Plugin     => new exFAT();
     public override bool        Partitions => true;
 

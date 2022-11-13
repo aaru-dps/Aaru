@@ -38,7 +38,7 @@ public class XtalDOS : ReadOnlyFilesystemTest
 {
     public XtalDOS() : base("CP/M") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "XtalDOS");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "XtalDOS");
 
     public override IFilesystem Plugin     => new CPM();
     public override bool        Partitions => false;

@@ -35,7 +35,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Atari : PartitionSchemeTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Atari ST");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Atari ST");
     public override PartitionTest[] Tests => new[]
     {
         new PartitionTest

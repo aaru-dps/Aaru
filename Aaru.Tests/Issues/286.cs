@@ -16,7 +16,7 @@ using Aaru.DiscImages;
 public class _286 : OpticalImageConvertIssueTest
 {
     public override Dictionary<string, string> ParsedOptions => new();
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue286");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue286");
     public override string InputPath => "2d_house_of_terror.nrg";
     public override string SuggestedOutputFilename => "AaruTestIssue286.aif";
     public override IWritableImage OutputFormat => new AaruFormat();

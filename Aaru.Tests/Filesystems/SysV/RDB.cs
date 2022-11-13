@@ -40,7 +40,7 @@ public class RDB : FilesystemTest
     public RDB() : base("SVR4 fs") {}
 
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "System V filesystem (RDB)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (RDB)");
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => true;
 

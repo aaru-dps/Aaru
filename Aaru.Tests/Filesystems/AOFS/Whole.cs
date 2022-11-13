@@ -39,7 +39,7 @@ public class Whole : FilesystemTest
 {
     public Whole() : base("Amiga OFS") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System");
 
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => false;

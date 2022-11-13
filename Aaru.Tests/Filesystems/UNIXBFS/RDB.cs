@@ -39,7 +39,7 @@ public class RDB : FilesystemTest
 {
     public RDB() : base("UFS") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Boot File System (RDB)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Boot File System (RDB)");
     public override IFilesystem Plugin => new BFS();
     public override bool Partitions => true;
 

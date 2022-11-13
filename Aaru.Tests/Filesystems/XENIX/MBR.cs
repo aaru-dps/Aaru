@@ -39,7 +39,7 @@ public class MBR : FilesystemTest
 {
     public MBR() : base("XENIX fs") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem (MBR)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "XENIX filesystem (MBR)");
     public override IFilesystem Plugin => new SysVfs();
     public override bool Partitions => true;
 

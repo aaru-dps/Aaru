@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class RdWr : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.3.3", "NDIF", "RdWr");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 6.3.3", "NDIF", "RdWr");
     public override IMediaImage Plugin => new Ndif();
 
     public override BlockImageTestExpected[] Tests => new[]

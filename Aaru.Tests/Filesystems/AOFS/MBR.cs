@@ -40,7 +40,7 @@ public class MBR : FilesystemTest
     public MBR() : base("Amiga OFS") {}
 
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System (MBR)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (MBR)");
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 

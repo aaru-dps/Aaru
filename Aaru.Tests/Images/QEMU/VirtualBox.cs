@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class VirtualBox : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VirtualBox");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "VirtualBox");
     public override IMediaImage Plugin => new Vdi();
 
     public override BlockImageTestExpected[] Tests => new[]

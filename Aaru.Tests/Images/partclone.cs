@@ -37,7 +37,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Partclone : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "partclone");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "partclone");
     public override IMediaImage Plugin    => new PartClone();
 
     public override BlockImageTestExpected[] Tests => new[]

@@ -36,7 +36,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Alcohol120 : OpticalMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Alcohol 120%");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Alcohol 120%");
     public override IMediaImage Plugin => new DiscImages.Alcohol120();
 
     public override OpticalImageTestExpected[] Tests => new[]

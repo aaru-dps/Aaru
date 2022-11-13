@@ -39,7 +39,7 @@ public class Whole : FilesystemTest
 {
     public Whole() : base("BFS") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Boot File System");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Boot File System");
 
     public override IFilesystem Plugin     => new BFS();
     public override bool        Partitions => false;

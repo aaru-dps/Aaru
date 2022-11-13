@@ -40,7 +40,7 @@ using NUnit.Framework;
 public class RayDIM : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Disk IMage Archiver");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "Disk IMage Archiver");
     public override IMediaImage Plugin => new RayDim();
 
     public override BlockImageTestExpected[] Tests => new[]

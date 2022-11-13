@@ -17,6 +17,6 @@ using NUnit.Framework;
 [TestFixture]
 public class _176 : OpticalImageReadIssueTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue176");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue176");
     public override string TestFile   => "WEBBEARS.mds";
 }

@@ -14,7 +14,7 @@ using System.IO;
 // 20210307 CLAUNIA: Reopened
 public class _360 : FsExtractIssueTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue360");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue360");
     public override string TestFile => "AAAA.iso.xz";
     public override Dictionary<string, string> ParsedOptions => new();
     public override bool Debug => true;

@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class VMware6 : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VMware 6");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "VMware 6");
     public override IMediaImage Plugin => new VMware();
 
     public override BlockImageTestExpected[] Tests => new[]

@@ -39,7 +39,7 @@ public class RDB : ReadOnlyFilesystemTest
 {
     public RDB() : base("FAT16") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (RDB)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (RDB)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 

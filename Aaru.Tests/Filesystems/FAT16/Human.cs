@@ -39,7 +39,7 @@ public class Human : ReadOnlyFilesystemTest
 {
     public Human() : base("FAT16") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (Human68K)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (Human68K)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 

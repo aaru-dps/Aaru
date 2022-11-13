@@ -37,7 +37,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Reiser3 : FilesystemTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Reiser filesystem v3");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Reiser filesystem v3");
     public override IFilesystem Plugin => new Reiser();
     public override bool Partitions => true;
 

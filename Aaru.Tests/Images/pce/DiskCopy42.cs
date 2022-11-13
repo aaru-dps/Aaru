@@ -37,7 +37,7 @@ using NUnit.Framework;
 public class DiskCopy42 : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "pce", "DiskCopy 4.2");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "pce", "DiskCopy 4.2");
     public override IMediaImage Plugin => new DiscImages.DiskCopy42();
 
     public override BlockImageTestExpected[] Tests => new[]

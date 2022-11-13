@@ -37,7 +37,7 @@ using NUnit.Framework;
 [TestFixture]
 public class HyperV : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Hyper-V");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Hyper-V");
     public override IMediaImage Plugin    => new Vhdx();
 
     public override BlockImageTestExpected[] Tests => new[]

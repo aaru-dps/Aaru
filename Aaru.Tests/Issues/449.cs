@@ -9,6 +9,6 @@ using System.IO;
 
 public class _449 : OpticalImageReadIssueTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue449");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue449");
     public override string TestFile   => "NRG-Nero_Burning_ROM4.nrg";
 }

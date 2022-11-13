@@ -39,7 +39,7 @@ public class APM : FilesystemTest
 {
     public APM() : base("BeFS") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (APM)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Be File System (APM)");
     public override IFilesystem Plugin => new BeFS();
     public override bool Partitions => true;
 

@@ -39,7 +39,7 @@ public class Whole : FilesystemTest
 {
     public Whole() : base("Acer Fast Filesystem") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Acer File System");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Acer File System");
 
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => false;

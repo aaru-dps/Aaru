@@ -37,7 +37,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v1 filesystem");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "MINIX v1 filesystem");
     public override IFilesystem Plugin => new MinixFS();
     public override bool Partitions => false;
 

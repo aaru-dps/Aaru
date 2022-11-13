@@ -67,7 +67,7 @@ public class Crc64
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
@@ -80,7 +80,7 @@ public class Crc64
     [Test]
     public void EmptyFile()
     {
-        byte[] result = Crc64Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
+        byte[] result = Crc64Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"));
         result.Should().BeEquivalentTo(_expectedEmpty);
     }
 
@@ -89,7 +89,7 @@ public class Crc64
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
@@ -106,7 +106,7 @@ public class Crc64
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
@@ -119,7 +119,7 @@ public class Crc64
     [Test]
     public void RandomFile()
     {
-        byte[] result = Crc64Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
+        byte[] result = Crc64Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"));
         result.Should().BeEquivalentTo(_expectedRandom);
     }
 
@@ -128,7 +128,7 @@ public class Crc64
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 1048576);
@@ -145,7 +145,7 @@ public class Crc64
     {
         var data = new byte[15];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 15);
@@ -162,7 +162,7 @@ public class Crc64
     {
         var data = new byte[31];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 31);
@@ -179,7 +179,7 @@ public class Crc64
     {
         var data = new byte[63];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 63);
@@ -196,7 +196,7 @@ public class Crc64
     {
         var data = new byte[2352];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
         fs.Read(data, 0, 2352);

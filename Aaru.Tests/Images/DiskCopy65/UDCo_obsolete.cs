@@ -40,7 +40,7 @@ using NUnit.Framework;
 public class UDCo_obsolete : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.5", "UDIF", "UDCo_OBS");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 6.5", "UDIF", "UDCo_OBS");
     public override IMediaImage Plugin => new Udif();
 
     public override BlockImageTestExpected[] Tests => new[]

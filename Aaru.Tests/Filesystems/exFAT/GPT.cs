@@ -39,7 +39,7 @@ public class GPT : FilesystemTest
 {
     public GPT() : base("exFAT") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (GPT)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (GPT)");
     public override IFilesystem Plugin     => new exFAT();
     public override bool        Partitions => true;
 

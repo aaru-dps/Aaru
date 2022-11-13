@@ -36,7 +36,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Apple2Mg : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "2mg");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "2mg");
     public override IMediaImage Plugin    => new DiscImages.Apple2Mg();
 
     public override BlockImageTestExpected[] Tests => new[]

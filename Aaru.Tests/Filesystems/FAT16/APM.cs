@@ -39,7 +39,7 @@ public class APM : ReadOnlyFilesystemTest
 {
     public APM() : base("FAT16") {}
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (APM)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (APM)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 

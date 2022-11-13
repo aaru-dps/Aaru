@@ -40,7 +40,7 @@ public class APM : FilesystemTest
     public APM() : base("Amiga FFS2") {}
 
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System 2 (APM)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System 2 (APM)");
 
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;

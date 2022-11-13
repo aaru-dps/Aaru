@@ -39,7 +39,7 @@ using NUnit.Framework;
 public class ULMO : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "UDIF", "ULMO");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskImagesFramework", "UDIF", "ULMO");
     public override IMediaImage Plugin => new Udif();
 
     public override BlockImageTestExpected[] Tests => new BlockImageTestExpected[]

@@ -39,7 +39,7 @@ public class Whole : ReadOnlyFilesystemTest
 {
     public Whole() : base("FAT12") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT12");
 
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => false;

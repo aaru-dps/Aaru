@@ -38,7 +38,7 @@ using NUnit.Framework;
 public class VirtualPC : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VirtualPC");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "VirtualPC");
     public override IMediaImage Plugin => new Vhd();
 
     public override BlockImageTestExpected[] Tests => new[]

@@ -35,7 +35,7 @@ using NUnit.Framework;
 [TestFixture]
 public class Xbox : PartitionSchemeTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Xbox");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Xbox");
 
     public override PartitionTest[] Tests => new[]
     {

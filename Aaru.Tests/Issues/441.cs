@@ -13,7 +13,7 @@ using System.IO;
 
 public class _441 : FsExtractIssueTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue441");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue441");
     public override string TestFile => "Zip-100_aaru_5.2.aaruf";
     public override Dictionary<string, string> ParsedOptions => new();
     public override bool Debug => true;

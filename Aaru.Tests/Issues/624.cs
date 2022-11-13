@@ -8,7 +8,7 @@ using Aaru.Tests.WritableImages;
 
 public class _624 : WritableOpticalMediaImageTest
 {
-    public override string         DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Pending", "issue624");
+    public override string         DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Pending", "issue624");
     public override IMediaImage    InputPlugin => new ZZZRawImage();
     public override IWritableImage OutputPlugin => new Alcohol120();
     public override string         OutputExtension => "mds";

@@ -18,7 +18,7 @@ using System.IO;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class SimsEP : FsExtractHashIssueTest
 {
-    protected override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue542", "exp");
+    protected override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue542", "exp");
     protected override string TestFile => "THE_SIMS_EP.aaruf";
     protected override Dictionary<string, string> ParsedOptions => new();
     protected override bool Debug => false;

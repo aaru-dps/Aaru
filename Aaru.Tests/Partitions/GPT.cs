@@ -36,7 +36,7 @@ using NUnit.Framework;
 public class Gpt : PartitionSchemeTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "GUID Partition Table");
+        Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "GUID Partition Table");
 
     public override PartitionTest[] Tests => new[]
     {

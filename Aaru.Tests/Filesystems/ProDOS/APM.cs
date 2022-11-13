@@ -39,7 +39,7 @@ public class APM : FilesystemTest
 {
     public APM() : base("ProDOS") {}
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ProDOS filesystem (APM)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "ProDOS filesystem (APM)");
 
     public override IFilesystem Plugin     => new ProDOSPlugin();
     public override bool        Partitions => true;

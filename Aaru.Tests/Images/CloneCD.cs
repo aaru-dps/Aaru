@@ -39,7 +39,7 @@ using NUnit.Framework;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CloneCD : OpticalMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CloneCD");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CloneCD");
     public override IMediaImage Plugin    => new CloneCd();
 
     public override OpticalImageTestExpected[] Tests => new[]

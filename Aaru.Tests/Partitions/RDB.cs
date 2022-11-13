@@ -36,7 +36,7 @@ using NUnit.Framework;
 public class Rdb : PartitionSchemeTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Rigid Disk Block");
+        Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Rigid Disk Block");
 
     public override PartitionTest[] Tests => new[]
     {

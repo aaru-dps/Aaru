@@ -36,7 +36,7 @@ using NUnit.Framework;
 [TestFixture]
 public class DiscJuggler : OpticalMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiscJuggler");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiscJuggler");
     public override IMediaImage Plugin => new DiscImages.DiscJuggler();
     public override OpticalImageTestExpected[] Tests => new[]
     {
