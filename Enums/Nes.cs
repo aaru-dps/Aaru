@@ -1,3 +1,4 @@
+// ReSharper disable InconsistentNaming
 namespace Aaru.CommonTypes.Enums;
 
 public enum NesConsoleType : byte
