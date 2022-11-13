@@ -32,28 +32,6 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <NoWarn>CS1591;CS1574</NoWarn>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-        <DebugSymbols>True</DebugSymbols>
-        <DebugType>full</DebugType>
-        <Optimize>False</Optimize>
-        <OutputPath>bin\Debug</OutputPath>
-        <DefineConstants>DEBUG</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <PlatformTarget>x86</PlatformTarget>
-        <Externalconsole>false</Externalconsole>
-        <ConsolePause>false</ConsolePause>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-        <DebugType>none</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release</OutputPath>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <PlatformTarget>x86</PlatformTarget>
-        <Externalconsole>false</Externalconsole>
-        <ConsolePause>false</ConsolePause>
-    </PropertyGroup>
     <ItemGroup>
         <Compile Include="Commands\Database\DatabaseFamily.cs" />
         <Compile Include="Commands\Database\Statistics.cs" />
@@ -174,20 +152,6 @@
         <PackageReference Update="Packaging.Targets" Version="0.1.189"></PackageReference>
         <PackageReference Include="Packaging.Targets" Version="0.1.220" />
     </ItemGroup>
-    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-        <DebugPackage>-dbg</DebugPackage>
-        <Optimize>false</Optimize>
-        <DebugSymbols>true</DebugSymbols>
-        <DefineDebug>true</DefineDebug>
-        <DebugType>portable</DebugType>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)' != 'Debug'">
-        <Optimize>true</Optimize>
-        <DebugSymbols>false</DebugSymbols>
-        <DefineDebug>false</DefineDebug>
-        <DebugType>none</DebugType>
-    </PropertyGroup>
 
     <PropertyGroup>
         <PackageVersion>6.0.0-alpha3</PackageVersion>
