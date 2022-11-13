@@ -27,6 +27,7 @@
         <Authors>Rebecca Wallander &lt;sakcheen@gmail.com&gt;</Authors>
         <Nullable>enable</Nullable>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <NoWarn>CS1591;CS1574</NoWarn>
