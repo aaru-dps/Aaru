@@ -119,9 +119,9 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"></ProjectReference>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.LGPL">

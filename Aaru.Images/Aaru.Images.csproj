@@ -513,14 +513,14 @@
         <Compile Include="RayDIM\RayDIM.cs"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Compression\Aaru.Compression.csproj"></ProjectReference>
+        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+        <ProjectReference Include="..\Aaru.Compression\Aaru.Compression.csproj"/>
         <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj"/>
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"></ProjectReference>
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
+        <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"/>
         <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj"/>
     </ItemGroup>
     <ItemGroup>

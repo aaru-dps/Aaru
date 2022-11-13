@@ -210,13 +210,13 @@
         <Compile Include="ISO9660\Consts\CDi.cs"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"></ProjectReference>
+        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+        <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"/>
+        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <Folder Include="LisaFS\"/>
