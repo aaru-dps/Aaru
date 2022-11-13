@@ -238,8 +238,7 @@ public static class DetectOS
                 goto default;
             case PlatformID.Win32NT:
                 // From Windows 8.1 the reported version is simply falsified...
-                if(Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Major >= 2 ||
-                   Environment.OSVersion.Version.Major > 6)
+                if(Environment.OSVersion.Version.Major is 6 and >= 2 or > 6)
                     return FileVersionInfo.
                            GetVersionInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
                                                        "KERNEL32.DLL")).ProductVersion;
