@@ -53,7 +53,11 @@ public struct DecodedSense
 {
     public          FixedSense?      Fixed;
     public          DescriptorSense? Descriptor;
+
+    // ReSharper disable once InconsistentNaming
     public readonly byte             ASC         => Descriptor?.ASC      ?? (Fixed?.ASC      ?? 0);
+
+    // ReSharper disable once InconsistentNaming
     public readonly byte             ASCQ        => Descriptor?.ASCQ     ?? (Fixed?.ASCQ     ?? 0);
     public readonly SenseKeys        SenseKey    => Descriptor?.SenseKey ?? (Fixed?.SenseKey ?? SenseKeys.NoSense);
     public readonly string           Description => Sense.GetSenseDescription(ASC, ASCQ);

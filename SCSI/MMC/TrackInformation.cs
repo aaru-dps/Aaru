@@ -28,6 +28,9 @@
 
 namespace Aaru.Decoders.SCSI.MMC;
 
+using System.Diagnostics.CodeAnalysis;
+
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class TrackInformation
 {
     public bool                     Blank;
