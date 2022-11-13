@@ -341,10 +341,9 @@ public static class DetectOS
                 if(version.StartsWith("10.0", StringComparison.Ordinal))
                     return "Windows 10";
 
-                if(version.StartsWith("11.0", StringComparison.Ordinal))
-                    return "Windows 11";
+                return version.StartsWith("11.0", StringComparison.Ordinal) ? "Windows 11"
+                           : "Windows NT/2000/XP/Vista/7/10/11";
 
-                return "Windows NT/2000/XP/Vista/7/10/11";
             case PlatformID.Win32S: return "Windows 3.x with win32s";
             case PlatformID.Win32Windows:
                 if(string.IsNullOrEmpty(version))
@@ -359,10 +358,8 @@ public static class DetectOS
                 if(version.StartsWith("4.1", StringComparison.Ordinal))
                     return "Windows 98";
 
-                if(version.StartsWith("4.9", StringComparison.Ordinal))
-                    return "Windows Me";
+                return version.StartsWith("4.9", StringComparison.Ordinal) ? "Windows Me" : "Windows 9x/Me";
 
-                return "Windows 9x/Me";
             case PlatformID.WinCE:        return "Windows CE/Mobile";
             case PlatformID.WindowsPhone: return "Windows Phone";
             case PlatformID.Xbox:         return "Xbox OS";
