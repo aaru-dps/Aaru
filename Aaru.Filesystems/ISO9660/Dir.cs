@@ -540,8 +540,8 @@ public sealed partial class ISO9660
     {
         int systemAreaOff = start;
         hasResourceFork = false;
-        var               continueSymlink          = false;
-        var               continueSymlinkComponent = false;
+        var continueSymlink          = false;
+        var continueSymlinkComponent = false;
 
         while(systemAreaOff + 2 <= end)
         {
@@ -724,14 +724,21 @@ public sealed partial class ISO9660
                 case RRIP_POSIX_ATTRIBUTES:
                     byte pxLength = data[systemAreaOff + 2];
 
-                    if(pxLength == 36)
-                        entry.PosixAttributesOld =
-                            Marshal.ByteArrayToStructureLittleEndian<PosixAttributesOld>(data, systemAreaOff,
-                                Marshal.SizeOf<PosixAttributesOld>());
-                    else if(pxLength >= 44)
-                        entry.PosixAttributes =
-                            Marshal.ByteArrayToStructureLittleEndian<PosixAttributes>(data, systemAreaOff,
-                                Marshal.SizeOf<PosixAttributes>());
+                    switch(pxLength)
+                    {
+                        case 36:
+                            entry.PosixAttributesOld =
+                                Marshal.ByteArrayToStructureLittleEndian<PosixAttributesOld>(data, systemAreaOff,
+                                    Marshal.SizeOf<PosixAttributesOld>());
+
+                            break;
+                        case >= 44:
+                            entry.PosixAttributes =
+                                Marshal.ByteArrayToStructureLittleEndian<PosixAttributes>(data, systemAreaOff,
+                                    Marshal.SizeOf<PosixAttributes>());
+
+                            break;
+                    }
 
                     systemAreaOff += pxLength;
 

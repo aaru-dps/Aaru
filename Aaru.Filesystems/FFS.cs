@@ -478,16 +478,17 @@ public sealed class FFSPlugin : IFilesystem
         sbInformation.AppendFormat("Hardware sector interleave: {0}", sb.fs_old_interleave).AppendLine();
         sbInformation.AppendFormat("Sector 0 skew: {0}/track", sb.fs_old_trackskew).AppendLine();
 
-        if(!fs_type_43bsd &&
-           sb.fs_id_1 > 0 &&
-           sb.fs_id_2 > 0)
-            sbInformation.AppendFormat("Volume ID: 0x{0:X8}{1:X8}", sb.fs_id_1, sb.fs_id_2).AppendLine();
-        else if(fs_type_43bsd  &&
-                sb.fs_id_1 > 0 &&
-                sb.fs_id_2 > 0)
+        switch(fs_type_43bsd)
         {
-            sbInformation.AppendFormat("{0} µsec for head switch", sb.fs_id_1).AppendLine();
-            sbInformation.AppendFormat("{0} µsec for track-to-track seek", sb.fs_id_2).AppendLine();
+            case false when sb.fs_id_1 > 0 && sb.fs_id_2 > 0:
+                sbInformation.AppendFormat("Volume ID: 0x{0:X8}{1:X8}", sb.fs_id_1, sb.fs_id_2).AppendLine();
+
+                break;
+            case true when sb.fs_id_1 > 0 && sb.fs_id_2 > 0:
+                sbInformation.AppendFormat("{0} µsec for head switch", sb.fs_id_1).AppendLine();
+                sbInformation.AppendFormat("{0} µsec for track-to-track seek", sb.fs_id_2).AppendLine();
+
+                break;
         }
 
         sbInformation.AppendFormat("Cylinder group summary LBA: {0}", sb.fs_old_csaddr).AppendLine();

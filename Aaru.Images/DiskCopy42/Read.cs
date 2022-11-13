@@ -264,37 +264,41 @@ public sealed partial class DiskCopy42
 
                 for(var i = 0; i < 46; i++)
                 {
-                    if(i >= 0 &&
-                       i <= 3)
-                        sectorsToCopy = 22;
+                    switch(i)
+                    {
+                        case >= 0 and <= 3:
+                            sectorsToCopy = 22;
 
-                    if(i >= 4 &&
-                       i <= 10)
-                        sectorsToCopy = 21;
+                            break;
+                        case >= 4 and <= 10:
+                            sectorsToCopy = 21;
 
-                    if(i >= 11 &&
-                       i <= 16)
-                        sectorsToCopy = 20;
+                            break;
+                        case >= 11 and <= 16:
+                            sectorsToCopy = 20;
 
-                    if(i >= 17 &&
-                       i <= 22)
-                        sectorsToCopy = 19;
+                            break;
+                        case >= 17 and <= 22:
+                            sectorsToCopy = 19;
 
-                    if(i >= 23 &&
-                       i <= 28)
-                        sectorsToCopy = 18;
+                            break;
+                        case >= 23 and <= 28:
+                            sectorsToCopy = 18;
 
-                    if(i >= 29 &&
-                       i <= 34)
-                        sectorsToCopy = 17;
+                            break;
+                        case >= 29 and <= 34:
+                            sectorsToCopy = 17;
 
-                    if(i >= 35 &&
-                       i <= 41)
-                        sectorsToCopy = 16;
+                            break;
+                        case >= 35 and <= 41:
+                            sectorsToCopy = 16;
 
-                    if(i >= 42 &&
-                       i <= 45)
-                        sectorsToCopy = 15;
+                            break;
+                        case >= 42 and <= 45:
+                            sectorsToCopy = 15;
+
+                            break;
+                    }
 
                     Array.Copy(data, header.DataSize / 2 + copiedSectors * 512, twiggyCache,
                                twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);

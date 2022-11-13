@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 
 namespace Aaru.Core.Devices.Scanning;
@@ -259,18 +257,33 @@ public sealed partial class MediaScan
 
             if(!error)
             {
-                if(duration >= 500)
-                    results.F += blocksToRead;
-                else if(duration >= 150)
-                    results.E += blocksToRead;
-                else if(duration >= 50)
-                    results.D += blocksToRead;
-                else if(duration >= 10)
-                    results.C += blocksToRead;
-                else if(duration >= 3)
-                    results.B += blocksToRead;
-                else
-                    results.A += blocksToRead;
+                switch(duration)
+                {
+                    case >= 500:
+                        results.F += blocksToRead;
+
+                        break;
+                    case >= 150:
+                        results.E += blocksToRead;
+
+                        break;
+                    case >= 50:
+                        results.D += blocksToRead;
+
+                        break;
+                    case >= 10:
+                        results.C += blocksToRead;
+
+                        break;
+                    case >= 3:
+                        results.B += blocksToRead;
+
+                        break;
+                    default:
+                        results.A += blocksToRead;
+
+                        break;
+                }
 
                 ScanTime?.Invoke(i, duration);
                 mhddLog.Write(i, duration);

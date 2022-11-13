@@ -478,18 +478,16 @@ sealed class ConvertImageCommand : Command
                                                                         StringComparison.
                                                                             InvariantCultureIgnoreCase)));
 
-        if(candidates.Count == 0)
+        switch(candidates.Count)
         {
-            AaruConsole.WriteLine("No plugin supports requested extension.");
+            case 0:
+                AaruConsole.WriteLine("No plugin supports requested extension.");
 
-            return (int)ErrorNumber.FormatNotFound;
-        }
+                return (int)ErrorNumber.FormatNotFound;
+            case > 1:
+                AaruConsole.WriteLine("More than one plugin supports requested extension.");
 
-        if(candidates.Count > 1)
-        {
-            AaruConsole.WriteLine("More than one plugin supports requested extension.");
-
-            return (int)ErrorNumber.TooManyFormats;
+                return (int)ErrorNumber.TooManyFormats;
         }
 
         IBaseWritableImage outputFormat = candidates[0];
@@ -707,8 +705,8 @@ sealed class ConvertImageCommand : Command
 
                             foreach(Track track in inputOptical.Tracks)
                             {
-                                discTask.Description =
-                                    $"Converting sectors in track {discTask.Value + 1} of {discTask.MaxValue}";
+                                discTask.Description = $"Converting sectors in track {discTask.Value + 1} of {
+                                    discTask.MaxValue}";
 
                                 doneSectors = 0;
                                 ulong trackSectors = track.EndSector - track.StartSector + 1;
@@ -727,8 +725,8 @@ sealed class ConvertImageCommand : Command
                                     else
                                         sectorsToDo = (uint)(trackSectors - doneSectors);
 
-                                    trackTask.Description =
-                                        $"Converting sectors {doneSectors + track.StartSector} to {doneSectors + sectorsToDo + track.StartSector} in track {track.Sequence}";
+                                    trackTask.Description = $"Converting sectors {doneSectors + track.StartSector} to {
+                                        doneSectors + sectorsToDo + track.StartSector} in track {track.Sequence}";
 
                                     var useNotLong = false;
                                     var result     = false;
@@ -942,8 +940,8 @@ sealed class ConvertImageCommand : Command
 
                                 foreach(Track track in inputOptical.Tracks)
                                 {
-                                    discTask.Description =
-                                        $"Converting tags in track {discTask.Value + 1} of {discTask.MaxValue}";
+                                    discTask.Description = $"Converting tags in track {discTask.Value + 1} of {
+                                        discTask.MaxValue}";
 
                                     doneSectors = 0;
                                     ulong  trackSectors = track.EndSector - track.StartSector + 1;
@@ -956,31 +954,35 @@ sealed class ConvertImageCommand : Command
                                         case SectorTagType.CdTrackIsrc:
                                             errno = inputOptical.ReadSectorTag(track.Sequence, tag, out sector);
 
-                                            if(errno == ErrorNumber.NoData)
+                                            switch(errno)
                                             {
-                                                errno = ErrorNumber.NoError;
-
-                                                continue;
-                                            }
-
-                                            if(errno == ErrorNumber.NoError)
-                                                result = outputOptical.WriteSectorTag(sector, track.Sequence, tag);
-                                            else
-                                            {
-                                                if(force)
-                                                {
-                                                    AaruConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
-                                                                               outputOptical.ErrorMessage);
+                                                case ErrorNumber.NoData:
+                                                    errno = ErrorNumber.NoError;
 
                                                     continue;
-                                                }
+                                                case ErrorNumber.NoError:
+                                                    result = outputOptical.WriteSectorTag(sector, track.Sequence, tag);
 
-                                                AaruConsole.ErrorWriteLine("Error {0} writing tag, not continuing...",
+                                                    break;
+                                                default:
+                                                {
+                                                    if(force)
+                                                    {
+                                                        AaruConsole.
+                                                            ErrorWriteLine("Error {0} writing tag, continuing...",
                                                                            outputOptical.ErrorMessage);
 
-                                                errno = ErrorNumber.WriteError;
+                                                        continue;
+                                                    }
 
-                                                return;
+                                                    AaruConsole.
+                                                        ErrorWriteLine("Error {0} writing tag, not continuing...",
+                                                                       outputOptical.ErrorMessage);
+
+                                                    errno = ErrorNumber.WriteError;
+
+                                                    return;
+                                                }
                                             }
 
                                             if(!result)
@@ -1396,8 +1398,8 @@ sealed class ConvertImageCommand : Command
 
                             foreach(TapeFile tapeFile in inputTape.Files)
                             {
-                                filesTask.Description =
-                                    $"Converting file {tapeFile.File} of partition {tapeFile.Partition}...";
+                                filesTask.Description = $"Converting file {tapeFile.File} of partition {
+                                    tapeFile.Partition}...";
 
                                 outputTape.AddFile(tapeFile);
                                 filesTask.Increment(1);

@@ -92,29 +92,38 @@ public sealed partial class CPM
                     if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename))
                         fileCount++;
                 }
-                else if(entry.statusUser == 0x20)
-                {
-                    for(var f = 0; f < 8; f++)
-                        if(entry.filename[f] < 0x20 &&
-                           entry.filename[f] != 0x00)
-                            return false;
+                else
+                    switch(entry.statusUser)
+                    {
+                        case 0x20:
+                        {
+                            for(var f = 0; f < 8; f++)
+                                if(entry.filename[f] < 0x20 &&
+                                   entry.filename[f] != 0x00)
+                                    return false;
 
-                    for(var e = 0; e < 3; e++)
-                        if(entry.extension[e] < 0x20 &&
-                           entry.extension[e] != 0x00)
-                            return false;
+                            for(var e = 0; e < 3; e++)
+                                if(entry.extension[e] < 0x20 &&
+                                   entry.extension[e] != 0x00)
+                                    return false;
 
-                    _label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
-                    _labelCreationDate = new byte[4];
-                    _labelUpdateDate   = new byte[4];
-                    Array.Copy(directory, off + 24, _labelCreationDate, 0, 4);
-                    Array.Copy(directory, off + 28, _labelUpdateDate, 0, 4);
-                }
-                else if(entry.statusUser == 0x21)
-                    if(directory[off + 1] == 0x00)
-                        _thirdPartyTimestamps = true;
-                    else
-                        _standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
+                            _label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
+                            _labelCreationDate = new byte[4];
+                            _labelUpdateDate   = new byte[4];
+                            Array.Copy(directory, off + 24, _labelCreationDate, 0, 4);
+                            Array.Copy(directory, off + 28, _labelUpdateDate, 0, 4);
+
+                            break;
+                        }
+                        case 0x21 when directory[off + 1] == 0x00:
+                            _thirdPartyTimestamps = true;
+
+                            break;
+                        case 0x21:
+                            _standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
+
+                            break;
+                    }
             }
 
             return fileCount > 0;

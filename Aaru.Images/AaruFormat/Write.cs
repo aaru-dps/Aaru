@@ -411,8 +411,8 @@ public sealed partial class AaruFormat
 
                             if(decompressedLength != blockHeader.length)
                             {
-                                ErrorMessage =
-                                    $"Error decompressing block, should be {blockHeader.length} bytes but got {decompressedLength} bytes.";
+                                ErrorMessage = $"Error decompressing block, should be {blockHeader.length
+                                } bytes but got {decompressedLength} bytes.";
 
                                 return false;
                             }
@@ -598,8 +598,8 @@ public sealed partial class AaruFormat
                             if(ddtHeader.entries != _imageInfo.Sectors &&
                                !IsTape)
                             {
-                                ErrorMessage =
-                                    $"Trying to write a media with {_imageInfo.Sectors} sectors to an image with {ddtHeader.entries} sectors, not continuing...";
+                                ErrorMessage = $"Trying to write a media with {_imageInfo.Sectors
+                                } sectors to an image with {ddtHeader.entries} sectors, not continuing...";
 
                                 return false;
                             }
@@ -625,8 +625,8 @@ public sealed partial class AaruFormat
 
                                     if(decompressedLength != ddtHeader.length)
                                     {
-                                        ErrorMessage =
-                                            $"Error decompressing DDT, should be {ddtHeader.length} bytes but got {decompressedLength} bytes.";
+                                        ErrorMessage = $"Error decompressing DDT, should be {ddtHeader.length
+                                        } bytes but got {decompressedLength} bytes.";
 
                                         return false;
                                     }
@@ -646,8 +646,8 @@ public sealed partial class AaruFormat
 
                                     break;
                                 default:
-                                    ErrorMessage =
-                                        $"Found unsupported compression algorithm {(ushort)ddtHeader.compression}";
+                                    ErrorMessage = $"Found unsupported compression algorithm {
+                                        (ushort)ddtHeader.compression}";
 
                                     return false;
                             }
@@ -676,8 +676,8 @@ public sealed partial class AaruFormat
 
                             if(ddtHeader.entries != _imageInfo.Sectors)
                             {
-                                ErrorMessage =
-                                    $"Trying to write a media with {_imageInfo.Sectors} sectors to an image with {ddtHeader.entries} sectors, not continuing...";
+                                ErrorMessage = $"Trying to write a media with {_imageInfo.Sectors
+                                } sectors to an image with {ddtHeader.entries} sectors, not continuing...";
 
                                 return false;
                             }
@@ -702,8 +702,8 @@ public sealed partial class AaruFormat
 
                                     if(decompressedLength != ddtHeader.length)
                                     {
-                                        ErrorMessage =
-                                            $"Error decompressing DDT, should be {ddtHeader.length} bytes but got {decompressedLength} bytes.";
+                                        ErrorMessage = $"Error decompressing DDT, should be {ddtHeader.length
+                                        } bytes but got {decompressedLength} bytes.";
 
                                         return false;
                                     }
@@ -720,8 +720,8 @@ public sealed partial class AaruFormat
 
                                     break;
                                 default:
-                                    ErrorMessage =
-                                        $"Found unsupported compression algorithm {(ushort)ddtHeader.compression}";
+                                    ErrorMessage = $"Found unsupported compression algorithm {
+                                        (ushort)ddtHeader.compression}";
 
                                     return false;
                             }
@@ -2590,8 +2590,8 @@ public sealed partial class AaruFormat
             switch(_compressionAlgorithm)
             {
                 case CompressionType.Lzma:
-                    int    cmpLen = LZMA.EncodeBuffer(mediaTag.Value, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 4, 0,
-                                                      2, 273);
+                    int cmpLen = LZMA.EncodeBuffer(mediaTag.Value, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 4,
+                                                   0, 2, 273);
 
                     if(cmpLen + LZMA_PROPERTIES_LENGTH > mediaTag.Value.Length)
                         doNotCompress = true;
@@ -3330,26 +3330,56 @@ public sealed partial class AaruFormat
                     uint emptyMode2Form1   = 0;
 
                     for(long i = 0; i < _sectorPrefixDdt.LongLength; i++)
-                        if((_sectorPrefixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
-                            notDumpedPrefixes++;
-                        else if((_sectorPrefixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
-                            correctPrefixes++;
-                        else if((_sectorPrefixDdt[i] & CD_DFIX_MASK) > 0)
-                            writtenPrefixes++;
+                        switch(_sectorPrefixDdt[i] & CD_XFIX_MASK)
+                        {
+                            case (uint)CdFixFlags.NotDumped:
+                                notDumpedPrefixes++;
+
+                                break;
+                            case (uint)CdFixFlags.Correct:
+                                correctPrefixes++;
+
+                                break;
+                            default:
+                            {
+                                if((_sectorPrefixDdt[i] & CD_DFIX_MASK) > 0)
+                                    writtenPrefixes++;
+
+                                break;
+                            }
+                        }
 
                     for(long i = 0; i < _sectorPrefixDdt.LongLength; i++)
-                        if((_sectorSuffixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
-                            notDumpedSuffixes++;
-                        else if((_sectorSuffixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
-                            correctSuffixes++;
-                        else if((_sectorSuffixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form1Ok)
-                            correctMode2Form1++;
-                        else if((_sectorSuffixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form2Ok)
-                            correctMode2Form2++;
-                        else if((_sectorSuffixDdt[i] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form2NoCrc)
-                            emptyMode2Form1++;
-                        else if((_sectorSuffixDdt[i] & CD_DFIX_MASK) > 0)
-                            writtenSuffixes++;
+                        switch(_sectorSuffixDdt[i] & CD_XFIX_MASK)
+                        {
+                            case (uint)CdFixFlags.NotDumped:
+                                notDumpedSuffixes++;
+
+                                break;
+                            case (uint)CdFixFlags.Correct:
+                                correctSuffixes++;
+
+                                break;
+                            case (uint)CdFixFlags.Mode2Form1Ok:
+                                correctMode2Form1++;
+
+                                break;
+                            case (uint)CdFixFlags.Mode2Form2Ok:
+                                correctMode2Form2++;
+
+                                break;
+                            case (uint)CdFixFlags.Mode2Form2NoCrc:
+                                emptyMode2Form1++;
+
+                                break;
+                            default:
+                            {
+                                if((_sectorSuffixDdt[i] & CD_DFIX_MASK) > 0)
+                                    writtenSuffixes++;
+
+                                break;
+                            }
+                        }
 
                     AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                "{0} ({1:P}% prefixes are correct, {2} ({3:P}%) prefixes have not been dumped, {4} ({5:P}%) prefixes have been written to image",
@@ -4110,15 +4140,18 @@ public sealed partial class AaruFormat
                         flags    = flags
                     });
 
-                    if(!track.Indexes.ContainsKey(0) &&
-                       track.Pregap > 0)
+                    switch(track.Indexes.ContainsKey(0))
                     {
-                        track.Indexes[0] = (int)track.StartSector;
-                        track.Indexes[1] = (int)(track.StartSector + track.Pregap);
+                        case false when track.Pregap > 0:
+                            track.Indexes[0] = (int)track.StartSector;
+                            track.Indexes[1] = (int)(track.StartSector + track.Pregap);
+
+                            break;
+                        case false when !track.Indexes.ContainsKey(1):
+                            track.Indexes[0] = (int)track.StartSector;
+
+                            break;
                     }
-                    else if(!track.Indexes.ContainsKey(0) &&
-                            !track.Indexes.ContainsKey(1))
-                        track.Indexes[0] = (int)track.StartSector;
 
                     compactDiscIndexEntries.AddRange(track.Indexes.Select(trackIndex => new CompactDiscIndexEntry
                     {

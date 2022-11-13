@@ -323,10 +323,17 @@ public sealed partial class Udif
             _imageInfo.Application        = version.VersionString;
             _imageInfo.Comments           = version.VersionMessage;
 
-            if(version.MajorVersion == 3)
-                _imageInfo.Application = "ShrinkWrap™";
-            else if(version.MajorVersion == 6)
-                _imageInfo.Application = "DiskCopy";
+            switch(version.MajorVersion)
+            {
+                case 3:
+                    _imageInfo.Application = "ShrinkWrap™";
+
+                    break;
+                case 6:
+                    _imageInfo.Application = "DiskCopy";
+
+                    break;
+            }
         }
         else
             _imageInfo.Application = "DiskCopy";

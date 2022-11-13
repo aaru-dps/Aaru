@@ -86,8 +86,8 @@ public sealed partial class Qcow2
 
             if((_qHdr.features & QCOW_FEATURE_MASK) != 0)
             {
-                AaruConsole.
-                    ErrorWriteLine($"Unknown incompatible features {_qHdr.features & QCOW_FEATURE_MASK:X} enabled, not proceeding.");
+                AaruConsole.ErrorWriteLine($"Unknown incompatible features {_qHdr.features & QCOW_FEATURE_MASK
+                    :X} enabled, not proceeding.");
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -107,18 +107,16 @@ public sealed partial class Qcow2
             return ErrorNumber.InvalidArgument;
         }
 
-        if(_qHdr.crypt_method > QCOW_ENCRYPTION_AES)
+        switch(_qHdr.crypt_method)
         {
-            AaruConsole.ErrorWriteLine("Invalid encryption method");
+            case > QCOW_ENCRYPTION_AES:
+                AaruConsole.ErrorWriteLine("Invalid encryption method");
 
-            return ErrorNumber.InvalidArgument;
-        }
+                return ErrorNumber.InvalidArgument;
+            case > QCOW_ENCRYPTION_NONE:
+                AaruConsole.ErrorWriteLine("AES encrypted images not yet supported");
 
-        if(_qHdr.crypt_method > QCOW_ENCRYPTION_NONE)
-        {
-            AaruConsole.ErrorWriteLine("AES encrypted images not yet supported");
-
-            return ErrorNumber.NotImplemented;
+                return ErrorNumber.NotImplemented;
         }
 
         if(_qHdr.backing_file_offset != 0)
@@ -225,7 +223,8 @@ public sealed partial class Qcow2
         if((long)l1Off >= _l1Table.LongLength)
         {
             AaruConsole.DebugWriteLine("QCOW2 plugin",
-                                       $"Trying to read past L1 table, position {l1Off} of a max {_l1Table.LongLength}");
+                                       $"Trying to read past L1 table, position {l1Off} of a max {_l1Table.LongLength
+                                       }");
 
             return ErrorNumber.InvalidArgument;
         }

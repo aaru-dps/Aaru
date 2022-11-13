@@ -95,59 +95,64 @@ public sealed class ScsiInfo
                             goto deviceGotReset;
                     }
 
-                    if(decSense?.ASC == 0x3A)
+                    switch(decSense?.ASC)
                     {
-                        var leftRetries = 5;
-
-                        while(leftRetries > 0)
+                        case 0x3A:
                         {
-                            //AaruConsole.WriteLine("\rWaiting for drive to become ready");
-                            Thread.Sleep(2000);
-                            sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
+                            var leftRetries = 5;
 
-                            if(!sense)
-                                break;
+                            while(leftRetries > 0)
+                            {
+                                //AaruConsole.WriteLine("\rWaiting for drive to become ready");
+                                Thread.Sleep(2000);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
 
-                            leftRetries--;
+                                if(!sense)
+                                    break;
+
+                                leftRetries--;
+                            }
+
+                            if(sense)
+                            {
+                                AaruConsole.ErrorWriteLine("Please insert media in drive");
+
+                                return;
+                            }
+
+                            break;
                         }
-
-                        if(sense)
+                        case 0x04 when decSense?.ASCQ == 0x01:
                         {
-                            AaruConsole.ErrorWriteLine("Please insert media in drive");
+                            var leftRetries = 10;
 
-                            return;
+                            while(leftRetries > 0)
+                            {
+                                //AaruConsole.WriteLine("\rWaiting for drive to become ready");
+                                Thread.Sleep(2000);
+                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
+
+                                if(!sense)
+                                    break;
+
+                                leftRetries--;
+                            }
+
+                            if(sense)
+                            {
+                                AaruConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
+                                                           Sense.PrettifySense(senseBuf));
+
+                                return;
+                            }
+
+                            break;
                         }
-                    }
-                    else if(decSense?.ASC  == 0x04 &&
-                            decSense?.ASCQ == 0x01)
-                    {
-                        var leftRetries = 10;
-
-                        while(leftRetries > 0)
-                        {
-                            //AaruConsole.WriteLine("\rWaiting for drive to become ready");
-                            Thread.Sleep(2000);
-                            sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
-
-                            if(!sense)
-                                break;
-
-                            leftRetries--;
-                        }
-
-                        if(sense)
-                        {
+                        default:
                             AaruConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
                                                        Sense.PrettifySense(senseBuf));
 
                             return;
-                        }
-                    }
-                    else
-                    {
-                        AaruConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Sense.PrettifySense(senseBuf));
-
-                        return;
                     }
                 }
                 else

@@ -101,71 +101,76 @@ partial class Dump
                 toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
 
             foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR is 1 or 4))
-                if(trk.POINT >= 0x01 &&
-                   trk.POINT <= 0x63)
+                switch(trk.POINT)
                 {
-                    trackList.Add(new Track
-                    {
-                        Sequence = trk.POINT,
-                        Session  = trk.SessionNumber,
-                        Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                               (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
-                                   : TrackType.Audio,
-                        StartSector =
-                            (ulong)(trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME - 150),
-                        BytesPerSector    = (int)sectorSize,
-                        RawBytesPerSector = (int)sectorSize
-                    });
-
-                    trackFlags?.Add(trk.POINT, trk.CONTROL);
-                }
-                else if(trk.POINT == 0xA2)
-                {
-                    int phour, pmin, psec, pframe;
-
-                    if(trk.PFRAME == 0)
-                    {
-                        pframe = 74;
-
-                        if(trk.PSEC == 0)
+                    case >= 0x01 and <= 0x63:
+                        trackList.Add(new Track
                         {
-                            psec = 59;
+                            Sequence = trk.POINT,
+                            Session  = trk.SessionNumber,
+                            Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                   (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
+                                       : TrackType.Audio,
+                            StartSector =
+                                (ulong)(trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME - 150),
+                            BytesPerSector    = (int)sectorSize,
+                            RawBytesPerSector = (int)sectorSize
+                        });
 
-                            if(trk.PMIN == 0)
+                        trackFlags?.Add(trk.POINT, trk.CONTROL);
+
+                        break;
+                    case 0xA2:
+                    {
+                        int phour, pmin, psec, pframe;
+
+                        if(trk.PFRAME == 0)
+                        {
+                            pframe = 74;
+
+                            if(trk.PSEC == 0)
                             {
-                                pmin  = 59;
-                                phour = trk.PHOUR - 1;
+                                psec = 59;
+
+                                if(trk.PMIN == 0)
+                                {
+                                    pmin  = 59;
+                                    phour = trk.PHOUR - 1;
+                                }
+                                else
+                                {
+                                    pmin  = trk.PMIN - 1;
+                                    phour = trk.PHOUR;
+                                }
                             }
                             else
                             {
-                                pmin  = trk.PMIN - 1;
+                                psec  = trk.PSEC - 1;
+                                pmin  = trk.PMIN;
                                 phour = trk.PHOUR;
                             }
                         }
                         else
                         {
-                            psec  = trk.PSEC - 1;
-                            pmin  = trk.PMIN;
-                            phour = trk.PHOUR;
+                            pframe = trk.PFRAME - 1;
+                            psec   = trk.PSEC;
+                            pmin   = trk.PMIN;
+                            phour  = trk.PHOUR;
                         }
-                    }
-                    else
-                    {
-                        pframe = trk.PFRAME - 1;
-                        psec   = trk.PSEC;
-                        pmin   = trk.PMIN;
-                        phour  = trk.PHOUR;
-                    }
 
-                    lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
-                    leadOutStarts?.Add(trk.SessionNumber, lastSector + 1);
+                        lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
+                        leadOutStarts?.Add(trk.SessionNumber, lastSector + 1);
+
+                        break;
+                    }
+                    case 0xA0 when trk.ADR == 1:
+                        leadoutTrackType =
+                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
+                                : TrackType.Audio;
+
+                        break;
                 }
-                else if(trk.POINT == 0xA0 &&
-                        trk.ADR   == 1)
-                    leadoutTrackType =
-                        (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                        (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
-                            : TrackType.Audio;
         }
         else
         {
@@ -189,31 +194,33 @@ partial class Dump
             if(oldToc.HasValue)
                 foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.OrderBy(t => t.TrackNumber).
                                                                    Where(trk => trk.ADR is 1 or 4))
-                    if(trk.TrackNumber >= 0x01 &&
-                       trk.TrackNumber <= 0x63)
+                    switch(trk.TrackNumber)
                     {
-                        trackList.Add(new Track
-                        {
-                            Sequence = trk.TrackNumber,
-                            Session  = 1,
-                            Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                   (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
-                                       : TrackType.Audio,
-                            StartSector       = trk.TrackStartAddress,
-                            BytesPerSector    = (int)sectorSize,
-                            RawBytesPerSector = (int)sectorSize
-                        });
+                        case >= 0x01 and <= 0x63:
+                            trackList.Add(new Track
+                            {
+                                Sequence = trk.TrackNumber,
+                                Session  = 1,
+                                Type = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                       (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
+                                           ? TrackType.Data : TrackType.Audio,
+                                StartSector       = trk.TrackStartAddress,
+                                BytesPerSector    = (int)sectorSize,
+                                RawBytesPerSector = (int)sectorSize
+                            });
 
-                        trackFlags?.Add(trk.TrackNumber, trk.CONTROL);
-                    }
-                    else if(trk.TrackNumber == 0xAA)
-                    {
-                        leadoutTrackType =
-                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
-                                : TrackType.Audio;
+                            trackFlags?.Add(trk.TrackNumber, trk.CONTROL);
 
-                        lastSector = trk.TrackStartAddress - 1;
+                            break;
+                        case 0xAA:
+                            leadoutTrackType =
+                                (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
+                                    : TrackType.Audio;
+
+                            lastSector = trk.TrackStartAddress - 1;
+
+                            break;
                     }
         }
 

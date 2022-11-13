@@ -281,35 +281,44 @@ sealed class FilesystemInfoCommand : Command
                             Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
                         });
 
-                        if(idPlugins.Count == 0)
-                            AaruConsole.WriteLine("[bold]Filesystem not identified[/]");
-                        else if(idPlugins.Count > 1)
+                        switch(idPlugins.Count)
                         {
-                            AaruConsole.WriteLine($"[italic]Identified by {idPlugins.Count} plugins[/]");
+                            case 0:
+                                AaruConsole.WriteLine("[bold]Filesystem not identified[/]");
 
-                            foreach(string pluginName in idPlugins)
-                                if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
-                                {
-                                    AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
+                                break;
+                            case > 1:
+                            {
+                                AaruConsole.WriteLine($"[italic]Identified by {idPlugins.Count} plugins[/]");
 
-                                    plugin.GetInformation(imageFormat, partitionsList[i], out information,
-                                                          encodingClass);
+                                foreach(string pluginName in idPlugins)
+                                    if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                                    {
+                                        AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
 
-                                    AaruConsole.Write(information);
-                                    Statistics.AddFilesystem(plugin.XmlFsType.Type);
-                                }
-                        }
-                        else
-                        {
-                            plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+                                        plugin.GetInformation(imageFormat, partitionsList[i], out information,
+                                                              encodingClass);
 
-                            if(plugin == null)
-                                continue;
+                                        AaruConsole.Write(information);
+                                        Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                    }
 
-                            AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
-                            plugin.GetInformation(imageFormat, partitionsList[i], out information, encodingClass);
-                            AaruConsole.Write("{0}", information);
-                            Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                break;
+                            }
+                            default:
+                            {
+                                plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+
+                                if(plugin == null)
+                                    continue;
+
+                                AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
+                                plugin.GetInformation(imageFormat, partitionsList[i], out information, encodingClass);
+                                AaruConsole.Write("{0}", information);
+                                Statistics.AddFilesystem(plugin.XmlFsType.Type);
+
+                                break;
+                            }
                         }
 
                         AaruConsole.WriteLine();
@@ -332,31 +341,40 @@ sealed class FilesystemInfoCommand : Command
                     Filesystems.Identify(imageFormat, out idPlugins, wholePart);
                 });
 
-                if(idPlugins.Count == 0)
-                    AaruConsole.WriteLine("[bold]Filesystem not identified[/]");
-                else if(idPlugins.Count > 1)
+                switch(idPlugins.Count)
                 {
-                    AaruConsole.WriteLine($"[italic]Identified by {idPlugins.Count} plugins[/]");
+                    case 0:
+                        AaruConsole.WriteLine("[bold]Filesystem not identified[/]");
 
-                    foreach(string pluginName in idPlugins)
-                        if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                        break;
+                    case > 1:
+                    {
+                        AaruConsole.WriteLine($"[italic]Identified by {idPlugins.Count} plugins[/]");
+
+                        foreach(string pluginName in idPlugins)
+                            if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                            {
+                                AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
+                                plugin.GetInformation(imageFormat, wholePart, out information, encodingClass);
+                                AaruConsole.Write(information);
+                                Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                            }
+
+                        break;
+                    }
+                    default:
+                    {
+                        plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
+
+                        if(plugin != null)
                         {
-                            AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
+                            AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
                             plugin.GetInformation(imageFormat, wholePart, out information, encodingClass);
                             AaruConsole.Write(information);
                             Statistics.AddFilesystem(plugin.XmlFsType.Type);
                         }
-                }
-                else
-                {
-                    plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
 
-                    if(plugin != null)
-                    {
-                        AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
-                        plugin.GetInformation(imageFormat, wholePart, out information, encodingClass);
-                        AaruConsole.Write(information);
-                        Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                        break;
                     }
                 }
             }

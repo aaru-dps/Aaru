@@ -113,32 +113,27 @@ sealed partial class Reader
             tries++;
         }
 
-        if(!_read6  &&
-           !_read10 &&
-           !_read12 &&
-           !_read16)
+        switch(_read6)
         {
-            // Magneto-opticals may have empty LBA 0 but we know they work with READ(12)
-            if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
+            case false when !_read10 && !_read12 && !_read16:
             {
-                ErrorMessage = "Cannot read medium, aborting scan...";
+                // Magneto-opticals may have empty LBA 0 but we know they work with READ(12)
+                if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
+                {
+                    ErrorMessage = "Cannot read medium, aborting scan...";
+
+                    return true;
+                }
+
+                _read12 = true;
+
+                break;
+            }
+            case true when !_read10 && !_read12 && !_read16 && Blocks > 0x001FFFFF + 1:
+                ErrorMessage = $"Device only supports SCSI READ (6) but has more than {0x001FFFFF + 1} blocks ({Blocks
+                } blocks total)";
 
                 return true;
-            }
-
-            _read12 = true;
-        }
-
-        if(_read6   &&
-           !_read10 &&
-           !_read12 &&
-           !_read16 &&
-           Blocks > 0x001FFFFF + 1)
-        {
-            ErrorMessage =
-                $"Device only supports SCSI READ (6) but has more than {0x001FFFFF + 1} blocks ({Blocks} blocks total)";
-
-            return true;
         }
 
         if(Blocks > 0x001FFFFF + 1)
@@ -150,8 +145,8 @@ sealed partial class Reader
         if(!_read16 &&
            Blocks > 0xFFFFFFFF + (long)1)
         {
-            ErrorMessage =
-                $"Device only supports SCSI READ (10) but has more than {0xFFFFFFFF + (long)1} blocks ({Blocks} blocks total)";
+            ErrorMessage = $"Device only supports SCSI READ (10) but has more than {0xFFFFFFFF + (long)1} blocks ({
+                Blocks} blocks total)";
 
             return true;
         }
@@ -573,22 +568,23 @@ sealed partial class Reader
         {
             sense = _dev.ReadCapacity16(out cmdBuf, out senseBuf, _timeout, out _);
 
-            if(sense && Blocks == 0)
-                if(_dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
-                {
+            switch(sense)
+            {
+                case true when Blocks == 0 && _dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice:
                     ErrorMessage = "Unable to get media capacity\n" + $"{Sense.PrettifySense(senseBuf)}";
 
                     return true;
+                case false:
+                {
+                    var temp = new byte[8];
+
+                    Array.Copy(cmdBuf, 0, temp, 0, 8);
+                    Array.Reverse(temp);
+                    Blocks           = BitConverter.ToUInt64(temp, 0);
+                    LogicalBlockSize = (uint)((cmdBuf[8] << 24) + (cmdBuf[9] << 16) + (cmdBuf[10] << 8) + cmdBuf[11]);
+
+                    break;
                 }
-
-            if(!sense)
-            {
-                var temp = new byte[8];
-
-                Array.Copy(cmdBuf, 0, temp, 0, 8);
-                Array.Reverse(temp);
-                Blocks           = BitConverter.ToUInt64(temp, 0);
-                LogicalBlockSize = (uint)((cmdBuf[8] << 24) + (cmdBuf[9] << 16) + (cmdBuf[10] << 8) + cmdBuf[11]);
             }
         }
 

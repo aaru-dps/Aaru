@@ -481,27 +481,33 @@ public sealed partial class Gdi
 
         br.BaseStream.Seek(pos, SeekOrigin.Begin);
 
-        if(sectorOffset     == 0 &&
-           sectorSkip       == 0 &&
-           remainingSectors == length)
-            buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
-        else if(sectorOffset == 0 &&
-                sectorSkip   == 0)
+        switch(sectorOffset)
         {
-            byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
-            Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
-        }
-        else
-        {
-            var bufferPos = (int)((length - remainingSectors) * sectorSize);
+            case 0 when sectorSkip == 0 && remainingSectors == length:
+                buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
 
-            for(ulong i = 0; i < remainingSectors; i++)
+                break;
+            case 0 when sectorSkip == 0:
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
-                bufferPos += (int)sectorSize;
+                byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
+                Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
+
+                break;
+            }
+            default:
+            {
+                var bufferPos = (int)((length - remainingSectors) * sectorSize);
+
+                for(ulong i = 0; i < remainingSectors; i++)
+                {
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
+                    bufferPos += (int)sectorSize;
+                }
+
+                break;
             }
         }
 
@@ -669,27 +675,33 @@ public sealed partial class Gdi
 
         br.BaseStream.Seek(pos, SeekOrigin.Begin);
 
-        if(sectorOffset     == 0 &&
-           sectorSkip       == 0 &&
-           remainingSectors == length)
-            buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
-        else if(sectorOffset == 0 &&
-                sectorSkip   == 0)
+        switch(sectorOffset)
         {
-            byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
-            Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
-        }
-        else
-        {
-            var bufferPos = (int)((length - remainingSectors) * sectorSize);
+            case 0 when sectorSkip == 0 && remainingSectors == length:
+                buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
 
-            for(ulong i = 0; i < remainingSectors; i++)
+                break;
+            case 0 when sectorSkip == 0:
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
-                bufferPos += (int)sectorSize;
+                byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
+                Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
+
+                break;
+            }
+            default:
+            {
+                var bufferPos = (int)((length - remainingSectors) * sectorSize);
+
+                for(ulong i = 0; i < remainingSectors; i++)
+                {
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
+                    bufferPos += (int)sectorSize;
+                }
+
+                break;
             }
         }
 
@@ -810,27 +822,33 @@ public sealed partial class Gdi
 
         br.BaseStream.Seek(pos, SeekOrigin.Begin);
 
-        if(sectorOffset     == 0 &&
-           sectorSkip       == 0 &&
-           remainingSectors == length)
-            buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
-        else if(sectorOffset == 0 &&
-                sectorSkip   == 0)
+        switch(sectorOffset)
         {
-            byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
-            Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
-        }
-        else
-        {
-            var bufferPos = (int)((length - remainingSectors) * sectorSize);
+            case 0 when sectorSkip == 0 && remainingSectors == length:
+                buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
 
-            for(ulong i = 0; i < remainingSectors; i++)
+                break;
+            case 0 when sectorSkip == 0:
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
-                bufferPos += (int)sectorSize;
+                byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
+                Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
+
+                break;
+            }
+            default:
+            {
+                var bufferPos = (int)((length - remainingSectors) * sectorSize);
+
+                for(ulong i = 0; i < remainingSectors; i++)
+                {
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
+                    bufferPos += (int)sectorSize;
+                }
+
+                break;
             }
         }
 

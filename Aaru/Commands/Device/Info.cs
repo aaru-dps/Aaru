@@ -375,190 +375,191 @@ sealed class DeviceInfoCommand : Command
 
             if(devInfo.ScsiEvpdPages != null)
                 foreach(KeyValuePair<byte, byte[]> page in devInfo.ScsiEvpdPages)
-                    if(page.Key >= 0x01 &&
-                       page.Key <= 0x7F)
+                    switch(page.Key)
                     {
-                        AaruConsole.WriteLine("ASCII Page {0:X2}h: {1}", page.Key, EVPD.DecodeASCIIPage(page.Value));
+                        case >= 0x01 and <= 0x7F:
+                            AaruConsole.WriteLine("ASCII Page {0:X2}h: {1}", page.Key,
+                                                  EVPD.DecodeASCIIPage(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, page.Value);
-                    }
-                    else if(page.Key == 0x80)
-                    {
-                        AaruConsole.WriteLine("Unit Serial Number: {0}", EVPD.DecodePage80(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0x81)
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_81(page.Value));
+                            break;
+                        case 0x80:
+                            AaruConsole.WriteLine("Unit Serial Number: {0}", EVPD.DecodePage80(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0x82)
-                    {
-                        AaruConsole.WriteLine("ASCII implemented operating definitions: {0}",
-                                              EVPD.DecodePage82(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0x83)
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_83(page.Value));
+                            break;
+                        case 0x81:
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_81(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0x84)
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_84(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0x85)
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_85(page.Value));
+                            break;
+                        case 0x82:
+                            AaruConsole.WriteLine("ASCII implemented operating definitions: {0}",
+                                                  EVPD.DecodePage82(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0x86)
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_86(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0x89)
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_89(page.Value));
+                            break;
+                        case 0x83:
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_83(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0xB0)
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_B0(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0xB1)
-                    {
-                        AaruConsole.WriteLine("Manufacturer-assigned Serial Number: {0}",
-                                              EVPD.DecodePageB1(page.Value));
+                            break;
+                        case 0x84:
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_84(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0xB2)
-                    {
-                        AaruConsole.WriteLine("TapeAlert Supported Flags Bitmap: 0x{0:X16}",
-                                              EVPD.DecodePageB2(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0xB3)
-                    {
-                        AaruConsole.WriteLine("Automation Device Serial Number: {0}", EVPD.DecodePageB3(page.Value));
+                            break;
+                        case 0x85:
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_85(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0xB4)
-                    {
-                        AaruConsole.WriteLine("Data Transfer Device Element Address: 0x{0}",
-                                              EVPD.DecodePageB4(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0xC0 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                           Trim() == "quantum")
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_Quantum(page.Value));
+                            break;
+                        case 0x86:
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_86(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0xC0 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                           Trim() == "seagate")
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_Seagate(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0xC0 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                           Trim() == "ibm")
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_IBM(page.Value));
+                            break;
+                        case 0x89:
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_89(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0xC1 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                           Trim() == "ibm")
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C1_IBM(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key is 0xC0 or 0xC1 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                           Trim() == "certance")
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_C1_Certance(page.Value));
+                            break;
+                        case 0xB0:
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_B0(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key is 0xC2 or 0xC3 or 0xC4 or 0xC5 or 0xC6 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                           Trim() == "certance")
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key is 0xC0 or 0xC1 or 0xC2 or 0xC3 or 0xC4 or 0xC5 &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                           Trim() == "hp")
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_to_C5_HP(page.Value));
+                            break;
+                        case 0xB1:
+                            AaruConsole.WriteLine("Manufacturer-assigned Serial Number: {0}",
+                                                  EVPD.DecodePageB1(page.Value));
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else if(page.Key == 0xDF &&
-                            StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                           Trim() == "certance")
-                    {
-                        AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_DF_Certance(page.Value));
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
-                    }
-                    else
-                    {
-                        if(page.Key == 0x00)
-                            continue;
+                            break;
+                        case 0xB2:
+                            AaruConsole.WriteLine("TapeAlert Supported Flags Bitmap: 0x{0:X16}",
+                                                  EVPD.DecodePageB2(page.Value));
 
-                        AaruConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}",
-                                                   page.Key);
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
 
-                        DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
-                                         $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+                            break;
+                        case 0xB3:
+                            AaruConsole.WriteLine("Automation Device Serial Number: {0}",
+                                                  EVPD.DecodePageB3(page.Value));
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        case 0xB4:
+                            AaruConsole.WriteLine("Data Transfer Device Element Address: 0x{0}",
+                                                  EVPD.DecodePageB4(page.Value));
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        case 0xC0 when StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
+                                                      ToLowerInvariant().Trim() == "quantum":
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_Quantum(page.Value));
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        case 0xC0 when StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
+                                                      ToLowerInvariant().Trim() == "seagate":
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_Seagate(page.Value));
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        case 0xC0 when StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
+                                                      ToLowerInvariant().Trim() == "ibm":
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_IBM(page.Value));
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        case 0xC1 when StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
+                                                      ToLowerInvariant().Trim() == "ibm":
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C1_IBM(page.Value));
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        case 0xC0 or 0xC1
+                            when StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
+                                                ToLowerInvariant().Trim() == "certance":
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_C1_Certance(page.Value));
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        case 0xC2 or 0xC3 or 0xC4 or 0xC5 or 0xC6
+                            when StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
+                                                ToLowerInvariant().Trim() == "certance":
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(page.Value));
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        case 0xC0 or 0xC1 or 0xC2 or 0xC3 or 0xC4 or 0xC5
+                            when StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
+                                                ToLowerInvariant().Trim() == "hp":
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_C0_to_C5_HP(page.Value));
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        case 0xDF when StringHandlers.CToString(devInfo.ScsiInquiry.Value.VendorIdentification).
+                                                      ToLowerInvariant().Trim() == "certance":
+                            AaruConsole.WriteLine("{0}", EVPD.PrettifyPage_DF_Certance(page.Value));
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        default:
+                        {
+                            if(page.Key == 0x00)
+                                continue;
+
+                            AaruConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}",
+                                                       page.Key);
+
+                            DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
+                                             $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
+
+                            break;
+                        }
                     }
 
             if(devInfo.ScsiModeSense6 != null)

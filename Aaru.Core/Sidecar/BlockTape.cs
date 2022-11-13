@@ -179,36 +179,65 @@ public sealed partial class Sidecar
         {
             _sidecar.BlockMedia[0].DiskType = "Quarter-inch cartridge";
 
-            if(totalSize <= 20 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-11";
-            else if(totalSize <= 40 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-40";
-            else if(totalSize <= 60 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-24";
-            else if(totalSize <= 80 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-80";
-            else if(totalSize <= 120 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-120";
-            else if(totalSize <= 150 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-150";
-            else if(totalSize <= 320 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-320";
-            else if(totalSize <= 340 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-3010";
-            else if(totalSize <= 525 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-525";
-            else if(totalSize <= 670 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-3020";
-            else if(totalSize <= 1200 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-3080";
-            else if(totalSize <= 1350 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-1350";
-            else if(totalSize <= (long)4000 * 1048576)
-                _sidecar.BlockMedia[0].DiskSubType = "QIC-3095";
-            else
+            switch(totalSize)
             {
-                _sidecar.BlockMedia[0].DiskType    = "Unknown tape";
-                _sidecar.BlockMedia[0].DiskSubType = "Unknown tape";
+                case <= 20 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-11";
+
+                    break;
+                case <= 40 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-40";
+
+                    break;
+                case <= 60 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-24";
+
+                    break;
+                case <= 80 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-80";
+
+                    break;
+                case <= 120 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-120";
+
+                    break;
+                case <= 150 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-150";
+
+                    break;
+                case <= 320 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-320";
+
+                    break;
+                case <= 340 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-3010";
+
+                    break;
+                case <= 525 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-525";
+
+                    break;
+                case <= 670 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-3020";
+
+                    break;
+                case <= 1200 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-3080";
+
+                    break;
+                case <= 1350 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-1350";
+
+                    break;
+                case <= (long)4000 * 1048576:
+                    _sidecar.BlockMedia[0].DiskSubType = "QIC-3095";
+
+                    break;
+                default:
+                    _sidecar.BlockMedia[0].DiskType    = "Unknown tape";
+                    _sidecar.BlockMedia[0].DiskSubType = "Unknown tape";
+
+                    break;
             }
         }
         else

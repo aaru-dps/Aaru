@@ -225,11 +225,14 @@ public sealed class XZ : IFilter
 
     int Decode(byte[] buf, int sizeMax, ref ulong num)
     {
-        if(sizeMax == 0)
-            return 0;
+        switch(sizeMax)
+        {
+            case 0: return 0;
+            case > 9:
+                sizeMax = 9;
 
-        if(sizeMax > 9)
-            sizeMax = 9;
+                break;
+        }
 
         num = (ulong)(buf[0] & 0x7F);
         var i = 0;

@@ -248,9 +248,10 @@ public sealed partial class CPM
         // For each directory entry
         for(var dOff = 0; dOff < directory.Length; dOff += 32)
 
-            // Describes a file (does not support PDOS entries with user >= 16, because they're identical to password entries
-            if((directory[dOff] & 0x7F) < 0x10)
-                if(allocationBlocks.Count > 256)
+            switch(directory[dOff] & 0x7F)
+            {
+                // Describes a file (does not support PDOS entries with user >= 16, because they're identical to password entries
+                case < 0x10 when allocationBlocks.Count > 256:
                 {
                     DirectoryEntry16 entry =
                         Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry16>(directory, dOff, 32);
@@ -360,8 +361,10 @@ public sealed partial class CPM
                     }
 
                     dirCnt++;
+
+                    break;
                 }
-                else
+                case < 0x10:
                 {
                     DirectoryEntry entry =
                         Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, dOff, 32);
@@ -471,241 +474,247 @@ public sealed partial class CPM
                     }
 
                     dirCnt++;
+
+                    break;
                 }
 
-            // A password entry (or a file entry in PDOS, but this does not handle that case)
-            else if((directory[dOff] & 0x7F) >= 0x10 &&
-                    (directory[dOff] & 0x7F) < 0x20)
-            {
-                PasswordEntry entry = Marshal.ByteArrayToStructureLittleEndian<PasswordEntry>(directory, dOff, 32);
-
-                int user = entry.userNumber & 0x0F;
-
-                for(var i = 0; i < 8; i++)
-                    entry.filename[i] &= 0x7F;
-
-                for(var i = 0; i < 3; i++)
-                    entry.extension[i] &= 0x7F;
-
-                string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
-                string extension = Encoding.ASCII.GetString(entry.extension).Trim();
-
-                // If user is != 0, append user to name to have identical filenames
-                if(user > 0)
-                    filename = $"{user:X1}:{filename}";
-
-                if(!string.IsNullOrEmpty(extension))
-                    filename = filename + "." + extension;
-
-                filename = filename.Replace('/', '\u2215');
-
-                // Do not repeat passwords
-                if(_passwordCache.ContainsKey(filename))
-                    _passwordCache.Remove(filename);
-
-                // Copy whole password entry
-                var tmp = new byte[32];
-                Array.Copy(directory, dOff, tmp, 0, 32);
-                _passwordCache.Add(filename, tmp);
-
-                // Count entries 3 by 3 for timestamps
-                switch(dirCnt % 3)
+                // A password entry (or a file entry in PDOS, but this does not handle that case)
+                case >= 0x10 and < 0x20:
                 {
-                    case 0:
-                        file1 = filename;
+                    PasswordEntry entry = Marshal.ByteArrayToStructureLittleEndian<PasswordEntry>(directory, dOff, 32);
 
-                        break;
-                    case 1:
-                        file2 = filename;
+                    int user = entry.userNumber & 0x0F;
 
-                        break;
-                    case 2:
-                        file3 = filename;
+                    for(var i = 0; i < 8; i++)
+                        entry.filename[i] &= 0x7F;
 
-                        break;
+                    for(var i = 0; i < 3; i++)
+                        entry.extension[i] &= 0x7F;
+
+                    string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
+                    string extension = Encoding.ASCII.GetString(entry.extension).Trim();
+
+                    // If user is != 0, append user to name to have identical filenames
+                    if(user > 0)
+                        filename = $"{user:X1}:{filename}";
+
+                    if(!string.IsNullOrEmpty(extension))
+                        filename = filename + "." + extension;
+
+                    filename = filename.Replace('/', '\u2215');
+
+                    // Do not repeat passwords
+                    if(_passwordCache.ContainsKey(filename))
+                        _passwordCache.Remove(filename);
+
+                    // Copy whole password entry
+                    var tmp = new byte[32];
+                    Array.Copy(directory, dOff, tmp, 0, 32);
+                    _passwordCache.Add(filename, tmp);
+
+                    // Count entries 3 by 3 for timestamps
+                    switch(dirCnt % 3)
+                    {
+                        case 0:
+                            file1 = filename;
+
+                            break;
+                        case 1:
+                            file2 = filename;
+
+                            break;
+                        case 2:
+                            file3 = filename;
+
+                            break;
+                    }
+
+                    dirCnt++;
+
+                    break;
                 }
 
-                dirCnt++;
+                // Volume label and password entry. Volume password is ignored.
+                default:
+                    switch(directory[dOff] & 0x7F)
+                    {
+                        case 0x20:
+                            LabelEntry labelEntry =
+                                Marshal.ByteArrayToStructureLittleEndian<LabelEntry>(directory, dOff, 32);
+
+                            // The volume label defines if one of the fields in CP/M 3 timestamp is a creation or an
+                            // access time
+                            atime |= (labelEntry.flags & 0x40) == 0x40;
+
+                            _label             = Encoding.ASCII.GetString(directory, dOff + 1, 11).Trim();
+                            _labelCreationDate = new byte[4];
+                            _labelUpdateDate   = new byte[4];
+                            Array.Copy(directory, dOff + 24, _labelCreationDate, 0, 4);
+                            Array.Copy(directory, dOff + 28, _labelUpdateDate, 0, 4);
+
+                            // Count entries 3 by 3 for timestamps
+                            switch(dirCnt % 3)
+                            {
+                                case 0:
+                                    file1 = null;
+
+                                    break;
+                                case 1:
+                                    file2 = null;
+
+                                    break;
+                                case 2:
+                                    file3 = null;
+
+                                    break;
+                            }
+
+                            dirCnt++;
+
+                            break;
+                        case 0x21:
+                            if(directory[dOff + 10] == 0x00 &&
+                               directory[dOff + 20] == 0x00 &&
+                               directory[dOff + 30] == 0x00 &&
+                               directory[dOff + 31] == 0x00)
+                            {
+                                DateEntry dateEntry =
+                                    Marshal.ByteArrayToStructureLittleEndian<DateEntry>(directory, dOff, 32);
+
+                                FileEntryInfo fInfo;
+
+                                // Entry contains timestamps for last 3 entries, whatever the kind they are.
+                                if(!string.IsNullOrEmpty(file1))
+                                {
+                                    if(_statCache.TryGetValue(file1, out fInfo))
+                                        _statCache.Remove(file1);
+                                    else
+                                        fInfo = new FileEntryInfo();
+
+                                    if(atime)
+                                        fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date1);
+                                    else
+                                        fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date1);
+
+                                    fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date2);
+
+                                    _statCache.Add(file1, fInfo);
+                                }
+
+                                if(!string.IsNullOrEmpty(file2))
+                                {
+                                    if(_statCache.TryGetValue(file2, out fInfo))
+                                        _statCache.Remove(file2);
+                                    else
+                                        fInfo = new FileEntryInfo();
+
+                                    if(atime)
+                                        fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date3);
+                                    else
+                                        fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date3);
+
+                                    fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date4);
+
+                                    _statCache.Add(file2, fInfo);
+                                }
+
+                                if(!string.IsNullOrEmpty(file3))
+                                {
+                                    if(_statCache.TryGetValue(file3, out fInfo))
+                                        _statCache.Remove(file3);
+                                    else
+                                        fInfo = new FileEntryInfo();
+
+                                    if(atime)
+                                        fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date5);
+                                    else
+                                        fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date5);
+
+                                    fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date6);
+
+                                    _statCache.Add(file3, fInfo);
+                                }
+
+                                file1  = null;
+                                file2  = null;
+                                file3  = null;
+                                dirCnt = 0;
+                            }
+
+                            // However, if this byte is 0, timestamp is in Z80DOS or DOS+ format
+                            else if(directory[dOff + 1] == 0x00)
+                            {
+                                TrdPartyDateEntry trdPartyDateEntry =
+                                    Marshal.ByteArrayToStructureLittleEndian<TrdPartyDateEntry>(directory, dOff, 32);
+
+                                FileEntryInfo fInfo;
+
+                                // Entry contains timestamps for last 3 entries, whatever the kind they are.
+                                if(!string.IsNullOrEmpty(file1))
+                                {
+                                    if(_statCache.TryGetValue(file1, out fInfo))
+                                        _statCache.Remove(file1);
+                                    else
+                                        fInfo = new FileEntryInfo();
+
+                                    var ctime = new byte[4];
+                                    ctime[0] = trdPartyDateEntry.create1[0];
+                                    ctime[1] = trdPartyDateEntry.create1[1];
+
+                                    fInfo.AccessTime    = DateHandlers.CpmToDateTime(trdPartyDateEntry.access1);
+                                    fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
+                                    fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify1);
+
+                                    _statCache.Add(file1, fInfo);
+                                }
+
+                                if(!string.IsNullOrEmpty(file2))
+                                {
+                                    if(_statCache.TryGetValue(file2, out fInfo))
+                                        _statCache.Remove(file2);
+                                    else
+                                        fInfo = new FileEntryInfo();
+
+                                    var ctime = new byte[4];
+                                    ctime[0] = trdPartyDateEntry.create2[0];
+                                    ctime[1] = trdPartyDateEntry.create2[1];
+
+                                    fInfo.AccessTime    = DateHandlers.CpmToDateTime(trdPartyDateEntry.access2);
+                                    fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
+                                    fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify2);
+
+                                    _statCache.Add(file2, fInfo);
+                                }
+
+                                if(!string.IsNullOrEmpty(file3))
+                                {
+                                    if(_statCache.TryGetValue(file1, out fInfo))
+                                        _statCache.Remove(file3);
+                                    else
+                                        fInfo = new FileEntryInfo();
+
+                                    var ctime = new byte[4];
+                                    ctime[0] = trdPartyDateEntry.create3[0];
+                                    ctime[1] = trdPartyDateEntry.create3[1];
+
+                                    fInfo.AccessTime    = DateHandlers.CpmToDateTime(trdPartyDateEntry.access3);
+                                    fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
+                                    fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify3);
+
+                                    _statCache.Add(file3, fInfo);
+                                }
+
+                                file1  = null;
+                                file2  = null;
+                                file3  = null;
+                                dirCnt = 0;
+                            }
+
+                            break;
+                    }
+
+                    break;
             }
-
-            // Volume label and password entry. Volume password is ignored.
-            else
-                switch(directory[dOff] & 0x7F)
-                {
-                    case 0x20:
-                        LabelEntry labelEntry =
-                            Marshal.ByteArrayToStructureLittleEndian<LabelEntry>(directory, dOff, 32);
-
-                        // The volume label defines if one of the fields in CP/M 3 timestamp is a creation or an
-                        // access time
-                        atime |= (labelEntry.flags & 0x40) == 0x40;
-
-                        _label             = Encoding.ASCII.GetString(directory, dOff + 1, 11).Trim();
-                        _labelCreationDate = new byte[4];
-                        _labelUpdateDate   = new byte[4];
-                        Array.Copy(directory, dOff + 24, _labelCreationDate, 0, 4);
-                        Array.Copy(directory, dOff + 28, _labelUpdateDate, 0, 4);
-
-                        // Count entries 3 by 3 for timestamps
-                        switch(dirCnt % 3)
-                        {
-                            case 0:
-                                file1 = null;
-
-                                break;
-                            case 1:
-                                file2 = null;
-
-                                break;
-                            case 2:
-                                file3 = null;
-
-                                break;
-                        }
-
-                        dirCnt++;
-
-                        break;
-                    case 0x21:
-                        if(directory[dOff + 10] == 0x00 &&
-                           directory[dOff + 20] == 0x00 &&
-                           directory[dOff + 30] == 0x00 &&
-                           directory[dOff + 31] == 0x00)
-                        {
-                            DateEntry dateEntry =
-                                Marshal.ByteArrayToStructureLittleEndian<DateEntry>(directory, dOff, 32);
-
-                            FileEntryInfo fInfo;
-
-                            // Entry contains timestamps for last 3 entries, whatever the kind they are.
-                            if(!string.IsNullOrEmpty(file1))
-                            {
-                                if(_statCache.TryGetValue(file1, out fInfo))
-                                    _statCache.Remove(file1);
-                                else
-                                    fInfo = new FileEntryInfo();
-
-                                if(atime)
-                                    fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date1);
-                                else
-                                    fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date1);
-
-                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date2);
-
-                                _statCache.Add(file1, fInfo);
-                            }
-
-                            if(!string.IsNullOrEmpty(file2))
-                            {
-                                if(_statCache.TryGetValue(file2, out fInfo))
-                                    _statCache.Remove(file2);
-                                else
-                                    fInfo = new FileEntryInfo();
-
-                                if(atime)
-                                    fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date3);
-                                else
-                                    fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date3);
-
-                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date4);
-
-                                _statCache.Add(file2, fInfo);
-                            }
-
-                            if(!string.IsNullOrEmpty(file3))
-                            {
-                                if(_statCache.TryGetValue(file3, out fInfo))
-                                    _statCache.Remove(file3);
-                                else
-                                    fInfo = new FileEntryInfo();
-
-                                if(atime)
-                                    fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date5);
-                                else
-                                    fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date5);
-
-                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date6);
-
-                                _statCache.Add(file3, fInfo);
-                            }
-
-                            file1  = null;
-                            file2  = null;
-                            file3  = null;
-                            dirCnt = 0;
-                        }
-
-                        // However, if this byte is 0, timestamp is in Z80DOS or DOS+ format
-                        else if(directory[dOff + 1] == 0x00)
-                        {
-                            TrdPartyDateEntry trdPartyDateEntry =
-                                Marshal.ByteArrayToStructureLittleEndian<TrdPartyDateEntry>(directory, dOff, 32);
-
-                            FileEntryInfo fInfo;
-
-                            // Entry contains timestamps for last 3 entries, whatever the kind they are.
-                            if(!string.IsNullOrEmpty(file1))
-                            {
-                                if(_statCache.TryGetValue(file1, out fInfo))
-                                    _statCache.Remove(file1);
-                                else
-                                    fInfo = new FileEntryInfo();
-
-                                var ctime = new byte[4];
-                                ctime[0] = trdPartyDateEntry.create1[0];
-                                ctime[1] = trdPartyDateEntry.create1[1];
-
-                                fInfo.AccessTime    = DateHandlers.CpmToDateTime(trdPartyDateEntry.access1);
-                                fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
-                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify1);
-
-                                _statCache.Add(file1, fInfo);
-                            }
-
-                            if(!string.IsNullOrEmpty(file2))
-                            {
-                                if(_statCache.TryGetValue(file2, out fInfo))
-                                    _statCache.Remove(file2);
-                                else
-                                    fInfo = new FileEntryInfo();
-
-                                var ctime = new byte[4];
-                                ctime[0] = trdPartyDateEntry.create2[0];
-                                ctime[1] = trdPartyDateEntry.create2[1];
-
-                                fInfo.AccessTime    = DateHandlers.CpmToDateTime(trdPartyDateEntry.access2);
-                                fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
-                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify2);
-
-                                _statCache.Add(file2, fInfo);
-                            }
-
-                            if(!string.IsNullOrEmpty(file3))
-                            {
-                                if(_statCache.TryGetValue(file1, out fInfo))
-                                    _statCache.Remove(file3);
-                                else
-                                    fInfo = new FileEntryInfo();
-
-                                var ctime = new byte[4];
-                                ctime[0] = trdPartyDateEntry.create3[0];
-                                ctime[1] = trdPartyDateEntry.create3[1];
-
-                                fInfo.AccessTime    = DateHandlers.CpmToDateTime(trdPartyDateEntry.access3);
-                                fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
-                                fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify3);
-
-                                _statCache.Add(file3, fInfo);
-                            }
-
-                            file1  = null;
-                            file2  = null;
-                            file3  = null;
-                            dirCnt = 0;
-                        }
-
-                        break;
-                }
 
         // Cache all files. As CP/M maximum volume size is 8 Mib
         // this should not be a problem

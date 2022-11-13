@@ -378,18 +378,16 @@ sealed class DumpMediaCommand : Command
                                                                         StringComparison.
                                                                             InvariantCultureIgnoreCase)));
 
-        if(candidates.Count == 0)
+        switch(candidates.Count)
         {
-            AaruConsole.WriteLine("No plugin supports requested extension.");
+            case 0:
+                AaruConsole.WriteLine("No plugin supports requested extension.");
 
-            return (int)ErrorNumber.FormatNotFound;
-        }
+                return (int)ErrorNumber.FormatNotFound;
+            case > 1:
+                AaruConsole.WriteLine("More than one plugin supports requested extension.");
 
-        if(candidates.Count > 1)
-        {
-            AaruConsole.WriteLine("More than one plugin supports requested extension.");
-
-            return (int)ErrorNumber.TooManyFormats;
+                return (int)ErrorNumber.TooManyFormats;
         }
 
         while(true)

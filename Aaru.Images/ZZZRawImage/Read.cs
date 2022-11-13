@@ -137,79 +137,87 @@ public sealed partial class ZZZRawImage
 
                 break;
             default:
-                if(_extension is ".adf" or ".adl" or ".ssd" or ".dsd" &&
-                   imageFilter.DataForkLength is 163840 or 327680 or 655360)
-                    _imageInfo.SectorSize = 256;
-                else if(_extension is ".adf" or ".adl" &&
-                        imageFilter.DataForkLength == 819200)
-                    _imageInfo.SectorSize = 1024;
-                else
-                    switch(imageFilter.DataForkLength)
-                    {
-                        case 242944:
-                        case 256256:
-                        case 495872:
-                        case 92160:
-                        case 133120:
-                            _imageInfo.SectorSize = 128;
+                switch(_extension)
+                {
+                    case ".adf" or ".adl" or ".ssd" or ".dsd"
+                        when imageFilter.DataForkLength is 163840 or 327680 or 655360:
+                        _imageInfo.SectorSize = 256;
 
-                            break;
-                        case 116480:
-                        case 287488:  // T0S0 = 128bps
-                        case 988416:  // T0S0 = 128bps
-                        case 995072:  // T0S0 = 128bps, T0S1 = 256bps
-                        case 1021696: // T0S0 = 128bps, T0S1 = 256bps
-                        case 232960:
-                        case 143360:
-                        case 286720:
-                        case 512512:
-                        case 102400:
-                        case 204800:
-                        case 655360:
-                        case 80384:  // T0S0 = 128bps
-                        case 325632: // T0S0 = 128bps, T0S1 = 256bps
-                        case 653312: // T0S0 = 128bps, T0S1 = 256bps
+                        break;
+                    case ".adf" or ".adl" when imageFilter.DataForkLength == 819200:
+                        _imageInfo.SectorSize = 1024;
 
-                        #region Commodore
-                        case 174848:
-                        case 175531:
-                        case 196608:
-                        case 197376:
-                        case 349696:
-                        case 351062:
-                        case 822400:
-                            #endregion Commodore
+                        break;
+                    default:
+                        switch(imageFilter.DataForkLength)
+                        {
+                            case 242944:
+                            case 256256:
+                            case 495872:
+                            case 92160:
+                            case 133120:
+                                _imageInfo.SectorSize = 128;
 
-                            _imageInfo.SectorSize = 256;
+                                break;
+                            case 116480:
+                            case 287488:  // T0S0 = 128bps
+                            case 988416:  // T0S0 = 128bps
+                            case 995072:  // T0S0 = 128bps, T0S1 = 256bps
+                            case 1021696: // T0S0 = 128bps, T0S1 = 256bps
+                            case 232960:
+                            case 143360:
+                            case 286720:
+                            case 512512:
+                            case 102400:
+                            case 204800:
+                            case 655360:
+                            case 80384:  // T0S0 = 128bps
+                            case 325632: // T0S0 = 128bps, T0S1 = 256bps
+                            case 653312: // T0S0 = 128bps, T0S1 = 256bps
 
-                            break;
-                        case 81664:
-                            _imageInfo.SectorSize = 319;
+                            #region Commodore
+                            case 174848:
+                            case 175531:
+                            case 196608:
+                            case 197376:
+                            case 349696:
+                            case 351062:
+                            case 822400:
+                                #endregion Commodore
 
-                            break;
-                        case 306432:  // T0S0 = 128bps
-                        case 1146624: // T0S0 = 128bps, T0S1 = 256bps
-                        case 1177344: // T0S0 = 128bps, T0S1 = 256bps
-                            _imageInfo.SectorSize = 512;
+                                _imageInfo.SectorSize = 256;
 
-                            break;
-                        case 1222400: // T0S0 = 128bps, T0S1 = 256bps
-                        case 1304320: // T0S0 = 128bps, T0S1 = 256bps
-                        case 1255168: // T0S0 = 128bps, T0S1 = 256bps
-                        case 1261568:
-                        case 1638400:
-                            _imageInfo.SectorSize = 1024;
+                                break;
+                            case 81664:
+                                _imageInfo.SectorSize = 319;
 
-                            break;
-                        case 35002122240:
-                            _imageInfo.SectorSize = 2048;
+                                break;
+                            case 306432:  // T0S0 = 128bps
+                            case 1146624: // T0S0 = 128bps, T0S1 = 256bps
+                            case 1177344: // T0S0 = 128bps, T0S1 = 256bps
+                                _imageInfo.SectorSize = 512;
 
-                            break;
-                        default:
-                            _imageInfo.SectorSize = 512;
+                                break;
+                            case 1222400: // T0S0 = 128bps, T0S1 = 256bps
+                            case 1304320: // T0S0 = 128bps, T0S1 = 256bps
+                            case 1255168: // T0S0 = 128bps, T0S1 = 256bps
+                            case 1261568:
+                            case 1638400:
+                                _imageInfo.SectorSize = 1024;
 
-                            break;
-                    }
+                                break;
+                            case 35002122240:
+                                _imageInfo.SectorSize = 2048;
+
+                                break;
+                            default:
+                                _imageInfo.SectorSize = 512;
+
+                                break;
+                        }
+
+                        break;
+                }
 
                 break;
         }
@@ -1004,44 +1012,50 @@ public sealed partial class ZZZRawImage
                 if(decMode.Value.Pages != null)
                     foreach(Modes.ModePage page in decMode.Value.Pages)
 
-                        // CD-ROM page
-                        if(page.Page    == 0x2A &&
-                           page.Subpage == 0)
+                        switch(page.Page)
                         {
-                            if(_mediaTags.ContainsKey(MediaTagType.SCSI_MODEPAGE_2A))
-                                _mediaTags.Remove(MediaTagType.SCSI_MODEPAGE_2A);
+                            // CD-ROM page
+                            case 0x2A when page.Subpage == 0:
+                            {
+                                if(_mediaTags.ContainsKey(MediaTagType.SCSI_MODEPAGE_2A))
+                                    _mediaTags.Remove(MediaTagType.SCSI_MODEPAGE_2A);
 
-                            _mediaTags.Add(MediaTagType.SCSI_MODEPAGE_2A, page.PageResponse);
-                        }
+                                _mediaTags.Add(MediaTagType.SCSI_MODEPAGE_2A, page.PageResponse);
 
-                        // Rigid Disk page
-                        else if(page.Page    == 0x04 &&
-                                page.Subpage == 0)
-                        {
-                            Modes.ModePage_04? mode04 = Modes.DecodeModePage_04(page.PageResponse);
+                                break;
+                            }
 
-                            if(!mode04.HasValue)
-                                continue;
+                            // Rigid Disk page
+                            case 0x04 when page.Subpage == 0:
+                            {
+                                Modes.ModePage_04? mode04 = Modes.DecodeModePage_04(page.PageResponse);
 
-                            _imageInfo.Cylinders = mode04.Value.Cylinders;
-                            _imageInfo.Heads     = mode04.Value.Heads;
+                                if(!mode04.HasValue)
+                                    continue;
 
-                            _imageInfo.SectorsPerTrack =
-                                (uint)(_imageInfo.Sectors / (mode04.Value.Cylinders * mode04.Value.Heads));
-                        }
+                                _imageInfo.Cylinders = mode04.Value.Cylinders;
+                                _imageInfo.Heads     = mode04.Value.Heads;
 
-                        // Flexible Disk Page
-                        else if(page.Page    == 0x05 &&
-                                page.Subpage == 0)
-                        {
-                            Modes.ModePage_05? mode05 = Modes.DecodeModePage_05(page.PageResponse);
+                                _imageInfo.SectorsPerTrack =
+                                    (uint)(_imageInfo.Sectors / (mode04.Value.Cylinders * mode04.Value.Heads));
 
-                            if(!mode05.HasValue)
-                                continue;
+                                break;
+                            }
 
-                            _imageInfo.Cylinders       = mode05.Value.Cylinders;
-                            _imageInfo.Heads           = mode05.Value.Heads;
-                            _imageInfo.SectorsPerTrack = mode05.Value.SectorsPerTrack;
+                            // Flexible Disk Page
+                            case 0x05 when page.Subpage == 0:
+                            {
+                                Modes.ModePage_05? mode05 = Modes.DecodeModePage_05(page.PageResponse);
+
+                                if(!mode05.HasValue)
+                                    continue;
+
+                                _imageInfo.Cylinders       = mode05.Value.Cylinders;
+                                _imageInfo.Heads           = mode05.Value.Heads;
+                                _imageInfo.SectorsPerTrack = mode05.Value.SectorsPerTrack;
+
+                                break;
+                            }
                         }
             }
 

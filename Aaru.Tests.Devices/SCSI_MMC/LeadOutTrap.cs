@@ -170,14 +170,17 @@ static partial class ScsiMmc
 
         min = 0;
 
-        if(leadOutTrack.PMIN == 122)
-            tocIsNotBcd = true;
-
-        if(leadOutTrack.PMIN >= 0xA0 &&
-           !tocIsNotBcd)
+        switch(leadOutTrack.PMIN)
         {
-            min               += 90;
-            leadOutTrack.PMIN -= 0x90;
+            case 122:
+                tocIsNotBcd = true;
+
+                break;
+            case >= 0xA0 when !tocIsNotBcd:
+                min               += 90;
+                leadOutTrack.PMIN -= 0x90;
+
+                break;
         }
 
         if(tocIsNotBcd)

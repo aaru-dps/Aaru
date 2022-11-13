@@ -421,11 +421,11 @@ public sealed partial class LisaFS
         {
             byte[] sector;
 
-            ErrorNumber errno = !tags ? _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                                            (uint)file.extents[i].length, out sector)
-                                    : _device.ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                                             (uint)file.extents[i].length, SectorTagType.AppleSectorTag,
-                                                             out sector);
+            ErrorNumber errno =
+                !tags ? _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                            (uint)file.extents[i].length, out sector)
+                    : _device.ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                             (uint)file.extents[i].length, SectorTagType.AppleSectorTag, out sector);
 
             if(errno != ErrorNumber.NoError)
                 return errno;
@@ -463,18 +463,17 @@ public sealed partial class LisaFS
             '/'
         }, StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length == 0)
+        switch(pathElements.Length)
         {
-            fileId = DIRID_ROOT;
-            isDir  = true;
+            case 0:
+                fileId = DIRID_ROOT;
+                isDir  = true;
 
-            return ErrorNumber.NoError;
+                return ErrorNumber.NoError;
+
+            // Only V3 supports subdirectories
+            case > 1 when _mddf.fsversion != LISA_V3: return ErrorNumber.NotSupported;
         }
-
-        // Only V3 supports subdirectories
-        if(pathElements.Length > 1 &&
-           _mddf.fsversion     != LISA_V3)
-            return ErrorNumber.NotSupported;
 
         if(_debug && pathElements.Length == 1)
         {

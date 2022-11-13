@@ -167,15 +167,26 @@ sealed class DeviceReportCommand : Command
         var    removable = false;
         string jsonFile;
 
-        if(!string.IsNullOrWhiteSpace(dev.Manufacturer) &&
-           !string.IsNullOrWhiteSpace(dev.FirmwareRevision))
-            jsonFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.FirmwareRevision + ".json";
-        else if(!string.IsNullOrWhiteSpace(dev.Manufacturer))
-            jsonFile = dev.Manufacturer + "_" + dev.Model + ".json";
-        else if(!string.IsNullOrWhiteSpace(dev.FirmwareRevision))
-            jsonFile = dev.Model + "_" + dev.FirmwareRevision + ".json";
-        else
-            jsonFile = dev.Model + ".json";
+        switch(string.IsNullOrWhiteSpace(dev.Manufacturer))
+        {
+            case false when !string.IsNullOrWhiteSpace(dev.FirmwareRevision):
+                jsonFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.FirmwareRevision + ".json";
+
+                break;
+            case false:
+                jsonFile = dev.Manufacturer + "_" + dev.Model + ".json";
+
+                break;
+            default:
+            {
+                if(!string.IsNullOrWhiteSpace(dev.FirmwareRevision))
+                    jsonFile = dev.Model + "_" + dev.FirmwareRevision + ".json";
+                else
+                    jsonFile = dev.Model + ".json";
+
+                break;
+            }
+        }
 
         jsonFile = jsonFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
 
@@ -735,8 +746,8 @@ sealed class DeviceReportCommand : Command
 
                             foreach(string mediaType in mediaTypes)
                             {
-                                if(!AnsiConsole.
-                                       Confirm($"[italic]Do you have a {mediaType} disc that you can insert in the drive?[/]"))
+                                if(!AnsiConsole.Confirm($"[italic]Do you have a {mediaType
+                                } disc that you can insert in the drive?[/]"))
                                     continue;
 
                                 AaruConsole.
@@ -869,8 +880,8 @@ sealed class DeviceReportCommand : Command
 
                                                         for(var i = (ushort)mediaTest.BlockSize;; i++)
                                                         {
-                                                            task.Description =
-                                                                $"Trying to READ LONG with a size of {i} bytes...";
+                                                            task.Description = $"Trying to READ LONG with a size of {i
+                                                            } bytes...";
 
                                                             task.Value = i;
 
@@ -1107,8 +1118,8 @@ sealed class DeviceReportCommand : Command
 
                         foreach(string mediaType in mediaTypes)
                         {
-                            if(!AnsiConsole.
-                                   Confirm($"[italic]Do you have a {mediaType} disc that you can insert in the drive?[/]"))
+                            if(!AnsiConsole.Confirm($"[italic]Do you have a {mediaType
+                            } disc that you can insert in the drive?[/]"))
                                 continue;
 
                             AaruConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
@@ -1236,8 +1247,8 @@ sealed class DeviceReportCommand : Command
                                                     {
                                                         task.Value = i;
 
-                                                        task.Description =
-                                                            $"Trying to READ LONG with a size of {i} bytes...";
+                                                        task.Description = $"Trying to READ LONG with a size of {i
+                                                        } bytes...";
 
                                                         sense = mediaTest.SupportsReadLong16 == true
                                                                     ? dev.ReadLong16(out buffer, out senseBuffer, false,
@@ -1433,8 +1444,8 @@ sealed class DeviceReportCommand : Command
                                                         {
                                                             task.Value = i;
 
-                                                            task.Description =
-                                                                $"Trying to READ LONG with a size of {i} bytes...";
+                                                            task.Description = $"Trying to READ LONG with a size of {i
+                                                            } bytes...";
 
                                                             sense = mediaTest.SupportsReadLong16 == true
                                                                         ? dev.ReadLong16(out buffer, out senseBuffer,
@@ -1521,8 +1532,8 @@ sealed class DeviceReportCommand : Command
                                                     {
                                                         task.Value = i;
 
-                                                        task.Description =
-                                                            $"Trying to READ LONG with a size of {i} bytes...";
+                                                        task.Description = $"Trying to READ LONG with a size of {i
+                                                        } bytes...";
 
                                                         sense = report.SCSI.ReadCapabilities.SupportsReadLong16 == true
                                                                     ? dev.ReadLong16(out buffer, out senseBuffer, false,

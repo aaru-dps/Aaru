@@ -107,21 +107,34 @@ public sealed class MediaInfoViewModel : ViewModelBase
         {
             ulong totalSize = scsiInfo.Blocks * scsiInfo.BlockSize;
 
-            if(totalSize > 1099511627776)
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)";
-            else if(totalSize > 1073741824)
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)";
-            else if(totalSize > 1048576)
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)";
-            else if(totalSize > 1024)
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1024d:F3} KiB)";
-            else
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize} bytes)";
+            switch(totalSize)
+            {
+                case > 1099511627776:
+                    MediaSize = $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                    } bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)";
+
+                    break;
+                case > 1073741824:
+                    MediaSize = $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                    } bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)";
+
+                    break;
+                case > 1048576:
+                    MediaSize = $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                    } bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)";
+
+                    break;
+                case > 1024:
+                    MediaSize = $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                    } bytes/each. (for a total of {totalSize / 1024d:F3} KiB)";
+
+                    break;
+                default:
+                    MediaSize = $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                    } bytes/each. (for a total of {totalSize} bytes)";
+
+                    break;
+            }
         }
 
         if(scsiInfo.MediaSerialNumber != null)
@@ -388,24 +401,21 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
     async Task ExecuteDumpCommand()
     {
-        if(_scsiInfo.MediaType is CommonTypes.MediaType.GDR or CommonTypes.MediaType.GDROM)
+        switch(_scsiInfo.MediaType)
         {
-            await MessageBoxManager.
-                  GetMessageBoxStandardWindow("Error", "GD-ROM dump support is not yet implemented.", ButtonEnum.Ok,
-                                              Icon.Error).ShowDialog(_view);
+            case CommonTypes.MediaType.GDR or CommonTypes.MediaType.GDROM:
+                await MessageBoxManager.
+                      GetMessageBoxStandardWindow("Error", "GD-ROM dump support is not yet implemented.", ButtonEnum.Ok,
+                                                  Icon.Error).ShowDialog(_view);
 
-            return;
-        }
+                return;
+            case CommonTypes.MediaType.XGD or CommonTypes.MediaType.XGD2 or CommonTypes.MediaType.XGD3
+                when _scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true:
+                await MessageBoxManager.
+                      GetMessageBoxStandardWindow("Error", "Dumping Xbox discs require a Kreon drive.", ButtonEnum.Ok,
+                                                  Icon.Error).ShowDialog(_view);
 
-        if(_scsiInfo.MediaType is CommonTypes.MediaType.XGD or CommonTypes.MediaType.XGD2
-                                                            or CommonTypes.MediaType.XGD3 &&
-           _scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true)
-        {
-            await MessageBoxManager.
-                  GetMessageBoxStandardWindow("Error", "Dumping Xbox discs require a Kreon drive.", ButtonEnum.Ok,
-                                              Icon.Error).ShowDialog(_view);
-
-            return;
+                return;
         }
 
         var mediaDumpWindow = new MediaDump();

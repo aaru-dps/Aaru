@@ -407,8 +407,8 @@ public sealed partial class FAT
                    atariBpb.serial_no[1] != 0x48 ||
                    atariBpb.serial_no[2] != 0x43)
                 {
-                    XmlFsType.VolumeSerial =
-                        $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{atariBpb.serial_no[2]:X2}";
+                    XmlFsType.VolumeSerial = $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{
+                        atariBpb.serial_no[2]:X2}";
 
                     _statfs.Id = new FileSystemId
                     {
@@ -428,43 +428,31 @@ public sealed partial class FAT
                 if(fakeBpb.oem_name[5] != 0x49 ||
                    fakeBpb.oem_name[6] != 0x48 ||
                    fakeBpb.oem_name[7] != 0x43)
-                {
-                    // Later versions of Windows create a DOS 3 BPB without OEM name on 8 sectors/track floppies
-                    // OEM ID should be ASCII, otherwise ignore it
-                    if(fakeBpb.oem_name[0] >= 0x20 &&
-                       fakeBpb.oem_name[0] <= 0x7F &&
-                       fakeBpb.oem_name[1] >= 0x20 &&
-                       fakeBpb.oem_name[1] <= 0x7F &&
-                       fakeBpb.oem_name[2] >= 0x20 &&
-                       fakeBpb.oem_name[2] <= 0x7F &&
-                       fakeBpb.oem_name[3] >= 0x20 &&
-                       fakeBpb.oem_name[3] <= 0x7F &&
-                       fakeBpb.oem_name[4] >= 0x20 &&
-                       fakeBpb.oem_name[4] <= 0x7F &&
-                       fakeBpb.oem_name[5] >= 0x20 &&
-                       fakeBpb.oem_name[5] <= 0x7F &&
-                       fakeBpb.oem_name[6] >= 0x20 &&
-                       fakeBpb.oem_name[6] <= 0x7F &&
-                       fakeBpb.oem_name[7] >= 0x20 &&
-                       fakeBpb.oem_name[7] <= 0x7F)
-                        XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name);
-                    else if(fakeBpb.oem_name[0] < 0x20  &&
-                            fakeBpb.oem_name[1] >= 0x20 &&
-                            fakeBpb.oem_name[1] <= 0x7F &&
-                            fakeBpb.oem_name[2] >= 0x20 &&
-                            fakeBpb.oem_name[2] <= 0x7F &&
-                            fakeBpb.oem_name[3] >= 0x20 &&
-                            fakeBpb.oem_name[3] <= 0x7F &&
-                            fakeBpb.oem_name[4] >= 0x20 &&
-                            fakeBpb.oem_name[4] <= 0x7F &&
-                            fakeBpb.oem_name[5] >= 0x20 &&
-                            fakeBpb.oem_name[5] <= 0x7F &&
-                            fakeBpb.oem_name[6] >= 0x20 &&
-                            fakeBpb.oem_name[6] <= 0x7F &&
-                            fakeBpb.oem_name[7] >= 0x20 &&
-                            fakeBpb.oem_name[7] <= 0x7F)
-                        XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name, Encoding, start: 1);
-                }
+                    switch(fakeBpb.oem_name[0])
+                    {
+                        // Later versions of Windows create a DOS 3 BPB without OEM name on 8 sectors/track floppies
+                        // OEM ID should be ASCII, otherwise ignore it
+                        case >= 0x20 and <= 0x7F when fakeBpb.oem_name[1] >= 0x20 && fakeBpb.oem_name[1] <= 0x7F &&
+                                                      fakeBpb.oem_name[2] >= 0x20 && fakeBpb.oem_name[2] <= 0x7F &&
+                                                      fakeBpb.oem_name[3] >= 0x20 && fakeBpb.oem_name[3] <= 0x7F &&
+                                                      fakeBpb.oem_name[4] >= 0x20 && fakeBpb.oem_name[4] <= 0x7F &&
+                                                      fakeBpb.oem_name[5] >= 0x20 && fakeBpb.oem_name[5] <= 0x7F &&
+                                                      fakeBpb.oem_name[6] >= 0x20 && fakeBpb.oem_name[6] <= 0x7F &&
+                                                      fakeBpb.oem_name[7] >= 0x20 && fakeBpb.oem_name[7] <= 0x7F:
+                            XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name);
+
+                            break;
+                        case < 0x20 when fakeBpb.oem_name[1] >= 0x20 && fakeBpb.oem_name[1] <= 0x7F &&
+                                         fakeBpb.oem_name[2] >= 0x20 && fakeBpb.oem_name[2] <= 0x7F &&
+                                         fakeBpb.oem_name[3] >= 0x20 && fakeBpb.oem_name[3] <= 0x7F &&
+                                         fakeBpb.oem_name[4] >= 0x20 && fakeBpb.oem_name[4] <= 0x7F &&
+                                         fakeBpb.oem_name[5] >= 0x20 && fakeBpb.oem_name[5] <= 0x7F &&
+                                         fakeBpb.oem_name[6] >= 0x20 && fakeBpb.oem_name[6] <= 0x7F &&
+                                         fakeBpb.oem_name[7] >= 0x20 && fakeBpb.oem_name[7] <= 0x7F:
+                            XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name, Encoding, start: 1);
+
+                            break;
+                    }
 
                 if(fakeBpb.signature is 0x28 or 0x29)
                 {

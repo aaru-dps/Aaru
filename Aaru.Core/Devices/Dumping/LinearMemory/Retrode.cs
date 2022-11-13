@@ -244,14 +244,25 @@ public partial class Dump
         uint romSectors   = romSize / 512;
         uint romRemaining = romSize % 512;
 
-        if(romSize > 1073741824)
-            UpdateStatus?.Invoke($"Cartridge has {romSize} bytes ({romSize / 1073741824d:F3} GiB)");
-        else if(romSize > 1048576)
-            UpdateStatus?.Invoke($"Cartridge has {romSize} bytes ({romSize / 1048576d:F3} MiB)");
-        else if(romSize > 1024)
-            UpdateStatus?.Invoke($"Cartridge has {romSize} bytes ({romSize / 1024d:F3} KiB)");
-        else
-            UpdateStatus?.Invoke($"Cartridge has {romSize} bytes");
+        switch(romSize)
+        {
+            case > 1073741824:
+                UpdateStatus?.Invoke($"Cartridge has {romSize} bytes ({romSize / 1073741824d:F3} GiB)");
+
+                break;
+            case > 1048576:
+                UpdateStatus?.Invoke($"Cartridge has {romSize} bytes ({romSize / 1048576d:F3} MiB)");
+
+                break;
+            case > 1024:
+                UpdateStatus?.Invoke($"Cartridge has {romSize} bytes ({romSize / 1024d:F3} KiB)");
+
+                break;
+            default:
+                UpdateStatus?.Invoke($"Cartridge has {romSize} bytes");
+
+                break;
+        }
 
         UpdateStatus?.Invoke($"Media identified as {mediaType}.");
         _dumpLog.WriteLine("Media identified as {0}.", mediaType);
@@ -380,11 +391,11 @@ public partial class Dump
 
         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
-        UpdateStatus?.
-            Invoke($"Average dump speed {512 * (double)(romSectors + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average dump speed {512 * (double)(romSectors + 1) / 1024 / (totalDuration / 1000)
+            :F3} KiB/sec.");
 
-        UpdateStatus?.
-            Invoke($"Average write speed {512 * (double)(romSectors + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average write speed {512 * (double)(romSectors + 1) / 1024 / imageWriteDuration
+            :F3} KiB/sec.");
 
         _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
@@ -433,11 +444,12 @@ public partial class Dump
         */
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.
-            Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+        UpdateStatus?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000
+            :F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {
+            (closeEnd - closeStart).TotalSeconds:F3} closing).");
 
-        UpdateStatus?.
-            Invoke($"Average speed: {512 * (double)(romSectors + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+        UpdateStatus?.Invoke($"Average speed: {512 * (double)(romSectors + 1) / 1048576 / (totalDuration / 1000)
+            :F3} MiB/sec.");
 
         if(maxSpeed > 0)
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

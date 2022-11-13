@@ -359,8 +359,8 @@ public sealed partial class VMware
 
             if(extentHdr.capacity < extent.Sectors)
             {
-                AaruConsole.
-                    ErrorWriteLine($"Extent contains incorrect number of sectors, {extentHdr.capacity}. {extent.Sectors} were expected");
+                AaruConsole.ErrorWriteLine($"Extent contains incorrect number of sectors, {extentHdr.capacity}. {
+                    extent.Sectors} were expected");
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -400,75 +400,81 @@ public sealed partial class VMware
         long gdOffset  = 0;
         uint gtEsPerGt = 0;
 
-        if(oneNoFlat && !cowD)
+        switch(oneNoFlat)
         {
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.magic = 0x{0:X8}", _vmEHdr.magic);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.version = {0}", _vmEHdr.version);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.flags = 0x{0:X8}", _vmEHdr.flags);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.capacity = {0}", _vmEHdr.capacity);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.grainSize = {0}", _vmEHdr.grainSize);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorOffset = {0}", _vmEHdr.descriptorOffset);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorSize = {0}", _vmEHdr.descriptorSize);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.GTEsPerGT = {0}", _vmEHdr.GTEsPerGT);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.rgdOffset = {0}", _vmEHdr.rgdOffset);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.gdOffset = {0}", _vmEHdr.gdOffset);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.overhead = {0}", _vmEHdr.overhead);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.uncleanShutdown = {0}", _vmEHdr.uncleanShutdown);
+            case true when !cowD:
+            {
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.magic = 0x{0:X8}", _vmEHdr.magic);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.version = {0}", _vmEHdr.version);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.flags = 0x{0:X8}", _vmEHdr.flags);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.capacity = {0}", _vmEHdr.capacity);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.grainSize = {0}", _vmEHdr.grainSize);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorOffset = {0}", _vmEHdr.descriptorOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorSize = {0}", _vmEHdr.descriptorSize);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.GTEsPerGT = {0}", _vmEHdr.GTEsPerGT);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.rgdOffset = {0}", _vmEHdr.rgdOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.gdOffset = {0}", _vmEHdr.gdOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.overhead = {0}", _vmEHdr.overhead);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.uncleanShutdown = {0}", _vmEHdr.uncleanShutdown);
 
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.singleEndLineChar = 0x{0:X2}",
-                                       _vmEHdr.singleEndLineChar);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.singleEndLineChar = 0x{0:X2}",
+                                           _vmEHdr.singleEndLineChar);
 
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.nonEndLineChar = 0x{0:X2}", _vmEHdr.nonEndLineChar);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.nonEndLineChar = 0x{0:X2}", _vmEHdr.nonEndLineChar);
 
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar1 = 0x{0:X2}",
-                                       _vmEHdr.doubleEndLineChar1);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar1 = 0x{0:X2}",
+                                           _vmEHdr.doubleEndLineChar1);
 
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar2 = 0x{0:X2}",
-                                       _vmEHdr.doubleEndLineChar2);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar2 = 0x{0:X2}",
+                                           _vmEHdr.doubleEndLineChar2);
 
-            AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.compression = 0x{0:X4}", _vmEHdr.compression);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.compression = 0x{0:X4}", _vmEHdr.compression);
 
-            _grainSize = _vmEHdr.grainSize;
-            grains     = (uint)(_imageInfo.Sectors / _vmEHdr.grainSize) + 1;
-            gdEntries  = grains / _vmEHdr.GTEsPerGT;
-            gtEsPerGt  = _vmEHdr.GTEsPerGT;
+                _grainSize = _vmEHdr.grainSize;
+                grains     = (uint)(_imageInfo.Sectors / _vmEHdr.grainSize) + 1;
+                gdEntries  = grains / _vmEHdr.GTEsPerGT;
+                gtEsPerGt  = _vmEHdr.GTEsPerGT;
 
-            if((_vmEHdr.flags & FLAGS_USE_REDUNDANT_TABLE) == FLAGS_USE_REDUNDANT_TABLE)
-                gdOffset = (long)_vmEHdr.rgdOffset;
-            else
-                gdOffset = (long)_vmEHdr.gdOffset;
-        }
-        else if(oneNoFlat && cowD)
-        {
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.magic = 0x{0:X8}", _vmCHdr.magic);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.version = {0}", _vmCHdr.version);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.flags = 0x{0:X8}", _vmCHdr.flags);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.sectors = {0}", _vmCHdr.sectors);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.grainSize = {0}", _vmCHdr.grainSize);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.gdOffset = {0}", _vmCHdr.gdOffset);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.numGDEntries = {0}", _vmCHdr.numGDEntries);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.freeSector = {0}", _vmCHdr.freeSector);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.cylinders = {0}", _vmCHdr.cylinders);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.heads = {0}", _vmCHdr.heads);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.spt = {0}", _vmCHdr.spt);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.generation = {0}", _vmCHdr.generation);
+                if((_vmEHdr.flags & FLAGS_USE_REDUNDANT_TABLE) == FLAGS_USE_REDUNDANT_TABLE)
+                    gdOffset = (long)_vmEHdr.rgdOffset;
+                else
+                    gdOffset = (long)_vmEHdr.gdOffset;
 
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.name = {0}", StringHandlers.CToString(_vmCHdr.name));
+                break;
+            }
+            case true when cowD:
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.magic = 0x{0:X8}", _vmCHdr.magic);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.version = {0}", _vmCHdr.version);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.flags = 0x{0:X8}", _vmCHdr.flags);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.sectors = {0}", _vmCHdr.sectors);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.grainSize = {0}", _vmCHdr.grainSize);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.gdOffset = {0}", _vmCHdr.gdOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.numGDEntries = {0}", _vmCHdr.numGDEntries);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.freeSector = {0}", _vmCHdr.freeSector);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.cylinders = {0}", _vmCHdr.cylinders);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.heads = {0}", _vmCHdr.heads);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.spt = {0}", _vmCHdr.spt);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.generation = {0}", _vmCHdr.generation);
 
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.description = {0}",
-                                       StringHandlers.CToString(_vmCHdr.description));
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.name = {0}",
+                                           StringHandlers.CToString(_vmCHdr.name));
 
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.savedGeneration = {0}", _vmCHdr.savedGeneration);
-            AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.uncleanShutdown = {0}", _vmCHdr.uncleanShutdown);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.description = {0}",
+                                           StringHandlers.CToString(_vmCHdr.description));
 
-            _grainSize            = _vmCHdr.grainSize;
-            grains                = (uint)(_imageInfo.Sectors / _vmCHdr.grainSize) + 1;
-            gdEntries             = _vmCHdr.numGDEntries;
-            gdOffset              = _vmCHdr.gdOffset;
-            gtEsPerGt             = grains / gdEntries;
-            _imageInfo.MediaTitle = StringHandlers.CToString(_vmCHdr.name);
-            _imageInfo.Comments   = StringHandlers.CToString(_vmCHdr.description);
-            _version              = _vmCHdr.version;
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.savedGeneration = {0}", _vmCHdr.savedGeneration);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.uncleanShutdown = {0}", _vmCHdr.uncleanShutdown);
+
+                _grainSize            = _vmCHdr.grainSize;
+                grains                = (uint)(_imageInfo.Sectors / _vmCHdr.grainSize) + 1;
+                gdEntries             = _vmCHdr.numGDEntries;
+                gdOffset              = _vmCHdr.gdOffset;
+                gtEsPerGt             = grains / gdEntries;
+                _imageInfo.MediaTitle = StringHandlers.CToString(_vmCHdr.name);
+                _imageInfo.Comments   = StringHandlers.CToString(_vmCHdr.description);
+                _version              = _vmCHdr.version;
+
+                break;
         }
 
         if(oneNoFlat)
@@ -636,19 +642,20 @@ public sealed partial class VMware
 
         uint grainOff = _gTable[index];
 
-        if(grainOff == 0 && _hasParent)
-            return _parentImage.ReadSector(sectorAddress, out buffer);
-
-        if(grainOff is 0 or 1)
+        switch(grainOff)
         {
-            buffer = new byte[SECTOR_SIZE];
+            case 0 when _hasParent: return _parentImage.ReadSector(sectorAddress, out buffer);
+            case 0 or 1:
+            {
+                buffer = new byte[SECTOR_SIZE];
 
-            if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                _sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                    _sectorCache.Clear();
 
-            _sectorCache.Add(sectorAddress, buffer);
+                _sectorCache.Add(sectorAddress, buffer);
 
-            return ErrorNumber.NoError;
+                return ErrorNumber.NoError;
+            }
         }
 
         if(!_grainCache.TryGetValue(grainOff, out byte[] grain))

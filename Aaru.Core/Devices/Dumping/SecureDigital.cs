@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 
 namespace Aaru.Core.Devices.Dumping;
@@ -469,24 +467,27 @@ public partial class Dump
 
         if(cid != null)
         {
-            if(_dev.Type == DeviceType.SecureDigital && _private)
+            switch(_dev.Type)
             {
-                // Clear serial number and manufacturing date
-                cid[9]  = 0;
-                cid[10] = 0;
-                cid[11] = 0;
-                cid[12] = 0;
-                cid[13] = 0;
-                cid[14] = 0;
-            }
-            else if(_dev.Type == DeviceType.MMC && _private)
-            {
-                // Clear serial number and manufacturing date
-                cid[10] = 0;
-                cid[11] = 0;
-                cid[12] = 0;
-                cid[13] = 0;
-                cid[14] = 0;
+                case DeviceType.SecureDigital when _private:
+                    // Clear serial number and manufacturing date
+                    cid[9]  = 0;
+                    cid[10] = 0;
+                    cid[11] = 0;
+                    cid[12] = 0;
+                    cid[13] = 0;
+                    cid[14] = 0;
+
+                    break;
+                case DeviceType.MMC when _private:
+                    // Clear serial number and manufacturing date
+                    cid[10] = 0;
+                    cid[11] = 0;
+                    cid[12] = 0;
+                    cid[13] = 0;
+                    cid[14] = 0;
+
+                    break;
             }
 
             ret =
@@ -686,11 +687,11 @@ public partial class Dump
 
         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
-        UpdateStatus?.
-            Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000)
+            :F3} KiB/sec.");
 
-        UpdateStatus?.
-            Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration
+            :F3} KiB/sec.");
 
         _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
@@ -888,8 +889,8 @@ public partial class Dump
                 totalChkDuration = (end - chkStart).TotalMilliseconds;
                 UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
 
-                UpdateStatus?.
-                    Invoke($"Average checksum speed {blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+                UpdateStatus?.Invoke($"Average checksum speed {
+                    blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
 
                 _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
 
@@ -941,11 +942,12 @@ public partial class Dump
 
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.
-            Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+        UpdateStatus?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000
+            :F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {
+            (closeEnd - closeStart).TotalSeconds:F3} closing).");
 
-        UpdateStatus?.
-            Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+        UpdateStatus?.Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000)
+            :F3} MiB/sec.");
 
         if(maxSpeed > 0)
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

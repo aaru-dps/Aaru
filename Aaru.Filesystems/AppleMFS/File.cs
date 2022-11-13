@@ -166,18 +166,29 @@ public sealed partial class AppleMFS
         byte[]      file;
         ErrorNumber error = ErrorNumber.NoError;
 
-        if(_debug && string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-            file = _directoryBlocks;
-        else if(_debug                                                                &&
-                string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
-                _bootBlocks                                                      != null)
-            file = _bootBlocks;
-        else if(_debug && string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
-            file = _blockMapBytes;
-        else if(_debug && string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
-            file = _mdbBlocks;
-        else
-            error = ReadFile(path, out file, false, false);
+        switch(_debug)
+        {
+            case true when string.Compare(path, "$", StringComparison.InvariantCulture) == 0:
+                file = _directoryBlocks;
+
+                break;
+            case true when string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 && _bootBlocks != null:
+                file = _bootBlocks;
+
+                break;
+            case true when string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0:
+                file = _blockMapBytes;
+
+                break;
+            case true when string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0:
+                file = _mdbBlocks;
+
+                break;
+            default:
+                error = ReadFile(path, out file, false, false);
+
+                break;
+        }
 
         if(error != ErrorNumber.NoError)
             return error;

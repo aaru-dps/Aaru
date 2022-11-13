@@ -69,10 +69,17 @@ static partial class AppleCommon
         else if((bb.bbVersion & 0xFF) == 0x0D)
             sb.AppendLine("Boot block should be executed.");
 
-        if(bb.bbPageFlags > 0)
-            sb.AppendLine("Allocate secondary sound buffer at boot.");
-        else if(bb.bbPageFlags < 0)
-            sb.AppendLine("Allocate secondary sound and video buffers at boot.");
+        switch(bb.bbPageFlags)
+        {
+            case > 0:
+                sb.AppendLine("Allocate secondary sound buffer at boot.");
+
+                break;
+            case < 0:
+                sb.AppendLine("Allocate secondary sound and video buffers at boot.");
+
+                break;
+        }
 
         sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.bbSysName, encoding)).AppendLine();
 

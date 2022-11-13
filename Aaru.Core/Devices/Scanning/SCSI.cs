@@ -115,8 +115,8 @@ public sealed partial class MediaScan
 
                             if(sense)
                             {
-                                StoppingErrorMessage?.
-                                    Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+                                StoppingErrorMessage?.Invoke($"Error testing unit was ready:\n{
+                                    Sense.PrettifySense(senseBuf)}");
 
                                 return results;
                             }
@@ -143,8 +143,8 @@ public sealed partial class MediaScan
 
                             if(sense)
                             {
-                                StoppingErrorMessage?.
-                                    Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+                                StoppingErrorMessage?.Invoke($"Error testing unit was ready:\n{
+                                    Sense.PrettifySense(senseBuf)}");
 
                                 return results;
                             }
@@ -152,8 +152,8 @@ public sealed partial class MediaScan
                             break;
                         }
                         default:
-                            StoppingErrorMessage?.
-                                Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+                            StoppingErrorMessage?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)
+                            }");
 
                             return results;
                     }
@@ -199,21 +199,34 @@ public sealed partial class MediaScan
 
                     ulong totalSize = results.Blocks * blockSize;
 
-                    if(totalSize > 1099511627776)
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)");
-                    else if(totalSize > 1073741824)
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)");
-                    else if(totalSize > 1048576)
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)");
-                    else if(totalSize > 1024)
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1024d:F3} KiB)");
-                    else
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize} bytes)");
+                    switch(totalSize)
+                    {
+                        case > 1099511627776:
+                            UpdateStatus?.Invoke($"Media has {results.Blocks} blocks of {blockSize
+                            } bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)");
+
+                            break;
+                        case > 1073741824:
+                            UpdateStatus?.Invoke($"Media has {results.Blocks} blocks of {blockSize
+                            } bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)");
+
+                            break;
+                        case > 1048576:
+                            UpdateStatus?.Invoke($"Media has {results.Blocks} blocks of {blockSize
+                            } bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)");
+
+                            break;
+                        case > 1024:
+                            UpdateStatus?.Invoke($"Media has {results.Blocks} blocks of {blockSize
+                            } bytes/each. (for a total of {totalSize / 1024d:F3} KiB)");
+
+                            break;
+                        default:
+                            UpdateStatus?.Invoke($"Media has {results.Blocks} blocks of {blockSize
+                            } bytes/each. (for a total of {totalSize} bytes)");
+
+                            break;
+                    }
                 }
 
                 break;
@@ -386,18 +399,33 @@ public sealed partial class MediaScan
 
                 if(!sense)
                 {
-                    if(cmdDuration >= 500)
-                        results.F += blocksToRead;
-                    else if(cmdDuration >= 150)
-                        results.E += blocksToRead;
-                    else if(cmdDuration >= 50)
-                        results.D += blocksToRead;
-                    else if(cmdDuration >= 10)
-                        results.C += blocksToRead;
-                    else if(cmdDuration >= 3)
-                        results.B += blocksToRead;
-                    else
-                        results.A += blocksToRead;
+                    switch(cmdDuration)
+                    {
+                        case >= 500:
+                            results.F += blocksToRead;
+
+                            break;
+                        case >= 150:
+                            results.E += blocksToRead;
+
+                            break;
+                        case >= 50:
+                            results.D += blocksToRead;
+
+                            break;
+                        case >= 10:
+                            results.C += blocksToRead;
+
+                            break;
+                        case >= 3:
+                            results.B += blocksToRead;
+
+                            break;
+                        default:
+                            results.A += blocksToRead;
+
+                            break;
+                    }
 
                     ScanTime?.Invoke(i, cmdDuration);
                     mhddLog.Write(i, cmdDuration);
@@ -521,18 +549,33 @@ public sealed partial class MediaScan
                 if(!sense &&
                    !_dev.Error)
                 {
-                    if(cmdDuration >= 500)
-                        results.F += blocksToRead;
-                    else if(cmdDuration >= 150)
-                        results.E += blocksToRead;
-                    else if(cmdDuration >= 50)
-                        results.D += blocksToRead;
-                    else if(cmdDuration >= 10)
-                        results.C += blocksToRead;
-                    else if(cmdDuration >= 3)
-                        results.B += blocksToRead;
-                    else
-                        results.A += blocksToRead;
+                    switch(cmdDuration)
+                    {
+                        case >= 500:
+                            results.F += blocksToRead;
+
+                            break;
+                        case >= 150:
+                            results.E += blocksToRead;
+
+                            break;
+                        case >= 50:
+                            results.D += blocksToRead;
+
+                            break;
+                        case >= 10:
+                            results.C += blocksToRead;
+
+                            break;
+                        case >= 3:
+                            results.B += blocksToRead;
+
+                            break;
+                        default:
+                            results.A += blocksToRead;
+
+                            break;
+                    }
 
                     ScanTime?.Invoke(i, cmdDuration);
                     mhddLog.Write(i, cmdDuration);

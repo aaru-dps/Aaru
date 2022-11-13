@@ -178,11 +178,17 @@ public sealed class AppleHFSPlus : IFilesystem
 
         var sb = new StringBuilder();
 
-        if(vh.signature == 0x482B)
-            sb.AppendLine("HFS+ filesystem.");
+        switch(vh.signature)
+        {
+            case 0x482B:
+                sb.AppendLine("HFS+ filesystem.");
 
-        if(vh.signature == 0x4858)
-            sb.AppendLine("HFSX filesystem.");
+                break;
+            case 0x4858:
+                sb.AppendLine("HFSX filesystem.");
+
+                break;
+        }
 
         if(wrapped)
             sb.AppendLine("Volume is wrapped inside an HFS volume.");
@@ -296,11 +302,17 @@ public sealed class AppleHFSPlus : IFilesystem
                 XmlFsType.ModificationDateSpecified = true;
             }
 
-            if(vh.signature == 0x482B)
-                XmlFsType.Type = "HFS+";
+            switch(vh.signature)
+            {
+                case 0x482B:
+                    XmlFsType.Type = "HFS+";
 
-            if(vh.signature == 0x4858)
-                XmlFsType.Type = "HFSX";
+                    break;
+                case 0x4858:
+                    XmlFsType.Type = "HFSX";
+
+                    break;
+            }
 
             if(vh.drFndrInfo6 != 0 &&
                vh.drFndrInfo7 != 0)

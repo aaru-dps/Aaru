@@ -368,33 +368,44 @@ public sealed partial class FAT
 
                 break;
             case 0xFD:
-                if(imagePlugin.Info.Sectors    == 4004 &&
-                   imagePlugin.Info.SectorSize == 128)
-                    fat2SectorNo = 7;
-                else if(imagePlugin.Info.Sectors    == 2002 &&
-                        imagePlugin.Info.SectorSize == 128)
-                    fat2SectorNo = 7;
+                switch(imagePlugin.Info.Sectors)
+                {
+                    case 4004 when imagePlugin.Info.SectorSize == 128:
+                    case 2002 when imagePlugin.Info.SectorSize == 128:
+                        fat2SectorNo = 7;
+
+                        break;
+                }
 
                 break;
             case 0xFE:
-                if(imagePlugin.Info.Sectors    == 320 &&
-                   imagePlugin.Info.SectorSize == 512)
-                    fat2SectorNo = 2;
-                else if(imagePlugin.Info.Sectors    == 2002 &&
-                        imagePlugin.Info.SectorSize == 128)
-                    fat2SectorNo = 7;
-                else if(imagePlugin.Info.Sectors    == 1232 &&
-                        imagePlugin.Info.SectorSize == 1024)
-                    fat2SectorNo = 3;
-                else if(imagePlugin.Info.Sectors    == 616 &&
-                        imagePlugin.Info.SectorSize == 1024)
-                    fat2SectorNo = 2;
-                else if(imagePlugin.Info.Sectors    == 720 &&
-                        imagePlugin.Info.SectorSize == 128)
-                    fat2SectorNo = 5;
-                else if(imagePlugin.Info.Sectors    == 640 &&
-                        imagePlugin.Info.SectorSize == 512)
-                    fat2SectorNo = 2;
+                switch(imagePlugin.Info.Sectors)
+                {
+                    case 320 when imagePlugin.Info.SectorSize == 512:
+                        fat2SectorNo = 2;
+
+                        break;
+                    case 2002 when imagePlugin.Info.SectorSize == 128:
+                        fat2SectorNo = 7;
+
+                        break;
+                    case 1232 when imagePlugin.Info.SectorSize == 1024:
+                        fat2SectorNo = 3;
+
+                        break;
+                    case 616 when imagePlugin.Info.SectorSize == 1024:
+                        fat2SectorNo = 2;
+
+                        break;
+                    case 720 when imagePlugin.Info.SectorSize == 128:
+                        fat2SectorNo = 5;
+
+                        break;
+                    case 640 when imagePlugin.Info.SectorSize == 512:
+                        fat2SectorNo = 2;
+
+                        break;
+                }
 
                 break;
             case 0xFF:
@@ -851,8 +862,8 @@ public sealed partial class FAT
                    atariBpb.serial_no[2] == 0x43)
                     sb.AppendLine("Volume has been modified by Windows 9x/Me Volume Tracker.");
                 else
-                    XmlFsType.VolumeSerial =
-                        $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{atariBpb.serial_no[2]:X2}";
+                    XmlFsType.VolumeSerial = $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{
+                        atariBpb.serial_no[2]:X2}";
 
                 XmlFsType.SystemIdentifier = StringHandlers.CToString(atariBpb.oem_name);
 
@@ -866,43 +877,31 @@ public sealed partial class FAT
                    fakeBpb.oem_name[7] == 0x43)
                     sb.AppendLine("Volume has been modified by Windows 9x/Me Volume Tracker.");
                 else
-                {
-                    // Later versions of Windows create a DOS 3 BPB without OEM name on 8 sectors/track floppies
-                    // OEM ID should be ASCII, otherwise ignore it
-                    if(fakeBpb.oem_name[0] >= 0x20 &&
-                       fakeBpb.oem_name[0] <= 0x7F &&
-                       fakeBpb.oem_name[1] >= 0x20 &&
-                       fakeBpb.oem_name[1] <= 0x7F &&
-                       fakeBpb.oem_name[2] >= 0x20 &&
-                       fakeBpb.oem_name[2] <= 0x7F &&
-                       fakeBpb.oem_name[3] >= 0x20 &&
-                       fakeBpb.oem_name[3] <= 0x7F &&
-                       fakeBpb.oem_name[4] >= 0x20 &&
-                       fakeBpb.oem_name[4] <= 0x7F &&
-                       fakeBpb.oem_name[5] >= 0x20 &&
-                       fakeBpb.oem_name[5] <= 0x7F &&
-                       fakeBpb.oem_name[6] >= 0x20 &&
-                       fakeBpb.oem_name[6] <= 0x7F &&
-                       fakeBpb.oem_name[7] >= 0x20 &&
-                       fakeBpb.oem_name[7] <= 0x7F)
-                        XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name);
-                    else if(fakeBpb.oem_name[0] < 0x20  &&
-                            fakeBpb.oem_name[1] >= 0x20 &&
-                            fakeBpb.oem_name[1] <= 0x7F &&
-                            fakeBpb.oem_name[2] >= 0x20 &&
-                            fakeBpb.oem_name[2] <= 0x7F &&
-                            fakeBpb.oem_name[3] >= 0x20 &&
-                            fakeBpb.oem_name[3] <= 0x7F &&
-                            fakeBpb.oem_name[4] >= 0x20 &&
-                            fakeBpb.oem_name[4] <= 0x7F &&
-                            fakeBpb.oem_name[5] >= 0x20 &&
-                            fakeBpb.oem_name[5] <= 0x7F &&
-                            fakeBpb.oem_name[6] >= 0x20 &&
-                            fakeBpb.oem_name[6] <= 0x7F &&
-                            fakeBpb.oem_name[7] >= 0x20 &&
-                            fakeBpb.oem_name[7] <= 0x7F)
-                        XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name, Encoding, start: 1);
-                }
+                    switch(fakeBpb.oem_name[0])
+                    {
+                        // Later versions of Windows create a DOS 3 BPB without OEM name on 8 sectors/track floppies
+                        // OEM ID should be ASCII, otherwise ignore it
+                        case >= 0x20 and <= 0x7F when fakeBpb.oem_name[1] >= 0x20 && fakeBpb.oem_name[1] <= 0x7F &&
+                                                      fakeBpb.oem_name[2] >= 0x20 && fakeBpb.oem_name[2] <= 0x7F &&
+                                                      fakeBpb.oem_name[3] >= 0x20 && fakeBpb.oem_name[3] <= 0x7F &&
+                                                      fakeBpb.oem_name[4] >= 0x20 && fakeBpb.oem_name[4] <= 0x7F &&
+                                                      fakeBpb.oem_name[5] >= 0x20 && fakeBpb.oem_name[5] <= 0x7F &&
+                                                      fakeBpb.oem_name[6] >= 0x20 && fakeBpb.oem_name[6] <= 0x7F &&
+                                                      fakeBpb.oem_name[7] >= 0x20 && fakeBpb.oem_name[7] <= 0x7F:
+                            XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name);
+
+                            break;
+                        case < 0x20 when fakeBpb.oem_name[1] >= 0x20 && fakeBpb.oem_name[1] <= 0x7F &&
+                                         fakeBpb.oem_name[2] >= 0x20 && fakeBpb.oem_name[2] <= 0x7F &&
+                                         fakeBpb.oem_name[3] >= 0x20 && fakeBpb.oem_name[3] <= 0x7F &&
+                                         fakeBpb.oem_name[4] >= 0x20 && fakeBpb.oem_name[4] <= 0x7F &&
+                                         fakeBpb.oem_name[5] >= 0x20 && fakeBpb.oem_name[5] <= 0x7F &&
+                                         fakeBpb.oem_name[6] >= 0x20 && fakeBpb.oem_name[6] <= 0x7F &&
+                                         fakeBpb.oem_name[7] >= 0x20 && fakeBpb.oem_name[7] <= 0x7F:
+                            XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name, Encoding, start: 1);
+
+                            break;
+                    }
 
                 if(fakeBpb.signature is 0x28 or 0x29)
                     XmlFsType.VolumeSerial = $"{fakeBpb.serial_no:X8}";
@@ -1096,24 +1095,29 @@ public sealed partial class FAT
 
         if(XmlFsType.Bootable)
         {
-            // Intel short jump
-            if(bpbSector[0] == 0xEB &&
-               bpbSector[1] < 0x80)
+            switch(bpbSector[0])
             {
-                int sigSize  = bpbSector[510] == 0x55 && bpbSector[511] == 0xAA ? 2 : 0;
-                var bootCode = new byte[512 - sigSize - bpbSector[1] - 2];
-                Array.Copy(bpbSector, bpbSector[1] + 2, bootCode, 0, bootCode.Length);
-                Sha1Context.Data(bootCode, out _);
-            }
+                // Intel short jump
+                case 0xEB when bpbSector[1] < 0x80:
+                {
+                    int sigSize  = bpbSector[510] == 0x55 && bpbSector[511] == 0xAA ? 2 : 0;
+                    var bootCode = new byte[512 - sigSize - bpbSector[1] - 2];
+                    Array.Copy(bpbSector, bpbSector[1] + 2, bootCode, 0, bootCode.Length);
+                    Sha1Context.Data(bootCode, out _);
 
-            // Intel big jump
-            else if(bpbSector[0]                        == 0xE9 &&
-                    BitConverter.ToUInt16(bpbSector, 1) < 0x1FC)
-            {
-                int sigSize  = bpbSector[510] == 0x55 && bpbSector[511] == 0xAA ? 2 : 0;
-                var bootCode = new byte[512 - sigSize - BitConverter.ToUInt16(bpbSector, 1) - 3];
-                Array.Copy(bpbSector, BitConverter.ToUInt16(bpbSector, 1) + 3, bootCode, 0, bootCode.Length);
-                Sha1Context.Data(bootCode, out _);
+                    break;
+                }
+
+                // Intel big jump
+                case 0xE9 when BitConverter.ToUInt16(bpbSector, 1) < 0x1FC:
+                {
+                    int sigSize  = bpbSector[510] == 0x55 && bpbSector[511] == 0xAA ? 2 : 0;
+                    var bootCode = new byte[512 - sigSize - BitConverter.ToUInt16(bpbSector, 1) - 3];
+                    Array.Copy(bpbSector, BitConverter.ToUInt16(bpbSector, 1) + 3, bootCode, 0, bootCode.Length);
+                    Sha1Context.Data(bootCode, out _);
+
+                    break;
+                }
             }
 
             sb.AppendLine("Volume is bootable");

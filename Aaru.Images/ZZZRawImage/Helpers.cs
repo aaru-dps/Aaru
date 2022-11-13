@@ -39,33 +39,18 @@ public sealed partial class ZZZRawImage
     MediaType CalculateDiskType()
     {
         if(_imageInfo.SectorSize == 2048)
-        {
-            if(_imageInfo.Sectors == 58620544)
-                return MediaType.REV120;
-
-            if(_imageInfo.Sectors == 17090880)
-                return MediaType.REV35;
-
-            if(_imageInfo.Sectors <= 360000)
-                return MediaType.CD;
-
-            if(_imageInfo.Sectors <= 2295104)
-                return MediaType.DVDPR;
-
-            if(_imageInfo.Sectors <= 2298496)
-                return MediaType.DVDR;
-
-            if(_imageInfo.Sectors <= 4171712)
-                return MediaType.DVDRDL;
-
-            if(_imageInfo.Sectors <= 4173824)
-                return MediaType.DVDPRDL;
-
-            if(_imageInfo.Sectors <= 24438784)
-                return MediaType.BDR;
-
-            return _imageInfo.Sectors <= 62500864 ? MediaType.BDRXL : MediaType.Unknown;
-        }
+            switch(_imageInfo.Sectors)
+            {
+                case 58620544:    return MediaType.REV120;
+                case 17090880:    return MediaType.REV35;
+                case <= 360000:   return MediaType.CD;
+                case <= 2295104:  return MediaType.DVDPR;
+                case <= 2298496:  return MediaType.DVDR;
+                case <= 4171712:  return MediaType.DVDRDL;
+                case <= 4173824:  return MediaType.DVDPRDL;
+                case <= 24438784: return MediaType.BDR;
+                default:          return _imageInfo.Sectors <= 62500864 ? MediaType.BDRXL : MediaType.Unknown;
+            }
 
         switch(_imageInfo.ImageSize)
         {
@@ -117,14 +102,13 @@ public sealed partial class ZZZRawImage
                 if(_imageInfo.SectorSize == 256)
                     return MediaType.CBM_35_DD;
 
-                if(_extension is ".adf" or ".adl" &&
-                   _imageInfo.SectorSize == 1024)
-                    return MediaType.ACORN_35_DS_DD;
+                return _extension switch
+                       {
+                           ".adf" or ".adl" when _imageInfo.SectorSize == 1024 => MediaType.ACORN_35_DS_DD,
+                           ".st"                                               => MediaType.ATARI_35_DS_DD,
+                           _                                                   => MediaType.AppleSonyDS
+                       };
 
-                if(_extension == ".st")
-                    return MediaType.ATARI_35_DS_DD;
-
-                return MediaType.AppleSonyDS;
             case 839680: return MediaType.FDFORMAT_35_DD;
             case 901120:
                 if(_extension == ".st")

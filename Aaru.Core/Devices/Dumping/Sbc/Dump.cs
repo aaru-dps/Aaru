@@ -226,21 +226,34 @@ partial class Dump
 
             ulong totalSize = blocks * blockSize;
 
-            if(totalSize > 1099511627776)
-                UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)");
-            else if(totalSize > 1073741824)
-                UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)");
-            else if(totalSize > 1048576)
-                UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)");
-            else if(totalSize > 1024)
-                UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1024d:F3} KiB)");
-            else
-                UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize} bytes)");
+            switch(totalSize)
+            {
+                case > 1099511627776:
+                    UpdateStatus?.Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {
+                        totalSize / 1099511627776d:F3} TiB)");
+
+                    break;
+                case > 1073741824:
+                    UpdateStatus?.Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {
+                        totalSize / 1073741824d:F3} GiB)");
+
+                    break;
+                case > 1048576:
+                    UpdateStatus?.Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {
+                        totalSize / 1048576d:F3} MiB)");
+
+                    break;
+                case > 1024:
+                    UpdateStatus?.Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {
+                        totalSize / 1024d:F3} KiB)");
+
+                    break;
+                default:
+                    UpdateStatus?.Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {
+                        totalSize} bytes)");
+
+                    break;
+            }
         }
 
         // Check how many blocks to read, if error show and return
@@ -309,8 +322,8 @@ partial class Dump
                 // Only a block will be read, but it contains 16 sectors and command expect sector number not block number
                 blocksToRead = (uint)(longBlockSize == 37856 ? 16 : 1);
 
-                UpdateStatus?.
-                    Invoke($"Reading {longBlockSize} raw bytes ({blockSize * blocksToRead} cooked bytes) per sector.");
+                UpdateStatus?.Invoke($"Reading {longBlockSize} raw bytes ({blockSize * blocksToRead
+                } cooked bytes) per sector.");
 
                 physicalBlockSize = longBlockSize;
                 blockSize         = longBlockSize;
@@ -525,8 +538,8 @@ partial class Dump
 
                     #if DEBUG
                         foreach(Track trk in tracks)
-                            UpdateStatus?.
-                                Invoke($"Track {trk.Sequence} starts at LBA {trk.StartSector} and ends at LBA {trk.EndSector}");
+                            UpdateStatus?.Invoke($"Track {trk.Sequence} starts at LBA {trk.StartSector
+                            } and ends at LBA {trk.EndSector}");
                     #endif
 
                         if(canStoreNotCdTracks)
@@ -574,45 +587,52 @@ partial class Dump
             var setGeometry = false;
 
             foreach(Modes.ModePage page in decMode.Value.Pages)
-                if(page.Page    == 0x04 &&
-                   page.Subpage == 0x00)
+                switch(page.Page)
                 {
-                    Modes.ModePage_04? rigidPage = Modes.DecodeModePage_04(page.PageResponse);
+                    case 0x04 when page.Subpage == 0x00:
+                    {
+                        Modes.ModePage_04? rigidPage = Modes.DecodeModePage_04(page.PageResponse);
 
-                    if(!rigidPage.HasValue || setGeometry)
-                        continue;
+                        if(!rigidPage.HasValue || setGeometry)
+                            continue;
 
-                    _dumpLog.WriteLine("Setting geometry to {0} cylinders, {1} heads, {2} sectors per track",
-                                       rigidPage.Value.Cylinders, rigidPage.Value.Heads,
-                                       (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads)));
+                        _dumpLog.WriteLine("Setting geometry to {0} cylinders, {1} heads, {2} sectors per track",
+                                           rigidPage.Value.Cylinders, rigidPage.Value.Heads,
+                                           (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads)));
 
-                    UpdateStatus?.
-                        Invoke($"Setting geometry to {rigidPage.Value.Cylinders} cylinders, {rigidPage.Value.Heads} heads, {(uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads))} sectors per track");
+                        UpdateStatus?.Invoke($"Setting geometry to {rigidPage.Value.Cylinders} cylinders, {
+                            rigidPage.Value.Heads} heads, {
+                                (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads))
+                            } sectors per track");
 
-                    outputFormat.SetGeometry(rigidPage.Value.Cylinders, rigidPage.Value.Heads,
-                                             (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads)));
+                        outputFormat.SetGeometry(rigidPage.Value.Cylinders, rigidPage.Value.Heads,
+                                                 (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads)));
 
-                    setGeometry = true;
-                }
-                else if(page.Page    == 0x05 &&
-                        page.Subpage == 0x00)
-                {
-                    Modes.ModePage_05? flexiblePage = Modes.DecodeModePage_05(page.PageResponse);
+                        setGeometry = true;
 
-                    if(!flexiblePage.HasValue)
-                        continue;
+                        break;
+                    }
+                    case 0x05 when page.Subpage == 0x00:
+                    {
+                        Modes.ModePage_05? flexiblePage = Modes.DecodeModePage_05(page.PageResponse);
 
-                    _dumpLog.WriteLine("Setting geometry to {0} cylinders, {1} heads, {2} sectors per track",
-                                       flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
-                                       flexiblePage.Value.SectorsPerTrack);
+                        if(!flexiblePage.HasValue)
+                            continue;
 
-                    UpdateStatus?.
-                        Invoke($"Setting geometry to {flexiblePage.Value.Cylinders} cylinders, {flexiblePage.Value.Heads} heads, {flexiblePage.Value.SectorsPerTrack} sectors per track");
+                        _dumpLog.WriteLine("Setting geometry to {0} cylinders, {1} heads, {2} sectors per track",
+                                           flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
+                                           flexiblePage.Value.SectorsPerTrack);
 
-                    outputFormat.SetGeometry(flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
-                                             flexiblePage.Value.SectorsPerTrack);
+                        UpdateStatus?.Invoke($"Setting geometry to {flexiblePage.Value.Cylinders} cylinders, {
+                            flexiblePage.Value.Heads} heads, {flexiblePage.Value.SectorsPerTrack} sectors per track");
 
-                    setGeometry = true;
+                        outputFormat.SetGeometry(flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
+                                                 flexiblePage.Value.SectorsPerTrack);
+
+                        setGeometry = true;
+
+                        break;
+                    }
                 }
         }
 
@@ -723,11 +743,11 @@ partial class Dump
 
         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
-        UpdateStatus?.
-            Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000)
+            :F3} KiB/sec.");
 
-        UpdateStatus?.
-            Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration
+            :F3} KiB/sec.");
 
         _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
@@ -1009,8 +1029,8 @@ partial class Dump
                     totalChkDuration = (end - chkStart).TotalMilliseconds;
                     UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
 
-                    UpdateStatus?.
-                        Invoke($"Average checksum speed {blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+                    UpdateStatus?.Invoke($"Average checksum speed {
+                        blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
 
                     _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
 
@@ -1224,11 +1244,12 @@ partial class Dump
 
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.
-            Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+        UpdateStatus?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000
+            :F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {
+            (closeEnd - closeStart).TotalSeconds:F3} closing).");
 
-        UpdateStatus?.
-            Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+        UpdateStatus?.Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000)
+            :F3} MiB/sec.");
 
         if(maxSpeed > 0)
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

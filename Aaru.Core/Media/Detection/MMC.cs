@@ -513,25 +513,22 @@ public static class MMC
 
             if(mediaType != MediaType.CDI)
             {
-                if(hasDataTrack                  &&
-                   hasAudioTrack                 &&
-                   allFirstSessionTracksAreAudio &&
-                   sessions == 2)
+                switch(hasDataTrack)
                 {
-                    AaruConsole.DebugWriteLine("Media detection",
-                                               "Disc has audio and data tracks, two sessions, and all data tracks are in second session, setting as CD+.");
+                    case true when hasAudioTrack && allFirstSessionTracksAreAudio && sessions == 2:
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Disc has audio and data tracks, two sessions, and all data tracks are in second session, setting as CD+.");
 
-                    mediaType = MediaType.CDPLUS;
-                }
+                        mediaType = MediaType.CDPLUS;
 
-                if(!hasDataTrack &&
-                   hasAudioTrack &&
-                   sessions == 1)
-                {
-                    AaruConsole.DebugWriteLine("Media detection",
-                                               "Disc has only audio tracks in a single session, setting as CD Digital Audio.");
+                        break;
+                    case false when hasAudioTrack && sessions == 1:
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Disc has only audio tracks in a single session, setting as CD Digital Audio.");
 
-                    mediaType = MediaType.CDDA;
+                        mediaType = MediaType.CDDA;
+
+                        break;
                 }
 
                 if(hasDataTrack   &&

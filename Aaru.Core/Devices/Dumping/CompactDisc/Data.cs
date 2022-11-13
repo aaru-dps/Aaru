@@ -233,31 +233,36 @@ partial class Dump
                         blocksToRead += (uint)sectorsForOffset;
                 }
 
-            if(!inData &&
-               currentReadSpeed == 0xFFFF)
+            switch(inData)
             {
-                _dumpLog.WriteLine("Setting speed to 8x for audio reading.");
-                UpdateStatus?.Invoke("Setting speed to 8x for audio reading.");
+                case false when currentReadSpeed == 0xFFFF:
+                    _dumpLog.WriteLine("Setting speed to 8x for audio reading.");
+                    UpdateStatus?.Invoke("Setting speed to 8x for audio reading.");
 
-                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
 
-                currentReadSpeed = 1200;
-            }
+                    currentReadSpeed = 1200;
 
-            if(inData && currentReadSpeed != _speed)
-            {
-                _dumpLog.WriteLine($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
+                    break;
+                case true when currentReadSpeed != _speed:
+                {
+                    _dumpLog.WriteLine($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")
+                    }.");
 
-                UpdateStatus?.Invoke($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
+                    UpdateStatus?.Invoke($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")
+                    }.");
 
-                _speed *= _speedMultiplier;
+                    _speed *= _speedMultiplier;
 
-                if(_speed is 0 or > 0xFFFF)
-                    _speed = 0xFFFF;
+                    if(_speed is 0 or > 0xFFFF)
+                        _speed = 0xFFFF;
 
-                currentReadSpeed = _speed;
+                    currentReadSpeed = _speed;
 
-                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
+                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
+
+                    break;
+                }
             }
 
             if(inData && crossingLeadOut)

@@ -974,50 +974,46 @@ partial class Dump
                         continue;
                 }
 
-                if(decSense.Value.SenseKey is SenseKeys.NoSense or SenseKeys.RecoveredError &&
-                   (decSense.Value.ASCQ is 0x02 or 0x05 || eom))
+                switch(decSense.Value.SenseKey)
                 {
-                    // TODO: Detect end of partition
-                    endOfMedia = true;
-                    UpdateStatus?.Invoke("Found end-of-tape/partition...");
-                    _dumpLog.WriteLine("Found end-of-tape/partition...");
+                    case SenseKeys.NoSense or SenseKeys.RecoveredError when decSense.Value.ASCQ is 0x02 or 0x05 || eom:
+                        // TODO: Detect end of partition
+                        endOfMedia = true;
+                        UpdateStatus?.Invoke("Found end-of-tape/partition...");
+                        _dumpLog.WriteLine("Found end-of-tape/partition...");
 
-                    continue;
-                }
+                        continue;
+                    case SenseKeys.NoSense or SenseKeys.RecoveredError when decSense.Value.ASCQ == 0x01 || filemark:
+                        currentTapeFile.LastBlock = currentBlock - 1;
+                        outputTape.AddFile(currentTapeFile);
 
-                if(decSense.Value.SenseKey is SenseKeys.NoSense or SenseKeys.RecoveredError &&
-                   (decSense.Value.ASCQ == 0x01 || filemark))
-                {
-                    currentTapeFile.LastBlock = currentBlock - 1;
-                    outputTape.AddFile(currentTapeFile);
+                        currentFile++;
 
-                    currentFile++;
+                        currentTapeFile = new TapeFile
+                        {
+                            File       = currentFile,
+                            FirstBlock = currentBlock,
+                            Partition  = currentPartition
+                        };
 
-                    currentTapeFile = new TapeFile
-                    {
-                        File       = currentFile,
-                        FirstBlock = currentBlock,
-                        Partition  = currentPartition
-                    };
+                        UpdateStatus?.Invoke($"Changed to file {currentFile} at block {currentBlock}");
+                        _dumpLog.WriteLine("Changed to file {0} at block {1}", currentFile, currentBlock);
 
-                    UpdateStatus?.Invoke($"Changed to file {currentFile} at block {currentBlock}");
-                    _dumpLog.WriteLine("Changed to file {0} at block {1}", currentFile, currentBlock);
-
-                    continue;
+                        continue;
                 }
 
                 if(decSense is null)
                 {
-                    StoppingErrorMessage?.
-                        Invoke($"Drive could not read block ${currentBlock}. Sense cannot be decoded, look at log for dump...");
+                    StoppingErrorMessage?.Invoke($"Drive could not read block ${currentBlock
+                    }. Sense cannot be decoded, look at log for dump...");
 
                     _dumpLog.WriteLine($"Drive could not read block ${currentBlock}. Sense bytes follow...");
                     _dumpLog.WriteLine(PrintHex.ByteArrayToHexArrayString(senseBuf, 32));
                 }
                 else
                 {
-                    StoppingErrorMessage?.
-                        Invoke($"Drive could not read block ${currentBlock}. Sense follows...\n{decSense.Value.SenseKey} {decSense.Value.Description}");
+                    StoppingErrorMessage?.Invoke($"Drive could not read block ${currentBlock}. Sense follows...\n{
+                        decSense.Value.SenseKey} {decSense.Value.Description}");
 
                     _dumpLog.WriteLine($"Drive could not read block ${currentBlock}. Sense follows...");
 
@@ -1084,11 +1080,11 @@ partial class Dump
 
         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
-        UpdateStatus?.
-            Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000)
+            :F3} KiB/sec.");
 
-        UpdateStatus?.
-            Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration
+            :F3} KiB/sec.");
 
         _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
@@ -1329,8 +1325,8 @@ partial class Dump
                 totalChkDuration = (end - chkStart).TotalMilliseconds;
                 UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
 
-                UpdateStatus?.
-                    Invoke($"Average checksum speed {blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+                UpdateStatus?.Invoke($"Average checksum speed {
+                    blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
 
                 _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
 
@@ -1404,11 +1400,12 @@ partial class Dump
 
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.
-            Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+        UpdateStatus?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000
+            :F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {
+            (closeEnd - closeStart).TotalSeconds:F3} closing).");
 
-        UpdateStatus?.
-            Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+        UpdateStatus?.Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000)
+            :F3} MiB/sec.");
 
         if(maxSpeed > 0)
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

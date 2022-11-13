@@ -86,13 +86,19 @@ public static class ImageInfo
         else
             AaruConsole.WriteLine("[bold]Format:[/] [italic]{0}[/]", Markup.Escape(imageFormat.Format));
 
-        if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application) &&
-           !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion))
-            AaruConsole.WriteLine("Was created with [italic]{0}[/] version [italic]{1}[/]",
-                                  Markup.Escape(imageFormat.Info.Application),
-                                  Markup.Escape(imageFormat.Info.ApplicationVersion));
-        else if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
-            AaruConsole.WriteLine("Was created with [italic]{0}[/]", Markup.Escape(imageFormat.Info.Application));
+        switch(string.IsNullOrWhiteSpace(imageFormat.Info.Application))
+        {
+            case false when !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion):
+                AaruConsole.WriteLine("Was created with [italic]{0}[/] version [italic]{1}[/]",
+                                      Markup.Escape(imageFormat.Info.Application),
+                                      Markup.Escape(imageFormat.Info.ApplicationVersion));
+
+                break;
+            case false:
+                AaruConsole.WriteLine("Was created with [italic]{0}[/]", Markup.Escape(imageFormat.Info.Application));
+
+                break;
+        }
 
         AaruConsole.WriteLine("Image without headers is {0} bytes long", imageFormat.Info.ImageSize);
 

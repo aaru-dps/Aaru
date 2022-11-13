@@ -233,21 +233,34 @@ sealed class MediaInfoCommand : Command
                 {
                     ulong totalSize = scsiInfo.Blocks * scsiInfo.BlockSize;
 
-                    if(totalSize > 1099511627776)
-                        AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} TiB)",
-                                              scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1099511627776d);
-                    else if(totalSize > 1073741824)
-                        AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} GiB)",
-                                              scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1073741824d);
-                    else if(totalSize > 1048576)
-                        AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} MiB)",
-                                              scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1048576d);
-                    else if(totalSize > 1024)
-                        AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} KiB)",
-                                              scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1024d);
-                    else
-                        AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
-                                              scsiInfo.Blocks, scsiInfo.BlockSize, totalSize);
+                    switch(totalSize)
+                    {
+                        case > 1099511627776:
+                            AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} TiB)",
+                                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1099511627776d);
+
+                            break;
+                        case > 1073741824:
+                            AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} GiB)",
+                                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1073741824d);
+
+                            break;
+                        case > 1048576:
+                            AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} MiB)",
+                                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1048576d);
+
+                            break;
+                        case > 1024:
+                            AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} KiB)",
+                                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1024d);
+
+                            break;
+                        default:
+                            AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
+                                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize);
+
+                            break;
+                    }
                 }
 
                 break;
@@ -682,8 +695,8 @@ sealed class MediaInfoCommand : Command
                     }
                     else
                     {
-                        AaruConsole.
-                            WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+                        AaruConsole.WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4
+                        } samples).");
 
                         AaruConsole.WriteLine("[red]Disc write offset is unknown.[/]");
                     }
@@ -696,13 +709,13 @@ sealed class MediaInfoCommand : Command
                     {
                         AaruConsole.WriteLine("[red]Drive reading offset not found in database.[/]");
 
-                        AaruConsole.
-                            WriteLine($"Combined disc and drive offset are {offsetBytes} bytes ({offsetBytes / 4} samples).");
+                        AaruConsole.WriteLine($"Combined disc and drive offset are {offsetBytes} bytes ({offsetBytes / 4
+                        } samples).");
                     }
                     else
                     {
-                        AaruConsole.
-                            WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+                        AaruConsole.WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4
+                        } samples).");
 
                         AaruConsole.WriteLine($"Combined offset is {offsetBytes} bytes ({offsetBytes / 4} samples).");
 
@@ -713,6 +726,7 @@ sealed class MediaInfoCommand : Command
                 }
             }
         }
+
         dev.Close();
     }
 }

@@ -83,8 +83,8 @@ public sealed class SubdirectoryViewModel
 
             if(errno != ErrorNumber.NoError)
             {
-                AaruConsole.
-                    ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
+                AaruConsole.ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {
+                    dirent}");
 
                 continue;
             }
@@ -247,16 +247,19 @@ public sealed class SubdirectoryViewModel
                     string corrected = new(chars);
 
                     mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Unsupported filename",
-                                     $"The file name {filename} is not supported on this platform.\nDo you want to rename it to {corrected}?",
-                                     ButtonEnum.YesNoCancel, Icon.Warning).ShowDialog(_view);
+                                     $"The file name {filename
+                                     } is not supported on this platform.\nDo you want to rename it to {corrected
+                                     }?", ButtonEnum.YesNoCancel, Icon.Warning).ShowDialog(_view);
 
-                    if(mboxResult == ButtonResult.Cancel)
-                        return;
+                    switch(mboxResult)
+                    {
+                        case ButtonResult.Cancel: return;
+                        case ButtonResult.No:     continue;
+                        default:
+                            filename = corrected;
 
-                    if(mboxResult == ButtonResult.No)
-                        continue;
-
-                    filename = corrected;
+                            break;
+                    }
                 }
 
             string outputPath = Path.Combine(folder, filename);
@@ -264,27 +267,30 @@ public sealed class SubdirectoryViewModel
             if(File.Exists(outputPath))
             {
                 mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Existing file",
-                                 $"A file named {filename} already exists on the destination folder.\nDo you want to overwrite it?",
+                                 $"A file named {filename
+                                 } already exists on the destination folder.\nDo you want to overwrite it?",
                                  ButtonEnum.YesNoCancel, Icon.Warning).ShowDialog(_view);
 
-                if(mboxResult == ButtonResult.Cancel)
-                    return;
-
-                if(mboxResult == ButtonResult.No)
-                    continue;
-
-                try
+                switch(mboxResult)
                 {
-                    File.Delete(outputPath);
-                }
-                catch(IOException)
-                {
-                    mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Cannot delete",
-                                     "Could not delete existing file.\nDo you want to continue?", ButtonEnum.YesNo,
-                                     Icon.Error).ShowDialog(_view);
+                    case ButtonResult.Cancel: return;
+                    case ButtonResult.No:     continue;
+                    default:
+                        try
+                        {
+                            File.Delete(outputPath);
+                        }
+                        catch(IOException)
+                        {
+                            mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Cannot delete",
+                                             "Could not delete existing file.\nDo you want to continue?",
+                                             ButtonEnum.YesNo, Icon.Error).ShowDialog(_view);
 
-                    if(mboxResult == ButtonResult.No)
-                        return;
+                            if(mboxResult == ButtonResult.No)
+                                return;
+                        }
+
+                        break;
                 }
             }
 

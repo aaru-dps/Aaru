@@ -134,12 +134,21 @@ public sealed partial class AppleNib
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
 
-        if(_imageInfo.Sectors == 455)
-            _imageInfo.MediaType = MediaType.Apple32SS;
-        else if(_imageInfo.Sectors == 560)
-            _imageInfo.MediaType = MediaType.Apple33SS;
-        else
-            _imageInfo.MediaType = MediaType.Unknown;
+        switch(_imageInfo.Sectors)
+        {
+            case 455:
+                _imageInfo.MediaType = MediaType.Apple32SS;
+
+                break;
+            case 560:
+                _imageInfo.MediaType = MediaType.Apple33SS;
+
+                break;
+            default:
+                _imageInfo.MediaType = MediaType.Unknown;
+
+                break;
+        }
 
         _imageInfo.SectorSize   = 256;
         _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;

@@ -450,14 +450,25 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0020:
                 case 0x0021:
                 case 0x0022:
-                    if(blocks <= 360000)
-                        MaxX = 360000;
-                    else if(blocks <= 405000)
-                        MaxX = 405000;
-                    else if(blocks <= 445500)
-                        MaxX = 445500;
-                    else
-                        MaxX = blocks;
+                    switch(blocks)
+                    {
+                        case <= 360000:
+                            MaxX = 360000;
+
+                            break;
+                        case <= 405000:
+                            MaxX = 405000;
+
+                            break;
+                        case <= 445500:
+                            MaxX = 445500;
+
+                            break;
+                        default:
+                            MaxX = blocks;
+
+                            break;
+                    }
 
                     StepsX = MaxX   / 10;
                     StepsY = 150    * 4;
@@ -493,16 +504,29 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0042:
                 case 0x0043:
                 case 0x0040: // BD
-                    if(blocks <= 12219392)
-                        MaxX = 12219392;
-                    else if(blocks <= 24438784)
-                        MaxX = 24438784;
-                    else if(blocks <= 48878592)
-                        MaxX = 48878592;
-                    else if(blocks <= 62500864)
-                        MaxX = 62500864;
-                    else
-                        MaxX = blocks;
+                    switch(blocks)
+                    {
+                        case <= 12219392:
+                            MaxX = 12219392;
+
+                            break;
+                        case <= 24438784:
+                            MaxX = 24438784;
+
+                            break;
+                        case <= 48878592:
+                            MaxX = 48878592;
+
+                            break;
+                        case <= 62500864:
+                            MaxX = 62500864;
+
+                            break;
+                        default:
+                            MaxX = blocks;
+
+                            break;
+                    }
 
                     StepsX = MaxX / 10;
                     StepsY = 4394.5;
@@ -515,12 +539,21 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0053:
                 case 0x0058:
                 case 0x005A:
-                    if(blocks <= 7361599)
-                        MaxX = 7361599;
-                    else if(blocks <= 16305407)
-                        MaxX = 16305407;
-                    else
-                        MaxX = blocks;
+                    switch(blocks)
+                    {
+                        case <= 7361599:
+                            MaxX = 7361599;
+
+                            break;
+                        case <= 16305407:
+                            MaxX = 16305407;
+
+                            break;
+                        default:
+                            MaxX = blocks;
+
+                            break;
+                    }
 
                     StepsX = MaxX / 10;
                     StepsY = 4394.5;
@@ -596,22 +629,33 @@ public sealed class MediaScanViewModel : ViewModelBase
     {
         BlockMapList.Add((sector / _blocksToRead, duration));
 
-        if(duration < 3)
-            _localResults.A += _blocksToRead;
-        else if(duration >= 3 &&
-                duration < 10)
-            _localResults.B += _blocksToRead;
-        else if(duration >= 10 &&
-                duration < 50)
-            _localResults.C += _blocksToRead;
-        else if(duration >= 50 &&
-                duration < 150)
-            _localResults.D += _blocksToRead;
-        else if(duration >= 150 &&
-                duration < 500)
-            _localResults.E += _blocksToRead;
-        else if(duration >= 500)
-            _localResults.F += _blocksToRead;
+        switch(duration)
+        {
+            case < 3:
+                _localResults.A += _blocksToRead;
+
+                break;
+            case >= 3 and < 10:
+                _localResults.B += _blocksToRead;
+
+                break;
+            case >= 10 and < 50:
+                _localResults.C += _blocksToRead;
+
+                break;
+            case >= 50 and < 150:
+                _localResults.D += _blocksToRead;
+
+                break;
+            case >= 150 and < 500:
+                _localResults.E += _blocksToRead;
+
+                break;
+            case >= 500:
+                _localResults.F += _blocksToRead;
+
+                break;
+        }
 
         A = $"{_localResults.A} sectors took less than 3 ms.";
         B = $"{_localResults.B} sectors took less than 10 ms but more than 3 ms.";

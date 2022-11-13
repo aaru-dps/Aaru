@@ -167,11 +167,17 @@ public sealed partial class OperaFS
 
         var flags = (FileFlags)(entry.flags & FLAGS_MASK);
 
-        if(flags == FileFlags.Directory)
-            stat.Attributes |= FileAttributes.Directory;
+        switch(flags)
+        {
+            case FileFlags.Directory:
+                stat.Attributes |= FileAttributes.Directory;
 
-        if(flags == FileFlags.Special)
-            stat.Attributes |= FileAttributes.Device;
+                break;
+            case FileFlags.Special:
+                stat.Attributes |= FileAttributes.Device;
+
+                break;
+        }
 
         return ErrorNumber.NoError;
     }

@@ -99,28 +99,36 @@ public sealed partial class CopyQm
 
             var runLength = BitConverter.ToInt16(runLengthBytes, 0);
 
-            if(runLength < 0)
+            switch(runLength)
             {
-                var repeatedByte  = (byte)stream.ReadByte();
-                var repeatedArray = new byte[runLength * -1];
-                ArrayHelpers.ArrayFill(repeatedArray, repeatedByte);
-
-                for(var i = 0; i < runLength * -1; i++)
+                case < 0:
                 {
-                    _decodedImage.WriteByte(repeatedByte);
+                    var repeatedByte  = (byte)stream.ReadByte();
+                    var repeatedArray = new byte[runLength * -1];
+                    ArrayHelpers.ArrayFill(repeatedArray, repeatedByte);
 
-                    _calculatedDataCrc = _copyQmCrcTable[(repeatedByte ^ _calculatedDataCrc) & 0x3F] ^
-                                         (_calculatedDataCrc >> 8);
+                    for(var i = 0; i < runLength * -1; i++)
+                    {
+                        _decodedImage.WriteByte(repeatedByte);
+
+                        _calculatedDataCrc = _copyQmCrcTable[(repeatedByte ^ _calculatedDataCrc) & 0x3F] ^
+                                             (_calculatedDataCrc >> 8);
+                    }
+
+                    break;
                 }
-            }
-            else if(runLength > 0)
-            {
-                var nonRepeated = new byte[runLength];
-                stream.Read(nonRepeated, 0, runLength);
-                _decodedImage.Write(nonRepeated, 0, runLength);
+                case > 0:
+                {
+                    var nonRepeated = new byte[runLength];
+                    stream.Read(nonRepeated, 0, runLength);
+                    _decodedImage.Write(nonRepeated, 0, runLength);
 
-                foreach(byte c in nonRepeated)
-                    _calculatedDataCrc = _copyQmCrcTable[(c ^ _calculatedDataCrc) & 0x3F] ^ (_calculatedDataCrc >> 8);
+                    foreach(byte c in nonRepeated)
+                        _calculatedDataCrc =
+                            _copyQmCrcTable[(c ^ _calculatedDataCrc) & 0x3F] ^ (_calculatedDataCrc >> 8);
+
+                    break;
+                }
             }
         }
 

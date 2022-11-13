@@ -89,15 +89,19 @@ public sealed class AppleMap : IPartition
 
         ushort maxDrivers = 61;
 
-        if(sectorSize == 256)
+        switch(sectorSize)
         {
-            var tmp = new byte[512];
-            Array.Copy(ddmSector, 0, tmp, 0, 256);
-            ddmSector  = tmp;
-            maxDrivers = 29;
+            case 256:
+            {
+                var tmp = new byte[512];
+                Array.Copy(ddmSector, 0, tmp, 0, 256);
+                ddmSector  = tmp;
+                maxDrivers = 29;
+
+                break;
+            }
+            case < 256: return false;
         }
-        else if(sectorSize < 256)
-            return false;
 
         AppleDriverDescriptorMap ddm = Marshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddmSector);
 

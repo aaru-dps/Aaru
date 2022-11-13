@@ -277,21 +277,18 @@ sealed partial class Dump
                     read16 = !_dev.Read16(out cmdBuf, out _, 0, false, true, false, firstLba, 2048, 0, 1, false,
                                           _dev.Timeout, out _);
 
-                    if(!read6  &&
-                       !read10 &&
-                       !read12 &&
-                       !read16)
+                    switch(read6)
                     {
-                        _dumpLog.WriteLine("Cannot read from disc, not continuing...");
-                        StoppingErrorMessage?.Invoke("Cannot read from disc, not continuing...");
+                        case false when !read10 && !read12 && !read16:
+                            _dumpLog.WriteLine("Cannot read from disc, not continuing...");
+                            StoppingErrorMessage?.Invoke("Cannot read from disc, not continuing...");
 
-                        return;
-                    }
+                            return;
+                        case true:
+                            _dumpLog.WriteLine("Drive supports READ(6)...");
+                            UpdateStatus?.Invoke("Drive supports READ(6)...");
 
-                    if(read6)
-                    {
-                        _dumpLog.WriteLine("Drive supports READ(6)...");
-                        UpdateStatus?.Invoke("Drive supports READ(6)...");
+                            break;
                     }
 
                     if(read10)
@@ -344,8 +341,8 @@ sealed partial class Dump
             default:
                 _dumpLog.WriteLine("Handling subchannel type {0} not supported, exiting...", supportedSubchannel);
 
-                StoppingErrorMessage?.
-                    Invoke($"Handling subchannel type {supportedSubchannel} not supported, exiting...");
+                StoppingErrorMessage?.Invoke($"Handling subchannel type {supportedSubchannel
+                } not supported, exiting...");
 
                 return;
         }
@@ -964,8 +961,8 @@ sealed partial class Dump
 
     #if DEBUG
         foreach(Track trk in tracks)
-            UpdateStatus?.
-                Invoke($"Track {trk.Sequence} starts at LBA {trk.StartSector} and ends at LBA {trk.EndSector}");
+            UpdateStatus?.Invoke($"Track {trk.Sequence} starts at LBA {trk.StartSector} and ends at LBA {trk.EndSector
+            }");
     #endif
 
         // Check offset
@@ -1058,10 +1055,12 @@ sealed partial class Dump
             {
                 _dumpLog.WriteLine("Drive reading offset not found in database.");
                 UpdateStatus?.Invoke("Drive reading offset not found in database.");
-                _dumpLog.WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4} samples).");
 
-                UpdateStatus?.
-                    Invoke($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4} samples).");
+                _dumpLog.WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4
+                } samples).");
+
+                UpdateStatus?.Invoke($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4
+                } samples).");
             }
             else
             {
@@ -1165,18 +1164,18 @@ sealed partial class Dump
                         _dumpLog.WriteLine("Drive reading offset not found in database.");
                         UpdateStatus?.Invoke("Drive reading offset not found in database.");
 
-                        _dumpLog.
-                            WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4} samples).");
+                        _dumpLog.WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4
+                        } samples).");
 
-                        UpdateStatus?.
-                            Invoke($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4} samples).");
+                        UpdateStatus?.Invoke($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4
+                        } samples).");
                     }
                     else
                     {
                         _dumpLog.WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
 
-                        UpdateStatus?.
-                            Invoke($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+                        UpdateStatus?.Invoke($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4
+                        } samples).");
 
                         discOffset = offsetBytes - driveOffset;
 
@@ -1224,11 +1223,11 @@ sealed partial class Dump
 
         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
-        UpdateStatus?.
-            Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000)
+            :F3} KiB/sec.");
 
-        UpdateStatus?.
-            Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration
+            :F3} KiB/sec.");
 
         _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
@@ -1384,11 +1383,12 @@ sealed partial class Dump
         end = DateTime.UtcNow;
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.
-            Invoke($"Took a total of {(end - dumpStart).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+        UpdateStatus?.Invoke($"Took a total of {(end - dumpStart).TotalSeconds:F3} seconds ({totalDuration / 1000
+            :F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {
+            (closeEnd - closeStart).TotalSeconds:F3} closing).");
 
-        UpdateStatus?.
-            Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+        UpdateStatus?.Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000)
+            :F3} MiB/sec.");
 
         if(maxSpeed > 0)
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

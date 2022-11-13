@@ -468,37 +468,38 @@ public sealed partial class FAT
 
                     break;
                 case 0xFD:
-                    if(imagePlugin.Info.Sectors    == 4004 &&
-                       imagePlugin.Info.SectorSize == 128)
+                    switch(imagePlugin.Info.Sectors)
                     {
-                        AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
-                        fakeBpb.bps      = 128;
-                        fakeBpb.spc      = 4;
-                        fakeBpb.rsectors = 4;
-                        fakeBpb.fats_no  = 2;
-                        fakeBpb.root_ent = 68;
-                        fakeBpb.sectors  = 4004;
-                        fakeBpb.media    = 0xFD;
-                        fakeBpb.sptrk    = 26;
-                        fakeBpb.heads    = 2;
-                        fakeBpb.hsectors = 0;
-                        fakeBpb.spfat    = 6;
-                    }
-                    else if(imagePlugin.Info.Sectors    == 2002 &&
-                            imagePlugin.Info.SectorSize == 128)
-                    {
-                        AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
-                        fakeBpb.bps      = 128;
-                        fakeBpb.spc      = 4;
-                        fakeBpb.rsectors = 4;
-                        fakeBpb.fats_no  = 2;
-                        fakeBpb.root_ent = 68;
-                        fakeBpb.sectors  = 2002;
-                        fakeBpb.media    = 0xFD;
-                        fakeBpb.sptrk    = 26;
-                        fakeBpb.heads    = 1;
-                        fakeBpb.hsectors = 0;
-                        fakeBpb.spfat    = 6;
+                        case 4004 when imagePlugin.Info.SectorSize == 128:
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                            fakeBpb.bps      = 128;
+                            fakeBpb.spc      = 4;
+                            fakeBpb.rsectors = 4;
+                            fakeBpb.fats_no  = 2;
+                            fakeBpb.root_ent = 68;
+                            fakeBpb.sectors  = 4004;
+                            fakeBpb.media    = 0xFD;
+                            fakeBpb.sptrk    = 26;
+                            fakeBpb.heads    = 2;
+                            fakeBpb.hsectors = 0;
+                            fakeBpb.spfat    = 6;
+
+                            break;
+                        case 2002 when imagePlugin.Info.SectorSize == 128:
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                            fakeBpb.bps      = 128;
+                            fakeBpb.spc      = 4;
+                            fakeBpb.rsectors = 4;
+                            fakeBpb.fats_no  = 2;
+                            fakeBpb.root_ent = 68;
+                            fakeBpb.sectors  = 2002;
+                            fakeBpb.media    = 0xFD;
+                            fakeBpb.sptrk    = 26;
+                            fakeBpb.heads    = 1;
+                            fakeBpb.hsectors = 0;
+                            fakeBpb.spfat    = 6;
+
+                            break;
                     }
 
                     break;

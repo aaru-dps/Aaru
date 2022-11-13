@@ -166,20 +166,16 @@ public sealed partial class AppleMFS
         if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
             return ErrorNumber.NoSuchFile;
 
-        if(entry.flRLgLen                                                                     > 0 &&
-           string.Compare(xattr, "com.apple.ResourceFork", StringComparison.InvariantCulture) == 0)
+        switch(entry.flRLgLen)
         {
-            error = ReadFile(path, out buf, true, false);
+            case > 0 when string.Compare(xattr, "com.apple.ResourceFork", StringComparison.InvariantCulture) == 0:
+                error = ReadFile(path, out buf, true, false);
 
-            return error;
-        }
+                return error;
+            case > 0 when string.Compare(xattr, "com.apple.ResourceFork.tags", StringComparison.InvariantCulture) == 0:
+                error = ReadFile(path, out buf, true, true);
 
-        if(entry.flRLgLen                                                                          > 0 &&
-           string.Compare(xattr, "com.apple.ResourceFork.tags", StringComparison.InvariantCulture) == 0)
-        {
-            error = ReadFile(path, out buf, true, true);
-
-            return error;
+                return error;
         }
 
         if(string.Compare(xattr, "com.apple.FinderInfo", StringComparison.InvariantCulture) == 0)

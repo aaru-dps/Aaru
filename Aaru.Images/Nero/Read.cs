@@ -296,18 +296,19 @@ public sealed partial class Nero
 
                             // MagicISO
                             if(entry.SectorSize == 2352)
-                            {
-                                if(entry.Mode == 0x0000)
+                                switch(entry.Mode)
                                 {
-                                    corruptedTrackMode = true;
-                                    entry.Mode         = 0x0005;
+                                    case 0x0000:
+                                        corruptedTrackMode = true;
+                                        entry.Mode         = 0x0005;
+
+                                        break;
+                                    case 0x0002 or 0x0003:
+                                        corruptedTrackMode = true;
+                                        entry.Mode         = 0x0006;
+
+                                        break;
                                 }
-                                else if(entry.Mode is 0x0002 or 0x0003)
-                                {
-                                    corruptedTrackMode = true;
-                                    entry.Mode         = 0x0006;
-                                }
-                            }
 
                             AaruConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", i / 32 + 1);
 
@@ -411,18 +412,19 @@ public sealed partial class Nero
 
                             // MagicISO
                             if(entry.SectorSize == 2352)
-                            {
-                                if(entry.Mode == 0x0000)
+                                switch(entry.Mode)
                                 {
-                                    corruptedTrackMode = true;
-                                    entry.Mode         = 0x0005;
+                                    case 0x0000:
+                                        corruptedTrackMode = true;
+                                        entry.Mode         = 0x0005;
+
+                                        break;
+                                    case 0x0002 or 0x0003:
+                                        corruptedTrackMode = true;
+                                        entry.Mode         = 0x0006;
+
+                                        break;
                                 }
-                                else if(entry.Mode is 0x0002 or 0x0003)
-                                {
-                                    corruptedTrackMode = true;
-                                    entry.Mode         = 0x0006;
-                                }
-                            }
 
                             AaruConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", i / 32 + 1);
 
