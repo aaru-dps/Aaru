@@ -387,7 +387,6 @@ public sealed partial class LisaFS
     ErrorNumber ReadFile(short fileId, out byte[] buf, bool tags)
     {
         buf = null;
-        ErrorNumber errno;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;
@@ -422,11 +421,11 @@ public sealed partial class LisaFS
         {
             byte[] sector;
 
-            errno = !tags ? _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                                (uint)file.extents[i].length, out sector)
-                        : _device.ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                                 (uint)file.extents[i].length, SectorTagType.AppleSectorTag,
-                                                 out sector);
+            ErrorNumber errno = !tags ? _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                                            (uint)file.extents[i].length, out sector)
+                                    : _device.ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                                             (uint)file.extents[i].length, SectorTagType.AppleSectorTag,
+                                                             out sector);
 
             if(errno != ErrorNumber.NoError)
                 return errno;

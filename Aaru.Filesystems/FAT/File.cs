@@ -91,8 +91,6 @@ public sealed partial class FAT
     /// <inheritdoc />
     public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
     {
-        ErrorNumber errno;
-
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
@@ -137,8 +135,8 @@ public sealed partial class FAT
             if(i + firstCluster >= clusters.Length)
                 return ErrorNumber.InvalidArgument;
 
-            errno = _image.ReadSectors(_firstClusterSector + clusters[i + firstCluster] * _sectorsPerCluster,
-                                       _sectorsPerCluster, out byte[] buffer);
+            ErrorNumber errno = _image.ReadSectors(_firstClusterSector + clusters[i + firstCluster] * _sectorsPerCluster,
+                                                   _sectorsPerCluster, out byte[] buffer);
 
             if(errno != ErrorNumber.NoError)
                 return errno;

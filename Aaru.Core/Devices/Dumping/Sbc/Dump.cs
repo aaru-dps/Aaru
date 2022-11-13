@@ -85,8 +85,7 @@ partial class Dump
         double             currentSpeed  = 0;
         double             maxSpeed      = double.MinValue;
         double             minSpeed      = double.MaxValue;
-        byte[]             readBuffer;
-        Modes.DecodedMode? decMode = null;
+        Modes.DecodedMode? decMode       = null;
         bool               ret;
         ExtentsULong       blankExtents = null;
         var                outputFormat = _outputPlugin as IWritableImage;
@@ -376,6 +375,8 @@ partial class Dump
         {
             if(outputFormat is IWritableOpticalImage opticalPlugin)
             {
+                byte[] readBuffer;
+
                 sense = _dev.ReadDiscInformation(out readBuffer, out _, MmcDiscInformationDataTypes.DiscInformation,
                                                  _dev.Timeout, out _);
 

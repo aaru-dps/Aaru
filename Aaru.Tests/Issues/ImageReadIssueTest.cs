@@ -37,11 +37,12 @@ public abstract class ImageReadIssueTest
 
         ulong       doneSectors = 0;
         var         ctx         = new Crc32Context();
-        ErrorNumber errno;
 
         while(doneSectors < image.Info.Sectors)
         {
             byte[] sector;
+
+            ErrorNumber errno;
 
             if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
             {

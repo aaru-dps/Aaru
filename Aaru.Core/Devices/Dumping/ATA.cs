@@ -57,8 +57,6 @@ public partial class Dump
     /// <summary>Dumps an ATA device</summary>
     void Ata()
     {
-        bool recoveredError;
-
         if(_outputPlugin is not IWritableImage outputFormat)
         {
             StoppingErrorMessage?.Invoke("Image is not writable, aborting...");
@@ -247,6 +245,8 @@ public partial class Dump
 
                 // Setting geometry
                 outputFormat.SetGeometry(cylinders, heads, sectors);
+
+                bool recoveredError;
 
                 if(ataReader.IsLba)
                 {

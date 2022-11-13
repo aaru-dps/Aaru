@@ -46,7 +46,6 @@ public abstract class OpticalImageReadIssueTest
         ulong previousTrackEnd = 0;
 
         List<Track> inputTracks = opticalInput.Tracks;
-        ErrorNumber errno;
 
         foreach(Track currentTrack in inputTracks)
         {
@@ -56,6 +55,8 @@ public abstract class OpticalImageReadIssueTest
             while(doneSectors < sectors)
             {
                 byte[] sector;
+
+                ErrorNumber errno;
 
                 if(sectors - doneSectors >= SECTORS_TO_READ)
                 {

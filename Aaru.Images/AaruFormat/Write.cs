@@ -2584,15 +2584,14 @@ public sealed partial class AaruFormat
 
             var cmpBuffer = new byte[mediaTag.Value.Length + 262144];
 
-            int    cmpLen;
             byte[] lzmaProperties = null;
             var    doNotCompress  = false;
 
             switch(_compressionAlgorithm)
             {
                 case CompressionType.Lzma:
-                    cmpLen = LZMA.EncodeBuffer(mediaTag.Value, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 4, 0,
-                                               2, 273);
+                    int    cmpLen = LZMA.EncodeBuffer(mediaTag.Value, cmpBuffer, out lzmaProperties, 9, _dictionarySize, 4, 0,
+                                                      2, 273);
 
                     if(cmpLen + LZMA_PROPERTIES_LENGTH > mediaTag.Value.Length)
                         doNotCompress = true;

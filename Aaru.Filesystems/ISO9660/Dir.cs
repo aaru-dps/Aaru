@@ -542,7 +542,6 @@ public sealed partial class ISO9660
         hasResourceFork = false;
         var               continueSymlink          = false;
         var               continueSymlinkComponent = false;
-        AppleCommon.FInfo fInfo;
 
         while(systemAreaOff + 2 <= end)
         {
@@ -550,6 +549,8 @@ public sealed partial class ISO9660
 
             if(BigEndianBitConverter.ToUInt16(data, systemAreaOff + 6) == XA_MAGIC)
                 systemAreaSignature = XA_MAGIC;
+
+            AppleCommon.FInfo fInfo;
 
             switch(systemAreaSignature)
             {

@@ -48,8 +48,6 @@ public sealed partial class CPM
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        ErrorNumber errno;
-
         // This will only continue on devices with a chance to have ever been used by CP/M while failing on all others
         // It's ugly, but will stop a lot of false positives
         switch(imagePlugin.Info.MediaType)
@@ -172,6 +170,8 @@ public sealed partial class CPM
             _label             = null;
 
             // Try Amstrad superblock
+            ErrorNumber errno;
+
             if(!_cpmFound)
             {
                 // Read CHS = {0,0,1}

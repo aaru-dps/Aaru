@@ -200,7 +200,6 @@ public static class CompactDisc
                 subLog.WriteRwFix(lba);
             }
 
-            byte smin, ssec, amin, asec, aframe;
             int  aPos;
 
             // Fix Q
@@ -258,20 +257,20 @@ public static class CompactDisc
                !rwOk)
                 continue;
 
-            aframe = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
+            var aframe = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
 
             if((q[0] & 0x3) == 1)
             {
-                amin = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
-                asec = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
+                var  amin = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
+                var asec = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
                 aPos = amin * 60 * 75 + asec * 75 + aframe - 150;
             }
             else
             {
                 ulong expectedSectorAddress = sectorAddress + (ulong)(subPos / 96) + 150;
-                smin                  =  (byte)(expectedSectorAddress / 60 / 75);
+                var  smin                  = (byte)(expectedSectorAddress / 60 / 75);
                 expectedSectorAddress -= (ulong)(smin                 * 60 * 75);
-                ssec                  =  (byte)(expectedSectorAddress / 75);
+                var ssec = (byte)(expectedSectorAddress / 75);
 
                 aPos = smin * 60 * 75 + ssec * 75 + aframe - 150;
 
@@ -875,9 +874,8 @@ public static class CompactDisc
                                out bool fixedIndex, out bool fixedRelPos, out bool fixedAbsPos, out bool fixedCrc,
                                out bool fixedMcn, out bool fixedIsrc)
     {
-        byte amin, asec, aframe, pmin, psec, pframe;
-        byte rmin, rsec, rframe;
-        int  aPos, rPos, pPos, dPos;
+        byte aframe;
+        byte rframe;
         controlFix  = false;
         fixedZero   = false;
         fixedTno    = false;
@@ -1049,18 +1047,26 @@ public static class CompactDisc
                             return true;
                     }
 
-                amin   = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
-                asec   = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
-                aframe = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
-                aPos   = amin * 60 * 75 + asec * 75 + aframe - 150;
+                var  amin = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
+                var asec = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
+                aframe = (byte)(q[9] / 16 * 10                      + (q[9] & 0x0F));
+                int aPos = amin      * 60 * 75 + asec * 75 + aframe - 150;
 
-                pmin   = (byte)(q[3] / 16 * 10 + (q[3] & 0x0F));
-                psec   = (byte)(q[4] / 16 * 10 + (q[4] & 0x0F));
-                pframe = (byte)(q[5] / 16 * 10 + (q[5] & 0x0F));
-                pPos   = pmin * 60 * 75 + psec * 75 + pframe;
+                var pmin   = (byte)(q[3] / 16 * 10 + (q[3] & 0x0F));
+                var psec   = (byte)(q[4] / 16 * 10 + (q[4] & 0x0F));
+                var pframe = (byte)(q[5] / 16 * 10 + (q[5] & 0x0F));
+                int pPos   = pmin * 60 * 75 + psec * 75 + pframe;
 
                 // TODO: pregap
                 // Not pregap
+                byte rmin;
+
+                byte rsec;
+
+                int rPos;
+
+                int dPos;
+
                 if(q[2] > 0)
                 {
                     // Previous was not pregap either

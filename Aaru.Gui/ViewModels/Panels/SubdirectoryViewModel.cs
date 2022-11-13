@@ -119,8 +119,6 @@ public sealed class SubdirectoryViewModel
         if(SelectedEntries.Count == 0)
             return;
 
-        ButtonResult mboxResult;
-
         var saveFilesFolderDialog = new OpenFolderDialog
         {
             Title = "Choose destination folder..."
@@ -138,6 +136,8 @@ public sealed class SubdirectoryViewModel
         foreach(FileModel file in SelectedEntries)
         {
             string filename = file.Name;
+
+            ButtonResult mboxResult;
 
             if(DetectOS.IsWindows)
                 if(filename.Contains('<')                ||

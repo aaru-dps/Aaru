@@ -61,7 +61,6 @@ public sealed partial class FAT
     public ErrorNumber ReadDir(string path, out List<string> contents)
     {
         contents = null;
-        ErrorNumber errno;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;
@@ -139,8 +138,8 @@ public sealed partial class FAT
 
             for(var i = 0; i < clusters.Length; i++)
             {
-                errno = _image.ReadSectors(_firstClusterSector + clusters[i] * _sectorsPerCluster, _sectorsPerCluster,
-                                           out byte[] buffer);
+                ErrorNumber errno = _image.ReadSectors(_firstClusterSector + clusters[i] * _sectorsPerCluster, _sectorsPerCluster,
+                                                       out byte[] buffer);
 
                 if(errno != ErrorNumber.NoError)
                     return errno;

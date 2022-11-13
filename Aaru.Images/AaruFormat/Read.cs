@@ -1955,7 +1955,6 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public ErrorNumber ReadSectorLong(ulong sectorAddress, out byte[] buffer)
     {
-        ErrorNumber errno;
         buffer = null;
 
         switch(_imageInfo.XmlMediaType)
@@ -1976,7 +1975,7 @@ public sealed partial class AaruFormat
                     return ReadSector(sectorAddress, out buffer);
 
                 buffer = new byte[2352];
-                errno  = ReadSector(sectorAddress, out byte[] data);
+                ErrorNumber errno = ReadSector(sectorAddress, out byte[] data);
 
                 if(errno != ErrorNumber.NoError)
                     return errno;

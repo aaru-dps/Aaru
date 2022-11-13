@@ -90,17 +90,18 @@ public static class ADC
             return AARU_adc_decode_buffer(destination, destination.Length, source, source.Length);
 
         var        inputPosition = 0;
-        int        chunkSize;
-        int        offset;
-        int        chunkType;
-        var        outPosition = 0;
-        Span<byte> temp        = stackalloc byte[3];
+        var        outPosition   = 0;
+        Span<byte> temp          = stackalloc byte[3];
 
         while(inputPosition < source.Length)
         {
             byte readByte = source[inputPosition++];
 
-            chunkType = GetChunkType(readByte);
+            int chunkType = GetChunkType(readByte);
+
+            int chunkSize;
+
+            int offset;
 
             switch(chunkType)
             {

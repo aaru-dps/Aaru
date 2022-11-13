@@ -241,10 +241,6 @@ public sealed partial class WCDiskImage
     /// <param name="head">The head number of the track being read.</param>
     ErrorNumber ReadTrack(Stream stream, int cyl, int head)
     {
-        byte[] sectorData;
-        byte[] crc;
-        short  calculatedCRC;
-
         for(var sect = 1; sect < _imageInfo.SectorsPerTrack + 1; sect++)
         {
             /* read the sector header */
@@ -264,7 +260,7 @@ public sealed partial class WCDiskImage
                 return ErrorNumber.InvalidArgument;
             }
 
-            sectorData = new byte[512];
+            var sectorData = new byte[512];
 
             /* read the sector data */
             switch(sheader.flag)
@@ -272,8 +268,9 @@ public sealed partial class WCDiskImage
                 case SectorFlag.Normal: /* read a normal sector and store it in cache */
                     stream.Read(sectorData, 0, 512);
                     _sectorCache[(cyl, head, sect)] = sectorData;
+                    byte[] crc;
                     CRC16IBMContext.Data(sectorData, 512, out crc);
-                    calculatedCRC = (short)((256 * crc[0]) | crc[1]);
+                    var calculatedCRC = (short)((256 * crc[0]) | crc[1]);
                     /*
                     AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Regular sector, stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
                         cyl, head, sect, sheader.crc, 256 * crc[0] + crc[1]);

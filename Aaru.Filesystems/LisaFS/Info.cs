@@ -49,8 +49,6 @@ public sealed partial class LisaFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        ErrorNumber errno;
-
         if(imagePlugin.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true)
             return false;
 
@@ -63,7 +61,7 @@ public sealed partial class LisaFS
         // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
         for(var i = 0; i < 100; i++)
         {
-            errno = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag, out byte[] tag);
+            ErrorNumber errno = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag, out byte[] tag);
 
             if(errno != ErrorNumber.NoError)
                 continue;
@@ -137,7 +135,6 @@ public sealed partial class LisaFS
         Encoding    = new LisaRoman();
         information = "";
         var         sb = new StringBuilder();
-        ErrorNumber errno;
 
         if(imagePlugin.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true)
             return;
@@ -151,7 +148,7 @@ public sealed partial class LisaFS
         // LisaOS searches sectors until tag tells MDDF resides there, so we'll search 100 sectors
         for(var i = 0; i < 100; i++)
         {
-            errno = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag, out byte[] tag);
+            ErrorNumber errno = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag, out byte[] tag);
 
             if(errno != ErrorNumber.NoError)
                 continue;
