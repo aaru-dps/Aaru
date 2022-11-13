@@ -128,13 +128,16 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="Spectre.Console" Version="0.43.0" />
-        <PackageReference Include="Spectre.Console.Analyzer" Version="0.43.0" />
+        <PackageReference Include="Spectre.Console" Version="0.45.0" />
+        <PackageReference Include="Spectre.Console.Analyzer" Version="0.45.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />
         <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta3.22114.1" />
         <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
         <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2">
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

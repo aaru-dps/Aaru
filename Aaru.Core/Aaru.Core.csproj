@@ -129,20 +129,20 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Aaru.Archives\Aaru.Archives.csproj" />
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
         <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
         <ProjectReference Include="..\Aaru.Decryption\Aaru.Decryption.csproj" />
         <ProjectReference Include="..\Aaru.Dto\Aaru.Dto.csproj" />
-        <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"/>
-        <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"/>
-        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
-        <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"/>
-        <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj"/>
-        <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"/>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
-        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+        <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj" />
+        <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj" />
+        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj" />
+        <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj" />
+        <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj" />
+        <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj" />
+        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
+        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
+        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj" />
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Logging\" />
@@ -158,9 +158,9 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Spectre.Console" Version="0.43.0" />
+        <PackageReference Include="Spectre.Console" Version="0.45.0" />
         <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
         <PackageReference Include="System.Collections" Version="4.3.0" />
         <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
         <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />

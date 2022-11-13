@@ -25,19 +25,19 @@
         <NrtShowRevision>true</NrtShowRevision>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.13" />
-        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.18" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.18" />
         <PackageReference Include="Claunia.Encoding" Version="1.9.2" />
-        <PackageReference Include="MessageBox.Avalonia" Version="1.7.1" />
+        <PackageReference Include="MessageBox.Avalonia" Version="2.1.0" />
         <PackageReference Include="OxyPlot.Avalonia-alpha-2020-04-15" Version="1.0.0" />
         <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2">
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Avalonia" Version="0.10.13" />
-        <PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.13" />
+        <PackageReference Include="Avalonia" Version="0.10.18" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.18" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj" />

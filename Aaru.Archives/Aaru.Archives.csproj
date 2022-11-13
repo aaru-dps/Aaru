@@ -38,7 +38,7 @@
         <NrtShowRevision>true</NrtShowRevision>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="Register.cs"/>
+        <Compile Include="Register.cs" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.LGPL">
@@ -46,13 +46,13 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="SharpCompress" Version="0.30.1"/>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2">
+        <PackageReference Include="SharpCompress" Version="0.32.2" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

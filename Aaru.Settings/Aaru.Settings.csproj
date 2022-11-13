@@ -38,7 +38,7 @@
         <NrtShowRevision>true</NrtShowRevision>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="Settings.cs"/>
+        <Compile Include="Settings.cs" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.LGPL">
@@ -46,11 +46,11 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5"/>
-        <PackageReference Include="plist-cil" Version="2.2.0"/>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+        <PackageReference Include="plist-cil" Version="2.2.0" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
     </ItemGroup>
 </Project>

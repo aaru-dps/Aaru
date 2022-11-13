@@ -39,35 +39,35 @@
         <NrtShowRevision>true</NrtShowRevision>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="AppleMap.cs"/>
-        <Compile Include="Atari.cs"/>
-        <Compile Include="MBR.cs"/>
-        <Compile Include="NeXT.cs"/>
-        <Compile Include="RDB.cs"/>
-        <Compile Include="Register.cs"/>
-        <Compile Include="Sun.cs"/>
-        <Compile Include="GPT.cs"/>
-        <Compile Include="RioKarma.cs"/>
-        <Compile Include="BSD.cs"/>
-        <Compile Include="PC98.cs"/>
-        <Compile Include="DEC.cs"/>
-        <Compile Include="SGI.cs"/>
-        <Compile Include="Acorn.cs"/>
-        <Compile Include="DragonFlyBSD.cs"/>
-        <Compile Include="VTOC.cs"/>
-        <Compile Include="Human68k.cs"/>
-        <Compile Include="Xbox.cs"/>
-        <Compile Include="UNIX.cs"/>
-        <Compile Include="XENIX.cs"/>
-        <Compile Include="Plan9.cs"/>
-        <Compile Include="Apricot.cs"/>
+        <Compile Include="AppleMap.cs" />
+        <Compile Include="Atari.cs" />
+        <Compile Include="MBR.cs" />
+        <Compile Include="NeXT.cs" />
+        <Compile Include="RDB.cs" />
+        <Compile Include="Register.cs" />
+        <Compile Include="Sun.cs" />
+        <Compile Include="GPT.cs" />
+        <Compile Include="RioKarma.cs" />
+        <Compile Include="BSD.cs" />
+        <Compile Include="PC98.cs" />
+        <Compile Include="DEC.cs" />
+        <Compile Include="SGI.cs" />
+        <Compile Include="Acorn.cs" />
+        <Compile Include="DragonFlyBSD.cs" />
+        <Compile Include="VTOC.cs" />
+        <Compile Include="Human68k.cs" />
+        <Compile Include="Xbox.cs" />
+        <Compile Include="UNIX.cs" />
+        <Compile Include="XENIX.cs" />
+        <Compile Include="Plan9.cs" />
+        <Compile Include="Apricot.cs" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
-        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
-        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
+        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj" />
+        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.LGPL">
@@ -75,7 +75,7 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Spectre.Console" Version="0.43.0"/>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all"/>
+        <PackageReference Include="Spectre.Console" Version="0.45.0" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
     </ItemGroup>
 </Project>

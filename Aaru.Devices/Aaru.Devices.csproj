@@ -115,7 +115,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="System.Management" Version="7.0.0" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
