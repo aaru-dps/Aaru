@@ -385,34 +385,34 @@ sealed class DecodeCommand : Command
                             break;
                     }
 
-        if(sectorTags)
+        if(!sectorTags)
+            return (int)ErrorNumber.NoError;
+
+        if(length.ToLowerInvariant() == "all") {}
+        else
         {
-            if(length.ToLowerInvariant() == "all") {}
-            else
+            if(!ulong.TryParse(length, out ulong _))
             {
-                if(!ulong.TryParse(length, out ulong _))
-                {
-                    AaruConsole.WriteLine("Value \"{0}\" is not a valid number for length.", length);
-                    AaruConsole.WriteLine("Not decoding sectors tags");
+                AaruConsole.WriteLine("Value \"{0}\" is not a valid number for length.", length);
+                AaruConsole.WriteLine("Not decoding sectors tags");
 
-                    return 3;
-                }
+                return 3;
             }
-
-            if(inputFormat.Info.ReadableSectorTags.Count == 0)
-                AaruConsole.WriteLine("There are no sector tags in chosen disc image.");
-            else
-                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
-                    switch(tag)
-                    {
-                        default:
-                            AaruConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.", tag);
-
-                            break;
-                    }
-
-            // TODO: Not implemented
         }
+
+        if(inputFormat.Info.ReadableSectorTags.Count == 0)
+            AaruConsole.WriteLine("There are no sector tags in chosen disc image.");
+        else
+            foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
+                switch(tag)
+                {
+                    default:
+                        AaruConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.", tag);
+
+                        break;
+                }
+
+        // TODO: Not implemented
 
         return (int)ErrorNumber.NoError;
     }

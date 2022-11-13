@@ -1238,15 +1238,15 @@ public class Remote : IDisposable
             Array.Copy(res.ocr, 0, ocr, 0, res.ocr_len);
         }
 
-        if(res.scr_len > 0)
-        {
-            if(res.scr_len > 16)
-                res.scr_len = 16;
+        if(res.scr_len <= 0)
+            return res.isSdhci;
 
-            scr = new byte[res.scr_len];
+        if(res.scr_len > 16)
+            res.scr_len = 16;
 
-            Array.Copy(res.scr, 0, scr, 0, res.scr_len);
-        }
+        scr = new byte[res.scr_len];
+
+        Array.Copy(res.scr, 0, scr, 0, res.scr_len);
 
         return res.isSdhci;
     }
@@ -1576,7 +1576,7 @@ public class Remote : IDisposable
     /// <param name="sense">Set to <c>true</c> if any of the commands returned an error status, <c>false</c> otherwise</param>
     /// <param name="timeout">Maximum allowed time to execute a single command</param>
     /// <returns>0 if no error occurred, otherwise, errno</returns>
-    public int SendMultipleMmcCommands(Device.MmcSingleCommand[] commands, out double duration, out bool sense,
+    public int SendMultipleMmcCommands(Devices.Device.MmcSingleCommand[] commands, out double duration, out bool sense,
                                        uint timeout = 0)
     {
         if(ServerProtocolVersion < 2)
@@ -1588,7 +1588,7 @@ public class Remote : IDisposable
         long packetSize = Marshal.SizeOf<AaruPacketMultiCmdSdhci>() +
                           Marshal.SizeOf<AaruCmdSdhci>() * commands.LongLength;
 
-        foreach(Device.MmcSingleCommand command in commands)
+        foreach(Devices.Device.MmcSingleCommand command in commands)
             packetSize += command.buffer?.Length ?? 0;
 
         var packet = new AaruPacketMultiCmdSdhci
@@ -1630,7 +1630,7 @@ public class Remote : IDisposable
             off += tmp.Length;
         }
 
-        foreach(Device.MmcSingleCommand command in commands.Where(command => (command.buffer?.Length ?? 0) != 0))
+        foreach(Devices.Device.MmcSingleCommand command in commands.Where(command => (command.buffer?.Length ?? 0) != 0))
         {
             Array.Copy(command.buffer, 0, buf, off, command.buffer.Length);
 
@@ -1699,7 +1699,7 @@ public class Remote : IDisposable
 
         var error = 0;
 
-        foreach(Device.MmcSingleCommand command in commands)
+        foreach(Devices.Device.MmcSingleCommand command in commands)
         {
             AaruResSdhci cmdRes =
                 Marshal.ByteArrayToStructureLittleEndian<AaruResSdhci>(buf, off, Marshal.SizeOf<AaruResSdhci>());
@@ -1720,7 +1720,7 @@ public class Remote : IDisposable
             off += Marshal.SizeOf<AaruResSdhci>();
         }
 
-        foreach(Device.MmcSingleCommand command in commands)
+        foreach(Devices.Device.MmcSingleCommand command in commands)
         {
             Array.Copy(buf, off, command.buffer, 0, command.buffer.Length);
             off += command.buffer.Length;
@@ -1738,13 +1738,13 @@ public class Remote : IDisposable
     /// <param name="sense">Set to <c>true</c> if any of the commands returned an error status, <c>false</c> otherwise</param>
     /// <param name="timeout">Maximum allowed time to execute a single command</param>
     /// <returns>0 if no error occurred, otherwise, errno</returns>
-    int SendMultipleMmcCommandsV1(Device.MmcSingleCommand[] commands, out double duration, out bool sense, uint timeout)
+    int SendMultipleMmcCommandsV1(Devices.Device.MmcSingleCommand[] commands, out double duration, out bool sense, uint timeout)
     {
         sense    = false;
         duration = 0;
         var error = 0;
 
-        foreach(Device.MmcSingleCommand command in commands)
+        foreach(Devices.Device.MmcSingleCommand command in commands)
         {
             error = SendMmcCommand(command.command, command.write, command.isApplication, command.flags,
                                    command.argument, command.blockSize, command.blocks, ref command.buffer,

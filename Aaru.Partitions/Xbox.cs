@@ -168,101 +168,101 @@ public sealed class Xbox : IPartition
         {
             errno = imagePlugin.ReadSector((ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize), out sector);
 
-            if(errno == ErrorNumber.NoError)
+            if(errno != ErrorNumber.NoError)
+                return false;
+
+            temp = BitConverter.ToUInt32(sector, 0);
+
+            if(temp != XBOX_CIGAM)
+                return false;
+
+            var securityPart = new Partition
             {
-                temp = BitConverter.ToUInt32(sector, 0);
+                Description = "Security sectors",
+                Size        = XBOX360_SECURITY_SECTOR_LEN,
+                Length      = (ulong)(XBOX360_SECURITY_SECTOR_LEN / imagePlugin.Info.SectorSize),
+                Sequence    = 1,
+                Offset      = XBOX360_SECURITY_SECTOR_OFF,
+                Start       = (ulong)(XBOX360_SECURITY_SECTOR_OFF / imagePlugin.Info.SectorSize),
+                Scheme      = Name
+            };
 
-                if(temp != XBOX_CIGAM)
-                    return false;
+            var sysCachePart = new Partition
+            {
+                Description = "System cache",
+                Size        = XBOX360_SYSTEM_CACHE_LEN,
+                Length      = (ulong)(XBOX360_SYSTEM_CACHE_LEN / imagePlugin.Info.SectorSize),
+                Sequence    = 2,
+                Offset      = XBOX360_SYSTEM_CACHE_OFF,
+                Start       = (ulong)(XBOX360_SYSTEM_CACHE_OFF / imagePlugin.Info.SectorSize),
+                Scheme      = Name
+            };
 
-                var securityPart = new Partition
-                {
-                    Description = "Security sectors",
-                    Size        = XBOX360_SECURITY_SECTOR_LEN,
-                    Length      = (ulong)(XBOX360_SECURITY_SECTOR_LEN / imagePlugin.Info.SectorSize),
-                    Sequence    = 1,
-                    Offset      = XBOX360_SECURITY_SECTOR_OFF,
-                    Start       = (ulong)(XBOX360_SECURITY_SECTOR_OFF / imagePlugin.Info.SectorSize),
-                    Scheme      = Name
-                };
+            var gameCachePart = new Partition
+            {
+                Description = "Game cache",
+                Size        = XBOX360_GAME_CACHE_LEN,
+                Length      = (ulong)(XBOX360_GAME_CACHE_LEN / imagePlugin.Info.SectorSize),
+                Sequence    = 3,
+                Offset      = XBOX360_GAME_CACHE_OFF,
+                Start       = (ulong)(XBOX360_GAME_CACHE_OFF / imagePlugin.Info.SectorSize),
+                Scheme      = Name
+            };
 
-                var sysCachePart = new Partition
-                {
-                    Description = "System cache",
-                    Size        = XBOX360_SYSTEM_CACHE_LEN,
-                    Length      = (ulong)(XBOX360_SYSTEM_CACHE_LEN / imagePlugin.Info.SectorSize),
-                    Sequence    = 2,
-                    Offset      = XBOX360_SYSTEM_CACHE_OFF,
-                    Start       = (ulong)(XBOX360_SYSTEM_CACHE_OFF / imagePlugin.Info.SectorSize),
-                    Scheme      = Name
-                };
+            var sysExtPart = new Partition
+            {
+                Description = "System volume",
+                Size        = XBOX368_SYS_EXT_LEN,
+                Length      = (ulong)(XBOX368_SYS_EXT_LEN / imagePlugin.Info.SectorSize),
+                Sequence    = 4,
+                Offset      = XBOX368_SYS_EXT_OFF,
+                Start       = (ulong)(XBOX368_SYS_EXT_OFF / imagePlugin.Info.SectorSize),
+                Scheme      = Name
+            };
 
-                var gameCachePart = new Partition
-                {
-                    Description = "Game cache",
-                    Size        = XBOX360_GAME_CACHE_LEN,
-                    Length      = (ulong)(XBOX360_GAME_CACHE_LEN / imagePlugin.Info.SectorSize),
-                    Sequence    = 3,
-                    Offset      = XBOX360_GAME_CACHE_OFF,
-                    Start       = (ulong)(XBOX360_GAME_CACHE_OFF / imagePlugin.Info.SectorSize),
-                    Scheme      = Name
-                };
+            var sysExt2Part = new Partition
+            {
+                Description = "System volume 2",
+                Size        = XBOX360_SYS_EXT2_LEN,
+                Length      = (ulong)(XBOX360_SYS_EXT2_LEN / imagePlugin.Info.SectorSize),
+                Sequence    = 5,
+                Offset      = XBOX360_SYS_EXT2_OFF,
+                Start       = (ulong)(XBOX360_SYS_EXT2_OFF / imagePlugin.Info.SectorSize),
+                Scheme      = Name
+            };
 
-                var sysExtPart = new Partition
-                {
-                    Description = "System volume",
-                    Size        = XBOX368_SYS_EXT_LEN,
-                    Length      = (ulong)(XBOX368_SYS_EXT_LEN / imagePlugin.Info.SectorSize),
-                    Sequence    = 4,
-                    Offset      = XBOX368_SYS_EXT_OFF,
-                    Start       = (ulong)(XBOX368_SYS_EXT_OFF / imagePlugin.Info.SectorSize),
-                    Scheme      = Name
-                };
+            var xbox1Part = new Partition
+            {
+                Description = "Xbox backwards compatibility",
+                Size        = XBOX360_COMPAT_LEN,
+                Length      = (ulong)(XBOX360_COMPAT_LEN / imagePlugin.Info.SectorSize),
+                Sequence    = 6,
+                Offset      = XBOX360_COMPAT_OFF,
+                Start       = (ulong)(XBOX360_COMPAT_OFF / imagePlugin.Info.SectorSize),
+                Scheme      = Name
+            };
 
-                var sysExt2Part = new Partition
-                {
-                    Description = "System volume 2",
-                    Size        = XBOX360_SYS_EXT2_LEN,
-                    Length      = (ulong)(XBOX360_SYS_EXT2_LEN / imagePlugin.Info.SectorSize),
-                    Sequence    = 5,
-                    Offset      = XBOX360_SYS_EXT2_OFF,
-                    Start       = (ulong)(XBOX360_SYS_EXT2_OFF / imagePlugin.Info.SectorSize),
-                    Scheme      = Name
-                };
+            var dataPart = new Partition
+            {
+                Description = "Data volume",
+                Sequence    = 7,
+                Offset      = XBOX_360DATA_OFF,
+                Start       = (ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize),
+                Scheme      = Name
+            };
 
-                var xbox1Part = new Partition
-                {
-                    Description = "Xbox backwards compatibility",
-                    Size        = XBOX360_COMPAT_LEN,
-                    Length      = (ulong)(XBOX360_COMPAT_LEN / imagePlugin.Info.SectorSize),
-                    Sequence    = 6,
-                    Offset      = XBOX360_COMPAT_OFF,
-                    Start       = (ulong)(XBOX360_COMPAT_OFF / imagePlugin.Info.SectorSize),
-                    Scheme      = Name
-                };
+            dataPart.Length = imagePlugin.Info.Sectors - dataPart.Start;
+            dataPart.Size   = dataPart.Length * imagePlugin.Info.SectorSize;
 
-                var dataPart = new Partition
-                {
-                    Description = "Data volume",
-                    Sequence    = 7,
-                    Offset      = XBOX_360DATA_OFF,
-                    Start       = (ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize),
-                    Scheme      = Name
-                };
+            partitions.Add(securityPart);
+            partitions.Add(sysCachePart);
+            partitions.Add(gameCachePart);
+            partitions.Add(sysExtPart);
+            partitions.Add(sysExt2Part);
+            partitions.Add(xbox1Part);
+            partitions.Add(dataPart);
 
-                dataPart.Length = imagePlugin.Info.Sectors - dataPart.Start;
-                dataPart.Size   = dataPart.Length * imagePlugin.Info.SectorSize;
-
-                partitions.Add(securityPart);
-                partitions.Add(sysCachePart);
-                partitions.Add(gameCachePart);
-                partitions.Add(sysExtPart);
-                partitions.Add(sysExt2Part);
-                partitions.Add(xbox1Part);
-                partitions.Add(dataPart);
-
-                return true;
-            }
+            return true;
         }
 
         return false;

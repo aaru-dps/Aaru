@@ -83,12 +83,12 @@ public sealed partial class Gdi
 
                 if(lineNumber == 1)
                 {
-                    if(!int.TryParse(line, out _))
-                    {
-                        AaruConsole.ErrorWriteLine("Not a correct Dreamcast GDI image");
+                    if(int.TryParse(line, out _))
+                        continue;
 
-                        return ErrorNumber.InvalidArgument;
-                    }
+                    AaruConsole.ErrorWriteLine("Not a correct Dreamcast GDI image");
+
+                    return ErrorNumber.InvalidArgument;
                 }
                 else
                 {

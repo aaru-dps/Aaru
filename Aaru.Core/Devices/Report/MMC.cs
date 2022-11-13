@@ -2022,83 +2022,83 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask("Trying MediaTek READ DRAM command for Lead-Out...").IsIndeterminate();
 
-                if(mediaTest.Blocks > 0)
+                if(!(mediaTest.Blocks > 0))
+                    return;
+
+                if(mediaType                == "Audio CD" &&
+                   mediaTest.SupportsReadCd == true)
                 {
-                    if(mediaType                == "Audio CD" &&
-                       mediaTest.SupportsReadCd == true)
-                    {
-                        _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.Cdda, false,
-                                    false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                    MmcSubchannel.None, _dev.Timeout, out _);
+                    _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.Cdda, false, false,
+                                false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
+                                _dev.Timeout, out _);
 
-                        triedLeadOut = true;
-                    }
-                    else if((mediaType.StartsWith("CD", StringComparison.OrdinalIgnoreCase) ||
-                             mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)") &&
-                            mediaTest.SupportsReadCdRaw == true)
-                    {
-                        _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.AllTypes, false,
-                                    false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                    MmcSubchannel.None, _dev.Timeout, out _);
-
-                        triedLeadOut = true;
-                    }
-                    else if((mediaType.StartsWith("CD", StringComparison.OrdinalIgnoreCase) ||
-                             mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)") &&
-                            mediaTest.SupportsReadCd == true)
-                    {
-                        _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2048, 1, MmcSectorTypes.AllTypes, false,
-                                    false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                    MmcSubchannel.None, _dev.Timeout, out _);
-
-                        triedLeadOut = true;
-                    }
-                    else if(mediaTest.SupportsRead6 == true)
-                    {
-                        _dev.Read6(out _, out _, (uint)(mediaTest.Blocks + 1), 2048, _dev.Timeout, out _);
-                        triedLeadOut = true;
-                    }
-                    else if(mediaTest.SupportsRead10 == true)
-                    {
-                        _dev.Read10(out _, out _, 0, false, true, false, false, (uint)(mediaTest.Blocks + 1), 2048, 0,
-                                    1, _dev.Timeout, out _);
-
-                        triedLeadOut = true;
-                    }
-                    else if(mediaTest.SupportsRead12 == true)
-                    {
-                        _dev.Read12(out _, out _, 0, false, true, false, false, (uint)(mediaTest.Blocks + 1), 2048, 0,
-                                    1, false, _dev.Timeout, out _);
-
-                        triedLeadOut = true;
-                    }
-                    else if(mediaTest.SupportsRead16 == true)
-                    {
-                        _dev.Read16(out _, out _, 0, false, true, false, (ulong)(mediaTest.Blocks + 1), 2048, 0, 1,
-                                    false, _dev.Timeout, out _);
-
-                        triedLeadOut = true;
-                    }
-
-                    if(triedLeadOut)
-                    {
-                        mediaTest.CanReadF1_06LeadOut =
-                            !_dev.MediaTekReadDram(out buffer, out senseBuffer, 0, 0xB00, _dev.Timeout, out _);
-
-                        mediaTest.ReadF1_06LeadOutData = mediaTest.CanReadF1_06LeadOut == true ? buffer : senseBuffer;
-
-                        // This means it has returned the same as previous read, so not really lead-out.
-                        if(mediaTest.CanReadF1_06        == true &&
-                           mediaTest.CanReadF1_06LeadOut == true &&
-                           mediaTest.ReadF1_06Data.SequenceEqual(mediaTest.ReadF1_06LeadOutData))
-                        {
-                            mediaTest.CanReadF1_06LeadOut  = false;
-                            mediaTest.ReadF1_06LeadOutData = senseBuffer;
-                        }
-
-                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadF1_06LeadOut);
-                    }
+                    triedLeadOut = true;
                 }
+                else if((mediaType.StartsWith("CD", StringComparison.OrdinalIgnoreCase) ||
+                         mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)") &&
+                        mediaTest.SupportsReadCdRaw == true)
+                {
+                    _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.AllTypes, false,
+                                false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                MmcSubchannel.None, _dev.Timeout, out _);
+
+                    triedLeadOut = true;
+                }
+                else if((mediaType.StartsWith("CD", StringComparison.OrdinalIgnoreCase) ||
+                         mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)") &&
+                        mediaTest.SupportsReadCd == true)
+                {
+                    _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2048, 1, MmcSectorTypes.AllTypes, false,
+                                false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
+                                _dev.Timeout, out _);
+
+                    triedLeadOut = true;
+                }
+                else if(mediaTest.SupportsRead6 == true)
+                {
+                    _dev.Read6(out _, out _, (uint)(mediaTest.Blocks + 1), 2048, _dev.Timeout, out _);
+                    triedLeadOut = true;
+                }
+                else if(mediaTest.SupportsRead10 == true)
+                {
+                    _dev.Read10(out _, out _, 0, false, true, false, false, (uint)(mediaTest.Blocks + 1), 2048, 0, 1,
+                                _dev.Timeout, out _);
+
+                    triedLeadOut = true;
+                }
+                else if(mediaTest.SupportsRead12 == true)
+                {
+                    _dev.Read12(out _, out _, 0, false, true, false, false, (uint)(mediaTest.Blocks + 1), 2048, 0, 1,
+                                false, _dev.Timeout, out _);
+
+                    triedLeadOut = true;
+                }
+                else if(mediaTest.SupportsRead16 == true)
+                {
+                    _dev.Read16(out _, out _, 0, false, true, false, (ulong)(mediaTest.Blocks + 1), 2048, 0, 1, false,
+                                _dev.Timeout, out _);
+
+                    triedLeadOut = true;
+                }
+
+                if(!triedLeadOut)
+                    return;
+
+                mediaTest.CanReadF1_06LeadOut =
+                    !_dev.MediaTekReadDram(out buffer, out senseBuffer, 0, 0xB00, _dev.Timeout, out _);
+
+                mediaTest.ReadF1_06LeadOutData = mediaTest.CanReadF1_06LeadOut == true ? buffer : senseBuffer;
+
+                // This means it has returned the same as previous read, so not really lead-out.
+                if(mediaTest.CanReadF1_06        == true &&
+                   mediaTest.CanReadF1_06LeadOut == true &&
+                   mediaTest.ReadF1_06Data.SequenceEqual(mediaTest.ReadF1_06LeadOutData))
+                {
+                    mediaTest.CanReadF1_06LeadOut  = false;
+                    mediaTest.ReadF1_06LeadOutData = senseBuffer;
+                }
+
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadF1_06LeadOut);
             });
         }
 
@@ -2177,25 +2177,23 @@ public sealed partial class DeviceReport
                                                                                false, MmcErrorField.None,
                                                                                MmcSubchannel.Raw, _dev.Timeout, out _);
 
+                        if(mediaTest.CanReadingIntersessionLeadOut != false)
+                            return;
+
+                        mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
+                                                                               firstSessionLeadOutLba, 2368, 1,
+                                                                               MmcSectorTypes.AllTypes, false, false,
+                                                                               false, MmcHeaderCodes.AllHeaders, true,
+                                                                               false, MmcErrorField.None,
+                                                                               MmcSubchannel.Q16, _dev.Timeout, out _);
+
                         if(mediaTest.CanReadingIntersessionLeadOut == false)
-                        {
                             mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                          firstSessionLeadOutLba, 2368, 1,
+                                                                          firstSessionLeadOutLba, 2352, 1,
                                                                           MmcSectorTypes.AllTypes, false, false,
                                                                           false, MmcHeaderCodes.AllHeaders, true,
                                                                           false, MmcErrorField.None,
-                                                                          MmcSubchannel.Q16, _dev.Timeout, out _);
-
-                            if(mediaTest.CanReadingIntersessionLeadOut == false)
-                                mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                              firstSessionLeadOutLba, 2352, 1,
-                                                                              MmcSectorTypes.AllTypes, false,
-                                                                              false, false,
-                                                                              MmcHeaderCodes.AllHeaders, true,
-                                                                              false, MmcErrorField.None,
-                                                                              MmcSubchannel.None, _dev.Timeout,
-                                                                              out _);
-                        }
+                                                                          MmcSubchannel.None, _dev.Timeout, out _);
                     });
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadingIntersessionLeadOut);
@@ -2213,24 +2211,23 @@ public sealed partial class DeviceReport
                                                                               false, MmcErrorField.None,
                                                                               MmcSubchannel.Raw, _dev.Timeout, out _);
 
+                        if(mediaTest.CanReadingIntersessionLeadIn != false)
+                            return;
+
+                        mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
+                                                                              secondSessionLeadInLba, 2368, 1,
+                                                                              MmcSectorTypes.AllTypes, false, false,
+                                                                              false, MmcHeaderCodes.AllHeaders, true,
+                                                                              false, MmcErrorField.None,
+                                                                              MmcSubchannel.Q16, _dev.Timeout, out _);
+
                         if(mediaTest.CanReadingIntersessionLeadIn == false)
-                        {
                             mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                         secondSessionLeadInLba, 2368, 1,
+                                                                         secondSessionLeadInLba, 2352, 1,
                                                                          MmcSectorTypes.AllTypes, false, false,
                                                                          false, MmcHeaderCodes.AllHeaders, true,
                                                                          false, MmcErrorField.None,
-                                                                         MmcSubchannel.Q16, _dev.Timeout, out _);
-
-                            if(mediaTest.CanReadingIntersessionLeadIn == false)
-                                mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                             secondSessionLeadInLba, 2352, 1,
-                                                                             MmcSectorTypes.AllTypes, false, false,
-                                                                             false, MmcHeaderCodes.AllHeaders,
-                                                                             true, false, MmcErrorField.None,
-                                                                             MmcSubchannel.None, _dev.Timeout,
-                                                                             out _);
-                        }
+                                                                         MmcSubchannel.None, _dev.Timeout, out _);
                     });
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadingIntersessionLeadIn);

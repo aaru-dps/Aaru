@@ -2222,18 +2222,18 @@ public static class MMC
                                 break;
                             }
 
-                            if(line.StartsWith("BOOT2=cdrom0:", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                ps2BootFile = line.Substring(13);
+                            if(!line.StartsWith("BOOT2=cdrom0:", StringComparison.InvariantCultureIgnoreCase))
+                                continue;
 
-                                if(ps2BootFile.StartsWith('\\'))
-                                    ps2BootFile = ps2BootFile.Substring(1);
+                            ps2BootFile = line.Substring(13);
 
-                                if(ps2BootFile.EndsWith(";1", StringComparison.InvariantCultureIgnoreCase))
-                                    ps2BootFile = ps2BootFile.Substring(0, ps2BootFile.Length - 2);
+                            if(ps2BootFile.StartsWith('\\'))
+                                ps2BootFile = ps2BootFile.Substring(1);
 
-                                break;
-                            }
+                            if(ps2BootFile.EndsWith(";1", StringComparison.InvariantCultureIgnoreCase))
+                                ps2BootFile = ps2BootFile.Substring(0, ps2BootFile.Length - 2);
+
+                            break;
                         }
 
                         if(ps1BootFile != null &&

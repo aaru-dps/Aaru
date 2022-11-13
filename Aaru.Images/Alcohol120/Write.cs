@@ -563,11 +563,11 @@ public sealed partial class Alcohol120
 
                 extraCount += _writingTracks.Count(t => t.Session == i);
 
-                if(i < sessions)
-                {
-                    currentExtraOffset += Marshal.SizeOf<Track>() * 2;
-                    extraCount         += 2;
-                }
+                if(i >= sessions)
+                    continue;
+
+                currentExtraOffset += Marshal.SizeOf<Track>() * 2;
+                extraCount         += 2;
             }
 
         long footerOffset = currentExtraOffset + Marshal.SizeOf<TrackExtra>() * extraCount;

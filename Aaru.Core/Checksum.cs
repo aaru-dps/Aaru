@@ -842,16 +842,16 @@ public sealed class Checksum
             dataChecksums.Add(chk);
         }
 
-        if(enabled.HasFlag(EnableChecksum.Fletcher32))
-        {
-            chk = new ChecksumType
-            {
-                type  = ChecksumTypeType.fletcher32,
-                Value = f32CtxData.End()
-            };
+        if(!enabled.HasFlag(EnableChecksum.Fletcher32))
+            return dataChecksums;
 
-            dataChecksums.Add(chk);
-        }
+        chk = new ChecksumType
+        {
+            type  = ChecksumTypeType.fletcher32,
+            Value = f32CtxData.End()
+        };
+
+        dataChecksums.Add(chk);
 
         return dataChecksums;
     }

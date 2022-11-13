@@ -128,62 +128,62 @@ partial class Dump
                         bool tmpSense = dvdDecrypt.ReadTitleKey(out tmpBuf, out _, DvdCssKeyClass.DvdCssCppmOrCprm,
                                                                 i + j, _dev.Timeout, out _);
 
-                        if(!tmpSense)
+                        if(tmpSense)
+                            continue;
+
+                        CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(tmpBuf, dvdDecrypt.BusKey);
+
+                        if(titleKey.HasValue)
+                            outputFormat.WriteSectorTag(new[]
+                            {
+                                titleKey.Value.CMI
+                            }, i + j, SectorTagType.DvdCmi);
+                        else
+                            continue;
+
+                        // If the CMI bit is 1, the sector is using copy protection, else it is not
+                        if((titleKey.Value.CMI & 0x80) >> 7 == 0)
                         {
-                            CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(tmpBuf, dvdDecrypt.BusKey);
-
-                            if(titleKey.HasValue)
-                                outputFormat.WriteSectorTag(new[]
-                                {
-                                    titleKey.Value.CMI
-                                }, i + j, SectorTagType.DvdCmi);
-                            else
-                                continue;
-
-                            // If the CMI bit is 1, the sector is using copy protection, else it is not
-                            if((titleKey.Value.CMI & 0x80) >> 7 == 0)
+                            // The CMI indicates this sector is not encrypted.
+                            outputFormat.WriteSectorTag(new byte[]
                             {
-                                // The CMI indicates this sector is not encrypted.
-                                outputFormat.WriteSectorTag(new byte[]
-                                {
-                                    0, 0, 0, 0, 0
-                                }, i + j, SectorTagType.DvdTitleKey);
+                                0, 0, 0, 0, 0
+                            }, i + j, SectorTagType.DvdTitleKey);
 
-                                outputFormat.WriteSectorTag(new byte[]
-                                {
-                                    0, 0, 0, 0, 0
-                                }, i + j, SectorTagType.DvdTitleKeyDecrypted);
-
-                                _resume.MissingTitleKeys.Remove(i + j);
-
-                                continue;
-                            }
-
-                            // According to libdvdcss, if the key is all zeroes, the sector is actually
-                            // not encrypted even if the CMI says it is.
-                            if(titleKey.Value.Key.All(k => k == 0))
+                            outputFormat.WriteSectorTag(new byte[]
                             {
-                                outputFormat.WriteSectorTag(new byte[]
-                                {
-                                    0, 0, 0, 0, 0
-                                }, i + j, SectorTagType.DvdTitleKey);
+                                0, 0, 0, 0, 0
+                            }, i + j, SectorTagType.DvdTitleKeyDecrypted);
 
-                                outputFormat.WriteSectorTag(new byte[]
-                                {
-                                    0, 0, 0, 0, 0
-                                }, i + j, SectorTagType.DvdTitleKeyDecrypted);
+                            _resume.MissingTitleKeys.Remove(i + j);
 
-                                _resume.MissingTitleKeys.Remove(i + j);
-
-                                continue;
-                            }
-
-                            outputFormat.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdTitleKey);
-                            _resume.MissingTitleKeys.Remove(i                 + j);
-
-                            CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out tmpBuf);
-                            outputFormat.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
+                            continue;
                         }
+
+                        // According to libdvdcss, if the key is all zeroes, the sector is actually
+                        // not encrypted even if the CMI says it is.
+                        if(titleKey.Value.Key.All(k => k == 0))
+                        {
+                            outputFormat.WriteSectorTag(new byte[]
+                            {
+                                0, 0, 0, 0, 0
+                            }, i + j, SectorTagType.DvdTitleKey);
+
+                            outputFormat.WriteSectorTag(new byte[]
+                            {
+                                0, 0, 0, 0, 0
+                            }, i + j, SectorTagType.DvdTitleKeyDecrypted);
+
+                            _resume.MissingTitleKeys.Remove(i + j);
+
+                            continue;
+                        }
+
+                        outputFormat.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdTitleKey);
+                        _resume.MissingTitleKeys.Remove(i                 + j);
+
+                        CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out tmpBuf);
+                        outputFormat.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
                     }
 
                     if(!_storeEncrypted)

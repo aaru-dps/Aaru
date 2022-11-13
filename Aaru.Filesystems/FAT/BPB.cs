@@ -785,28 +785,27 @@ public sealed partial class FAT
             return BpbKind.Atari;
         }
 
-        if(useApricotBpb)
-        {
-            fakeBpb.bps      = apricotBpb.mainBPB.bps;
-            fakeBpb.spc      = apricotBpb.mainBPB.spc;
-            fakeBpb.rsectors = apricotBpb.mainBPB.rsectors;
-            fakeBpb.fats_no  = apricotBpb.mainBPB.fats_no;
-            fakeBpb.root_ent = apricotBpb.mainBPB.root_ent;
-            fakeBpb.sectors  = apricotBpb.mainBPB.sectors;
-            fakeBpb.media    = apricotBpb.mainBPB.media;
-            fakeBpb.spfat    = apricotBpb.mainBPB.spfat;
-            fakeBpb.sptrk    = apricotBpb.spt;
-            bootable         = apricotBpb.bootType > 0;
+        if(!useApricotBpb)
+            return BpbKind.None;
 
-            if(apricotBpb.bootLocation                       > 0 &&
-               apricotBpb.bootLocation + apricotBpb.bootSize < imagePlugin.Info.Sectors)
-                imagePlugin.ReadSectors(apricotBpb.bootLocation,
-                                        (uint)(apricotBpb.sectorSize * apricotBpb.bootSize) /
-                                        imagePlugin.Info.SectorSize, out fakeBpb.boot_code);
+        fakeBpb.bps      = apricotBpb.mainBPB.bps;
+        fakeBpb.spc      = apricotBpb.mainBPB.spc;
+        fakeBpb.rsectors = apricotBpb.mainBPB.rsectors;
+        fakeBpb.fats_no  = apricotBpb.mainBPB.fats_no;
+        fakeBpb.root_ent = apricotBpb.mainBPB.root_ent;
+        fakeBpb.sectors  = apricotBpb.mainBPB.sectors;
+        fakeBpb.media    = apricotBpb.mainBPB.media;
+        fakeBpb.spfat    = apricotBpb.mainBPB.spfat;
+        fakeBpb.sptrk    = apricotBpb.spt;
+        bootable         = apricotBpb.bootType > 0;
 
-            return BpbKind.Apricot;
-        }
+        if(apricotBpb.bootLocation                       > 0 &&
+           apricotBpb.bootLocation + apricotBpb.bootSize < imagePlugin.Info.Sectors)
+            imagePlugin.ReadSectors(apricotBpb.bootLocation,
+                                    (uint)(apricotBpb.sectorSize * apricotBpb.bootSize) / imagePlugin.Info.SectorSize,
+                                    out fakeBpb.boot_code);
 
-        return BpbKind.None;
+        return BpbKind.Apricot;
+
     }
 }

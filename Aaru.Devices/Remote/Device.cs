@@ -216,11 +216,11 @@ public sealed partial class Device : Devices.Device
         }
         #endregion FireWire
         #region PCMCIA
-        if(dev._remote.GetPcmciaData(out byte[] cisBuf))
-        {
-            dev.IsPcmcia = true;
-            dev.Cis      = cisBuf;
-        }
+        if(!dev._remote.GetPcmciaData(out byte[] cisBuf))
+            return dev;
+
+        dev.IsPcmcia = true;
+        dev.Cis      = cisBuf;
         #endregion PCMCIA
 
         return dev;

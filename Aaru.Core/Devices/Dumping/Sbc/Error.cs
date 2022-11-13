@@ -89,7 +89,7 @@ partial class Dump
 
                     if(dcMode10?.Pages != null)
                         foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                                                                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
                             currentModePage = modePage;
                 }
             }
@@ -99,7 +99,7 @@ partial class Dump
 
                 if(dcMode6?.Pages != null)
                     foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage => modePage.Page == 0x01 &&
-                                modePage.Subpage                                                           == 0x00))
+                                                                               modePage.Subpage                                                           == 0x00))
                         currentModePage = modePage;
             }
 
@@ -347,52 +347,51 @@ partial class Dump
 
             totalDuration += cmdDuration;
 
-            if(!sense &&
-               !_dev.Error)
+            if(sense || _dev.Error)
+                continue;
+
+            CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(buffer, dvdDecrypt.BusKey);
+
+            if(!titleKey.HasValue)
+                continue;
+
+            outputFormat.WriteSectorTag(new[]
             {
-                CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(buffer, dvdDecrypt.BusKey);
+                titleKey.Value.CMI
+            }, missingKey, SectorTagType.DvdCmi);
 
-                if(titleKey.HasValue)
+            // If the CMI bit is 1, the sector is using copy protection, else it is not
+            // If the decoded title key is zeroed, there should be no copy protection
+            if((titleKey.Value.CMI & 0x80) >> 7 == 0 ||
+               titleKey.Value.Key.All(k => k == 0))
+            {
+                outputFormat.WriteSectorTag(new byte[]
                 {
-                    outputFormat.WriteSectorTag(new[]
-                    {
-                        titleKey.Value.CMI
-                    }, missingKey, SectorTagType.DvdCmi);
+                    0, 0, 0, 0, 0
+                }, missingKey, SectorTagType.DvdTitleKey);
 
-                    // If the CMI bit is 1, the sector is using copy protection, else it is not
-                    // If the decoded title key is zeroed, there should be no copy protection
-                    if((titleKey.Value.CMI & 0x80) >> 7 == 0 ||
-                       titleKey.Value.Key.All(k => k == 0))
-                    {
-                        outputFormat.WriteSectorTag(new byte[]
-                        {
-                            0, 0, 0, 0, 0
-                        }, missingKey, SectorTagType.DvdTitleKey);
+                outputFormat.WriteSectorTag(new byte[]
+                {
+                    0, 0, 0, 0, 0
+                }, missingKey, SectorTagType.DvdTitleKeyDecrypted);
 
-                        outputFormat.WriteSectorTag(new byte[]
-                        {
-                            0, 0, 0, 0, 0
-                        }, missingKey, SectorTagType.DvdTitleKeyDecrypted);
+                _resume.MissingTitleKeys.Remove(missingKey);
+                UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
+                _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
+            }
+            else
+            {
+                outputFormat.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdTitleKey);
+                _resume.MissingTitleKeys.Remove(missingKey);
 
-                        _resume.MissingTitleKeys.Remove(missingKey);
-                        UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
-                        _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
-                    }
-                    else
-                    {
-                        outputFormat.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdTitleKey);
-                        _resume.MissingTitleKeys.Remove(missingKey);
-
-                        if(discKey != null)
-                        {
-                            CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out buffer);
-                            outputFormat.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
-                        }
-
-                        UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
-                        _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
-                    }
+                if(discKey != null)
+                {
+                    CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out buffer);
+                    outputFormat.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
                 }
+
+                UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
+                _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
             }
         }
 

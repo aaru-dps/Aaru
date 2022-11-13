@@ -454,11 +454,11 @@ public sealed class BlockMap : ItemsControl
             ctx.FillRectangle(new SolidColorBrush(color), new Rect(x, y, squareWidth, squareHeight));
             x += squareWidth + 2 * borderWidth;
 
-            if(x >= sideLength)
-            {
-                x =  0;
-                y += squareHeight + 2 * borderWidth;
-            }
+            if(x < sideLength)
+                continue;
+
+            x =  0;
+            y += squareHeight + 2 * borderWidth;
         }
     }
 

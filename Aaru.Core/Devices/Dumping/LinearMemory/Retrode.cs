@@ -179,12 +179,12 @@ public partial class Dump
                 break;
             }
 
-            if(tmp.SequenceEqual(_gbaExtension))
-            {
-                gbaFound = true;
+            if(!tmp.SequenceEqual(_gbaExtension))
+                continue;
 
-                break;
-            }
+            gbaFound = true;
+
+            break;
         }
 
         if(!sfcFound     &&

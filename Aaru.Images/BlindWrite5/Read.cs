@@ -1302,14 +1302,16 @@ public sealed partial class BlindWrite5
 
         AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", _imageInfo.MediaType);
 
-        if(_header.profile != ProfileNumber.CDR  &&
-           _header.profile != ProfileNumber.CDRW &&
-           _header.profile != ProfileNumber.CDROM)
-            foreach(Track track in Tracks)
-            {
-                track.Pregap = 0;
-                track.Indexes?.Clear();
-            }
+        if(_header.profile == ProfileNumber.CDR  ||
+           _header.profile == ProfileNumber.CDRW ||
+           _header.profile == ProfileNumber.CDROM)
+            return ErrorNumber.NoError;
+
+        foreach(Track track in Tracks)
+        {
+            track.Pregap = 0;
+            track.Indexes?.Clear();
+        }
 
         return ErrorNumber.NoError;
     }
