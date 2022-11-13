@@ -473,17 +473,18 @@ public struct Inquiry
                 decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + i * 2);
         }
 
-        if(SCSIInquiryResponse.Length >= 75 &&
-           SCSIInquiryResponse.Length < 96)
+        switch(SCSIInquiryResponse.Length)
         {
-            decoded.Reserved5 = new byte[SCSIInquiryResponse.Length - 74];
-            Array.Copy(SCSIInquiryResponse, 74, decoded.Reserved5, 0, SCSIInquiryResponse.Length - 74);
-        }
+            case >= 75 and < 96:
+                decoded.Reserved5 = new byte[SCSIInquiryResponse.Length - 74];
+                Array.Copy(SCSIInquiryResponse, 74, decoded.Reserved5, 0, SCSIInquiryResponse.Length - 74);
 
-        if(SCSIInquiryResponse.Length >= 96)
-        {
-            decoded.Reserved5 = new byte[22];
-            Array.Copy(SCSIInquiryResponse, 74, decoded.Reserved5, 0, 22);
+                break;
+            case >= 96:
+                decoded.Reserved5 = new byte[22];
+                Array.Copy(SCSIInquiryResponse, 74, decoded.Reserved5, 0, 22);
+
+                break;
         }
 
         if(SCSIInquiryResponse.Length > 96)
