@@ -249,21 +249,16 @@ public static class Marshal
                  properties))
             return ByteArrayToStructureLittleEndian<T>(bytes);
 
-        switch(properties.Endian)
-        {
-            case BitEndian.Little:
-                return properties.HasReferences ? ByteArrayToStructureLittleEndian<T>(bytes)
-                           : SpanToStructureLittleEndian<T>(bytes);
-
-            case BitEndian.Big:
-                return properties.HasReferences ? ByteArrayToStructureBigEndian<T>(bytes)
-                           : SpanToStructureBigEndian<T>(bytes);
-
-            case BitEndian.Pdp:
-                return properties.HasReferences ? ByteArrayToStructurePdpEndian<T>(bytes)
-                           : SpanToStructurePdpEndian<T>(bytes);
-            default: throw new ArgumentOutOfRangeException();
-        }
+        return properties.Endian switch
+               {
+                   BitEndian.Little => properties.HasReferences ? ByteArrayToStructureLittleEndian<T>(bytes)
+                                           : SpanToStructureLittleEndian<T>(bytes),
+                   BitEndian.Big => properties.HasReferences ? ByteArrayToStructureBigEndian<T>(bytes)
+                                        : SpanToStructureBigEndian<T>(bytes),
+                   BitEndian.Pdp => properties.HasReferences ? ByteArrayToStructurePdpEndian<T>(bytes)
+                                        : SpanToStructurePdpEndian<T>(bytes),
+                   _ => throw new ArgumentOutOfRangeException()
+               };
     }
 
     /// <summary>Swaps all members of a structure</summary>
