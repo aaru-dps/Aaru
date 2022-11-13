@@ -62,11 +62,17 @@ public static class PrintHex
         int offsetLength = $"{array.Length:X}".Length;
         var sb           = new StringBuilder();
 
-        if(last > 0)
-            rows++;
+        switch(last)
+        {
+            case > 0:
+                rows++;
 
-        if(last == 0)
-            last = width;
+                break;
+            case 0:
+                last = width;
+
+                break;
+        }
 
         if(offsetLength < str.Length)
             offsetLength = str.Length;

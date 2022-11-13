@@ -299,11 +299,15 @@ public static class DateHandlers
         else
             offset = (short)(preOffset & 0x7FF);
 
-        if(offset == -2047)
-            return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified).AddTicks(ticks);
+        switch(offset)
+        {
+            case -2047:
+                return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified).AddTicks(ticks);
+            case < -1440 or > 1440:
+                offset = 0;
 
-        if(offset is < -1440 or > 1440)
-            offset = 0;
+                break;
+        }
 
         return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0)).AddTicks(ticks).
             DateTime;
