@@ -38,22 +38,22 @@
         <NrtShowRevision>true</NrtShowRevision>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="ArrayFill.cs"/>
-        <Compile Include="BigEndianBitConverter.cs"/>
-        <Compile Include="BitEndian.cs"/>
-        <Compile Include="DateHandlers.cs"/>
-        <Compile Include="Marshal.cs"/>
-        <Compile Include="MarshallingPropertiesAttribute.cs"/>
-        <Compile Include="PrintHex.cs"/>
-        <Compile Include="StringHandlers.cs"/>
-        <Compile Include="Swapping.cs"/>
-        <Compile Include="ArrayIsEmpty.cs"/>
-        <Compile Include="CompareBytes.cs"/>
-        <Compile Include="CountBits.cs"/>
-        <Compile Include="CHS.cs"/>
+        <Compile Include="ArrayFill.cs" />
+        <Compile Include="BigEndianBitConverter.cs" />
+        <Compile Include="BitEndian.cs" />
+        <Compile Include="DateHandlers.cs" />
+        <Compile Include="Marshal.cs" />
+        <Compile Include="MarshallingPropertiesAttribute.cs" />
+        <Compile Include="PrintHex.cs" />
+        <Compile Include="StringHandlers.cs" />
+        <Compile Include="Swapping.cs" />
+        <Compile Include="ArrayIsEmpty.cs" />
+        <Compile Include="CompareBytes.cs" />
+        <Compile Include="CountBits.cs" />
+        <Compile Include="CHS.cs" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.LGPL">
@@ -61,7 +61,7 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="System.Memory" Version="4.5.4"/>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all"/>
+        <PackageReference Include="System.Memory" Version="4.5.5" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all" />
     </ItemGroup>
 </Project>
