@@ -18,7 +18,7 @@
         <Title>Aaru.Dto</Title>
         <ApplicationVersion>$(Version)</ApplicationVersion>
         <TargetFramework>net7.0</TargetFramework>
-        <LangVersion>10</LangVersion>
+        <LangVersion>11</LangVersion>
         <Description>Data transfer objects used to interchange data between Aaru and Aaru.Server.</Description>
         <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
         <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
