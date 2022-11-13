@@ -20,6 +20,7 @@
         <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
         <LangVersion>11</LangVersion>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     </PropertyGroup>
     <PropertyGroup>
         <NrtRevisionFormat>$(Version)+{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>

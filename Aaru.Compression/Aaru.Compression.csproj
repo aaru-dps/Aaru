@@ -30,6 +30,7 @@
         <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <NoWarn>CS1591;CS1574</NoWarn>

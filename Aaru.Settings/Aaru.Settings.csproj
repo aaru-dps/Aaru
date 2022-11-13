@@ -28,6 +28,7 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     </PropertyGroup>
     <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
         <InternalsVisibleTo Include="Aaru.Tests"/>
