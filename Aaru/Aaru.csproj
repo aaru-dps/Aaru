@@ -16,7 +16,7 @@
         <Product>Aaru Data Preservation Suite</Product>
         <Title>Aaru</Title>
         <ApplicationVersion>$(Version)</ApplicationVersion>
-        <RuntimeIdentifiers>alpine-x64;linux-arm64;linux-arm;linux-x64;osx-x64;win-arm64;win-arm;win-x64;win-x86;debian-arm;debian-arm64;debian-x64;rhel-arm64;rhel-x64;sles-x64</RuntimeIdentifiers>
+        <RuntimeIdentifiers>alpine-x64;linux-arm64;linux-arm;linux-x64;osx-x64;osx-arm64;win-arm64;win-arm;win-x64;win-x86;debian-arm;debian-arm64;debian-x64;rhel-arm64;rhel-x64;sles-x64</RuntimeIdentifiers>
         <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
         <LangVersion>11</LangVersion>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
@@ -182,6 +182,10 @@
 
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
         <PackageName>$(PackagePrefix)-$(PackageVersion)_macos$(DebugPackage)</PackageName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">
+        <PackageName>$(PackagePrefix)-$(PackageVersion)_macos_applesilicon$(DebugPackage)</PackageName>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
