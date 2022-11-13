@@ -292,10 +292,9 @@ public sealed class UDF : IFilesystem
 
         ulong count = 0;
 
-        var                              pvd = new PrimaryVolumeDescriptor();
-        var                              lvd = new LogicalVolumeDescriptor();
-        LogicalVolumeIntegrityDescriptor lvid;
-        var                              lvidiu = new LogicalVolumeIntegrityDescriptorImplementationUse();
+        var pvd    = new PrimaryVolumeDescriptor();
+        var lvd    = new LogicalVolumeDescriptor();
+        var lvidiu = new LogicalVolumeIntegrityDescriptorImplementationUse();
 
         while(count < 256)
         {
@@ -338,7 +337,8 @@ public sealed class UDF : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        lvid = Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptor>(sector);
+        LogicalVolumeIntegrityDescriptor lvid =
+            Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptor>(sector);
 
         if(lvid.tag.tagIdentifier == TagIdentifier.LogicalVolumeIntegrityDescriptor &&
            lvid.tag.tagLocation   == lvd.integritySequenceExtent.location)

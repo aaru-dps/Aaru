@@ -76,8 +76,6 @@ public static class ImageInfo
     /// <param name="imageFormat">Media image</param>
     public static void PrintImageInfo(IBaseImage imageFormat)
     {
-        Table table;
-
         AaruConsole.WriteLine("[bold]Image information:[/]");
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Version))
@@ -247,7 +245,7 @@ public static class ImageInfo
             }
         }
 
-        table = new Table
+        var table = new Table
         {
             Title = new TableTitle("Dump hardware information")
         };

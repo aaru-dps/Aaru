@@ -432,14 +432,13 @@ public sealed partial class FAT
     {
         Encoding    = encoding ?? Encoding.GetEncoding("IBM437");
         information = "";
-        ErrorNumber errno;
 
         var sb = new StringBuilder();
         XmlFsType = new FileSystemType();
 
         uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
 
-        errno = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb, out byte[] bpbSector);
+        ErrorNumber errno = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb, out byte[] bpbSector);
 
         if(errno != ErrorNumber.NoError)
             return;

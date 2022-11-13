@@ -278,8 +278,6 @@ static partial class Usb
         /// <summary>Return Root Hub for this Controller</summary>
         internal UsbHub GetRootHub()
         {
-            IntPtr h, h2;
-
             var root = new UsbHub
             {
                 _hubIsRootHub  = true,
@@ -287,8 +285,8 @@ static partial class Usb
             };
 
             // Open a handle to the Host Controller
-            h = CreateFile(_controllerDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                           IntPtr.Zero);
+            IntPtr h = CreateFile(_controllerDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+                                  IntPtr.Zero);
 
             if(h == _invalidHandleValue)
                 return root;
@@ -307,10 +305,9 @@ static partial class Usb
             }
 
             // TODO: Get DriverKeyName for Root Hub
-
             // Now let's open the Hub (based upon the HubName we got above)
-            h2 = CreateFile(root._hubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                            IntPtr.Zero);
+            IntPtr h2 = CreateFile(root._hubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+                                   IntPtr.Zero);
 
             if(h2 != _invalidHandleValue)
             {
@@ -709,13 +706,12 @@ static partial class Usb
                 return null;
 
             var    hub = new UsbHub();
-            IntPtr h, h2;
             hub._hubIsRootHub  = false;
             hub._hubDeviceDesc = "External Hub";
 
             // Open a handle to the Host Controller
-            h = CreateFile(_portHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                           IntPtr.Zero);
+            IntPtr h = CreateFile(_portHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+                                  IntPtr.Zero);
 
             if(h == _invalidHandleValue)
                 return hub;
@@ -741,8 +737,8 @@ static partial class Usb
             }
 
             // Now let's open the Hub (based upon the HubName we got above)
-            h2 = CreateFile(hub._hubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                            IntPtr.Zero);
+            IntPtr h2 = CreateFile(hub._hubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+                                   IntPtr.Zero);
 
             if(h2 != _invalidHandleValue)
             {

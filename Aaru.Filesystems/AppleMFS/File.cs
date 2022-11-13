@@ -361,9 +361,8 @@ public sealed partial class AppleMFS
         do
         {
             byte[]      sectors;
-            ErrorNumber errno;
 
-            errno =
+            ErrorNumber errno =
                 tags
                     ? _device.
                         ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,

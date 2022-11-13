@@ -890,7 +890,6 @@ public static class CompactDisc
         var nextQ = new byte[12];
         Array.Copy(deSub, subPos + 12 - 96, preQ, 0, 12);
         Array.Copy(deSub, subPos      + 12 + 96, nextQ, 0, 12);
-        bool status;
 
         CRC16CCITTContext.Data(preQ, 10, out byte[] preCrc);
         bool preCrcOk = preCrc[0] == preQ[10] && preCrc[1] == preQ[11];
@@ -908,7 +907,7 @@ public static class CompactDisc
         }
 
         CRC16CCITTContext.Data(q, 10, out byte[] qCrc);
-        status = qCrc[0] == q[10] && qCrc[1] == q[11];
+        bool status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
         if(fixedAdr && status)
             return true;

@@ -240,11 +240,9 @@ sealed class EntropyCommand : Command
                         if(!wholeDisc)
                             return;
 
-                        EntropyResults entropy;
-
-                        entropy = inputFormat.Info.XmlMediaType == XmlMediaType.LinearMedia
-                                      ? entropyCalculator.CalculateLinearMediaEntropy()
-                                      : entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
+                        EntropyResults entropy = inputFormat.Info.XmlMediaType == XmlMediaType.LinearMedia
+                                                     ? entropyCalculator.CalculateLinearMediaEntropy()
+                                                     : entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
 
                         AaruConsole.WriteLine("Entropy for disk is {0:F4}.", entropy.Entropy);
 

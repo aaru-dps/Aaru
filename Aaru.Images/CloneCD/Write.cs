@@ -300,7 +300,6 @@ public sealed partial class CloneCd
         _subStream?.Close();
 
         FullTOC.CDFullTOC? nullableToc = null;
-        FullTOC.CDFullTOC  toc;
 
         // Easy, just decode the real toc
         if(_fullToc != null)
@@ -312,7 +311,7 @@ public sealed partial class CloneCd
         }
 
         // Not easy, create a toc from scratch
-        toc = nullableToc ?? FullTOC.Create(Tracks, _trackFlags, true);
+        FullTOC.CDFullTOC toc = nullableToc ?? FullTOC.Create(Tracks, _trackFlags, true);
 
         _descriptorStream.WriteLine("[CloneCD]");
         _descriptorStream.WriteLine("Version=2");

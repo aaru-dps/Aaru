@@ -168,8 +168,7 @@ public sealed partial class Chd
                         break;
                     case EntryFlagsV3.Mini:
                         buffer = new byte[_bytesPerHunk];
-                        byte[] mini;
-                        mini = BigEndianBitConverter.GetBytes(entry.offset);
+                        byte[] mini = BigEndianBitConverter.GetBytes(entry.offset);
 
                         for(var i = 0; i < _bytesPerHunk; i++)
                             buffer[i] = mini[i % 8];

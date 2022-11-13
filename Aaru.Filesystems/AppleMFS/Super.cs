@@ -54,7 +54,6 @@ public sealed partial class AppleMFS
         _device         = imagePlugin;
         _partitionStart = partition.Start;
         Encoding        = encoding ?? Encoding.GetEncoding("macintosh");
-        ErrorNumber errno;
 
         options ??= GetDefaultOptions();
 
@@ -63,7 +62,7 @@ public sealed partial class AppleMFS
 
         _volMdb = new MasterDirectoryBlock();
 
-        errno = _device.ReadSector(2 + _partitionStart, out _mdbBlocks);
+        ErrorNumber errno = _device.ReadSector(2 + _partitionStart, out _mdbBlocks);
 
         if(errno != ErrorNumber.NoError)
             return errno;

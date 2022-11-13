@@ -13,13 +13,11 @@ static partial class ScsiMmc
 {
     static void ReadLeadOutUsingTrapDisc(string devPath, Device dev)
     {
-        string strDev;
         int    item;
         var    tocIsNotBcd = false;
         bool   sense;
         byte[] buffer;
         byte[] senseBuffer;
-        int    retries;
 
     start:
         Console.Clear();
@@ -35,7 +33,7 @@ static partial class ScsiMmc
 
         AaruConsole.WriteLine("Sending READ FULL TOC to the device...");
 
-        retries = 0;
+        var retries = 0;
 
         do
         {
@@ -399,7 +397,7 @@ static partial class ScsiMmc
         AaruConsole.WriteLine("0.- Return to special SCSI MultiMedia Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        string strDev = Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {

@@ -43,17 +43,15 @@ public sealed partial class ISO9660
 {
     ErrorNumber ReadSector(ulong sector, out byte[] buffer, bool interleaved = false, byte fileNumber = 0)
     {
-        ulong       realSector;
-        uint        sectorCount;
         ErrorNumber errno;
         buffer = null;
 
-        sectorCount = (uint)_blockSize / 2048;
+        uint sectorCount = (uint)_blockSize / 2048;
 
         if(_blockSize % 2048 > 0)
             sectorCount++;
 
-        realSector = sector * _blockSize / 2048;
+        ulong realSector = sector * _blockSize / 2048;
 
         ulong offset = sector * _blockSize % 2048;
 

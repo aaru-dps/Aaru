@@ -59,7 +59,6 @@ public sealed partial class FAT
                              Dictionary<string, string> options, string @namespace)
     {
         XmlFsType = new FileSystemType();
-        ErrorNumber errno;
 
         options ??= GetDefaultOptions();
 
@@ -102,7 +101,7 @@ public sealed partial class FAT
 
         uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
 
-        errno = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb, out byte[] bpbSector);
+        ErrorNumber errno = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb, out byte[] bpbSector);
 
         if(errno != ErrorNumber.NoError)
             return errno;

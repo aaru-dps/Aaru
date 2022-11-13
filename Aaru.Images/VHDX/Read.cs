@@ -522,8 +522,7 @@ public sealed partial class Vhdx
                 return ErrorNumber.NoError;
         }
 
-        bool partialBlock;
-        partialBlock = (blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_PARTIALLY_PRESENT;
+        bool partialBlock = (blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_PARTIALLY_PRESENT;
 
         if(partialBlock &&
            _hasParent   &&

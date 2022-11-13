@@ -98,8 +98,6 @@ public sealed class HAMMER : IFilesystem
 
         var sb = new StringBuilder();
 
-        SuperBlock superBlock;
-
         uint run = HAMMER_VOLHDR_SIZE / imagePlugin.Info.SectorSize;
 
         if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0)
@@ -112,8 +110,9 @@ public sealed class HAMMER : IFilesystem
 
         var magic = BitConverter.ToUInt64(sbSector, 0);
 
-        superBlock = magic == HAMMER_FSBUF_VOLUME ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)
-                         : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
+        SuperBlock superBlock = magic == HAMMER_FSBUF_VOLUME
+                                    ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)
+                                    : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
         sb.AppendLine("HAMMER filesystem");
 

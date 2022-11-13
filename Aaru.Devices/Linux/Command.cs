@@ -480,7 +480,6 @@ partial class Device
 
         duration = 0;
         sense    = false;
-        int off;
 
         // Create array for buffers
         var bufferPointers = new nint[commands.Length];
@@ -491,7 +490,7 @@ partial class Device
         // First value of array is uint64 with count of commands
         Array.Copy(BitConverter.GetBytes((ulong)commands.Length), 0, ioMultiCmd, 0, sizeof(ulong));
 
-        off = sizeof(ulong);
+        int off = sizeof(ulong);
 
         for(var i = 0; i < commands.Length; i++)
         {
