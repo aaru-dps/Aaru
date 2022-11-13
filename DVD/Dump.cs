@@ -361,13 +361,16 @@ public sealed class Dump
 
             sense = InvalidateAgid(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, timeout, out duration);
 
-            // Get AGID
-            if(protectionType == CopyrightType.CSS)
-                sense = ReportAgidCssCppm(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, timeout,
-                                          out duration);
+            switch(protectionType)
+            {
+                // Get AGID
+                case CopyrightType.CSS:
+                    sense = ReportAgidCssCppm(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, timeout,
+                                              out duration);
 
-            if(protectionType == CopyrightType.CPRM)
-                throw new NotImplementedException();
+                    break;
+                case CopyrightType.CPRM: throw new NotImplementedException();
+            }
 
             if(!sense)
             {
