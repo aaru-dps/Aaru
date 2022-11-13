@@ -57,16 +57,15 @@ public static partial class MediaTypeFromDevice
             return pcmcia ? MediaType.PCCardTypeI : MediaType.GENERIC_HDD;
         }
 
-        if(manufacturer.ToLowerInvariant() == "syquest" &&
-           model.ToLowerInvariant()        == "sparq"   &&
-           blocks                          == 1961069)
-        {
-            AaruConsole.DebugWriteLine("Media detection",
-                                       "Drive manufacturer is SyQuest, media has 1961069 blocks of 512 bytes, setting media type to SparQ.");
+        if(manufacturer.ToLowerInvariant() != "syquest" ||
+           model.ToLowerInvariant()        != "sparq"   ||
+           blocks                          != 1961069)
+            return MediaType.Unknown;
 
-            return MediaType.SparQ;
-        }
+        AaruConsole.DebugWriteLine("Media detection",
+                                   "Drive manufacturer is SyQuest, media has 1961069 blocks of 512 bytes, setting media type to SparQ.");
 
-        return MediaType.Unknown;
+        return MediaType.SparQ;
+
     }
 }
