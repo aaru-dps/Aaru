@@ -387,7 +387,7 @@ public static class DI
                 sb.AppendFormat("Disc media type ID: \"{0}\"", Encoding.ASCII.GetString(unit.MediaTypeID)).AppendLine();
 
                 sb.AppendFormat("Disc timestamp: 0x{0:X2}", unit.TimeStamp).AppendLine();
-                sb.AppendFormat("Disc product revison number: {0}", unit.ProductRevisionNumber).AppendLine();
+                sb.AppendFormat("Disc product revision number: {0}", unit.ProductRevisionNumber).AppendLine();
             }
 
             sb.AppendFormat("Blu-ray DI Unit format dependent contents as hex follows:");
@@ -403,6 +403,7 @@ public static class DI
     {
         var manufacturer = "";
 
+        // ReSharper disable StringLiteralTypo
         switch(manufacturerId)
         {
             case "AMESOB":
@@ -484,6 +485,8 @@ public static class DI
 
                 break;
         }
+
+        // ReSharper restore StringLiteralTypo
 
         return manufacturer != "" ? $"{manufacturer} (\"{manufacturerId}\")" : $"\"{manufacturerId}\"";
     }

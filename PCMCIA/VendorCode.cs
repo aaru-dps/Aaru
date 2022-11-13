@@ -37,6 +37,7 @@ using System.Diagnostics.CodeAnalysis;
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public static class VendorCode
 {
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string Prettify(ushort id)
     {
         switch(id)

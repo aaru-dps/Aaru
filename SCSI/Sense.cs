@@ -750,7 +750,7 @@ public static class Sense
             case 0x09:
                 switch(ASCQ)
                 {
-                    case 0x00: return "TRACK FLOLLOWING ERROR";
+                    case 0x00: return "TRACK FOLLOWING ERROR";
                     case 0x01: return "TRACKING SERVO FAILURE";
                     case 0x02: return "FOCUS SERVO FAILURE";
                     case 0x03: return "SPINDLE SERVO FAILURE";
@@ -871,7 +871,7 @@ public static class Sense
                     case 0x10: return "ERROR READING ISRC NUMBER";
                     case 0x11: return "READ ERROR - LOSS OF STREAMING";
                     case 0x12: return "AUXILIARY MEMORY READ ERROR";
-                    case 0x13: return "READ ERROR - FAILED RETRANSMISSITION REQUEST";
+                    case 0x13: return "READ ERROR - FAILED RETRANSMISSION REQUEST";
                     case 0x14: return "READ ERROR - LBA MARKED BAD BY APPLICATION CLIENT";
                     case 0x15: return "WRITE AFTER SANITIZE REQUIRED";
                 }
@@ -899,7 +899,7 @@ public static class Sense
                     case 0x02: return "FILEMARK OR SETMARK NOT FOUND";
                     case 0x03: return "END-OF-DATA NOT FOUND";
                     case 0x04: return "BLOCK SEQUENCE ERROR";
-                    case 0x05: return "RECORD NOT FOUND - RECOMMENDAD REASSIGNMENT";
+                    case 0x05: return "RECORD NOT FOUND - RECOMMENDED REASSIGNMENT";
                     case 0x06: return "RECORD NOT FOUND - DATA AUTO-REALLOCATED";
                     case 0x07: return "LOCATE OPERATION FAILURE";
                 }
@@ -1787,7 +1787,7 @@ public static class Sense
             case 0x61:
                 switch(ASCQ)
                 {
-                    case 0x00: return "VIDEO ACQUISTION ERROR";
+                    case 0x00: return "VIDEO ACQUISITION ERROR";
                     case 0x01: return "UNABLE TO ACQUIRE VIDEO";
                     case 0x02: return "OUT OF FOCUS";
                 }
@@ -1923,7 +1923,7 @@ public static class Sense
             case 0x71:
                 switch(ASCQ)
                 {
-                    case 0x00: return "DECOMPRESSIONG EXCEPTION LONG ALGORITHM ID";
+                    case 0x00: return "DECOMPRESSION EXCEPTION LONG ALGORITHM ID";
                 }
 
                 break;
@@ -1967,7 +1967,7 @@ public static class Sense
                     case 0x04: return "CRYPTOGRAPHIC INTEGRITY VALIDATION FAILED";
                     case 0x05: return "ERROR DECRYPTING DATA";
                     case 0x06: return "UNKNOWN SIGNATURE VERIFICATION KEY";
-                    case 0x07: return "ENCRYPTION PARAMETERS NOT USEABLE";
+                    case 0x07: return "ENCRYPTION PARAMETERS NOT USABLE";
                     case 0x08: return "DIGITAL SIGNATURE VALIDATION FAILURE";
                     case 0x09: return "ENCRYPTION MODE MISMATCH ON READ";
                     case 0x0A: return "ENCRYPTED BLOCK NOT RAW READ ENABLED";

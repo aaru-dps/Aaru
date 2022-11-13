@@ -321,6 +321,7 @@ public static class ATIP
         return Prettify(decoded);
     }
 
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string ManufacturerFromATIP(byte sec, int frm)
     {
         switch(sec)

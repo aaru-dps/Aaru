@@ -32,8 +32,11 @@
 
 namespace Aaru.Decoders.SCSI;
 
+using System.Diagnostics.CodeAnalysis;
+
 public static class VendorString
 {
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string Prettify(string scsiVendorString)
     {
         switch(scsiVendorString)

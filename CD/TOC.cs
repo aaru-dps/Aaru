@@ -74,7 +74,7 @@ public static class TOC
         if(decoded.DataLength + 2 != CDTOCResponse.Length)
         {
             AaruConsole.DebugWriteLine("CD TOC decoder",
-                                       "Expected CDTOC size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                       "Expected CD TOC size ({0} bytes) is not received size ({1} bytes), not decoding",
                                        decoded.DataLength + 2, CDTOCResponse.Length);
 
             return null;

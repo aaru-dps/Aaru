@@ -291,7 +291,7 @@ public static partial class Modes
                             page.BackgroundScanInterval).AppendLine();
 
         if(page.BackgroundPrescanTimeLimit > 0)
-            sb.AppendFormat("\tBackgroun pre-scan operations can take a maximum of {0} hours",
+            sb.AppendFormat("\tBackground pre-scan operations can take a maximum of {0} hours",
                             page.BackgroundPrescanTimeLimit).AppendLine();
 
         if(page.MinIdleBeforeBgScan > 0)

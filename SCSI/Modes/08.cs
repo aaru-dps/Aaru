@@ -234,7 +234,7 @@ public static partial class Modes
                     sb.AppendLine("\tDevice should use number of cache segments or cache segment size for caching");
 
                 if(page.ABPF)
-                    sb.AppendLine("\tPre-fetch should be aborted upong receiving a new command");
+                    sb.AppendLine("\tPre-fetch should be aborted upon receiving a new command");
 
                 if(page.CAP)
                     sb.AppendLine("\tCaching analysis is permitted");

@@ -75,7 +75,7 @@ public static class PMA
         if(decoded.DataLength + 2 != CDPMAResponse.Length)
         {
             AaruConsole.DebugWriteLine("CD PMA decoder",
-                                       "Expected CDPMA size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                       "Expected CD PMA size ({0} bytes) is not received size ({1} bytes), not decoding",
                                        decoded.DataLength + 2, CDPMAResponse.Length);
 
             return null;

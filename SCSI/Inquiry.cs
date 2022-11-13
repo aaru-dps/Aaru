@@ -2320,7 +2320,7 @@ public static class Inquiry
                             response.Qt_EEPROMFormatMinorVersion).AppendLine();
 
             sb.AppendFormat("Firmware personality: {0}", response.Qt_FirmwarePersonality).AppendLine();
-            sb.AppendFormat("Firmware subpersonality: {0}", response.Qt_FirmwareSubPersonality).AppendLine();
+            sb.AppendFormat("Firmware sub-personality: {0}", response.Qt_FirmwareSubPersonality).AppendLine();
 
             sb.AppendFormat("Tape directory format version: {0}", response.Qt_TapeDirectoryFormatVersion).AppendLine();
 

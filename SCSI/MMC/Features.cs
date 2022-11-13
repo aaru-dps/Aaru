@@ -3543,7 +3543,7 @@ public static class Features
             sb.AppendFormat("\t{0} logical blocks per media writable unit", ftr.Blocking).AppendLine();
 
         if(ftr.LastLBA > 0)
-            sb.AppendFormat("\tLast adressable logical block is {0}", ftr.LastLBA).AppendLine();
+            sb.AppendFormat("\tLast addressable logical block is {0}", ftr.LastLBA).AppendLine();
 
         return sb.ToString();
     }
@@ -4270,7 +4270,7 @@ public static class Features
     }
 
     public static string Prettify_0042(Feature_0042? feature) =>
-        !feature.HasValue ? null : "Drive is able to detect and report defective writable unit and behave accordinly\n";
+        !feature.HasValue ? null : "Drive is able to detect and report defective writable unit and behave accordingly\n";
 
     public static string Prettify_0050(Feature_0050? feature)
     {
@@ -4656,7 +4656,7 @@ public static class Features
             sb.AppendLine();
 
         if(ftr.MaxScrambleExtent > 0)
-            sb.AppendFormat("\tMaximum {0} scranble extent information entries", ftr.MaxScrambleExtent).AppendLine();
+            sb.AppendFormat("\tMaximum {0} scramble extent information entries", ftr.MaxScrambleExtent).AppendLine();
 
         return sb.ToString();
     }

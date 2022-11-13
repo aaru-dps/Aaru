@@ -491,22 +491,22 @@ public static partial class Modes
                                         break;
                                     case DensityType.X3_136:
                                         density =
-                                            "ANXI X3.136-1986: 6,3 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR (QIC-24)";
+                                            "ANSI X3.136-1986: 6,3 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR (QIC-24)";
 
                                         break;
                                     case DensityType.X3_157:
                                         density =
-                                            "ANXI X3.157-1987: 12,7 mm 9-Track Magnetic Tape, 126 bpmm, Phase Encoding";
+                                            "ANSI X3.157-1987: 12,7 mm 9-Track Magnetic Tape, 126 bpmm, Phase Encoding";
 
                                         break;
                                     case DensityType.X3_158:
                                         density =
-                                            "ANXI X3.158-1987: 3,81 mm 4-Track Magnetic Tape Cassette, 315 bpmm, GCR";
+                                            "ANSI X3.158-1987: 3,81 mm 4-Track Magnetic Tape Cassette, 315 bpmm, GCR";
 
                                         break;
                                     case DensityType.X3B5_86:
                                         density =
-                                            "ANXI X3B5/86-199: 12,7 mm 22-Track Magnetic Tape Cartridge, 262 bpmm, MFM";
+                                            "ANSI X3B5/86-199: 12,7 mm 22-Track Magnetic Tape Cartridge, 262 bpmm, MFM";
 
                                         break;
                                     case DensityType.HiTC1:
@@ -534,11 +534,11 @@ public static partial class Modes
 
                                         break;
                                     case DensityType.X3B5_88:
-                                        density = "ANXI X3B5/88-185A: 3,81 mm Magnetic Tape Cassette, 2400 bpmm, DDS";
+                                        density = "ANSI X3B5/88-185A: 3,81 mm Magnetic Tape Cassette, 2400 bpmm, DDS";
 
                                         break;
                                     case DensityType.X3_202:
-                                        density = "ANXI X3.202-1991: 8 mm Magnetic Tape Cassette, 1703 bpmm, RLL";
+                                        density = "ANSI X3.202-1991: 8 mm Magnetic Tape Cassette, 1703 bpmm, RLL";
 
                                         break;
                                     case DensityType.ECMA_TC17:
@@ -547,12 +547,12 @@ public static partial class Modes
                                         break;
                                     case DensityType.X3_193:
                                         density =
-                                            "ANXI X3.193-1990: 12,7 mm 48-Track Magnetic Tape Cartridge, 394 bpmm, MFM";
+                                            "ANSI X3.193-1990: 12,7 mm 48-Track Magnetic Tape Cartridge, 394 bpmm, MFM";
 
                                         break;
                                     case DensityType.X3B5_91:
                                         density =
-                                            "ANXI X3B5/97-174: 12,7 mm 48-Track Magnetic Tape Cartridge, 1673 bpmm, MFM";
+                                            "ANSI X3B5/97-174: 12,7 mm 48-Track Magnetic Tape Cartridge, 1673 bpmm, MFM";
 
                                         break;
                                     case DensityType.QIC11:

@@ -1014,7 +1014,7 @@ public static class EVPD
 
                     break;
                 default:
-                    sb.AppendFormat("\tIndentifier has unknown association with code {0}",
+                    sb.AppendFormat("\tIdentifier has unknown association with code {0}",
                                     (byte)descriptor.Association).AppendLine();
 
                     break;
@@ -1300,7 +1300,7 @@ public static class EVPD
             sb.AppendLine("Device supports referrals");
 
         if(page.HSSRELEF)
-            sb.AppendLine("Devoce implements alternate reset handling");
+            sb.AppendLine("Device implements alternate reset handling");
 
         if(page.CBCS)
             sb.AppendLine("Device supports capability-based command security");
@@ -1926,7 +1926,7 @@ public static class EVPD
                     break;
             }
 
-            sb.AppendFormat("\tCartridge has an uncompressed capabity of {0} gigabytes", page.CartridgeCapacity).
+            sb.AppendFormat("\tCartridge has an uncompressed capability of {0} gigabytes", page.CartridgeCapacity).
                AppendLine();
 
             sb.AppendFormat("\tCartridge serial number: {0}",

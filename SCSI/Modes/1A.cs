@@ -152,7 +152,7 @@ public static partial class Modes
                 sb.AppendFormat("\tStandby timer Y is set to {0} ms", page.StandbyTimer_Y * 100).AppendLine();
         }
         else
-            sb.AppendLine("\tDrive will not enter standy mode");
+            sb.AppendLine("\tDrive will not enter standby mode");
 
         if(page.Idle   && page.IdleTimer   > 0 ||
            page.Idle_B && page.IdleTimer_B > 0 ||

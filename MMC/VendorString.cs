@@ -32,12 +32,15 @@
 
 namespace Aaru.Decoders.MMC;
 
+using System.Diagnostics.CodeAnalysis;
+
 /// <summary>Decodes MultiMediaCard vendors</summary>
 public static class VendorString
 {
     /// <summary>Converts the byte value of a MultiMediaCard vendor ID to the manufacturer's name string</summary>
     /// <param name="mmcVendorId">MMC vendor ID</param>
     /// <returns>Manufacturer</returns>
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string Prettify(byte mmcVendorId) => mmcVendorId switch
                                                        {
                                                            0x07 => "Nokia",

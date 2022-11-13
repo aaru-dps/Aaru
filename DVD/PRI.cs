@@ -477,6 +477,7 @@ public static class PRI
 
     public static string Prettify(byte[] response) => Prettify(Decode(response));
 
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string ManufacturerFromPrePit(string manufacturerId)
     {
         var manufacturer = "";

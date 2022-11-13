@@ -240,7 +240,7 @@ public static partial class Modes
             sb.AppendLine("\tAbort any write command without protection information");
 
         if(page.SBLP)
-            sb.AppendLine("\tSupportes block lengths and protection information");
+            sb.AppendLine("\tSupports block lengths and protection information");
 
         switch(page.TST)
         {

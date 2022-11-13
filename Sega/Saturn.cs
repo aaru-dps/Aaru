@@ -67,7 +67,7 @@ public static class Saturn
         AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_version = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.product_version));
 
-        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.release_datedate = \"{0}\"",
+        AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.release_date = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.release_date));
 
         AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.saturn_media = \"{0}\"",

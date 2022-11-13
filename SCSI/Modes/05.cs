@@ -189,7 +189,7 @@ public static partial class Modes
                              (double)page.MotorOnDelay * 10).AppendLine();
         else
             sb.
-                AppendFormat("\tTarget shall wait {0} seconds after drive is ready before aborting medium access attemps",
+                AppendFormat("\tTarget shall wait {0} seconds after drive is ready before aborting medium access attempts",
                              (double)page.MotorOnDelay * 10).AppendLine();
 
         if(page.MotorOffDelay != 0xFF)

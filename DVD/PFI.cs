@@ -960,6 +960,7 @@ public static class PFI
         }
     }
 
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string ManufacturerFromDVDPlusID(string manufacturerId)
     {
         var manufacturer = "";
