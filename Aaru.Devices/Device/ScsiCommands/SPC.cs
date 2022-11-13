@@ -394,13 +394,9 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <param name="prevent"><c>true</c> to prevent medium removal, <c>false</c> to allow it.</param>
-    public bool SpcPreventAllowMediumRemoval(out byte[] senseBuffer, bool prevent, uint timeout, out double duration)
-    {
-        if(prevent)
-            return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration);
-
-        return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
-    }
+    public bool SpcPreventAllowMediumRemoval(out byte[] senseBuffer, bool prevent, uint timeout, out double duration) =>
+        prevent ? SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration)
+            : SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
 
     /// <summary>Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>

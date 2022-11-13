@@ -100,13 +100,10 @@ public sealed class QNX4 : IFilesystem
             return false;
 
         // Check inodes are in use
-        if((qnxSb.rootDir.di_status & 0x01) != 0x01 ||
-           (qnxSb.inode.di_status   & 0x01) != 0x01 ||
-           (qnxSb.boot.di_status    & 0x01) != 0x01)
-            return false;
+        return (qnxSb.rootDir.di_status & 0x01) == 0x01 && (qnxSb.inode.di_status & 0x01) == 0x01 &&
+               (qnxSb.boot.di_status    & 0x01) == 0x01;
 
         // All hail filesystems without identification marks
-        return true;
     }
 
     /// <inheritdoc />

@@ -61,11 +61,8 @@ public sealed partial class ZZZRawImage
             case 116480: return MediaType.Apple32SS;
             case 133120: return MediaType.ATARI_525_ED;
             case 143360: return MediaType.Apple33SS;
-            case 163840:
-                if(_imageInfo.SectorSize == 256)
-                    return MediaType.ACORN_525_SS_DD_40;
+            case 163840: return _imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_40 : MediaType.DOS_525_SS_DD_8;
 
-                return MediaType.DOS_525_SS_DD_8;
             case 184320: return MediaType.DOS_525_SS_DD_9;
             case 204800: return MediaType.ACORN_525_SS_SD_80;
             case 232960: return MediaType.Apple32DS;
@@ -77,21 +74,12 @@ public sealed partial class ZZZRawImage
             case 315392: return MediaType.MetaFloppy_Mod_II;
             case 322560: return MediaType.Apricot_35;
             case 325632: return MediaType.ECMA_70;
-            case 327680:
-                if(_imageInfo.SectorSize == 256)
-                    return MediaType.ACORN_525_SS_DD_80;
+            case 327680: return _imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_80 : MediaType.DOS_525_DS_DD_8;
 
-                return MediaType.DOS_525_DS_DD_8;
-            case 368640:
-                if(_extension == ".st")
-                    return MediaType.DOS_35_SS_DD_9;
+            case 368640: return _extension == ".st" ? MediaType.DOS_35_SS_DD_9 : MediaType.DOS_525_DS_DD_9;
 
-                return MediaType.DOS_525_DS_DD_9;
-            case 409600:
-                if(_extension == ".st")
-                    return MediaType.ATARI_35_SS_DD;
+            case 409600: return _extension == ".st" ? MediaType.ATARI_35_SS_DD : MediaType.AppleSonySS;
 
-                return MediaType.AppleSonySS;
             case 450560: return MediaType.ATARI_35_SS_DD_11;
             case 495872: return MediaType.IBM43FD_128;
             case 512512: return MediaType.ECMA_59;
@@ -110,11 +98,8 @@ public sealed partial class ZZZRawImage
                        };
 
             case 839680: return MediaType.FDFORMAT_35_DD;
-            case 901120:
-                if(_extension == ".st")
-                    return MediaType.ATARI_35_DS_DD_11;
+            case 901120: return _extension == ".st" ? MediaType.ATARI_35_DS_DD_11 : MediaType.CBM_AMIGA_35_DD;
 
-                return MediaType.CBM_AMIGA_35_DD;
             case 988416:                                      return MediaType.IBM43FD_256;
             case 995072:                                      return MediaType.IBM53FD_256;
             case 1021696:                                     return MediaType.ECMA_99_26;

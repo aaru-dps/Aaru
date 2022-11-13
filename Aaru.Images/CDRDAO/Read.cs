@@ -1492,11 +1492,5 @@ public sealed partial class Cdrdao
     public List<Track> GetSessionTracks(Session session) => GetSessionTracks(session.Sequence);
 
     /// <inheritdoc />
-    public List<Track> GetSessionTracks(ushort session)
-    {
-        if(session == 1)
-            return Tracks;
-
-        return null;
-    }
+    public List<Track> GetSessionTracks(ushort session) => session == 1 ? Tracks : null;
 }
