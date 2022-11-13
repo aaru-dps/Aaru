@@ -1013,7 +1013,7 @@ public class MmcFeatures
     public byte? AGIDs { get; set; }
     [DisplayName("Binding nonce blocks")]
     public byte? BindingNonceBlocks { get; set; }
-    [DisplayName("Blocks per redable unit")]
+    [DisplayName("Blocks per readable unit")]
     public ushort? BlocksPerReadableUnit { get; set; }
     [DisplayName("Buffer under-run free in DVD writing")]
     public bool BufferUnderrunFreeInDVD { get; set; }
