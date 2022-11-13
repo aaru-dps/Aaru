@@ -32,29 +32,14 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <NoWarn>CS1591;CS1574</NoWarn>
     </PropertyGroup>
+    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <InternalsVisibleTo Include="Aaru.Tests"/>
+        <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+    </ItemGroup>
     <PropertyGroup>
         <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
         <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
         <NrtShowRevision>true</NrtShowRevision>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>full</DebugType>
-        <Optimize>false</Optimize>
-        <OutputPath>bin\Debug</OutputPath>
-        <DefineConstants>DEBUG;</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <ConsolePause>false</ConsolePause>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <DebugType>full</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release</OutputPath>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <ConsolePause>false</ConsolePause>
     </PropertyGroup>
     <ItemGroup>
         <Compile Include="Device\ScsiCommands\MediaTek.cs" />

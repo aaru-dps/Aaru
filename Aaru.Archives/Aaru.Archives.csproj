@@ -32,6 +32,10 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <NoWarn>CS1591;CS1574</NoWarn>
     </PropertyGroup>
+    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <InternalsVisibleTo Include="Aaru.Tests"/>
+        <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+    </ItemGroup>
     <PropertyGroup>
         <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
         <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
