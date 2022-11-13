@@ -17,7 +17,7 @@
         <Product>Aaru Data Preservation Suite</Product>
         <Title>Aaru.Filesystems</Title>
         <ApplicationVersion>$(Version)</ApplicationVersion>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <NoWarn>CS0649</NoWarn>
         <LangVersion>10</LangVersion>
         <Description>Filesystem implementations used by the Aaru Data Preservation Suite.</Description>
