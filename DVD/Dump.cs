@@ -372,12 +372,12 @@ public sealed class Dump
                 case CopyrightType.CPRM: throw new NotImplementedException();
             }
 
-            if(!sense)
-            {
-                Agid = (byte)(buffer[7] >> 6);
+            if(sense)
+                continue;
 
-                break;
-            }
+            Agid = (byte)(buffer[7] >> 6);
+
+            break;
         }
 
         if(sense)
@@ -411,12 +411,12 @@ public sealed class Dump
                 break;
             }
 
-            if(i >= 31)
-            {
-                senseBuffer = Array.Empty<byte>();
+            if(i < 31)
+                continue;
 
-                return true;
-            }
+            senseBuffer = Array.Empty<byte>();
+
+            return true;
         }
 
         sense = ReportChallenge(out buffer, out senseBuffer, DvdCssKeyClass.DvdCssCppmOrCprm, timeout, out duration);
