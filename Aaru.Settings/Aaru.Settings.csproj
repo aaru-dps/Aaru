@@ -1,8 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
         <SchemaVersion>2.0</SchemaVersion>
         <ProjectGuid>{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}</ProjectGuid>
         <OutputType>Library</OutputType>

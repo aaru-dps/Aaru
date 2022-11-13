@@ -1,8 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
         <SchemaVersion>2.0</SchemaVersion>
         <ProjectGuid>{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}</ProjectGuid>
         <OutputType>Exe</OutputType>
@@ -22,7 +20,6 @@
         <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
         <LangVersion>11</LangVersion>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-        <Platforms>x86;AnyCPU</Platforms>
     </PropertyGroup>
     <PropertyGroup>
         <NrtRevisionFormat>$(Version)+{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>

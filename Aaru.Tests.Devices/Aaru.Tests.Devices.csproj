@@ -1,8 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
         <ProjectGuid>{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}</ProjectGuid>
         <OutputType>Exe</OutputType>
         <RootNamespace>Aaru.Tests.Devices</RootNamespace>
@@ -20,7 +18,6 @@
         <LangVersion>11</LangVersion>
         <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-        <Platforms>x86;AnyCPU</Platforms>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <NoWarn>CS1591;CS1574</NoWarn>
