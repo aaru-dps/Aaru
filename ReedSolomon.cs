@@ -86,115 +86,70 @@ public class ReedSolomon
     /// <summary>Initializes the Reed-Solomon with RS(n,k) with GF(2^m)</summary>
     public void InitRs(int n, int k, int m)
     {
-        switch(m)
-        {
-            case 2:
-                _pp = new[]
-                {
-                    1, 1, 1
-                };
-
-                break;
-            case 3:
-                _pp = new[]
-                {
-                    1, 1, 0, 1
-                };
-
-                break;
-            case 4:
-                _pp = new[]
-                {
-                    1, 1, 0, 0, 1
-                };
-
-                break;
-            case 5:
-                _pp = new[]
-                {
-                    1, 0, 1, 0, 0, 1
-                };
-
-                break;
-            case 6:
-                _pp = new[]
-                {
-                    1, 1, 0, 0, 0, 0, 1
-                };
-
-                break;
-            case 7:
-                _pp = new[]
-                {
-                    1, 0, 0, 1, 0, 0, 0, 1
-                };
-
-                break;
-            case 8:
-                _pp = new[]
-                {
-                    1, 0, 1, 1, 1, 0, 0, 0, 1
-                };
-
-                break;
-            case 9:
-                _pp = new[]
-                {
-                    1, 0, 0, 0, 1, 0, 0, 0, 0, 1
-                };
-
-                break;
-            case 10:
-                _pp = new[]
-                {
-                    1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
-                };
-
-                break;
-            case 11:
-                _pp = new[]
-                {
-                    1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1
-                };
-
-                break;
-            case 12:
-                _pp = new[]
-                {
-                    1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1
-                };
-
-                break;
-            case 13:
-                _pp = new[]
-                {
-                    1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1
-                };
-
-                break;
-            case 14:
-                _pp = new[]
-                {
-                    1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1
-                };
-
-                break;
-            case 15:
-                _pp = new[]
-                {
-                    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
-                };
-
-                break;
-            case 16:
-                _pp = new[]
-                {
-                    1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
-                };
-
-                break;
-            default: throw new ArgumentOutOfRangeException(nameof(m), "m must be between 2 and 16 inclusive");
-        }
+        _pp = m switch
+              {
+                  2 => new[]
+                  {
+                      1, 1, 1
+                  },
+                  3 => new[]
+                  {
+                      1, 1, 0, 1
+                  },
+                  4 => new[]
+                  {
+                      1, 1, 0, 0, 1
+                  },
+                  5 => new[]
+                  {
+                      1, 0, 1, 0, 0, 1
+                  },
+                  6 => new[]
+                  {
+                      1, 1, 0, 0, 0, 0, 1
+                  },
+                  7 => new[]
+                  {
+                      1, 0, 0, 1, 0, 0, 0, 1
+                  },
+                  8 => new[]
+                  {
+                      1, 0, 1, 1, 1, 0, 0, 0, 1
+                  },
+                  9 => new[]
+                  {
+                      1, 0, 0, 0, 1, 0, 0, 0, 0, 1
+                  },
+                  10 => new[]
+                  {
+                      1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+                  },
+                  11 => new[]
+                  {
+                      1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1
+                  },
+                  12 => new[]
+                  {
+                      1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1
+                  },
+                  13 => new[]
+                  {
+                      1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1
+                  },
+                  14 => new[]
+                  {
+                      1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1
+                  },
+                  15 => new[]
+                  {
+                      1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+                  },
+                  16 => new[]
+                  {
+                      1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
+                  },
+                  _ => throw new ArgumentOutOfRangeException(nameof(m), "m must be between 2 and 16 inclusive")
+              };
 
         _mm      = m;
         _kk      = k;

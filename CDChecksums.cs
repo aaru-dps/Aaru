@@ -96,17 +96,12 @@ public static class CdChecksums
                    subchannelStatus == false)
                     status = false;
 
-                switch(channelStatus)
-                {
-                    case null when subchannelStatus == true:
-                        status = true;
-
-                        break;
-                    case true when subchannelStatus == null:
-                        status = true;
-
-                        break;
-                }
+                status = channelStatus switch
+                         {
+                             null when subchannelStatus == true => true,
+                             true when subchannelStatus == null => true,
+                             _                                  => status
+                         };
 
                 return status;
             }
