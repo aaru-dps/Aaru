@@ -477,23 +477,12 @@ public static class PFI
         PhysicalFormatInformation decoded = pfi.Value;
         var                       sb      = new StringBuilder();
 
-        string sizeString;
-
-        switch(decoded.DiscSize)
-        {
-            case DVDSize.Eighty:
-                sizeString = "80mm";
-
-                break;
-            case DVDSize.OneTwenty:
-                sizeString = "120mm";
-
-                break;
-            default:
-                sizeString = $"unknown size identifier {decoded.DiscSize}";
-
-                break;
-        }
+        string sizeString = decoded.DiscSize switch
+                            {
+                                DVDSize.Eighty    => "80mm",
+                                DVDSize.OneTwenty => "120mm",
+                                _                 => $"unknown size identifier {decoded.DiscSize}"
+                            };
 
         var categorySentence = "Disc is a {0} {1} version {2}";
 
@@ -960,13 +949,11 @@ public static class PFI
 
     public static string Prettify(byte[] response, MediaType mediaType) => Prettify(Decode(response, mediaType));
 
-    public static string ManufacturerFromDVDRAM(string manufacturerId)
-    {
-        switch(manufacturerId)
-        {
-            default: return ManufacturerFromDVDPlusID(manufacturerId);
-        }
-    }
+    public static string ManufacturerFromDVDRAM(string manufacturerId) => manufacturerId switch
+                                                                          {
+                                                                              _ =>
+                                                                                  ManufacturerFromDVDPlusID(manufacturerId)
+                                                                          };
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string ManufacturerFromDVDPlusID(string manufacturerId)

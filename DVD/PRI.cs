@@ -185,71 +185,25 @@ public static class PRI
         {
             if((decoded.OPCSuggestedCode & 0xF) > 0)
             {
-                double recordingPower = 0;
-
-                switch(decoded.OPCSuggestedCode & 0xF)
-                {
-                    case 1:
-                        recordingPower = 7.0;
-
-                        break;
-                    case 2:
-                        recordingPower = 7.5;
-
-                        break;
-                    case 3:
-                        recordingPower = 8.0;
-
-                        break;
-                    case 4:
-                        recordingPower = 8.5;
-
-                        break;
-                    case 5:
-                        recordingPower = 9.0;
-
-                        break;
-                    case 6:
-                        recordingPower = 9.5;
-
-                        break;
-                    case 7:
-                        recordingPower = 10.0;
-
-                        break;
-                    case 8:
-                        recordingPower = 10.5;
-
-                        break;
-                    case 9:
-                        recordingPower = 11.0;
-
-                        break;
-                    case 10:
-                        recordingPower = 11.5;
-
-                        break;
-                    case 11:
-                        recordingPower = 12.0;
-
-                        break;
-                    case 12:
-                        recordingPower = 12.5;
-
-                        break;
-                    case 13:
-                        recordingPower = 13.0;
-
-                        break;
-                    case 14:
-                        recordingPower = 13.5;
-
-                        break;
-                    case 15:
-                        recordingPower = 14.0;
-
-                        break;
-                }
+                double recordingPower = (decoded.OPCSuggestedCode & 0xF) switch
+                                        {
+                                            1  => 7.0,
+                                            2  => 7.5,
+                                            3  => 8.0,
+                                            4  => 8.5,
+                                            5  => 9.0,
+                                            6  => 9.5,
+                                            7  => 10.0,
+                                            8  => 10.5,
+                                            9  => 11.0,
+                                            10 => 11.5,
+                                            11 => 12.0,
+                                            12 => 12.5,
+                                            13 => 13.0,
+                                            14 => 13.5,
+                                            15 => 14.0,
+                                            _  => 0
+                                        };
 
                 sb.AppendFormat("Recommended recording power is {0} mW", recordingPower).AppendLine();
             }
@@ -258,71 +212,25 @@ public static class PRI
 
             if((decoded.WaveLengthCode & 0xF) > 0)
             {
-                double erasingPower = 0;
-
-                switch(decoded.WaveLengthCode & 0xF)
-                {
-                    case 1:
-                        erasingPower = 0.38;
-
-                        break;
-                    case 2:
-                        erasingPower = 0.40;
-
-                        break;
-                    case 3:
-                        erasingPower = 0.42;
-
-                        break;
-                    case 4:
-                        erasingPower = 0.44;
-
-                        break;
-                    case 5:
-                        erasingPower = 0.46;
-
-                        break;
-                    case 6:
-                        erasingPower = 0.48;
-
-                        break;
-                    case 7:
-                        erasingPower = 0.50;
-
-                        break;
-                    case 8:
-                        erasingPower = 0.52;
-
-                        break;
-                    case 9:
-                        erasingPower = 0.54;
-
-                        break;
-                    case 10:
-                        erasingPower = 0.56;
-
-                        break;
-                    case 11:
-                        erasingPower = 0.58;
-
-                        break;
-                    case 12:
-                        erasingPower = 0.60;
-
-                        break;
-                    case 13:
-                        erasingPower = 0.62;
-
-                        break;
-                    case 14:
-                        erasingPower = 0.64;
-
-                        break;
-                    case 15:
-                        erasingPower = 0.66;
-
-                        break;
-                }
+                double erasingPower = (decoded.WaveLengthCode & 0xF) switch
+                                      {
+                                          1  => 0.38,
+                                          2  => 0.40,
+                                          3  => 0.42,
+                                          4  => 0.44,
+                                          5  => 0.46,
+                                          6  => 0.48,
+                                          7  => 0.50,
+                                          8  => 0.52,
+                                          9  => 0.54,
+                                          10 => 0.56,
+                                          11 => 0.58,
+                                          12 => 0.60,
+                                          13 => 0.62,
+                                          14 => 0.64,
+                                          15 => 0.66,
+                                          _  => 0
+                                      };
 
                 sb.AppendFormat("Recommended erasing power ratio is {0} ε", erasingPower).AppendLine();
             }
@@ -333,138 +241,49 @@ public static class PRI
         {
             if((decoded.OPCSuggestedCode & 0xF) > 0)
             {
-                double recordingPower = 0;
-
-                switch(decoded.OPCSuggestedCode & 0xF)
-                {
-                    case 1:
-                        recordingPower = 6.0;
-
-                        break;
-                    case 2:
-                        recordingPower = 6.5;
-
-                        break;
-                    case 3:
-                        recordingPower = 7.0;
-
-                        break;
-                    case 4:
-                        recordingPower = 7.5;
-
-                        break;
-                    case 5:
-                        recordingPower = 8.0;
-
-                        break;
-                    case 6:
-                        recordingPower = 8.5;
-
-                        break;
-                    case 7:
-                        recordingPower = 9.0;
-
-                        break;
-                    case 8:
-                        recordingPower = 9.5;
-
-                        break;
-                    case 9:
-                        recordingPower = 10.0;
-
-                        break;
-                    case 10:
-                        recordingPower = 10.5;
-
-                        break;
-                    case 11:
-                        recordingPower = 11.0;
-
-                        break;
-                    case 12:
-                        recordingPower = 11.5;
-
-                        break;
-                    case 13:
-                        recordingPower = 12.0;
-
-                        break;
-                }
+                double recordingPower = (decoded.OPCSuggestedCode & 0xF) switch
+                                        {
+                                            1  => 6.0,
+                                            2  => 6.5,
+                                            3  => 7.0,
+                                            4  => 7.5,
+                                            5  => 8.0,
+                                            6  => 8.5,
+                                            7  => 9.0,
+                                            8  => 9.5,
+                                            9  => 10.0,
+                                            10 => 10.5,
+                                            11 => 11.0,
+                                            12 => 11.5,
+                                            13 => 12.0,
+                                            _  => 0
+                                        };
 
                 sb.AppendFormat("Recommended recording power is {0} mW", recordingPower).AppendLine();
             }
 
             if(decoded.WaveLengthCode > 0)
             {
-                var wavelength = 0;
-
-                switch(decoded.WaveLengthCode)
-                {
-                    case 1:
-                        wavelength = 645;
-
-                        break;
-                    case 2:
-                        wavelength = 646;
-
-                        break;
-                    case 3:
-                        wavelength = 647;
-
-                        break;
-                    case 4:
-                        wavelength = 648;
-
-                        break;
-                    case 5:
-                        wavelength = 649;
-
-                        break;
-                    case 6:
-                        wavelength = 650;
-
-                        break;
-                    case 7:
-                        wavelength = 651;
-
-                        break;
-                    case 8:
-                        wavelength = 652;
-
-                        break;
-                    case 9:
-                        wavelength = 653;
-
-                        break;
-                    case 10:
-                        wavelength = 654;
-
-                        break;
-                    case 11:
-                        wavelength = 655;
-
-                        break;
-                    case 12:
-                        wavelength = 656;
-
-                        break;
-                    case 13:
-                        wavelength = 657;
-
-                        break;
-                    case 14:
-                        wavelength = 658;
-
-                        break;
-                    case 15:
-                        wavelength = 659;
-
-                        break;
-                    case 16:
-                        wavelength = 660;
-
-                        break;
-                }
+                int wavelength = decoded.WaveLengthCode switch
+                                 {
+                                     1  => 645,
+                                     2  => 646,
+                                     3  => 647,
+                                     4  => 648,
+                                     5  => 649,
+                                     6  => 650,
+                                     7  => 651,
+                                     8  => 652,
+                                     9  => 653,
+                                     10 => 654,
+                                     11 => 655,
+                                     12 => 656,
+                                     13 => 657,
+                                     14 => 658,
+                                     15 => 659,
+                                     16 => 660,
+                                     _  => 0
+                                 };
 
                 sb.AppendFormat("Recommended recording power is {0} mW", wavelength).AppendLine();
             }

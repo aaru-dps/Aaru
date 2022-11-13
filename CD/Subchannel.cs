@@ -590,49 +590,46 @@ public static class Subchannel
 
     public static string DecodeMcn(byte[] q) => $"{q[1]:X2}{q[2]:X2}{q[3]:X2}{q[4]:X2}{q[5]:X2}{q[6]:X2}{q[7] >> 4:X}";
 
-    public static byte GetIsrcCode(char c)
-    {
-        switch(c)
-        {
-            case '0': return 0x00;
-            case '1': return 0x01;
-            case '2': return 0x02;
-            case '3': return 0x03;
-            case '4': return 0x04;
-            case '5': return 0x05;
-            case '6': return 0x06;
-            case '7': return 0x07;
-            case '8': return 0x08;
-            case '9': return 0x09;
-            case 'A': return 0x11;
-            case 'B': return 0x12;
-            case 'C': return 0x13;
-            case 'D': return 0x14;
-            case 'E': return 0x15;
-            case 'F': return 0x16;
-            case 'G': return 0x17;
-            case 'H': return 0x18;
-            case 'I': return 0x19;
-            case 'J': return 0x1A;
-            case 'K': return 0x1B;
-            case 'L': return 0x1C;
-            case 'M': return 0x1D;
-            case 'N': return 0x1E;
-            case 'O': return 0x1F;
-            case 'P': return 0x20;
-            case 'Q': return 0x21;
-            case 'R': return 0x22;
-            case 'S': return 0x23;
-            case 'T': return 0x24;
-            case 'U': return 0x25;
-            case 'V': return 0x26;
-            case 'W': return 0x27;
-            case 'X': return 0x28;
-            case 'Y': return 0x29;
-            case 'Z': return 0x2A;
-            default:  return 0x00;
-        }
-    }
+    public static byte GetIsrcCode(char c) => c switch
+                                              {
+                                                  '0' => 0x00,
+                                                  '1' => 0x01,
+                                                  '2' => 0x02,
+                                                  '3' => 0x03,
+                                                  '4' => 0x04,
+                                                  '5' => 0x05,
+                                                  '6' => 0x06,
+                                                  '7' => 0x07,
+                                                  '8' => 0x08,
+                                                  '9' => 0x09,
+                                                  'A' => 0x11,
+                                                  'B' => 0x12,
+                                                  'C' => 0x13,
+                                                  'D' => 0x14,
+                                                  'E' => 0x15,
+                                                  'F' => 0x16,
+                                                  'G' => 0x17,
+                                                  'H' => 0x18,
+                                                  'I' => 0x19,
+                                                  'J' => 0x1A,
+                                                  'K' => 0x1B,
+                                                  'L' => 0x1C,
+                                                  'M' => 0x1D,
+                                                  'N' => 0x1E,
+                                                  'O' => 0x1F,
+                                                  'P' => 0x20,
+                                                  'Q' => 0x21,
+                                                  'R' => 0x22,
+                                                  'S' => 0x23,
+                                                  'T' => 0x24,
+                                                  'U' => 0x25,
+                                                  'V' => 0x26,
+                                                  'W' => 0x27,
+                                                  'X' => 0x28,
+                                                  'Y' => 0x29,
+                                                  'Z' => 0x2A,
+                                                  _   => 0x00
+                                              };
 
     public static byte[] Generate(int sector, uint trackSequence, int pregap, int trackStart, byte flags, byte index)
     {

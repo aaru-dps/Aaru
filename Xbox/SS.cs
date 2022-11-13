@@ -138,23 +138,12 @@ public static class SS
         SecuritySector decoded = ss.Value;
         var            sb      = new StringBuilder();
 
-        string sizeString;
-
-        switch(decoded.DiscSize)
-        {
-            case DVDSize.Eighty:
-                sizeString = "80mm";
-
-                break;
-            case DVDSize.OneTwenty:
-                sizeString = "120mm";
-
-                break;
-            default:
-                sizeString = $"unknown size identifier {decoded.DiscSize}";
-
-                break;
-        }
+        string sizeString = decoded.DiscSize switch
+                            {
+                                DVDSize.Eighty    => "80mm",
+                                DVDSize.OneTwenty => "120mm",
+                                _                 => $"unknown size identifier {decoded.DiscSize}"
+                            };
 
         const string categorySentence = "Disc is a {0} {1} version {2}";
 

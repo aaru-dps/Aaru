@@ -254,18 +254,16 @@ public static class EVPD
 
     public static string PrettifyPage_81(byte[] pageResponse) => PrettifyPage_81(DecodePage_81(pageResponse));
 
-    public static string DefinitionToString(ScsiDefinitions definition)
-    {
-        switch(definition)
-        {
-            case ScsiDefinitions.Current: return "";
-            case ScsiDefinitions.CCS:     return "CCS";
-            case ScsiDefinitions.SCSI1:   return "SCSI-1";
-            case ScsiDefinitions.SCSI2:   return "SCSI-2";
-            case ScsiDefinitions.SCSI3:   return "SCSI-3";
-            default:                      return $"Unknown definition code {(byte)definition}";
-        }
-    }
+    public static string DefinitionToString(ScsiDefinitions definition) => definition switch
+                                                                           {
+                                                                               ScsiDefinitions.Current => "",
+                                                                               ScsiDefinitions.CCS     => "CCS",
+                                                                               ScsiDefinitions.SCSI1   => "SCSI-1",
+                                                                               ScsiDefinitions.SCSI2   => "SCSI-2",
+                                                                               ScsiDefinitions.SCSI3   => "SCSI-3",
+                                                                               _ => $"Unknown definition code {
+                                                                                   (byte)definition}"
+                                                                           };
 
     public static string PrettifyPage_81(Page_81? modePage)
     {
@@ -416,21 +414,12 @@ public static class EVPD
 
             Array.Copy(pageResponse, position + 4, descriptor.Binary, 0, descriptor.Length);
 
-            switch(descriptor.CodeSet)
-            {
-                case IdentificationCodeSet.ASCII:
-                    descriptor.ASCII = StringHandlers.CToString(descriptor.Binary);
-
-                    break;
-                case IdentificationCodeSet.UTF8:
-                    descriptor.ASCII = Encoding.UTF8.GetString(descriptor.Binary);
-
-                    break;
-                default:
-                    descriptor.ASCII = "";
-
-                    break;
-            }
+            descriptor.ASCII = descriptor.CodeSet switch
+                               {
+                                   IdentificationCodeSet.ASCII => StringHandlers.CToString(descriptor.Binary),
+                                   IdentificationCodeSet.UTF8  => Encoding.UTF8.GetString(descriptor.Binary),
+                                   _                           => ""
+                               };
 
             position += 4 + descriptor.Length;
             descriptors.Add(descriptor);
@@ -485,67 +474,23 @@ public static class EVPD
 
             if(descriptor.PIV)
             {
-                string protocol;
-
-                switch(descriptor.ProtocolIdentifier)
-                {
-                    case ProtocolIdentifiers.ADT:
-                        protocol = "Automation/Drive Interface Transport";
-
-                        break;
-                    case ProtocolIdentifiers.ATA:
-                        protocol = "AT Attachment Interface (ATA/ATAPI)";
-
-                        break;
-                    case ProtocolIdentifiers.FibreChannel:
-                        protocol = "Fibre Channel";
-
-                        break;
-                    case ProtocolIdentifiers.Firewire:
-                        protocol = "IEEE 1394";
-
-                        break;
-                    case ProtocolIdentifiers.iSCSI:
-                        protocol = "Internet SCSI";
-
-                        break;
-                    case ProtocolIdentifiers.NoProtocol:
-                        protocol = "no specific";
-
-                        break;
-                    case ProtocolIdentifiers.PCIe:
-                        protocol = "PCI Express";
-
-                        break;
-                    case ProtocolIdentifiers.RDMAP:
-                        protocol = "SCSI Remote Direct Memory Access";
-
-                        break;
-                    case ProtocolIdentifiers.SAS:
-                        protocol = "Serial Attachment SCSI";
-
-                        break;
-                    case ProtocolIdentifiers.SCSI:
-                        protocol = "Parallel SCSI";
-
-                        break;
-                    case ProtocolIdentifiers.SCSIe:
-                        protocol = "SCSI over PCI Express";
-
-                        break;
-                    case ProtocolIdentifiers.SSA:
-                        protocol = "SSA";
-
-                        break;
-                    case ProtocolIdentifiers.UAS:
-                        protocol = "USB Attached SCSI";
-
-                        break;
-                    default:
-                        protocol = $"unknown code {(byte)descriptor.ProtocolIdentifier}";
-
-                        break;
-                }
+                string protocol = descriptor.ProtocolIdentifier switch
+                                  {
+                                      ProtocolIdentifiers.ADT => "Automation/Drive Interface Transport",
+                                      ProtocolIdentifiers.ATA => "AT Attachment Interface (ATA/ATAPI)",
+                                      ProtocolIdentifiers.FibreChannel => "Fibre Channel",
+                                      ProtocolIdentifiers.Firewire => "IEEE 1394",
+                                      ProtocolIdentifiers.iSCSI => "Internet SCSI",
+                                      ProtocolIdentifiers.NoProtocol => "no specific",
+                                      ProtocolIdentifiers.PCIe => "PCI Express",
+                                      ProtocolIdentifiers.RDMAP => "SCSI Remote Direct Memory Access",
+                                      ProtocolIdentifiers.SAS => "Serial Attachment SCSI",
+                                      ProtocolIdentifiers.SCSI => "Parallel SCSI",
+                                      ProtocolIdentifiers.SCSIe => "SCSI over PCI Express",
+                                      ProtocolIdentifiers.SSA => "SSA",
+                                      ProtocolIdentifiers.UAS => "USB Attached SCSI",
+                                      _ => $"unknown code {(byte)descriptor.ProtocolIdentifier}"
+                                  };
 
                 sb.AppendFormat("\tDescriptor referes to {0} protocol", protocol).AppendLine();
             }
@@ -1014,8 +959,8 @@ public static class EVPD
 
                     break;
                 default:
-                    sb.AppendFormat("\tIdentifier has unknown association with code {0}",
-                                    (byte)descriptor.Association).AppendLine();
+                    sb.AppendFormat("\tIdentifier has unknown association with code {0}", (byte)descriptor.Association).
+                       AppendLine();
 
                     break;
             }

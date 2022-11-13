@@ -129,75 +129,27 @@ public static partial class Decoders
                         cid.ProductRevision & 0x0F).AppendLine();
 
         sb.AppendFormat("\tProduct serial number: {0}", cid.ProductSerialNumber).AppendLine();
-        var year = "";
 
-        switch(cid.ManufacturingDate & 0x0F)
-        {
-            case 0:
-                year = "1997 or 2013";
-
-                break;
-            case 1:
-                year = "1998 or 2014";
-
-                break;
-            case 2:
-                year = "1999 or 2015";
-
-                break;
-            case 3:
-                year = "2000 or 2016";
-
-                break;
-            case 4:
-                year = "2001 or 2017";
-
-                break;
-            case 5:
-                year = "2002 or 2018";
-
-                break;
-            case 6:
-                year = "2003 or 2019";
-
-                break;
-            case 7:
-                year = "2004 or 2020";
-
-                break;
-            case 8:
-                year = "2005 or 2021";
-
-                break;
-            case 9:
-                year = "2006 or 2022";
-
-                break;
-            case 10:
-                year = "2007 or 2023";
-
-                break;
-            case 11:
-                year = "2008 or 2024";
-
-                break;
-            case 12:
-                year = "2009 or 2025";
-
-                break;
-            case 13:
-                year = "2010";
-
-                break;
-            case 14:
-                year = "2011";
-
-                break;
-            case 15:
-                year = "2012";
-
-                break;
-        }
+        string year = (cid.ManufacturingDate & 0x0F) switch
+                      {
+                          0  => "1997 or 2013",
+                          1  => "1998 or 2014",
+                          2  => "1999 or 2015",
+                          3  => "2000 or 2016",
+                          4  => "2001 or 2017",
+                          5  => "2002 or 2018",
+                          6  => "2003 or 2019",
+                          7  => "2004 or 2020",
+                          8  => "2005 or 2021",
+                          9  => "2006 or 2022",
+                          10 => "2007 or 2023",
+                          11 => "2008 or 2024",
+                          12 => "2009 or 2025",
+                          13 => "2010",
+                          14 => "2011",
+                          15 => "2012",
+                          _  => ""
+                      };
 
         sb.AppendFormat("\tDevice manufactured month {0} of {1}", (cid.ManufacturingDate & 0xF0) >> 4, year).
            AppendLine();

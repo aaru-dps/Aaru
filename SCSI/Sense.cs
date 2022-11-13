@@ -187,14 +187,14 @@ public static class Sense
         if((sense[0] & 0x70) != 0x70)
             return sense.Length != 4 ? SenseType.Invalid : SenseType.StandardSense;
 
-        switch(sense[0] & 0x0F)
-        {
-            case 0:  return SenseType.ExtendedSenseFixedCurrent;
-            case 1:  return SenseType.ExtendedSenseFixedPast;
-            case 2:  return SenseType.ExtendedSenseDescriptorCurrent;
-            case 3:  return SenseType.ExtendedSenseDescriptorPast;
-            default: return SenseType.Unknown;
-        }
+        return (sense[0] & 0x0F) switch
+               {
+                   0 => SenseType.ExtendedSenseFixedCurrent,
+                   1 => SenseType.ExtendedSenseFixedPast,
+                   2 => SenseType.ExtendedSenseDescriptorCurrent,
+                   3 => SenseType.ExtendedSenseDescriptorPast,
+                   _ => SenseType.Unknown
+               };
     }
 
     public static StandardSense? DecodeStandard(byte[] sense)
@@ -593,28 +593,25 @@ public static class Sense
     public static string PrettifyDescriptor00(byte[] descriptor) =>
         PrettifyDescriptor00(DecodeDescriptor00(descriptor));
 
-    public static string GetSenseKey(SenseKeys key)
-    {
-        switch(key)
-        {
-            case SenseKeys.AbortedCommand: return "ABORTED COMMAND";
-            case SenseKeys.BlankCheck:     return "BLANK CHECK";
-            case SenseKeys.CopyAborted:    return "COPY ABORTED";
-            case SenseKeys.DataProtect:    return "DATA PROTECT";
-            case SenseKeys.Equal:          return "EQUAL";
-            case SenseKeys.HardwareError:  return "HARDWARE ERROR";
-            case SenseKeys.IllegalRequest: return "ILLEGAL REQUEST";
-            case SenseKeys.MediumError:    return "MEDIUM ERROR";
-            case SenseKeys.Miscompare:     return "MISCOMPARE";
-            case SenseKeys.NoSense:        return "NO SENSE";
-            case SenseKeys.PrivateUse:     return "PRIVATE USE";
-            case SenseKeys.RecoveredError: return "RECOVERED ERROR";
-            case SenseKeys.Completed:      return "COMPLETED";
-            case SenseKeys.UnitAttention:  return "UNIT ATTENTION";
-            case SenseKeys.VolumeOverflow: return "VOLUME OVERFLOW";
-            default:                       return "UNKNOWN";
-        }
-    }
+    public static string GetSenseKey(SenseKeys key) => key switch
+                                                       {
+                                                           SenseKeys.AbortedCommand => "ABORTED COMMAND",
+                                                           SenseKeys.BlankCheck     => "BLANK CHECK",
+                                                           SenseKeys.CopyAborted    => "COPY ABORTED",
+                                                           SenseKeys.DataProtect    => "DATA PROTECT",
+                                                           SenseKeys.Equal          => "EQUAL",
+                                                           SenseKeys.HardwareError  => "HARDWARE ERROR",
+                                                           SenseKeys.IllegalRequest => "ILLEGAL REQUEST",
+                                                           SenseKeys.MediumError    => "MEDIUM ERROR",
+                                                           SenseKeys.Miscompare     => "MISCOMPARE",
+                                                           SenseKeys.NoSense        => "NO SENSE",
+                                                           SenseKeys.PrivateUse     => "PRIVATE USE",
+                                                           SenseKeys.RecoveredError => "RECOVERED ERROR",
+                                                           SenseKeys.Completed      => "COMPLETED",
+                                                           SenseKeys.UnitAttention  => "UNIT ATTENTION",
+                                                           SenseKeys.VolumeOverflow => "VOLUME OVERFLOW",
+                                                           _                        => "UNKNOWN"
+                                                       };
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static string GetSenseDescription(byte ASC, byte ASCQ)
@@ -1431,11 +1428,11 @@ public static class Sense
 
                 break;
             case 0x40:
-                switch(ASCQ)
-                {
-                    case 0x00: return "RAM FAILURE";
-                    default:   return $"DIAGNOSTIC FAILURE ON COMPONENT {ASCQ:X2}h";
-                }
+                return ASCQ switch
+                       {
+                           0x00 => "RAM FAILURE",
+                           _    => $"DIAGNOSTIC FAILURE ON COMPONENT {ASCQ:X2}h"
+                       };
             case 0x41:
                 switch(ASCQ)
                 {

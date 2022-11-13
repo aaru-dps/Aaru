@@ -209,73 +209,26 @@ public static partial class Decoders
                 break;
         }
 
-        switch((csd.TAAC & 0x78) >> 3)
-        {
-            case 0:
-                multiplier = 0;
-
-                break;
-            case 1:
-                multiplier = 1;
-
-                break;
-            case 2:
-                multiplier = 1.2;
-
-                break;
-            case 3:
-                multiplier = 1.3;
-
-                break;
-            case 4:
-                multiplier = 1.5;
-
-                break;
-            case 5:
-                multiplier = 2;
-
-                break;
-            case 6:
-                multiplier = 2.5;
-
-                break;
-            case 7:
-                multiplier = 3;
-
-                break;
-            case 8:
-                multiplier = 3.5;
-
-                break;
-            case 9:
-                multiplier = 4;
-
-                break;
-            case 10:
-                multiplier = 4.5;
-
-                break;
-            case 11:
-                multiplier = 5;
-
-                break;
-            case 12:
-                multiplier = 5.5;
-
-                break;
-            case 13:
-                multiplier = 6;
-
-                break;
-            case 14:
-                multiplier = 7;
-
-                break;
-            case 15:
-                multiplier = 8;
-
-                break;
-        }
+        multiplier = ((csd.TAAC & 0x78) >> 3) switch
+                     {
+                         0  => 0,
+                         1  => 1,
+                         2  => 1.2,
+                         3  => 1.3,
+                         4  => 1.5,
+                         5  => 2,
+                         6  => 2.5,
+                         7  => 3,
+                         8  => 3.5,
+                         9  => 4,
+                         10 => 4.5,
+                         11 => 5,
+                         12 => 5.5,
+                         13 => 6,
+                         14 => 7,
+                         15 => 8,
+                         _  => multiplier
+                     };
 
         double result = unitFactor * multiplier;
         sb.AppendFormat("\tAsynchronous data access time is {0}{1}", result, unit).AppendLine();
@@ -309,73 +262,26 @@ public static partial class Decoders
                 break;
         }
 
-        switch((csd.Speed & 0x78) >> 3)
-        {
-            case 0:
-                multiplier = 0;
-
-                break;
-            case 1:
-                multiplier = 1;
-
-                break;
-            case 2:
-                multiplier = 1.2;
-
-                break;
-            case 3:
-                multiplier = 1.3;
-
-                break;
-            case 4:
-                multiplier = 1.5;
-
-                break;
-            case 5:
-                multiplier = 2;
-
-                break;
-            case 6:
-                multiplier = 2.6;
-
-                break;
-            case 7:
-                multiplier = 3;
-
-                break;
-            case 8:
-                multiplier = 3.5;
-
-                break;
-            case 9:
-                multiplier = 4;
-
-                break;
-            case 10:
-                multiplier = 4.5;
-
-                break;
-            case 11:
-                multiplier = 5.2;
-
-                break;
-            case 12:
-                multiplier = 5.5;
-
-                break;
-            case 13:
-                multiplier = 6;
-
-                break;
-            case 14:
-                multiplier = 7;
-
-                break;
-            case 15:
-                multiplier = 8;
-
-                break;
-        }
+        multiplier = ((csd.Speed & 0x78) >> 3) switch
+                     {
+                         0  => 0,
+                         1  => 1,
+                         2  => 1.2,
+                         3  => 1.3,
+                         4  => 1.5,
+                         5  => 2,
+                         6  => 2.6,
+                         7  => 3,
+                         8  => 3.5,
+                         9  => 4,
+                         10 => 4.5,
+                         11 => 5.2,
+                         12 => 5.5,
+                         13 => 6,
+                         14 => 7,
+                         15 => 8,
+                         _  => multiplier
+                     };
 
         result = unitFactor * multiplier;
         sb.AppendFormat("\tDevice's transfer speed: {0}{1}", result, unit).AppendLine();

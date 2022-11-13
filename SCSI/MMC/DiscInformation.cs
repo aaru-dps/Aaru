@@ -354,14 +354,13 @@ public static class DiscInformation
         if(response.Length < 12)
             return null;
 
-        switch(response[2] & 0xE0)
-        {
-            case 0x00: return Prettify000b(Decode000b(response));
-            case 0x20: return Prettify001b(Decode001b(response));
-            case 0x40: return Prettify010b(Decode010b(response));
-        }
-
-        return null;
+        return (response[2] & 0xE0) switch
+               {
+                   0x00 => Prettify000b(Decode000b(response)),
+                   0x20 => Prettify001b(Decode001b(response)),
+                   0x40 => Prettify010b(Decode010b(response)),
+                   _    => null
+               };
     }
 
     public struct StandardDiscInformation
