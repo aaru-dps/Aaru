@@ -29,6 +29,9 @@
         <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
         <NrtShowRevision>false</NrtShowRevision>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <NoWarn>CS1591;CS1574</NoWarn>
+    </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
         <DebugSymbols>True</DebugSymbols>
         <DebugType>full</DebugType>

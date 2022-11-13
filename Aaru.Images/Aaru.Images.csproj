@@ -32,6 +32,9 @@
         <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <NoWarn>CS1591;CS1574</NoWarn>
+    </PropertyGroup>
     <PropertyGroup>
         <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
         <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>

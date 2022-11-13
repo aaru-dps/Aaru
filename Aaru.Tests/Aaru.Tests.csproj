@@ -11,6 +11,10 @@
         <ReleaseVersion>$(Version)</ReleaseVersion>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <NoWarn>CS1591;CS1574</NoWarn>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Claunia.Encoding" Version="1.9.2"/>
         <PackageReference Include="FluentAssertions" Version="6.5.1"/>
