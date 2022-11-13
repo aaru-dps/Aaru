@@ -44,10 +44,7 @@ public static class DensitySupport
 {
     public static DensitySupportHeader? DecodeDensity(byte[] response)
     {
-        if(response == null)
-            return null;
-
-        if(response.Length <= 56)
+        if(response is not { Length: > 56 })
             return null;
 
         var responseLen = (ushort)((response[0] << 8) + response[1] + 2);
@@ -147,10 +144,7 @@ public static class DensitySupport
 
     public static MediaTypeSupportHeader? DecodeMediumType(byte[] response)
     {
-        if(response == null)
-            return null;
-
-        if(response.Length <= 60)
+        if(response is not { Length: > 60 })
             return null;
 
         var responseLen = (ushort)((response[0] << 8) + response[1] + 2);

@@ -2214,24 +2214,19 @@ public static class EVPD
                 break;
         }
 
-        if(page.Component        != null &&
-           page.Component.Length > 0)
+        if(page.Component is { Length: > 0 })
             sb.AppendFormat("\tComponent: {0}", StringHandlers.CToString(page.Component)).AppendLine();
 
-        if(page.Version        != null &&
-           page.Version.Length > 0)
+        if(page.Version is { Length: > 0 })
             sb.AppendFormat("\tVersion: {0}", StringHandlers.CToString(page.Version)).AppendLine();
 
-        if(page.Date        != null &&
-           page.Date.Length > 0)
+        if(page.Date is { Length: > 0 })
             sb.AppendFormat("\tDate: {0}", StringHandlers.CToString(page.Date)).AppendLine();
 
-        if(page.Variant        != null &&
-           page.Variant.Length > 0)
+        if(page.Variant is { Length: > 0 })
             sb.AppendFormat("\tVariant: {0}", StringHandlers.CToString(page.Variant)).AppendLine();
 
-        if(page.Copyright        != null &&
-           page.Copyright.Length > 0)
+        if(page.Copyright is { Length: > 0 })
             sb.AppendFormat("\tCopyright: {0}", StringHandlers.CToString(page.Copyright)).AppendLine();
 
         return sb.ToString();

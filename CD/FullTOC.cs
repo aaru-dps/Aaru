@@ -334,8 +334,7 @@ public static class FullTOC
 
                             default:
                             {
-                                if(descriptor.POINT >= 0x01 &&
-                                   descriptor.POINT <= 0x63)
+                                if(descriptor.POINT is >= 0x01 and <= 0x63)
                                     if(descriptor.ADR == 4)
                                         sb.AppendFormat("Video track {3} starts at: {0:D2}:{1:D2}:{2:D2}",
                                                         descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
@@ -525,8 +524,7 @@ public static class FullTOC
 
                             default:
                             {
-                                if(descriptor.POINT >= 0x01 &&
-                                   descriptor.POINT <= 0x40)
+                                if(descriptor.POINT is >= 0x01 and <= 0x40)
                                 {
                                     sb.
                                         AppendFormat("Start time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}",
