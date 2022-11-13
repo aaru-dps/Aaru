@@ -454,15 +454,15 @@ public static class Marshal
         {
             char c = hex[i];
 
-            if(c < '0'            ||
-               c > '9' && c < 'A' ||
-               c > 'F' && c < 'a' ||
+            if(c < '0'              ||
+               c is > '9' and < 'A' ||
+               c is > 'F' and < 'a' ||
                c > 'f')
                 break;
 
-            c -= c >= 'a' && c <= 'f'
+            c -= c is >= 'a' and <= 'f'
                      ? '\u0057'
-                     : c >= 'A' && c <= 'F'
+                     : c is >= 'A' and <= 'F'
                          ? '\u0037'
                          : '\u0030';
 
@@ -470,15 +470,15 @@ public static class Marshal
 
             c = hex[i + 1];
 
-            if(c < '0'            ||
-               c > '9' && c < 'A' ||
-               c > 'F' && c < 'a' ||
+            if(c < '0'              ||
+               c is > '9' and < 'A' ||
+               c is > 'F' and < 'a' ||
                c > 'f')
                 break;
 
-            c -= c >= 'a' && c <= 'f'
+            c -= c is >= 'a' and <= 'f'
                      ? '\u0057'
-                     : c >= 'A' && c <= 'F'
+                     : c is >= 'A' and <= 'F'
                          ? '\u0037'
                          : '\u0030';
 
