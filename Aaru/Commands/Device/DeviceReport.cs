@@ -1301,29 +1301,15 @@ sealed class DeviceReportCommand : Command
                                 }
                             }
 
-                            switch(mediaType)
-                            {
-                                case "MD DATA (140Mb data MiniDisc)":
-                                    mediaTest.MediumTypeName = "MMD-140A";
-
-                                    break;
-                                case "60 minutes rewritable MiniDisc":
-                                    mediaTest.MediumTypeName = "MDW-60";
-
-                                    break;
-                                case "74 minutes rewritable MiniDisc":
-                                    mediaTest.MediumTypeName = "MDW-74";
-
-                                    break;
-                                case "80 minutes rewritable MiniDisc":
-                                    mediaTest.MediumTypeName = "MDW-80";
-
-                                    break;
-                                case "Embossed Audio MiniDisc":
-                                    mediaTest.MediumTypeName = "MiniDisc";
-
-                                    break;
-                            }
+                            mediaTest.MediumTypeName = mediaType switch
+                                                       {
+                                                           "MD DATA (140Mb data MiniDisc)"  => "MMD-140A",
+                                                           "60 minutes rewritable MiniDisc" => "MDW-60",
+                                                           "74 minutes rewritable MiniDisc" => "MDW-74",
+                                                           "80 minutes rewritable MiniDisc" => "MDW-80",
+                                                           "Embossed Audio MiniDisc"        => "MiniDisc",
+                                                           _                                => mediaTest.MediumTypeName
+                                                       };
 
                             mediaTest.Manufacturer      = "SONY";
                             mediaTest.MediaIsRecognized = mediaIsRecognized;

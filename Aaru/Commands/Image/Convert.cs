@@ -421,21 +421,13 @@ sealed class ConvertImageCommand : Command
 
             // Obsolete types
             #pragma warning disable 612
-            switch(mediaType)
-            {
-                case MediaType.SQ1500:
-                    mediaType = MediaType.SyJet;
-
-                    break;
-                case MediaType.Bernoulli:
-                    mediaType = MediaType.Bernoulli10;
-
-                    break;
-                case MediaType.Bernoulli2:
-                    mediaType = MediaType.BernoulliBox2_20;
-
-                    break;
-            }
+            mediaType = mediaType switch
+                        {
+                            MediaType.SQ1500     => MediaType.SyJet,
+                            MediaType.Bernoulli  => MediaType.Bernoulli10,
+                            MediaType.Bernoulli2 => MediaType.BernoulliBox2_20,
+                            _                    => inputFormat.Info.MediaType
+                        };
             #pragma warning restore 612
 
             AaruConsole.DebugWriteLine("Convert-image command", "Correctly opened image file.");

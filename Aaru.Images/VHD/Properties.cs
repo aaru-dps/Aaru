@@ -52,19 +52,13 @@ public sealed partial class Vhd
     public string Author => "Natalia Portillo";
 
     /// <inheritdoc />
-    public string Format
-    {
-        get
-        {
-            switch(_thisFooter.DiskType)
-            {
-                case TYPE_FIXED:        return "Virtual PC fixed size disk image";
-                case TYPE_DYNAMIC:      return "Virtual PC dynamic size disk image";
-                case TYPE_DIFFERENCING: return "Virtual PC differencing disk image";
-                default:                return "Virtual PC disk image";
-            }
-        }
-    }
+    public string Format => _thisFooter.DiskType switch
+                            {
+                                TYPE_FIXED        => "Virtual PC fixed size disk image",
+                                TYPE_DYNAMIC      => "Virtual PC dynamic size disk image",
+                                TYPE_DIFFERENCING => "Virtual PC differencing disk image",
+                                _                 => "Virtual PC disk image"
+                            };
 
     /// <inheritdoc />
     public List<DumpHardwareType> DumpHardware => null;

@@ -279,21 +279,12 @@ public sealed partial class CPM
 
                             if(amsSb.format == 2)
                             {
-                                switch(amsSb.sidedness & 0x02)
-                                {
-                                    case 1:
-                                        _workingDefinition.order = "SIDES";
-
-                                        break;
-                                    case 2:
-                                        _workingDefinition.order = "CYLINDERS";
-
-                                        break;
-                                    default:
-                                        _workingDefinition.order = null;
-
-                                        break;
-                                }
+                                _workingDefinition.order = (amsSb.sidedness & 0x02) switch
+                                                           {
+                                                               1 => "SIDES",
+                                                               2 => "CYLINDERS",
+                                                               _ => null
+                                                           };
 
                                 _workingDefinition.side2 = new Side
                                 {

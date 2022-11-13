@@ -406,21 +406,13 @@ public sealed partial class LisaFS
 
         stat.FreeFiles = FILEID_MAX - stat.Files;
 
-        switch(_mddf.fsversion)
-        {
-            case LISA_V1:
-                stat.Type = "LisaFS v1";
-
-                break;
-            case LISA_V2:
-                stat.Type = "LisaFS v2";
-
-                break;
-            case LISA_V3:
-                stat.Type = "LisaFS v3";
-
-                break;
-        }
+        stat.Type = _mddf.fsversion switch
+                    {
+                        LISA_V1 => "LisaFS v1",
+                        LISA_V2 => "LisaFS v2",
+                        LISA_V3 => "LisaFS v3",
+                        _       => stat.Type
+                    };
 
         return ErrorNumber.NoError;
     }

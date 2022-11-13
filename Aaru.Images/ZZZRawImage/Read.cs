@@ -436,65 +436,25 @@ public sealed partial class ZZZRawImage
         {
             PFI.PhysicalFormatInformation decPfi = PFI.Decode(pfi, _imageInfo.MediaType).Value;
 
-            switch(decPfi.DiskCategory)
-            {
-                case DiskCategory.DVDPR:
-                    _imageInfo.MediaType = MediaType.DVDPR;
-
-                    break;
-                case DiskCategory.DVDPRDL:
-                    _imageInfo.MediaType = MediaType.DVDPRDL;
-
-                    break;
-                case DiskCategory.DVDPRW:
-                    _imageInfo.MediaType = MediaType.DVDPRW;
-
-                    break;
-                case DiskCategory.DVDPRWDL:
-                    _imageInfo.MediaType = MediaType.DVDPRWDL;
-
-                    break;
-                case DiskCategory.DVDR:
-                    _imageInfo.MediaType = decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
-
-                    break;
-                case DiskCategory.DVDRAM:
-                    _imageInfo.MediaType = MediaType.DVDRAM;
-
-                    break;
-                default:
-                    _imageInfo.MediaType = MediaType.DVDROM;
-
-                    break;
-                case DiskCategory.DVDRW:
-                    _imageInfo.MediaType = decPfi.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW;
-
-                    break;
-                case DiskCategory.HDDVDR:
-                    _imageInfo.MediaType = MediaType.HDDVDR;
-
-                    break;
-                case DiskCategory.HDDVDRAM:
-                    _imageInfo.MediaType = MediaType.HDDVDRAM;
-
-                    break;
-                case DiskCategory.HDDVDROM:
-                    _imageInfo.MediaType = MediaType.HDDVDROM;
-
-                    break;
-                case DiskCategory.HDDVDRW:
-                    _imageInfo.MediaType = MediaType.HDDVDRW;
-
-                    break;
-                case DiskCategory.Nintendo:
-                    _imageInfo.MediaType = decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
-
-                    break;
-                case DiskCategory.UMD:
-                    _imageInfo.MediaType = MediaType.UMD;
-
-                    break;
-            }
+            _imageInfo.MediaType = decPfi.DiskCategory switch
+                                   {
+                                       DiskCategory.DVDPR => MediaType.DVDPR,
+                                       DiskCategory.DVDPRDL => MediaType.DVDPRDL,
+                                       DiskCategory.DVDPRW => MediaType.DVDPRW,
+                                       DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                       DiskCategory.DVDR => decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
+                                       DiskCategory.DVDRAM => MediaType.DVDRAM,
+                                       DiskCategory.DVDRW => decPfi.PartVersion >= 15 ? MediaType.DVDRWDL
+                                                                 : MediaType.DVDRW,
+                                       DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                                       DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                                       DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                                       DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                                       DiskCategory.Nintendo => decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD
+                                                                    : MediaType.WOD,
+                                       DiskCategory.UMD => MediaType.UMD,
+                                       _                => MediaType.DVDROM
+                                   };
 
             if(_imageInfo.MediaType is MediaType.DVDR or MediaType.DVDRW or MediaType.HDDVDR &&
                _mediaTags.TryGetValue(MediaTagType.DVD_MediaIdentifier, out byte[] mid))

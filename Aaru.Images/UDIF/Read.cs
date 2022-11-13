@@ -296,21 +296,13 @@ public sealed partial class Udif
             if(version.MinorVersion % 10 > 0)
                 release = $".{version.MinorVersion % 10}";
 
-            switch(version.DevStage)
-            {
-                case Version.DevelopmentStage.Alpha:
-                    dev = "a";
-
-                    break;
-                case Version.DevelopmentStage.Beta:
-                    dev = "b";
-
-                    break;
-                case Version.DevelopmentStage.PreAlpha:
-                    dev = "d";
-
-                    break;
-            }
+            dev = version.DevStage switch
+                  {
+                      Version.DevelopmentStage.Alpha    => "a",
+                      Version.DevelopmentStage.Beta     => "b",
+                      Version.DevelopmentStage.PreAlpha => "d",
+                      _                                 => dev
+                  };
 
             if(dev                       == null &&
                version.PreReleaseVersion > 0)
@@ -323,17 +315,12 @@ public sealed partial class Udif
             _imageInfo.Application        = version.VersionString;
             _imageInfo.Comments           = version.VersionMessage;
 
-            switch(version.MajorVersion)
-            {
-                case 3:
-                    _imageInfo.Application = "ShrinkWrap™";
-
-                    break;
-                case 6:
-                    _imageInfo.Application = "DiskCopy";
-
-                    break;
-            }
+            _imageInfo.Application = version.MajorVersion switch
+                                     {
+                                         3 => "ShrinkWrap™",
+                                         6 => "DiskCopy",
+                                         _ => _imageInfo.Application
+                                     };
         }
         else
             _imageInfo.Application = "DiskCopy";

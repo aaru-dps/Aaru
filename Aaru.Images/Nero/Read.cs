@@ -845,21 +845,13 @@ public sealed partial class Nero
                         _imageStream.Read(tmpBuffer, 0, 2);
                         _toc.Unknown = BigEndianBitConverter.ToUInt16(tmpBuffer, 0);
 
-                        switch(tmpBuffer[0])
-                        {
-                            case 0:
-                                _imageInfo.MediaType = CommonTypes.MediaType.CDROM;
-
-                                break;
-                            case 0x10:
-                                _imageInfo.MediaType = CommonTypes.MediaType.CDI;
-
-                                break;
-                            case 0x20:
-                                _imageInfo.MediaType = CommonTypes.MediaType.CDROMXA;
-
-                                break;
-                        }
+                        _imageInfo.MediaType = tmpBuffer[0] switch
+                                               {
+                                                   0    => CommonTypes.MediaType.CDROM,
+                                                   0x10 => CommonTypes.MediaType.CDI,
+                                                   0x20 => CommonTypes.MediaType.CDROMXA,
+                                                   _    => _imageInfo.MediaType
+                                               };
 
                         AaruConsole.DebugWriteLine("Nero plugin", "\tneroTOC.Unknown = 0x{0:X4} ({0})", _toc.Unknown);
 

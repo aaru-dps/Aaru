@@ -450,25 +450,13 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0020:
                 case 0x0021:
                 case 0x0022:
-                    switch(blocks)
-                    {
-                        case <= 360000:
-                            MaxX = 360000;
-
-                            break;
-                        case <= 405000:
-                            MaxX = 405000;
-
-                            break;
-                        case <= 445500:
-                            MaxX = 445500;
-
-                            break;
-                        default:
-                            MaxX = blocks;
-
-                            break;
-                    }
+                    MaxX = blocks switch
+                           {
+                               <= 360000 => 360000,
+                               <= 405000 => 405000,
+                               <= 445500 => 445500,
+                               _         => blocks
+                           };
 
                     StepsX = MaxX   / 10;
                     StepsY = 150    * 4;
@@ -504,29 +492,14 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0042:
                 case 0x0043:
                 case 0x0040: // BD
-                    switch(blocks)
-                    {
-                        case <= 12219392:
-                            MaxX = 12219392;
-
-                            break;
-                        case <= 24438784:
-                            MaxX = 24438784;
-
-                            break;
-                        case <= 48878592:
-                            MaxX = 48878592;
-
-                            break;
-                        case <= 62500864:
-                            MaxX = 62500864;
-
-                            break;
-                        default:
-                            MaxX = blocks;
-
-                            break;
-                    }
+                    MaxX = blocks switch
+                           {
+                               <= 12219392 => 12219392,
+                               <= 24438784 => 24438784,
+                               <= 48878592 => 48878592,
+                               <= 62500864 => 62500864,
+                               _           => blocks
+                           };
 
                     StepsX = MaxX / 10;
                     StepsY = 4394.5;
@@ -539,21 +512,12 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0053:
                 case 0x0058:
                 case 0x005A:
-                    switch(blocks)
-                    {
-                        case <= 7361599:
-                            MaxX = 7361599;
-
-                            break;
-                        case <= 16305407:
-                            MaxX = 16305407;
-
-                            break;
-                        default:
-                            MaxX = blocks;
-
-                            break;
-                    }
+                    MaxX = blocks switch
+                           {
+                               <= 7361599  => 7361599,
+                               <= 16305407 => 16305407,
+                               _           => blocks
+                           };
 
                     StepsX = MaxX / 10;
                     StepsY = 4394.5;

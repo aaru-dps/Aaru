@@ -37,18 +37,15 @@ using Aaru.Decoders.SCSI.MMC;
 
 public sealed partial class BlindWrite5
 {
-    static CommonTypes.Enums.TrackType BlindWriteTrackTypeToTrackType(TrackType trackType)
-    {
-        switch(trackType)
-        {
-            case TrackType.Mode1:   return CommonTypes.Enums.TrackType.CdMode1;
-            case TrackType.Mode2F1: return CommonTypes.Enums.TrackType.CdMode2Form1;
-            case TrackType.Mode2F2: return CommonTypes.Enums.TrackType.CdMode2Form2;
-            case TrackType.Mode2:   return CommonTypes.Enums.TrackType.CdMode2Formless;
-            case TrackType.Audio:   return CommonTypes.Enums.TrackType.Audio;
-            default:                return CommonTypes.Enums.TrackType.Data;
-        }
-    }
+    static CommonTypes.Enums.TrackType BlindWriteTrackTypeToTrackType(TrackType trackType) => trackType switch
+                                                                            {
+                                                                                TrackType.Mode1   => CommonTypes.Enums.TrackType.CdMode1,
+                                                                                TrackType.Mode2F1 => CommonTypes.Enums.TrackType.CdMode2Form1,
+                                                                                TrackType.Mode2F2 => CommonTypes.Enums.TrackType.CdMode2Form2,
+                                                                                TrackType.Mode2   => CommonTypes.Enums.TrackType.CdMode2Formless,
+                                                                                TrackType.Audio   => CommonTypes.Enums.TrackType.Audio,
+                                                                                _                 => CommonTypes.Enums.TrackType.Data
+                                                                            };
 
     static MediaType BlindWriteProfileToMediaType(ProfileNumber profile)
     {

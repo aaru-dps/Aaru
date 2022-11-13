@@ -39,18 +39,18 @@ public sealed partial class ZZZRawImage
     MediaType CalculateDiskType()
     {
         if(_imageInfo.SectorSize == 2048)
-            switch(_imageInfo.Sectors)
-            {
-                case 58620544:    return MediaType.REV120;
-                case 17090880:    return MediaType.REV35;
-                case <= 360000:   return MediaType.CD;
-                case <= 2295104:  return MediaType.DVDPR;
-                case <= 2298496:  return MediaType.DVDR;
-                case <= 4171712:  return MediaType.DVDRDL;
-                case <= 4173824:  return MediaType.DVDPRDL;
-                case <= 24438784: return MediaType.BDR;
-                default:          return _imageInfo.Sectors <= 62500864 ? MediaType.BDRXL : MediaType.Unknown;
-            }
+            return _imageInfo.Sectors switch
+                   {
+                       58620544    => MediaType.REV120,
+                       17090880    => MediaType.REV35,
+                       <= 360000   => MediaType.CD,
+                       <= 2295104  => MediaType.DVDPR,
+                       <= 2298496  => MediaType.DVDR,
+                       <= 4171712  => MediaType.DVDRDL,
+                       <= 4173824  => MediaType.DVDPRDL,
+                       <= 24438784 => MediaType.BDR,
+                       _           => _imageInfo.Sectors <= 62500864 ? MediaType.BDRXL : MediaType.Unknown
+                   };
 
         switch(_imageInfo.ImageSize)
         {

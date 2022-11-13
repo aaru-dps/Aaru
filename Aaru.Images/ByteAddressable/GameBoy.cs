@@ -730,225 +730,225 @@ public class GameBoy : IByteAddressableImage
         {
             string licenseeNew = StringHandlers.CToString(headerLicenseeNew);
 
-            switch(licenseeNew)
-            {
-                case "00": return "none";
-                case "01": return "Nintendo R&D1";
-                case "08": return "Capcom";
-                case "13": return "Electronic Arts";
-                case "18": return "Hudson Soft";
-                case "19": return "b-ai";
-                case "20": return "kss";
-                case "22": return "pow";
-                case "24": return "PCM Complete";
-                case "25": return "san-x";
-                case "28": return "Kemco Japan";
-                case "29": return "seta";
-                case "30": return "Viacom";
-                case "31": return "Nintendo";
-                case "32": return "Bandai";
-                case "33": return "Ocean / Acclaim";
-                case "34": return "Konami";
-                case "35": return "Hector";
-                case "37": return "Taito";
-                case "38": return "Hudson";
-                case "39": return "Banpresto";
-                case "41": return "Ubi Soft";
-                case "42": return "Atlus";
-                case "44": return "Malibu";
-                case "46": return "angel";
-                case "47": return "Bullet -Proof";
-                case "49": return "irem";
-                case "50": return "Absolute";
-                case "51": return "Acclaim";
-                case "52": return "Activision";
-                case "53": return "American sammy";
-                case "54": return "Konami";
-                case "55": return "Hi tech entertainment";
-                case "56": return "LJN";
-                case "57": return "Matchbox";
-                case "58": return "Mattel";
-                case "59": return "Milton Bradley";
-                case "60": return "Titus";
-                case "61": return "Virgin";
-                case "64": return "LucasArts";
-                case "67": return "Ocean";
-                case "69": return "Electronic Arts";
-                case "70": return "Infogrames";
-                case "71": return "Interplay";
-                case "72": return "Brøderbund";
-                case "73": return "sculptured";
-                case "75": return "sci";
-                case "78": return "THQ";
-                case "79": return "Accolade";
-                case "80": return "misawa";
-                case "83": return "lozc";
-                case "86": return "tokuma shoten i";
-                case "87": return "tsukuda ori";
-                case "91": return "Chunsoft";
-                case "92": return "Video  system";
-                case "93": return "Ocean / Acclaim";
-                case "95": return "Varie";
-                case "96": return "Yonezawa / s'pal";
-                case "97": return "Kaneko";
-                case "99": return "Pack in soft";
-                case "A4": return "Konami";
-                default:   return "Unknown";
-            }
+            return licenseeNew switch
+                   {
+                       "00" => "none",
+                       "01" => "Nintendo R&D1",
+                       "08" => "Capcom",
+                       "13" => "Electronic Arts",
+                       "18" => "Hudson Soft",
+                       "19" => "b-ai",
+                       "20" => "kss",
+                       "22" => "pow",
+                       "24" => "PCM Complete",
+                       "25" => "san-x",
+                       "28" => "Kemco Japan",
+                       "29" => "seta",
+                       "30" => "Viacom",
+                       "31" => "Nintendo",
+                       "32" => "Bandai",
+                       "33" => "Ocean / Acclaim",
+                       "34" => "Konami",
+                       "35" => "Hector",
+                       "37" => "Taito",
+                       "38" => "Hudson",
+                       "39" => "Banpresto",
+                       "41" => "Ubi Soft",
+                       "42" => "Atlus",
+                       "44" => "Malibu",
+                       "46" => "angel",
+                       "47" => "Bullet -Proof",
+                       "49" => "irem",
+                       "50" => "Absolute",
+                       "51" => "Acclaim",
+                       "52" => "Activision",
+                       "53" => "American sammy",
+                       "54" => "Konami",
+                       "55" => "Hi tech entertainment",
+                       "56" => "LJN",
+                       "57" => "Matchbox",
+                       "58" => "Mattel",
+                       "59" => "Milton Bradley",
+                       "60" => "Titus",
+                       "61" => "Virgin",
+                       "64" => "LucasArts",
+                       "67" => "Ocean",
+                       "69" => "Electronic Arts",
+                       "70" => "Infogrames",
+                       "71" => "Interplay",
+                       "72" => "Brøderbund",
+                       "73" => "sculptured",
+                       "75" => "sci",
+                       "78" => "THQ",
+                       "79" => "Accolade",
+                       "80" => "misawa",
+                       "83" => "lozc",
+                       "86" => "tokuma shoten i",
+                       "87" => "tsukuda ori",
+                       "91" => "Chunsoft",
+                       "92" => "Video  system",
+                       "93" => "Ocean / Acclaim",
+                       "95" => "Varie",
+                       "96" => "Yonezawa / s'pal",
+                       "97" => "Kaneko",
+                       "99" => "Pack in soft",
+                       "A4" => "Konami",
+                       _    => "Unknown"
+                   };
         }
 
-        switch(headerLicensee)
-        {
-            case 0x00: return "none";
-            case 0x01: return "nintendo";
-            case 0x08: return "capcom";
-            case 0x09: return "hot-b";
-            case 0x0A: return "jaleco";
-            case 0x0B: return "coconuts";
-            case 0x0C: return "elite systems";
-            case 0x13: return "electronic arts";
-            case 0x18: return "hudsonsoft";
-            case 0x19: return "itc entertainment";
-            case 0x1A: return "yanoman";
-            case 0x1D: return "clary";
-            case 0x1F: return "virgin";
-            case 0x20: return "KSS";
-            case 0x24: return "pcm complete";
-            case 0x25: return "san-x";
-            case 0x28: return "kotobuki systems";
-            case 0x29: return "seta";
-            case 0x30: return "infogrames";
-            case 0x31: return "nintendo";
-            case 0x32: return "bandai";
-            case 0x33: return "'''GBC - see above'''";
-            case 0x34: return "konami";
-            case 0x35: return "hector";
-            case 0x38: return "Capcom";
-            case 0x39: return "Banpresto";
-            case 0x3C: return "*entertainment i";
-            case 0x3E: return "gremlin";
-            case 0x41: return "Ubisoft";
-            case 0x42: return "Atlus";
-            case 0x44: return "Malibu";
-            case 0x46: return "angel";
-            case 0x47: return "spectrum holoby";
-            case 0x49: return "irem";
-            case 0x4A: return "virgin";
-            case 0x4D: return "malibu";
-            case 0x4F: return "u.s. gold";
-            case 0x50: return "absolute";
-            case 0x51: return "acclaim";
-            case 0x52: return "activision";
-            case 0x53: return "american sammy";
-            case 0x54: return "gametek";
-            case 0x55: return "park place";
-            case 0x56: return "ljn";
-            case 0x57: return "matchbox";
-            case 0x59: return "milton bradley";
-            case 0x5A: return "mindscape";
-            case 0x5B: return "romstar";
-            case 0x5C: return "naxat soft";
-            case 0x5D: return "tradewest";
-            case 0x60: return "titus";
-            case 0x61: return "virgin";
-            case 0x67: return "ocean";
-            case 0x69: return "electronic arts";
-            case 0x6E: return "elite systems";
-            case 0x6F: return "electro brain";
-            case 0x70: return "Infogrammes";
-            case 0x71: return "Interplay";
-            case 0x72: return "broderbund";
-            case 0x73: return "sculptered soft";
-            case 0x75: return "the sales curve";
-            case 0x78: return "t*hq";
-            case 0x79: return "accolade";
-            case 0x7A: return "triffix entertainment";
-            case 0x7C: return "microprose";
-            case 0x7F: return "kemco";
-            case 0x80: return "misawa entertainment";
-            case 0x83: return "lozc";
-            case 0x86: return "tokuma shoten intermedia";
-            case 0x8B: return "bullet-proof software";
-            case 0x8C: return "vic tokai";
-            case 0x8E: return "ape";
-            case 0x8F: return "i'max";
-            case 0x91: return "chun soft";
-            case 0x92: return "video system";
-            case 0x93: return "tsuburava";
-            case 0x95: return "varie";
-            case 0x96: return "yonezawa/s'pal";
-            case 0x97: return "kaneko";
-            case 0x99: return "arc";
-            case 0x9A: return "nihon bussan";
-            case 0x9B: return "Tecmo";
-            case 0x9C: return "imagineer";
-            case 0x9D: return "Banpresto";
-            case 0x9F: return "nova";
-            case 0xA1: return "Hori electric";
-            case 0xA2: return "Bandai";
-            case 0xA4: return "Konami";
-            case 0xA6: return "kawada";
-            case 0xA7: return "takara";
-            case 0xA9: return "technos japan";
-            case 0xAA: return "broderbund";
-            case 0xAC: return "Toei animation";
-            case 0xAD: return "toho";
-            case 0xAF: return "Namco";
-            case 0xB0: return "Acclaim";
-            case 0xB1: return "ascii or nexoft";
-            case 0xB2: return "Bandai";
-            case 0xB4: return "Enix";
-            case 0xB6: return "HAL";
-            case 0xB7: return "SNK";
-            case 0xB9: return "pony canyon";
-            case 0xBA: return "*culture brain o";
-            case 0xBB: return "Sunsoft";
-            case 0xBD: return "Sony imagesoft";
-            case 0xBF: return "sammy";
-            case 0xC0: return "Taito";
-            case 0xC2: return "Kemco";
-            case 0xC3: return "Squaresoft";
-            case 0xC4: return "tokuma shoten intermedia";
-            case 0xC5: return "data east";
-            case 0xC6: return "tonkin house";
-            case 0xC8: return "koei";
-            case 0xC9: return "ufl";
-            case 0xCA: return "ultra";
-            case 0xCB: return "vap";
-            case 0xCC: return "use";
-            case 0xCD: return "meldac";
-            case 0xCE: return "*pony canyon or";
-            case 0xCF: return "angel";
-            case 0xD0: return "Taito";
-            case 0xD1: return "sofel";
-            case 0xD2: return "quest";
-            case 0xD3: return "sigma enterprises";
-            case 0xD4: return "ask kodansha";
-            case 0xD6: return "naxat soft";
-            case 0xD7: return "copya systems";
-            case 0xD9: return "Banpresto";
-            case 0xDA: return "tomy";
-            case 0xDB: return "ljn";
-            case 0xDD: return "ncs";
-            case 0xDE: return "human";
-            case 0xDF: return "altron";
-            case 0xE0: return "jaleco";
-            case 0xE1: return "towachiki";
-            case 0xE2: return "uutaka";
-            case 0xE3: return "varie";
-            case 0xE5: return "epoch";
-            case 0xE7: return "athena";
-            case 0xE8: return "asmik";
-            case 0xE9: return "natsume";
-            case 0xEA: return "king records";
-            case 0xEB: return "atlus";
-            case 0xEC: return "Epic/Sony records";
-            case 0xEE: return "igs";
-            case 0xF0: return "a wave";
-            case 0xF3: return "extreme entertainment";
-            case 0xFF: return "ljn";
-            default:   return "Unknown";
-        }
+        return headerLicensee switch
+               {
+                   0x00 => "none",
+                   0x01 => "nintendo",
+                   0x08 => "capcom",
+                   0x09 => "hot-b",
+                   0x0A => "jaleco",
+                   0x0B => "coconuts",
+                   0x0C => "elite systems",
+                   0x13 => "electronic arts",
+                   0x18 => "hudsonsoft",
+                   0x19 => "itc entertainment",
+                   0x1A => "yanoman",
+                   0x1D => "clary",
+                   0x1F => "virgin",
+                   0x20 => "KSS",
+                   0x24 => "pcm complete",
+                   0x25 => "san-x",
+                   0x28 => "kotobuki systems",
+                   0x29 => "seta",
+                   0x30 => "infogrames",
+                   0x31 => "nintendo",
+                   0x32 => "bandai",
+                   0x33 => "'''GBC - see above'''",
+                   0x34 => "konami",
+                   0x35 => "hector",
+                   0x38 => "Capcom",
+                   0x39 => "Banpresto",
+                   0x3C => "*entertainment i",
+                   0x3E => "gremlin",
+                   0x41 => "Ubisoft",
+                   0x42 => "Atlus",
+                   0x44 => "Malibu",
+                   0x46 => "angel",
+                   0x47 => "spectrum holoby",
+                   0x49 => "irem",
+                   0x4A => "virgin",
+                   0x4D => "malibu",
+                   0x4F => "u.s. gold",
+                   0x50 => "absolute",
+                   0x51 => "acclaim",
+                   0x52 => "activision",
+                   0x53 => "american sammy",
+                   0x54 => "gametek",
+                   0x55 => "park place",
+                   0x56 => "ljn",
+                   0x57 => "matchbox",
+                   0x59 => "milton bradley",
+                   0x5A => "mindscape",
+                   0x5B => "romstar",
+                   0x5C => "naxat soft",
+                   0x5D => "tradewest",
+                   0x60 => "titus",
+                   0x61 => "virgin",
+                   0x67 => "ocean",
+                   0x69 => "electronic arts",
+                   0x6E => "elite systems",
+                   0x6F => "electro brain",
+                   0x70 => "Infogrammes",
+                   0x71 => "Interplay",
+                   0x72 => "broderbund",
+                   0x73 => "sculptered soft",
+                   0x75 => "the sales curve",
+                   0x78 => "t*hq",
+                   0x79 => "accolade",
+                   0x7A => "triffix entertainment",
+                   0x7C => "microprose",
+                   0x7F => "kemco",
+                   0x80 => "misawa entertainment",
+                   0x83 => "lozc",
+                   0x86 => "tokuma shoten intermedia",
+                   0x8B => "bullet-proof software",
+                   0x8C => "vic tokai",
+                   0x8E => "ape",
+                   0x8F => "i'max",
+                   0x91 => "chun soft",
+                   0x92 => "video system",
+                   0x93 => "tsuburava",
+                   0x95 => "varie",
+                   0x96 => "yonezawa/s'pal",
+                   0x97 => "kaneko",
+                   0x99 => "arc",
+                   0x9A => "nihon bussan",
+                   0x9B => "Tecmo",
+                   0x9C => "imagineer",
+                   0x9D => "Banpresto",
+                   0x9F => "nova",
+                   0xA1 => "Hori electric",
+                   0xA2 => "Bandai",
+                   0xA4 => "Konami",
+                   0xA6 => "kawada",
+                   0xA7 => "takara",
+                   0xA9 => "technos japan",
+                   0xAA => "broderbund",
+                   0xAC => "Toei animation",
+                   0xAD => "toho",
+                   0xAF => "Namco",
+                   0xB0 => "Acclaim",
+                   0xB1 => "ascii or nexoft",
+                   0xB2 => "Bandai",
+                   0xB4 => "Enix",
+                   0xB6 => "HAL",
+                   0xB7 => "SNK",
+                   0xB9 => "pony canyon",
+                   0xBA => "*culture brain o",
+                   0xBB => "Sunsoft",
+                   0xBD => "Sony imagesoft",
+                   0xBF => "sammy",
+                   0xC0 => "Taito",
+                   0xC2 => "Kemco",
+                   0xC3 => "Squaresoft",
+                   0xC4 => "tokuma shoten intermedia",
+                   0xC5 => "data east",
+                   0xC6 => "tonkin house",
+                   0xC8 => "koei",
+                   0xC9 => "ufl",
+                   0xCA => "ultra",
+                   0xCB => "vap",
+                   0xCC => "use",
+                   0xCD => "meldac",
+                   0xCE => "*pony canyon or",
+                   0xCF => "angel",
+                   0xD0 => "Taito",
+                   0xD1 => "sofel",
+                   0xD2 => "quest",
+                   0xD3 => "sigma enterprises",
+                   0xD4 => "ask kodansha",
+                   0xD6 => "naxat soft",
+                   0xD7 => "copya systems",
+                   0xD9 => "Banpresto",
+                   0xDA => "tomy",
+                   0xDB => "ljn",
+                   0xDD => "ncs",
+                   0xDE => "human",
+                   0xDF => "altron",
+                   0xE0 => "jaleco",
+                   0xE1 => "towachiki",
+                   0xE2 => "uutaka",
+                   0xE3 => "varie",
+                   0xE5 => "epoch",
+                   0xE7 => "athena",
+                   0xE8 => "asmik",
+                   0xE9 => "natsume",
+                   0xEA => "king records",
+                   0xEB => "atlus",
+                   0xEC => "Epic/Sony records",
+                   0xEE => "igs",
+                   0xF0 => "a wave",
+                   0xF3 => "extreme entertainment",
+                   0xFF => "ljn",
+                   _    => "Unknown"
+               };
     }
 
     static uint DecodeRomSize(byte headerRomType) => headerRomType switch

@@ -419,21 +419,12 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                 {
                     ImageResultVisible = true;
 
-                    switch(discCheckStatus)
-                    {
-                        case true:
-                            ImageResultText = "Disc image checksums are correct";
-
-                            break;
-                        case false:
-                            ImageResultText = "Disc image checksums are incorrect";
-
-                            break;
-                        case null:
-                            ImageResultText = "Disc image does not contain checksums";
-
-                            break;
-                    }
+                    ImageResultText = discCheckStatus switch
+                                      {
+                                          true  => "Disc image checksums are correct",
+                                          false => "Disc image checksums are incorrect",
+                                          null  => "Disc image does not contain checksums"
+                                      };
                 });
 
                 AaruConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);
@@ -493,8 +484,8 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                         {
                             Progress2Value = all / 512d;
 
-                            Progress2Text =
-                                $"Checking sector {all} of {_inputFormat.Info.Sectors}, on track {currentTrack.Sequence}";
+                            Progress2Text = $"Checking sector {all} of {_inputFormat.Info.Sectors}, on track {
+                                currentTrack.Sequence}";
                         });
 
                         List<ulong> tempFailingLbas;

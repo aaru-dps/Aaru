@@ -782,13 +782,15 @@ public sealed partial class BlindWrite5
                         lowerCaseExtension = true;
                     }
                     else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension
+                                                     }")))
                     {
                         basePath          = imageFilter.ParentFolder;
                         lowerCaseFileName = true;
                     }
                     else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
+                                                         firstExtensionLower}")))
                     {
                         basePath           = imageFilter.ParentFolder;
                         lowerCaseFileName  = true;
@@ -803,13 +805,15 @@ public sealed partial class BlindWrite5
                         lowerCaseExtension = true;
                     }
                     else if(File.Exists(Path.Combine(_dataPath,
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension
+                                                     }")))
                     {
                         basePath          = _dataPath;
                         lowerCaseFileName = true;
                     }
                     else if(File.Exists(Path.Combine(_dataPath,
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
+                                                         firstExtensionLower}")))
                     {
                         basePath           = _dataPath;
                         lowerCaseFileName  = true;
@@ -826,13 +830,15 @@ public sealed partial class BlindWrite5
                         lowerCaseExtension = true;
                     }
                     else if(File.Exists(Path.Combine(_dataPath.ToLower(CultureInfo.CurrentCulture),
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension
+                                                     }")))
                     {
                         basePath          = _dataPath.ToLower(CultureInfo.CurrentCulture);
                         lowerCaseFileName = true;
                     }
                     else if(File.Exists(Path.Combine(_dataPath.ToLower(CultureInfo.CurrentCulture),
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
+                                                         firstExtensionLower}")))
                     {
                         basePath           = _dataPath.ToLower(CultureInfo.CurrentCulture);
                         lowerCaseFileName  = true;
@@ -849,13 +855,15 @@ public sealed partial class BlindWrite5
                         lowerCaseExtension = true;
                     }
                     else if(File.Exists(Path.Combine(imageFilter.ParentFolder, _dataPath,
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension
+                                                     }")))
                     {
                         basePath          = Path.Combine(imageFilter.ParentFolder, _dataPath);
                         lowerCaseFileName = true;
                     }
                     else if(File.Exists(Path.Combine(imageFilter.ParentFolder, _dataPath,
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
+                                                         firstExtensionLower}")))
                     {
                         basePath           = Path.Combine(imageFilter.ParentFolder, _dataPath);
                         lowerCaseFileName  = true;
@@ -877,7 +885,8 @@ public sealed partial class BlindWrite5
                     }
                     else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
                                                      _dataPath.ToLower(CultureInfo.CurrentCulture),
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension
+                                                     }")))
                     {
                         basePath = Path.Combine(imageFilter.ParentFolder,
                                                 _dataPath.ToLower(CultureInfo.CurrentCulture));
@@ -886,7 +895,8 @@ public sealed partial class BlindWrite5
                     }
                     else if(File.Exists(Path.Combine(imageFilter.ParentFolder,
                                                      _dataPath.ToLower(CultureInfo.CurrentCulture),
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
+                                                         firstExtensionLower}")))
                     {
                         basePath = Path.Combine(imageFilter.ParentFolder,
                                                 _dataPath.ToLower(CultureInfo.CurrentCulture));
@@ -902,13 +912,15 @@ public sealed partial class BlindWrite5
                         lowerCaseExtension = true;
                     }
                     else if(File.Exists(Path.Combine("",
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension
+                                                     }")))
                     {
                         basePath          = "";
                         lowerCaseFileName = true;
                     }
                     else if(File.Exists(Path.Combine("",
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtensionLower}")))
+                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
+                                                         firstExtensionLower}")))
                     {
                         basePath           = "";
                         lowerCaseFileName  = true;
@@ -1105,65 +1117,26 @@ public sealed partial class BlindWrite5
             // So much for archival value
             if(pfi0.HasValue)
             {
-                switch(pfi0.Value.DiskCategory)
-                {
-                    case DiskCategory.DVDPR:
-                        _imageInfo.MediaType = MediaType.DVDPR;
-
-                        break;
-                    case DiskCategory.DVDPRDL:
-                        _imageInfo.MediaType = MediaType.DVDPRDL;
-
-                        break;
-                    case DiskCategory.DVDPRW:
-                        _imageInfo.MediaType = MediaType.DVDPRW;
-
-                        break;
-                    case DiskCategory.DVDPRWDL:
-                        _imageInfo.MediaType = MediaType.DVDPRWDL;
-
-                        break;
-                    case DiskCategory.DVDR:
-                        _imageInfo.MediaType = pfi0.Value.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
-
-                        break;
-                    case DiskCategory.DVDRAM:
-                        _imageInfo.MediaType = MediaType.DVDRAM;
-
-                        break;
-                    default:
-                        _imageInfo.MediaType = MediaType.DVDROM;
-
-                        break;
-                    case DiskCategory.DVDRW:
-                        _imageInfo.MediaType = pfi0.Value.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW;
-
-                        break;
-                    case DiskCategory.HDDVDR:
-                        _imageInfo.MediaType = MediaType.HDDVDR;
-
-                        break;
-                    case DiskCategory.HDDVDRAM:
-                        _imageInfo.MediaType = MediaType.HDDVDRAM;
-
-                        break;
-                    case DiskCategory.HDDVDROM:
-                        _imageInfo.MediaType = MediaType.HDDVDROM;
-
-                        break;
-                    case DiskCategory.HDDVDRW:
-                        _imageInfo.MediaType = MediaType.HDDVDRW;
-
-                        break;
-                    case DiskCategory.Nintendo:
-                        _imageInfo.MediaType = pfi0.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
-
-                        break;
-                    case DiskCategory.UMD:
-                        _imageInfo.MediaType = MediaType.UMD;
-
-                        break;
-                }
+                _imageInfo.MediaType = pfi0.Value.DiskCategory switch
+                                       {
+                                           DiskCategory.DVDPR    => MediaType.DVDPR,
+                                           DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                                           DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                                           DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                           DiskCategory.DVDR => pfi0.Value.PartVersion >= 6 ? MediaType.DVDRDL
+                                                                    : MediaType.DVDR,
+                                           DiskCategory.DVDRAM => MediaType.DVDRAM,
+                                           DiskCategory.DVDRW => pfi0.Value.PartVersion >= 15 ? MediaType.DVDRWDL
+                                                                     : MediaType.DVDRW,
+                                           DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                                           DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                                           DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                                           DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                                           DiskCategory.Nintendo => pfi0.Value.DiscSize == DVDSize.Eighty
+                                                                        ? MediaType.GOD : MediaType.WOD,
+                                           DiskCategory.UMD => MediaType.UMD,
+                                           _                => MediaType.DVDROM
+                                       };
 
                 if(DMI.IsXbox(_dmi))
                     _imageInfo.MediaType = MediaType.XGD;
@@ -1275,17 +1248,12 @@ public sealed partial class BlindWrite5
         }
 
         if(isBd && _imageInfo.Sectors > 24438784)
-            switch(_imageInfo.MediaType)
-            {
-                case MediaType.BDR:
-                    _imageInfo.MediaType = MediaType.BDRXL;
-
-                    break;
-                case MediaType.BDRE:
-                    _imageInfo.MediaType = MediaType.BDREXL;
-
-                    break;
-            }
+            _imageInfo.MediaType = _imageInfo.MediaType switch
+                                   {
+                                       MediaType.BDR  => MediaType.BDRXL,
+                                       MediaType.BDRE => MediaType.BDREXL,
+                                       _              => _imageInfo.MediaType
+                                   };
 
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "ImageInfo.mediaType = {0}", _imageInfo.MediaType);
 

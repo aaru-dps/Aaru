@@ -1127,61 +1127,26 @@ public static class MMC
                         PFI.PhysicalFormatInformation? pfi = PFI.Decode(cmdBuf, mediaType);
 
                         if(pfi != null)
-                            switch(pfi.Value.DiskCategory)
-                            {
-                                case DiskCategory.DVDPR:
-                                    mediaType = MediaType.DVDPR;
-
-                                    break;
-                                case DiskCategory.DVDPRDL:
-                                    mediaType = MediaType.DVDPRDL;
-
-                                    break;
-                                case DiskCategory.DVDPRW:
-                                    mediaType = MediaType.DVDPRW;
-
-                                    break;
-                                case DiskCategory.DVDPRWDL:
-                                    mediaType = MediaType.DVDPRWDL;
-
-                                    break;
-                                case DiskCategory.DVDR:
-                                    mediaType = pfi.Value.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
-
-                                    break;
-                                case DiskCategory.DVDRAM:
-                                    mediaType = MediaType.DVDRAM;
-
-                                    break;
-                                case DiskCategory.DVDRW:
-                                    mediaType = pfi.Value.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW;
-
-                                    break;
-                                case DiskCategory.HDDVDR:
-                                    mediaType = MediaType.HDDVDR;
-
-                                    break;
-                                case DiskCategory.HDDVDRAM:
-                                    mediaType = MediaType.HDDVDRAM;
-
-                                    break;
-                                case DiskCategory.HDDVDROM:
-                                    mediaType = MediaType.HDDVDROM;
-
-                                    break;
-                                case DiskCategory.HDDVDRW:
-                                    mediaType = MediaType.HDDVDRW;
-
-                                    break;
-                                case DiskCategory.Nintendo:
-                                    mediaType = pfi.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
-
-                                    break;
-                                case DiskCategory.UMD:
-                                    mediaType = MediaType.UMD;
-
-                                    break;
-                            }
+                            mediaType = pfi.Value.DiskCategory switch
+                                        {
+                                            DiskCategory.DVDPR    => MediaType.DVDPR,
+                                            DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                                            DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                                            DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                            DiskCategory.DVDR => pfi.Value.PartVersion >= 6 ? MediaType.DVDRDL
+                                                                     : MediaType.DVDR,
+                                            DiskCategory.DVDRAM => MediaType.DVDRAM,
+                                            DiskCategory.DVDRW => pfi.Value.PartVersion >= 15 ? MediaType.DVDRWDL
+                                                                      : MediaType.DVDRW,
+                                            DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                                            DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                                            DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                                            DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                                            DiskCategory.Nintendo => pfi.Value.DiscSize == DVDSize.Eighty
+                                                                         ? MediaType.GOD : MediaType.WOD,
+                                            DiskCategory.UMD => MediaType.UMD,
+                                            _                => mediaType
+                                        };
                     }
 
                     sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,

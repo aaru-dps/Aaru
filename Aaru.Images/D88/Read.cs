@@ -180,29 +180,15 @@ public sealed partial class D88
                bps        == IBMSectorSizeCode.EighthKilo)
                 _imageInfo.MediaType = MediaType.NEC_8_SD;
             else if(bps == IBMSectorSizeCode.QuarterKilo)
-                switch(trkCounter)
-                {
-                    case 35 when spt == 16:
-                        _imageInfo.MediaType = MediaType.MetaFloppy_Mod_I;
-
-                        break;
-                    case 77 when spt == 16:
-                        _imageInfo.MediaType = MediaType.MetaFloppy_Mod_II;
-
-                        break;
-                    case 80 when spt == 16:
-                        _imageInfo.MediaType = MediaType.NEC_525_SS;
-
-                        break;
-                    case 154 when spt == 26:
-                        _imageInfo.MediaType = MediaType.NEC_8_DD;
-
-                        break;
-                    case 160 when spt == 16:
-                        _imageInfo.MediaType = MediaType.NEC_525_DS;
-
-                        break;
-                }
+                _imageInfo.MediaType = trkCounter switch
+                                       {
+                                           35 when spt  == 16 => MediaType.MetaFloppy_Mod_I,
+                                           77 when spt  == 16 => MediaType.MetaFloppy_Mod_II,
+                                           80 when spt  == 16 => MediaType.NEC_525_SS,
+                                           154 when spt == 26 => MediaType.NEC_8_DD,
+                                           160 when spt == 16 => MediaType.NEC_525_DS,
+                                           _                  => _imageInfo.MediaType
+                                       };
             else if(trkCounter == 154 &&
                     spt        == 8   &&
                     bps        == IBMSectorSizeCode.Kilo)
@@ -212,57 +198,36 @@ public sealed partial class D88
                 {
                     case 40:
                     {
-                        switch(spt)
-                        {
-                            case 8:
-                                _imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
-
-                                break;
-                            case 9:
-                                _imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
-
-                                break;
-                        }
+                        _imageInfo.MediaType = spt switch
+                                               {
+                                                   8 => MediaType.DOS_525_SS_DD_8,
+                                                   9 => MediaType.DOS_525_SS_DD_9,
+                                                   _ => _imageInfo.MediaType
+                                               };
                     }
 
                         break;
                     case 80:
                     {
-                        switch(spt)
-                        {
-                            case 8:
-                                _imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
-
-                                break;
-                            case 9:
-                                _imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
-
-                                break;
-                        }
+                        _imageInfo.MediaType = spt switch
+                                               {
+                                                   8 => MediaType.DOS_525_DS_DD_8,
+                                                   9 => MediaType.DOS_525_DS_DD_9,
+                                                   _ => _imageInfo.MediaType
+                                               };
                     }
 
                         break;
                     case 160:
                     {
-                        switch(spt)
-                        {
-                            case 15:
-                                _imageInfo.MediaType = MediaType.NEC_35_HD_15;
-
-                                break;
-                            case 9:
-                                _imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-
-                                break;
-                            case 18:
-                                _imageInfo.MediaType = MediaType.DOS_35_HD;
-
-                                break;
-                            case 36:
-                                _imageInfo.MediaType = MediaType.DOS_35_ED;
-
-                                break;
-                        }
+                        _imageInfo.MediaType = spt switch
+                                               {
+                                                   15 => MediaType.NEC_35_HD_15,
+                                                   9  => MediaType.DOS_35_DS_DD_9,
+                                                   18 => MediaType.DOS_35_HD,
+                                                   36 => MediaType.DOS_35_ED,
+                                                   _  => _imageInfo.MediaType
+                                               };
                     }
 
                         break;

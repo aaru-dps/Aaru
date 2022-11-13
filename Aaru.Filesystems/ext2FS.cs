@@ -299,35 +299,15 @@ public sealed class ext2FS : IFilesystem
                 return;
         }
 
-        string extOs;
-
-        switch(supblk.creator_os)
-        {
-            case EXT2_OS_FREEBSD:
-                extOs = "FreeBSD";
-
-                break;
-            case EXT2_OS_HURD:
-                extOs = "Hurd";
-
-                break;
-            case EXT2_OS_LINUX:
-                extOs = "Linux";
-
-                break;
-            case EXT2_OS_LITES:
-                extOs = "Lites";
-
-                break;
-            case EXT2_OS_MASIX:
-                extOs = "MasIX";
-
-                break;
-            default:
-                extOs = $"Unknown OS ({supblk.creator_os})";
-
-                break;
-        }
+        string extOs = supblk.creator_os switch
+                       {
+                           EXT2_OS_FREEBSD => "FreeBSD",
+                           EXT2_OS_HURD    => "Hurd",
+                           EXT2_OS_LINUX   => "Linux",
+                           EXT2_OS_LITES   => "Lites",
+                           EXT2_OS_MASIX   => "MasIX",
+                           _               => $"Unknown OS ({supblk.creator_os})"
+                       };
 
         XmlFsType.SystemIdentifier = extOs;
 

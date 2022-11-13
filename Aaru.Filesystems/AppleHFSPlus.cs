@@ -302,17 +302,12 @@ public sealed class AppleHFSPlus : IFilesystem
                 XmlFsType.ModificationDateSpecified = true;
             }
 
-            switch(vh.signature)
-            {
-                case 0x482B:
-                    XmlFsType.Type = "HFS+";
-
-                    break;
-                case 0x4858:
-                    XmlFsType.Type = "HFSX";
-
-                    break;
-            }
+            XmlFsType.Type = vh.signature switch
+                             {
+                                 0x482B => "HFS+",
+                                 0x4858 => "HFSX",
+                                 _      => XmlFsType.Type
+                             };
 
             if(vh.drFndrInfo6 != 0 &&
                vh.drFndrInfo7 != 0)

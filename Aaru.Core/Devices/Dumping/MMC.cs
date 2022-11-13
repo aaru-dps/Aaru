@@ -283,26 +283,14 @@ partial class Dump
         var mediaTags = new Dictionary<MediaTagType, byte[]>();
 
         if(dskType == MediaType.PD650)
-            switch(blocks + 1)
-            {
-                case 1281856:
-                    dskType = MediaType.PD650_WORM;
-
-                    break;
-                case 58620544:
-                    dskType = MediaType.REV120;
-
-                    break;
-                case 17090880:
-                    dskType = MediaType.REV35;
-
-                    break;
-
-                case 34185728:
-                    dskType = MediaType.REV70;
-
-                    break;
-            }
+            dskType = (blocks + 1) switch
+                      {
+                          1281856  => MediaType.PD650_WORM,
+                          58620544 => MediaType.REV120,
+                          17090880 => MediaType.REV35,
+                          34185728 => MediaType.REV70,
+                          _        => dskType
+                      };
 
         #region Nintendo
         switch(dskType)
@@ -365,65 +353,25 @@ partial class Dump
                         UpdateStatus?.Invoke($"PFI:\n{PFI.Prettify(decPfi)}");
 
                         // False book types
-                        switch(decPfi.DiskCategory)
-                        {
-                            case DiskCategory.DVDPR:
-                                dskType = MediaType.DVDPR;
-
-                                break;
-                            case DiskCategory.DVDPRDL:
-                                dskType = MediaType.DVDPRDL;
-
-                                break;
-                            case DiskCategory.DVDPRW:
-                                dskType = MediaType.DVDPRW;
-
-                                break;
-                            case DiskCategory.DVDPRWDL:
-                                dskType = MediaType.DVDPRWDL;
-
-                                break;
-                            case DiskCategory.DVDR:
-                                dskType = decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
-
-                                break;
-                            case DiskCategory.DVDRAM:
-                                dskType = MediaType.DVDRAM;
-
-                                break;
-                            default:
-                                dskType = MediaType.DVDROM;
-
-                                break;
-                            case DiskCategory.DVDRW:
-                                dskType = decPfi.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW;
-
-                                break;
-                            case DiskCategory.HDDVDR:
-                                dskType = MediaType.HDDVDR;
-
-                                break;
-                            case DiskCategory.HDDVDRAM:
-                                dskType = MediaType.HDDVDRAM;
-
-                                break;
-                            case DiskCategory.HDDVDROM:
-                                dskType = MediaType.HDDVDROM;
-
-                                break;
-                            case DiskCategory.HDDVDRW:
-                                dskType = MediaType.HDDVDRW;
-
-                                break;
-                            case DiskCategory.Nintendo:
-                                dskType = decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
-
-                                break;
-                            case DiskCategory.UMD:
-                                dskType = MediaType.UMD;
-
-                                break;
-                        }
+                        dskType = decPfi.DiskCategory switch
+                                  {
+                                      DiskCategory.DVDPR => MediaType.DVDPR,
+                                      DiskCategory.DVDPRDL => MediaType.DVDPRDL,
+                                      DiskCategory.DVDPRW => MediaType.DVDPRW,
+                                      DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                      DiskCategory.DVDR => decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
+                                      DiskCategory.DVDRAM => MediaType.DVDRAM,
+                                      DiskCategory.DVDRW => decPfi.PartVersion >= 15 ? MediaType.DVDRWDL
+                                                                : MediaType.DVDRW,
+                                      DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                                      DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                                      DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                                      DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                                      DiskCategory.Nintendo => decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD
+                                                                   : MediaType.WOD,
+                                      DiskCategory.UMD => MediaType.UMD,
+                                      _                => MediaType.DVDROM
+                                  };
                     }
                 }
 
@@ -584,9 +532,10 @@ partial class Dump
                                 }
                             }
                             else
-                                UpdateStatus?.
-                                    Invoke($"Drive reports disc uses {(CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ?? CopyrightType.NoProtection).ToString()} copy protection. " +
-                                           "This is not yet supported and the dump will be incorrect.");
+                                UpdateStatus?.Invoke($"Drive reports disc uses {
+                                    (CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ??
+                                     CopyrightType.NoProtection).ToString()} copy protection. " +
+                                                     "This is not yet supported and the dump will be incorrect.");
                         }
                     }
                 }

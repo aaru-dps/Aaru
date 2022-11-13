@@ -110,25 +110,13 @@ partial class Dump
         PlextorSubchannel supportedPlextorSubchannel;
         var               outputFormat = _outputPlugin as IWritableImage;
 
-        switch(supportedSubchannel)
-        {
-            case MmcSubchannel.None:
-                supportedPlextorSubchannel = PlextorSubchannel.None;
-
-                break;
-            case MmcSubchannel.Raw:
-                supportedPlextorSubchannel = PlextorSubchannel.Pack;
-
-                break;
-            case MmcSubchannel.Q16:
-                supportedPlextorSubchannel = PlextorSubchannel.Q16;
-
-                break;
-            default:
-                supportedPlextorSubchannel = PlextorSubchannel.None;
-
-                break;
-        }
+        supportedPlextorSubchannel = supportedSubchannel switch
+                                     {
+                                         MmcSubchannel.None => PlextorSubchannel.None,
+                                         MmcSubchannel.Raw  => PlextorSubchannel.Pack,
+                                         MmcSubchannel.Q16  => PlextorSubchannel.Q16,
+                                         _                  => PlextorSubchannel.None
+                                     };
 
         InitProgress?.Invoke();
 
@@ -673,10 +661,10 @@ partial class Dump
                     }
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                        desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.Sequence, ref mcn,
-                        tracks, subchannelExtents, _fixSubchannelPosition, outputFormat as IWritableOpticalImage,
-                        _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
-                        out List<ulong> newPregapSectors);
+                                                                             desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.Sequence, ref mcn,
+                                                                             tracks, subchannelExtents, _fixSubchannelPosition, outputFormat as IWritableOpticalImage,
+                                                                             _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
+                                                                             out List<ulong> newPregapSectors);
 
                     // Set tracks and go back
                     if(indexesChanged)

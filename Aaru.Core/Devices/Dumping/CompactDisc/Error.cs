@@ -87,25 +87,13 @@ partial class Dump
         PlextorSubchannel supportedPlextorSubchannel;
         var               outputOptical = _outputPlugin as IWritableOpticalImage;
 
-        switch(supportedSubchannel)
-        {
-            case MmcSubchannel.None:
-                supportedPlextorSubchannel = PlextorSubchannel.None;
-
-                break;
-            case MmcSubchannel.Raw:
-                supportedPlextorSubchannel = PlextorSubchannel.Pack;
-
-                break;
-            case MmcSubchannel.Q16:
-                supportedPlextorSubchannel = PlextorSubchannel.Q16;
-
-                break;
-            default:
-                supportedPlextorSubchannel = PlextorSubchannel.None;
-
-                break;
-        }
+        supportedPlextorSubchannel = supportedSubchannel switch
+                                     {
+                                         MmcSubchannel.None => PlextorSubchannel.None,
+                                         MmcSubchannel.Raw  => PlextorSubchannel.Pack,
+                                         MmcSubchannel.Q16  => PlextorSubchannel.Q16,
+                                         _                  => PlextorSubchannel.None
+                                     };
 
         if(_resume.BadBlocks.Count <= 0 ||
            _aborted                     ||
@@ -138,7 +126,7 @@ partial class Dump
 
                     if(dcMode10?.Pages != null)
                         foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                                                                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
                             currentModePage = modePage;
                 }
             }
@@ -148,7 +136,7 @@ partial class Dump
 
                 if(dcMode6?.Pages != null)
                     foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage => modePage.Page == 0x01 &&
-                                modePage.Subpage                                                           == 0x00))
+                                                                               modePage.Subpage                                                           == 0x00))
                         currentModePage = modePage;
             }
 
@@ -569,29 +557,14 @@ partial class Dump
            desiredSubchannel   == MmcSubchannel.None)
             return;
 
-        switch(supportedSubchannel)
-        {
-            case MmcSubchannel.None:
-                supportedPlextorSubchannel = PlextorSubchannel.None;
-
-                break;
-            case MmcSubchannel.Raw:
-                supportedPlextorSubchannel = PlextorSubchannel.All;
-
-                break;
-            case MmcSubchannel.Q16:
-                supportedPlextorSubchannel = PlextorSubchannel.Q16;
-
-                break;
-            case MmcSubchannel.Rw:
-                supportedPlextorSubchannel = PlextorSubchannel.Pack;
-
-                break;
-            default:
-                supportedPlextorSubchannel = PlextorSubchannel.None;
-
-                break;
-        }
+        supportedPlextorSubchannel = supportedSubchannel switch
+                                     {
+                                         MmcSubchannel.None => PlextorSubchannel.None,
+                                         MmcSubchannel.Raw  => PlextorSubchannel.All,
+                                         MmcSubchannel.Q16  => PlextorSubchannel.Q16,
+                                         MmcSubchannel.Rw   => PlextorSubchannel.Pack,
+                                         _                  => PlextorSubchannel.None
+                                     };
 
         if(_aborted)
             return;
@@ -625,8 +598,8 @@ partial class Dump
                 break;
             }
 
-            PulseProgress?.
-                Invoke($"Retrying sector {badSector} subchannel, pass {pass}, {(forward ? "forward" : "reverse")}");
+            PulseProgress?.Invoke($"Retrying sector {badSector} subchannel, pass {pass}, {
+                (forward ? "forward" : "reverse")}");
 
             uint startSector = badSector - 2;
 

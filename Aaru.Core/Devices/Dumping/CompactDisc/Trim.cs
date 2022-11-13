@@ -91,25 +91,13 @@ partial class Dump
         byte[]            senseBuf      = null;
         var               outputOptical = _outputPlugin as IWritableOpticalImage;
 
-        switch(supportedSubchannel)
-        {
-            case MmcSubchannel.None:
-                supportedPlextorSubchannel = PlextorSubchannel.None;
-
-                break;
-            case MmcSubchannel.Raw:
-                supportedPlextorSubchannel = PlextorSubchannel.Pack;
-
-                break;
-            case MmcSubchannel.Q16:
-                supportedPlextorSubchannel = PlextorSubchannel.Q16;
-
-                break;
-            default:
-                supportedPlextorSubchannel = PlextorSubchannel.None;
-
-                break;
-        }
+        supportedPlextorSubchannel = supportedSubchannel switch
+                                     {
+                                         MmcSubchannel.None => PlextorSubchannel.None,
+                                         MmcSubchannel.Raw  => PlextorSubchannel.Pack,
+                                         MmcSubchannel.Q16  => PlextorSubchannel.Q16,
+                                         _                  => PlextorSubchannel.None
+                                     };
 
         if(_resume.BadBlocks.Count <= 0 ||
            _aborted                     ||

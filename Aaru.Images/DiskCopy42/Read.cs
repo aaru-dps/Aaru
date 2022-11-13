@@ -165,63 +165,25 @@ public sealed partial class DiskCopy42
         imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         imageInfo.MediaTitle           = header.DiskName;
 
-        switch(header.Format)
-        {
-            case kSonyFormat400K:
-                imageInfo.MediaType = imageInfo.Sectors == 1600 ? MediaType.AppleSonyDS : MediaType.AppleSonySS;
-
-                break;
-            case kSonyFormat800K:
-                imageInfo.MediaType = MediaType.AppleSonyDS;
-
-                break;
-            case kSonyFormat720K:
-                imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-
-                break;
-            case kSonyFormat1440K:
-                imageInfo.MediaType = MediaType.DOS_35_HD;
-
-                break;
-            case kSonyFormat1680K:
-                imageInfo.MediaType = MediaType.DMF;
-
-                break;
-            case kSigmaFormatTwiggy:
-                imageInfo.MediaType = MediaType.AppleFileWare;
-
-                break;
-            case kNotStandardFormat:
-                switch(imageInfo.Sectors)
-                {
-                    case 9728:
-                        imageInfo.MediaType = MediaType.AppleProfile;
-
-                        break;
-                    case 19456:
-                        imageInfo.MediaType = MediaType.AppleProfile;
-
-                        break;
-                    case 38912:
-                        imageInfo.MediaType = MediaType.AppleWidget;
-
-                        break;
-                    case 39040:
-                        imageInfo.MediaType = MediaType.AppleHD20;
-
-                        break;
-                    default:
-                        imageInfo.MediaType = MediaType.Unknown;
-
-                        break;
-                }
-
-                break;
-            default:
-                imageInfo.MediaType = MediaType.Unknown;
-
-                break;
-        }
+        imageInfo.MediaType = header.Format switch
+                              {
+                                  kSonyFormat400K => imageInfo.Sectors == 1600 ? MediaType.AppleSonyDS
+                                                         : MediaType.AppleSonySS,
+                                  kSonyFormat800K    => MediaType.AppleSonyDS,
+                                  kSonyFormat720K    => MediaType.DOS_35_DS_DD_9,
+                                  kSonyFormat1440K   => MediaType.DOS_35_HD,
+                                  kSonyFormat1680K   => MediaType.DMF,
+                                  kSigmaFormatTwiggy => MediaType.AppleFileWare,
+                                  kNotStandardFormat => imageInfo.Sectors switch
+                                                        {
+                                                            9728  => MediaType.AppleProfile,
+                                                            19456 => MediaType.AppleProfile,
+                                                            38912 => MediaType.AppleWidget,
+                                                            39040 => MediaType.AppleHD20,
+                                                            _     => MediaType.Unknown
+                                                        },
+                                  _ => MediaType.Unknown
+                              };
 
         if(imageInfo.MediaType == MediaType.AppleFileWare)
         {
@@ -264,41 +226,18 @@ public sealed partial class DiskCopy42
 
                 for(var i = 0; i < 46; i++)
                 {
-                    switch(i)
-                    {
-                        case >= 0 and <= 3:
-                            sectorsToCopy = 22;
-
-                            break;
-                        case >= 4 and <= 10:
-                            sectorsToCopy = 21;
-
-                            break;
-                        case >= 11 and <= 16:
-                            sectorsToCopy = 20;
-
-                            break;
-                        case >= 17 and <= 22:
-                            sectorsToCopy = 19;
-
-                            break;
-                        case >= 23 and <= 28:
-                            sectorsToCopy = 18;
-
-                            break;
-                        case >= 29 and <= 34:
-                            sectorsToCopy = 17;
-
-                            break;
-                        case >= 35 and <= 41:
-                            sectorsToCopy = 16;
-
-                            break;
-                        case >= 42 and <= 45:
-                            sectorsToCopy = 15;
-
-                            break;
-                    }
+                    sectorsToCopy = i switch
+                                    {
+                                        >= 0 and <= 3   => 22,
+                                        >= 4 and <= 10  => 21,
+                                        >= 11 and <= 16 => 20,
+                                        >= 17 and <= 22 => 19,
+                                        >= 23 and <= 28 => 18,
+                                        >= 29 and <= 34 => 17,
+                                        >= 35 and <= 41 => 16,
+                                        >= 42 and <= 45 => 15,
+                                        _               => sectorsToCopy
+                                    };
 
                     Array.Copy(data, header.DataSize / 2 + copiedSectors * 512, twiggyCache,
                                twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
@@ -338,21 +277,13 @@ public sealed partial class DiskCopy42
                         if(version.MinorVersion % 10 > 0)
                             release = $".{version.MinorVersion % 10}";
 
-                        switch(version.DevStage)
-                        {
-                            case Version.DevelopmentStage.Alpha:
-                                dev = "a";
-
-                                break;
-                            case Version.DevelopmentStage.Beta:
-                                dev = "b";
-
-                                break;
-                            case Version.DevelopmentStage.PreAlpha:
-                                dev = "d";
-
-                                break;
-                        }
+                        dev = version.DevStage switch
+                              {
+                                  Version.DevelopmentStage.Alpha    => "a",
+                                  Version.DevelopmentStage.Beta     => "b",
+                                  Version.DevelopmentStage.PreAlpha => "d",
+                                  _                                 => dev
+                              };
 
                         if(dev                       == null &&
                            version.PreReleaseVersion > 0)
@@ -429,17 +360,12 @@ public sealed partial class DiskCopy42
 
                 break;
             case MediaType.AppleProfile:
-                switch(imageInfo.Sectors)
-                {
-                    case 9728:
-                        imageInfo.Cylinders = 152;
-
-                        break;
-                    case 19456:
-                        imageInfo.Cylinders = 304;
-
-                        break;
-                }
+                imageInfo.Cylinders = imageInfo.Sectors switch
+                                      {
+                                          9728  => 152,
+                                          19456 => 304,
+                                          _     => imageInfo.Cylinders
+                                      };
 
                 imageInfo.Heads           = 4;
                 imageInfo.SectorsPerTrack = 16;

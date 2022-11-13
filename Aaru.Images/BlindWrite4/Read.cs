@@ -758,13 +758,11 @@ public sealed partial class BlindWrite4
             // Any non first track is audio
             audio |= bwTrack.Sequence != 1 && bwTrack.Type == CommonTypes.Enums.TrackType.Audio;
 
-            switch(bwTrack.Type)
-            {
-                case CommonTypes.Enums.TrackType.CdMode2Formless:
-                    mode2 = true;
-
-                    break;
-            }
+            mode2 = bwTrack.Type switch
+                    {
+                        CommonTypes.Enums.TrackType.CdMode2Formless => true,
+                        _                                           => mode2
+                    };
         }
 
         if(!data &&

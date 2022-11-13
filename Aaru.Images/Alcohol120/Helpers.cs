@@ -72,18 +72,15 @@ public sealed partial class Alcohol120
         }
     }
 
-    static MediaType MediumTypeToMediaType(MediumType discType)
-    {
-        switch(discType)
-        {
-            case MediumType.CD:   return MediaType.CD;
-            case MediumType.CDR:  return MediaType.CDR;
-            case MediumType.CDRW: return MediaType.CDRW;
-            case MediumType.DVD:  return MediaType.DVDROM;
-            case MediumType.DVDR: return MediaType.DVDR;
-            default:              return MediaType.Unknown;
-        }
-    }
+    static MediaType MediumTypeToMediaType(MediumType discType) => discType switch
+                                                                   {
+                                                                       MediumType.CD   => MediaType.CD,
+                                                                       MediumType.CDR  => MediaType.CDR,
+                                                                       MediumType.CDRW => MediaType.CDRW,
+                                                                       MediumType.DVD  => MediaType.DVDROM,
+                                                                       MediumType.DVDR => MediaType.DVDR,
+                                                                       _               => MediaType.Unknown
+                                                                   };
 
     static MediumType MediaTypeToMediumType(MediaType type)
     {
@@ -137,18 +134,15 @@ public sealed partial class Alcohol120
         }
     }
 
-    static TrackMode TrackTypeToTrackMode(TrackType type)
-    {
-        switch(type)
-        {
-            case TrackType.Audio:           return TrackMode.Audio;
-            case TrackType.CdMode1:         return TrackMode.Mode1;
-            case TrackType.CdMode2Formless: return TrackMode.Mode2;
-            case TrackType.CdMode2Form1:    return TrackMode.Mode2F1;
-            case TrackType.CdMode2Form2:    return TrackMode.Mode2F2;
-            default:                        return TrackMode.DVD;
-        }
-    }
+    static TrackMode TrackTypeToTrackMode(TrackType type) => type switch
+                                                             {
+                                                                 TrackType.Audio           => TrackMode.Audio,
+                                                                 TrackType.CdMode1         => TrackMode.Mode1,
+                                                                 TrackType.CdMode2Formless => TrackMode.Mode2,
+                                                                 TrackType.CdMode2Form1    => TrackMode.Mode2F1,
+                                                                 TrackType.CdMode2Form2    => TrackMode.Mode2F2,
+                                                                 _                         => TrackMode.DVD
+                                                             };
 
     static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
         ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));

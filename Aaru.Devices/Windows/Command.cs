@@ -57,23 +57,12 @@ partial class Device
         if(buffer == null)
             return -1;
 
-        ScsiIoctlDirection dir;
-
-        switch(direction)
-        {
-            case ScsiDirection.In:
-                dir = ScsiIoctlDirection.In;
-
-                break;
-            case ScsiDirection.Out:
-                dir = ScsiIoctlDirection.Out;
-
-                break;
-            default:
-                dir = ScsiIoctlDirection.Unspecified;
-
-                break;
-        }
+        ScsiIoctlDirection dir = direction switch
+                                 {
+                                     ScsiDirection.In  => ScsiIoctlDirection.In,
+                                     ScsiDirection.Out => ScsiIoctlDirection.Out,
+                                     _                 => ScsiIoctlDirection.Unspecified
+                                 };
 
         var sptdSb = new ScsiPassThroughDirectAndSenseBuffer
         {

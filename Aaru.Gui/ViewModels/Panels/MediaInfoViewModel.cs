@@ -107,34 +107,19 @@ public sealed class MediaInfoViewModel : ViewModelBase
         {
             ulong totalSize = scsiInfo.Blocks * scsiInfo.BlockSize;
 
-            switch(totalSize)
-            {
-                case > 1099511627776:
-                    MediaSize = $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                    } bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)";
-
-                    break;
-                case > 1073741824:
-                    MediaSize = $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                    } bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)";
-
-                    break;
-                case > 1048576:
-                    MediaSize = $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                    } bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)";
-
-                    break;
-                case > 1024:
-                    MediaSize = $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                    } bytes/each. (for a total of {totalSize / 1024d:F3} KiB)";
-
-                    break;
-                default:
-                    MediaSize = $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                    } bytes/each. (for a total of {totalSize} bytes)";
-
-                    break;
-            }
+            MediaSize = totalSize switch
+                        {
+                            > 1099511627776 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                            } bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)",
+                            > 1073741824 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                            } bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)",
+                            > 1048576 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                            } bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)",
+                            > 1024 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                            } bytes/each. (for a total of {totalSize / 1024d:F3} KiB)",
+                            _ => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                            } bytes/each. (for a total of {totalSize} bytes)"
+                        };
         }
 
         if(scsiInfo.MediaSerialNumber != null)

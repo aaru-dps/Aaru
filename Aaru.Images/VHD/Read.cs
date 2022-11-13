@@ -178,8 +178,8 @@ public sealed partial class Vhd
             _imageInfo.Version = "1.0";
         else
         {
-            AaruConsole.
-                ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
+            AaruConsole.ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType
+            } found. Please submit a bug with an example image.");
 
             return ErrorNumber.InvalidArgument;
         }
@@ -198,8 +198,8 @@ public sealed partial class Vhd
 
             case CREATOR_VIRTUAL_BOX:
             {
-                _imageInfo.ApplicationVersion =
-                    $"{(_thisFooter.CreatorVersion & 0xFFFF0000) >> 16}.{_thisFooter.CreatorVersion & 0x0000FFFF:D2}";
+                _imageInfo.ApplicationVersion = $"{(_thisFooter.CreatorVersion & 0xFFFF0000) >> 16}.{
+                    _thisFooter.CreatorVersion & 0x0000FFFF:D2}";
 
                 switch(_thisFooter.CreatorHostOs)
                 {
@@ -214,8 +214,8 @@ public sealed partial class Vhd
 
                         break;
                     default:
-                        _imageInfo.Application =
-                            $"VirtualBox for unknown OS \"{Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs))}\"";
+                        _imageInfo.Application = $"VirtualBox for unknown OS \"{
+                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs))}\"";
 
                         break;
                 }
@@ -227,17 +227,11 @@ public sealed partial class Vhd
             {
                 _imageInfo.Application = "Microsoft Virtual Server";
 
-                switch(_thisFooter.CreatorVersion)
-                {
-                    case VERSION_VIRTUAL_SERVER2004:
-                        _imageInfo.ApplicationVersion = "2004";
-
-                        break;
-                    default:
-                        _imageInfo.ApplicationVersion = $"Unknown version 0x{_thisFooter.CreatorVersion:X8}";
-
-                        break;
-                }
+                _imageInfo.ApplicationVersion = _thisFooter.CreatorVersion switch
+                                                {
+                                                    VERSION_VIRTUAL_SERVER2004 => "2004",
+                                                    _ => $"Unknown version 0x{_thisFooter.CreatorVersion:X8}"
+                                                };
 
                 break;
             }
@@ -288,8 +282,8 @@ public sealed partial class Vhd
 
                         break;
                     default:
-                        _imageInfo.Application =
-                            $"Virtual PC for unknown OS \"{Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs))}\"";
+                        _imageInfo.Application = $"Virtual PC for unknown OS \"{
+                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs))}\"";
 
                         _imageInfo.ApplicationVersion = $"Unknown version 0x{_thisFooter.CreatorVersion:X8}";
 
@@ -303,8 +297,9 @@ public sealed partial class Vhd
             {
                 _imageInfo.Application = "DiscImageChef";
 
-                _imageInfo.ApplicationVersion =
-                    $"{(_thisFooter.CreatorVersion & 0xFF000000) >> 24}.{(_thisFooter.CreatorVersion & 0xFF0000) >> 16}.{(_thisFooter.CreatorVersion & 0xFF00) >> 8}.{_thisFooter.CreatorVersion & 0xFF}";
+                _imageInfo.ApplicationVersion = $"{(_thisFooter.CreatorVersion & 0xFF000000) >> 24}.{
+                    (_thisFooter.CreatorVersion & 0xFF0000) >> 16}.{(_thisFooter.CreatorVersion & 0xFF00) >> 8}.{
+                        _thisFooter.CreatorVersion & 0xFF}";
             }
 
                 break;
@@ -313,15 +308,16 @@ public sealed partial class Vhd
             {
                 _imageInfo.Application = "Aaru";
 
-                _imageInfo.ApplicationVersion =
-                    $"{(_thisFooter.CreatorVersion & 0xFF000000) >> 24}.{(_thisFooter.CreatorVersion & 0xFF0000) >> 16}.{(_thisFooter.CreatorVersion & 0xFF00) >> 8}.{_thisFooter.CreatorVersion & 0xFF}";
+                _imageInfo.ApplicationVersion = $"{(_thisFooter.CreatorVersion & 0xFF000000) >> 24}.{
+                    (_thisFooter.CreatorVersion & 0xFF0000) >> 16}.{(_thisFooter.CreatorVersion & 0xFF00) >> 8}.{
+                        _thisFooter.CreatorVersion & 0xFF}";
             }
 
                 break;
             default:
             {
-                _imageInfo.Application =
-                    $"Unknown application \"{Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs))}\"";
+                _imageInfo.Application = $"Unknown application \"{
+                    Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs))}\"";
 
                 _imageInfo.ApplicationVersion = $"Unknown version 0x{_thisFooter.CreatorVersion:X8}";
 
@@ -460,8 +456,8 @@ public sealed partial class Vhd
 
             if(_thisDynamic.HeaderVersion != VERSION1)
             {
-                AaruConsole.
-                    ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
+                AaruConsole.ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType
+                } found. Please submit a bug with an example image.");
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -643,8 +639,8 @@ public sealed partial class Vhd
 
                     if(parentError != ErrorNumber.NoError)
                     {
-                        AaruConsole.
-                            ErrorWriteLine($"(VirtualPC plugin): Error {parentError} opening parent disk image");
+                        AaruConsole.ErrorWriteLine($"(VirtualPC plugin): Error {parentError
+                        } opening parent disk image");
 
                         return parentError;
                     }
@@ -672,8 +668,8 @@ public sealed partial class Vhd
                 return ErrorNumber.NotImplemented;
 
             default:
-                AaruConsole.
-                    ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
+                AaruConsole.ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType
+                } found. Please submit a bug with an example image.");
 
                 return ErrorNumber.InvalidArgument;
         }
@@ -869,8 +865,8 @@ public sealed partial class Vhd
                 return ErrorNumber.NotImplemented;
 
             default:
-                AaruConsole.
-                    ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType} found. Please submit a bug with an example image.");
+                AaruConsole.ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType
+                } found. Please submit a bug with an example image.");
 
                 return ErrorNumber.InvalidArgument;
         }

@@ -152,33 +152,15 @@ public partial class Device
 
         // WORKAROUND: Some drives return incorrect length information. As these structures are fixed length just apply known length.
         if(mediaType == MmcDiscStructureMediaType.Bd)
-            switch(format)
-            {
-                case MmcDiscStructureFormat.DiscInformation:
-                    buffer = new byte[4100];
-
-                    break;
-                case MmcDiscStructureFormat.BdBurstCuttingArea:
-                    buffer = new byte[68];
-
-                    break;
-                case MmcDiscStructureFormat.BdDds:
-                    buffer = new byte[strctLength < 100 ? 100 : strctLength];
-
-                    break;
-                case MmcDiscStructureFormat.CartridgeStatus:
-                    buffer = new byte[8];
-
-                    break;
-                case MmcDiscStructureFormat.BdSpareAreaInformation:
-                    buffer = new byte[16];
-
-                    break;
-                default:
-                    buffer = new byte[strctLength];
-
-                    break;
-            }
+            buffer = format switch
+                     {
+                         MmcDiscStructureFormat.DiscInformation => new byte[4100],
+                         MmcDiscStructureFormat.BdBurstCuttingArea => new byte[68],
+                         MmcDiscStructureFormat.BdDds => new byte[strctLength < 100 ? 100 : strctLength],
+                         MmcDiscStructureFormat.CartridgeStatus => new byte[8],
+                         MmcDiscStructureFormat.BdSpareAreaInformation => new byte[16],
+                         _ => new byte[strctLength]
+                     };
         else
             buffer = new byte[strctLength];
 

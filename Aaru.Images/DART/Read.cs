@@ -199,21 +199,13 @@ public sealed partial class Dart
                         if(version.MinorVersion % 10 > 0)
                             release = $".{version.MinorVersion % 10}";
 
-                        switch(version.DevStage)
-                        {
-                            case Version.DevelopmentStage.Alpha:
-                                dev = "a";
-
-                                break;
-                            case Version.DevelopmentStage.Beta:
-                                dev = "b";
-
-                                break;
-                            case Version.DevelopmentStage.PreAlpha:
-                                dev = "d";
-
-                                break;
-                        }
+                        dev = version.DevStage switch
+                              {
+                                  Version.DevelopmentStage.Alpha    => "a",
+                                  Version.DevelopmentStage.Beta     => "b",
+                                  Version.DevelopmentStage.PreAlpha => "d",
+                                  _                                 => dev
+                              };
 
                         if(dev                       == null &&
                            version.PreReleaseVersion > 0)

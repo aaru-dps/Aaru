@@ -110,21 +110,12 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask("Trying to get OCR...").IsIndeterminate();
 
-            switch(_dev.Type)
-            {
-                case DeviceType.MMC:
-                {
-                    sense = _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _);
-
-                    break;
-                }
-                case DeviceType.SecureDigital:
-                {
-                    sense = _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _);
-
-                    break;
-                }
-            }
+            sense = _dev.Type switch
+                    {
+                        DeviceType.MMC           => _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _),
+                        DeviceType.SecureDigital => _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _),
+                        _                        => sense
+                    };
         });
 
         if(!sense)

@@ -170,25 +170,13 @@ static class Pioneer
                         continue;
                     }
 
-                    switch(subchan)
-                    {
-                        case PioneerSubchannel.Q16:
-                            blockSize = 2368;
-
-                            break;
-                        case PioneerSubchannel.All:
-                            blockSize = 2448;
-
-                            break;
-                        case PioneerSubchannel.Only:
-                            blockSize = 96;
-
-                            break;
-                        default:
-                            blockSize = 2352;
-
-                            break;
-                    }
+                    blockSize = subchan switch
+                                {
+                                    PioneerSubchannel.Q16  => 2368,
+                                    PioneerSubchannel.All  => 2448,
+                                    PioneerSubchannel.Only => 96,
+                                    _                      => 2352
+                                };
 
                     break;
                 case 2: goto start;
@@ -423,25 +411,13 @@ static class Pioneer
                         continue;
                     }
 
-                    switch(subchan)
-                    {
-                        case PioneerSubchannel.Q16:
-                            blockSize = 2368;
-
-                            break;
-                        case PioneerSubchannel.All:
-                            blockSize = 2448;
-
-                            break;
-                        case PioneerSubchannel.Only:
-                            blockSize = 96;
-
-                            break;
-                        default:
-                            blockSize = 2352;
-
-                            break;
-                    }
+                    blockSize = subchan switch
+                                {
+                                    PioneerSubchannel.Q16  => 2368,
+                                    PioneerSubchannel.All  => 2448,
+                                    PioneerSubchannel.Only => 96,
+                                    _                      => 2352
+                                };
 
                     break;
                 case 2: goto start;

@@ -36,13 +36,10 @@ using Aaru.CommonTypes;
 
 public sealed partial class DiscJuggler
 {
-    static MediaType DecodeCdiMediumType(ushort type)
-    {
-        switch(type)
-        {
-            case 56:  return MediaType.DVDROM;
-            case 152: return MediaType.CDROM;
-            default:  return MediaType.Unknown;
-        }
-    }
+    static MediaType DecodeCdiMediumType(ushort type) => type switch
+                                                         {
+                                                             56  => MediaType.DVDROM,
+                                                             152 => MediaType.CDROM,
+                                                             _   => MediaType.Unknown
+                                                         };
 }

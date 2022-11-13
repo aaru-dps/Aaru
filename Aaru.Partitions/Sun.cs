@@ -276,8 +276,8 @@ public sealed class SunDisklabel : IPartition
                     };
 
                     if(dkl8.dkl_vtoc.v_timestamp[i] != 0)
-                        part.Description +=
-                            $"\nPartition timestamped on {DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i])}";
+                        part.Description += $"\nPartition timestamped on {
+                            DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i])}";
 
                     if(part.Start < imagePlugin.Info.Sectors &&
                        part.End   <= imagePlugin.Info.Sectors)
@@ -357,8 +357,8 @@ public sealed class SunDisklabel : IPartition
                     };
 
                     if(dkl16.dkl_vtoc.v_timestamp[i] != 0)
-                        part.Description +=
-                            $"\nPartition timestamped on {DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i])}";
+                        part.Description += $"\nPartition timestamped on {
+                            DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i])}";
 
                     if(part.Start < imagePlugin.Info.Sectors &&
                        part.End   <= imagePlugin.Info.Sectors)
@@ -444,37 +444,34 @@ public sealed class SunDisklabel : IPartition
         return sb.ToString();
     }
 
-    static string SunIdToString(SunTag id)
-    {
-        switch(id)
-        {
-            case SunTag.Linux:          return "Linux";
-            case SunTag.LinuxRaid:      return "Linux RAID";
-            case SunTag.LinuxSwap:      return "Linux swap";
-            case SunTag.LVM:            return "LVM";
-            case SunTag.SunBoot:        return "Sun boot";
-            case SunTag.SunEmpty:       return "Empty";
-            case SunTag.SunHome:        return "Sun /home";
-            case SunTag.SunRoot:        return "Sun /";
-            case SunTag.SunStand:       return "Sun /stand";
-            case SunTag.SunSwap:        return "Sun swap";
-            case SunTag.SunUsr:         return "Sun /usr";
-            case SunTag.SunVar:         return "Sun /var";
-            case SunTag.SunWholeDisk:   return "Whole disk";
-            case SunTag.SunAlt:         return "Replacement sectors";
-            case SunTag.SunCache:       return "Sun cachefs";
-            case SunTag.SunReserved:    return "Reserved for SMI";
-            case SunTag.VxVmPublic:     return "Veritas public";
-            case SunTag.VxVmPrivate:    return "Veritas private";
-            case SunTag.NetBSD:         return "NetBSD";
-            case SunTag.FreeBSD_Swap:   return "FreeBSD swap";
-            case SunTag.FreeBSD_UFS:    return "FreeBSD";
-            case SunTag.FreeBSD_Vinum:  return "Vinum";
-            case SunTag.FreeBSD_ZFS:    return "FreeBSD ZFS";
-            case SunTag.FreeBSD_NANDFS: return "FreeBSD nandfs";
-            default:                    return "Unknown";
-        }
-    }
+    static string SunIdToString(SunTag id) => id switch
+                                              {
+                                                  SunTag.Linux          => "Linux",
+                                                  SunTag.LinuxRaid      => "Linux RAID",
+                                                  SunTag.LinuxSwap      => "Linux swap",
+                                                  SunTag.LVM            => "LVM",
+                                                  SunTag.SunBoot        => "Sun boot",
+                                                  SunTag.SunEmpty       => "Empty",
+                                                  SunTag.SunHome        => "Sun /home",
+                                                  SunTag.SunRoot        => "Sun /",
+                                                  SunTag.SunStand       => "Sun /stand",
+                                                  SunTag.SunSwap        => "Sun swap",
+                                                  SunTag.SunUsr         => "Sun /usr",
+                                                  SunTag.SunVar         => "Sun /var",
+                                                  SunTag.SunWholeDisk   => "Whole disk",
+                                                  SunTag.SunAlt         => "Replacement sectors",
+                                                  SunTag.SunCache       => "Sun cachefs",
+                                                  SunTag.SunReserved    => "Reserved for SMI",
+                                                  SunTag.VxVmPublic     => "Veritas public",
+                                                  SunTag.VxVmPrivate    => "Veritas private",
+                                                  SunTag.NetBSD         => "NetBSD",
+                                                  SunTag.FreeBSD_Swap   => "FreeBSD swap",
+                                                  SunTag.FreeBSD_UFS    => "FreeBSD",
+                                                  SunTag.FreeBSD_Vinum  => "Vinum",
+                                                  SunTag.FreeBSD_ZFS    => "FreeBSD ZFS",
+                                                  SunTag.FreeBSD_NANDFS => "FreeBSD nandfs",
+                                                  _                     => "Unknown"
+                                              };
 
     enum SunTag : ushort
     {

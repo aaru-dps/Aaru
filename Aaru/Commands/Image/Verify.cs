@@ -243,8 +243,8 @@ sealed class VerifyCommand : Command
 
                                     while(remainingSectors > 0)
                                     {
-                                        trackTask.Description =
-                                            $"Checking sector {currentSectorAll} of {inputFormat.Info.Sectors}, on track {currentTrack.Sequence}";
+                                        trackTask.Description = $"Checking sector {currentSectorAll} of {
+                                            inputFormat.Info.Sectors}, on track {currentTrack.Sequence}";
 
                                         List<ulong> tempFailingLbas;
                                         List<ulong> tempUnknownLbas;
@@ -379,17 +379,17 @@ sealed class VerifyCommand : Command
                 correctSectors = true;
         }
 
-        switch(correctImage)
-        {
-            case null when correctSectors is null:   return (int)ErrorNumber.NotVerifiable;
-            case null when correctSectors == false:  return (int)ErrorNumber.BadSectorsImageNotVerified;
-            case null:                               return (int)ErrorNumber.CorrectSectorsImageNotVerified;
-            case false when correctSectors is null:  return (int)ErrorNumber.BadImageSectorsNotVerified;
-            case false when correctSectors == false: return (int)ErrorNumber.BadImageBadSectors;
-            case false:                              return (int)ErrorNumber.CorrectSectorsBadImage;
-            case true when correctSectors is null:   return (int)ErrorNumber.CorrectImageSectorsNotVerified;
-            case true when correctSectors == false:  return (int)ErrorNumber.CorrectImageBadSectors;
-            case true:                               return (int)ErrorNumber.NoError;
-        }
+        return correctImage switch
+               {
+                   null when correctSectors is null   => (int)ErrorNumber.NotVerifiable,
+                   null when correctSectors == false  => (int)ErrorNumber.BadSectorsImageNotVerified,
+                   null                               => (int)ErrorNumber.CorrectSectorsImageNotVerified,
+                   false when correctSectors is null  => (int)ErrorNumber.BadImageSectorsNotVerified,
+                   false when correctSectors == false => (int)ErrorNumber.BadImageBadSectors,
+                   false                              => (int)ErrorNumber.CorrectSectorsBadImage,
+                   true when correctSectors is null   => (int)ErrorNumber.CorrectImageSectorsNotVerified,
+                   true when correctSectors == false  => (int)ErrorNumber.CorrectImageBadSectors,
+                   true                               => (int)ErrorNumber.NoError
+               };
     }
 }

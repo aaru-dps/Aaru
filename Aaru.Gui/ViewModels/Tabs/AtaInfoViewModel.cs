@@ -69,33 +69,15 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
             if(ataMcptError.HasValue)
             {
-                switch(ataMcptError.Value.DeviceHead & 0x7)
-                {
-                    case 0:
-                        AtaMcptText = "Device reports incorrect media card type";
-
-                        break;
-                    case 1:
-                        AtaMcptText = "Device contains a Secure Digital card";
-
-                        break;
-                    case 2:
-                        AtaMcptText = "Device contains a MultiMediaCard ";
-
-                        break;
-                    case 3:
-                        AtaMcptText = "Device contains a Secure Digital I/O card";
-
-                        break;
-                    case 4:
-                        AtaMcptText = "Device contains a Smart Media card";
-
-                        break;
-                    default:
-                        AtaMcptText = $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}";
-
-                        break;
-                }
+                AtaMcptText = (ataMcptError.Value.DeviceHead & 0x7) switch
+                              {
+                                  0 => "Device reports incorrect media card type",
+                                  1 => "Device contains a Secure Digital card",
+                                  2 => "Device contains a MultiMediaCard ",
+                                  3 => "Device contains a Secure Digital I/O card",
+                                  4 => "Device contains a Smart Media card",
+                                  _ => $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}"
+                              };
 
                 AtaMcptWriteProtectionChecked = (ataMcptError.Value.DeviceHead & 0x08) == 0x08;
 

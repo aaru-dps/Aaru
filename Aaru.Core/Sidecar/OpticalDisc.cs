@@ -163,65 +163,24 @@ public sealed partial class Sidecar
                            dskType != MediaType.PS3DVD &&
                            dskType != MediaType.Nuon)
                         {
-                            switch(pfi.Value.DiskCategory)
-                            {
-                                case DiskCategory.DVDPR:
-                                    dskType = MediaType.DVDPR;
-
-                                    break;
-                                case DiskCategory.DVDPRDL:
-                                    dskType = MediaType.DVDPRDL;
-
-                                    break;
-                                case DiskCategory.DVDPRW:
-                                    dskType = MediaType.DVDPRW;
-
-                                    break;
-                                case DiskCategory.DVDPRWDL:
-                                    dskType = MediaType.DVDPRWDL;
-
-                                    break;
-                                case DiskCategory.DVDR:
-                                    dskType = MediaType.DVDR;
-
-                                    break;
-                                case DiskCategory.DVDRAM:
-                                    dskType = MediaType.DVDRAM;
-
-                                    break;
-                                case DiskCategory.DVDROM:
-                                    dskType = MediaType.DVDROM;
-
-                                    break;
-                                case DiskCategory.DVDRW:
-                                    dskType = MediaType.DVDRW;
-
-                                    break;
-                                case DiskCategory.HDDVDR:
-                                    dskType = MediaType.HDDVDR;
-
-                                    break;
-                                case DiskCategory.HDDVDRAM:
-                                    dskType = MediaType.HDDVDRAM;
-
-                                    break;
-                                case DiskCategory.HDDVDROM:
-                                    dskType = MediaType.HDDVDROM;
-
-                                    break;
-                                case DiskCategory.HDDVDRW:
-                                    dskType = MediaType.HDDVDRW;
-
-                                    break;
-                                case DiskCategory.Nintendo:
-                                    dskType = MediaType.GOD;
-
-                                    break;
-                                case DiskCategory.UMD:
-                                    dskType = MediaType.UMD;
-
-                                    break;
-                            }
+                            dskType = pfi.Value.DiskCategory switch
+                                      {
+                                          DiskCategory.DVDPR    => MediaType.DVDPR,
+                                          DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                                          DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                                          DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                          DiskCategory.DVDR     => MediaType.DVDR,
+                                          DiskCategory.DVDRAM   => MediaType.DVDRAM,
+                                          DiskCategory.DVDROM   => MediaType.DVDROM,
+                                          DiskCategory.DVDRW    => MediaType.DVDRW,
+                                          DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                                          DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                                          DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                                          DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                                          DiskCategory.Nintendo => MediaType.GOD,
+                                          DiskCategory.UMD      => MediaType.UMD,
+                                          _                     => dskType
+                                      };
 
                             if(dskType               == MediaType.DVDR &&
                                pfi.Value.PartVersion >= 6)
@@ -313,55 +272,23 @@ public sealed partial class Sidecar
 
             var xmlTrk = new TrackType();
 
-            switch(trk.Type)
-            {
-                case CommonTypes.Enums.TrackType.Audio:
-                    xmlTrk.TrackType1 = TrackTypeTrackType.audio;
-
-                    break;
-                case CommonTypes.Enums.TrackType.CdMode2Form2:
-                    xmlTrk.TrackType1 = TrackTypeTrackType.m2f2;
-
-                    break;
-                case CommonTypes.Enums.TrackType.CdMode2Formless:
-                    xmlTrk.TrackType1 = TrackTypeTrackType.mode2;
-
-                    break;
-                case CommonTypes.Enums.TrackType.CdMode2Form1:
-                    xmlTrk.TrackType1 = TrackTypeTrackType.m2f1;
-
-                    break;
-                case CommonTypes.Enums.TrackType.CdMode1:
-                    xmlTrk.TrackType1 = TrackTypeTrackType.mode1;
-
-                    break;
-                case CommonTypes.Enums.TrackType.Data:
-                    switch(sidecar.OpticalDisc[0].DiscType)
-                    {
-                        case "BD":
-                            xmlTrk.TrackType1 = TrackTypeTrackType.bluray;
-
-                            break;
-                        case "DDCD":
-                            xmlTrk.TrackType1 = TrackTypeTrackType.ddcd;
-
-                            break;
-                        case "DVD":
-                            xmlTrk.TrackType1 = TrackTypeTrackType.dvd;
-
-                            break;
-                        case "HD DVD":
-                            xmlTrk.TrackType1 = TrackTypeTrackType.hddvd;
-
-                            break;
-                        default:
-                            xmlTrk.TrackType1 = TrackTypeTrackType.mode1;
-
-                            break;
-                    }
-
-                    break;
-            }
+            xmlTrk.TrackType1 = trk.Type switch
+                                {
+                                    CommonTypes.Enums.TrackType.Audio           => TrackTypeTrackType.audio,
+                                    CommonTypes.Enums.TrackType.CdMode2Form2    => TrackTypeTrackType.m2f2,
+                                    CommonTypes.Enums.TrackType.CdMode2Formless => TrackTypeTrackType.mode2,
+                                    CommonTypes.Enums.TrackType.CdMode2Form1    => TrackTypeTrackType.m2f1,
+                                    CommonTypes.Enums.TrackType.CdMode1         => TrackTypeTrackType.mode1,
+                                    CommonTypes.Enums.TrackType.Data => sidecar.OpticalDisc[0].DiscType switch
+                                                                        {
+                                                                            "BD"     => TrackTypeTrackType.bluray,
+                                                                            "DDCD"   => TrackTypeTrackType.ddcd,
+                                                                            "DVD"    => TrackTypeTrackType.dvd,
+                                                                            "HD DVD" => TrackTypeTrackType.hddvd,
+                                                                            _        => TrackTypeTrackType.mode1
+                                                                        },
+                                    _ => xmlTrk.TrackType1
+                                };
 
             xmlTrk.Sequence = new TrackSequenceType
             {
@@ -639,25 +566,14 @@ public sealed partial class Sidecar
                             lstFs.Add(plugin.XmlFsType);
                             Statistics.AddFilesystem(plugin.XmlFsType.Type);
 
-                            switch(plugin.XmlFsType.Type)
-                            {
-                                case "Opera":
-                                    dskType = MediaType.ThreeDO;
-
-                                    break;
-                                case "PC Engine filesystem":
-                                    dskType = MediaType.SuperCDROM2;
-
-                                    break;
-                                case "Nintendo Wii filesystem":
-                                    dskType = MediaType.WOD;
-
-                                    break;
-                                case "Nintendo Gamecube filesystem":
-                                    dskType = MediaType.GOD;
-
-                                    break;
-                            }
+                            dskType = plugin.XmlFsType.Type switch
+                                      {
+                                          "Opera"                        => MediaType.ThreeDO,
+                                          "PC Engine filesystem"         => MediaType.SuperCDROM2,
+                                          "Nintendo Wii filesystem"      => MediaType.WOD,
+                                          "Nintendo Gamecube filesystem" => MediaType.GOD,
+                                          _                              => dskType
+                                      };
                         }
                         #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                         catch
@@ -706,25 +622,14 @@ public sealed partial class Sidecar
                         lstFs.Add(plugin.XmlFsType);
                         Statistics.AddFilesystem(plugin.XmlFsType.Type);
 
-                        switch(plugin.XmlFsType.Type)
-                        {
-                            case "Opera":
-                                dskType = MediaType.ThreeDO;
-
-                                break;
-                            case "PC Engine filesystem":
-                                dskType = MediaType.SuperCDROM2;
-
-                                break;
-                            case "Nintendo Wii filesystem":
-                                dskType = MediaType.WOD;
-
-                                break;
-                            case "Nintendo Gamecube filesystem":
-                                dskType = MediaType.GOD;
-
-                                break;
-                        }
+                        dskType = plugin.XmlFsType.Type switch
+                                  {
+                                      "Opera"                        => MediaType.ThreeDO,
+                                      "PC Engine filesystem"         => MediaType.SuperCDROM2,
+                                      "Nintendo Wii filesystem"      => MediaType.WOD,
+                                      "Nintendo Gamecube filesystem" => MediaType.GOD,
+                                      _                              => dskType
+                                  };
                     }
                     #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch

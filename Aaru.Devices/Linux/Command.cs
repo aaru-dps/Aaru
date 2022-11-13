@@ -56,31 +56,14 @@ partial class Device
         if(buffer == null)
             return -1;
 
-        ScsiIoctlDirection dir;
-
-        switch(direction)
-        {
-            case ScsiDirection.In:
-                dir = ScsiIoctlDirection.In;
-
-                break;
-            case ScsiDirection.Out:
-                dir = ScsiIoctlDirection.Out;
-
-                break;
-            case ScsiDirection.Bidirectional:
-                dir = ScsiIoctlDirection.Unspecified;
-
-                break;
-            case ScsiDirection.None:
-                dir = ScsiIoctlDirection.None;
-
-                break;
-            default:
-                dir = ScsiIoctlDirection.Unknown;
-
-                break;
-        }
+        ScsiIoctlDirection dir = direction switch
+                                 {
+                                     ScsiDirection.In            => ScsiIoctlDirection.In,
+                                     ScsiDirection.Out           => ScsiIoctlDirection.Out,
+                                     ScsiDirection.Bidirectional => ScsiIoctlDirection.Unspecified,
+                                     ScsiDirection.None          => ScsiIoctlDirection.None,
+                                     _                           => ScsiIoctlDirection.Unknown
+                                 };
 
         var ioHdr = new SgIoHdrT();
 
@@ -448,7 +431,7 @@ partial class Device
 
         var ioCmd = new MmcIocCmd();
 
-        IntPtr bufPtr = Marshal.AllocHGlobal(buffer.Length);
+        nint bufPtr = Marshal.AllocHGlobal(buffer.Length);
 
         ioCmd.write_flag = write;
         ioCmd.is_ascmd   = isApplication;
@@ -500,7 +483,7 @@ partial class Device
         int off;
 
         // Create array for buffers
-        var bufferPointers = new IntPtr[commands.Length];
+        var bufferPointers = new nint[commands.Length];
 
         // Allocate memory for the array for commands
         var ioMultiCmd = new byte[sizeof(ulong) + Marshal.SizeOf<MmcIocCmd>() * commands.Length];
@@ -547,7 +530,7 @@ partial class Device
         }
 
         // Allocate unmanaged memory for array of commands
-        IntPtr ioMultiCmdPtr = Marshal.AllocHGlobal(ioMultiCmd.Length);
+        nint ioMultiCmdPtr = Marshal.AllocHGlobal(ioMultiCmd.Length);
 
         // Copy array of commands to unmanaged memory
         Marshal.Copy(ioMultiCmd, 0, ioMultiCmdPtr, ioMultiCmd.Length);
@@ -653,8 +636,8 @@ partial class Device
     /// <returns>Contents of the symbolic link</returns>
     static string ReadLink(string path)
     {
-        IntPtr buf = Marshal.AllocHGlobal(4096);
-        int    resultSize;
+        nint buf = Marshal.AllocHGlobal(4096);
+        int  resultSize;
 
         if(DetectOS.Is64Bit)
         {

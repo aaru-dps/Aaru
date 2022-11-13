@@ -323,35 +323,18 @@ public sealed class ScsiInfo
 
                         break;
                     case 0x0002:
-                        switch(scsiMediumType)
-                        {
-                            case 0x01:
-                                MediaType = MediaType.PD650;
-
-                                break;
-                            case 0x41:
-                                switch(Blocks)
-                                {
-                                    case 58620544:
-                                        MediaType = MediaType.REV120;
-
-                                        break;
-                                    case 17090880:
-                                        MediaType = MediaType.REV35;
-
-                                        break;
-                                    case 34185728:
-                                        MediaType = MediaType.REV70;
-
-                                        break;
-                                }
-
-                                break;
-                            default:
-                                MediaType = MediaType.Unknown;
-
-                                break;
-                        }
+                        MediaType = scsiMediumType switch
+                                    {
+                                        0x01 => MediaType.PD650,
+                                        0x41 => Blocks switch
+                                                {
+                                                    58620544 => MediaType.REV120,
+                                                    17090880 => MediaType.REV35,
+                                                    34185728 => MediaType.REV70,
+                                                    _        => MediaType
+                                                },
+                                        _ => MediaType.Unknown
+                                    };
 
                         break;
                     case 0x0005:
@@ -519,67 +502,26 @@ public sealed class ScsiInfo
 
                     if(DecodedPfi.HasValue)
                         if(MediaType == MediaType.DVDROM)
-                            switch(DecodedPfi.Value.DiskCategory)
-                            {
-                                case DiskCategory.DVDPR:
-                                    MediaType = MediaType.DVDPR;
-
-                                    break;
-                                case DiskCategory.DVDPRDL:
-                                    MediaType = MediaType.DVDPRDL;
-
-                                    break;
-                                case DiskCategory.DVDPRW:
-                                    MediaType = MediaType.DVDPRW;
-
-                                    break;
-                                case DiskCategory.DVDPRWDL:
-                                    MediaType = MediaType.DVDPRWDL;
-
-                                    break;
-                                case DiskCategory.DVDR:
-                                    MediaType = DecodedPfi.Value.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
-
-                                    break;
-                                case DiskCategory.DVDRAM:
-                                    MediaType = MediaType.DVDRAM;
-
-                                    break;
-                                default:
-                                    MediaType = MediaType.DVDROM;
-
-                                    break;
-                                case DiskCategory.DVDRW:
-                                    MediaType = DecodedPfi.Value.PartVersion >= 15 ? MediaType.DVDRWDL
-                                                    : MediaType.DVDRW;
-
-                                    break;
-                                case DiskCategory.HDDVDR:
-                                    MediaType = MediaType.HDDVDR;
-
-                                    break;
-                                case DiskCategory.HDDVDRAM:
-                                    MediaType = MediaType.HDDVDRAM;
-
-                                    break;
-                                case DiskCategory.HDDVDROM:
-                                    MediaType = MediaType.HDDVDROM;
-
-                                    break;
-                                case DiskCategory.HDDVDRW:
-                                    MediaType = MediaType.HDDVDRW;
-
-                                    break;
-                                case DiskCategory.Nintendo:
-                                    MediaType = DecodedPfi.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD
-                                                    : MediaType.WOD;
-
-                                    break;
-                                case DiskCategory.UMD:
-                                    MediaType = MediaType.UMD;
-
-                                    break;
-                            }
+                            MediaType = DecodedPfi.Value.DiskCategory switch
+                                        {
+                                            DiskCategory.DVDPR    => MediaType.DVDPR,
+                                            DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                                            DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                                            DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                            DiskCategory.DVDR => DecodedPfi.Value.PartVersion >= 6 ? MediaType.DVDRDL
+                                                                     : MediaType.DVDR,
+                                            DiskCategory.DVDRAM => MediaType.DVDRAM,
+                                            DiskCategory.DVDRW => DecodedPfi.Value.PartVersion >= 15 ? MediaType.DVDRWDL
+                                                                      : MediaType.DVDRW,
+                                            DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                                            DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                                            DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                                            DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                                            DiskCategory.Nintendo => DecodedPfi.Value.DiscSize == DVDSize.Eighty
+                                                                         ? MediaType.GOD : MediaType.WOD,
+                                            DiskCategory.UMD => MediaType.UMD,
+                                            _                => MediaType.DVDROM
+                                        };
                 }
 
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -1200,17 +1142,12 @@ public sealed class ScsiInfo
 
                         if(nintendoPfi.Value.DiskCategory == DiskCategory.Nintendo &&
                            nintendoPfi.Value.PartVersion  == 15)
-                            switch(nintendoPfi.Value.DiscSize)
-                            {
-                                case DVDSize.Eighty:
-                                    MediaType = MediaType.GOD;
-
-                                    break;
-                                case DVDSize.OneTwenty:
-                                    MediaType = MediaType.WOD;
-
-                                    break;
-                            }
+                            MediaType = nintendoPfi.Value.DiscSize switch
+                                        {
+                                            DVDSize.Eighty    => MediaType.GOD,
+                                            DVDSize.OneTwenty => MediaType.WOD,
+                                            _                 => MediaType
+                                        };
                     }
                 }
 
@@ -1422,17 +1359,12 @@ public sealed class ScsiInfo
 
             if(DecodedDiscInformation.HasValue)
                 if(MediaType == MediaType.CD)
-                    switch(DecodedDiscInformation.Value.DiscType)
-                    {
-                        case 0x10:
-                            MediaType = MediaType.CDI;
-
-                            break;
-                        case 0x20:
-                            MediaType = MediaType.CDROMXA;
-
-                            break;
-                    }
+                    MediaType = DecodedDiscInformation.Value.DiscType switch
+                                {
+                                    0x10 => MediaType.CDI,
+                                    0x20 => MediaType.CDROMXA,
+                                    _    => MediaType
+                                };
         }
 
         MediaType tmpType = MediaType;

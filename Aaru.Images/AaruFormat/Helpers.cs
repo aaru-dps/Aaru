@@ -286,160 +286,248 @@ public sealed partial class AaruFormat
     }
 
     // Converts between image data type and Aaru media tag type
-    static MediaTagType GetMediaTagTypeForDataType(DataType type)
-    {
-        switch(type)
-        {
-            case DataType.CompactDiscPartialToc:            return MediaTagType.CD_TOC;
-            case DataType.CompactDiscSessionInfo:           return MediaTagType.CD_SessionInfo;
-            case DataType.CompactDiscToc:                   return MediaTagType.CD_FullTOC;
-            case DataType.CompactDiscPma:                   return MediaTagType.CD_PMA;
-            case DataType.CompactDiscAtip:                  return MediaTagType.CD_ATIP;
-            case DataType.CompactDiscLeadInCdText:          return MediaTagType.CD_TEXT;
-            case DataType.DvdPfi:                           return MediaTagType.DVD_PFI;
-            case DataType.DvdLeadInCmi:                     return MediaTagType.DVD_CMI;
-            case DataType.DvdDiscKey:                       return MediaTagType.DVD_DiscKey;
-            case DataType.DvdBca:                           return MediaTagType.DVD_BCA;
-            case DataType.DvdDmi:                           return MediaTagType.DVD_DMI;
-            case DataType.DvdMediaIdentifier:               return MediaTagType.DVD_MediaIdentifier;
-            case DataType.DvdMediaKeyBlock:                 return MediaTagType.DVD_MKB;
-            case DataType.DvdRamDds:                        return MediaTagType.DVDRAM_DDS;
-            case DataType.DvdRamMediumStatus:               return MediaTagType.DVDRAM_MediumStatus;
-            case DataType.DvdRamSpareArea:                  return MediaTagType.DVDRAM_SpareArea;
-            case DataType.DvdRRmd:                          return MediaTagType.DVDR_RMD;
-            case DataType.DvdRPrerecordedInfo:              return MediaTagType.DVDR_PreRecordedInfo;
-            case DataType.DvdRMediaIdentifier:              return MediaTagType.DVDR_MediaIdentifier;
-            case DataType.DvdRPfi:                          return MediaTagType.DVDR_PFI;
-            case DataType.DvdAdip:                          return MediaTagType.DVD_ADIP;
-            case DataType.HdDvdCpi:                         return MediaTagType.HDDVD_CPI;
-            case DataType.HdDvdMediumStatus:                return MediaTagType.HDDVD_MediumStatus;
-            case DataType.DvdDlLayerCapacity:               return MediaTagType.DVDDL_LayerCapacity;
-            case DataType.DvdDlMiddleZoneAddress:           return MediaTagType.DVDDL_MiddleZoneAddress;
-            case DataType.DvdDlJumpIntervalSize:            return MediaTagType.DVDDL_JumpIntervalSize;
-            case DataType.DvdDlManualLayerJumpLba:          return MediaTagType.DVDDL_ManualLayerJumpLBA;
-            case DataType.BlurayDi:                         return MediaTagType.BD_DI;
-            case DataType.BlurayBca:                        return MediaTagType.BD_BCA;
-            case DataType.BlurayDds:                        return MediaTagType.BD_DDS;
-            case DataType.BlurayCartridgeStatus:            return MediaTagType.BD_CartridgeStatus;
-            case DataType.BluraySpareArea:                  return MediaTagType.BD_SpareArea;
-            case DataType.AacsVolumeIdentifier:             return MediaTagType.AACS_VolumeIdentifier;
-            case DataType.AacsSerialNumber:                 return MediaTagType.AACS_SerialNumber;
-            case DataType.AacsMediaIdentifier:              return MediaTagType.AACS_MediaIdentifier;
-            case DataType.AacsMediaKeyBlock:                return MediaTagType.AACS_MKB;
-            case DataType.AacsDataKeys:                     return MediaTagType.AACS_DataKeys;
-            case DataType.AacsLbaExtents:                   return MediaTagType.AACS_LBAExtents;
-            case DataType.CprmMediaKeyBlock:                return MediaTagType.AACS_CPRM_MKB;
-            case DataType.HybridRecognizedLayers:           return MediaTagType.Hybrid_RecognizedLayers;
-            case DataType.ScsiMmcWriteProtection:           return MediaTagType.MMC_WriteProtection;
-            case DataType.ScsiMmcDiscInformation:           return MediaTagType.MMC_DiscInformation;
-            case DataType.ScsiMmcTrackResourcesInformation: return MediaTagType.MMC_TrackResourcesInformation;
-            case DataType.ScsiMmcPowResourcesInformation:   return MediaTagType.MMC_POWResourcesInformation;
-            case DataType.ScsiInquiry:                      return MediaTagType.SCSI_INQUIRY;
-            case DataType.ScsiModePage2A:                   return MediaTagType.SCSI_MODEPAGE_2A;
-            case DataType.AtaIdentify:                      return MediaTagType.ATA_IDENTIFY;
-            case DataType.AtapiIdentify:                    return MediaTagType.ATAPI_IDENTIFY;
-            case DataType.PcmciaCis:                        return MediaTagType.PCMCIA_CIS;
-            case DataType.SecureDigitalCid:                 return MediaTagType.SD_CID;
-            case DataType.SecureDigitalCsd:                 return MediaTagType.SD_CSD;
-            case DataType.SecureDigitalScr:                 return MediaTagType.SD_SCR;
-            case DataType.SecureDigitalOcr:                 return MediaTagType.SD_OCR;
-            case DataType.MultiMediaCardCid:                return MediaTagType.MMC_CID;
-            case DataType.MultiMediaCardCsd:                return MediaTagType.MMC_CSD;
-            case DataType.MultiMediaCardOcr:                return MediaTagType.MMC_OCR;
-            case DataType.MultiMediaCardExtendedCsd:        return MediaTagType.MMC_ExtendedCSD;
-            case DataType.XboxSecuritySector:               return MediaTagType.Xbox_SecuritySector;
-            case DataType.FloppyLeadOut:                    return MediaTagType.Floppy_LeadOut;
-            case DataType.DvdDiscControlBlock:              return MediaTagType.DCB;
-            case DataType.CompactDiscFirstTrackPregap:      return MediaTagType.CD_FirstTrackPregap;
-            case DataType.CompactDiscLeadOut:               return MediaTagType.CD_LeadOut;
-            case DataType.ScsiModeSense6:                   return MediaTagType.SCSI_MODESENSE_6;
-            case DataType.ScsiModeSense10:                  return MediaTagType.SCSI_MODESENSE_10;
-            case DataType.UsbDescriptors:                   return MediaTagType.USB_Descriptors;
-            case DataType.XboxDmi:                          return MediaTagType.Xbox_DMI;
-            case DataType.XboxPfi:                          return MediaTagType.Xbox_PFI;
-            case DataType.CompactDiscMediaCatalogueNumber:  return MediaTagType.CD_MCN;
-            case DataType.CompactDiscLeadIn:                return MediaTagType.CD_LeadIn;
-            case DataType.DvdDiscKeyDecrypted:              return MediaTagType.DVD_DiscKey_Decrypted;
-            default:                                        throw new ArgumentOutOfRangeException();
-        }
-    }
+    static MediaTagType GetMediaTagTypeForDataType(DataType type) => type switch
+                                                                     {
+                                                                         DataType.CompactDiscPartialToc => MediaTagType.
+                                                                             CD_TOC,
+                                                                         DataType.CompactDiscSessionInfo =>
+                                                                             MediaTagType.CD_SessionInfo,
+                                                                         DataType.CompactDiscToc => MediaTagType.
+                                                                             CD_FullTOC,
+                                                                         DataType.CompactDiscPma => MediaTagType.CD_PMA,
+                                                                         DataType.CompactDiscAtip => MediaTagType.
+                                                                             CD_ATIP,
+                                                                         DataType.CompactDiscLeadInCdText =>
+                                                                             MediaTagType.CD_TEXT,
+                                                                         DataType.DvdPfi       => MediaTagType.DVD_PFI,
+                                                                         DataType.DvdLeadInCmi => MediaTagType.DVD_CMI,
+                                                                         DataType.DvdDiscKey =>
+                                                                             MediaTagType.DVD_DiscKey,
+                                                                         DataType.DvdBca => MediaTagType.DVD_BCA,
+                                                                         DataType.DvdDmi => MediaTagType.DVD_DMI,
+                                                                         DataType.DvdMediaIdentifier => MediaTagType.
+                                                                             DVD_MediaIdentifier,
+                                                                         DataType.DvdMediaKeyBlock => MediaTagType.
+                                                                             DVD_MKB,
+                                                                         DataType.DvdRamDds => MediaTagType.DVDRAM_DDS,
+                                                                         DataType.DvdRamMediumStatus => MediaTagType.
+                                                                             DVDRAM_MediumStatus,
+                                                                         DataType.DvdRamSpareArea => MediaTagType.
+                                                                             DVDRAM_SpareArea,
+                                                                         DataType.DvdRRmd => MediaTagType.DVDR_RMD,
+                                                                         DataType.DvdRPrerecordedInfo => MediaTagType.
+                                                                             DVDR_PreRecordedInfo,
+                                                                         DataType.DvdRMediaIdentifier => MediaTagType.
+                                                                             DVDR_MediaIdentifier,
+                                                                         DataType.DvdRPfi  => MediaTagType.DVDR_PFI,
+                                                                         DataType.DvdAdip  => MediaTagType.DVD_ADIP,
+                                                                         DataType.HdDvdCpi => MediaTagType.HDDVD_CPI,
+                                                                         DataType.HdDvdMediumStatus => MediaTagType.
+                                                                             HDDVD_MediumStatus,
+                                                                         DataType.DvdDlLayerCapacity => MediaTagType.
+                                                                             DVDDL_LayerCapacity,
+                                                                         DataType.DvdDlMiddleZoneAddress =>
+                                                                             MediaTagType.DVDDL_MiddleZoneAddress,
+                                                                         DataType.DvdDlJumpIntervalSize => MediaTagType.
+                                                                             DVDDL_JumpIntervalSize,
+                                                                         DataType.DvdDlManualLayerJumpLba =>
+                                                                             MediaTagType.DVDDL_ManualLayerJumpLBA,
+                                                                         DataType.BlurayDi  => MediaTagType.BD_DI,
+                                                                         DataType.BlurayBca => MediaTagType.BD_BCA,
+                                                                         DataType.BlurayDds => MediaTagType.BD_DDS,
+                                                                         DataType.BlurayCartridgeStatus => MediaTagType.
+                                                                             BD_CartridgeStatus,
+                                                                         DataType.BluraySpareArea => MediaTagType.
+                                                                             BD_SpareArea,
+                                                                         DataType.AacsVolumeIdentifier => MediaTagType.
+                                                                             AACS_VolumeIdentifier,
+                                                                         DataType.AacsSerialNumber => MediaTagType.
+                                                                             AACS_SerialNumber,
+                                                                         DataType.AacsMediaIdentifier => MediaTagType.
+                                                                             AACS_MediaIdentifier,
+                                                                         DataType.AacsMediaKeyBlock => MediaTagType.
+                                                                             AACS_MKB,
+                                                                         DataType.AacsDataKeys => MediaTagType.
+                                                                             AACS_DataKeys,
+                                                                         DataType.AacsLbaExtents => MediaTagType.
+                                                                             AACS_LBAExtents,
+                                                                         DataType.CprmMediaKeyBlock => MediaTagType.
+                                                                             AACS_CPRM_MKB,
+                                                                         DataType.HybridRecognizedLayers =>
+                                                                             MediaTagType.Hybrid_RecognizedLayers,
+                                                                         DataType.ScsiMmcWriteProtection =>
+                                                                             MediaTagType.MMC_WriteProtection,
+                                                                         DataType.ScsiMmcDiscInformation =>
+                                                                             MediaTagType.MMC_DiscInformation,
+                                                                         DataType.ScsiMmcTrackResourcesInformation =>
+                                                                             MediaTagType.MMC_TrackResourcesInformation,
+                                                                         DataType.ScsiMmcPowResourcesInformation =>
+                                                                             MediaTagType.MMC_POWResourcesInformation,
+                                                                         DataType.ScsiInquiry => MediaTagType.
+                                                                             SCSI_INQUIRY,
+                                                                         DataType.ScsiModePage2A => MediaTagType.
+                                                                             SCSI_MODEPAGE_2A,
+                                                                         DataType.AtaIdentify => MediaTagType.
+                                                                             ATA_IDENTIFY,
+                                                                         DataType.AtapiIdentify => MediaTagType.
+                                                                             ATAPI_IDENTIFY,
+                                                                         DataType.PcmciaCis => MediaTagType.PCMCIA_CIS,
+                                                                         DataType.SecureDigitalCid => MediaTagType.
+                                                                             SD_CID,
+                                                                         DataType.SecureDigitalCsd => MediaTagType.
+                                                                             SD_CSD,
+                                                                         DataType.SecureDigitalScr => MediaTagType.
+                                                                             SD_SCR,
+                                                                         DataType.SecureDigitalOcr => MediaTagType.
+                                                                             SD_OCR,
+                                                                         DataType.MultiMediaCardCid => MediaTagType.
+                                                                             MMC_CID,
+                                                                         DataType.MultiMediaCardCsd => MediaTagType.
+                                                                             MMC_CSD,
+                                                                         DataType.MultiMediaCardOcr => MediaTagType.
+                                                                             MMC_OCR,
+                                                                         DataType.MultiMediaCardExtendedCsd =>
+                                                                             MediaTagType.MMC_ExtendedCSD,
+                                                                         DataType.XboxSecuritySector => MediaTagType.
+                                                                             Xbox_SecuritySector,
+                                                                         DataType.FloppyLeadOut => MediaTagType.
+                                                                             Floppy_LeadOut,
+                                                                         DataType.DvdDiscControlBlock => MediaTagType.
+                                                                             DCB,
+                                                                         DataType.CompactDiscFirstTrackPregap =>
+                                                                             MediaTagType.CD_FirstTrackPregap,
+                                                                         DataType.CompactDiscLeadOut => MediaTagType.
+                                                                             CD_LeadOut,
+                                                                         DataType.ScsiModeSense6 => MediaTagType.
+                                                                             SCSI_MODESENSE_6,
+                                                                         DataType.ScsiModeSense10 => MediaTagType.
+                                                                             SCSI_MODESENSE_10,
+                                                                         DataType.UsbDescriptors => MediaTagType.
+                                                                             USB_Descriptors,
+                                                                         DataType.XboxDmi => MediaTagType.Xbox_DMI,
+                                                                         DataType.XboxPfi => MediaTagType.Xbox_PFI,
+                                                                         DataType.CompactDiscMediaCatalogueNumber =>
+                                                                             MediaTagType.CD_MCN,
+                                                                         DataType.CompactDiscLeadIn => MediaTagType.
+                                                                             CD_LeadIn,
+                                                                         DataType.DvdDiscKeyDecrypted => MediaTagType.
+                                                                             DVD_DiscKey_Decrypted,
+                                                                         _ => throw new ArgumentOutOfRangeException()
+                                                                     };
 
     // Converts between Aaru media tag type and image data type
-    static DataType GetDataTypeForMediaTag(MediaTagType tag)
-    {
-        switch(tag)
-        {
-            case MediaTagType.CD_TOC: return DataType.CompactDiscPartialToc;
-            case MediaTagType.CD_SessionInfo: return DataType.CompactDiscSessionInfo;
-            case MediaTagType.CD_FullTOC: return DataType.CompactDiscToc;
-            case MediaTagType.CD_PMA: return DataType.CompactDiscPma;
-            case MediaTagType.CD_ATIP: return DataType.CompactDiscAtip;
-            case MediaTagType.CD_TEXT: return DataType.CompactDiscLeadInCdText;
-            case MediaTagType.DVD_PFI: return DataType.DvdPfi;
-            case MediaTagType.DVD_CMI: return DataType.DvdLeadInCmi;
-            case MediaTagType.DVD_DiscKey: return DataType.DvdDiscKey;
-            case MediaTagType.DVD_BCA: return DataType.DvdBca;
-            case MediaTagType.DVD_DMI: return DataType.DvdDmi;
-            case MediaTagType.DVD_MediaIdentifier: return DataType.DvdMediaIdentifier;
-            case MediaTagType.DVD_MKB: return DataType.DvdMediaKeyBlock;
-            case MediaTagType.DVDRAM_DDS: return DataType.DvdRamDds;
-            case MediaTagType.DVDRAM_MediumStatus: return DataType.DvdRamMediumStatus;
-            case MediaTagType.DVDRAM_SpareArea: return DataType.DvdRamSpareArea;
-            case MediaTagType.DVDR_RMD: return DataType.DvdRRmd;
-            case MediaTagType.DVDR_PreRecordedInfo: return DataType.DvdRPrerecordedInfo;
-            case MediaTagType.DVDR_MediaIdentifier: return DataType.DvdRMediaIdentifier;
-            case MediaTagType.DVDR_PFI: return DataType.DvdRPfi;
-            case MediaTagType.DVD_ADIP: return DataType.DvdAdip;
-            case MediaTagType.HDDVD_CPI: return DataType.HdDvdCpi;
-            case MediaTagType.HDDVD_MediumStatus: return DataType.HdDvdMediumStatus;
-            case MediaTagType.DVDDL_LayerCapacity: return DataType.DvdDlLayerCapacity;
-            case MediaTagType.DVDDL_MiddleZoneAddress: return DataType.DvdDlMiddleZoneAddress;
-            case MediaTagType.DVDDL_JumpIntervalSize: return DataType.DvdDlJumpIntervalSize;
-            case MediaTagType.DVDDL_ManualLayerJumpLBA: return DataType.DvdDlManualLayerJumpLba;
-            case MediaTagType.BD_DI: return DataType.BlurayDi;
-            case MediaTagType.BD_BCA: return DataType.BlurayBca;
-            case MediaTagType.BD_DDS: return DataType.BlurayDds;
-            case MediaTagType.BD_CartridgeStatus: return DataType.BlurayCartridgeStatus;
-            case MediaTagType.BD_SpareArea: return DataType.BluraySpareArea;
-            case MediaTagType.AACS_VolumeIdentifier: return DataType.AacsVolumeIdentifier;
-            case MediaTagType.AACS_SerialNumber: return DataType.AacsSerialNumber;
-            case MediaTagType.AACS_MediaIdentifier: return DataType.AacsMediaIdentifier;
-            case MediaTagType.AACS_MKB: return DataType.AacsMediaKeyBlock;
-            case MediaTagType.AACS_DataKeys: return DataType.AacsDataKeys;
-            case MediaTagType.AACS_LBAExtents: return DataType.AacsLbaExtents;
-            case MediaTagType.AACS_CPRM_MKB: return DataType.CprmMediaKeyBlock;
-            case MediaTagType.Hybrid_RecognizedLayers: return DataType.HybridRecognizedLayers;
-            case MediaTagType.MMC_WriteProtection: return DataType.ScsiMmcWriteProtection;
-            case MediaTagType.MMC_DiscInformation: return DataType.ScsiMmcDiscInformation;
-            case MediaTagType.MMC_TrackResourcesInformation: return DataType.ScsiMmcTrackResourcesInformation;
-            case MediaTagType.MMC_POWResourcesInformation: return DataType.ScsiMmcPowResourcesInformation;
-            case MediaTagType.SCSI_INQUIRY: return DataType.ScsiInquiry;
-            case MediaTagType.SCSI_MODEPAGE_2A: return DataType.ScsiModePage2A;
-            case MediaTagType.ATA_IDENTIFY: return DataType.AtaIdentify;
-            case MediaTagType.ATAPI_IDENTIFY: return DataType.AtapiIdentify;
-            case MediaTagType.PCMCIA_CIS: return DataType.PcmciaCis;
-            case MediaTagType.SD_CID: return DataType.SecureDigitalCid;
-            case MediaTagType.SD_CSD: return DataType.SecureDigitalCsd;
-            case MediaTagType.SD_SCR: return DataType.SecureDigitalScr;
-            case MediaTagType.SD_OCR: return DataType.SecureDigitalOcr;
-            case MediaTagType.MMC_CID: return DataType.MultiMediaCardCid;
-            case MediaTagType.MMC_CSD: return DataType.MultiMediaCardCsd;
-            case MediaTagType.MMC_OCR: return DataType.MultiMediaCardOcr;
-            case MediaTagType.MMC_ExtendedCSD: return DataType.MultiMediaCardExtendedCsd;
-            case MediaTagType.Xbox_SecuritySector: return DataType.XboxSecuritySector;
-            case MediaTagType.Floppy_LeadOut: return DataType.FloppyLeadOut;
-            case MediaTagType.DCB: return DataType.DvdDiscControlBlock;
-            case MediaTagType.CD_FirstTrackPregap: return DataType.CompactDiscFirstTrackPregap;
-            case MediaTagType.CD_LeadOut: return DataType.CompactDiscLeadOut;
-            case MediaTagType.SCSI_MODESENSE_6: return DataType.ScsiModeSense6;
-            case MediaTagType.SCSI_MODESENSE_10: return DataType.ScsiModeSense10;
-            case MediaTagType.USB_Descriptors: return DataType.UsbDescriptors;
-            case MediaTagType.Xbox_DMI: return DataType.XboxDmi;
-            case MediaTagType.Xbox_PFI: return DataType.XboxPfi;
-            case MediaTagType.CD_MCN: return DataType.CompactDiscMediaCatalogueNumber;
-            case MediaTagType.CD_LeadIn: return DataType.CompactDiscLeadIn;
-            case MediaTagType.DVD_DiscKey_Decrypted: return DataType.DvdDiscKeyDecrypted;
-            default: throw new ArgumentOutOfRangeException(nameof(tag), tag, null);
-        }
-    }
+    static DataType GetDataTypeForMediaTag(MediaTagType tag) => tag switch
+                                                                {
+                                                                    MediaTagType.CD_TOC => DataType.
+                                                                        CompactDiscPartialToc,
+                                                                    MediaTagType.CD_SessionInfo => DataType.
+                                                                        CompactDiscSessionInfo,
+                                                                    MediaTagType.CD_FullTOC => DataType.CompactDiscToc,
+                                                                    MediaTagType.CD_PMA     => DataType.CompactDiscPma,
+                                                                    MediaTagType.CD_ATIP    => DataType.CompactDiscAtip,
+                                                                    MediaTagType.CD_TEXT => DataType.
+                                                                        CompactDiscLeadInCdText,
+                                                                    MediaTagType.DVD_PFI     => DataType.DvdPfi,
+                                                                    MediaTagType.DVD_CMI     => DataType.DvdLeadInCmi,
+                                                                    MediaTagType.DVD_DiscKey => DataType.DvdDiscKey,
+                                                                    MediaTagType.DVD_BCA     => DataType.DvdBca,
+                                                                    MediaTagType.DVD_DMI     => DataType.DvdDmi,
+                                                                    MediaTagType.DVD_MediaIdentifier => DataType.
+                                                                        DvdMediaIdentifier,
+                                                                    MediaTagType.DVD_MKB => DataType.DvdMediaKeyBlock,
+                                                                    MediaTagType.DVDRAM_DDS => DataType.DvdRamDds,
+                                                                    MediaTagType.DVDRAM_MediumStatus => DataType.
+                                                                        DvdRamMediumStatus,
+                                                                    MediaTagType.DVDRAM_SpareArea => DataType.
+                                                                        DvdRamSpareArea,
+                                                                    MediaTagType.DVDR_RMD => DataType.DvdRRmd,
+                                                                    MediaTagType.DVDR_PreRecordedInfo => DataType.
+                                                                        DvdRPrerecordedInfo,
+                                                                    MediaTagType.DVDR_MediaIdentifier => DataType.
+                                                                        DvdRMediaIdentifier,
+                                                                    MediaTagType.DVDR_PFI  => DataType.DvdRPfi,
+                                                                    MediaTagType.DVD_ADIP  => DataType.DvdAdip,
+                                                                    MediaTagType.HDDVD_CPI => DataType.HdDvdCpi,
+                                                                    MediaTagType.HDDVD_MediumStatus => DataType.
+                                                                        HdDvdMediumStatus,
+                                                                    MediaTagType.DVDDL_LayerCapacity => DataType.
+                                                                        DvdDlLayerCapacity,
+                                                                    MediaTagType.DVDDL_MiddleZoneAddress => DataType.
+                                                                        DvdDlMiddleZoneAddress,
+                                                                    MediaTagType.DVDDL_JumpIntervalSize => DataType.
+                                                                        DvdDlJumpIntervalSize,
+                                                                    MediaTagType.DVDDL_ManualLayerJumpLBA => DataType.
+                                                                        DvdDlManualLayerJumpLba,
+                                                                    MediaTagType.BD_DI  => DataType.BlurayDi,
+                                                                    MediaTagType.BD_BCA => DataType.BlurayBca,
+                                                                    MediaTagType.BD_DDS => DataType.BlurayDds,
+                                                                    MediaTagType.BD_CartridgeStatus => DataType.
+                                                                        BlurayCartridgeStatus,
+                                                                    MediaTagType.BD_SpareArea => DataType.
+                                                                        BluraySpareArea,
+                                                                    MediaTagType.AACS_VolumeIdentifier => DataType.
+                                                                        AacsVolumeIdentifier,
+                                                                    MediaTagType.AACS_SerialNumber => DataType.
+                                                                        AacsSerialNumber,
+                                                                    MediaTagType.AACS_MediaIdentifier => DataType.
+                                                                        AacsMediaIdentifier,
+                                                                    MediaTagType.AACS_MKB => DataType.AacsMediaKeyBlock,
+                                                                    MediaTagType.AACS_DataKeys => DataType.AacsDataKeys,
+                                                                    MediaTagType.AACS_LBAExtents => DataType.
+                                                                        AacsLbaExtents,
+                                                                    MediaTagType.AACS_CPRM_MKB => DataType.
+                                                                        CprmMediaKeyBlock,
+                                                                    MediaTagType.Hybrid_RecognizedLayers => DataType.
+                                                                        HybridRecognizedLayers,
+                                                                    MediaTagType.MMC_WriteProtection => DataType.
+                                                                        ScsiMmcWriteProtection,
+                                                                    MediaTagType.MMC_DiscInformation => DataType.
+                                                                        ScsiMmcDiscInformation,
+                                                                    MediaTagType.MMC_TrackResourcesInformation =>
+                                                                        DataType.ScsiMmcTrackResourcesInformation,
+                                                                    MediaTagType.MMC_POWResourcesInformation =>
+                                                                        DataType.ScsiMmcPowResourcesInformation,
+                                                                    MediaTagType.SCSI_INQUIRY => DataType.ScsiInquiry,
+                                                                    MediaTagType.SCSI_MODEPAGE_2A => DataType.
+                                                                        ScsiModePage2A,
+                                                                    MediaTagType.ATA_IDENTIFY => DataType.AtaIdentify,
+                                                                    MediaTagType.ATAPI_IDENTIFY => DataType.
+                                                                        AtapiIdentify,
+                                                                    MediaTagType.PCMCIA_CIS => DataType.PcmciaCis,
+                                                                    MediaTagType.SD_CID => DataType.SecureDigitalCid,
+                                                                    MediaTagType.SD_CSD => DataType.SecureDigitalCsd,
+                                                                    MediaTagType.SD_SCR => DataType.SecureDigitalScr,
+                                                                    MediaTagType.SD_OCR => DataType.SecureDigitalOcr,
+                                                                    MediaTagType.MMC_CID => DataType.MultiMediaCardCid,
+                                                                    MediaTagType.MMC_CSD => DataType.MultiMediaCardCsd,
+                                                                    MediaTagType.MMC_OCR => DataType.MultiMediaCardOcr,
+                                                                    MediaTagType.MMC_ExtendedCSD => DataType.
+                                                                        MultiMediaCardExtendedCsd,
+                                                                    MediaTagType.Xbox_SecuritySector => DataType.
+                                                                        XboxSecuritySector,
+                                                                    MediaTagType.Floppy_LeadOut => DataType.
+                                                                        FloppyLeadOut,
+                                                                    MediaTagType.DCB => DataType.DvdDiscControlBlock,
+                                                                    MediaTagType.CD_FirstTrackPregap => DataType.
+                                                                        CompactDiscFirstTrackPregap,
+                                                                    MediaTagType.CD_LeadOut => DataType.
+                                                                        CompactDiscLeadOut,
+                                                                    MediaTagType.SCSI_MODESENSE_6 => DataType.
+                                                                        ScsiModeSense6,
+                                                                    MediaTagType.SCSI_MODESENSE_10 => DataType.
+                                                                        ScsiModeSense10,
+                                                                    MediaTagType.USB_Descriptors => DataType.
+                                                                        UsbDescriptors,
+                                                                    MediaTagType.Xbox_DMI => DataType.XboxDmi,
+                                                                    MediaTagType.Xbox_PFI => DataType.XboxPfi,
+                                                                    MediaTagType.CD_MCN => DataType.
+                                                                        CompactDiscMediaCatalogueNumber,
+                                                                    MediaTagType.CD_LeadIn =>
+                                                                        DataType.CompactDiscLeadIn,
+                                                                    MediaTagType.DVD_DiscKey_Decrypted => DataType.
+                                                                        DvdDiscKeyDecrypted,
+                                                                    _ => throw new
+                                                                             ArgumentOutOfRangeException(nameof(tag),
+                                                                                 tag, null)
+                                                                };
 }

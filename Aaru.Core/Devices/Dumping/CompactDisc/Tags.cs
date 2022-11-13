@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
@@ -94,17 +92,12 @@ partial class Dump
 
             if(discInfo.HasValue &&
                mediaType == MediaType.CD)
-                switch(discInfo.Value.DiscType)
-                {
-                    case 0x10:
-                        mediaType = MediaType.CDI;
-
-                        break;
-                    case 0x20:
-                        mediaType = MediaType.CDROMXA;
-
-                        break;
-                }
+                mediaType = discInfo.Value.DiscType switch
+                            {
+                                0x10 => MediaType.CDI,
+                                0x20 => MediaType.CDROMXA,
+                                _    => mediaType
+                            };
         }
 
         _dumpLog.WriteLine("Reading PMA");

@@ -166,30 +166,27 @@ public sealed class SGI : IPartition
         return true;
     }
 
-    static string TypeToString(SGIType typ)
-    {
-        switch(typ)
-        {
-            case SGIType.Header:    return "Volume header";
-            case SGIType.TrkRepl:   return "Track replacements";
-            case SGIType.SecRepl:   return "Sector replacements";
-            case SGIType.Swap:      return "Raw data (swap)";
-            case SGIType.Bsd:       return "4.2BSD Fast File System";
-            case SGIType.SystemV:   return "UNIX System V";
-            case SGIType.Volume:    return "Whole device";
-            case SGIType.EFS:       return "EFS";
-            case SGIType.Lvol:      return "Logical volume";
-            case SGIType.Rlvol:     return "Raw logical volume";
-            case SGIType.XFS:       return "XFS";
-            case SGIType.Xlvol:     return "XFS log device";
-            case SGIType.Rxlvol:    return "XLV volume";
-            case SGIType.Xvm:       return "SGI XVM";
-            case SGIType.LinuxSwap: return "Linux swap";
-            case SGIType.Linux:     return "Linux";
-            case SGIType.LinuxRAID: return "Linux RAID";
-            default:                return "Unknown";
-        }
-    }
+    static string TypeToString(SGIType typ) => typ switch
+                                               {
+                                                   SGIType.Header    => "Volume header",
+                                                   SGIType.TrkRepl   => "Track replacements",
+                                                   SGIType.SecRepl   => "Sector replacements",
+                                                   SGIType.Swap      => "Raw data (swap)",
+                                                   SGIType.Bsd       => "4.2BSD Fast File System",
+                                                   SGIType.SystemV   => "UNIX System V",
+                                                   SGIType.Volume    => "Whole device",
+                                                   SGIType.EFS       => "EFS",
+                                                   SGIType.Lvol      => "Logical volume",
+                                                   SGIType.Rlvol     => "Raw logical volume",
+                                                   SGIType.XFS       => "XFS",
+                                                   SGIType.Xlvol     => "XFS log device",
+                                                   SGIType.Rxlvol    => "XLV volume",
+                                                   SGIType.Xvm       => "SGI XVM",
+                                                   SGIType.LinuxSwap => "Linux swap",
+                                                   SGIType.Linux     => "Linux",
+                                                   SGIType.LinuxRAID => "Linux RAID",
+                                                   _                 => "Unknown"
+                                               };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Label

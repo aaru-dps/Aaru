@@ -423,29 +423,29 @@ public sealed class VTOC : IPartition
         return partitions.Count > 0;
     }
 
-    static string DecodeUnixtag(pTag type, bool isNew)
-    {
-        switch(type)
-        {
-            case pTag.V_UNUSED:      return "Unused";
-            case pTag.V_BOOT:        return "Boot";
-            case pTag.V_ROOT:        return "/";
-            case pTag.V_SWAP:        return "Swap";
-            case pTag.V_USER:        return "/usr";
-            case pTag.V_BACKUP:      return "Whole disk";
-            case pTag.V_STAND_OLD:   return isNew ? "Stand" : "Alternate sector space";
-            case pTag.V_VAR_OLD:     return isNew ? "/var" : "non UNIX";
-            case pTag.V_HOME_OLD:    return isNew ? "/home" : "Alternate track space";
-            case pTag.V_ALTSCTR_OLD: return isNew ? "Alternate sector track" : "Stand";
-            case pTag.V_CACHE:       return isNew ? "Cache" : "/var";
-            case pTag.V_RESERVED:    return isNew ? "Reserved" : "/home";
-            case pTag.V_DUMP:        return "dump";
-            case pTag.V_ALTSCTR:     return "Alternate sector track";
-            case pTag.V_VMPUBLIC:    return "volume mgt public partition";
-            case pTag.V_VMPRIVATE:   return "volume mgt private partition";
-            default:                 return $"Unknown TAG: 0x{type:X4}";
-        }
-    }
+    static string DecodeUnixtag(pTag type, bool isNew) => type switch
+                                                          {
+                                                              pTag.V_UNUSED => "Unused",
+                                                              pTag.V_BOOT   => "Boot",
+                                                              pTag.V_ROOT   => "/",
+                                                              pTag.V_SWAP   => "Swap",
+                                                              pTag.V_USER   => "/usr",
+                                                              pTag.V_BACKUP => "Whole disk",
+                                                              pTag.V_STAND_OLD => isNew ? "Stand"
+                                                                  : "Alternate sector space",
+                                                              pTag.V_VAR_OLD => isNew ? "/var" : "non UNIX",
+                                                              pTag.V_HOME_OLD => isNew ? "/home"
+                                                                  : "Alternate track space",
+                                                              pTag.V_ALTSCTR_OLD => isNew ? "Alternate sector track"
+                                                                  : "Stand",
+                                                              pTag.V_CACHE     => isNew ? "Cache" : "/var",
+                                                              pTag.V_RESERVED  => isNew ? "Reserved" : "/home",
+                                                              pTag.V_DUMP      => "dump",
+                                                              pTag.V_ALTSCTR   => "Alternate sector track",
+                                                              pTag.V_VMPUBLIC  => "volume mgt public partition",
+                                                              pTag.V_VMPRIVATE => "volume mgt private partition",
+                                                              _                => $"Unknown TAG: 0x{type:X4}"
+                                                          };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
 

@@ -394,47 +394,39 @@ public sealed class NintendoPlugin : IFilesystem
     }
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
-    static string PublisherCodeToString(string publisherCode)
-    {
-        switch(publisherCode)
-        {
-            case "01": return "Nintendo";
-            case "08": return "CAPCOM";
-            case "41": return "Ubisoft";
-            case "4F": return "Eidos";
-            case "51": return "Acclaim";
-            case "52": return "Activision";
-            case "5D": return "Midway";
-            case "5G": return "Hudson";
-            case "64": return "LucasArts";
-            case "69": return "Electronic Arts";
-            case "6S": return "TDK Mediactive";
-            case "8P": return "SEGA";
-            case "A4": return "Mirage Studios";
-            case "AF": return "Namco";
-            case "B2": return "Bandai";
-            case "DA": return "Tomy";
-            case "EM": return "Konami";
-            case "70": return "Atari";
-            case "4Q": return "Disney Interactive";
-            case "GD": return "Square Enix";
-            case "7D": return "Sierra";
-        }
+    static string PublisherCodeToString(string publisherCode) => publisherCode switch
+                                                                 {
+                                                                     "01" => "Nintendo",
+                                                                     "08" => "CAPCOM",
+                                                                     "41" => "Ubisoft",
+                                                                     "4F" => "Eidos",
+                                                                     "51" => "Acclaim",
+                                                                     "52" => "Activision",
+                                                                     "5D" => "Midway",
+                                                                     "5G" => "Hudson",
+                                                                     "64" => "LucasArts",
+                                                                     "69" => "Electronic Arts",
+                                                                     "6S" => "TDK Mediactive",
+                                                                     "8P" => "SEGA",
+                                                                     "A4" => "Mirage Studios",
+                                                                     "AF" => "Namco",
+                                                                     "B2" => "Bandai",
+                                                                     "DA" => "Tomy",
+                                                                     "EM" => "Konami",
+                                                                     "70" => "Atari",
+                                                                     "4Q" => "Disney Interactive",
+                                                                     "GD" => "Square Enix",
+                                                                     "7D" => "Sierra",
+                                                                     _    => $"Unknown publisher '{publisherCode}'"
+                                                                 };
 
-        return $"Unknown publisher '{publisherCode}'";
-    }
-
-    static string PartitionTypeToString(uint type)
-    {
-        switch(type)
-        {
-            case 0: return "data";
-            case 1: return "update";
-            case 2: return "channel";
-        }
-
-        return $"unknown type {type}";
-    }
+    static string PartitionTypeToString(uint type) => type switch
+                                                      {
+                                                          0 => "data",
+                                                          1 => "update",
+                                                          2 => "channel",
+                                                          _ => $"unknown type {type}"
+                                                      };
 
     struct NintendoFields
     {

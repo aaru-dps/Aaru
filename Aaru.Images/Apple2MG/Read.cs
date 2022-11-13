@@ -134,9 +134,7 @@ public sealed partial class Apple2Mg
                 _decodedImage = new byte[_imageHeader.DataSize];
 
                 offsets = _imageHeader.ImageFormat == SectorOrder.Dos
-                              ? isDos
-                                    ? _deinterleave
-                                    : _interleave
+                              ? isDos ? _deinterleave : _interleave
                               : isDos
                                   ? _interleave
                                   : _deinterleave;
@@ -178,49 +176,19 @@ public sealed partial class Apple2Mg
 
         _imageInfo.ImageSize = _imageHeader.DataSize;
 
-        switch(_imageHeader.Creator)
-        {
-            case CREATOR_ASIMOV:
-                _imageInfo.Application = "ASIMOV2";
-
-                break;
-            case CREATOR_BERNIE:
-                _imageInfo.Application = "Bernie ][ the Rescue";
-
-                break;
-            case CREATOR_CATAKIG:
-                _imageInfo.Application = "Catakig";
-
-                break;
-            case CREATOR_SHEPPY:
-                _imageInfo.Application = "Sheppy's ImageMaker";
-
-                break;
-            case CREATOR_SWEET:
-                _imageInfo.Application = "Sweet16";
-
-                break;
-            case CREATOR_XGS:
-                _imageInfo.Application = "XGS";
-
-                break;
-            case CREATOR_CIDER:
-                _imageInfo.Application = "CiderPress";
-
-                break;
-            case CREATOR_DIC:
-                _imageInfo.Application = "DiscImageChef";
-
-                break;
-            case CREATOR_AARU:
-                _imageInfo.Application = "Aaru";
-
-                break;
-            default:
-                _imageInfo.Application = $"Unknown creator code \"{Encoding.ASCII.GetString(creator)}\"";
-
-                break;
-        }
+        _imageInfo.Application = _imageHeader.Creator switch
+                                 {
+                                     CREATOR_ASIMOV  => "ASIMOV2",
+                                     CREATOR_BERNIE  => "Bernie ][ the Rescue",
+                                     CREATOR_CATAKIG => "Catakig",
+                                     CREATOR_SHEPPY  => "Sheppy's ImageMaker",
+                                     CREATOR_SWEET   => "Sweet16",
+                                     CREATOR_XGS     => "XGS",
+                                     CREATOR_CIDER   => "CiderPress",
+                                     CREATOR_DIC     => "DiscImageChef",
+                                     CREATOR_AARU    => "Aaru",
+                                     _               => $"Unknown creator code \"{Encoding.ASCII.GetString(creator)}\""
+                                 };
 
         _imageInfo.Version = _imageHeader.Version.ToString();
 

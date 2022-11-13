@@ -195,29 +195,14 @@ public sealed partial class Cdrdao
 
                     _discimage.Disktypestr = matchDiskType.Groups["type"].Value;
 
-                    switch(matchDiskType.Groups["type"].Value)
-                    {
-                        case "CD_DA":
-                            _discimage.Disktype = MediaType.CDDA;
-
-                            break;
-                        case "CD_ROM":
-                            _discimage.Disktype = MediaType.CDROM;
-
-                            break;
-                        case "CD_ROM_XA":
-                            _discimage.Disktype = MediaType.CDROMXA;
-
-                            break;
-                        case "CD_I":
-                            _discimage.Disktype = MediaType.CDI;
-
-                            break;
-                        default:
-                            _discimage.Disktype = MediaType.CD;
-
-                            break;
-                    }
+                    _discimage.Disktype = matchDiskType.Groups["type"].Value switch
+                                          {
+                                              "CD_DA"     => MediaType.CDDA,
+                                              "CD_ROM"    => MediaType.CDROM,
+                                              "CD_ROM_XA" => MediaType.CDROMXA,
+                                              "CD_I"      => MediaType.CDI,
+                                              _           => MediaType.CD
+                                          };
                 }
                 else if(matchMcn.Success)
                 {
