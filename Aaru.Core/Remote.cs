@@ -474,6 +474,8 @@ public static class Remote
                                 ProgressTask task = ctx.AddTask("Updating known iNES/NES 2.0 headers");
                                 task.MaxValue = sync.Offsets.Count;
 
+                                sync.NesHeaders ??= new();
+
                                 foreach(NesHeaderDto header in sync.NesHeaders)
                                 {
                                     task.Increment(1);
