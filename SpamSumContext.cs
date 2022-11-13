@@ -281,8 +281,6 @@ public sealed class SpamSumContext : IChecksum
         if(!(bi == 0 || (ulong)SSDEEP_BS(bi) / 2 * SPAMSUM_LENGTH < _self.TotalSize))
             throw new Exception("Assertion failed");
 
-        int resultOff;
-
         /* Initial blocksize guess. */
         while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < _self.TotalSize)
         {
@@ -318,7 +316,7 @@ public sealed class SpamSumContext : IChecksum
 
         Array.Copy(Encoding.ASCII.GetBytes(sb.ToString()), 0, result, 0, i);
 
-        resultOff = i;
+        int resultOff = i;
 
         i = (int)_self.Bh[bi].Dlen;
 
