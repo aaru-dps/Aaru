@@ -408,30 +408,54 @@ public static partial class Decoders
 
             result = (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2) * Math.Pow(2, csd.ReadBlockLength);
 
-            if(result > 1073741824)
-                sb.AppendFormat("\tDevice has {0} GiB", result / 1073741824.0).AppendLine();
-            else if(result > 1048576)
-                sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0).AppendLine();
-            else if(result > 1024)
-                sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0).AppendLine();
-            else
-                sb.AppendFormat("\tDevice has {0} bytes", result).AppendLine();
+            switch(result)
+            {
+                case > 1073741824:
+                    sb.AppendFormat("\tDevice has {0} GiB", result / 1073741824.0).AppendLine();
+
+                    break;
+                case > 1048576:
+                    sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0).AppendLine();
+
+                    break;
+                case > 1024:
+                    sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0).AppendLine();
+
+                    break;
+                default:
+                    sb.AppendFormat("\tDevice has {0} bytes", result).AppendLine();
+
+                    break;
+            }
         }
         else
         {
             sb.AppendFormat("\tDevice has {0} blocks", (csd.Size + 1) * 1024).AppendLine();
             result = ((ulong)csd.Size + 1) * 1024 * 512;
 
-            if(result > 1099511627776)
-                sb.AppendFormat("\tDevice has {0} TiB", result / 1099511627776.0).AppendLine();
-            else if(result > 1073741824)
-                sb.AppendFormat("\tDevice has {0} GiB", result / 1073741824.0).AppendLine();
-            else if(result > 1048576)
-                sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0).AppendLine();
-            else if(result > 1024)
-                sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0).AppendLine();
-            else
-                sb.AppendFormat("\tDevice has {0} bytes", result).AppendLine();
+            switch(result)
+            {
+                case > 1099511627776:
+                    sb.AppendFormat("\tDevice has {0} TiB", result / 1099511627776.0).AppendLine();
+
+                    break;
+                case > 1073741824:
+                    sb.AppendFormat("\tDevice has {0} GiB", result / 1073741824.0).AppendLine();
+
+                    break;
+                case > 1048576:
+                    sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0).AppendLine();
+
+                    break;
+                case > 1024:
+                    sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0).AppendLine();
+
+                    break;
+                default:
+                    sb.AppendFormat("\tDevice has {0} bytes", result).AppendLine();
+
+                    break;
+            }
         }
 
         if(csd.Structure == 0)

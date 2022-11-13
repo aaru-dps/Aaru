@@ -125,37 +125,46 @@ public static class CSS_CPRM
         sb.AppendLine($"Drive has {vendorResets} vendor resets available.");
         sb.AppendLine($"Drive has {userControlledChanges} user controlled changes available.");
 
-        if(decoded.RegionMask == 0xFF)
-            sb.AppendLine("Drive has no region set.");
-        else if(decoded.RegionMask == 0x00)
-            sb.AppendLine("Drive is region free.");
-        else
+        switch(decoded.RegionMask)
         {
-            sb.Append("Drive has the following regions set:");
+            case 0xFF:
+                sb.AppendLine("Drive has no region set.");
 
-            if((decoded.RegionMask & 0x01) != 0x01)
-                sb.Append(" 1");
+                break;
+            case 0x00:
+                sb.AppendLine("Drive is region free.");
 
-            if((decoded.RegionMask & 0x02) != 0x02)
-                sb.Append(" 2");
+                break;
+            default:
+            {
+                sb.Append("Drive has the following regions set:");
 
-            if((decoded.RegionMask & 0x04) != 0x04)
-                sb.Append(" 3");
+                if((decoded.RegionMask & 0x01) != 0x01)
+                    sb.Append(" 1");
 
-            if((decoded.RegionMask & 0x08) != 0x08)
-                sb.Append(" 4");
+                if((decoded.RegionMask & 0x02) != 0x02)
+                    sb.Append(" 2");
 
-            if((decoded.RegionMask & 0x10) != 0x10)
-                sb.Append(" 5");
+                if((decoded.RegionMask & 0x04) != 0x04)
+                    sb.Append(" 3");
 
-            if((decoded.RegionMask & 0x20) != 0x20)
-                sb.Append(" 6");
+                if((decoded.RegionMask & 0x08) != 0x08)
+                    sb.Append(" 4");
 
-            if((decoded.RegionMask & 0x40) != 0x40)
-                sb.Append(" 7");
+                if((decoded.RegionMask & 0x10) != 0x10)
+                    sb.Append(" 5");
 
-            if((decoded.RegionMask & 0x80) != 0x80)
-                sb.Append(" 8");
+                if((decoded.RegionMask & 0x20) != 0x20)
+                    sb.Append(" 6");
+
+                if((decoded.RegionMask & 0x40) != 0x40)
+                    sb.Append(" 7");
+
+                if((decoded.RegionMask & 0x80) != 0x80)
+                    sb.Append(" 8");
+
+                break;
+            }
         }
 
         sb.AppendLine("");
@@ -217,37 +226,46 @@ public static class CSS_CPRM
         if(decoded.CopyrightType == 0)
             return sb.ToString();
 
-        if(decoded.RegionInformation == 0xFF)
-            sb.AppendLine("Disc cannot be played in any region at all.");
-        else if(decoded.RegionInformation == 0x00)
-            sb.AppendLine("Disc can be played in any region.");
-        else
+        switch(decoded.RegionInformation)
         {
-            sb.Append("Disc can be played in the following regions:");
+            case 0xFF:
+                sb.AppendLine("Disc cannot be played in any region at all.");
 
-            if((decoded.RegionInformation & 0x01) != 0x01)
-                sb.Append(" 1");
+                break;
+            case 0x00:
+                sb.AppendLine("Disc can be played in any region.");
 
-            if((decoded.RegionInformation & 0x02) != 0x02)
-                sb.Append(" 2");
+                break;
+            default:
+            {
+                sb.Append("Disc can be played in the following regions:");
 
-            if((decoded.RegionInformation & 0x04) != 0x04)
-                sb.Append(" 3");
+                if((decoded.RegionInformation & 0x01) != 0x01)
+                    sb.Append(" 1");
 
-            if((decoded.RegionInformation & 0x08) != 0x08)
-                sb.Append(" 4");
+                if((decoded.RegionInformation & 0x02) != 0x02)
+                    sb.Append(" 2");
 
-            if((decoded.RegionInformation & 0x10) != 0x10)
-                sb.Append(" 5");
+                if((decoded.RegionInformation & 0x04) != 0x04)
+                    sb.Append(" 3");
 
-            if((decoded.RegionInformation & 0x20) != 0x20)
-                sb.Append(" 6");
+                if((decoded.RegionInformation & 0x08) != 0x08)
+                    sb.Append(" 4");
 
-            if((decoded.RegionInformation & 0x40) != 0x40)
-                sb.Append(" 7");
+                if((decoded.RegionInformation & 0x10) != 0x10)
+                    sb.Append(" 5");
 
-            if((decoded.RegionInformation & 0x80) != 0x80)
-                sb.Append(" 8");
+                if((decoded.RegionInformation & 0x20) != 0x20)
+                    sb.Append(" 6");
+
+                if((decoded.RegionInformation & 0x40) != 0x40)
+                    sb.Append(" 7");
+
+                if((decoded.RegionInformation & 0x80) != 0x80)
+                    sb.Append(" 8");
+
+                break;
+            }
         }
 
         return sb.ToString();

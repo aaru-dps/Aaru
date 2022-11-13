@@ -200,36 +200,43 @@ public static partial class Modes
                 offset     += pg.PageResponse.Length;
             }
             else
-            {
-                if(isSubpage && offset + 3 < modeResponse.Length)
+                switch(isSubpage)
                 {
-                    pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
-                    int copyLen = pg.PageResponse.Length;
+                    case true when offset + 3 < modeResponse.Length:
+                    {
+                        pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
+                        int copyLen = pg.PageResponse.Length;
 
-                    if(pg.PageResponse.Length + offset > modeResponse.Length)
-                        copyLen = modeResponse.Length - offset;
+                        if(pg.PageResponse.Length + offset > modeResponse.Length)
+                            copyLen = modeResponse.Length - offset;
 
-                    Array.Copy(modeResponse, offset, pg.PageResponse, 0, copyLen);
-                    pg.Page    =  (byte)(modeResponse[offset] & 0x3F);
-                    pg.Subpage =  modeResponse[offset + 1];
-                    offset     += pg.PageResponse.Length;
+                        Array.Copy(modeResponse, offset, pg.PageResponse, 0, copyLen);
+                        pg.Page    =  (byte)(modeResponse[offset] & 0x3F);
+                        pg.Subpage =  modeResponse[offset + 1];
+                        offset     += pg.PageResponse.Length;
+
+                        break;
+                    }
+                    case true when offset + 1 < modeResponse.Length:
+                    {
+                        pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
+                        int copyLen = pg.PageResponse.Length;
+
+                        if(pg.PageResponse.Length + offset > modeResponse.Length)
+                            copyLen = modeResponse.Length - offset;
+
+                        Array.Copy(modeResponse, offset, pg.PageResponse, 0, copyLen);
+                        pg.Page    =  (byte)(modeResponse[offset] & 0x3F);
+                        pg.Subpage =  0;
+                        offset     += pg.PageResponse.Length;
+
+                        break;
+                    }
+                    default:
+                        offset = modeResponse.Length;
+
+                        break;
                 }
-                else if(isSubpage && offset + 1 < modeResponse.Length)
-                {
-                    pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
-                    int copyLen = pg.PageResponse.Length;
-
-                    if(pg.PageResponse.Length + offset > modeResponse.Length)
-                        copyLen = modeResponse.Length - offset;
-
-                    Array.Copy(modeResponse, offset, pg.PageResponse, 0, copyLen);
-                    pg.Page    =  (byte)(modeResponse[offset] & 0x3F);
-                    pg.Subpage =  0;
-                    offset     += pg.PageResponse.Length;
-                }
-                else
-                    offset = modeResponse.Length;
-            }
 
             listpages.Add(pg);
         }

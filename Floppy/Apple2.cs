@@ -208,20 +208,23 @@ public static class Apple2
         {
             output[i] = (byte)((buffer[86 + i] << 2) & 0xFF);
 
-            if(i < 86)
+            switch(i)
             {
-                output[i] |= (byte)(((buffer[i] & 1) << 1) & 0xFF);
-                output[i] |= (byte)(((buffer[i] & 2) >> 1) & 0xFF);
-            }
-            else if(i < 86 * 2)
-            {
-                output[i] |= (byte)(((buffer[i - 86] & 4) >> 1) & 0xFF);
-                output[i] |= (byte)(((buffer[i - 86] & 8) >> 3) & 0xFF);
-            }
-            else
-            {
-                output[i] |= (byte)(((buffer[i - 86 * 2] & 0x10) >> 3) & 0xFF);
-                output[i] |= (byte)(((buffer[i - 86 * 2] & 0x20) >> 5) & 0xFF);
+                case < 86:
+                    output[i] |= (byte)(((buffer[i] & 1) << 1) & 0xFF);
+                    output[i] |= (byte)(((buffer[i] & 2) >> 1) & 0xFF);
+
+                    break;
+                case < 86 * 2:
+                    output[i] |= (byte)(((buffer[i - 86] & 4) >> 1) & 0xFF);
+                    output[i] |= (byte)(((buffer[i - 86] & 8) >> 3) & 0xFF);
+
+                    break;
+                default:
+                    output[i] |= (byte)(((buffer[i - 86 * 2] & 0x10) >> 3) & 0xFF);
+                    output[i] |= (byte)(((buffer[i - 86 * 2] & 0x20) >> 5) & 0xFF);
+
+                    break;
             }
         }
 

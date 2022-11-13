@@ -211,95 +211,98 @@ public static class PFI
             case DiskCategory.DVDRAM:
                 pfi.DiscType = (DVDRAMDiscType)response[36];
 
-                if(pfi.PartVersion == 1)
+                switch(pfi.PartVersion)
                 {
-                    pfi.Velocity                    = response[52];
-                    pfi.ReadPower                   = response[53];
-                    pfi.PeakPower                   = response[54];
-                    pfi.BiasPower                   = response[55];
-                    pfi.FirstPulseStart             = response[56];
-                    pfi.FirstPulseEnd               = response[57];
-                    pfi.MultiPulseDuration          = response[58];
-                    pfi.LastPulseStart              = response[59];
-                    pfi.LastPulseEnd                = response[60];
-                    pfi.BiasPowerDuration           = response[61];
-                    pfi.PeakPowerGroove             = response[62];
-                    pfi.BiasPowerGroove             = response[63];
-                    pfi.FirstPulseStartGroove       = response[64];
-                    pfi.FirstPulseEndGroove         = response[65];
-                    pfi.MultiplePulseDurationGroove = response[66];
-                    pfi.LastPulseStartGroove        = response[67];
-                    pfi.LastPulseEndGroove          = response[68];
-                    pfi.BiasPowerDurationGroove     = response[69];
-                }
-                else if(pfi.PartVersion >= 6)
-                {
-                    pfi.Velocity                        =  response[504];
-                    pfi.ReadPower                       =  response[505];
-                    pfi.AdaptativeWritePulseControlFlag |= (response[506] & 0x80) == 0x80;
-                    pfi.PeakPower                       =  response[507];
-                    pfi.BiasPower1                      =  response[508];
-                    pfi.BiasPower2                      =  response[509];
-                    pfi.BiasPower3                      =  response[510];
-                    pfi.PeakPowerGroove                 =  response[511];
-                    pfi.BiasPower1Groove                =  response[512];
-                    pfi.BiasPower2Groove                =  response[513];
-                    pfi.BiasPower3Groove                =  response[514];
-                    pfi.FirstPulseEnd                   =  response[515];
-                    pfi.FirstPulseDuration              =  response[516];
-                    pfi.MultiPulseDuration              =  response[518];
-                    pfi.LastPulseStart                  =  response[519];
-                    pfi.BiasPower2Duration              =  response[520];
-                    pfi.FirstPulseStart3TSpace3T        =  response[521];
-                    pfi.FirstPulseStart4TSpace3T        =  response[522];
-                    pfi.FirstPulseStart5TSpace3T        =  response[523];
-                    pfi.FirstPulseStartSpace3T          =  response[524];
-                    pfi.FirstPulseStart3TSpace4T        =  response[525];
-                    pfi.FirstPulseStart4TSpace4T        =  response[526];
-                    pfi.FirstPulseStart5TSpace4T        =  response[527];
-                    pfi.FirstPulseStartSpace4T          =  response[528];
-                    pfi.FirstPulseStart3TSpace5T        =  response[529];
-                    pfi.FirstPulseStart4TSpace5T        =  response[530];
-                    pfi.FirstPulseStart5TSpace5T        =  response[531];
-                    pfi.FirstPulseStartSpace5T          =  response[532];
-                    pfi.FirstPulseStart3TSpace          =  response[533];
-                    pfi.FirstPulseStart4TSpace          =  response[534];
-                    pfi.FirstPulseStart5TSpace          =  response[535];
-                    pfi.FirstPulseStartSpace            =  response[536];
-                    pfi.FirstPulse3TStartTSpace3T       =  response[537];
-                    pfi.FirstPulse4TStartTSpace3T       =  response[538];
-                    pfi.FirstPulse5TStartTSpace3T       =  response[539];
-                    pfi.FirstPulseStartTSpace3T         =  response[540];
-                    pfi.FirstPulse3TStartTSpace4T       =  response[541];
-                    pfi.FirstPulse4TStartTSpace4T       =  response[542];
-                    pfi.FirstPulse5TStartTSpace4T       =  response[543];
-                    pfi.FirstPulseStartTSpace4T         =  response[544];
-                    pfi.FirstPulse3TStartTSpace5T       =  response[545];
-                    pfi.FirstPulse4TStartTSpace5T       =  response[546];
-                    pfi.FirstPulse5TStartTSpace5T       =  response[547];
-                    pfi.FirstPulseStartTSpace5T         =  response[548];
-                    pfi.FirstPulse3TStartTSpace         =  response[549];
-                    pfi.FirstPulse4TStartTSpace         =  response[550];
-                    pfi.FirstPulse5TStartTSpace         =  response[551];
-                    pfi.FirstPulseStartTSpace           =  response[552];
-                    tmp                                 =  new byte[48];
-                    Array.Copy(response, 553, tmp, 0, 48);
-                    pfi.DiskManufacturer = StringHandlers.SpacePaddedToString(tmp);
-                    tmp                  = new byte[16];
-                    Array.Copy(response, 601, tmp, 0, 16);
-                    pfi.DiskManufacturerSupplementary = StringHandlers.SpacePaddedToString(tmp);
-                    pfi.WritePowerControlParams       = new byte[2];
-                    pfi.WritePowerControlParams[0]    = response[617];
-                    pfi.WritePowerControlParams[1]    = response[618];
-                    pfi.PowerRatioLandThreshold       = response[619];
-                    pfi.TargetAsymmetry               = response[620];
-                    pfi.TemporaryPeakPower            = response[621];
-                    pfi.TemporaryBiasPower1           = response[622];
-                    pfi.TemporaryBiasPower2           = response[623];
-                    pfi.TemporaryBiasPower3           = response[624];
-                    pfi.PowerRatioGrooveThreshold     = response[625];
-                    pfi.PowerRatioLandThreshold6T     = response[626];
-                    pfi.PowerRatioGrooveThreshold6T   = response[627];
+                    case 1:
+                        pfi.Velocity                    = response[52];
+                        pfi.ReadPower                   = response[53];
+                        pfi.PeakPower                   = response[54];
+                        pfi.BiasPower                   = response[55];
+                        pfi.FirstPulseStart             = response[56];
+                        pfi.FirstPulseEnd               = response[57];
+                        pfi.MultiPulseDuration          = response[58];
+                        pfi.LastPulseStart              = response[59];
+                        pfi.LastPulseEnd                = response[60];
+                        pfi.BiasPowerDuration           = response[61];
+                        pfi.PeakPowerGroove             = response[62];
+                        pfi.BiasPowerGroove             = response[63];
+                        pfi.FirstPulseStartGroove       = response[64];
+                        pfi.FirstPulseEndGroove         = response[65];
+                        pfi.MultiplePulseDurationGroove = response[66];
+                        pfi.LastPulseStartGroove        = response[67];
+                        pfi.LastPulseEndGroove          = response[68];
+                        pfi.BiasPowerDurationGroove     = response[69];
+
+                        break;
+                    case >= 6:
+                        pfi.Velocity                        =  response[504];
+                        pfi.ReadPower                       =  response[505];
+                        pfi.AdaptativeWritePulseControlFlag |= (response[506] & 0x80) == 0x80;
+                        pfi.PeakPower                       =  response[507];
+                        pfi.BiasPower1                      =  response[508];
+                        pfi.BiasPower2                      =  response[509];
+                        pfi.BiasPower3                      =  response[510];
+                        pfi.PeakPowerGroove                 =  response[511];
+                        pfi.BiasPower1Groove                =  response[512];
+                        pfi.BiasPower2Groove                =  response[513];
+                        pfi.BiasPower3Groove                =  response[514];
+                        pfi.FirstPulseEnd                   =  response[515];
+                        pfi.FirstPulseDuration              =  response[516];
+                        pfi.MultiPulseDuration              =  response[518];
+                        pfi.LastPulseStart                  =  response[519];
+                        pfi.BiasPower2Duration              =  response[520];
+                        pfi.FirstPulseStart3TSpace3T        =  response[521];
+                        pfi.FirstPulseStart4TSpace3T        =  response[522];
+                        pfi.FirstPulseStart5TSpace3T        =  response[523];
+                        pfi.FirstPulseStartSpace3T          =  response[524];
+                        pfi.FirstPulseStart3TSpace4T        =  response[525];
+                        pfi.FirstPulseStart4TSpace4T        =  response[526];
+                        pfi.FirstPulseStart5TSpace4T        =  response[527];
+                        pfi.FirstPulseStartSpace4T          =  response[528];
+                        pfi.FirstPulseStart3TSpace5T        =  response[529];
+                        pfi.FirstPulseStart4TSpace5T        =  response[530];
+                        pfi.FirstPulseStart5TSpace5T        =  response[531];
+                        pfi.FirstPulseStartSpace5T          =  response[532];
+                        pfi.FirstPulseStart3TSpace          =  response[533];
+                        pfi.FirstPulseStart4TSpace          =  response[534];
+                        pfi.FirstPulseStart5TSpace          =  response[535];
+                        pfi.FirstPulseStartSpace            =  response[536];
+                        pfi.FirstPulse3TStartTSpace3T       =  response[537];
+                        pfi.FirstPulse4TStartTSpace3T       =  response[538];
+                        pfi.FirstPulse5TStartTSpace3T       =  response[539];
+                        pfi.FirstPulseStartTSpace3T         =  response[540];
+                        pfi.FirstPulse3TStartTSpace4T       =  response[541];
+                        pfi.FirstPulse4TStartTSpace4T       =  response[542];
+                        pfi.FirstPulse5TStartTSpace4T       =  response[543];
+                        pfi.FirstPulseStartTSpace4T         =  response[544];
+                        pfi.FirstPulse3TStartTSpace5T       =  response[545];
+                        pfi.FirstPulse4TStartTSpace5T       =  response[546];
+                        pfi.FirstPulse5TStartTSpace5T       =  response[547];
+                        pfi.FirstPulseStartTSpace5T         =  response[548];
+                        pfi.FirstPulse3TStartTSpace         =  response[549];
+                        pfi.FirstPulse4TStartTSpace         =  response[550];
+                        pfi.FirstPulse5TStartTSpace         =  response[551];
+                        pfi.FirstPulseStartTSpace           =  response[552];
+                        tmp                                 =  new byte[48];
+                        Array.Copy(response, 553, tmp, 0, 48);
+                        pfi.DiskManufacturer = StringHandlers.SpacePaddedToString(tmp);
+                        tmp                  = new byte[16];
+                        Array.Copy(response, 601, tmp, 0, 16);
+                        pfi.DiskManufacturerSupplementary = StringHandlers.SpacePaddedToString(tmp);
+                        pfi.WritePowerControlParams       = new byte[2];
+                        pfi.WritePowerControlParams[0]    = response[617];
+                        pfi.WritePowerControlParams[1]    = response[618];
+                        pfi.PowerRatioLandThreshold       = response[619];
+                        pfi.TargetAsymmetry               = response[620];
+                        pfi.TemporaryPeakPower            = response[621];
+                        pfi.TemporaryBiasPower1           = response[622];
+                        pfi.TemporaryBiasPower2           = response[623];
+                        pfi.TemporaryBiasPower3           = response[624];
+                        pfi.PowerRatioGrooveThreshold     = response[625];
+                        pfi.PowerRatioLandThreshold6T     = response[626];
+                        pfi.PowerRatioGrooveThreshold6T   = response[627];
+
+                        break;
                 }
 
                 break;
@@ -781,12 +784,17 @@ public static class PFI
 
         sb.AppendFormat("Disc has {0} layers", decoded.Layers + 1).AppendLine();
 
-        if(decoded.TrackPath &&
-           decoded.Layers == 1)
-            sb.AppendLine("Layers are in parallel track path");
-        else if(!decoded.TrackPath &&
-                decoded.Layers == 1)
-            sb.AppendLine("Layers are in opposite track path");
+        switch(decoded.TrackPath)
+        {
+            case true when decoded.Layers == 1:
+                sb.AppendLine("Layers are in parallel track path");
+
+                break;
+            case false when decoded.Layers == 1:
+                sb.AppendLine("Layers are in opposite track path");
+
+                break;
+        }
 
         switch(decoded.LinearDensity)
         {

@@ -163,16 +163,25 @@ public static partial class Modes
         if(page.POFM)
             sb.AppendLine("\tPartition parameters will not be applied until a FORMAT MEDIUM command is received");
 
-        if(!page.CLEAR &&
-           !page.ADDP)
-            sb.AppendLine("\tDevice may erase any or all partitions on MODE SELECT for partitioning");
-        else if(page.CLEAR &&
-                !page.ADDP)
-            sb.AppendLine("\tDevice shall erase all partitions on MODE SELECT for partitioning");
-        else if(!page.CLEAR)
-            sb.AppendLine("\tDevice shall not erase any partition on MODE SELECT for partitioning");
-        else
-            sb.AppendLine("\tDevice shall erase all partitions differing on size on MODE SELECT for partitioning");
+        switch(page.CLEAR)
+        {
+            case false when !page.ADDP:
+                sb.AppendLine("\tDevice may erase any or all partitions on MODE SELECT for partitioning");
+
+                break;
+            case true when !page.ADDP:
+                sb.AppendLine("\tDevice shall erase all partitions on MODE SELECT for partitioning");
+
+                break;
+            case false:
+                sb.AppendLine("\tDevice shall not erase any partition on MODE SELECT for partitioning");
+
+                break;
+            default:
+                sb.AppendLine("\tDevice shall erase all partitions differing on size on MODE SELECT for partitioning");
+
+                break;
+        }
 
         string measure;
 

@@ -367,8 +367,15 @@ public static class Subchannel
             switch(adr)
             {
                 case 1 when subBuf[2] < 0xA0:
-                    return
-                        $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: {subBuf[3]:X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {qPos}), track {subBuf[2]:X} starts at {subBuf[7]:X2}:{subBuf[8]:X2}:{subBuf[9]:X2} (LBA {qStart}), Q CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
+                    return $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                    ? "corrupted pause"
+                                    : pause
+                                        ? "pause"
+                                        : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: {subBuf[3]
+                                        :X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {qPos}), track {subBuf[2]
+                                        :X} starts at {subBuf[7]:X2}:{subBuf[8]:X2}:{subBuf[9]:X2} (LBA {qStart
+                                    }), Q CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
+                                        (rwEmpty ? "empty" : "not empty")}";
                 case 1 when subBuf[2] == 0xA0:
                 {
                     string format = subBuf[8] switch
@@ -379,44 +386,136 @@ public static class Subchannel
                                         _    => $"unknown {subBuf[0]:X2}"
                                     };
 
-                    return
-                        $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: {subBuf[3]:X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {qPos}), track {subBuf[2]:X} is first program area track in {format} format, Q CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
+                    return $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                    ? "corrupted pause"
+                                    : pause
+                                        ? "pause"
+                                        : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: {subBuf[3]
+                                        :X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {qPos}), track {subBuf[2]
+                                        :X} is first program area track in {format} format, Q CRC 0x{subBuf[10]:X2}{
+                                        subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
+                                            (rwEmpty ? "empty" : "not empty")}";
                 }
                 case 1 when subBuf[2] == 0xA1:
-                    return
-                        $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: {subBuf[3]:X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {qPos}), track {subBuf[2]:X} is last program area track, Q CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
+                    return $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                    ? "corrupted pause"
+                                    : pause
+                                        ? "pause"
+                                        : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: {subBuf[3]
+                                        :X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {qPos}), track {subBuf[2]
+                                        :X} is last program area track, Q CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({
+                                        (crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
                 case 1:
-                    return subBuf[2] == 0xA2
-                               ? $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: {subBuf[3]:X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {qPos}), track {subBuf[2]:X} starts at {subBuf[7]:X2}{subBuf[8]:X2}{subBuf[9]:X2} (LBA {qStart}), Q CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}"
-                               : $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]:X2} {subBuf[1]:X2} {subBuf[2]:X2} {subBuf[3]:X2} {subBuf[4]:X2} {subBuf[5]:X2} {subBuf[6]:X2} {subBuf[7]:X2} {subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
+                    return subBuf[2] == 0xA2 ? $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {
+                        (corruptedPause
+                             ? "corrupted pause"
+                             : pause
+                                 ? "pause"
+                                 : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: {subBuf[3]:X2}:{
+                                 subBuf[4]:X2}:{subBuf[5]:X2} (LBA {qPos}), track {subBuf[2]:X} starts at {subBuf[7]
+                                     :X2}{subBuf[8]:X2}{subBuf[9]:X2} (LBA {qStart}), Q CRC 0x{subBuf[10]:X2}{subBuf[11]
+                                     :X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}" : $"{
+                                         minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                                         ? "corrupted pause"
+                                                         : pause
+                                                             ? "pause"
+                                                             : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]
+                                                             :X2} {subBuf[1]:X2} {subBuf[2]:X2} {subBuf[3]:X2} {
+                                                             subBuf[4]:X2} {subBuf[5]:X2} {subBuf[6]:X2} {subBuf[7]
+                                                                 :X2} {subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{
+                                                                 subBuf[10]:X2}{subBuf[11]:X2} ({
+                                                                     (crcOk ? "OK" : "BAD")}), R-W {
+                                                                         (rwEmpty ? "empty" : "not empty")}";
                 case 2:
-                    return
-                        $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} MCN: {DecodeMcn(subBuf)} frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
+                    return $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                    ? "corrupted pause"
+                                    : pause
+                                        ? "pause"
+                                        : "not pause")}, {controlInfo}, {copy}, Q mode {adr} MCN: {DecodeMcn(subBuf)
+                                    } frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({
+                                        (crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
             }
 
             if(adr != 5)
-                return
-                    $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]:X2} {subBuf[1]:X2} {subBuf[2]:X2} {subBuf[3]:X2} {subBuf[4]:X2} {subBuf[5]:X2} {subBuf[6]:X2} {subBuf[7]:X2} {subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
+                return $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                ? "corrupted pause"
+                                : pause
+                                    ? "pause"
+                                    : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]:X2} {subBuf[1]:X2} {
+                                    subBuf[2]:X2} {subBuf[3]:X2} {subBuf[4]:X2} {subBuf[5]:X2} {subBuf[6]:X2} {
+                                        subBuf[7]:X2} {subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]
+                                            :X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")
+                                        }";
 
-            if(subBuf[2] <= 0x40)
-                return
-                    $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} skip interval start time {subBuf[7]:X2}{subBuf[8]:X2}{subBuf[9]:X2}, skip interval stop time {subBuf[3]:X2}{subBuf[4]:X2}{subBuf[5]:X2}, CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
-
-            if(subBuf[2] == 0xB0)
-                return final
-                           ? $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} next program area can start at {subBuf[3]:X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {nextPos}), last-session, {zero} mode 5 pointers, CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}"
-                           : $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} next program area can start at {subBuf[3]:X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {nextPos}), maximum Lead-out at {subBuf[7]:X2}:{subBuf[8]:X2}:{subBuf[9]:X2} (LBA {maxOut}), {zero} mode 5 pointers, CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
-
-            if(subBuf[2] == 0xB1)
-                return
-                    $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr}, {pmin} skip interval pointers, {psec} skip track assignments, CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
+            switch(subBuf[2])
+            {
+                case <= 0x40:
+                    return $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                    ? "corrupted pause"
+                                    : pause
+                                        ? "pause"
+                                        : "not pause")}, {controlInfo}, {copy}, Q mode {adr
+                                    } skip interval start time {subBuf[7]:X2}{subBuf[8]:X2}{subBuf[9]
+                                        :X2}, skip interval stop time {subBuf[3]:X2}{subBuf[4]:X2}{subBuf[5]
+                                        :X2}, CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
+                                        (rwEmpty ? "empty" : "not empty")}";
+                case 0xB0:
+                    return final ? $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                    ? "corrupted pause"
+                                    : pause
+                                        ? "pause"
+                                        : "not pause")}, {controlInfo}, {copy}, Q mode {adr
+                                    } next program area can start at {subBuf[3]:X2}:{subBuf[4]:X2}:{subBuf[5]
+                                        :X2} (LBA {nextPos}), last-session, {zero} mode 5 pointers, CRC 0x{
+                                        subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
+                                            (rwEmpty ? "empty" : "not empty")}" : $"{minute:D2}:{second:D2}:{frame
+                                                :D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                                            ? "corrupted pause"
+                                                            : pause
+                                                                ? "pause"
+                                                                : "not pause")}, {controlInfo}, {copy}, Q mode {
+                                                                adr} next program area can start at {subBuf[3]
+                                                                    :X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {
+                                                                    nextPos}), maximum Lead-out at {subBuf[7]
+                                                                        :X2}:{subBuf[8]:X2}:{subBuf[9]
+                                                                        :X2} (LBA {maxOut}), {zero
+                                                                    } mode 5 pointers, CRC 0x{subBuf[10]:X2}{
+                                                                        subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")
+                                                                        }), R-W {(rwEmpty ? "empty"
+                                                                                        : "not empty")}";
+                case 0xB1:
+                    return $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                    ? "corrupted pause"
+                                    : pause
+                                        ? "pause"
+                                        : "not pause")}, {controlInfo}, {copy}, Q mode {adr}, {pmin
+                                    } skip interval pointers, {psec} skip track assignments, CRC 0x{subBuf[10]:X2}{
+                                        subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
+                                            (rwEmpty ? "empty" : "not empty")}";
+            }
 
             if(subBuf[2] != 0xB2 &&
                subBuf[2] != 0xB3 &&
                subBuf[2] != 0xB4)
-                return subBuf[2] == 0xC0
-                           ? $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr}, ATIP values {subBuf[3]:X2}, {subBuf[4]:X2}, {subBuf[5]:X2}, first disc Lead-in starts at {subBuf[7]:X2}{subBuf[8]:X2}{subBuf[9]:X2} (LBA {qStart}), CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}"
-                           : $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]:X2} {subBuf[1]:X2} {subBuf[2]:X2} {subBuf[3]:X2} {subBuf[4]:X2} {subBuf[5]:X2} {subBuf[6]:X2} {subBuf[7]:X2} {subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
+                return subBuf[2] == 0xC0 ? $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {
+                    (corruptedPause
+                         ? "corrupted pause"
+                         : pause
+                             ? "pause"
+                             : "not pause")}, {controlInfo}, {copy}, Q mode {adr}, ATIP values {subBuf[3]:X2}, {
+                             subBuf[4]:X2}, {subBuf[5]:X2}, first disc Lead-in starts at {subBuf[7]:X2}{subBuf[8]:X2}{
+                                 subBuf[9]:X2} (LBA {qStart}), CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({
+                                     (crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}" : $"{minute
+                                         :D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                                     ? "corrupted pause"
+                                                     : pause
+                                                         ? "pause"
+                                                         : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]:X2} {
+                                                         subBuf[1]:X2} {subBuf[2]:X2} {subBuf[3]:X2} {subBuf[4]
+                                                             :X2} {subBuf[5]:X2} {subBuf[6]:X2} {subBuf[7]:X2} {
+                                                             subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{
+                                                                 subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
+                                                                     (rwEmpty ? "empty" : "not empty")}";
 
             string skipTracks = $"{subBuf[3]:X2}";
 
@@ -435,27 +534,59 @@ public static class Subchannel
             if(subBuf[9] > 0)
                 skipTracks += $", {subBuf[4]:X2}";
 
-            return
-                $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr}, tracks {skipTracks} to be skipped, CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}";
+            return $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                            ? "corrupted pause"
+                            : pause
+                                ? "pause"
+                                : "not pause")}, {controlInfo}, {copy}, Q mode {adr}, tracks {skipTracks
+                            } to be skipped, CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
+                                (rwEmpty ? "empty" : "not empty")}";
         }
 
         area = subBuf[1] == 0xAA ? "Lead-out" : "Program";
 
         return adr switch
                {
-                   1 =>
-                       $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: track {subBuf[1]:X} index {subBuf[2]:X} relative position {subBuf[3]:X2}:{subBuf[4]:X2}:{subBuf[5]:X2} (LBA {qPos + 150}), absolute position {subBuf[7]:X2}:{subBuf[8]:X2}:{subBuf[9]:X2} (LBA {qStart}), Q CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}",
-                   2 =>
-                       $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} MCN: {DecodeMcn(subBuf)} frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}",
-                   3 =>
-                       $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} ISRC: {DecodeIsrc(subBuf)} frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}",
-                   _ =>
-                       $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]:X2} {subBuf[1]:X2} {subBuf[2]:X2} {subBuf[3]:X2} {subBuf[4]:X2} {subBuf[5]:X2} {subBuf[6]:X2} {subBuf[7]:X2} {subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}"
+                   1 => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                   ? "corrupted pause"
+                                   : pause
+                                       ? "pause"
+                                       : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: track {
+                                       subBuf[1]:X} index {subBuf[2]:X} relative position {subBuf[3]:X2}:{subBuf[4]
+                                           :X2}:{subBuf[5]:X2} (LBA {qPos + 150}), absolute position {subBuf[7]
+                                           :X2}:{subBuf[8]:X2}:{subBuf[9]:X2} (LBA {qStart}), Q CRC 0x{subBuf[10]
+                                           :X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
+                                           (rwEmpty ? "empty" : "not empty")}",
+                   2 => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                   ? "corrupted pause"
+                                   : pause
+                                       ? "pause"
+                                       : "not pause")}, {controlInfo}, {copy}, Q mode {adr} MCN: {DecodeMcn(subBuf)
+                                   } frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({
+                                       (crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}",
+                   3 => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                   ? "corrupted pause"
+                                   : pause
+                                       ? "pause"
+                                       : "not pause")}, {controlInfo}, {copy}, Q mode {adr} ISRC: {
+                                       DecodeIsrc(subBuf)} frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]
+                                           :X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")
+                                       }",
+                   _ => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                                   ? "corrupted pause"
+                                   : pause
+                                       ? "pause"
+                                       : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]:X2} {subBuf[1]:X2} {
+                                       subBuf[2]:X2} {subBuf[3]:X2} {subBuf[4]:X2} {subBuf[5]:X2} {subBuf[6]:X2} {
+                                           subBuf[7]:X2} {subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{
+                                               subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
+                                                   (rwEmpty ? "empty" : "not empty")}"
                };
     }
 
-    public static string DecodeIsrc(byte[] q) =>
-        $"{_isrcTable[q[1] / 4]}{_isrcTable[(q[1] & 3) * 16 + q[2] / 16]}{_isrcTable[(q[2] & 0xF) * 4 + q[3] / 64]}{_isrcTable[q[3] & 0x3F]}{_isrcTable[q[4] / 4]}{q[5]:X2}{q[6]:X2}{q[7]:X2}{q[8] / 16:X1}";
+    public static string DecodeIsrc(byte[] q) => $"{_isrcTable[q[1] / 4]}{_isrcTable[(q[1] & 3) * 16 + q[2] / 16]}{
+        _isrcTable[(q[2] & 0xF) * 4 + q[3] / 64]}{_isrcTable[q[3] & 0x3F]}{_isrcTable[q[4] / 4]}{q[5]:X2}{q[6]:X2}{q[7]
+            :X2}{q[8] / 16:X1}";
 
     public static string DecodeMcn(byte[] q) => $"{q[1]:X2}{q[2]:X2}{q[3]:X2}{q[4]:X2}{q[5]:X2}{q[6]:X2}{q[7] >> 4:X}";
 

@@ -438,18 +438,27 @@ public static partial class Decoders
                 {
                     unit = Math.Pow(2, csd.OperationCodesTimeout) * 100;
 
-                    if(unit > 1000000)
-                        sb.
-                            AppendFormat("\t\tMaximum timeout for switch command when setting a value to the mode operation codes field is {0:D2}s",
-                                         unit / 1000000).AppendLine();
-                    else if(unit > 1000)
-                        sb.
-                            AppendFormat("\tMaximum timeout for switch command when setting a value to the mode operation codes field is {0:D2}ms",
-                                         unit / 1000).AppendLine();
-                    else
-                        sb.
-                            AppendFormat("\tMaximum timeout for switch command when setting a value to the mode operation codes field is {0:D2}µs",
-                                         unit).AppendLine();
+                    switch(unit)
+                    {
+                        case > 1000000:
+                            sb.
+                                AppendFormat("\t\tMaximum timeout for switch command when setting a value to the mode operation codes field is {0:D2}s",
+                                             unit / 1000000).AppendLine();
+
+                            break;
+                        case > 1000:
+                            sb.
+                                AppendFormat("\tMaximum timeout for switch command when setting a value to the mode operation codes field is {0:D2}ms",
+                                             unit / 1000).AppendLine();
+
+                            break;
+                        default:
+                            sb.
+                                AppendFormat("\tMaximum timeout for switch command when setting a value to the mode operation codes field is {0:D2}µs",
+                                             unit).AppendLine();
+
+                            break;
+                    }
                 }
         }
 
@@ -716,43 +725,71 @@ public static partial class Decoders
         {
             unit = Math.Pow(2, csd.ProductionStateAwareness) * 100;
 
-            if(unit > 1000000)
-                sb.AppendFormat("\tDevice takes a maximum of {0} s to switch production state awareness",
-                                unit / 1000000).AppendLine();
-            else if(unit > 1000)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms to switch production state awareness", unit / 1000).
-                   AppendLine();
-            else
-                sb.AppendFormat("\tDevice takes a maximum of {0} μs to switch production state awareness", unit).
-                   AppendLine();
+            switch(unit)
+            {
+                case > 1000000:
+                    sb.AppendFormat("\tDevice takes a maximum of {0} s to switch production state awareness",
+                                    unit / 1000000).AppendLine();
+
+                    break;
+                case > 1000:
+                    sb.AppendFormat("\tDevice takes a maximum of {0} ms to switch production state awareness",
+                                    unit / 1000).AppendLine();
+
+                    break;
+                default:
+                    sb.AppendFormat("\tDevice takes a maximum of {0} μs to switch production state awareness", unit).
+                       AppendLine();
+
+                    break;
+            }
         }
 
         if(csd.SleepAwakeTimeout > 0)
         {
             unit = Math.Pow(2, csd.SleepAwakeTimeout) * 100;
 
-            if(unit > 1000000)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms to transition between sleep and standby states",
-                                unit / 1000000).AppendLine();
-            else if(unit > 1000)
-                sb.AppendFormat("\tDevice takes a maximum of {0} μs to transition between sleep and standby states",
-                                unit / 1000).AppendLine();
-            else
-                sb.AppendFormat("\tDevice takes a maximum of {0} ns to transition between sleep and standby states",
-                                unit).AppendLine();
+            switch(unit)
+            {
+                case > 1000000:
+                    sb.AppendFormat("\tDevice takes a maximum of {0} ms to transition between sleep and standby states",
+                                    unit / 1000000).AppendLine();
+
+                    break;
+                case > 1000:
+                    sb.AppendFormat("\tDevice takes a maximum of {0} μs to transition between sleep and standby states",
+                                    unit / 1000).AppendLine();
+
+                    break;
+                default:
+                    sb.AppendFormat("\tDevice takes a maximum of {0} ns to transition between sleep and standby states",
+                                    unit).AppendLine();
+
+                    break;
+            }
         }
 
         if(csd.SleepNotificationTimeout > 0)
         {
             unit = Math.Pow(2, csd.SleepNotificationTimeout) * 10;
 
-            if(unit > 1000000)
-                sb.AppendFormat("\tDevice takes a maximum of {0} s to move to sleep state", unit / 1000000).
-                   AppendLine();
-            else if(unit > 1000)
-                sb.AppendFormat("\tDevice takes a maximum of {0} ms to move to sleep state", unit / 1000).AppendLine();
-            else
-                sb.AppendFormat("\tDevice takes a maximum of {0} μs to move to sleep state", unit).AppendLine();
+            switch(unit)
+            {
+                case > 1000000:
+                    sb.AppendFormat("\tDevice takes a maximum of {0} s to move to sleep state", unit / 1000000).
+                       AppendLine();
+
+                    break;
+                case > 1000:
+                    sb.AppendFormat("\tDevice takes a maximum of {0} ms to move to sleep state", unit / 1000).
+                       AppendLine();
+
+                    break;
+                default:
+                    sb.AppendFormat("\tDevice takes a maximum of {0} μs to move to sleep state", unit).AppendLine();
+
+                    break;
+            }
         }
 
         sb.AppendFormat("\tDevice has {0} sectors", csd.SectorCount).AppendLine();

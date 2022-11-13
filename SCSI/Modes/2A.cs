@@ -187,14 +187,19 @@ public static partial class Modes
             sb.AppendLine("\tDrive contains a changer that can report the exact contents of the slots");
 
         if(page.CurrentWriteSpeedSelected > 0)
-        {
-            if(page.RotationControlSelected == 0)
-                sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in CLV mode",
-                                page.CurrentWriteSpeedSelected).AppendLine();
-            else if(page.RotationControlSelected == 1)
-                sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in pure CAV mode",
-                                page.CurrentWriteSpeedSelected).AppendLine();
-        }
+            switch(page.RotationControlSelected)
+            {
+                case 0:
+                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in CLV mode",
+                                    page.CurrentWriteSpeedSelected).AppendLine();
+
+                    break;
+                case 1:
+                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in pure CAV mode",
+                                    page.CurrentWriteSpeedSelected).AppendLine();
+
+                    break;
+            }
         else
         {
             if(page.MaxWriteSpeed > 0)
@@ -208,12 +213,19 @@ public static partial class Modes
         if(page.WriteSpeedPerformanceDescriptors != null)
             foreach(ModePage_2A_WriteDescriptor descriptor in page.WriteSpeedPerformanceDescriptors.Where(descriptor =>
                         descriptor.WriteSpeed > 0))
-                if(descriptor.RotationControl == 0)
-                    sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode", descriptor.WriteSpeed).
-                       AppendLine();
-                else if(descriptor.RotationControl == 1)
-                    sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode",
-                                    descriptor.WriteSpeed).AppendLine();
+                switch(descriptor.RotationControl)
+                {
+                    case 0:
+                        sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode",
+                                        descriptor.WriteSpeed).AppendLine();
+
+                        break;
+                    case 1:
+                        sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode",
+                                        descriptor.WriteSpeed).AppendLine();
+
+                        break;
+                }
 
         if(page.TestWrite)
             sb.AppendLine("\tDrive supports test writing");

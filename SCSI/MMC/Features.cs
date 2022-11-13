@@ -3741,15 +3741,27 @@ public static class Features
         else if(ftr.DVDPRead &&
                 ftr.DVDPWrite)
             sb.Append("Drive can read and write DVD+MRW");
-        else if(ftr.Write &&
-                ftr.DVDPRead)
-            sb.Append("Drive and read DVD+MRW and read and write CD-MRW");
-        else if(ftr.Write)
-            sb.Append("Drive can read and write CD-MRW");
-        else if(ftr.DVDPRead)
-            sb.Append("Drive can read CD-MRW and DVD+MRW");
         else
-            sb.Append("Drive can read CD-MRW");
+            switch(ftr.Write)
+            {
+                case true when ftr.DVDPRead:
+                    sb.Append("Drive and read DVD+MRW and read and write CD-MRW");
+
+                    break;
+                case true:
+                    sb.Append("Drive can read and write CD-MRW");
+
+                    break;
+                default:
+                {
+                    if(ftr.DVDPRead)
+                        sb.Append("Drive can read CD-MRW and DVD+MRW");
+                    else
+                        sb.Append("Drive can read CD-MRW");
+
+                    break;
+                }
+            }
 
         if(ftr.Current)
             sb.AppendLine(" (current)");
@@ -3968,14 +3980,21 @@ public static class Features
         Feature_002E ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        if(ftr.SAO &&
-           !ftr.RAW)
-            sb.AppendLine("Drive can write CDs in Session at Once Mode:");
-        else if(!ftr.SAO &&
-                ftr.RAW)
-            sb.AppendLine("Drive can write CDs in raw Mode:");
-        else
-            sb.AppendLine("Drive can write CDs in Session at Once and in Raw Modes:");
+        switch(ftr.SAO)
+        {
+            case true when !ftr.RAW:
+                sb.AppendLine("Drive can write CDs in Session at Once Mode:");
+
+                break;
+            case false when ftr.RAW:
+                sb.AppendLine("Drive can write CDs in raw Mode:");
+
+                break;
+            default:
+                sb.AppendLine("Drive can write CDs in Session at Once and in Raw Modes:");
+
+                break;
+        }
 
         if(ftr.RAW &&
            ftr.RAWMS)
@@ -4270,7 +4289,8 @@ public static class Features
     }
 
     public static string Prettify_0042(Feature_0042? feature) =>
-        !feature.HasValue ? null : "Drive is able to detect and report defective writable unit and behave accordingly\n";
+        !feature.HasValue ? null
+            : "Drive is able to detect and report defective writable unit and behave accordingly\n";
 
     public static string Prettify_0050(Feature_0050? feature)
     {
@@ -4280,15 +4300,26 @@ public static class Features
         Feature_0050 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        if(ftr.HDDVDR &&
-           ftr.HDDVDRAM)
-            sb.Append("Drive can read HD DVD-ROM, HD DVD-RW, HD DVD-R and HD DVD-RAM");
-        else if(ftr.HDDVDR)
-            sb.Append("Drive can read HD DVD-ROM, HD DVD-RW and HD DVD-R");
-        else if(ftr.HDDVDRAM)
-            sb.Append("Drive can read HD DVD-ROM, HD DVD-RW and HD DVD-RAM");
-        else
-            sb.Append("Drive can read HD DVD-ROM and HD DVD-RW");
+        switch(ftr.HDDVDR)
+        {
+            case true when ftr.HDDVDRAM:
+                sb.Append("Drive can read HD DVD-ROM, HD DVD-RW, HD DVD-R and HD DVD-RAM");
+
+                break;
+            case true:
+                sb.Append("Drive can read HD DVD-ROM, HD DVD-RW and HD DVD-R");
+
+                break;
+            default:
+            {
+                if(ftr.HDDVDRAM)
+                    sb.Append("Drive can read HD DVD-ROM, HD DVD-RW and HD DVD-RAM");
+                else
+                    sb.Append("Drive can read HD DVD-ROM and HD DVD-RW");
+
+                break;
+            }
+        }
 
         if(ftr.Current)
             sb.AppendLine(" (current)");
@@ -4306,15 +4337,26 @@ public static class Features
         Feature_0051 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        if(ftr.HDDVDR &&
-           ftr.HDDVDRAM)
-            sb.Append("Drive can write HD DVD-RW, HD DVD-R and HD DVD-RAM");
-        else if(ftr.HDDVDR)
-            sb.Append("Drive can write HD DVD-RW and HD DVD-R");
-        else if(ftr.HDDVDRAM)
-            sb.Append("Drive can write HD DVD-RW and HD DVD-RAM");
-        else
-            sb.Append("Drive can write HD DVD-RW");
+        switch(ftr.HDDVDR)
+        {
+            case true when ftr.HDDVDRAM:
+                sb.Append("Drive can write HD DVD-RW, HD DVD-R and HD DVD-RAM");
+
+                break;
+            case true:
+                sb.Append("Drive can write HD DVD-RW and HD DVD-R");
+
+                break;
+            default:
+            {
+                if(ftr.HDDVDRAM)
+                    sb.Append("Drive can write HD DVD-RW and HD DVD-RAM");
+                else
+                    sb.Append("Drive can write HD DVD-RW");
+
+                break;
+            }
+        }
 
         if(ftr.Current)
             sb.AppendLine(" (current)");

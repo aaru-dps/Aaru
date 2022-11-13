@@ -209,12 +209,17 @@ public static class SS
 
         sb.AppendFormat("Disc has {0} layers", decoded.Layers + 1).AppendLine();
 
-        if(decoded.TrackPath &&
-           decoded.Layers == 1)
-            sb.AppendLine("Layers are in parallel track path");
-        else if(!decoded.TrackPath &&
-                decoded.Layers == 1)
-            sb.AppendLine("Layers are in opposite track path");
+        switch(decoded.TrackPath)
+        {
+            case true when decoded.Layers == 1:
+                sb.AppendLine("Layers are in parallel track path");
+
+                break;
+            case false when decoded.Layers == 1:
+                sb.AppendLine("Layers are in opposite track path");
+
+                break;
+        }
 
         switch(decoded.LinearDensity)
         {
