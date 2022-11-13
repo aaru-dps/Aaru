@@ -65,8 +65,8 @@ static class Neon
         /*
          * Process the data in blocks.
          */
-        uint blockSize = 1 << 5;
-        uint blocks     = len / blockSize;
+        const uint blockSize = 1 << 5;
+        uint       blocks    = len / blockSize;
         len -= blocks * blockSize;
 
         while(blocks != 0)
@@ -81,8 +81,8 @@ static class Neon
              * Process n blocks of data. At most NMAX data bytes can be
              * processed before s2 must be reduced modulo ADLER_MODULE.
              */
-            var               vS2           = Vector128.Create(s1 * n, 0, 0, 0);
-            var               vS1           = Vector128.Create(0u, 0, 0, 0);
+            var               vS2         = Vector128.Create(s1 * n, 0, 0, 0);
+            var               vS1         = Vector128.Create(0u, 0, 0, 0);
             Vector128<ushort> vColumnSum1 = AdvSimd.DuplicateToVector128((ushort)0);
             Vector128<ushort> vColumnSum2 = AdvSimd.DuplicateToVector128((ushort)0);
             Vector128<ushort> vColumnSum3 = AdvSimd.DuplicateToVector128((ushort)0);
@@ -135,28 +135,26 @@ static class Neon
              * Multiply-add bytes by [ 32, 31, 30, ... ] for s2.
              */
             vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum1.GetLower(),
-                                                       Vector64.Create((ushort)32, 31, 30, 29));
+                                                      Vector64.Create((ushort)32, 31, 30, 29));
 
             vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum1.GetUpper(),
-                                                       Vector64.Create((ushort)28, 27, 26, 25));
+                                                      Vector64.Create((ushort)28, 27, 26, 25));
 
             vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum2.GetLower(),
-                                                       Vector64.Create((ushort)24, 23, 22, 21));
+                                                      Vector64.Create((ushort)24, 23, 22, 21));
 
             vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum2.GetUpper(),
-                                                       Vector64.Create((ushort)20, 19, 18, 17));
+                                                      Vector64.Create((ushort)20, 19, 18, 17));
 
             vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum3.GetLower(),
-                                                       Vector64.Create((ushort)16, 15, 14, 13));
+                                                      Vector64.Create((ushort)16, 15, 14, 13));
 
             vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum3.GetUpper(),
-                                                       Vector64.Create((ushort)12, 11, 10, 9));
+                                                      Vector64.Create((ushort)12, 11, 10, 9));
 
-            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum4.GetLower(),
-                                                       Vector64.Create((ushort)8, 7, 6, 5));
+            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum4.GetLower(), Vector64.Create((ushort)8, 7, 6, 5));
 
-            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum4.GetUpper(),
-                                                       Vector64.Create((ushort)4, 3, 2, 1));
+            vS2 = AdvSimd.MultiplyWideningLowerAndAdd(vS2, vColumnSum4.GetUpper(), Vector64.Create((ushort)4, 3, 2, 1));
 
             /*
              * Sum epi32 ints v_s1(s2) and accumulate in s1(s2).

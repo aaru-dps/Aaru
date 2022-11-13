@@ -62,8 +62,8 @@ static class Ssse3
         /*
          * Process the data in blocks.
          */
-        uint blockSize = 1 << 5;
-        uint blocks     = len / blockSize;
+        const uint blockSize = 1 << 5;
+        uint       blocks    = len / blockSize;
         len -= blocks * blockSize;
 
         while(blocks != 0)
