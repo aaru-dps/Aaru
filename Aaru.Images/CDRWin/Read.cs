@@ -1207,74 +1207,72 @@ public sealed partial class CdrWin
             AaruConsole.DebugWriteLine("CDRWin plugin", "Track information:");
             AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} tracks", _discImage.Tracks.Count);
 
-            for(var i = 0; i < _discImage.Tracks.Count; i++)
+            foreach(CdrWinTrack t in _discImage.Tracks)
             {
-                AaruConsole.DebugWriteLine("CDRWin plugin", "\tTrack {0} information:", _discImage.Tracks[i].Sequence);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "\tTrack {0} information:", t.Sequence);
 
-                AaruConsole.DebugWriteLine("CDRWin plugin", "\t\t{0} bytes per sector", _discImage.Tracks[i].Bps);
-                AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPregap: {0} sectors", _discImage.Tracks[i].Pregap);
-                AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tData: {0} sectors", _discImage.Tracks[i].Sectors);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "\t\t{0} bytes per sector", t.Bps);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPregap: {0} sectors", t.Pregap);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tData: {0} sectors", t.Sectors);
 
-                AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPostgap: {0} sectors", _discImage.Tracks[i].Postgap);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPostgap: {0} sectors", t.Postgap);
 
-                if(_discImage.Tracks[i].Flag4Ch)
+                if(t.Flag4Ch)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack is flagged as quadraphonic");
 
-                if(_discImage.Tracks[i].FlagDcp)
+                if(t.FlagDcp)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack allows digital copy");
 
-                if(_discImage.Tracks[i].FlagPre)
+                if(t.FlagPre)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack has pre-emphasis applied");
 
-                if(_discImage.Tracks[i].FlagScms)
+                if(t.FlagScms)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack has SCMS");
 
                 AaruConsole.DebugWriteLine("CDRWin plugin",
                                            "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                                           _discImage.Tracks[i].TrackFile.DataFilter.Filename,
-                                           _discImage.Tracks[i].TrackFile.FileType,
-                                           _discImage.Tracks[i].TrackFile.Offset);
+                                           t.TrackFile.DataFilter.Filename, t.TrackFile.FileType, t.TrackFile.Offset);
 
                 AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tIndexes:");
 
-                foreach(KeyValuePair<ushort, int> kvp in _discImage.Tracks[i].Indexes)
+                foreach(KeyValuePair<ushort, int> kvp in t.Indexes)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\t\tIndex {0} starts at sector {1}", kvp.Key,
                                                kvp.Value);
 
-                if(_discImage.Tracks[i].Isrc == null)
+                if(t.Isrc == null)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tISRC is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tISRC: {0}", _discImage.Tracks[i].Isrc);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tISRC: {0}", t.Isrc);
 
-                if(_discImage.Tracks[i].Arranger == null)
+                if(t.Arranger == null)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tArranger is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tArranger: {0}", _discImage.Tracks[i].Arranger);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tArranger: {0}", t.Arranger);
 
-                if(_discImage.Tracks[i].Composer == null)
+                if(t.Composer == null)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tComposer is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tComposer: {0}", _discImage.Tracks[i].Composer);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tComposer: {0}", t.Composer);
 
-                if(_discImage.Tracks[i].Genre == null)
+                if(t.Genre == null)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tGenre is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tGenre: {0}", _discImage.Tracks[i].Genre);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tGenre: {0}", t.Genre);
 
-                if(_discImage.Tracks[i].Performer == null)
+                if(t.Performer == null)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer: {0}", _discImage.Tracks[i].Performer);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer: {0}", t.Performer);
 
-                if(_discImage.Tracks[i].Songwriter == null)
+                if(t.Songwriter == null)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter: {0}", _discImage.Tracks[i].Songwriter);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter: {0}", t.Songwriter);
 
-                if(_discImage.Tracks[i].Title == null)
+                if(t.Title == null)
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle: {0}", _discImage.Tracks[i].Title);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle: {0}", t.Title);
             }
 
             foreach(CdrWinTrack track in _discImage.Tracks)
