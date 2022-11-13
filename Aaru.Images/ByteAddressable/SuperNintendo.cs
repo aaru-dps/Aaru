@@ -45,39 +45,44 @@ public class SuperNintendo : IByteAddressableImage
         Header header;
         var    headerBytes = new byte[48];
 
-        if(stream.Length > 0x40FFFF)
+        switch(stream.Length)
         {
-            stream.Position = 0x40FFB0;
+            case > 0x40FFFF:
+            {
+                stream.Position = 0x40FFB0;
 
-            stream.Read(headerBytes, 0, 48);
-            header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+                stream.Read(headerBytes, 0, 48);
+                header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-            if((header.Mode & 0xF) == 0x5 ||
-               (header.Mode & 0xF) == 0xA)
-                return true;
+                if((header.Mode & 0xF) == 0x5 ||
+                   (header.Mode & 0xF) == 0xA)
+                    return true;
+
+                break;
+            }
+            case > 0xFFFF:
+            {
+                stream.Position = 0xFFB0;
+
+                stream.Read(headerBytes, 0, 48);
+                header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+
+                if((header.Mode & 0xF) == 0x1 ||
+                   (header.Mode & 0xF) == 0xA)
+                    return true;
+
+                break;
+            }
+            case > 0x7FFF:
+                stream.Position = 0x7FB0;
+
+                stream.Read(headerBytes, 0, 48);
+                header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+
+                return (header.Mode & 0xF) == 0x0 || (header.Mode & 0xF) == 0x2 || (header.Mode & 0xF) == 0x3;
         }
 
-        if(stream.Length > 0xFFFF)
-        {
-            stream.Position = 0xFFB0;
-
-            stream.Read(headerBytes, 0, 48);
-            header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-            if((header.Mode & 0xF) == 0x1 ||
-               (header.Mode & 0xF) == 0xA)
-                return true;
-        }
-
-        if(stream.Length <= 0x7FFF)
-            return false;
-
-        stream.Position = 0x7FB0;
-
-        stream.Read(headerBytes, 0, 48);
-        header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-        return (header.Mode & 0xF) == 0x0 || (header.Mode & 0xF) == 0x2 || (header.Mode & 0xF) == 0x3;
+        return false;
     }
 
     /// <inheritdoc />
@@ -95,41 +100,48 @@ public class SuperNintendo : IByteAddressableImage
         var found       = false;
         var headerBytes = new byte[48];
 
-        if(stream.Length > 0x40FFFF)
+        switch(stream.Length)
         {
-            stream.Position = 0x40FFB0;
+            case > 0x40FFFF:
+            {
+                stream.Position = 0x40FFB0;
 
-            stream.Read(headerBytes, 0, 48);
-            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+                stream.Read(headerBytes, 0, 48);
+                _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-            if((_header.Mode & 0xF) == 0x5 ||
-               (_header.Mode & 0xF) == 0xA)
-                found = true;
-        }
+                if((_header.Mode & 0xF) == 0x5 ||
+                   (_header.Mode & 0xF) == 0xA)
+                    found = true;
 
-        if(stream.Length > 0xFFFF)
-        {
-            stream.Position = 0xFFB0;
+                break;
+            }
+            case > 0xFFFF:
+            {
+                stream.Position = 0xFFB0;
 
-            stream.Read(headerBytes, 0, 48);
-            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+                stream.Read(headerBytes, 0, 48);
+                _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-            if((_header.Mode & 0xF) == 0x1 ||
-               (_header.Mode & 0xF) == 0xA)
-                found = true;
-        }
+                if((_header.Mode & 0xF) == 0x1 ||
+                   (_header.Mode & 0xF) == 0xA)
+                    found = true;
 
-        if(stream.Length > 0x7FFF)
-        {
-            stream.Position = 0x7FB0;
+                break;
+            }
+            case > 0x7FFF:
+            {
+                stream.Position = 0x7FB0;
 
-            stream.Read(headerBytes, 0, 48);
-            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+                stream.Read(headerBytes, 0, 48);
+                _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-            if((_header.Mode & 0xF) == 0x0 ||
-               (_header.Mode & 0xF) == 0x2 ||
-               (_header.Mode & 0xF) == 0x3)
-                found = true;
+                if((_header.Mode & 0xF) == 0x0 ||
+                   (_header.Mode & 0xF) == 0x2 ||
+                   (_header.Mode & 0xF) == 0x3)
+                    found = true;
+
+                break;
+            }
         }
 
         if(!found)
