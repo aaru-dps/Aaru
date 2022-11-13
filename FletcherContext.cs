@@ -132,9 +132,8 @@ public sealed class Fletcher32Context : IChecksum
             return;
         }
 
-        uint sum1 = previousSum1;
-        uint sum2 = previousSum2;
-        uint n;
+        uint sum1    = previousSum1;
+        uint sum2    = previousSum2;
         var  dataOff = 0;
 
         /* in case user likes doing a byte at a time, keep it fast */
@@ -179,7 +178,7 @@ public sealed class Fletcher32Context : IChecksum
         while(len >= NMAX)
         {
             len -= NMAX;
-            n   =  NMAX / 16; /* NMAX is divisible by 16 */
+            uint n = NMAX / 16;
 
             do
             {
@@ -479,9 +478,8 @@ public sealed class Fletcher16Context : IChecksum
             return;
         }
 
-        uint sum1 = previousSum1;
-        uint sum2 = previousSum2;
-        uint n;
+        uint sum1    = previousSum1;
+        uint sum2    = previousSum2;
         var  dataOff = 0;
 
         /* in case user likes doing a byte at a time, keep it fast */
@@ -526,7 +524,7 @@ public sealed class Fletcher16Context : IChecksum
         while(len >= NMAX)
         {
             len -= NMAX;
-            n   =  NMAX / 11; /* NMAX is divisible by 16 */
+            uint n = NMAX / 11;
 
             do
             {

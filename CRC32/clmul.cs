@@ -105,7 +105,6 @@ static class Clmul
 
     internal static uint Step(byte[] src, long len, uint initialCRC)
     {
-        Vector128<uint> xmmT0, xmmT1, xmmT2;
         Vector128<uint> xmmInitial = Sse2.ConvertScalarToVector128UInt32(initialCRC);
         Vector128<uint> xmmCRC0    = Sse2.ConvertScalarToVector128UInt32(0x9db42487);
         Vector128<uint> xmmCRC1    = Vector128<uint>.Zero;
@@ -121,18 +120,18 @@ static class Clmul
 
         while((len -= 64) >= 0)
         {
-            xmmT0 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                     BitConverter.ToUInt32(src, bufPos + 8), BitConverter.ToUInt32(src, bufPos + 12));
+            var xmmT0 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
+                                         BitConverter.ToUInt32(src, bufPos + 8), BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 
-            xmmT1 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                     BitConverter.ToUInt32(src, bufPos + 8), BitConverter.ToUInt32(src, bufPos + 12));
+            var xmmT1 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
+                                         BitConverter.ToUInt32(src, bufPos + 8), BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 
-            xmmT2 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                     BitConverter.ToUInt32(src, bufPos + 8), BitConverter.ToUInt32(src, bufPos + 12));
+            var xmmT2 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
+                                         BitConverter.ToUInt32(src, bufPos + 8), BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 

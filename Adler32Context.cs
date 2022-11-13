@@ -153,9 +153,8 @@ public sealed class Adler32Context : IChecksum
             return;
         }
 
-        uint sum1 = preSum1;
-        uint sum2 = preSum2;
-        uint n;
+        uint sum1    = preSum1;
+        uint sum2    = preSum2;
         var  dataOff = 0;
 
         /* in case user likes doing a byte at a time, keep it fast */
@@ -200,7 +199,7 @@ public sealed class Adler32Context : IChecksum
         while(len >= NMAX)
         {
             len -= NMAX;
-            n   =  NMAX / 16; /* NMAX is divisible by 16 */
+            uint n = NMAX / 16;
 
             do
             {
