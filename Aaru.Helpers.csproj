@@ -62,6 +62,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="System.Memory" Version="4.5.5" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
     </ItemGroup>
 </Project>
