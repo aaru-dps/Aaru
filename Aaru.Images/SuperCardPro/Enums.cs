@@ -33,9 +33,11 @@
 namespace Aaru.DiscImages;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 public sealed partial class SuperCardPro
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum ScpDiskType : byte
     {
         Commodore64    = 0x00,

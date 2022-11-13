@@ -526,11 +526,11 @@ public class SegaMegaDrive : IByteAddressableImage
         SegaHeader header =
             Marshal.ByteArrayToStructureBigEndian<SegaHeader>(_data, 0x100, Marshal.SizeOf<SegaHeader>());
 
-        bool extraRAM = header.ExtraRamPresent[0] == 0x52 && header.ExtraRamPresent[1] == 0x41;
+        bool extraRam = header.ExtraRamPresent[0] == 0x52 && header.ExtraRamPresent[1] == 0x41;
 
         mappings = new LinearMemoryMap
         {
-            Devices = extraRAM ? new LinearMemoryDevice[2] : new LinearMemoryDevice[1]
+            Devices = extraRam ? new LinearMemoryDevice[2] : new LinearMemoryDevice[1]
         };
 
         mappings.Devices[0].Type = LinearMemoryType.ROM;
@@ -547,7 +547,7 @@ public class SegaMegaDrive : IByteAddressableImage
             Length = header.RomEnd - header.RomStart + 1
         };
 
-        if(!extraRAM)
+        if(!extraRam)
             return ErrorNumber.NoError;
 
         mappings.Devices[1].PhysicalAddress = new LinearMemoryAddressing

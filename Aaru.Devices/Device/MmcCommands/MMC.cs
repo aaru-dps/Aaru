@@ -163,11 +163,11 @@ public partial class Device
         if(transferLength <= 1)
             return ReadSingleBlock(out buffer, out response, lba, blockSize, byteAddressed, timeout, out duration);
 
-        if(!_readMultipleBlockCannotSetBlockCount)
+        if(!ReadMultipleBlockCannotSetBlockCount)
             sense = ReadMultipleBlock(out buffer, out response, lba, blockSize, transferLength, byteAddressed, timeout,
                                       out duration);
 
-        if(_readMultipleBlockCannotSetBlockCount)
+        if(ReadMultipleBlockCannotSetBlockCount)
             return ReadMultipleUsingSingle(out buffer, out response, lba, blockSize, transferLength, byteAddressed,
                                            timeout, out duration);
 
@@ -206,7 +206,7 @@ public partial class Device
         return sense;
     }
 
-    protected static bool _readMultipleBlockCannotSetBlockCount;
+    protected static bool ReadMultipleBlockCannotSetBlockCount;
 
     /// <summary>Reads multiple blocks from a SecureDigital or MultiMediaCard device</summary>
     /// <param name="buffer">Data buffer</param>

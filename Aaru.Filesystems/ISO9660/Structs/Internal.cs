@@ -89,6 +89,8 @@ public sealed partial class ISO9660
         public string                         SymbolicLink;
         public DateTime?                      Timestamp;
         public ushort                         VolumeSequenceNumber;
+
+        // ReSharper disable once InconsistentNaming
         public CdromXa?                       XA;
         public byte                           XattrLength;
 

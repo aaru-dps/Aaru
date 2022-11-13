@@ -96,7 +96,7 @@ partial class Device : Devices.Device
 
         // Seems ioctl(2) does not allow the atomicity needed
         if(dev.PlatformId == PlatformID.Linux)
-            _readMultipleBlockCannotSetBlockCount = true;
+            ReadMultipleBlockCannotSetBlockCount = true;
 
         dev.Type     = DeviceType.Unknown;
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
