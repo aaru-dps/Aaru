@@ -485,7 +485,7 @@ public static class MMC
                     }
 
                 foreach(FullTOC.TrackDataDescriptor track in
-                        decodedToc.Value.TrackDescriptors.Where(t => t.POINT > 0 && t.POINT <= 0x99))
+                        decodedToc.Value.TrackDescriptors.Where(t => t.POINT is > 0 and <= 0x99))
                 {
                     if(track.TNO == 1 &&
                        ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
@@ -553,8 +553,7 @@ public static class MMC
             }
 
             if(mediaType is MediaType.CD or MediaType.CDROM && hasDataTrack)
-                foreach(uint startAddress in decodedToc.Value.TrackDescriptors.
-                                                        Where(t => t.POINT > 0 && t.POINT <= 0x99 &&
+                foreach(uint startAddress in decodedToc.Value.TrackDescriptors.Where(t => t.POINT is > 0 and <= 0x99 &&
                                                                    ((TocControl)(t.CONTROL & 0x0D) ==
                                                                     TocControl.DataTrack ||
                                                                     (TocControl)(t.CONTROL & 0x0D) ==
@@ -2327,8 +2326,7 @@ public static class MMC
                     }
                 }
 
-                if(blurayDi                              != null &&
-                   blurayDi?.Units?.Length               > 0     &&
+                if(blurayDi is { Units.Length: > 0 } &&
                    blurayDi?.Units[0].DiscTypeIdentifier != null)
                 {
                     string blurayType = StringHandlers.CToString(blurayDi?.Units[0].DiscTypeIdentifier);

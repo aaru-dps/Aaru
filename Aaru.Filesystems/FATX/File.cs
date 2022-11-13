@@ -239,8 +239,7 @@ public sealed partial class XboxFatPlugin
                 nextCluster = _fat32[nextCluster];
             }
         else
-            while(nextCluster > 0 &&
-                  nextCluster <= FAT16_RESERVED)
+            while(nextCluster is > 0 and <= FAT16_RESERVED)
             {
                 clusters.Add(nextCluster);
                 nextCluster = _fat16[nextCluster];

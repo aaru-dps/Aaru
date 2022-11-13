@@ -257,7 +257,7 @@ partial class Dump
                         DecodedSense? decSense = Sense.Decode(senseBuf);
 
                         // Try to workaround firmware
-                        if(decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05 ||
+                        if(decSense is { ASC: 0x11, ASCQ: 0x05 } ||
                            decSense?.ASC == 0x64)
                         {
                             sense = _dev.ReadCd(out cmdBuf, out _, badSectorToReRead, blockSize, sectorsToReRead,
@@ -280,7 +280,7 @@ partial class Dump
                         DecodedSense? decSense = Sense.Decode(senseBuf);
 
                         // Try to workaround firmware
-                        if(decSense?.ASC == 0x11 && decSense?.ASCQ == 0x05 ||
+                        if(decSense is { ASC: 0x11, ASCQ: 0x05 } ||
                            decSense?.ASC == 0x64)
                         {
                             sense = _dev.ReadCd(out cmdBuf, out _, badSectorToReRead, blockSize, sectorsToReRead,

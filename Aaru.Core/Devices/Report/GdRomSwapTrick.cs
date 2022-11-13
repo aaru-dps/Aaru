@@ -96,10 +96,7 @@ public sealed partial class DeviceReport
 
             DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
-            if(decodedSense?.ASC != 0x04)
-                break;
-
-            if(decodedSense?.ASCQ != 0x01)
+            if(decodedSense is not { ASC: 0x04, ASCQ: 0x01 })
                 break;
 
             Thread.Sleep(2000);
@@ -218,10 +215,7 @@ public sealed partial class DeviceReport
 
             DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
-            if(decodedSense?.ASC != 0x04)
-                break;
-
-            if(decodedSense?.ASCQ != 0x01)
+            if(decodedSense is not { ASC: 0x04, ASCQ: 0x01 })
                 break;
         } while(retries < 25);
 
@@ -1618,10 +1612,7 @@ public sealed partial class DeviceReport
 
                 DecodedSense? decoded = Sense.Decode(senseBuffer);
 
-                if(decoded?.ASC != 0x64)
-                    break;
-
-                if(decoded?.ASCQ != 0x00)
+                if(decoded is not { ASC: 0x64, ASCQ: 0x00 })
                     break;
 
                 trackModeChange = true;

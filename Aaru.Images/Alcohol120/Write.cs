@@ -625,8 +625,8 @@ public sealed partial class Alcohol120
                     allBlocks = (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i) ??
                                        _writingTracks.Count(t => t.Session == i) + 3),
                     nonTrackBlocks =
-                        (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
-                                                                       t.POINT         <= 0xAF) ?? 3),
+                        (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i &&
+                                                                       t.POINT is >= 0xA0 and <= 0xAF) ?? 3),
                     firstTrack  = (ushort)firstTrack.Sequence,
                     lastTrack   = (ushort)lastTrack.Sequence,
                     trackOffset = (uint)currentTrackOffset
@@ -646,11 +646,11 @@ public sealed partial class Alcohol120
 
                 (byte minute, byte second, byte frame) leadinPmsf = LbaToMsf(lastTrack.EndSector + 1);
 
-                if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT >= 0xA0 && t.POINT <= 0xAF) ==
+                if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT is >= 0xA0 and <= 0xAF) ==
                    true)
                     foreach(FullTOC.TrackDataDescriptor tocTrk in
-                            decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
-                                                                         t.POINT         <= 0xAF))
+                            decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == i &&
+                                                                         t.POINT is >= 0xA0 and <= 0xAF))
                     {
                         thisSessionTracks.Add(tocTrk.POINT, new Track
                         {

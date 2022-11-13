@@ -173,8 +173,7 @@ public static class ImageInfo
             AaruConsole.WriteLine("[bold]Media geometry:[/] [italic]{0} cylinders, {1} heads, {2} sectors per track[/]",
                                   imageFormat.Info.Cylinders, imageFormat.Info.Heads, imageFormat.Info.SectorsPerTrack);
 
-        if(imageFormat.Info.ReadableMediaTags       != null &&
-           imageFormat.Info.ReadableMediaTags.Count > 0)
+        if(imageFormat.Info.ReadableMediaTags is { Count: > 0 })
         {
             AaruConsole.WriteLine("[bold]Contains {0} readable media tags:[/]",
                                   imageFormat.Info.ReadableMediaTags.Count);
@@ -185,8 +184,7 @@ public static class ImageInfo
             AaruConsole.WriteLine();
         }
 
-        if(imageFormat.Info.ReadableSectorTags       != null &&
-           imageFormat.Info.ReadableSectorTags.Count > 0)
+        if(imageFormat.Info.ReadableSectorTags is { Count: > 0 })
         {
             AaruConsole.WriteLine("[bold]Contains {0} readable sector tags:[/]",
                                   imageFormat.Info.ReadableSectorTags.Count);
@@ -805,8 +803,7 @@ public static class ImageInfo
 
         try
         {
-            if(opticalImage.Sessions       != null &&
-               opticalImage.Sessions.Count > 0)
+            if(opticalImage.Sessions is { Count: > 0 })
             {
                 var table = new Table
                 {

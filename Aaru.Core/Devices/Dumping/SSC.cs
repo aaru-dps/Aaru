@@ -187,8 +187,7 @@ partial class Dump
                     PulseProgress?.Invoke("Rewinding, please wait...");
                     _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
                     decSense = Sense.Decode(senseBuf);
-                } while(decSense is { ASC: 0x00 } &&
-                        decSense.Value.ASCQ is 0x1A or 0x19);
+                } while(decSense is { ASC: 0x00, ASCQ: 0x1A or 0x19 });
 
                 // And yet, did not rewind!
                 if(decSense.HasValue &&
@@ -732,8 +731,7 @@ partial class Dump
                 PulseProgress?.Invoke("Rewinding, please wait...");
                 _dev.RequestSense(out senseBuf, _dev.Timeout, out duration);
                 decSense = Sense.Decode(senseBuf);
-            } while(decSense is { ASC: 0x00 } &&
-                    decSense.Value.ASCQ is 0x1A or 0x19);
+            } while(decSense is { ASC: 0x00, ASCQ: 0x1A or 0x19 });
 
             // And yet, did not rewind!
             if(decSense.HasValue &&
@@ -1410,8 +1408,7 @@ partial class Dump
         if(maxSpeed > 0)
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
 
-        if(minSpeed > 0 &&
-           minSpeed < double.MaxValue)
+        if(minSpeed is > 0 and < double.MaxValue)
             UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
 
         UpdateStatus?.Invoke($"{_resume.BadBlocks.Count} sectors could not be read.");

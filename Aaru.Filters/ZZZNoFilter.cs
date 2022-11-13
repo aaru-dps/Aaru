@@ -74,10 +74,10 @@ public sealed class ZZZNoFilter : IFilter
     public bool HasResourceFork => false;
 
     /// <inheritdoc />
-    public bool Identify(byte[] buffer) => buffer != null && buffer.Length > 0;
+    public bool Identify(byte[] buffer) => buffer is { Length: > 0 };
 
     /// <inheritdoc />
-    public bool Identify(Stream stream) => stream != null && stream.Length > 0;
+    public bool Identify(Stream stream) => stream is { Length: > 0 };
 
     /// <inheritdoc />
     public bool Identify(string path) => File.Exists(path);

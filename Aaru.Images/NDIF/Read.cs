@@ -159,9 +159,9 @@ public sealed partial class Ndif
                 }
 
                 // TODO: Handle compressed chunks
-                if(bChnk.type > CHUNK_TYPE_COPY    && bChnk.type < CHUNK_TYPE_KENCODE ||
-                   bChnk.type > CHUNK_TYPE_ADC     && bChnk.type < CHUNK_TYPE_STUFFIT ||
-                   bChnk.type > CHUNK_TYPE_STUFFIT && bChnk.type < CHUNK_TYPE_END     ||
+                if(bChnk.type is > CHUNK_TYPE_COPY and < CHUNK_TYPE_KENCODE ||
+                   bChnk.type is > CHUNK_TYPE_ADC and < CHUNK_TYPE_STUFFIT  ||
+                   bChnk.type is > CHUNK_TYPE_STUFFIT and < CHUNK_TYPE_END  ||
                    bChnk.type == 1)
                 {
                     AaruConsole.ErrorWriteLine($"Unsupported chunk type 0x{bChnk.type:X8} found");

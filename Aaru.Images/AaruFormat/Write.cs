@@ -3127,7 +3127,7 @@ public sealed partial class AaruFormat
         // Write the sector prefix, suffix and subchannels if present
         switch(_imageInfo.XmlMediaType)
         {
-            case XmlMediaType.OpticalDisc when Tracks != null && Tracks.Count > 0:
+            case XmlMediaType.OpticalDisc when Tracks is { Count: > 0 }:
                 DateTime startCompress;
                 DateTime endCompress;
 

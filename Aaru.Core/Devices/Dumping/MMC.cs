@@ -305,8 +305,7 @@ partial class Dump
                 {
                     PFI.PhysicalFormatInformation? nintendoPfi = PFI.Decode(cmdBuf, dskType);
 
-                    if(nintendoPfi?.DiskCategory     == DiskCategory.Nintendo &&
-                       nintendoPfi.Value.PartVersion == 15)
+                    if(nintendoPfi is { DiskCategory: DiskCategory.Nintendo, PartVersion: 15 })
                     {
                         _dumpLog.WriteLine("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
 

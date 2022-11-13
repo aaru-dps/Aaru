@@ -37,7 +37,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reactive;
 using System.Threading;
-using System.Threading.Tasks;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
@@ -302,9 +301,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         StopVisible                            =  false;
         ProgressVisible                        =  true;
 
-        if(WholeDiscChecked                                 &&
-           _inputFormat is IOpticalMediaImage opticalFormat &&
-           opticalFormat.Sessions?.Count > 1)
+        if(WholeDiscChecked && _inputFormat is IOpticalMediaImage { Sessions.Count: > 1 })
         {
             AaruConsole.ErrorWriteLine("Calculating disc entropy of multisession images is not yet implemented.");
             WholeDiscChecked = false;

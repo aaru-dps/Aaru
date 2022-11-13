@@ -99,8 +99,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         if(!string.IsNullOrEmpty(mcn))
             McnText = mcn;
 
-        if(isrcs       != null &&
-           isrcs.Count > 0)
+        if(isrcs is { Count: > 0 })
             foreach(KeyValuePair<byte, string> isrc in isrcs)
                 IsrcList.Add(new IsrcModel
                 {

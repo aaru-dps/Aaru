@@ -188,13 +188,11 @@ public sealed class ImageInfoViewModel : ViewModelBase
             MediaGeometryText =
                 $"Media geometry: {imageFormat.Info.Cylinders} cylinders, {imageFormat.Info.Heads} heads, {imageFormat.Info.SectorsPerTrack} sectors per track";
 
-        if(imageFormat.Info.ReadableMediaTags       != null &&
-           imageFormat.Info.ReadableMediaTags.Count > 0)
+        if(imageFormat.Info.ReadableMediaTags is { Count: > 0 })
             foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
                 MediaTagsList.Add(tag.ToString());
 
-        if(imageFormat.Info.ReadableSectorTags       != null &&
-           imageFormat.Info.ReadableSectorTags.Count > 0)
+        if(imageFormat.Info.ReadableSectorTags is { Count: > 0 })
             foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t))
                 SectorTagsList.Add(tag.ToString());
 
@@ -624,8 +622,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             try
             {
-                if(opticalMediaImage.Sessions       != null &&
-                   opticalMediaImage.Sessions.Count > 0)
+                if(opticalMediaImage.Sessions is { Count: > 0 })
                     foreach(Session session in opticalMediaImage.Sessions)
                         Sessions.Add(session);
             }
@@ -636,8 +633,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
             try
             {
-                if(opticalMediaImage.Tracks       != null &&
-                   opticalMediaImage.Tracks.Count > 0)
+                if(opticalMediaImage.Tracks is { Count: > 0 })
                     foreach(Track track in opticalMediaImage.Tracks)
                         Tracks.Add(track);
             }

@@ -201,7 +201,7 @@ public sealed partial class HPOFS
         sb.AppendFormat("Volume created on {0}", DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime)).
            AppendLine();
 
-        sb.AppendFormat("Volume uses {0} codepage {1}", mib.codepageType > 0 && mib.codepageType < 3
+        sb.AppendFormat("Volume uses {0} codepage {1}", mib.codepageType is > 0 and < 3
                                                             ? mib.codepageType == 2
                                                                   ? "EBCDIC"
                                                                   : "ASCII" : "Unknown", mib.codepage).AppendLine();

@@ -1010,7 +1010,7 @@ partial class Dump
 
                     if(dcMode6.HasValue)
                         foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                                                                                   modePage.Page == 0x01 && modePage.Subpage == 0x00))
                             currentModePage = modePage;
                 }
 
@@ -1249,8 +1249,7 @@ partial class Dump
         if(maxSpeed > 0)
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
 
-        if(minSpeed > 0 &&
-           minSpeed < double.MaxValue)
+        if(minSpeed is > 0 and < double.MaxValue)
             UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
 
         UpdateStatus?.Invoke($"{_resume.BadBlocks.Count} sectors could not be read.");

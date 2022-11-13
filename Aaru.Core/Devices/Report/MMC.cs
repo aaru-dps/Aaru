@@ -1874,9 +1874,7 @@ public sealed partial class DeviceReport
         {
             DecodedSense? decSense = Sense.Decode(senseBuffer);
 
-            if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
-               decSense.Value.ASC  == 0x24                     &&
-               decSense.Value.ASCQ == 0x00)
+            if(decSense is { SenseKey: SenseKeys.IllegalRequest, ASC: 0x24, ASCQ: 0x00 })
             {
                 mediaTest.SupportsReadLong = true;
 

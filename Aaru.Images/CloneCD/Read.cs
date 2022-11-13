@@ -457,8 +457,7 @@ public sealed partial class CloneCd
 
                                 break;
                             default:
-                                if(descriptor.POINT >= 0x01 &&
-                                   descriptor.POINT <= 0x63)
+                                if(descriptor.POINT is >= 0x01 and <= 0x63)
                                 {
                                     if(!firstTrackInSession)
                                     {

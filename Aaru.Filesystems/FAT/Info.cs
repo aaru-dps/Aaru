@@ -625,8 +625,7 @@ public sealed partial class FAT
                             XmlFsType.FreeClustersSpecified = true;
                         }
 
-                        if(fsInfo.last_cluster > 2 &&
-                           fsInfo.last_cluster < 0xFFFFFFFF)
+                        if(fsInfo.last_cluster is > 2 and < 0xFFFFFFFF)
                             sb.AppendFormat("Last allocated cluster {0}", fsInfo.last_cluster).AppendLine();
                     }
                 }
@@ -930,10 +929,8 @@ public sealed partial class FAT
 
             sb.AppendFormat("{0} sectors per FAT.", fakeBpb.spfat).AppendLine();
 
-            if(fakeBpb.sptrk > 0  &&
-               fakeBpb.sptrk < 64 &&
-               fakeBpb.heads > 0  &&
-               fakeBpb.heads < 256)
+            if(fakeBpb.sptrk is > 0 and < 64 &&
+               fakeBpb.heads is > 0 and < 256)
             {
                 sb.AppendFormat("{0} sectors per track.", fakeBpb.sptrk).AppendLine();
                 sb.AppendFormat("{0} heads.", fakeBpb.heads).AppendLine();

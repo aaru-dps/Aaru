@@ -312,10 +312,8 @@ public sealed partial class FAT
                         useDos32Bpb     = true;
                         minBootNearJump = 0x1E;
                     }
-                    else if(dos30Bpb.sptrk > 0  &&
-                            dos30Bpb.sptrk < 64 &&
-                            dos30Bpb.heads > 0  &&
-                            dos30Bpb.heads < 256)
+                    else if(dos30Bpb.sptrk is > 0 and < 64 &&
+                            dos30Bpb.heads is > 0 and < 256)
                         if(atariBpb.jump[0] == 0x60 ||
                            atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
                            Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ")

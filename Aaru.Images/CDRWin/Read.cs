@@ -1550,9 +1550,9 @@ public sealed partial class CdrWin
 
             var mediaTypeAsInt = (int)_discImage.MediaType;
 
-            _isCd = mediaTypeAsInt >= 10  && mediaTypeAsInt <= 39  || mediaTypeAsInt is 112 or 113 ||
-                    mediaTypeAsInt >= 150 && mediaTypeAsInt <= 152 || mediaTypeAsInt is 154 or 155 ||
-                    mediaTypeAsInt >= 171 && mediaTypeAsInt <= 179 || mediaTypeAsInt >= 740 && mediaTypeAsInt <= 749;
+            _isCd = mediaTypeAsInt is >= 10 and <= 39   || mediaTypeAsInt is 112 or 113 ||
+                    mediaTypeAsInt is >= 150 and <= 152 || mediaTypeAsInt is 154 or 155 ||
+                    mediaTypeAsInt is >= 171 and <= 179 || mediaTypeAsInt is >= 740 and <= 749;
 
             if(currentSession > 1           &&
                leadouts.Count == 0          &&
