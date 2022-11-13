@@ -155,7 +155,6 @@ public static class StringHandlers
     /// <param name="dstring">OSTA compressed unicode byte array.</param>
     public static string DecompressUnicode(byte[] dstring)
     {
-        ushort unicode;
         byte   compId = dstring[0];
         var    temp   = "";
 
@@ -165,6 +164,8 @@ public static class StringHandlers
 
         for(var byteIndex = 1; byteIndex < dstring.Length;)
         {
+            ushort unicode;
+
             if(compId == 16)
                 unicode = (ushort)(dstring[byteIndex++] << 8);
             else
