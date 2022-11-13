@@ -222,7 +222,6 @@ public partial class Device
                                   ushort transferLength, bool byteAddressed, uint timeout, out double duration)
     {
         buffer = new byte[transferLength * blockSize];
-        double setDuration = 0;
         uint   address;
         response = null;
 
@@ -239,10 +238,7 @@ public partial class Device
         Error = LastError != 0;
 
         if(transferLength > 1)
-        {
-            duration += setDuration;
             AaruConsole.DebugWriteLine("MMC Device", "READ_MULTIPLE_BLOCK took {0} ms.", duration);
-        }
         else
             AaruConsole.DebugWriteLine("MMC Device", "READ_SINGLE_BLOCK took {0} ms.", duration);
 

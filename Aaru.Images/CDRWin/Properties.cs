@@ -76,9 +76,9 @@ public sealed partial class CdrWin
         {
             List<Track> tracks = new();
 
-            ulong previousStartSector = 0;
-            ulong gdRomSession2Offset = 45000;
-            var   previousTrackFile   = "";
+            ulong       previousStartSector = 0;
+            const ulong gdRomSession2Offset = 45000;
+            var         previousTrackFile   = "";
 
             foreach(CdrWinTrack cdrTrack in _discImage.Tracks)
             {

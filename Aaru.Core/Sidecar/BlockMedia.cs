@@ -393,9 +393,9 @@ public sealed partial class Sidecar
             // For fast debugging, skip checksum
             //goto skipImageChecksum;
 
-            uint  sectorsToRead = 64;
-            ulong sectors       = image.Info.Sectors;
-            ulong doneSectors   = 0;
+            const uint sectorsToRead = 64;
+            ulong      sectors       = image.Info.Sectors;
+            ulong      doneSectors   = 0;
 
             InitProgress2();
 
@@ -495,9 +495,9 @@ public sealed partial class Sidecar
                     // For fast debugging, skip checksum
                     //goto skipImageChecksum;
 
-                    uint  sectorsToRead = 64;
-                    ulong sectors       = tapePartition.LastBlock - tapePartition.FirstBlock + 1;
-                    ulong doneSectors   = 0;
+                    const uint sectorsToRead = 64;
+                    ulong      sectors       = tapePartition.LastBlock - tapePartition.FirstBlock + 1;
+                    ulong      doneSectors   = 0;
 
                     InitProgress2();
 
@@ -595,9 +595,9 @@ public sealed partial class Sidecar
                         // For fast debugging, skip checksum
                         //goto skipImageChecksum;
 
-                        uint  sectorsToRead = 64;
-                        ulong sectors       = tapeFile.LastBlock - tapeFile.FirstBlock + 1;
-                        ulong doneSectors   = 0;
+                        const uint sectorsToRead = 64;
+                        ulong      sectors       = tapeFile.LastBlock - tapeFile.FirstBlock + 1;
+                        ulong      doneSectors   = 0;
 
                         InitProgress2();
 

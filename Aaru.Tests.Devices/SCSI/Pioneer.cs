@@ -281,7 +281,7 @@ static class Pioneer
         byte              startSecond = 2;
         byte              startMinute = 0;
         byte              endFrame    = 0;
-        byte              endSecond   = 0;
+        const byte        endSecond   = 0;
         byte              endMinute   = 0;
         PioneerSubchannel subchan     = PioneerSubchannel.None;
         uint              blockSize   = 2352;

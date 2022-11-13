@@ -1061,7 +1061,7 @@ static class Mmc
         byte           startSecond = 2;
         byte           startMinute = 0;
         byte           endFrame    = 0;
-        byte           endSecond   = 0;
+        const byte     endSecond   = 0;
         byte           endMinute   = 0;
         MmcSectorTypes sectorType  = MmcSectorTypes.AllTypes;
         var            dap         = false;

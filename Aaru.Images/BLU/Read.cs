@@ -167,17 +167,15 @@ public sealed partial class Blu
         if(sectorAddress + length > _imageInfo.Sectors)
             return ErrorNumber.OutOfRange;
 
-        var ms   = new MemoryStream();
-        var seek = 0;
-        var read = 0x200;
-        int skip = _bptag;
+        var       ms   = new MemoryStream();
+        const int read = 0x200;
+        int       skip = _bptag;
 
         Stream stream = _bluImageFilter.GetDataForkStream();
         stream.Seek((long)((sectorAddress + 1) * _imageHeader.BytesPerBlock), SeekOrigin.Begin);
 
         for(var i = 0; i < length; i++)
         {
-            stream.Seek(seek, SeekOrigin.Current);
             var sector = new byte[read];
             stream.Read(sector, 0, read);
             ms.Write(sector, 0, read);
@@ -206,10 +204,9 @@ public sealed partial class Blu
         if(sectorAddress + length > _imageInfo.Sectors)
             return ErrorNumber.SectorNotFound;
 
-        var ms   = new MemoryStream();
-        var seek = 0x200;
-        int read = _bptag;
-        var skip = 0;
+        var       ms   = new MemoryStream();
+        const int seek = 0x200;
+        int       read = _bptag;
 
         Stream stream = _bluImageFilter.GetDataForkStream();
         stream.Seek((long)((sectorAddress + 1) * _imageHeader.BytesPerBlock), SeekOrigin.Begin);
@@ -220,7 +217,6 @@ public sealed partial class Blu
             var sector = new byte[read];
             stream.Read(sector, 0, read);
             ms.Write(sector, 0, read);
-            stream.Seek(skip, SeekOrigin.Current);
         }
 
         buffer = ms.ToArray();

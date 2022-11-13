@@ -688,8 +688,6 @@ public sealed partial class Cdrdao
 
             for(var i = 0; i < _discimage.Tracks.Count; i++)
             {
-                ulong index0Len = 0;
-
                 if(_discimage.Tracks[i].Sequence == 1 &&
                    i                             != 0)
                 {
@@ -704,8 +702,8 @@ public sealed partial class Cdrdao
                     Description = $"Track {_discimage.Tracks[i].Sequence}.",
                     Name        = _discimage.Tracks[i].Title,
                     Start       = _discimage.Tracks[i].StartSector,
-                    Size        = (_discimage.Tracks[i].Sectors - index0Len) * _discimage.Tracks[i].Bps,
-                    Length      = _discimage.Tracks[i].Sectors - index0Len,
+                    Size        = _discimage.Tracks[i].Sectors * _discimage.Tracks[i].Bps,
+                    Length      = _discimage.Tracks[i].Sectors,
                     Sequence    = partitionSequence,
                     Offset      = byteOffset,
                     Type        = _discimage.Tracks[i].Tracktype

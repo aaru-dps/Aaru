@@ -109,7 +109,7 @@ partial class Dump
             return;
         }
 
-        MediaType dskType = MediaType.MDData;
+        const MediaType dskType = MediaType.MDData;
 
         if(scsiReader.FindReadCommand())
         {
@@ -524,7 +524,7 @@ partial class Dump
 
                     if(dcMode6?.Pages != null)
                         foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                                                                                   modePage.Page == 0x01 && modePage.Subpage == 0x00))
                             currentModePage = modePage;
                 }
 

@@ -1100,9 +1100,9 @@ partial class Dump
            _retryPasses > 0            &&
            (canLocate || canLocateLong))
         {
-            var pass              = 1;
-            var forward           = false;
-            var runningPersistent = false;
+            var        pass              = 1;
+            var        forward           = false;
+            const bool runningPersistent = false;
 
             Modes.ModePage? currentModePage = null;
 

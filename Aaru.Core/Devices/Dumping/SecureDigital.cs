@@ -756,9 +756,9 @@ public partial class Dump
            !_aborted                   &&
            _retryPasses > 0)
         {
-            var pass              = 1;
-            var forward           = true;
-            var runningPersistent = false;
+            var        pass              = 1;
+            var        forward           = true;
+            const bool runningPersistent = false;
 
             InitProgress?.Invoke();
         repeatRetryLba:

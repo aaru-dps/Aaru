@@ -49,7 +49,7 @@ public partial class Device
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
     public bool MiniDiscReadDataTOC(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
-        ushort transferLength = 2336;
+        const ushort transferLength = 2336;
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 
@@ -80,7 +80,7 @@ public partial class Device
     public bool MiniDiscReadUserTOC(out byte[] buffer, out byte[] senseBuffer, uint sector, uint timeout,
                                     out double duration)
     {
-        ushort transferLength = 2336;
+        const ushort transferLength = 2336;
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 
@@ -113,7 +113,7 @@ public partial class Device
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
     public bool MiniDiscD5(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
-        ushort transferLength = 4;
+        const ushort transferLength = 4;
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 
@@ -167,7 +167,7 @@ public partial class Device
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
     public bool MiniDiscReadPosition(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
-        ushort transferLength = 4;
+        const ushort transferLength = 4;
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 
@@ -196,7 +196,7 @@ public partial class Device
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
     public bool MiniDiscGetType(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
-        ushort transferLength = 8;
+        const ushort transferLength = 8;
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 

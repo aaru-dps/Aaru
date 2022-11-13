@@ -563,7 +563,7 @@ public sealed partial class DeviceReport
                 capabilities.Manufacturer = ataId.MediaManufacturer;
         }
 
-        ulong checkCorrectRead = 0;
+        const ulong checkCorrectRead = 0;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {

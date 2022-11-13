@@ -291,17 +291,17 @@ static class Sbc
 
     static void Read10(string devPath, Device dev)
     {
-        uint   lba         = 0;
-        uint   blockSize   = 512;
-        byte   count       = 1;
-        byte   rdprotect   = 0;
-        var    dpo         = false;
-        var    fua         = false;
-        var    fuaNv       = false;
-        byte   groupNumber = 0;
-        var    relative    = false;
-        string strDev;
-        int    item;
+        uint       lba         = 0;
+        uint       blockSize   = 512;
+        byte       count       = 1;
+        byte       rdprotect   = 0;
+        var        dpo         = false;
+        var        fua         = false;
+        var        fuaNv       = false;
+        const byte groupNumber = 0;
+        var        relative    = false;
+        string     strDev;
+        int        item;
 
     parameters:
 
@@ -547,18 +547,18 @@ static class Sbc
 
     static void Read12(string devPath, Device dev)
     {
-        uint   lba         = 0;
-        uint   blockSize   = 512;
-        byte   count       = 1;
-        byte   rdprotect   = 0;
-        var    dpo         = false;
-        var    fua         = false;
-        var    fuaNv       = false;
-        byte   groupNumber = 0;
-        var    relative    = false;
-        var    streaming   = false;
-        string strDev;
-        int    item;
+        uint       lba         = 0;
+        uint       blockSize   = 512;
+        byte       count       = 1;
+        byte       rdprotect   = 0;
+        var        dpo         = false;
+        var        fua         = false;
+        var        fuaNv       = false;
+        const byte groupNumber = 0;
+        var        relative    = false;
+        var        streaming   = false;
+        string     strDev;
+        int        item;
 
     parameters:
 
@@ -817,17 +817,17 @@ static class Sbc
 
     static void Read16(string devPath, Device dev)
     {
-        ulong  lba         = 0;
-        uint   blockSize   = 512;
-        byte   count       = 1;
-        byte   rdprotect   = 0;
-        var    dpo         = false;
-        var    fua         = false;
-        var    fuaNv       = false;
-        byte   groupNumber = 0;
-        var    streaming   = false;
-        string strDev;
-        int    item;
+        ulong      lba         = 0;
+        uint       blockSize   = 512;
+        byte       count       = 1;
+        byte       rdprotect   = 0;
+        var        dpo         = false;
+        var        fua         = false;
+        var        fuaNv       = false;
+        const byte groupNumber = 0;
+        var        streaming   = false;
+        string     strDev;
+        int        item;
 
     parameters:
 

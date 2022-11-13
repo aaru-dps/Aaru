@@ -336,9 +336,9 @@ public sealed partial class Sidecar
 
             xmlTrk.BytesPerSector = (uint)trk.BytesPerSector;
 
-            uint  sectorsToRead = 512;
-            ulong sectors       = xmlTrk.EndSector - xmlTrk.StartSector + 1;
-            ulong doneSectors   = 0;
+            const uint sectorsToRead = 512;
+            ulong      sectors       = xmlTrk.EndSector - xmlTrk.StartSector + 1;
+            ulong      doneSectors   = 0;
 
             // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
             if(image.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
