@@ -41,78 +41,78 @@
         <Compile Include="..\CICMMetadata\dotnet\cicm.cs">
             <Link>Metadata/cicm.cs</Link>
         </Compile>
-        <Compile Include="Delegates.cs"/>
-        <Compile Include="Enums\DeviceType.cs"/>
-        <Compile Include="Enums\ErrorNumber.cs"/>
-        <Compile Include="Enums\Images.cs"/>
-        <Compile Include="Enums\Nes.cs"/>
-        <Compile Include="Extents\ExtentsByte.cs"/>
-        <Compile Include="Extents\ExtentsConverter.cs"/>
-        <Compile Include="Extents\ExtentsInt.cs"/>
-        <Compile Include="Extents\ExtentsLong.cs"/>
-        <Compile Include="Extents\ExtentsSByte.cs"/>
-        <Compile Include="Extents\ExtentsShort.cs"/>
-        <Compile Include="Extents\ExtentsUInt.cs"/>
-        <Compile Include="Extents\ExtentsULong.cs"/>
-        <Compile Include="Extents\ExtentsUShort.cs"/>
-        <Compile Include="Filters.cs"/>
-        <Compile Include="Geometry.cs"/>
-        <Compile Include="Interfaces\IBaseImage.cs"/>
-        <Compile Include="Interfaces\IBaseWritableImage.cs"/>
-        <Compile Include="Interfaces\IByteAddressableImage.cs"/>
-        <Compile Include="Interfaces\IChecksum.cs"/>
-        <Compile Include="Interfaces\IFilesystem.cs"/>
-        <Compile Include="Interfaces\IArchive.cs"/>
-        <Compile Include="Interfaces\IFilter.cs"/>
-        <Compile Include="Interfaces\IFloppyImage.cs"/>
-        <Compile Include="Interfaces\IMediaImage.cs"/>
-        <Compile Include="Interfaces\IOpticalMediaImage.cs"/>
-        <Compile Include="Interfaces\IPartition.cs"/>
-        <Compile Include="Interfaces\IPartitionableMediaImage.cs"/>
-        <Compile Include="Interfaces\IPluginRegister.cs"/>
-        <Compile Include="Interfaces\IReadOnlyFilesystem.cs"/>
-        <Compile Include="Interfaces\ITapeImage.cs"/>
-        <Compile Include="Interfaces\IVerifiableImage.cs"/>
-        <Compile Include="Interfaces\IVerifiableSectorsImage.cs"/>
-        <Compile Include="Interfaces\IWritableFloppyImage.cs"/>
-        <Compile Include="Interfaces\IWritableImage.cs"/>
-        <Compile Include="Interfaces\IWritableOpticalImage.cs"/>
-        <Compile Include="Interfaces\IWritableTapeImage.cs"/>
-        <Compile Include="Interop\DetectOS.cs"/>
-        <Compile Include="Interop\PlatformID.cs"/>
-        <Compile Include="Interop\Version.cs"/>
-        <Compile Include="MediaTypeFromDevice\FromAta.cs"/>
-        <Compile Include="MediaTypeFromDevice\FromMmc.cs"/>
-        <Compile Include="MediaTypeFromDevice\FromOdc.cs"/>
-        <Compile Include="MediaTypeFromDevice\FromScsi.cs"/>
-        <Compile Include="MediaTypeFromDevice\FromSbc.cs"/>
-        <Compile Include="MediaTypeFromDevice\FromSsc.cs"/>
-        <Compile Include="Metadata\CdOffset.cs"/>
-        <Compile Include="Metadata\DeviceReport.cs"/>
-        <Compile Include="Metadata\DeviceReportV2.cs"/>
-        <Compile Include="Metadata\Dimensions.cs"/>
-        <Compile Include="Metadata\MediaType.cs"/>
-        <Compile Include="Metadata\Resume.cs"/>
-        <Compile Include="Metadata\Statistics.cs"/>
-        <Compile Include="Metadata\Version.cs"/>
-        <Compile Include="Partition.cs"/>
-        <Compile Include="MediaType.cs"/>
-        <Compile Include="PluginBase.cs"/>
-        <Compile Include="Structs\Devices\ATA\Identify.cs"/>
-        <Compile Include="Structs\Devices\SCSI\Enums.cs"/>
-        <Compile Include="Structs\Devices\SCSI\Inquiry.cs"/>
-        <Compile Include="Structs\Devices\SCSI\Modes\2A.cs"/>
-        <Compile Include="Structs\Filesystems.cs"/>
-        <Compile Include="Structs\Images.cs"/>
-        <Compile Include="Structs\TapeFile.cs"/>
-        <Compile Include="Structs\TapePartition.cs"/>
+        <Compile Include="Delegates.cs" />
+        <Compile Include="Enums\DeviceType.cs" />
+        <Compile Include="Enums\ErrorNumber.cs" />
+        <Compile Include="Enums\Images.cs" />
+        <Compile Include="Enums\Nes.cs" />
+        <Compile Include="Extents\ExtentsByte.cs" />
+        <Compile Include="Extents\ExtentsConverter.cs" />
+        <Compile Include="Extents\ExtentsInt.cs" />
+        <Compile Include="Extents\ExtentsLong.cs" />
+        <Compile Include="Extents\ExtentsSByte.cs" />
+        <Compile Include="Extents\ExtentsShort.cs" />
+        <Compile Include="Extents\ExtentsUInt.cs" />
+        <Compile Include="Extents\ExtentsULong.cs" />
+        <Compile Include="Extents\ExtentsUShort.cs" />
+        <Compile Include="Filters.cs" />
+        <Compile Include="Geometry.cs" />
+        <Compile Include="Interfaces\IBaseImage.cs" />
+        <Compile Include="Interfaces\IBaseWritableImage.cs" />
+        <Compile Include="Interfaces\IByteAddressableImage.cs" />
+        <Compile Include="Interfaces\IChecksum.cs" />
+        <Compile Include="Interfaces\IFilesystem.cs" />
+        <Compile Include="Interfaces\IArchive.cs" />
+        <Compile Include="Interfaces\IFilter.cs" />
+        <Compile Include="Interfaces\IFloppyImage.cs" />
+        <Compile Include="Interfaces\IMediaImage.cs" />
+        <Compile Include="Interfaces\IOpticalMediaImage.cs" />
+        <Compile Include="Interfaces\IPartition.cs" />
+        <Compile Include="Interfaces\IPartitionableMediaImage.cs" />
+        <Compile Include="Interfaces\IPluginRegister.cs" />
+        <Compile Include="Interfaces\IReadOnlyFilesystem.cs" />
+        <Compile Include="Interfaces\ITapeImage.cs" />
+        <Compile Include="Interfaces\IVerifiableImage.cs" />
+        <Compile Include="Interfaces\IVerifiableSectorsImage.cs" />
+        <Compile Include="Interfaces\IWritableFloppyImage.cs" />
+        <Compile Include="Interfaces\IWritableImage.cs" />
+        <Compile Include="Interfaces\IWritableOpticalImage.cs" />
+        <Compile Include="Interfaces\IWritableTapeImage.cs" />
+        <Compile Include="Interop\DetectOS.cs" />
+        <Compile Include="Interop\PlatformID.cs" />
+        <Compile Include="Interop\Version.cs" />
+        <Compile Include="MediaTypeFromDevice\FromAta.cs" />
+        <Compile Include="MediaTypeFromDevice\FromMmc.cs" />
+        <Compile Include="MediaTypeFromDevice\FromOdc.cs" />
+        <Compile Include="MediaTypeFromDevice\FromScsi.cs" />
+        <Compile Include="MediaTypeFromDevice\FromSbc.cs" />
+        <Compile Include="MediaTypeFromDevice\FromSsc.cs" />
+        <Compile Include="Metadata\CdOffset.cs" />
+        <Compile Include="Metadata\DeviceReport.cs" />
+        <Compile Include="Metadata\DeviceReportV2.cs" />
+        <Compile Include="Metadata\Dimensions.cs" />
+        <Compile Include="Metadata\MediaType.cs" />
+        <Compile Include="Metadata\Resume.cs" />
+        <Compile Include="Metadata\Statistics.cs" />
+        <Compile Include="Metadata\Version.cs" />
+        <Compile Include="Partition.cs" />
+        <Compile Include="MediaType.cs" />
+        <Compile Include="PluginBase.cs" />
+        <Compile Include="Structs\Devices\ATA\Identify.cs" />
+        <Compile Include="Structs\Devices\SCSI\Enums.cs" />
+        <Compile Include="Structs\Devices\SCSI\Inquiry.cs" />
+        <Compile Include="Structs\Devices\SCSI\Modes\2A.cs" />
+        <Compile Include="Structs\Filesystems.cs" />
+        <Compile Include="Structs\Images.cs" />
+        <Compile Include="Structs\TapeFile.cs" />
+        <Compile Include="Structs\TapePartition.cs" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-        <PackageReference Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7"/>
-        <PackageReference Include="System.Security.Principal.Windows" Version="6.0.0-preview.5.21301.5"/>
-        <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7" />
+        <PackageReference Include="System.Security.Principal.Windows" Version="6.0.0-preview.5.21301.5" />
+        <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
     </ItemGroup>
     <ItemGroup>
         <Content Include="..\LICENSE.MIT">
@@ -120,7 +120,7 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
     </ItemGroup>
 </Project>
