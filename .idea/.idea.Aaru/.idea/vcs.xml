@@ -10,6 +10,13 @@
     <mapping directory="$PROJECT_DIR$/Aaru.Checksums" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Aaru.CommonTypes" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Aaru.Compression/cuetools.net" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Aaru.Compression/cuetools.net/ThirdParty/FFmpeg.AutoGen" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Aaru.Compression/cuetools.net/ThirdParty/MAC_SDK" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Aaru.Compression/cuetools.net/ThirdParty/WavPack" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Aaru.Compression/cuetools.net/ThirdParty/WindowsMediaLib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Aaru.Compression/cuetools.net/ThirdParty/flac" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Aaru.Compression/cuetools.net/ThirdParty/openclnet" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Aaru.Compression/cuetools.net/ThirdParty/taglib-sharp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Aaru.Console" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Aaru.Decoders" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Aaru.Decryption" vcs="Git" />
