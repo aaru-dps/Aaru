@@ -5,7 +5,7 @@
 
         <IsPackable>false</IsPackable>
 
-        <LangVersion>10</LangVersion>
+        <LangVersion>11</LangVersion>
         <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
         <ReleaseVersion>$(Version)</ReleaseVersion>

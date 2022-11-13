@@ -20,7 +20,7 @@
         <ApplicationVersion>$(Version)</ApplicationVersion>
         <RuntimeIdentifiers>alpine-x64;linux-arm64;linux-arm;linux-x64;osx-x64;win-arm64;win-arm;win-x64;win-x86;debian-arm;debian-arm64;debian-x64;rhel-arm64;rhel-x64;sles-x64</RuntimeIdentifiers>
         <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-        <LangVersion>10</LangVersion>
+        <LangVersion>11</LangVersion>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
         <Platforms>x86;AnyCPU</Platforms>
     </PropertyGroup>

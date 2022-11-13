@@ -19,7 +19,7 @@
         <ApplicationVersion>$(Version)</ApplicationVersion>
         <TargetFramework>net7.0</TargetFramework>
         <NoWarn>CS0649</NoWarn>
-        <LangVersion>10</LangVersion>
+        <LangVersion>11</LangVersion>
         <Description>Partitioning schemes implemented by the Aaru Data Preservation Suite.</Description>
         <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
         <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>

@@ -17,7 +17,7 @@
         <Product>Aaru Data Preservation Suite</Product>
         <Title>Aaru.Tests.Devices</Title>
         <ApplicationVersion>$(Version)</ApplicationVersion>
-        <LangVersion>10</LangVersion>
+        <LangVersion>11</LangVersion>
         <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
         <Platforms>x86;AnyCPU</Platforms>

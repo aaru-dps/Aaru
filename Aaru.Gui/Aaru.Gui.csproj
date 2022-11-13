@@ -12,7 +12,7 @@
         <ApplicationVersion>$(Version)</ApplicationVersion>
         <TargetFramework>net7.0</TargetFramework>
         <NoWarn>CS0649,CS0169</NoWarn>
-        <LangVersion>10</LangVersion>
+        <LangVersion>11</LangVersion>
         <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
         <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
     </PropertyGroup>
