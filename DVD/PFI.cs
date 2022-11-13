@@ -484,7 +484,7 @@ public static class PFI
                                 _                 => $"unknown size identifier {decoded.DiscSize}"
                             };
 
-        var categorySentence = "Disc is a {0} {1} version {2}";
+        const string categorySentence = "Disc is a {0} {1} version {2}";
 
         switch(decoded.DiskCategory)
         {
@@ -669,7 +669,7 @@ public static class PFI
 
         if(decoded.RecordedBookType != decoded.DiskCategory)
         {
-            var bookTypeSentence = "Disc book type is {0}";
+            const string bookTypeSentence = "Disc book type is {0}";
 
             switch(decoded.RecordedBookType)
             {

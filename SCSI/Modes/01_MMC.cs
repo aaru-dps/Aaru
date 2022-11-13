@@ -128,20 +128,22 @@ public static partial class Modes
         if(page.ReadRetryCount > 0)
             sb.AppendFormat("\tDrive will repeat read operations {0} times", page.ReadRetryCount).AppendLine();
 
-        var AllUsed              = "\tAll available recovery procedures will be used.\n";
-        var CIRCRetriesUsed      = "\tOnly retries and CIRC are used.\n";
-        var RetriesUsed          = "\tOnly retries are used.\n";
-        var RecoveredNotReported = "\tRecovered errors will not be reported.\n";
-        var RecoveredReported    = "\tRecovered errors will be reported.\n";
-        var RecoveredAbort       = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
-        var UnrecECCAbort        = "\tUnrecovered ECC errors will return CHECK CONDITION.";
-        var UnrecCIRCAbort       = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
-        var UnrecECCNotAbort     = "\tUnrecovered ECC errors will not abort the transfer.";
-        var UnrecCIRCNotAbort    = "\tUnrecovered CIRC errors will not abort the transfer.";
+        const string AllUsed              = "\tAll available recovery procedures will be used.\n";
+        const string CIRCRetriesUsed      = "\tOnly retries and CIRC are used.\n";
+        const string RetriesUsed          = "\tOnly retries are used.\n";
+        const string RecoveredNotReported = "\tRecovered errors will not be reported.\n";
+        const string RecoveredReported    = "\tRecovered errors will be reported.\n";
+        const string RecoveredAbort       = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
+        const string UnrecECCAbort        = "\tUnrecovered ECC errors will return CHECK CONDITION.";
+        const string UnrecCIRCAbort       = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
+        const string UnrecECCNotAbort     = "\tUnrecovered ECC errors will not abort the transfer.";
+        const string UnrecCIRCNotAbort    = "\tUnrecovered CIRC errors will not abort the transfer.";
 
-        var UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
+        const string UnrecECCAbortData =
+            "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
 
-        var UnrecCIRCAbortData = "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
+        const string UnrecCIRCAbortData =
+            "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
 
         switch(page.Parameter)
         {

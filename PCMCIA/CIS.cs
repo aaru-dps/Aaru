@@ -222,7 +222,7 @@ public static class CIS
         var          buffer       = new List<byte>();
         List<string> strings      = null;
         var          firstString  = false;
-        var          secondString = false;
+        const bool   secondString = false;
 
         var tuple = new Level1VersionTuple
         {
