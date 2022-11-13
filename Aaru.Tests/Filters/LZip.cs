@@ -46,7 +46,7 @@ namespace Aaru.Tests.Filters
         };
         readonly string _location;
 
-        public LZip() => _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "lzip.lz");
+        public LZip() => _location = Path.Combine(Consts.TestFilesRoot, "Filters", "lzip.lz");
 
         [Test]
         public void CheckContents()

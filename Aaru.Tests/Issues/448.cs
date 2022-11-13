@@ -8,7 +8,7 @@ namespace Aaru.Tests.Issues
 {
     public class _448 : OpticalMediaImageTest
     {
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Pending", "issue448");
+        public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Pending", "issue448");
         public override IMediaImage _plugin    => new BlindWrite5();
 
         public override OpticalImageTestExpected[] Tests => new[]

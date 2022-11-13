@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.DiskCopy633.NDIF
     public class Rdxx : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.3.3", "NDIF", "Rdxx");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 6.3.3", "NDIF", "Rdxx");
         public override IMediaImage _plugin => new Ndif();
 
         public override BlockImageTestExpected[] Tests => new[]

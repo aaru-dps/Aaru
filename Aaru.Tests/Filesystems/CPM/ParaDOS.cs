@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.CPM
     {
         public ParaDOS() : base("CP/M") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "ParaDOS");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "ParaDOS");
 
         public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
         public override bool        Partitions => false;

@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems.EAFS
     {
         public Whole() : base("Extended Acer Fast Filesystem") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "EAFS");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "EAFS");
 
         public override IFilesystem Plugin     => new SysVfs();
         public override bool        Partitions => false;

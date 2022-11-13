@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.VirtualPC
     [TestFixture]
     public class Raw : BlockMediaImageTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "VirtualPC");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "VirtualPC");
         public override IMediaImage _plugin => new ZZZRawImage();
 
         public override BlockImageTestExpected[] Tests => new[]

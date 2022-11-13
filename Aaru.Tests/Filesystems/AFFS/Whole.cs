@@ -40,7 +40,7 @@ namespace Aaru.Tests.Filesystems.AFFS
         public Whole() : base("Amiga FFS") {}
 
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System");
 
         public override IFilesystem Plugin     => new AmigaDOSPlugin();
         public override bool        Partitions => false;

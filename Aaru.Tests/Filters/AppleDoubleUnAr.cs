@@ -46,8 +46,8 @@ namespace Aaru.Tests.Filters
 
         public AppleDoubleUnAr()
         {
-            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleDouble", "unar", "DOS_720.dmg");
-            _sidecar  = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleDouble", "unar", "DOS_720.dmg.rsrc");
+            _location = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "unar", "DOS_720.dmg");
+            _sidecar  = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "unar", "DOS_720.dmg.rsrc");
         }
 
         [Test]

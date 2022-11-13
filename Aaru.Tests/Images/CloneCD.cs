@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class CloneCD : OpticalMediaImageTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CloneCD");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CloneCD");
         public override IMediaImage _plugin => new CloneCd();
 
         public override OpticalImageTestExpected[] Tests => new[]

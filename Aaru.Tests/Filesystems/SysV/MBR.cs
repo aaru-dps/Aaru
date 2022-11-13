@@ -40,7 +40,7 @@ namespace Aaru.Tests.Filesystems.SysV
         public MBR() : base("SVR4 fs") {}
 
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "System V filesystem (MBR)");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (MBR)");
         public override IFilesystem Plugin     => new SysVfs();
         public override bool        Partitions => true;
 

@@ -35,7 +35,7 @@ namespace Aaru.Tests.Partitions
     [TestFixture]
     public class Minix : PartitionSchemeTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "MINIX");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "MINIX");
 
         public override PartitionTest[] Tests => new[]
         {

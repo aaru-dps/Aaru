@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.CPM
     {
         public AmstradCPM() : base("CP/M") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Amstrad CPM");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Amstrad CPM");
 
         public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
         public override bool        Partitions => false;

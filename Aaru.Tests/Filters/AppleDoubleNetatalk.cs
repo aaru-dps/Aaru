@@ -46,9 +46,9 @@ namespace Aaru.Tests.Filters
 
         public AppleDoubleNetatalk()
         {
-            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleDouble", "netatalk", "DOS_720.dmg");
+            _location = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "netatalk", "DOS_720.dmg");
 
-            _sidecar = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleDouble", "netatalk", ".AppleDouble",
+            _sidecar = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "netatalk", ".AppleDouble",
                                     "DOS_720.dmg");
         }
 

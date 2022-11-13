@@ -17,7 +17,7 @@ namespace Aaru.Tests.Issues
     // 20200309 CLAUNIA: Fixed in 3b2bb0ebf0c6c615c5622aebff494ed34b51055d
     public class _266 : FsExtractHashIssueTest
     {
-        protected override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue266");
+        protected override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue266");
         protected override string TestFile => "Namco (USA) (2005 Assets).cue";
         protected override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
         protected override bool Debug => false;

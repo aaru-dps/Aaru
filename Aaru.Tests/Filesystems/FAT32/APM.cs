@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems.FAT32
     {
         public APM() : base("FAT32") {}
 
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT32 (APM)");
+        public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT32 (APM)");
         public override IFilesystem Plugin     => new FAT();
         public override bool        Partitions => true;
 

@@ -36,7 +36,7 @@ namespace Aaru.Tests.Partitions
     public class AppleMap : PartitionSchemeTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Apple Partition Map");
+            Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Apple Partition Map");
         public override PartitionTest[] Tests => new[]
         {
             new PartitionTest

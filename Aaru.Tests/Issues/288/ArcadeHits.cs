@@ -15,7 +15,7 @@ namespace Aaru.Tests.Issues._288
     {
         public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue288", "arcadehits");
+            Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue288", "arcadehits");
         public override string InputPath =>
             "Midway's Greatest Arcade Hits Volume 1 v1.001 (2000)(Midway)(US)[!][compilation].gdi";
         public override string         SuggestedOutputFilename => "AaruTestIssue288_arcadehits.aif";

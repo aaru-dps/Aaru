@@ -59,7 +59,7 @@ namespace Aaru.Tests.Devices
             512, 512
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Device test dumps", "PocketZIP");
+        readonly string _dataFolder = Path.Combine(Consts.TestFilesRoot, "Device test dumps", "PocketZIP");
 
         [Test]
         public void Info()

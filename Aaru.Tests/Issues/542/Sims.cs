@@ -15,7 +15,7 @@ namespace Aaru.Tests.Issues._542
     public class Sims : FsExtractHashIssueTest
     {
         protected override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue542", "sims");
+            Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue542", "sims");
         protected override string                     TestFile         => "The Sims.aaruf";
         protected override Dictionary<string, string> ParsedOptions    => new Dictionary<string, string>();
         protected override bool                       Debug            => false;

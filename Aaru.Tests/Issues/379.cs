@@ -18,7 +18,7 @@ namespace Aaru.Tests.Issues
     public class _379 : OpticalImageConvertIssueTest
     {
         public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue379");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue379");
         public override string InputPath => "Sony USB Driver.B6T";
         public override string SuggestedOutputFilename => "AaruIssue379Output.aif";
         public override IWritableImage OutputFormat => new AaruFormat();

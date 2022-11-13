@@ -36,7 +36,7 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class TeleDisk : BlockMediaImageTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "TeleDisk");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "TeleDisk");
         public override IMediaImage _plugin => new DiscImages.TeleDisk();
 
         public override BlockImageTestExpected[] Tests => new[]

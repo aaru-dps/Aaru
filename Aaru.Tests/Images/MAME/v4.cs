@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.MAME
     [TestFixture]
     public class V4 : OpticalMediaImageTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MAME", "v4");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "MAME", "v4");
         public override IMediaImage _plugin => new Chd();
 
         public override OpticalImageTestExpected[] Tests => new[]

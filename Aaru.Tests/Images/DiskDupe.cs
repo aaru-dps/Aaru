@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class DiskDupe : BlockMediaImageTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskDupe");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskDupe");
         public override IMediaImage _plugin => new DiscImages.DiskDupe();
 
         public override BlockImageTestExpected[] Tests => new[]

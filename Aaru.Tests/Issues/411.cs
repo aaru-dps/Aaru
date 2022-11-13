@@ -21,7 +21,7 @@ namespace Aaru.Tests.Issues
     // 20201106 CLAUNIA: Fixed in d30a6d18cd1f6d8b9075f096bd56e23fc5106dbf
     public class _411 : FsExtractIssueTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue411");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue411");
         public override string TestFile => "CD02 - Master Quiz - Das total abgeflogene Quiz.mds";
         public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
         public override bool Debug => false;

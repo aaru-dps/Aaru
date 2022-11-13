@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems.NTFS
         public MBR() : base("NTFS") {}
 
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "New Technology File System (MBR)");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "New Technology File System (MBR)");
 
         public override IFilesystem Plugin     => new Aaru.Filesystems.NTFS();
         public override bool        Partitions => true;

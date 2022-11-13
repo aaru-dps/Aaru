@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems.HFSX
     {
         public GPT() : base("HFSX") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFSX (GPT)");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFSX (GPT)");
         public override IFilesystem Plugin => new AppleHFSPlus();
         public override bool Partitions => true;
 

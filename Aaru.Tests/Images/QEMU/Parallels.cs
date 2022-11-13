@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.QEMU
     public class Parallels : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "Parallels");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "Parallels");
         public override IMediaImage _plugin => new DiscImages.Parallels();
 
         public override BlockImageTestExpected[] Tests => new[]

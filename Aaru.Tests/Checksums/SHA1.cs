@@ -53,7 +53,7 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                     FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
@@ -66,7 +66,7 @@ namespace Aaru.Tests.Checksums
         [Test]
         public void EmptyFile()
         {
-            byte[] result = Sha1Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
+            byte[] result = Sha1Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"));
             result.Should().BeEquivalentTo(_expectedEmpty);
         }
 
@@ -75,7 +75,7 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                     FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
@@ -92,7 +92,7 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
                                     FileMode.Open, FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
@@ -105,7 +105,7 @@ namespace Aaru.Tests.Checksums
         [Test]
         public void RandomFile()
         {
-            byte[] result = Sha1Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
+            byte[] result = Sha1Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"));
             result.Should().BeEquivalentTo(_expectedRandom);
         }
 
@@ -114,7 +114,7 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
                                     FileMode.Open, FileAccess.Read);
 
             fs.Read(data, 0, 1048576);

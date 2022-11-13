@@ -59,7 +59,7 @@ namespace Aaru.Tests.Devices
             512, 512, 512
         };
 
-        readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Device test dumps", "LS-120");
+        readonly string _dataFolder = Path.Combine(Consts.TestFilesRoot, "Device test dumps", "LS-120");
 
         [Test]
         public void Info()

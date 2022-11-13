@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.DiskUtilities
     public class Raw : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "disk-analyse", "raw");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "disk-analyse", "raw");
         public override IMediaImage _plugin => new ZZZRawImage();
 
         public override BlockImageTestExpected[] Tests => new[]

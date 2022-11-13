@@ -38,7 +38,7 @@ namespace Aaru.Tests.Filesystems.UFS
     public class RDB : FilesystemTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (RDB)");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem (RDB)");
         public override IFilesystem Plugin     => new FFSPlugin();
         public override bool        Partitions => true;
 

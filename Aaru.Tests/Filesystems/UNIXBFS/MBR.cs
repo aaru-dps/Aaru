@@ -40,7 +40,7 @@ namespace Aaru.Tests.Filesystems.UNIXBFS
         public MBR() : base("BFS") {}
 
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Boot File System (MBR)");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "Boot File System (MBR)");
         public override IFilesystem Plugin     => new BFS();
         public override bool        Partitions => true;
 

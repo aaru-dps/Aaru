@@ -38,7 +38,7 @@ namespace Aaru.Tests.Filesystems.UDF._150
     public class Optical : FilesystemTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format", "1.50");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "Universal Disc Format", "1.50");
         public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
         public override bool        Partitions => false;
 

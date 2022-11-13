@@ -36,7 +36,7 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class AppleNib : BlockMediaImageTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Nibbles");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Nibbles");
         public override IMediaImage _plugin => new DiscImages.AppleNib();
 
         public override BlockImageTestExpected[] Tests => new[]

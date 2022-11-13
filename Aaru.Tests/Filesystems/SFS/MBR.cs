@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems.SFS
         public MBR() : base("SmartFileSystem") {}
 
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Smart File System (MBR)");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (MBR)");
         public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();
         public override bool        Partitions => true;
 

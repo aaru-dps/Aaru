@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.DiskImagesFramework.NDIF
     public class ROCo : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "NDIF", "ROCo");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskImagesFramework", "NDIF", "ROCo");
         public override IMediaImage _plugin => new Ndif();
 
         public override BlockImageTestExpected[] Tests => new[]

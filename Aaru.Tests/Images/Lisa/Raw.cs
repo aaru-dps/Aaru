@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.Lisa
     public class Raw : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Lisa emulators", "raw");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "Lisa emulators", "raw");
         public override IMediaImage _plugin => new ZZZRawImage();
 
         public override BlockImageTestExpected[] Tests => new[]

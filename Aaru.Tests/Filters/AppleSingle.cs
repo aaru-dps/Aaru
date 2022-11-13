@@ -42,7 +42,7 @@ namespace Aaru.Tests.Filters
         readonly string _location;
 
         public AppleSingle() =>
-            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleSingle", "DOS_720.ASF");
+            _location = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleSingle", "DOS_720.ASF");
 
         [Test]
         public void CheckContents()

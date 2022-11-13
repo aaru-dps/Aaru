@@ -13,7 +13,7 @@ namespace Aaru.Tests.Issues
     [TestFixture]
     public class _338 : OpticalImageReadIssueTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue338");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue338");
         public override string TestFile   => "TempImage.nrg.xz";
     }
 }

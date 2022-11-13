@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems.COHERENT
     {
         public Whole() : base("Coherent fs") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "COHERENT filesystem");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "COHERENT filesystem");
 
         public override IFilesystem Plugin     => new SysVfs();
         public override bool        Partitions => false;

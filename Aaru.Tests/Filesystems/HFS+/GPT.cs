@@ -41,7 +41,7 @@ namespace Aaru.Tests.Filesystems.HFSPlus
     {
         public GPT() : base("HFS+") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS+ (GPT)");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS+ (GPT)");
         public override IFilesystem Plugin => new AppleHFSPlus();
         public override bool Partitions => true;
 

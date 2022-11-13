@@ -38,7 +38,7 @@ namespace Aaru.Tests.Filesystems.exFAT
     {
         public APM() : base("exFAT") {}
 
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (APM)");
+        public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (APM)");
         public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();
         public override bool        Partitions => true;
 

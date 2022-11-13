@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
     public class UDRW : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "UDIF", "UDRW");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskImagesFramework", "UDIF", "UDRW");
         public override IMediaImage _plugin => new ZZZRawImage();
 
         public override BlockImageTestExpected[] Tests => new[]

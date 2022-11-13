@@ -12,7 +12,7 @@ namespace Aaru.Tests.Issues
 
     public class _495 : FsExtractIssueTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue495");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue495");
         public override string TestFile => "NetworkCD.aaruf";
         public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
         public override bool Debug => false;

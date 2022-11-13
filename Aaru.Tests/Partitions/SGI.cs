@@ -35,7 +35,7 @@ namespace Aaru.Tests.Partitions
     [TestFixture]
     public class Sgi : PartitionSchemeTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "SGI");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "SGI");
 
         public override PartitionTest[] Tests => new[]
         {

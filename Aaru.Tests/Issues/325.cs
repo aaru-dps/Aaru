@@ -15,7 +15,7 @@ namespace Aaru.Tests.Issues
     [TestFixture]
     public class _325 : OpticalImageReadIssueTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue325");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue325");
         public override string TestFile   => "TEST.cue";
     }
 }

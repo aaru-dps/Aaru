@@ -35,7 +35,7 @@ namespace Aaru.Tests.Partitions
     [TestFixture]
     public class Pc98 : PartitionSchemeTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "PC-98");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "PC-98");
 
         public override PartitionTest[] Tests => new[]
         {

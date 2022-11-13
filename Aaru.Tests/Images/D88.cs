@@ -36,7 +36,7 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class D88 : BlockMediaImageTest
     {
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "D88");
+        public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "D88");
         public override IMediaImage _plugin    => new DiscImages.D88();
         public override BlockImageTestExpected[] Tests => new[]
         {

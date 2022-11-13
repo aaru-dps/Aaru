@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems
         public Reiser4() : base("Reiser 4 filesystem") {}
 
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Reiser filesystem v4");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "Reiser filesystem v4");
         public override IFilesystem Plugin     => new Aaru.Filesystems.Reiser4();
         public override bool        Partitions => true;
 

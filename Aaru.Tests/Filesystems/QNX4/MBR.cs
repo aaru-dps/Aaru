@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems.QNX4
         public MBR() : base("QNX4 filesystem") {}
 
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem (MBR)");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem (MBR)");
         public override IFilesystem Plugin     => new Aaru.Filesystems.QNX4();
         public override bool        Partitions => true;
 

@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.AppleDOS
     public class DOS : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple DOS Order");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "Apple DOS Order");
         public override IMediaImage _plugin => new AppleDos();
 
         public override BlockImageTestExpected[] Tests => new[]

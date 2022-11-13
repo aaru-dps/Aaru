@@ -20,7 +20,7 @@ namespace Aaru.Tests.Issues
     public class _257 : OpticalImageConvertIssueTest
     {
         public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue257");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue257");
         public override string InputPath => "TempImage.nrg.xz";
         public override string SuggestedOutputFilename => "AaruIssue257Output.iso";
         public override IWritableImage OutputFormat => new ZZZRawImage();

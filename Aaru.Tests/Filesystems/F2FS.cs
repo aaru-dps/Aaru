@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems
     {
         public F2Fs() : base("F2FS filesystem") {}
 
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "F2FS");
+        public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "F2FS");
         public override IFilesystem Plugin     => new F2FS();
         public override bool        Partitions => true;
 

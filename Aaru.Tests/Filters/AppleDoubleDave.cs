@@ -46,9 +46,9 @@ namespace Aaru.Tests.Filters
 
         public AppleDoubleDave()
         {
-            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleDouble", "dave", "DOS_720.dmg");
+            _location = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "dave", "DOS_720.dmg");
 
-            _sidecar = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleDouble", "dave", "resource.frk",
+            _sidecar = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "dave", "resource.frk",
                                     "DOS_720.dmg");
         }
 

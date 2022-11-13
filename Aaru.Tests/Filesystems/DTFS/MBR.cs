@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems.DTFS
     {
         public MBR() : base("DTFS") {}
 
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "DTFS (MBR)");
+        public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "DTFS (MBR)");
         public override IFilesystem Plugin     => new SysVfs();
         public override bool        Partitions => true;
 

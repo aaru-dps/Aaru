@@ -43,7 +43,7 @@ namespace Aaru.Tests.Filters
         readonly string _location;
 
         public MacBinary3() =>
-            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "MacBinary", "macbinary3.bin");
+            _location = Path.Combine(Consts.TestFilesRoot, "Filters", "MacBinary", "macbinary3.bin");
 
         [Test]
         public void CheckContents()

@@ -38,7 +38,7 @@ namespace Aaru.Tests.Filesystems.MINIX.V2
     public class MBR : FilesystemTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v2 filesystem (MBR)");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "MINIX v2 filesystem (MBR)");
         public override IFilesystem Plugin     => new MinixFS();
         public override bool        Partitions => true;
 

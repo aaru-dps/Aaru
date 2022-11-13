@@ -26,10 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace Aaru.Tests
 {
     internal static class Consts
     {
-        public const string TEST_FILES_ROOT = "/mnt/DiscImageChef";
+        public static string TestFilesRoot = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "/Volumes/AaruTests" : "/mnt/AaruTests";
     }
 }

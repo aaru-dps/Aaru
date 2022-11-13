@@ -16,7 +16,7 @@ namespace Aaru.Tests.Issues._263
     // 20200309 CLAUNIA: Fixed in 3b2bb0ebf0c6c615c5622aebff494ed34b51055d
     public class Raw : FsExtractIssueTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue263");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue263");
         public override string TestFile => "Sony2.iso";
         public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
         public override bool Debug => true;

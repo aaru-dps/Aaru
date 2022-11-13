@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.DiskCopy65
     public class UDRo_obsolete : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.5", "UDIF", "UDRo_OBS");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 6.5", "UDIF", "UDRo_OBS");
         public override IMediaImage _plugin => new Udif();
 
         public override BlockImageTestExpected[] Tests => new[]

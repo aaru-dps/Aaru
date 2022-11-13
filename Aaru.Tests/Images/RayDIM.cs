@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images
     public class RayDIM : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Disk IMage Archiver");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "Disk IMage Archiver");
         public override IMediaImage _plugin => new RayDim();
 
         public override BlockImageTestExpected[] Tests => new[]

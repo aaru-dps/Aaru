@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.QEMU
     public class QCOW : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "QEMU Copy On Write");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "QEMU Copy On Write");
         public override IMediaImage _plugin => new Qcow();
 
         public override BlockImageTestExpected[] Tests => new[]

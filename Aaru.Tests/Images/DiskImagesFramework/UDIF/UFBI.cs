@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.DiskImagesFramework.UDIF
     public class UFBI : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "UDIF", "UFBI");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskImagesFramework", "UDIF", "UFBI");
         public override IMediaImage _plugin => new Udif();
 
         public override BlockImageTestExpected[] Tests => new[]

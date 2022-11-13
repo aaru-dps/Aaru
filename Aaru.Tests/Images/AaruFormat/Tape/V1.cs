@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.AaruFormat.Tape
     public class V1 : TapeMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
         public override IMediaImage _plugin => new DiscImages.AaruFormat();
 
         public override TapeImageTestExpected[] Tests => new[]

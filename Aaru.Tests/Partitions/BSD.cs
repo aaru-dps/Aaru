@@ -35,7 +35,7 @@ namespace Aaru.Tests.Partitions
     [TestFixture]
     public class Bsd : PartitionSchemeTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "BSD slices");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "BSD slices");
 
         public override PartitionTest[] Tests => new[]
         {

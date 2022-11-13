@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.Nero
     public class V1 : OpticalMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Nero Burning ROM", "V1");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "Nero Burning ROM", "V1");
         public override IMediaImage _plugin => new DiscImages.Nero();
 
         public override OpticalImageTestExpected[] Tests => new[]

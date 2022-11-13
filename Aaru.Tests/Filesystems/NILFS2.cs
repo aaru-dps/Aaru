@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems
     {
         public Nilfs2() : base("NILFS2 filesystem") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
                                                           "New Implementation of a Log-structured File System 2");
         public override IFilesystem Plugin     => new NILFS2();
         public override bool        Partitions => true;

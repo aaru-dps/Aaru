@@ -40,7 +40,7 @@ namespace Aaru.Tests.Filesystems.HTFS
         public Whole() : base("HTFS") {}
 
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "High Throughtput File System");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Throughtput File System");
 
         public override IFilesystem Plugin     => new SysVfs();
         public override bool        Partitions => false;

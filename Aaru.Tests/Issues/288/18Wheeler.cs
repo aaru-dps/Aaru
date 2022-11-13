@@ -15,7 +15,7 @@ namespace Aaru.Tests.Issues._288
     {
         public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue288", "18wheeler");
+            Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue288", "18wheeler");
         public override string         InputPath => "18 Wheeler - American Pro Trucker v1.500 (2001)(Sega)(US)[!].gdi";
         public override string         SuggestedOutputFilename => "AaruTestIssue288_18wheeler.aif";
         public override IWritableImage OutputFormat => new AaruFormat();

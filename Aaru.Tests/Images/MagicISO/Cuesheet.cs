@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.MagicISO
     public class Cuesheet : OpticalMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MagicISO", "Cuesheet");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "MagicISO", "Cuesheet");
         public override IMediaImage _plugin => new CdrWin();
 
         public override OpticalImageTestExpected[] Tests => new[]

@@ -14,7 +14,7 @@ namespace Aaru.Tests.Issues
     public class _299 : OpticalImageConvertIssueTest
     {
         public override Dictionary<string, string> ParsedOptions => new Dictionary<string, string>();
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Pending", "issue299");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Pending", "issue299");
         public override string InputPath => "2d_house_of_terror.cdi";
         public override string SuggestedOutputFilename => "AaruTestIssue299.aif";
         public override IWritableImage OutputFormat => new AaruFormat();

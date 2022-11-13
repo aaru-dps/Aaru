@@ -8,7 +8,7 @@ namespace Aaru.Tests.WritableImages.CDRWin
     public class FromAaru : WritableOpticalMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
         public override IMediaImage    InputPlugin     => new DiscImages.AaruFormat();
         public override IWritableImage OutputPlugin    => new CdrWin();
         public override string         OutputExtension => "cue";

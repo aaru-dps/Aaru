@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.cdrdao.cooked
     public class rw_raw : OpticalMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "cdrdao", "cooked", "rw_raw");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "cdrdao", "cooked", "rw_raw");
         public override IMediaImage _plugin => new Cdrdao();
 
         public override OpticalImageTestExpected[] Tests => new[]

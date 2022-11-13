@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.MINIX.V2
     [TestFixture]
     public class Whole : FilesystemTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v2 filesystem");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "MINIX v2 filesystem");
         public override IFilesystem Plugin => new MinixFS();
         public override bool Partitions => false;
 

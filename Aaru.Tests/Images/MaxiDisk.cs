@@ -36,7 +36,7 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class MaxiDisk : BlockMediaImageTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MaxiDisk");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "MaxiDisk");
         public override IMediaImage _plugin => new DiscImages.MaxiDisk();
 
         public override BlockImageTestExpected[] Tests => new[]

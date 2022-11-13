@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.MAME
     [TestFixture]
     public class V1 : BlockMediaImageTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MAME", "v1");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "MAME", "v1");
         public override IMediaImage _plugin => new Chd();
 
         public override BlockImageTestExpected[] Tests => new[]

@@ -35,7 +35,7 @@ namespace Aaru.Tests.Partitions
     [TestFixture]
     public class Acorn : PartitionSchemeTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Acorn");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Acorn");
 
         public override PartitionTest[] Tests => new[]
         {

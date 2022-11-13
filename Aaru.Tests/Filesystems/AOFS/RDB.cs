@@ -40,7 +40,7 @@ namespace Aaru.Tests.Filesystems.AOFS
         public RDB() : base("Amiga OFS") {}
 
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System (RDB)");
+            Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (RDB)");
         public override IFilesystem Plugin     => new AmigaDOSPlugin();
         public override bool        Partitions => true;
 

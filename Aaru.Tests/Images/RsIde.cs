@@ -36,7 +36,7 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class RsIde : BlockMediaImageTest
     {
-        public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "RS-IDE");
+        public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "RS-IDE");
         public override IMediaImage _plugin    => new DiscImages.RsIde();
 
         public override BlockImageTestExpected[] Tests => new[]

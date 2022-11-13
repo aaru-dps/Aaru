@@ -38,7 +38,7 @@ namespace Aaru.Tests.Filesystems
     {
         public Locus() : base("Locus filesystem") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Locus filesystem");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Locus filesystem");
         public override IFilesystem Plugin => new Aaru.Filesystems.Locus();
         public override bool Partitions => false;
 

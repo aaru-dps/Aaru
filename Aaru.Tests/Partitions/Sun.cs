@@ -36,7 +36,7 @@ namespace Aaru.Tests.Partitions
     [TestFixture]
     public class Sun : PartitionSchemeTest
     {
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Sun");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Sun");
 
         public override PartitionTest[] Tests => new[]
         {

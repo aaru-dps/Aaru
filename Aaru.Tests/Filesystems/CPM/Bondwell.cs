@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.CPM
     {
         public Bondwell() : base("CP/M") {}
 
-        public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Bondwell");
+        public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Bondwell");
 
         public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
         public override bool        Partitions => false;

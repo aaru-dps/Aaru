@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images.QEMU
     public class HyperV : BlockMediaImageTest
     {
         public override string DataFolder =>
-            Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "Hyper-V");
+            Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "Hyper-V");
         public override IMediaImage _plugin => new Vhdx();
 
         public override BlockImageTestExpected[] Tests => new[]
