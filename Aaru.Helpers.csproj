@@ -53,7 +53,7 @@
         <Compile Include="CHS.cs"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"></ProjectReference>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.LGPL">
