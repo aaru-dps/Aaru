@@ -245,8 +245,8 @@ public static class Marshal
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T MarshalStructure<T>(byte[] bytes) where T : struct
     {
-        if(!(typeof(T).GetCustomAttribute(typeof(MarshallingPropertiesAttribute)) is MarshallingPropertiesAttribute
-                 properties))
+        if(typeof(T).GetCustomAttribute(typeof(MarshallingPropertiesAttribute)) is not MarshallingPropertiesAttribute
+           properties)
             return ByteArrayToStructureLittleEndian<T>(bytes);
 
         return properties.Endian switch
