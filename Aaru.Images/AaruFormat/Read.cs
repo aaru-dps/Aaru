@@ -2223,8 +2223,9 @@ public sealed partial class AaruFormat
 
                             return ErrorNumber.NoError;
                         }
-                        else if(_sectorPrefixDdt != null &&
-                                _sectorSuffixDdt != null)
+
+                        if(_sectorPrefixDdt != null &&
+                           _sectorSuffixDdt != null)
                         {
                             buffer = new byte[2352 * length];
 
@@ -2240,8 +2241,8 @@ public sealed partial class AaruFormat
 
                             return ErrorNumber.NoError;
                         }
-                        else
-                            return ReadSectors(sectorAddress, length, out buffer);
+
+                        return ReadSectors(sectorAddress, length, out buffer);
 
                     // Join prefix (sync, header) with user data
                     case TrackType.CdMode2Formless:
@@ -2265,8 +2266,9 @@ public sealed partial class AaruFormat
 
                             return ErrorNumber.NoError;
                         }
-                        else if(_sectorPrefixDdt != null &&
-                                _sectorSuffixDdt != null)
+
+                        if(_sectorPrefixDdt != null &&
+                           _sectorSuffixDdt != null)
                         {
                             buffer = new byte[2352 * length];
 

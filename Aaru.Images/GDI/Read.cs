@@ -90,72 +90,70 @@ public sealed partial class Gdi
 
                     return ErrorNumber.InvalidArgument;
                 }
-                else
+
+                Match trackMatch = regexTrack.Match(line ?? "");
+
+                if(!trackMatch.Success)
                 {
-                    Match trackMatch = regexTrack.Match(line ?? "");
+                    AaruConsole.ErrorWriteLine($"Unknown line \"{line}\" at line {lineNumber}");
 
-                    if(!trackMatch.Success)
-                    {
-                        AaruConsole.ErrorWriteLine($"Unknown line \"{line}\" at line {lineNumber}");
-
-                        return ErrorNumber.InvalidArgument;
-                    }
-
-                    AaruConsole.DebugWriteLine("GDI plugin",
-                                               "Found track {0} starts at {1} flags {2} type {3} file {4} offset {5} at line {6}",
-                                               trackMatch.Groups["track"].Value, trackMatch.Groups["start"].Value,
-                                               trackMatch.Groups["flags"].Value, trackMatch.Groups["type"].Value,
-                                               trackMatch.Groups["filename"].Value, trackMatch.Groups["offset"].Value,
-                                               lineNumber);
-
-                    var filtersList = new FiltersList();
-
-                    var currentTrack = new GdiTrack
-                    {
-                        Bps         = ushort.Parse(trackMatch.Groups["type"].Value),
-                        Flags       = byte.Parse(trackMatch.Groups["flags"].Value),
-                        Offset      = long.Parse(trackMatch.Groups["offset"].Value),
-                        Sequence    = uint.Parse(trackMatch.Groups["track"].Value),
-                        StartSector = ulong.Parse(trackMatch.Groups["start"].Value),
-                        TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                         trackMatch.Groups["filename"].Value.
-                                                                             Replace("\\\"", "\"").Trim('"')))
-                    };
-
-                    currentTrack.TrackFile = currentTrack.TrackFilter.Filename;
-
-                    if(currentTrack.StartSector - currentStart > 0)
-                        if(currentTrack.StartSector == 45000)
-                        {
-                            highDensity = true;
-                            _offsetMap.Add(0, currentStart);
-                            _densitySeparationSectors = currentTrack.StartSector - currentStart;
-                            currentStart              = currentTrack.StartSector;
-                        }
-                        else
-                        {
-                            currentTrack.Pregap      =  currentTrack.StartSector - currentStart;
-                            currentTrack.StartSector -= currentTrack.StartSector - currentStart;
-                        }
-
-                    if((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) % currentTrack.Bps != 0)
-                    {
-                        AaruConsole.ErrorWriteLine("Track size not a multiple of sector size");
-
-                        return ErrorNumber.InvalidArgument;
-                    }
-
-                    currentTrack.Sectors = (ulong)((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) /
-                                                   currentTrack.Bps);
-
-                    currentTrack.Sectors     += currentTrack.Pregap;
-                    currentStart             += currentTrack.Sectors;
-                    currentTrack.HighDensity =  highDensity;
-
-                    currentTrack.TrackType = (currentTrack.Flags & 0x4) == 0x4 ? TrackType.CdMode1 : TrackType.Audio;
-
-                    _discImage.Tracks.Add(currentTrack);
+                    return ErrorNumber.InvalidArgument;
                 }
+
+                AaruConsole.DebugWriteLine("GDI plugin",
+                                           "Found track {0} starts at {1} flags {2} type {3} file {4} offset {5} at line {6}",
+                                           trackMatch.Groups["track"].Value, trackMatch.Groups["start"].Value,
+                                           trackMatch.Groups["flags"].Value, trackMatch.Groups["type"].Value,
+                                           trackMatch.Groups["filename"].Value, trackMatch.Groups["offset"].Value,
+                                           lineNumber);
+
+                var filtersList = new FiltersList();
+
+                var currentTrack = new GdiTrack
+                {
+                    Bps         = ushort.Parse(trackMatch.Groups["type"].Value),
+                    Flags       = byte.Parse(trackMatch.Groups["flags"].Value),
+                    Offset      = long.Parse(trackMatch.Groups["offset"].Value),
+                    Sequence    = uint.Parse(trackMatch.Groups["track"].Value),
+                    StartSector = ulong.Parse(trackMatch.Groups["start"].Value),
+                    TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                     trackMatch.Groups["filename"].Value.
+                                                                         Replace("\\\"", "\"").Trim('"')))
+                };
+
+                currentTrack.TrackFile = currentTrack.TrackFilter.Filename;
+
+                if(currentTrack.StartSector - currentStart > 0)
+                    if(currentTrack.StartSector == 45000)
+                    {
+                        highDensity = true;
+                        _offsetMap.Add(0, currentStart);
+                        _densitySeparationSectors = currentTrack.StartSector - currentStart;
+                        currentStart              = currentTrack.StartSector;
+                    }
+                    else
+                    {
+                        currentTrack.Pregap      =  currentTrack.StartSector - currentStart;
+                        currentTrack.StartSector -= currentTrack.StartSector - currentStart;
+                    }
+
+                if((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) % currentTrack.Bps != 0)
+                {
+                    AaruConsole.ErrorWriteLine("Track size not a multiple of sector size");
+
+                    return ErrorNumber.InvalidArgument;
+                }
+
+                currentTrack.Sectors = (ulong)((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) /
+                                               currentTrack.Bps);
+
+                currentTrack.Sectors     += currentTrack.Pregap;
+                currentStart             += currentTrack.Sectors;
+                currentTrack.HighDensity =  highDensity;
+
+                currentTrack.TrackType = (currentTrack.Flags & 0x4) == 0x4 ? TrackType.CdMode1 : TrackType.Audio;
+
+                _discImage.Tracks.Add(currentTrack);
             }
 
             var sessions = new Session[2];
