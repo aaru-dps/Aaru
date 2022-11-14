@@ -73,7 +73,7 @@ public sealed partial class FAT
             return ErrorNumber.NoError;
         }
 
-        string cutPath = path.StartsWith("/", StringComparison.Ordinal) ? path.Substring(1).ToLower(_cultureInfo)
+        string cutPath = path.StartsWith("/", StringComparison.Ordinal) ? path[1..].ToLower(_cultureInfo)
                              : path.ToLower(_cultureInfo);
 
         if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, CompleteDirectoryEntry> currentDirectory))
@@ -366,9 +366,8 @@ public sealed partial class FAT
                 foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
                 {
                     // No real file this sidecar accompanies
-                    if(!currentDirectory.
-                           TryGetValue(sidecar.Key.Substring(0, sidecar.Key.Length - FAT32_EA_TAIL.Length),
-                                       out CompleteDirectoryEntry fileWithEa))
+                    if(!currentDirectory.TryGetValue(sidecar.Key[..^FAT32_EA_TAIL.Length],
+                                                     out CompleteDirectoryEntry fileWithEa))
                         continue;
 
                     // If not in debug mode we will consider the lack of EA bitflags to mean the EAs are corrupted or not real

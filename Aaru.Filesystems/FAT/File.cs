@@ -293,7 +293,7 @@ public sealed partial class FAT
     {
         entry = null;
 
-        string cutPath = path.StartsWith('/') ? path.Substring(1).ToLower(_cultureInfo) : path.ToLower(_cultureInfo);
+        string cutPath = path.StartsWith('/') ? path[1..].ToLower(_cultureInfo) : path.ToLower(_cultureInfo);
 
         string[] pieces = cutPath.Split(new[]
         {

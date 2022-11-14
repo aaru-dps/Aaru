@@ -37,12 +37,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management;
+using System.Runtime.Versioning;
 using System.Text;
 using Aaru.Helpers;
 using Microsoft.Win32.SafeHandles;
 using Marshal = System.Runtime.InteropServices.Marshal;
 
-[System.Runtime.Versioning.SupportedOSPlatform("windows")]
+[SupportedOSPlatform("windows")]
 static class ListDevices
 {
     /// <summary>Converts a hex dump string to the ASCII string it represents</summary>
@@ -189,7 +190,7 @@ static class ListDevices
                 if(pieces?.Length > 1)
                 {
                     info.Vendor = pieces[0];
-                    info.Model  = info.Model.Substring(pieces[0].Length + 1);
+                    info.Model  = info.Model[(pieces[0].Length + 1)..];
                 }
             }
 

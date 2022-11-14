@@ -56,7 +56,7 @@ public sealed partial class XboxFatPlugin
             return ErrorNumber.NoError;
         }
 
-        string cutPath = path.StartsWith('/') ? path.Substring(1).ToLower(_cultureInfo) : path.ToLower(_cultureInfo);
+        string cutPath = path.StartsWith('/') ? path[1..].ToLower(_cultureInfo) : path.ToLower(_cultureInfo);
 
         if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntry> currentDirectory))
         {

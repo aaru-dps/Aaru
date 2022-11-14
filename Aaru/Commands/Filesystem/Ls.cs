@@ -364,7 +364,7 @@ sealed class LsCommand : Command
         List<string> directory = new();
 
         if(path.StartsWith('/'))
-            path = path.Substring(1);
+            path = path[1..];
 
         AaruConsole.WriteLine(string.IsNullOrEmpty(path) ? "Root directory" : $"Directory: {Markup.Escape(path)}");
 

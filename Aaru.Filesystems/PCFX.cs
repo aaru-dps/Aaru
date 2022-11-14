@@ -96,7 +96,7 @@ public sealed class PCFX : IFilesystem
         try
         {
             date = Encoding.GetString(header.date);
-            var year  = int.Parse(date.Substring(0, 4));
+            var year  = int.Parse(date[..4]);
             var month = int.Parse(date.Substring(4, 2));
             var day   = int.Parse(date.Substring(6, 2));
             dateTime = new DateTime(year, month, day);

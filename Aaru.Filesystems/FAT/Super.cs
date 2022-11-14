@@ -1050,7 +1050,7 @@ public sealed partial class FAT
             foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
             {
                 // No real file this sidecar accompanies
-                if(!_rootDirectoryCache.TryGetValue(sidecar.Key.Substring(0, sidecar.Key.Length - FAT32_EA_TAIL.Length),
+                if(!_rootDirectoryCache.TryGetValue(sidecar.Key[..^FAT32_EA_TAIL.Length],
                                                     out CompleteDirectoryEntry fileWithEa))
                     continue;
 

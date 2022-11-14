@@ -211,10 +211,10 @@ public class BZip2 : IFilter
         get
         {
             if(BasePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true)
-                return BasePath.Substring(0, BasePath.Length - 4);
+                return BasePath[..^4];
 
-            return BasePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? BasePath.Substring(0, BasePath.Length - 6) : BasePath;
+            return BasePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true ? BasePath[..^6]
+                       : BasePath;
         }
     }
 

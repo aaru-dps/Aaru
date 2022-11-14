@@ -72,7 +72,7 @@ public sealed class Plan9 : IPartition
         // While all of Plan9 is supposedly UTF-8, it uses ASCII strcmp for reading its partition table
         string[] really = StringHandlers.CToString(sector).Split('\n');
 
-        foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part.Substring(0, 5) == "part ").
+        foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part[..5] == "part ").
                                           Select(part => part.Split(' ')).TakeWhile(tokens => tokens.Length == 4))
         {
             if(!ulong.TryParse(tokens[2], out ulong start) ||

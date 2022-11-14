@@ -379,10 +379,10 @@ public sealed class ErrorLog
             if(prettySense != null)
             {
                 if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
-                    prettySense = prettySense.Substring(12);
+                    prettySense = prettySense[12..];
 
                 if(prettySense.EndsWith('\n'))
-                    prettySense = prettySense.Substring(0, prettySense.Length - 1);
+                    prettySense = prettySense[..^1];
 
                 prettySense = prettySense.Replace("\n", " - ");
 
@@ -400,10 +400,10 @@ public sealed class ErrorLog
             if(prettySense != null)
             {
                 if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
-                    prettySense = prettySense.Substring(12);
+                    prettySense = prettySense[12..];
 
                 if(prettySense.EndsWith('\n'))
-                    prettySense = prettySense.Substring(0, prettySense.Length - 1);
+                    prettySense = prettySense[..^1];
 
                 prettySense = prettySense.Replace("\n", " - ");
 
@@ -443,10 +443,10 @@ public sealed class ErrorLog
             if(prettySense != null)
             {
                 if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
-                    prettySense = prettySense.Substring(12);
+                    prettySense = prettySense[12..];
 
                 if(prettySense.EndsWith('\n'))
-                    prettySense = prettySense.Substring(0, prettySense.Length - 1);
+                    prettySense = prettySense[..^1];
 
                 prettySense = prettySense.Replace("\n", " - ");
 
@@ -464,10 +464,10 @@ public sealed class ErrorLog
             if(prettySense != null)
             {
                 if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
-                    prettySense = prettySense.Substring(12);
+                    prettySense = prettySense[12..];
 
                 if(prettySense.EndsWith('\n'))
-                    prettySense = prettySense.Substring(0, prettySense.Length - 1);
+                    prettySense = prettySense[..^1];
 
                 prettySense = prettySense.Replace("\n", " - ");
 

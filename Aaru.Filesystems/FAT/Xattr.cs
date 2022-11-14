@@ -58,7 +58,7 @@ public sealed partial class FAT
             return ErrorNumber.NotSupported;
 
         if(path[0] == '/')
-            path = path.Substring(1);
+            path = path[1..];
 
         if(_eaCache.TryGetValue(path.ToLower(_cultureInfo), out Dictionary<string, byte[]> eas))
         {
@@ -111,7 +111,7 @@ public sealed partial class FAT
             return err;
 
         if(path[0] == '/')
-            path = path.Substring(1);
+            path = path[1..];
 
         if(!xattrs.Contains(xattr.ToLower(_cultureInfo)))
             return ErrorNumber.NoSuchExtendedAttribute;

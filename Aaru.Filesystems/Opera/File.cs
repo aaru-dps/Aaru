@@ -187,7 +187,7 @@ public sealed partial class OperaFS
         entry = null;
 
         string cutPath = path.StartsWith("/", StringComparison.Ordinal)
-                             ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
+                             ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                              : path.ToLower(CultureInfo.CurrentUICulture);
 
         string[] pieces = cutPath.Split(new[]

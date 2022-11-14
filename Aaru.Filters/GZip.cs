@@ -210,10 +210,10 @@ public sealed class GZip : IFilter
         get
         {
             if(BasePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return BasePath.Substring(0, BasePath.Length - 3);
+                return BasePath[..^3];
 
-            return BasePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? BasePath.Substring(0, BasePath.Length - 5) : BasePath;
+            return BasePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true ? BasePath[..^5]
+                       : BasePath;
         }
     }
 

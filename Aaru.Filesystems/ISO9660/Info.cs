@@ -180,7 +180,7 @@ public sealed partial class ISO9660
 
                     bootSpec = "Unknown";
 
-                    if(Encoding.GetString(bvd.Value.system_id).Substring(0, 23) == "EL TORITO SPECIFICATION")
+                    if(Encoding.GetString(bvd.Value.system_id)[..23] == "EL TORITO SPECIFICATION")
                     {
                         bootSpec = "El Torito";
 

@@ -34,9 +34,10 @@ namespace Aaru.Devices.Linux;
 
 using System;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Text;
 
-[System.Runtime.Versioning.SupportedOSPlatform("linux")]
+[SupportedOSPlatform("linux")]
 static class ListDevices
 {
     const string PATH_SYS_DEVBLOCK = "/sys/block/";
@@ -124,7 +125,7 @@ static class ListDevices
                     if(pieces.Length > 1)
                     {
                         devices[i].Vendor = pieces[0];
-                        devices[i].Model  = devices[i].Model.Substring(pieces[0].Length + 1);
+                        devices[i].Model  = devices[i].Model[(pieces[0].Length + 1)..];
                     }
                 }
 

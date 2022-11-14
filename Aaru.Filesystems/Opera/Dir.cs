@@ -58,7 +58,7 @@ public sealed partial class OperaFS
         }
 
         string cutPath = path.StartsWith("/", StringComparison.Ordinal)
-                             ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
+                             ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                              : path.ToLower(CultureInfo.CurrentUICulture);
 
         if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntryWithPointers> currentDirectory))

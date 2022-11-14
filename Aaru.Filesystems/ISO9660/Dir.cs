@@ -63,7 +63,7 @@ public sealed partial class ISO9660
         }
 
         string cutPath = path.StartsWith("/", StringComparison.Ordinal)
-                             ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
+                             ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                              : path.ToLower(CultureInfo.CurrentUICulture);
 
         if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DecodedDirectoryEntry> currentDirectory))
@@ -142,8 +142,8 @@ public sealed partial class ISO9660
             switch(_namespace)
             {
                 case Namespace.Normal:
-                    contents.Add(entry.Filename.EndsWith(";1", StringComparison.Ordinal)
-                                     ? entry.Filename.Substring(0, entry.Filename.Length - 2) : entry.Filename);
+                    contents.Add(entry.Filename.EndsWith(";1", StringComparison.Ordinal) ? entry.Filename[..^2]
+                                     : entry.Filename);
 
                     break;
                 case Namespace.Vms:
@@ -383,14 +383,14 @@ public sealed partial class ISO9660
 
             // Tailing '.' is only allowed on RRIP. If present it will be recreated below with the alternate name
             if(entry.Filename.EndsWith(".", StringComparison.Ordinal))
-                entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 1);
+                entry.Filename = entry.Filename[..^1];
 
             if(entry.Filename.EndsWith(".;1", StringComparison.Ordinal))
-                entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 3) + ";1";
+                entry.Filename = entry.Filename[..^3] + ";1";
 
             // This is a legal Joliet name, different from VMS version fields, but Nero MAX incorrectly creates these filenames
             if(_joliet && entry.Filename.EndsWith(";1", StringComparison.Ordinal))
-                entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 2);
+                entry.Filename = entry.Filename[..^2];
 
             int systemAreaStart  = entryOff      + record.name_len + _directoryRecordSize;
             int systemAreaLength = record.length - record.name_len - _directoryRecordSize;
@@ -502,16 +502,16 @@ public sealed partial class ISO9660
         while(line != null)
         {
             // Skip the type field and the first space
-            string cutLine      = line.Substring(2);
+            string cutLine      = line[2..];
             int    spaceIndex   = cutLine.IndexOf(' ');
-            string originalName = cutLine.Substring(0, spaceIndex);
+            string originalName = cutLine[..spaceIndex];
             string originalNameWithVersion;
-            string newName = cutLine.Substring(spaceIndex + 1).TrimStart();
+            string newName = cutLine[(spaceIndex + 1)..].TrimStart();
 
             if(originalName.EndsWith(";1", StringComparison.Ordinal))
             {
                 originalNameWithVersion = originalName.ToLower(CultureInfo.CurrentUICulture);
-                originalName            = originalNameWithVersion.Substring(0, originalName.Length - 2);
+                originalName            = originalNameWithVersion[..(originalName.Length - 2)];
             }
             else
             {
@@ -1040,7 +1040,7 @@ public sealed partial class ISO9660
         else
         {
             string cutPath = path.StartsWith("/", StringComparison.Ordinal)
-                                 ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
+                                 ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                                  : path.ToLower(CultureInfo.CurrentUICulture);
 
             string[] pieces = cutPath.Split(new[]

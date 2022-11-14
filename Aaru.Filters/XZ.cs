@@ -184,10 +184,10 @@ public sealed class XZ : IFilter
         get
         {
             if(BasePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return BasePath.Substring(0, BasePath.Length - 3);
+                return BasePath[..^3];
 
-            return BasePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? BasePath.Substring(0, BasePath.Length - 5) : BasePath;
+            return BasePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true ? BasePath[..^5]
+                       : BasePath;
         }
     }
 

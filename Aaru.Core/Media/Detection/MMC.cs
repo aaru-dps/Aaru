@@ -1288,7 +1288,7 @@ public static class MMC
                     string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
                     if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                        name = name.Substring(0, name.Length - 2);
+                        name = name[..^2];
 
                     if(name                             == "PHOTO_CD" &&
                        (isoSector[rootPos + 25] & 0x02) == 0x02)
@@ -1342,7 +1342,7 @@ public static class MMC
                             string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
                             if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                                name = name.Substring(0, name.Length - 2);
+                                name = name[..^2];
 
                             if(name == "INFO.PCD")
                             {
@@ -1775,7 +1775,7 @@ public static class MMC
                         string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
                         if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                            name = name.Substring(0, name.Length - 2);
+                            name = name[..^2];
 
                         rootEntries.Add(name);
 
@@ -2020,7 +2020,7 @@ public static class MMC
                             string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
                             if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                                name = name.Substring(0, name.Length - 2);
+                                name = name[..^2];
 
                             if(name is "INFO.VCD" or "INFO.SVD")
                             {
@@ -2116,7 +2116,7 @@ public static class MMC
                             string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
                             if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                                name = name.Substring(0, name.Length - 2);
+                                name = name[..^2];
 
                             if(name == "INFO.PCD")
                             {
@@ -2210,13 +2210,13 @@ public static class MMC
 
                             if(line.StartsWith("BOOT=cdrom:", StringComparison.InvariantCultureIgnoreCase))
                             {
-                                ps1BootFile = line.Substring(11);
+                                ps1BootFile = line[11..];
 
                                 if(ps1BootFile.StartsWith('\\'))
-                                    ps1BootFile = ps1BootFile.Substring(1);
+                                    ps1BootFile = ps1BootFile[1..];
 
                                 if(ps1BootFile.EndsWith(";1", StringComparison.InvariantCultureIgnoreCase))
-                                    ps1BootFile = ps1BootFile.Substring(0, ps1BootFile.Length - 2);
+                                    ps1BootFile = ps1BootFile[..^2];
 
                                 break;
                             }
@@ -2224,13 +2224,13 @@ public static class MMC
                             if(!line.StartsWith("BOOT2=cdrom0:", StringComparison.InvariantCultureIgnoreCase))
                                 continue;
 
-                            ps2BootFile = line.Substring(13);
+                            ps2BootFile = line[13..];
 
                             if(ps2BootFile.StartsWith('\\'))
-                                ps2BootFile = ps2BootFile.Substring(1);
+                                ps2BootFile = ps2BootFile[1..];
 
                             if(ps2BootFile.EndsWith(";1", StringComparison.InvariantCultureIgnoreCase))
-                                ps2BootFile = ps2BootFile.Substring(0, ps2BootFile.Length - 2);
+                                ps2BootFile = ps2BootFile[..^2];
 
                             break;
                         }

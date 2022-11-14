@@ -179,10 +179,10 @@ public sealed class LZip : IFilter
         get
         {
             if(BasePath?.EndsWith(".lz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return BasePath.Substring(0, BasePath.Length - 3);
+                return BasePath[..^3];
 
-            return BasePath?.EndsWith(".lzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? BasePath.Substring(0, BasePath.Length - 5) : BasePath;
+            return BasePath?.EndsWith(".lzip", StringComparison.InvariantCultureIgnoreCase) == true ? BasePath[..^5]
+                       : BasePath;
         }
     }
 

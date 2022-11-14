@@ -377,7 +377,7 @@ public sealed partial class ZZZRawImage
 
         // Search for known tags
         string basename = imageFilter.BasePath;
-        basename = basename.Substring(0, basename.Length - _extension.Length);
+        basename = basename[..^_extension.Length];
 
         _mediaTags = new Dictionary<MediaTagType, byte[]>();
 
