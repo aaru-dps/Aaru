@@ -388,9 +388,7 @@ partial class Dump
         {
             if(outputFormat is IWritableOpticalImage opticalPlugin)
             {
-                byte[] readBuffer;
-
-                sense = _dev.ReadDiscInformation(out readBuffer, out _, MmcDiscInformationDataTypes.DiscInformation,
+                sense = _dev.ReadDiscInformation(out byte[] readBuffer, out _, MmcDiscInformationDataTypes.DiscInformation,
                                                  _dev.Timeout, out _);
 
                 if(!sense)

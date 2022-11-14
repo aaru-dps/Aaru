@@ -268,8 +268,7 @@ public sealed partial class WCDiskImage
                 case SectorFlag.Normal: /* read a normal sector and store it in cache */
                     stream.Read(sectorData, 0, 512);
                     _sectorCache[(cyl, head, sect)] = sectorData;
-                    byte[] crc;
-                    CRC16IBMContext.Data(sectorData, 512, out crc);
+                    CRC16IBMContext.Data(sectorData, 512, out byte[] crc);
                     var calculatedCRC = (short)((256 * crc[0]) | crc[1]);
                     /*
                     AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Regular sector, stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",

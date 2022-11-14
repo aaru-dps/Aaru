@@ -13,10 +13,8 @@ static partial class ScsiMmc
 {
     static void CheckGdromReadability(string devPath, Device dev)
     {
-        int    item;
         var    tocIsNotBcd = false;
         bool   sense;
-        byte[] buffer;
         byte[] senseBuffer;
 
     start:
@@ -54,7 +52,7 @@ static partial class ScsiMmc
             Thread.Sleep(2000);
         } while(retries < 25);
 
-        sense = dev.ReadRawToc(out buffer, out senseBuffer, 1, dev.Timeout, out _);
+        sense = dev.ReadRawToc(out byte[] buffer, out senseBuffer, 1, dev.Timeout, out _);
 
         if(sense)
         {
@@ -410,7 +408,7 @@ static partial class ScsiMmc
 
         string strDev = Console.ReadLine();
 
-        if(!int.TryParse(strDev, out item))
+        if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
             Console.ReadKey();

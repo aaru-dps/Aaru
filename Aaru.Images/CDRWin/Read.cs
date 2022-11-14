@@ -969,10 +969,9 @@ public sealed partial class CdrWin
 
                 if(leadouts.TryGetValue((byte)s, out int leadout))
                 {
-                    int startSector;
                     sessions[s - 1].EndSector = (ulong)(leadout - 1);
 
-                    if(!cueTracks[lastSessionTrack].Indexes.TryGetValue(0, out startSector))
+                    if(!cueTracks[lastSessionTrack].Indexes.TryGetValue(0, out int startSector))
                         cueTracks[lastSessionTrack].Indexes.TryGetValue(1, out startSector);
 
                     cueTracks[lastSessionTrack].Sectors = (ulong)(leadout - startSector);

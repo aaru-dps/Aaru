@@ -221,8 +221,6 @@ public sealed partial class DeviceReport
     {
         Modes.DecodedMode?    decMode = null;
         PeripheralDeviceTypes devType = _dev.ScsiType;
-        byte[]                mode10Buffer;
-        byte[]                mode6Buffer;
         bool                  sense;
         mediumType = 0;
 
@@ -240,7 +238,7 @@ public sealed partial class DeviceReport
             {
                 var saveBuffer = false;
 
-                sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, pageControl, 0x3F, 0xFF, _dev.Timeout,
+                sense = _dev.ModeSense10(out byte[] mode10Buffer, out _, false, true, pageControl, 0x3F, 0xFF, _dev.Timeout,
                                          out _);
 
                 if(sense || _dev.Error)
@@ -321,7 +319,7 @@ public sealed partial class DeviceReport
                     })
             {
                 var saveBuffer = false;
-                sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x3F, 0xFF, _dev.Timeout, out _);
+                sense = _dev.ModeSense6(out byte[] mode6Buffer, out _, true, pageControl, 0x3F, 0xFF, _dev.Timeout, out _);
 
                 if(sense || _dev.Error)
                 {

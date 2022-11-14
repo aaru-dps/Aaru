@@ -299,9 +299,7 @@ public sealed partial class Sidecar
             xmlTrk.StartSector = trk.StartSector;
             xmlTrk.EndSector   = trk.EndSector;
 
-            int idx0;
-
-            if(trk.Indexes?.TryGetValue(0, out idx0) == true &&
+            if(trk.Indexes?.TryGetValue(0, out int idx0) == true &&
                idx0                                  >= 0)
                 xmlTrk.StartSector = (ulong)idx0;
 

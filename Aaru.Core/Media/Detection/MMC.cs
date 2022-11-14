@@ -293,7 +293,6 @@ public static class MMC
     {
         uint                startOfFirstDataTrack = uint.MaxValue;
         DI.DiscInformation? blurayDi              = null;
-        byte[]              cmdBuf;
         bool                sense;
         byte                secondSessionFirstTrack = 0;
         byte[]              sector0;
@@ -309,7 +308,7 @@ public static class MMC
         hiddenTrack = false;
         hiddenData  = false;
 
-        sense = dev.GetConfiguration(out cmdBuf, out _, 0, MmcGetConfigurationRt.Current, dev.Timeout, out _);
+        sense = dev.GetConfiguration(out byte[] cmdBuf, out _, 0, MmcGetConfigurationRt.Current, dev.Timeout, out _);
 
         if(!sense)
         {

@@ -71,7 +71,6 @@ partial class Dump
         byte[]                           readBuffer;
         Modes.DecodedMode?               decMode   = null;
         Dictionary<MediaTagType, byte[]> mediaTags = new();
-        byte[]                           cmdBuf;
         bool                             ret;
 
         if(_outputPlugin is not IWritableImage outputFormat)
@@ -89,7 +88,7 @@ partial class Dump
         _dumpLog.WriteLine("Requesting MODE SENSE (6).");
         UpdateStatus?.Invoke("Requesting MODE SENSE (6).");
 
-        sense = _dev.ModeSense6(out cmdBuf, out _, true, ScsiModeSensePageControl.Current, 0x3F, 5, out _);
+        sense = _dev.ModeSense6(out byte[] cmdBuf, out _, true, ScsiModeSensePageControl.Current, 0x3F, 5, out _);
 
         if(!sense      &&
            !_dev.Error &&

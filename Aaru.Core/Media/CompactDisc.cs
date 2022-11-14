@@ -1606,7 +1606,6 @@ public static class CompactDisc
         foreach(int sector in subchannelExtents)
         {
             Track track = tracks.LastOrDefault(t => (int)t.StartSector <= sector);
-            byte  trkFlags;
             byte  flags;
             ulong trackStart;
             ulong pregap;
@@ -1627,7 +1626,7 @@ public static class CompactDisc
                 pregap     = track.Pregap;
             }
 
-            if(!trackFlags.TryGetValue((byte)(track?.Sequence ?? 0), out trkFlags) &&
+            if(!trackFlags.TryGetValue((byte)(track?.Sequence ?? 0), out byte trkFlags) &&
                track?.Type != TrackType.Audio)
                 flags = (byte)CdFlags.DataTrack;
             else
