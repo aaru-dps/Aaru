@@ -573,7 +573,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
     {
         var warning = false;
 
-        if(!(plugin is IWritableImage outputFormat))
+        if(plugin is not IWritableImage outputFormat)
         {
             await MessageBoxManager.GetMessageBoxStandardWindow("Error", "Error trying to find selected plugin",
                                                                 icon: Icon.Error).ShowDialog(_view);

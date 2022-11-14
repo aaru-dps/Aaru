@@ -389,7 +389,7 @@ public sealed class ImageVerifyViewModel : ViewModelBase
 
         if(VerifyImageChecked)
         {
-            if(!(_inputFormat is IVerifiableImage verifiableImage))
+            if(_inputFormat is not IVerifiableImage verifiableImage)
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     ImageResultVisible = true;
@@ -519,7 +519,7 @@ public sealed class ImageVerifyViewModel : ViewModelBase
 
                 endCheck = DateTime.UtcNow;
             }
-            else if(!(verifiableSectorsImage is null))
+            else if(verifiableSectorsImage is not null)
             {
                 ulong remainingSectors = _inputFormat.Info.Sectors;
                 ulong currentSector    = 0;

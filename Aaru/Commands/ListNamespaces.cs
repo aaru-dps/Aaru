@@ -86,7 +86,7 @@ sealed class ListNamespacesCommand : Command
         PluginBase plugins = GetPluginBase.Instance;
 
         foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in
-                plugins.ReadOnlyFilesystems.Where(kvp => !(kvp.Value.Namespaces is null)))
+                plugins.ReadOnlyFilesystems.Where(kvp => kvp.Value.Namespaces is not null))
         {
             Table table = new()
             {

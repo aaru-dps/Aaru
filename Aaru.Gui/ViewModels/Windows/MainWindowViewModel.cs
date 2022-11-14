@@ -342,7 +342,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteCalculateEntropyCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
+        if(TreeViewSelectedItem is not ImageModel imageModel)
             return;
 
         var imageEntropyWindow = new ImageEntropy();
@@ -355,7 +355,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteVerifyImageCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
+        if(TreeViewSelectedItem is not ImageModel imageModel)
             return;
 
         var imageVerifyWindow = new ImageVerify();
@@ -368,7 +368,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteChecksumImageCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
+        if(TreeViewSelectedItem is not ImageModel imageModel)
             return;
 
         var imageChecksumWindow = new ImageChecksum();
@@ -381,7 +381,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteConvertImageCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
+        if(TreeViewSelectedItem is not ImageModel imageModel)
             return;
 
         var imageConvertWindow = new ImageConvert();
@@ -396,7 +396,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteCreateSidecarCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
+        if(TreeViewSelectedItem is not ImageModel imageModel)
             return;
 
         var imageSidecarWindow = new ImageSidecar();
@@ -411,7 +411,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteViewImageSectorsCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
+        if(TreeViewSelectedItem is not ImageModel imageModel)
             return;
 
         new ViewSector
@@ -422,7 +422,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteDecodeImageMediaTagsCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
+        if(TreeViewSelectedItem is not ImageModel imageModel)
             return;
 
         new DecodeMediaTags

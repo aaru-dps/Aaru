@@ -857,7 +857,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveEvpdPageCommand()
     {
-        if(!(SelectedEvpdPage is ScsiPageModel pageModel))
+        if(SelectedEvpdPage is not ScsiPageModel pageModel)
             return;
 
         var dlgSaveBinary = new SaveFileDialog();

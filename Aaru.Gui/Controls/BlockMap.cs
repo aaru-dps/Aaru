@@ -246,7 +246,7 @@ public sealed class BlockMap : ItemsControl
             case NotifyCollectionChangedAction.Add:
             case NotifyCollectionChangedAction.Replace:
             {
-                if(!(e.NewItems is {} items))
+                if(e.NewItems is not {} items)
                     throw new ArgumentException("Invalid list of items");
 
                 using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
@@ -254,7 +254,7 @@ public sealed class BlockMap : ItemsControl
 
                 foreach(object item in items)
                 {
-                    if(!(item is ValueTuple<ulong, double> block))
+                    if(item is not ValueTuple<ulong, double> block)
                         throw new ArgumentException("Invalid item in list", nameof(Items));
 
                     DrawCluster(block.Item1, block.Item2, false, ctx);
@@ -267,8 +267,8 @@ public sealed class BlockMap : ItemsControl
             case NotifyCollectionChangedAction.Remove:
             case NotifyCollectionChangedAction.Move:
             {
-                if(!(e.NewItems is {} newItems) ||
-                   !(e.OldItems is {} oldItems))
+                if(e.NewItems is not {} newItems ||
+                   e.OldItems is not {} oldItems)
                     throw new ArgumentException("Invalid list of items");
 
                 using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
@@ -276,7 +276,7 @@ public sealed class BlockMap : ItemsControl
 
                 foreach(object item in oldItems)
                 {
-                    if(!(item is ValueTuple<ulong, double> block))
+                    if(item is not ValueTuple<ulong, double> block)
                         throw new ArgumentException("Invalid item in list", nameof(Items));
 
                     DrawCluster(block.Item1, block.Item2, false, ctx);
@@ -284,7 +284,7 @@ public sealed class BlockMap : ItemsControl
 
                 foreach(object item in newItems)
                 {
-                    if(!(item is ValueTuple<ulong, double> block))
+                    if(item is not ValueTuple<ulong, double> block)
                         throw new ArgumentException("Invalid item in list", nameof(Items));
 
                     DrawCluster(block.Item1, block.Item2, false, ctx);
@@ -314,7 +314,7 @@ public sealed class BlockMap : ItemsControl
 
         foreach(object item in Items)
         {
-            if(!(item is ValueTuple<ulong, double> block))
+            if(item is not ValueTuple<ulong, double> block)
                 throw new ArgumentException("Invalid item in list", nameof(Items));
 
             DrawCluster(block.Item1, block.Item2, false, ctx);
@@ -384,7 +384,7 @@ public sealed class BlockMap : ItemsControl
     protected override void ItemsChanged([NotNull] AvaloniaPropertyChangedEventArgs e)
     {
         if(e.NewValue != null &&
-           !(e.NewValue is IList<(ulong, double)>))
+           e.NewValue is not IList<(ulong, double)>)
             throw new
                 ArgumentException("Items must be a IList<(ulong, double)> with ulong being the block and double being the time spent reading it, or NaN for an error.");
 

@@ -759,7 +759,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         Encoding encoding = null;
 
-        if(!(SelectedEncoding is null))
+        if(SelectedEncoding is not null)
             try
             {
                 encoding = Claunia.Encoding.Encoding.GetEncoding(SelectedEncoding.Name);

@@ -169,7 +169,7 @@ public static class ImageInfo
            imageFormat.Info.Heads           > 0                         &&
            imageFormat.Info.SectorsPerTrack > 0                         &&
            imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
-           (!(imageFormat is ITapeImage tapeImage) || !tapeImage.IsTape))
+           imageFormat is not ITapeImage { IsTape: true })
             AaruConsole.WriteLine("[bold]Media geometry:[/] [italic]{0} cylinders, {1} heads, {2} sectors per track[/]",
                                   imageFormat.Info.Cylinders, imageFormat.Info.Heads, imageFormat.Info.SectorsPerTrack);
 

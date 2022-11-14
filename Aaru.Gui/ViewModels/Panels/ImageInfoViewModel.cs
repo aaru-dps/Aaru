@@ -184,7 +184,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
            imageFormat.Info.Heads           > 0                         &&
            imageFormat.Info.SectorsPerTrack > 0                         &&
            imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
-           (!(imageFormat is ITapeImage tapeImage) || !tapeImage.IsTape))
+           (imageFormat is not ITapeImage tapeImage || !tapeImage.IsTape))
             MediaGeometryText =
                 $"Media geometry: {imageFormat.Info.Cylinders} cylinders, {imageFormat.Info.Heads} heads, {imageFormat.Info.SectorsPerTrack} sectors per track";
 

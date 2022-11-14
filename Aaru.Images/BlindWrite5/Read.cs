@@ -131,7 +131,7 @@ public sealed partial class BlindWrite5
             _mode2A[1] -= 2;
             var decoded2A = ModePage_2A.Decode(_mode2A);
 
-            if(!(decoded2A is null))
+            if(decoded2A is not null)
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "mode page 2A: {0}",
                                            Modes.PrettifyModePage_2A(decoded2A));
             else

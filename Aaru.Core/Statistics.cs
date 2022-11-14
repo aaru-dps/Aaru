@@ -707,7 +707,7 @@ public static class Statistics
                             {
                                 Bus                   = device.Bus,
                                 Manufacturer          = device.Manufacturer,
-                                ManufacturerSpecified = !(device.Manufacturer is null),
+                                ManufacturerSpecified = device.Manufacturer is not null,
                                 Model                 = device.Model,
                                 Revision              = device.Revision
                             });

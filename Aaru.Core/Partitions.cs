@@ -151,7 +151,7 @@ public static class Partitions
         }
 
         // Be sure that device partitions are not excluded if not mapped by any scheme...
-        if(!(tapeImage is null))
+        if(tapeImage is not null)
         {
             var startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
 
@@ -165,7 +165,7 @@ public static class Partitions
                                                    }));
         }
 
-        if(!(partitionableImage is null))
+        if(partitionableImage is not null)
         {
             var startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
 
