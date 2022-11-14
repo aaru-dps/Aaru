@@ -185,22 +185,24 @@ public static class LisaTag
                 if(snTag == null)
                     return null;
 
-                pmTag           = new PriamTag();
-                pmTag.AbsPage   = 0;
-                pmTag.Checksum  = 0;
-                pmTag.DiskSize  = 0;
-                pmTag.FileId    = snTag.Value.FileId;
-                pmTag.Kind      = snTag.Value.Kind;
-                pmTag.NextBlock = snTag.Value.NextBlock;
-                pmTag.PrevBlock = snTag.Value.PrevBlock;
-                pmTag.RelPage   = snTag.Value.RelPage;
-                pmTag.Reserved  = snTag.Value.Reserved;
-                pmTag.UsedBytes = 0;
-                pmTag.ValidChk  = false;
-                pmTag.Version   = snTag.Value.Version;
-                pmTag.Volume    = snTag.Value.Volume;
-                pmTag.IsFirst   = snTag.Value.IsFirst;
-                pmTag.IsLast    = snTag.Value.IsLast;
+                pmTag = new PriamTag
+                {
+                    AbsPage   = 0,
+                    Checksum  = 0,
+                    DiskSize  = 0,
+                    FileId    = snTag.Value.FileId,
+                    Kind      = snTag.Value.Kind,
+                    NextBlock = snTag.Value.NextBlock,
+                    PrevBlock = snTag.Value.PrevBlock,
+                    RelPage   = snTag.Value.RelPage,
+                    Reserved  = snTag.Value.Reserved,
+                    UsedBytes = 0,
+                    ValidChk  = false,
+                    Version   = snTag.Value.Version,
+                    Volume    = snTag.Value.Volume,
+                    IsFirst   = snTag.Value.IsFirst,
+                    IsLast    = snTag.Value.IsLast
+                };
 
                 return pmTag;
             case 20:
@@ -209,22 +211,24 @@ public static class LisaTag
                 if(phTag == null)
                     return null;
 
-                pmTag           = new PriamTag();
-                pmTag.AbsPage   = phTag.Value.AbsPage;
-                pmTag.Checksum  = phTag.Value.Checksum;
-                pmTag.DiskSize  = 0;
-                pmTag.FileId    = phTag.Value.FileId;
-                pmTag.Kind      = phTag.Value.Kind;
-                pmTag.NextBlock = phTag.Value.NextBlock;
-                pmTag.PrevBlock = phTag.Value.PrevBlock;
-                pmTag.RelPage   = phTag.Value.RelPage;
-                pmTag.Reserved  = phTag.Value.Reserved;
-                pmTag.UsedBytes = phTag.Value.UsedBytes;
-                pmTag.ValidChk  = phTag.Value.ValidChk;
-                pmTag.Version   = phTag.Value.Version;
-                pmTag.Volume    = phTag.Value.Volume;
-                pmTag.IsFirst   = phTag.Value.IsFirst;
-                pmTag.IsLast    = phTag.Value.IsLast;
+                pmTag = new PriamTag
+                {
+                    AbsPage   = phTag.Value.AbsPage,
+                    Checksum  = phTag.Value.Checksum,
+                    DiskSize  = 0,
+                    FileId    = phTag.Value.FileId,
+                    Kind      = phTag.Value.Kind,
+                    NextBlock = phTag.Value.NextBlock,
+                    PrevBlock = phTag.Value.PrevBlock,
+                    RelPage   = phTag.Value.RelPage,
+                    Reserved  = phTag.Value.Reserved,
+                    UsedBytes = phTag.Value.UsedBytes,
+                    ValidChk  = phTag.Value.ValidChk,
+                    Version   = phTag.Value.Version,
+                    Volume    = phTag.Value.Volume,
+                    IsFirst   = phTag.Value.IsFirst,
+                    IsLast    = phTag.Value.IsLast
+                };
 
                 return pmTag;
             case 24: return DecodePriamTag(tag);

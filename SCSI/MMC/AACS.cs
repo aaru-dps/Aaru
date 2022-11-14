@@ -59,13 +59,14 @@ public static class AACS
         if(AACSVIResponse == null)
             return null;
 
-        var decoded = new AACSVolumeIdentifier();
+        var decoded = new AACSVolumeIdentifier
+        {
+            VolumeIdentifier = new byte[AACSVIResponse.Length - 4],
+            DataLength       = BigEndianBitConverter.ToUInt16(AACSVIResponse, 0),
+            Reserved1        = AACSVIResponse[2],
+            Reserved2        = AACSVIResponse[3]
+        };
 
-        decoded.VolumeIdentifier = new byte[AACSVIResponse.Length - 4];
-
-        decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSVIResponse, 0);
-        decoded.Reserved1  = AACSVIResponse[2];
-        decoded.Reserved2  = AACSVIResponse[3];
         Array.Copy(AACSVIResponse, 4, decoded.VolumeIdentifier, 0, AACSVIResponse.Length - 4);
 
         return decoded;
@@ -105,13 +106,14 @@ public static class AACS
         if(AACSMSNResponse == null)
             return null;
 
-        var decoded = new AACSMediaSerialNumber();
+        var decoded = new AACSMediaSerialNumber
+        {
+            MediaSerialNumber = new byte[AACSMSNResponse.Length - 4],
+            DataLength        = BigEndianBitConverter.ToUInt16(AACSMSNResponse, 0),
+            Reserved1         = AACSMSNResponse[2],
+            Reserved2         = AACSMSNResponse[3]
+        };
 
-        decoded.MediaSerialNumber = new byte[AACSMSNResponse.Length - 4];
-
-        decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSMSNResponse, 0);
-        decoded.Reserved1  = AACSMSNResponse[2];
-        decoded.Reserved2  = AACSMSNResponse[3];
         Array.Copy(AACSMSNResponse, 4, decoded.MediaSerialNumber, 0, AACSMSNResponse.Length - 4);
 
         return decoded;
@@ -151,13 +153,14 @@ public static class AACS
         if(AACSMIResponse == null)
             return null;
 
-        var decoded = new AACSMediaIdentifier();
+        var decoded = new AACSMediaIdentifier
+        {
+            MediaIdentifier = new byte[AACSMIResponse.Length - 4],
+            DataLength      = BigEndianBitConverter.ToUInt16(AACSMIResponse, 0),
+            Reserved1       = AACSMIResponse[2],
+            Reserved2       = AACSMIResponse[3]
+        };
 
-        decoded.MediaIdentifier = new byte[AACSMIResponse.Length - 4];
-
-        decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSMIResponse, 0);
-        decoded.Reserved1  = AACSMIResponse[2];
-        decoded.Reserved2  = AACSMIResponse[3];
         Array.Copy(AACSMIResponse, 4, decoded.MediaIdentifier, 0, AACSMIResponse.Length - 4);
 
         return decoded;
@@ -197,13 +200,14 @@ public static class AACS
         if(AACSMKBResponse == null)
             return null;
 
-        var decoded = new AACSMediaKeyBlock();
+        var decoded = new AACSMediaKeyBlock
+        {
+            MediaKeyBlockPacks = new byte[AACSMKBResponse.Length - 4],
+            DataLength         = BigEndianBitConverter.ToUInt16(AACSMKBResponse, 0),
+            Reserved           = AACSMKBResponse[2],
+            TotalPacks         = AACSMKBResponse[3]
+        };
 
-        decoded.MediaKeyBlockPacks = new byte[AACSMKBResponse.Length - 4];
-
-        decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSMKBResponse, 0);
-        decoded.Reserved   = AACSMKBResponse[2];
-        decoded.TotalPacks = AACSMKBResponse[3];
         Array.Copy(AACSMKBResponse, 4, decoded.MediaKeyBlockPacks, 0, AACSMKBResponse.Length - 4);
 
         return decoded;
@@ -242,13 +246,14 @@ public static class AACS
         if(AACSDKResponse == null)
             return null;
 
-        var decoded = new AACSDataKeys();
+        var decoded = new AACSDataKeys
+        {
+            DataKeys   = new byte[AACSDKResponse.Length - 4],
+            DataLength = BigEndianBitConverter.ToUInt16(AACSDKResponse, 0),
+            Reserved1  = AACSDKResponse[2],
+            Reserved2  = AACSDKResponse[3]
+        };
 
-        decoded.DataKeys = new byte[AACSDKResponse.Length - 4];
-
-        decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSDKResponse, 0);
-        decoded.Reserved1  = AACSDKResponse[2];
-        decoded.Reserved2  = AACSDKResponse[3];
         Array.Copy(AACSDKResponse, 4, decoded.DataKeys, 0, AACSDKResponse.Length - 4);
 
         return decoded;

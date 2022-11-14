@@ -63,17 +63,17 @@ public static class PRI
         if(response.Length < 67)
             return null;
 
-        var    pri = new PreRecordedInformation();
-
-        pri.DataLength = (ushort)((response[0] << 8) + response[1]);
-        pri.Reserved1  = response[2];
-        pri.Reserved2  = response[3];
-
-        pri.FieldId1 = response[4];
-        pri.FieldId2 = response[12];
-        pri.FieldId3 = response[20];
-        pri.FieldId4 = response[28];
-        pri.FieldId5 = response[36];
+        var pri = new PreRecordedInformation
+        {
+            DataLength = (ushort)((response[0] << 8) + response[1]),
+            Reserved1  = response[2],
+            Reserved2  = response[3],
+            FieldId1   = response[4],
+            FieldId2   = response[12],
+            FieldId3   = response[20],
+            FieldId4   = response[28],
+            FieldId5   = response[36]
+        };
 
         if(pri.FieldId1 != 1 ||
            pri.FieldId2 != 2 ||
