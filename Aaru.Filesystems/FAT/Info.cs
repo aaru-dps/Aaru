@@ -827,11 +827,12 @@ public sealed partial class FAT
             }
             else if(isFat16)
             {
-                sb.AppendLine(bpbKind == BpbKind.Atari
-                                  ? "Atari FAT16"
-                                  : bpbKind == BpbKind.Human
-                                      ? "Human68k FAT16"
-                                      : "Microsoft FAT16");
+                sb.AppendLine(bpbKind switch
+                              {
+                                  BpbKind.Atari => "Atari FAT16",
+                                  BpbKind.Human => "Human68k FAT16",
+                                  _             => "Microsoft FAT16"
+                              });
 
                 XmlFsType.Type = "FAT16";
             }
