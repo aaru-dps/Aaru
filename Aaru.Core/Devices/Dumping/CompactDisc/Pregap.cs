@@ -201,7 +201,7 @@ partial class Dump
             var   trackRetries = 0;
 
             // First track of each session has at least 150 sectors of pregap and is not always readable
-            if(tracks.Where(trk => trk.Session == track.Session).OrderBy(trk => trk.Sequence).FirstOrDefault().
+            if(tracks.Where(trk => trk.Session == track.Session).MinBy(trk => trk.Sequence).
                       Sequence == track.Sequence)
             {
                 AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.Sequence);
@@ -587,7 +587,7 @@ partial class Dump
             trk.Pregap = (ulong)pregaps[trk.Sequence];
 
             // Do not reduce pregap, or starting position of session's first track
-            if(tracks.Where(t => t.Session == trk.Session).OrderBy(t => t.Sequence).FirstOrDefault().Sequence ==
+            if(tracks.Where(t => t.Session == trk.Session).MinBy(t => t.Sequence).Sequence ==
                trk.Sequence)
                 continue;
 

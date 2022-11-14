@@ -1338,7 +1338,7 @@ sealed partial class Dump
         foreach(Track trk in tracks)
         {
             // Fix track starts in each session's first track
-            if(tracks.Where(t => t.Session == trk.Session).OrderBy(t => t.Sequence).FirstOrDefault().Sequence ==
+            if(tracks.Where(t => t.Session == trk.Session).MinBy(t => t.Sequence).Sequence ==
                trk.Sequence)
             {
                 if(trk.Sequence == 1)

@@ -573,8 +573,7 @@ public sealed partial class CdrWin
             if(currentSession >= lastSession)
                 continue;
 
-            Track lastTrackInSession = _writingTracks.Where(t => t.Session == currentSession).OrderBy(t => t.Sequence).
-                                                      LastOrDefault();
+            Track lastTrackInSession = _writingTracks.Where(t => t.Session == currentSession).MaxBy(t => t.Sequence);
 
             if(track.Sequence != lastTrackInSession.Sequence)
                 continue;

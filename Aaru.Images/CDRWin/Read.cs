@@ -1330,7 +1330,7 @@ public sealed partial class CdrWin
             for(var s = 1; s <= sessions.Length; s++)
                 _discImage.Sessions.Add(sessions[s - 1]);
 
-            _imageInfo.Sectors = _discImage.Sessions.OrderByDescending(s => s.EndSector).First().EndSector + 1;
+            _imageInfo.Sectors = _discImage.Sessions.MaxBy(s => s.EndSector).EndSector + 1;
 
             AaruConsole.DebugWriteLine("CDRWin plugin", "Session information:");
             AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} sessions", _discImage.Sessions.Count);
