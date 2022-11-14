@@ -108,10 +108,9 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Read-only media image formats ({0}):",
-                                                 plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces().
-                                                                                    Contains(typeof(
-                                                                                        IWritableImage)))))
+            Title = new TableTitle($"Read-only media image formats ({
+                plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces().Contains(typeof(IWritableImage)))
+            }):")
         };
 
         if(verbose)
@@ -132,7 +131,7 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Read/write media image formats ({0}):", plugins.WritableImages.Count))
+            Title = new TableTitle($"Read/write media image formats ({plugins.WritableImages.Count}):")
         };
 
         if(verbose)
@@ -152,10 +151,9 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Supported filesystems for identification and information only ({0}):",
-                                                 plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().
-                                                                               Contains(typeof(
-                                                                                   IReadOnlyFilesystem)))))
+            Title = new TableTitle($"Supported filesystems for identification and information only ({
+                plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().Contains(typeof(IReadOnlyFilesystem)))
+            }):")
         };
 
         if(verbose)
@@ -176,8 +174,8 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Supported filesystems that can read their contents ({0}):",
-                                                 plugins.ReadOnlyFilesystems.Count))
+            Title = new TableTitle($"Supported filesystems that can read their contents ({
+                plugins.ReadOnlyFilesystems.Count}):")
         };
 
         if(verbose)
@@ -197,8 +195,7 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Supported partitioning schemes ({0}):",
-                                                 plugins.PartPluginsList.Count))
+            Title = new TableTitle($"Supported partitioning schemes ({plugins.PartPluginsList.Count}):")
         };
 
         if(verbose)
@@ -218,7 +215,7 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Supported archive formats ({0}):", plugins.Archives.Count))
+            Title = new TableTitle($"Supported archive formats ({plugins.Archives.Count}):")
         };
 
         if(verbose)

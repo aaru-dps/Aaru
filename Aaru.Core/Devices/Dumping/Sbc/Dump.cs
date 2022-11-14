@@ -1005,7 +1005,7 @@ partial class Dump
 
                 if(opened != ErrorNumber.NoError)
                 {
-                    StoppingErrorMessage?.Invoke(string.Format("Error {0} opening created image.", opened));
+                    StoppingErrorMessage?.Invoke($"Error {opened} opening created image.");
 
                     return;
                 }
