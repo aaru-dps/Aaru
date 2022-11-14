@@ -347,8 +347,7 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime LifToDateTime(byte[] date)
     {
-        if(date        == null ||
-           date.Length != 6)
+        if(date is not { Length: 6 })
             return new DateTime(1970, 1, 1, 0, 0, 0);
 
         return LifToDateTime(date[0], date[1], date[2], date[3], date[4], date[5]);
