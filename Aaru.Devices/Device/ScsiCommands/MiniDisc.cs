@@ -55,8 +55,8 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.MiniDiscReadDTOC;
 
-        cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
-        cdb[8] = (byte)(transferLength & 0xFF);
+        cdb[7] = (transferLength & 0xFF00) >> 8;
+        cdb[8] = transferLength & 0xFF;
 
         buffer = new byte[transferLength];
 
@@ -89,9 +89,9 @@ public partial class Device
         cdb[2] = (byte)((sector & 0xFF000000) >> 24);
         cdb[3] = (byte)((sector & 0xFF0000)   >> 16);
         cdb[4] = (byte)((sector & 0xFF00)     >> 8);
-        cdb[5] = (byte)(sector & 0xFF);
-        cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
-        cdb[8] = (byte)(transferLength & 0xFF);
+        cdb[5] = (byte)(sector   & 0xFF);
+        cdb[7] = (transferLength & 0xFF00) >> 8;
+        cdb[8] = transferLength & 0xFF;
 
         buffer = new byte[transferLength];
 
@@ -119,8 +119,8 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.MiniDiscD5;
 
-        cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
-        cdb[8] = (byte)(transferLength & 0xFF);
+        cdb[7] = (transferLength & 0xFF00) >> 8;
+        cdb[8] = transferLength & 0xFF;
 
         buffer = new byte[transferLength];
 
@@ -173,8 +173,8 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.MiniDiscReadPosition;
 
-        cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
-        cdb[8] = (byte)(transferLength & 0xFF);
+        cdb[7] = (transferLength & 0xFF00) >> 8;
+        cdb[8] = transferLength & 0xFF;
 
         buffer = new byte[transferLength];
 
@@ -202,8 +202,8 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.MiniDiscGetType;
 
-        cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
-        cdb[8] = (byte)(transferLength & 0xFF);
+        cdb[7] = (transferLength & 0xFF00) >> 8;
+        cdb[8] = transferLength & 0xFF;
 
         buffer = new byte[transferLength];
 
