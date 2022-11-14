@@ -554,13 +554,13 @@ public sealed class Crc32Context : IChecksum
         uint[][] localTable = GenerateTable(polynomial);
 
         var buffer = new byte[65536];
-        int read   = fileStream.Read(buffer, 0, 65536);
+        int read   = fileStream.EnsureRead(buffer, 0, 65536);
 
         while(read > 0)
         {
             Step(ref localHashInt, localTable, buffer, (uint)read, useIso, useNative, nativeContext);
 
-            read = fileStream.Read(buffer, 0, 65536);
+            read = fileStream.EnsureRead(buffer, 0, 65536);
         }
 
         localHashInt ^= seed;

@@ -313,13 +313,13 @@ public sealed class Fletcher32Context : IChecksum
         ushort localSum2 = 0xFFFF;
 
         var buffer = new byte[65536];
-        int read   = fileStream.Read(buffer, 0, 65536);
+        int read   = fileStream.EnsureRead(buffer, 0, 65536);
 
         while(read > 0)
         {
             Step(ref localSum1, ref localSum2, buffer, (uint)read, useNative, nativeContext);
 
-            read = fileStream.Read(buffer, 0, 65536);
+            read = fileStream.EnsureRead(buffer, 0, 65536);
         }
 
         var finalSum = (uint)((localSum2 << 16) | localSum1);
@@ -641,13 +641,13 @@ public sealed class Fletcher16Context : IChecksum
         byte localSum2 = 0xFF;
 
         var buffer = new byte[65536];
-        int read   = fileStream.Read(buffer, 0, 65536);
+        int read   = fileStream.EnsureRead(buffer, 0, 65536);
 
         while(read > 0)
         {
             Step(ref localSum1, ref localSum2, buffer, (uint)read, useNative, nativeContext);
 
-            read = fileStream.Read(buffer, 0, 65536);
+            read = fileStream.EnsureRead(buffer, 0, 65536);
         }
 
         var finalSum = (ushort)((localSum2 << 8) | localSum1);
