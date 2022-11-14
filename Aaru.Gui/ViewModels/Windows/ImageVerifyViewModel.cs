@@ -35,6 +35,7 @@ namespace Aaru.Gui.ViewModels.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using System.Threading;
 using Aaru.CommonTypes.Interfaces;
@@ -343,6 +344,7 @@ public sealed class ImageVerifyViewModel : ViewModelBase
         new Thread(DoWork).Start();
     }
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
         bool formatHasTracks;

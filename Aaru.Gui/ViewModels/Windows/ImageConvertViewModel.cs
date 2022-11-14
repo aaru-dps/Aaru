@@ -679,11 +679,13 @@ public sealed class ImageConvertViewModel : ViewModelBase
         foreach(MediaTagType mediaTag in _inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
                     !outputFormat.SupportedMediaTags.Contains(mediaTag) && !ForceChecked))
         {
-            await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                            GetMessageBoxStandardWindow("Error",
-                                                                                $"Converting image will lose media tag {mediaTag}, not continuing...",
-                                                                                icon: Icon.Error).
-                                                                            ShowDialog(_view));
+            await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Converting image will lose media tag {
+                                                                                      mediaTag
+                                                                                  }, not continuing...",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
 
             return;
         }
@@ -703,11 +705,11 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 continue;
             }
 
-            await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                            GetMessageBoxStandardWindow("Error",
-                                                                                $"Converting image will lose sector tag {sectorTag}, not continuing...",
-                                                                                icon: Icon.Error).
-                                                                            ShowDialog(_view));
+            await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Converting image will lose sector tag {sectorTag}, not continuing...",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
 
             return;
         }
@@ -756,11 +758,13 @@ public sealed class ImageConvertViewModel : ViewModelBase
         if(!outputFormat.Create(DestinationText, _inputFormat.Info.MediaType, parsedOptions, _inputFormat.Info.Sectors,
                                 _inputFormat.Info.SectorSize))
         {
-            await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                            GetMessageBoxStandardWindow("Error",
-                                                                                $"Error {outputFormat.ErrorMessage} creating output image.",
-                                                                                icon: Icon.Error).
-                                                                            ShowDialog(_view));
+            await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Error {outputFormat.
+                                                                                      ErrorMessage
+                                                                                  } creating output image.",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
 
             AaruConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
 
@@ -802,11 +806,11 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                 if(ForceChecked != true)
                 {
-                    await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                  GetMessageBoxStandardWindow("Error",
-                                                                                      $"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
-                                                                                      icon: Icon.Error).
-                                                                                  ShowDialog(_view));
+                    await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
+                                                              GetMessageBoxStandardWindow("Error",
+                                                                  $"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
+                                                                  icon: Icon.Error).
+                                                              ShowDialog(_view));
 
                     AaruConsole.ErrorWriteLine("not continuing...");
 
@@ -831,11 +835,11 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
             if(!outputOptical.SetTracks(tracks))
             {
-                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                              GetMessageBoxStandardWindow("Error",
-                                                                                  $"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
-                                                                                  icon: Icon.Error).
-                                                                              ShowDialog(_view));
+                await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
+                                                                                  GetMessageBoxStandardWindow("Error",
+                                                                                      $"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
+                                                                                      icon: Icon.Error).
+                                                                                  ShowDialog(_view));
 
                 AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.", outputFormat.ErrorMessage);
 
@@ -877,7 +881,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             {
                 if(errno == ErrorNumber.NoError)
                 {
-                    await Dispatcher.UIThread.InvokeAsync(action: async () =>
+                    await Dispatcher.UIThread.InvokeAsync(action: async Task() =>
                                                               await MessageBoxManager.
                                                                     GetMessageBoxStandardWindow("Error",
                                                                         $"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
@@ -888,7 +892,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 }
                 else
                 {
-                    await Dispatcher.UIThread.InvokeAsync(action: async () =>
+                    await Dispatcher.UIThread.InvokeAsync(action: async Task() =>
                                                               await MessageBoxManager.
                                                                     GetMessageBoxStandardWindow("Error",
                                                                         $"Error {errno} reading media tag, not continuing...",
@@ -981,7 +985,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         }
                         else
                         {
-                            await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                            await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
                                                                           $"Error {errno} reading sector {doneSectors}, not continuing...",
                                                                           icon: Icon.Error).ShowDialog(_view));
@@ -1014,7 +1018,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         }
                         else
                         {
-                            await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                            await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
                                                                           $"Error {errno} reading sector {doneSectors}, not continuing...",
                                                                           icon: Icon.Error).ShowDialog(_view));
@@ -1037,7 +1041,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                     }
                     else
                     {
-                        await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                        await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                   GetMessageBoxStandardWindow("Error",
                                                                       $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
                                                                       icon: Icon.Error).ShowDialog(_view));
@@ -1195,7 +1199,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             }
                             else
                             {
-                                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
                                                                               $"Error {errno} reading sector {doneSectors}, not continuing...",
                                                                               icon: Icon.Error).
@@ -1247,7 +1251,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             }
                             else
                             {
-                                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
                                                                               $"Error {errno} reading sector {doneSectors}, not continuing...",
                                                                               icon: Icon.Error).
@@ -1271,7 +1275,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         }
                         else
                         {
-                            await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                            await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
                                                                           $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
                                                                           icon: Icon.Error).ShowDialog(_view));
@@ -1376,7 +1380,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             }
                             else
                             {
-                                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
                                                                               $"Error {errno} reading sector {doneSectors}, not continuing...",
                                                                               icon: Icon.Error).
@@ -1410,7 +1414,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             }
                             else
                             {
-                                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
                                                                               $"Error {errno} reading sector {doneSectors}, not continuing...",
                                                                               icon: Icon.Error).
@@ -1431,7 +1435,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         }
                         else
                         {
-                            await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                            await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
                                                                           $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
                                                                           icon: Icon.Error).ShowDialog(_view));
@@ -1506,7 +1510,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 }
                                 else
                                 {
-                                    await Dispatcher.UIThread.InvokeAsync(action: async () =>
+                                    await Dispatcher.UIThread.InvokeAsync(action: async Task() =>
                                                                               await MessageBoxManager.
                                                                                   GetMessageBoxStandardWindow("Error",
                                                                                       $"Error {errno} reading tag, not continuing...",
@@ -1529,7 +1533,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 }
                                 else
                                 {
-                                    await Dispatcher.UIThread.InvokeAsync(action: async () =>
+                                    await Dispatcher.UIThread.InvokeAsync(action: async Task() =>
                                                                               await MessageBoxManager.
                                                                                   GetMessageBoxStandardWindow("Error",
                                                                                       $"Error {outputFormat.ErrorMessage} writing tag, not continuing...",
@@ -1587,7 +1591,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             }
                             else
                             {
-                                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
                                                                               $"Error {errno} reading tag for sector {doneSectors}, not continuing...",
                                                                               icon: Icon.Error).
@@ -1607,7 +1611,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             }
                             else
                             {
-                                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
                                                                               $"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors}, not continuing...",
                                                                               icon: Icon.Error).
@@ -1672,7 +1676,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         if(_cancel)
         {
-            await Dispatcher.UIThread.InvokeAsync(action: async () =>
+            await Dispatcher.UIThread.InvokeAsync(action: async Task() =>
             {
                 await MessageBoxManager.
                       GetMessageBoxStandardWindow("Error", "Operation canceled, the output file is not correct.",
@@ -1688,16 +1692,16 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         if(!outputFormat.Close())
         {
-            await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                            GetMessageBoxStandardWindow("Error",
-                                                                                $"Error {outputFormat.ErrorMessage} closing output image... Contents are not correct.",
-                                                                                icon: Icon.Error).
-                                                                            ShowDialog(_view));
+            await Dispatcher.UIThread.InvokeAsync(action: async Task() => await MessageBoxManager.
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Error {outputFormat.ErrorMessage} closing output image... Contents are not correct.",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
 
             return;
         }
 
-        await Dispatcher.UIThread.InvokeAsync(action: async () =>
+        await Dispatcher.UIThread.InvokeAsync(action: async Task() =>
         {
             await MessageBoxManager.GetMessageBoxStandardWindow(warning ? "Warning" : "Conversion success",
                                                                 warning

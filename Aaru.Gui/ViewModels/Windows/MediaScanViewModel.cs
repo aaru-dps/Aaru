@@ -33,6 +33,7 @@
 namespace Aaru.Gui.ViewModels.Windows;
 
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
@@ -321,6 +322,7 @@ public sealed class MediaScanViewModel : ViewModelBase
     }
 
     // TODO: Allow to save MHDD and ImgBurn log files
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
         if(_devicePath.Length == 2   &&
@@ -421,6 +423,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         await WorkFinished();
     }
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void ScanSpeed(ulong sector, double currentSpeed) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         if(ChartPoints.Count == 0)
@@ -432,6 +435,7 @@ public sealed class MediaScanViewModel : ViewModelBase
             MaxY = currentSpeed + currentSpeed / 10d;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void InitBlockMap(ulong blocks, ulong blockSize, ulong blocksToRead, ushort currentProfile) =>
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -542,11 +546,13 @@ public sealed class MediaScanViewModel : ViewModelBase
         ProgressVisible = false;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress1Visible = false;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText          = text;
@@ -556,18 +562,21 @@ public sealed class MediaScanViewModel : ViewModelBase
         ProgressValue    = current;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress1Visible = true;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void PulseProgress(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText          = text;
         ProgressIndeterminate = true;
     });
 
-    async void StoppingErrorMessage(string text) => await Dispatcher.UIThread.InvokeAsync(action: async () =>
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void StoppingErrorMessage(string text) => await Dispatcher.UIThread.InvokeAsync(action: async Task() =>
     {
         ProgressText = text;
 
@@ -577,11 +586,13 @@ public sealed class MediaScanViewModel : ViewModelBase
         WorkFinished();
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText = text;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void OnScanUnreadable(ulong sector) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         _localResults.Errored += _blocksToRead;
@@ -589,6 +600,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         BlockMapList.Add((sector / _blocksToRead, double.NaN));
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void OnScanTime(ulong sector, double duration) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         BlockMapList.Add((sector / _blocksToRead, duration));

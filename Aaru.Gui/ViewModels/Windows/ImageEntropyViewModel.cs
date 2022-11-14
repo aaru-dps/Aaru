@@ -34,16 +34,17 @@ namespace Aaru.Gui.ViewModels.Windows;
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reactive;
 using System.Threading;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Gui.Models;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using JetBrains.Annotations;
 using ReactiveUI;
 
 public sealed class ImageEntropyViewModel : ViewModelBase
@@ -277,7 +278,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _progress2Value, value);
     }
 
-    [NotNull]
+    [JetBrains.Annotations.NotNull]
     public string Title => "Calculating entropy";
     public ObservableCollection<TrackEntropyModel> TrackEntropy { get; }
     public ReactiveCommand<Unit, Unit>             StartCommand { get; }
@@ -307,7 +308,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
             WholeDiscChecked = false;
         }
 
-        var thread = new Thread(async () =>
+        var thread = new Thread(async Task() =>
         {
             if(SeparatedTracksChecked)
             {
@@ -381,6 +382,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
 
     void EndProgress2() => Progress2Visible = false;
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText = text;
@@ -399,6 +401,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         ProgressValue = current;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress2Text = text;

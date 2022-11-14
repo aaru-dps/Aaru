@@ -34,6 +34,7 @@ namespace Aaru.Gui.ViewModels.Windows;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reactive;
 using System.Text;
@@ -219,6 +220,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
 
     void ExecuteStartCommand() => new Thread(DoWork).Start();
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
         // Prepare UI
@@ -262,11 +264,13 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         Statistics.AddCommand("create-sidecar");
     }
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void EndProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress2Visible = false;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress2Text          = text;
@@ -276,16 +280,19 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         Progress2Value    = current;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress2Visible = true;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress1Visible = false;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText          = text;
@@ -295,11 +302,13 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         ProgressValue    = current;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress1Visible = true;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         StatusText = text;
