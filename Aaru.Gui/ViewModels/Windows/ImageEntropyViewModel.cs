@@ -38,7 +38,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reactive;
 using System.Threading;
-using System.Threading.Tasks;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
@@ -308,7 +307,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
             WholeDiscChecked = false;
         }
 
-        var thread = new Thread(async Task() =>
+        var thread = new Thread(async () =>
         {
             if(SeparatedTracksChecked)
             {
