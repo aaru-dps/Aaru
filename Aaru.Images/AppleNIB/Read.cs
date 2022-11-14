@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Decoders.Floppy;
+using Aaru.Helpers;
 
 public sealed partial class AppleNib
 {
@@ -53,7 +54,7 @@ public sealed partial class AppleNib
             return ErrorNumber.InvalidArgument;
 
         var buffer = new byte[stream.Length];
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         AaruConsole.DebugWriteLine("Apple NIB Plugin", "Decoding whole image");
         List<Apple2.RawTrack> tracks = Apple2.MarshalDisk(buffer);

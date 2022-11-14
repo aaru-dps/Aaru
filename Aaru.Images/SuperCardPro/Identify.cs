@@ -50,7 +50,7 @@ public sealed partial class SuperCardPro
             return false;
 
         var hdr = new byte[Marshal.SizeOf<ScpHeader>()];
-        stream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
+        stream.EnsureRead(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
         Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 

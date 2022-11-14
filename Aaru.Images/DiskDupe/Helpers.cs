@@ -52,7 +52,7 @@ public sealed partial class DiskDupe
 
         // read and check signature
         fHeader.signature = new byte[10];
-        stream.Read(fHeader.signature, 0, 10);
+        stream.EnsureRead(fHeader.signature, 0, 10);
 
         if(!fHeader.signature.SequenceEqual(_headerMagic))
             return false;
@@ -77,7 +77,7 @@ public sealed partial class DiskDupe
         // read the trackmap and store the track offsets
         for(var i = 0; i < numTracks; i++)
         {
-            stream.Read(buffer, 0, 6);
+            stream.EnsureRead(buffer, 0, 6);
             trackMap[i]     = Marshal.ByteArrayToStructureBigEndian<TrackInfo>(buffer);
             trackOffsets[i] = trackLen * trackMap[i].trackNumber;
         }

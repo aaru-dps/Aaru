@@ -49,7 +49,7 @@ public class GameBoy : IByteAddressableImage
 
         stream.Position = 0x104;
         var magicBytes = new byte[8];
-        stream.Read(magicBytes, 0, 8);
+        stream.EnsureRead(magicBytes, 0, 8);
         var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         return magic == 0x0B000DCC6666EDCE;
@@ -69,7 +69,7 @@ public class GameBoy : IByteAddressableImage
 
         stream.Position = 0x104;
         var magicBytes = new byte[8];
-        stream.Read(magicBytes, 0, 8);
+        stream.EnsureRead(magicBytes, 0, 8);
         var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic != 0x0B000DCC6666EDCE)
@@ -77,7 +77,7 @@ public class GameBoy : IByteAddressableImage
 
         _data           = new byte[imageFilter.DataForkLength];
         stream.Position = 0;
-        stream.Read(_data, 0, (int)imageFilter.DataForkLength);
+        stream.EnsureRead(_data, 0, (int)imageFilter.DataForkLength);
 
         _imageInfo = new ImageInfo
         {

@@ -184,7 +184,7 @@ public sealed class AppleDouble : IFilter
             if(prodosStream.Length > 26)
             {
                 var prodosB = new byte[26];
-                prodosStream.Read(prodosB, 0, 26);
+                prodosStream.EnsureRead(prodosB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(prodosB);
                 prodosStream.Close();
 
@@ -202,7 +202,7 @@ public sealed class AppleDouble : IFilter
             if(unixStream.Length > 26)
             {
                 var unixB = new byte[26];
-                unixStream.Read(unixB, 0, 26);
+                unixStream.EnsureRead(unixB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(unixB);
                 unixStream.Close();
 
@@ -220,7 +220,7 @@ public sealed class AppleDouble : IFilter
             if(dosStream.Length > 26)
             {
                 var dosB = new byte[26];
-                dosStream.Read(dosB, 0, 26);
+                dosStream.EnsureRead(dosB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(dosB);
                 dosStream.Close();
 
@@ -238,7 +238,7 @@ public sealed class AppleDouble : IFilter
             if(doslStream.Length > 26)
             {
                 var doslB = new byte[26];
-                doslStream.Read(doslB, 0, 26);
+                doslStream.EnsureRead(doslB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(doslB);
                 doslStream.Close();
 
@@ -256,7 +256,7 @@ public sealed class AppleDouble : IFilter
             if(netatalkStream.Length > 26)
             {
                 var netatalkB = new byte[26];
-                netatalkStream.Read(netatalkB, 0, 26);
+                netatalkStream.EnsureRead(netatalkB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(netatalkB);
                 netatalkStream.Close();
 
@@ -274,7 +274,7 @@ public sealed class AppleDouble : IFilter
             if(daveStream.Length > 26)
             {
                 var daveB = new byte[26];
-                daveStream.Read(daveB, 0, 26);
+                daveStream.EnsureRead(daveB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(daveB);
                 daveStream.Close();
 
@@ -292,7 +292,7 @@ public sealed class AppleDouble : IFilter
             if(osxStream.Length > 26)
             {
                 var osxB = new byte[26];
-                osxStream.Read(osxB, 0, 26);
+                osxStream.EnsureRead(osxB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(osxB);
                 osxStream.Close();
 
@@ -312,7 +312,7 @@ public sealed class AppleDouble : IFilter
             return false;
 
         var unarB = new byte[26];
-        unarStream.Read(unarB, 0, 26);
+        unarStream.EnsureRead(unarB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(unarB);
         unarStream.Close();
 
@@ -372,7 +372,7 @@ public sealed class AppleDouble : IFilter
             if(prodosStream.Length > 26)
             {
                 var prodosB = new byte[26];
-                prodosStream.Read(prodosB, 0, 26);
+                prodosStream.EnsureRead(prodosB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(prodosB);
                 prodosStream.Close();
 
@@ -390,7 +390,7 @@ public sealed class AppleDouble : IFilter
             if(unixStream.Length > 26)
             {
                 var unixB = new byte[26];
-                unixStream.Read(unixB, 0, 26);
+                unixStream.EnsureRead(unixB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(unixB);
                 unixStream.Close();
 
@@ -408,7 +408,7 @@ public sealed class AppleDouble : IFilter
             if(dosStream.Length > 26)
             {
                 var dosB = new byte[26];
-                dosStream.Read(dosB, 0, 26);
+                dosStream.EnsureRead(dosB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(dosB);
                 dosStream.Close();
 
@@ -426,7 +426,7 @@ public sealed class AppleDouble : IFilter
             if(doslStream.Length > 26)
             {
                 var doslB = new byte[26];
-                doslStream.Read(doslB, 0, 26);
+                doslStream.EnsureRead(doslB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(doslB);
                 doslStream.Close();
 
@@ -444,7 +444,7 @@ public sealed class AppleDouble : IFilter
             if(netatalkStream.Length > 26)
             {
                 var netatalkB = new byte[26];
-                netatalkStream.Read(netatalkB, 0, 26);
+                netatalkStream.EnsureRead(netatalkB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(netatalkB);
                 netatalkStream.Close();
 
@@ -462,7 +462,7 @@ public sealed class AppleDouble : IFilter
             if(daveStream.Length > 26)
             {
                 var daveB = new byte[26];
-                daveStream.Read(daveB, 0, 26);
+                daveStream.EnsureRead(daveB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(daveB);
                 daveStream.Close();
 
@@ -480,7 +480,7 @@ public sealed class AppleDouble : IFilter
             if(osxStream.Length > 26)
             {
                 var osxB = new byte[26];
-                osxStream.Read(osxB, 0, 26);
+                osxStream.EnsureRead(osxB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(osxB);
                 osxStream.Close();
 
@@ -498,7 +498,7 @@ public sealed class AppleDouble : IFilter
             if(unarStream.Length > 26)
             {
                 var unarB = new byte[26];
-                unarStream.Read(unarB, 0, 26);
+                unarStream.EnsureRead(unarB, 0, 26);
                 _header = Marshal.ByteArrayToStructureBigEndian<Header>(unarB);
                 unarStream.Close();
 
@@ -516,7 +516,7 @@ public sealed class AppleDouble : IFilter
         fs.Seek(0, SeekOrigin.Begin);
 
         var hdrB = new byte[26];
-        fs.Read(hdrB, 0, 26);
+        fs.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         var entries = new Entry[_header.entries];
@@ -524,7 +524,7 @@ public sealed class AppleDouble : IFilter
         for(var i = 0; i < _header.entries; i++)
         {
             var entry = new byte[12];
-            fs.Read(entry, 0, 12);
+            fs.EnsureRead(entry, 0, 12);
             entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
 
@@ -540,7 +540,7 @@ public sealed class AppleDouble : IFilter
                 case EntryId.FileDates:
                     fs.Seek(entry.offset, SeekOrigin.Begin);
                     var datesB = new byte[16];
-                    fs.Read(datesB, 0, 16);
+                    fs.EnsureRead(datesB, 0, 16);
 
                     FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
 
@@ -551,7 +551,7 @@ public sealed class AppleDouble : IFilter
                 case EntryId.FileInfo:
                     fs.Seek(entry.offset, SeekOrigin.Begin);
                     var finfo = new byte[entry.length];
-                    fs.Read(finfo, 0, finfo.Length);
+                    fs.EnsureRead(finfo, 0, finfo.Length);
 
                     if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                     {

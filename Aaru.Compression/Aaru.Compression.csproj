@@ -76,11 +76,14 @@
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha8" />
-        <PackageReference Include="DotNetZip" Version="1.16.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="SharpCompress" Version="0.32.2" />
-        <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
+        <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha8"/>
+        <PackageReference Include="DotNetZip" Version="1.16.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="SharpCompress" Version="0.32.2"/>
+        <PackageReference Include="System.Resources.Extensions" Version="7.0.0"/>
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
     </ItemGroup>
 </Project>

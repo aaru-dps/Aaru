@@ -53,7 +53,7 @@ public sealed partial class WCDiskImage
         stream.Seek(0, SeekOrigin.Begin);
 
         var header = new byte[32];
-        stream.Read(header, 0, 32);
+        stream.EnsureRead(header, 0, 32);
 
         FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 
@@ -129,7 +129,7 @@ public sealed partial class WCDiskImage
         {
             AaruConsole.DebugWriteLine("d2f plugin", "Comment present, reading");
             var sheaderBuffer = new byte[6];
-            stream.Read(sheaderBuffer, 0, 6);
+            stream.EnsureRead(sheaderBuffer, 0, 6);
 
             SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
 
@@ -141,7 +141,7 @@ public sealed partial class WCDiskImage
             }
 
             var comm = new byte[sheader.crc];
-            stream.Read(comm, 0, sheader.crc);
+            stream.EnsureRead(comm, 0, sheader.crc);
             comments += Encoding.ASCII.GetString(comm) + Environment.NewLine;
         }
 
@@ -149,7 +149,7 @@ public sealed partial class WCDiskImage
         {
             AaruConsole.DebugWriteLine("d2f plugin", "Directory listing present, reading");
             var sheaderBuffer = new byte[6];
-            stream.Read(sheaderBuffer, 0, 6);
+            stream.EnsureRead(sheaderBuffer, 0, 6);
 
             SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
 
@@ -161,7 +161,7 @@ public sealed partial class WCDiskImage
             }
 
             var dir = new byte[sheader.crc];
-            stream.Read(dir, 0, sheader.crc);
+            stream.EnsureRead(dir, 0, sheader.crc);
             comments += Encoding.ASCII.GetString(dir);
         }
 
@@ -245,7 +245,7 @@ public sealed partial class WCDiskImage
         {
             /* read the sector header */
             var sheaderBuffer = new byte[6];
-            stream.Read(sheaderBuffer, 0, 6);
+            stream.EnsureRead(sheaderBuffer, 0, 6);
 
             SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
 
@@ -266,7 +266,7 @@ public sealed partial class WCDiskImage
             switch(sheader.flag)
             {
                 case SectorFlag.Normal: /* read a normal sector and store it in cache */
-                    stream.Read(sectorData, 0, 512);
+                    stream.EnsureRead(sectorData, 0, 512);
                     _sectorCache[(cyl, head, sect)] = sectorData;
                     CRC16IBMContext.Data(sectorData, 512, out byte[] crc);
                     var calculatedCRC = (short)((256 * crc[0]) | crc[1]);

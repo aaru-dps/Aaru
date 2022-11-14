@@ -190,7 +190,7 @@ public sealed class AppleSingle : IFilter
 
         var hdrB = new byte[26];
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(hdrB, 0, 26);
+        stream.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         return _header.magic == MAGIC && _header.version is VERSION or VERSION2;
@@ -208,7 +208,7 @@ public sealed class AppleSingle : IFilter
             return false;
 
         var hdrB = new byte[26];
-        fstream.Read(hdrB, 0, 26);
+        fstream.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         fstream.Close();
@@ -223,7 +223,7 @@ public sealed class AppleSingle : IFilter
         ms.Seek(0, SeekOrigin.Begin);
 
         var hdrB = new byte[26];
-        ms.Read(hdrB, 0, 26);
+        ms.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         var entries = new Entry[_header.entries];
@@ -231,7 +231,7 @@ public sealed class AppleSingle : IFilter
         for(var i = 0; i < _header.entries; i++)
         {
             var entry = new byte[12];
-            ms.Read(entry, 0, 12);
+            ms.EnsureRead(entry, 0, 12);
             entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
 
@@ -248,7 +248,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileDates:
                     ms.Seek(entry.offset, SeekOrigin.Begin);
                     var datesB = new byte[16];
-                    ms.Read(datesB, 0, 16);
+                    ms.EnsureRead(datesB, 0, 16);
 
                     FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
 
@@ -259,7 +259,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileInfo:
                     ms.Seek(entry.offset, SeekOrigin.Begin);
                     var finfo = new byte[entry.length];
-                    ms.Read(finfo, 0, finfo.Length);
+                    ms.EnsureRead(finfo, 0, finfo.Length);
 
                     if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                     {
@@ -309,7 +309,7 @@ public sealed class AppleSingle : IFilter
         stream.Seek(0, SeekOrigin.Begin);
 
         var hdrB = new byte[26];
-        stream.Read(hdrB, 0, 26);
+        stream.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         var entries = new Entry[_header.entries];
@@ -317,7 +317,7 @@ public sealed class AppleSingle : IFilter
         for(var i = 0; i < _header.entries; i++)
         {
             var entry = new byte[12];
-            stream.Read(entry, 0, 12);
+            stream.EnsureRead(entry, 0, 12);
             entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
 
@@ -334,7 +334,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileDates:
                     stream.Seek(entry.offset, SeekOrigin.Begin);
                     var datesB = new byte[16];
-                    stream.Read(datesB, 0, 16);
+                    stream.EnsureRead(datesB, 0, 16);
 
                     FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
 
@@ -345,7 +345,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileInfo:
                     stream.Seek(entry.offset, SeekOrigin.Begin);
                     var finfo = new byte[entry.length];
-                    stream.Read(finfo, 0, finfo.Length);
+                    stream.EnsureRead(finfo, 0, finfo.Length);
 
                     if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                     {
@@ -396,7 +396,7 @@ public sealed class AppleSingle : IFilter
         fs.Seek(0, SeekOrigin.Begin);
 
         var hdrB = new byte[26];
-        fs.Read(hdrB, 0, 26);
+        fs.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         var entries = new Entry[_header.entries];
@@ -404,7 +404,7 @@ public sealed class AppleSingle : IFilter
         for(var i = 0; i < _header.entries; i++)
         {
             var entry = new byte[12];
-            fs.Read(entry, 0, 12);
+            fs.EnsureRead(entry, 0, 12);
             entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
 
@@ -421,7 +421,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileDates:
                     fs.Seek(entry.offset, SeekOrigin.Begin);
                     var datesB = new byte[16];
-                    fs.Read(datesB, 0, 16);
+                    fs.EnsureRead(datesB, 0, 16);
 
                     FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
 
@@ -432,7 +432,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileInfo:
                     fs.Seek(entry.offset, SeekOrigin.Begin);
                     var finfo = new byte[entry.length];
-                    fs.Read(finfo, 0, finfo.Length);
+                    fs.EnsureRead(finfo, 0, finfo.Length);
 
                     if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                     {

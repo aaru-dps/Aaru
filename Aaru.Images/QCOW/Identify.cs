@@ -48,7 +48,7 @@ public sealed partial class Qcow
             return false;
 
         var qHdrB = new byte[48];
-        stream.Read(qHdrB, 0, 48);
+        stream.EnsureRead(qHdrB, 0, 48);
         _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
         return _qHdr.magic == QCOW_MAGIC && _qHdr.version == QCOW_VERSION;

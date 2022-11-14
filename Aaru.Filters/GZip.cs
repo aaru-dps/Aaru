@@ -86,7 +86,7 @@ public sealed class GZip : IFilter
         var buffer = new byte[3];
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 3);
+        stream.EnsureRead(buffer, 0, 3);
         stream.Seek(0, SeekOrigin.Begin);
 
         return buffer[0] == 0x1F && buffer[1] == 0x8B && buffer[2] == 0x08;
@@ -102,7 +102,7 @@ public sealed class GZip : IFilter
         var buffer = new byte[3];
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 3);
+        stream.EnsureRead(buffer, 0, 3);
         stream.Seek(0, SeekOrigin.Begin);
 
         return buffer[0] == 0x1F && buffer[1] == 0x8B && buffer[2] == 0x08;
@@ -118,9 +118,9 @@ public sealed class GZip : IFilter
         BasePath    = null;
 
         _dataStream.Seek(4, SeekOrigin.Begin);
-        _dataStream.Read(mtimeB, 0, 4);
+        _dataStream.EnsureRead(mtimeB, 0, 4);
         _dataStream.Seek(-4, SeekOrigin.End);
-        _dataStream.Read(isizeB, 0, 4);
+        _dataStream.EnsureRead(isizeB, 0, 4);
         _dataStream.Seek(0, SeekOrigin.Begin);
 
         var mtime = BitConverter.ToUInt32(mtimeB, 0);
@@ -145,9 +145,9 @@ public sealed class GZip : IFilter
         BasePath    = null;
 
         _dataStream.Seek(4, SeekOrigin.Begin);
-        _dataStream.Read(mtimeB, 0, 4);
+        _dataStream.EnsureRead(mtimeB, 0, 4);
         _dataStream.Seek(-4, SeekOrigin.End);
-        _dataStream.Read(isizeB, 0, 4);
+        _dataStream.EnsureRead(isizeB, 0, 4);
         _dataStream.Seek(0, SeekOrigin.Begin);
 
         var mtime = BitConverter.ToUInt32(mtimeB, 0);
@@ -172,9 +172,9 @@ public sealed class GZip : IFilter
         BasePath    = System.IO.Path.GetFullPath(path);
 
         _dataStream.Seek(4, SeekOrigin.Begin);
-        _dataStream.Read(mtimeB, 0, 4);
+        _dataStream.EnsureRead(mtimeB, 0, 4);
         _dataStream.Seek(-4, SeekOrigin.End);
-        _dataStream.Read(isizeB, 0, 4);
+        _dataStream.EnsureRead(isizeB, 0, 4);
         _dataStream.Seek(0, SeekOrigin.Begin);
 
         var mtime = BitConverter.ToUInt32(mtimeB, 0);

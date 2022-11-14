@@ -35,6 +35,7 @@ namespace Aaru.DiscImages;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class ZZZRawImage
 {
@@ -61,7 +62,7 @@ public sealed partial class ZZZRawImage
                 var    sync   = new byte[12];
                 Stream stream = imageFilter.GetDataForkStream();
                 stream.Position = 0;
-                stream.Read(sync, 0, 12);
+                stream.EnsureRead(sync, 0, 12);
 
                 return _cdSync.SequenceEqual(sync);
         }
@@ -81,7 +82,7 @@ public sealed partial class ZZZRawImage
             var    sync   = new byte[12];
             Stream stream = imageFilter.GetDataForkStream();
             stream.Position = 0;
-            stream.Read(sync, 0, 12);
+            stream.EnsureRead(sync, 0, 12);
 
             return _cdSync.SequenceEqual(sync);
         }

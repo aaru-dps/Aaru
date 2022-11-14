@@ -49,7 +49,7 @@ public sealed partial class Partimage
             return false;
 
         var pHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
         return _partimageMagic.SequenceEqual(_cVolumeHeader.magic);

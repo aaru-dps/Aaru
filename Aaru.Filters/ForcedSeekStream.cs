@@ -34,6 +34,7 @@ namespace Aaru.Filters;
 
 using System;
 using System.IO;
+using Aaru.Helpers;
 
 /// <summary>
 ///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams) by doing the
@@ -106,7 +107,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
         do
         {
             var buffer = new byte[BUFFER_LEN];
-            read = _baseStream.Read(buffer, 0, BUFFER_LEN);
+            read = _baseStream.EnsureRead(buffer, 0, BUFFER_LEN);
             _backStream.Write(buffer, 0, read);
         } while(read == BUFFER_LEN);
 
@@ -145,7 +146,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
             while(left > 0)
             {
-                int done = _baseStream.Read(buffer, bufPos, left);
+                int done = _baseStream.EnsureRead(buffer, bufPos, left);
                 left   -= done;
                 bufPos += done;
             }
@@ -159,7 +160,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
         while(left > 0)
         {
-            int done = _baseStream.Read(buffer, bufPos, left);
+            int done = _baseStream.EnsureRead(buffer, bufPos, left);
             left   -= done;
             bufPos += done;
         }
@@ -181,13 +182,13 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
             count = (int)(_streamLength - _backStream.Position);
 
         if(_backStream.Position + count <= _backStream.Length)
-            return _backStream.Read(buffer, offset, count);
+            return _backStream.EnsureRead(buffer, offset, count);
 
         long oldPosition = _backStream.Position;
         SetPosition(_backStream.Position + count);
         SetPosition(oldPosition);
 
-        return _backStream.Read(buffer, offset, count);
+        return _backStream.EnsureRead(buffer, offset, count);
     }
 
     /// <inheritdoc />

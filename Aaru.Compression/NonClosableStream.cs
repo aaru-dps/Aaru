@@ -33,6 +33,7 @@
 namespace Aaru.Compression;
 
 using System.IO;
+using Aaru.Helpers;
 
 /// <inheritdoc />
 /// <summary>Creates a MemoryStream that ignores close commands</summary>
@@ -57,7 +58,7 @@ sealed class NonClosableStream : Stream
 
     public override void Flush() => _baseStream.Flush();
 
-    public override int Read(byte[] buffer, int offset, int count) => _baseStream.Read(buffer, offset, count);
+    public override int Read(byte[] buffer, int offset, int count) => _baseStream.EnsureRead(buffer, offset, count);
 
     public override long Seek(long offset, SeekOrigin origin) => _baseStream.Seek(offset, origin);
 

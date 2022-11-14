@@ -57,7 +57,7 @@ public sealed partial class Qcow2
             return ErrorNumber.InvalidArgument;
 
         var qHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(qHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(qHdrB, 0, Marshal.SizeOf<Header>());
         _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
         AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", _qHdr.magic);
@@ -139,7 +139,7 @@ public sealed partial class Qcow2
 
         var l1TableB = new byte[_qHdr.l1_size * 8];
         stream.Seek((long)_qHdr.l1_table_offset, SeekOrigin.Begin);
-        stream.Read(l1TableB, 0, (int)_qHdr.l1_size * 8);
+        stream.EnsureRead(l1TableB, 0, (int)_qHdr.l1_size * 8);
         _l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
         AaruConsole.DebugWriteLine("QCOW plugin", "Reading L1 table");
 
@@ -241,7 +241,7 @@ public sealed partial class Qcow2
         {
             _imageStream.Seek((long)(_l1Table[l1Off] & QCOW_FLAGS_MASK), SeekOrigin.Begin);
             var l2TableB = new byte[_l2Size * 8];
-            _imageStream.Read(l2TableB, 0, _l2Size * 8);
+            _imageStream.EnsureRead(l2TableB, 0, _l2Size * 8);
             AaruConsole.DebugWriteLine("QCOW plugin", "Reading L2 table #{0}", l1Off);
             l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
 
@@ -276,11 +276,11 @@ public sealed partial class Qcow2
 
                     var zCluster = new byte[compSize];
                     _imageStream.Seek((long)realOff, SeekOrigin.Begin);
-                    _imageStream.Read(zCluster, 0, (int)compSize);
+                    _imageStream.EnsureRead(zCluster, 0, (int)compSize);
 
                     var zStream = new DeflateStream(new MemoryStream(zCluster), CompressionMode.Decompress);
                     cluster = new byte[_clusterSize];
-                    int read = zStream.Read(cluster, 0, _clusterSize);
+                    int read = zStream.EnsureRead(cluster, 0, _clusterSize);
 
                     if(read != _clusterSize)
                         return ErrorNumber.InOutError;
@@ -289,7 +289,7 @@ public sealed partial class Qcow2
                 {
                     cluster = new byte[_clusterSize];
                     _imageStream.Seek((long)(offset & QCOW_FLAGS_MASK), SeekOrigin.Begin);
-                    _imageStream.Read(cluster, 0, _clusterSize);
+                    _imageStream.EnsureRead(cluster, 0, _clusterSize);
                 }
 
                 if(_clusterCache.Count >= _maxClusterCache)

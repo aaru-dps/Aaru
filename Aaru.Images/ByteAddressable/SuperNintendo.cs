@@ -64,7 +64,7 @@ public class SuperNintendo : IByteAddressableImage
             {
                 stream.Position = 0x40FFB0;
 
-                stream.Read(headerBytes, 0, 48);
+                stream.EnsureRead(headerBytes, 0, 48);
                 header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
                 if((header.Mode & 0xF) == 0x5 ||
@@ -77,7 +77,7 @@ public class SuperNintendo : IByteAddressableImage
             {
                 stream.Position = 0xFFB0;
 
-                stream.Read(headerBytes, 0, 48);
+                stream.EnsureRead(headerBytes, 0, 48);
                 header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
                 if((header.Mode & 0xF) == 0x1 ||
@@ -89,7 +89,7 @@ public class SuperNintendo : IByteAddressableImage
             case > 0x7FFF:
                 stream.Position = 0x7FB0;
 
-                stream.Read(headerBytes, 0, 48);
+                stream.EnsureRead(headerBytes, 0, 48);
                 header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
                 return (header.Mode & 0xF) == 0x0 || (header.Mode & 0xF) == 0x2 || (header.Mode & 0xF) == 0x3;
@@ -119,7 +119,7 @@ public class SuperNintendo : IByteAddressableImage
             {
                 stream.Position = 0x40FFB0;
 
-                stream.Read(headerBytes, 0, 48);
+                stream.EnsureRead(headerBytes, 0, 48);
                 _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
                 if((_header.Mode & 0xF) == 0x5 ||
@@ -132,7 +132,7 @@ public class SuperNintendo : IByteAddressableImage
             {
                 stream.Position = 0xFFB0;
 
-                stream.Read(headerBytes, 0, 48);
+                stream.EnsureRead(headerBytes, 0, 48);
                 _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
                 if((_header.Mode & 0xF) == 0x1 ||
@@ -145,7 +145,7 @@ public class SuperNintendo : IByteAddressableImage
             {
                 stream.Position = 0x7FB0;
 
-                stream.Read(headerBytes, 0, 48);
+                stream.EnsureRead(headerBytes, 0, 48);
                 _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
                 if((_header.Mode & 0xF) == 0x0 ||
@@ -162,7 +162,7 @@ public class SuperNintendo : IByteAddressableImage
 
         _data           = new byte[imageFilter.DataForkLength];
         stream.Position = 0;
-        stream.Read(_data, 0, (int)imageFilter.DataForkLength);
+        stream.EnsureRead(_data, 0, (int)imageFilter.DataForkLength);
 
         Encoding encoding;
 

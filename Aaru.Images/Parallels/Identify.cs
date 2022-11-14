@@ -49,7 +49,7 @@ public sealed partial class Parallels
             return false;
 
         var pHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
         return _magic.SequenceEqual(_pHdr.magic) || _extMagic.SequenceEqual(_pHdr.magic);

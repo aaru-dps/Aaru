@@ -50,7 +50,7 @@ public sealed partial class WCDiskImage
             return false;
 
         var header = new byte[32];
-        stream.Read(header, 0, 32);
+        stream.EnsureRead(header, 0, 32);
 
         FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 

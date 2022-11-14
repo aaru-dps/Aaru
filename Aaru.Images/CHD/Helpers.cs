@@ -75,7 +75,7 @@ public sealed partial class Chd
 
                 var compHunk = new byte[length];
                 _imageStream.Seek((long)offset, SeekOrigin.Begin);
-                _imageStream.Read(compHunk, 0, compHunk.Length);
+                _imageStream.EnsureRead(compHunk, 0, compHunk.Length);
 
                 if(length == _sectorsPerHunk * _imageInfo.SectorSize)
                     buffer = compHunk;
@@ -89,7 +89,7 @@ public sealed partial class Chd
                 {
                     var zStream = new DeflateStream(new MemoryStream(compHunk), CompressionMode.Decompress);
                     buffer = new byte[_sectorsPerHunk * _imageInfo.SectorSize];
-                    int read = zStream.Read(buffer, 0, (int)(_sectorsPerHunk * _imageInfo.SectorSize));
+                    int read = zStream.EnsureRead(buffer, 0, (int)(_sectorsPerHunk * _imageInfo.SectorSize));
 
                     if(read != _sectorsPerHunk * _imageInfo.SectorSize)
                     {
@@ -124,13 +124,13 @@ public sealed partial class Chd
                                 {
                                     var zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
                                     _imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
-                                    _imageStream.Read(zHunk, 0, zHunk.Length);
+                                    _imageStream.EnsureRead(zHunk, 0, zHunk.Length);
 
                                     var zStream =
                                         new DeflateStream(new MemoryStream(zHunk), CompressionMode.Decompress);
 
                                     buffer = new byte[_bytesPerHunk];
-                                    int read = zStream.Read(buffer, 0, (int)_bytesPerHunk);
+                                    int read = zStream.EnsureRead(buffer, 0, (int)_bytesPerHunk);
 
                                     if(read != _bytesPerHunk)
                                     {
@@ -163,7 +163,7 @@ public sealed partial class Chd
                     uncompressedV3:
                         buffer = new byte[_bytesPerHunk];
                         _imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
-                        _imageStream.Read(buffer, 0, buffer.Length);
+                        _imageStream.EnsureRead(buffer, 0, buffer.Length);
 
                         break;
                     case EntryFlagsV3.Mini:
@@ -195,7 +195,7 @@ public sealed partial class Chd
                 {
                     buffer = new byte[_bytesPerHunk];
                     _imageStream.Seek(_hunkTableSmall[hunkNo] * _bytesPerHunk, SeekOrigin.Begin);
-                    _imageStream.Read(buffer, 0, buffer.Length);
+                    _imageStream.EnsureRead(buffer, 0, buffer.Length);
                 }
                 else
                 {

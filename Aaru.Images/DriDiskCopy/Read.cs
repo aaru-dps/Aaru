@@ -52,7 +52,7 @@ public sealed partial class DriDiskCopy
 
         var buffer = new byte[Marshal.SizeOf<Footer>()];
         stream.Seek(-buffer.Length, SeekOrigin.End);
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         _footer = Marshal.ByteArrayToStructureLittleEndian<Footer>(buffer);
 
@@ -142,8 +142,8 @@ public sealed partial class DriDiskCopy
         buffer = new byte[length * _imageInfo.SectorSize];
 
         Stream stream = _driImageFilter.GetDataForkStream();
-        stream.Seek((long)(sectorAddress    * _imageInfo.SectorSize), SeekOrigin.Begin);
-        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.Seek((long)(sectorAddress          * _imageInfo.SectorSize), SeekOrigin.Begin);
+        stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }

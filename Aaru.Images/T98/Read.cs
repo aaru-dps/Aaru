@@ -37,6 +37,7 @@ using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class T98
 {
@@ -50,7 +51,7 @@ public sealed partial class T98
             return ErrorNumber.InvalidArgument;
 
         var hdrB = new byte[256];
-        stream.Read(hdrB, 0, hdrB.Length);
+        stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         for(var i = 4; i < 256; i++)
             if(hdrB[i] != 0)
@@ -96,7 +97,7 @@ public sealed partial class T98
 
         stream.Seek((long)(256 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
-        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }

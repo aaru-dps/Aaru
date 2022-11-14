@@ -50,7 +50,7 @@ public sealed partial class DriDiskCopy
 
         var buffer = new byte[Marshal.SizeOf<Footer>()];
         stream.Seek(-buffer.Length, SeekOrigin.End);
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         Footer tmpFooter = Marshal.ByteArrayToStructureLittleEndian<Footer>(buffer);
 

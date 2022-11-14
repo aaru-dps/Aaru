@@ -93,7 +93,7 @@ public class SegaMegaDrive : IByteAddressableImage
         var buffer = new byte[4];
 
         stream.Position = 256;
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
 
         // SEGA
         if(buffer[0] == 0x53 &&
@@ -107,7 +107,7 @@ public class SegaMegaDrive : IByteAddressableImage
            buffer[1] == 0x41)
         {
             stream.Position = stream.Length / 2 + 256;
-            stream.Read(buffer, 0, 2);
+            stream.EnsureRead(buffer, 0, 2);
 
             // SG
             if(buffer[0] == 0x53 &&
@@ -116,7 +116,7 @@ public class SegaMegaDrive : IByteAddressableImage
         }
 
         stream.Position = 512 + 128;
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
 
         // EA
         if(buffer[0] != 0x45 ||
@@ -124,7 +124,7 @@ public class SegaMegaDrive : IByteAddressableImage
             return false;
 
         stream.Position = 8832;
-        stream.Read(buffer, 0, 2);
+        stream.EnsureRead(buffer, 0, 2);
 
         // SG
         return buffer[0] == 0x53 && buffer[1] == 0x47;
@@ -145,7 +145,7 @@ public class SegaMegaDrive : IByteAddressableImage
         var buffer = new byte[4];
 
         stream.Position = 256;
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
 
         // SEGA
         bool found = buffer[0] == 0x53 && buffer[1] == 0x45 && buffer[2] == 0x47 && buffer[3] == 0x41;
@@ -155,7 +155,7 @@ public class SegaMegaDrive : IByteAddressableImage
            buffer[1] == 0x41)
         {
             stream.Position = stream.Length / 2 + 256;
-            stream.Read(buffer, 0, 2);
+            stream.EnsureRead(buffer, 0, 2);
 
             // SG
             if(buffer[0] == 0x53 &&
@@ -167,14 +167,14 @@ public class SegaMegaDrive : IByteAddressableImage
         }
 
         stream.Position = 512 + 128;
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
 
         // EA
         if(buffer[0] == 0x45 &&
            buffer[1] == 0x41)
         {
             stream.Position = 8832;
-            stream.Read(buffer, 0, 2);
+            stream.EnsureRead(buffer, 0, 2);
 
             // SG
             if(buffer[0] == 0x53 &&
@@ -190,7 +190,7 @@ public class SegaMegaDrive : IByteAddressableImage
 
         _data           = new byte[_smd ? stream.Length - 512 : stream.Length];
         stream.Position = _smd ? 512 : 0;
-        stream.Read(_data, 0, _data.Length);
+        stream.EnsureRead(_data, 0, _data.Length);
 
         // Interleaves every 16KiB
         if(_smd)

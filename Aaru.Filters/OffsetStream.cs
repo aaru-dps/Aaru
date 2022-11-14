@@ -38,6 +38,7 @@ namespace Aaru.Filters
 {
     using System;
     using System.IO;
+    using Aaru.Helpers;
     using Microsoft.Win32.SafeHandles;
 
     /// <summary>Creates a stream that is a subset of another stream.</summary>
@@ -642,7 +643,7 @@ namespace Aaru.Filters
             if(_baseStream.Position + count > _streamEnd + 1)
                 throw new IOException("Cannot read past stream end.");
 
-            return _baseStream.Read(buffer, offset, count);
+            return _baseStream.EnsureRead(buffer, offset, count);
         }
 
         /// <inheritdoc />

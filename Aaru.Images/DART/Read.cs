@@ -58,7 +58,7 @@ public sealed partial class Dart
         stream.Seek(0, SeekOrigin.Begin);
         var headerB = new byte[Marshal.SizeOf<Header>()];
 
-        stream.Read(headerB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(headerB, 0, Marshal.SizeOf<Header>());
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
 
         if(header.srcCmp > COMPRESS_NONE)
@@ -115,7 +115,7 @@ public sealed partial class Dart
         for(var i = 0; i < bLength.Length; i++)
         {
             var tmpShort = new byte[2];
-            stream.Read(tmpShort, 0, 2);
+            stream.EnsureRead(tmpShort, 0, 2);
             bLength[i] = BigEndianBitConverter.ToInt16(tmpShort, 0);
         }
 
@@ -129,7 +129,7 @@ public sealed partial class Dart
 
                 if(l == -1)
                 {
-                    stream.Read(buffer, 0, BUFFER_SIZE);
+                    stream.EnsureRead(buffer, 0, BUFFER_SIZE);
                     dataMs.Write(buffer, 0, DATA_SIZE);
                     tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
                 }
@@ -140,7 +140,7 @@ public sealed partial class Dart
                     if(header.srcCmp == COMPRESS_RLE)
                     {
                         temp = new byte[l * 2];
-                        stream.Read(temp, 0, temp.Length);
+                        stream.EnsureRead(temp, 0, temp.Length);
                         buffer = new byte[BUFFER_SIZE];
 
                         AppleRle.DecodeBuffer(temp, buffer);
@@ -151,7 +151,7 @@ public sealed partial class Dart
                     else
                     {
                         temp = new byte[l];
-                        stream.Read(temp, 0, temp.Length);
+                        stream.EnsureRead(temp, 0, temp.Length);
 
                         AaruConsole.ErrorWriteLine("LZH Compressed images not yet supported");
 

@@ -31,6 +31,7 @@ namespace Aaru.Tests.Checksums;
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -56,7 +57,7 @@ public class Sha256
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         Sha256Context.Data(data, out byte[] result);
@@ -78,7 +79,7 @@ public class Sha256
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new Sha256Context();
@@ -95,7 +96,7 @@ public class Sha256
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         Sha256Context.Data(data, out byte[] result);
@@ -117,7 +118,7 @@ public class Sha256
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new Sha256Context();

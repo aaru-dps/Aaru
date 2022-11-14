@@ -50,7 +50,7 @@ public sealed partial class Imd
             return false;
 
         var hdr = new byte[stream.Length < 256 ? stream.Length : 256];
-        stream.Read(hdr, 0, hdr.Length);
+        stream.EnsureRead(hdr, 0, hdr.Length);
 
         string hdrStr = StringHandlers.CToString(hdr, Encoding.ASCII);
 

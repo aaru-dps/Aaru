@@ -50,11 +50,11 @@ public sealed partial class VMware
         {
             stream.Seek(0, SeekOrigin.Begin);
             var vmEHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
-            stream.Read(vmEHdrB, 0, Marshal.SizeOf<ExtentHeader>());
+            stream.EnsureRead(vmEHdrB, 0, Marshal.SizeOf<ExtentHeader>());
             _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(vmEHdrB);
 
             stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(ddfMagic, 0, 0x15);
+            stream.EnsureRead(ddfMagic, 0, 0x15);
 
             _vmCHdr = new CowHeader();
 
@@ -64,7 +64,7 @@ public sealed partial class VMware
 
             stream.Seek(0, SeekOrigin.Begin);
             var vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
-            stream.Read(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
+            stream.EnsureRead(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
             _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
 
             return _ddfMagicBytes.SequenceEqual(ddfMagic) || _vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
@@ -72,7 +72,7 @@ public sealed partial class VMware
         }
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(ddfMagic, 0, 0x15);
+        stream.EnsureRead(ddfMagic, 0, 0x15);
 
         return _ddfMagicBytes.SequenceEqual(ddfMagic);
     }

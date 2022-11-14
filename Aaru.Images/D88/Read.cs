@@ -58,7 +58,7 @@ public sealed partial class D88
             return ErrorNumber.InvalidArgument;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(hdrB, 0, hdrB.Length);
+        stream.EnsureRead(hdrB, 0, hdrB.Length);
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
         AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"", StringHandlers.CToString(hdr.name, shiftjis));
@@ -102,7 +102,7 @@ public sealed partial class D88
 
         hdrB = new byte[Marshal.SizeOf<SectorHeader>()];
         stream.Seek(hdr.track_table[0], SeekOrigin.Begin);
-        stream.Read(hdrB, 0, hdrB.Length);
+        stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         SectorHeader sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
@@ -124,7 +124,7 @@ public sealed partial class D88
         for(var i = 0; i < trkCounter; i++)
         {
             stream.Seek(hdr.track_table[i], SeekOrigin.Begin);
-            stream.Read(hdrB, 0, hdrB.Length);
+            stream.EnsureRead(hdrB, 0, hdrB.Length);
             SortedDictionary<byte, byte[]> sectors = new();
 
             sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
@@ -145,9 +145,9 @@ public sealed partial class D88
             for(short j = 1; j < maxJ; j++)
             {
                 secB = new byte[sechdr.size_of_data];
-                stream.Read(secB, 0, secB.Length);
+                stream.EnsureRead(secB, 0, secB.Length);
                 sectors.Add(sechdr.r, secB);
-                stream.Read(hdrB, 0, hdrB.Length);
+                stream.EnsureRead(hdrB, 0, hdrB.Length);
 
                 sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
@@ -163,7 +163,7 @@ public sealed partial class D88
             }
 
             secB = new byte[sechdr.size_of_data];
-            stream.Read(secB, 0, secB.Length);
+            stream.EnsureRead(secB, 0, secB.Length);
             sectors.Add(sechdr.r, secB);
 
             foreach(KeyValuePair<byte, byte[]> kvp in sectors)

@@ -35,6 +35,7 @@ namespace Aaru.DiscImages;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class RsIde
 {
@@ -45,7 +46,7 @@ public sealed partial class RsIde
         stream.Seek(0, SeekOrigin.Begin);
 
         var magic = new byte[7];
-        stream.Read(magic, 0, magic.Length);
+        stream.EnsureRead(magic, 0, magic.Length);
 
         return magic.SequenceEqual(_signature);
     }

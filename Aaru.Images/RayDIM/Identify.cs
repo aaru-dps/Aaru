@@ -50,7 +50,7 @@ public sealed partial class RayDim
 
         var buffer = new byte[Marshal.SizeOf<Header>()];
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 

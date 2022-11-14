@@ -33,6 +33,7 @@ using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filters;
+using Aaru.Helpers;
 using NUnit.Framework;
 
 [TestFixture]
@@ -60,7 +61,7 @@ public class AppleDoubleDave
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
         var    data = new byte[737280];
-        str.Read(data, 0, 737280);
+        str.EnsureRead(data, 0, 737280);
         str.Close();
         str.Dispose();
         filter.Close();
@@ -92,7 +93,7 @@ public class AppleDoubleDave
         filter.Open(_location);
         Stream str  = filter.GetResourceForkStream();
         var    data = new byte[286];
-        str.Read(data, 0, 286);
+        str.EnsureRead(data, 0, 286);
         str.Close();
         str.Dispose();
         filter.Close();

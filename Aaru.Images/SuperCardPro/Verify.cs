@@ -34,6 +34,7 @@ namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
+using Aaru.Helpers;
 
 public sealed partial class SuperCardPro
 {
@@ -47,7 +48,7 @@ public sealed partial class SuperCardPro
         uint sum       = 0;
 
         _scpStream.Position = 0;
-        _scpStream.Read(wholeFile, 0, wholeFile.Length);
+        _scpStream.EnsureRead(wholeFile, 0, wholeFile.Length);
 
         for(var i = 0x10; i < wholeFile.Length; i++)
             sum += wholeFile[i];

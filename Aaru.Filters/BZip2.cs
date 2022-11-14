@@ -36,6 +36,7 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using Ionic.BZip2;
 
 /// <inheritdoc />
@@ -97,7 +98,7 @@ public class BZip2 : IFilter
         var buffer = new byte[4];
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         stream.Seek(0, SeekOrigin.Begin);
 
         if(buffer[0] != 0x42 ||
@@ -111,7 +112,7 @@ public class BZip2 : IFilter
             return true;
 
         stream.Seek(-512, SeekOrigin.End);
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         stream.Seek(0, SeekOrigin.Begin);
 
         // Check it is not an UDIF
@@ -128,7 +129,7 @@ public class BZip2 : IFilter
         var buffer = new byte[4];
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         stream.Seek(0, SeekOrigin.Begin);
 
         if(buffer[0] != 0x42 ||
@@ -142,7 +143,7 @@ public class BZip2 : IFilter
             return true;
 
         stream.Seek(-512, SeekOrigin.End);
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         stream.Seek(0, SeekOrigin.Begin);
 
         // Check it is not an UDIF

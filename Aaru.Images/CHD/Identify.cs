@@ -35,6 +35,7 @@ namespace Aaru.DiscImages;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class Chd
 {
@@ -44,7 +45,7 @@ public sealed partial class Chd
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
         var magic = new byte[8];
-        stream.Read(magic, 0, 8);
+        stream.EnsureRead(magic, 0, 8);
 
         return _chdTag.SequenceEqual(magic);
     }

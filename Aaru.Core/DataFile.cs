@@ -35,6 +35,7 @@ namespace Aaru.Core;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.Console;
+using Aaru.Helpers;
 
 /// <summary>Abstracts a datafile with a block based interface</summary>
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global"), SuppressMessage("ReSharper", "UnusedMember.Global")]
@@ -55,7 +56,7 @@ public sealed class DataFile
     /// <param name="offset">Offset of <see cref="array" /> where data will be read</param>
     /// <param name="count">How many bytes to read</param>
     /// <returns>How many bytes were read</returns>
-    public int Read(byte[] array, int offset, int count) => _dataFs.Read(array, offset, count);
+    public int Read(byte[] array, int offset, int count) => _dataFs.EnsureRead(array, offset, count);
 
     /// <summary>Seeks to the specified block</summary>
     /// <param name="block">Block to seek to</param>

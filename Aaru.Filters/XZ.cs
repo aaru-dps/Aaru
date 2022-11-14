@@ -36,6 +36,7 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using SharpCompress.Compressors.Xz;
 
 /// <inheritdoc />
@@ -90,9 +91,9 @@ public sealed class XZ : IFilter
             return false;
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 6);
+        stream.EnsureRead(buffer, 0, 6);
         stream.Seek(-2, SeekOrigin.End);
-        stream.Read(footer, 0, 2);
+        stream.EnsureRead(footer, 0, 2);
         stream.Seek(0, SeekOrigin.Begin);
 
         return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A &&
@@ -113,9 +114,9 @@ public sealed class XZ : IFilter
             return false;
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 6);
+        stream.EnsureRead(buffer, 0, 6);
         stream.Seek(-2, SeekOrigin.End);
-        stream.Read(footer, 0, 2);
+        stream.EnsureRead(footer, 0, 2);
         stream.Seek(0, SeekOrigin.Begin);
 
         return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A &&
@@ -201,7 +202,7 @@ public sealed class XZ : IFilter
         // Seek to footer backwards size field
         _dataStream.Seek(-8, SeekOrigin.End);
         var tmp = new byte[4];
-        _dataStream.Read(tmp, 0, 4);
+        _dataStream.EnsureRead(tmp, 0, 4);
         uint backwardSize = (BitConverter.ToUInt32(tmp, 0) + 1) * 4;
 
         // Seek to first indexed record
@@ -209,14 +210,14 @@ public sealed class XZ : IFilter
 
         // Skip compressed size
         tmp = new byte[backwardSize - 2];
-        _dataStream.Read(tmp, 0, tmp.Length);
+        _dataStream.EnsureRead(tmp, 0, tmp.Length);
         ulong number = 0;
         int   ignore = Decode(tmp, tmp.Length, ref number);
 
         // Get compressed size
         _dataStream.Seek(-12 - (backwardSize - 2 - ignore), SeekOrigin.End);
         tmp = new byte[backwardSize - 2 - ignore];
-        _dataStream.Read(tmp, 0, tmp.Length);
+        _dataStream.EnsureRead(tmp, 0, tmp.Length);
         Decode(tmp, tmp.Length, ref number);
         DataForkLength = (long)number;
 

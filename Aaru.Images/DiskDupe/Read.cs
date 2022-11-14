@@ -39,6 +39,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class DiskDupe
 {
@@ -105,7 +106,7 @@ public sealed partial class DiskDupe
 
             strm.Seek(_trackOffsets[trackNum] + sectorOffset * _imageInfo.SectorSize, SeekOrigin.Begin);
 
-            strm.Read(buffer, 0, (int)_imageInfo.SectorSize);
+            strm.EnsureRead(buffer, 0, (int)_imageInfo.SectorSize);
         }
 
         return ErrorNumber.NoError;

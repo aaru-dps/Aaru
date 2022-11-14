@@ -52,7 +52,7 @@ public sealed partial class UkvFdi
             return ErrorNumber.InvalidArgument;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(hdrB, 0, hdrB.Length);
+        stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
@@ -65,7 +65,7 @@ public sealed partial class UkvFdi
 
         stream.Seek(hdr.descOff, SeekOrigin.Begin);
         var description = new byte[hdr.dataOff - hdr.descOff];
-        stream.Read(description, 0, description.Length);
+        stream.EnsureRead(description, 0, description.Length);
         _imageInfo.Comments = StringHandlers.CToString(description);
 
         AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.description = \"{0}\"", _imageInfo.Comments);
@@ -88,7 +88,7 @@ public sealed partial class UkvFdi
             for(ushort head = 0; head < hdr.heads; head++)
             {
                 var sctB = new byte[4];
-                stream.Read(sctB, 0, 4);
+                stream.EnsureRead(sctB, 0, 4);
                 stream.Seek(2, SeekOrigin.Current);
                 var sectors = (byte)stream.ReadByte();
                 var trkOff  = BitConverter.ToUInt32(sctB, 0);
@@ -113,7 +113,7 @@ public sealed partial class UkvFdi
                     var n    = (byte)stream.ReadByte();
                     var f    = (SectorFlags)stream.ReadByte();
                     var offB = new byte[2];
-                    stream.Read(offB, 0, 2);
+                    stream.EnsureRead(offB, 0, 2);
                     var secOff = BitConverter.ToUInt16(offB, 0);
 
                     AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}", c);
@@ -145,7 +145,7 @@ public sealed partial class UkvFdi
                 for(ushort sec = 0; sec < sectorsOff[cyl][head].Length; sec++)
                 {
                     stream.Seek(sectorsOff[cyl][head][sec], SeekOrigin.Begin);
-                    stream.Read(_sectorsData[cyl][head][sec], 0, _sectorsData[cyl][head][sec].Length);
+                    stream.EnsureRead(_sectorsData[cyl][head][sec], 0, _sectorsData[cyl][head][sec].Length);
                 }
 
                 // For empty cylinders

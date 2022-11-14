@@ -34,6 +34,7 @@ namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class DiskCopy42
 {
@@ -47,7 +48,7 @@ public sealed partial class DiskCopy42
         AaruConsole.DebugWriteLine("DC42 plugin", "Reading data");
         Stream dataStream = dc42ImageFilter.GetDataForkStream();
         dataStream.Seek(dataOffset, SeekOrigin.Begin);
-        dataStream.Read(data, 0, (int)header.DataSize);
+        dataStream.EnsureRead(data, 0, (int)header.DataSize);
 
         AaruConsole.DebugWriteLine("DC42 plugin", "Calculating data checksum");
         uint dataChk = CheckSum(data);
@@ -60,7 +61,7 @@ public sealed partial class DiskCopy42
         AaruConsole.DebugWriteLine("DC42 plugin", "Reading tags");
         Stream tagStream = dc42ImageFilter.GetDataForkStream();
         tagStream.Seek(tagOffset, SeekOrigin.Begin);
-        tagStream.Read(tags, 0, (int)header.TagSize);
+        tagStream.EnsureRead(tags, 0, (int)header.TagSize);
 
         AaruConsole.DebugWriteLine("DC42 plugin", "Calculating tag checksum");
         tagsChk = CheckSum(tags);

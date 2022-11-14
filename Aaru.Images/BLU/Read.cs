@@ -54,7 +54,7 @@ public sealed partial class Blu
         };
 
         var header = new byte[0x17];
-        stream.Read(header, 0, 0x17);
+        stream.EnsureRead(header, 0, 0x17);
         Array.Copy(header, 0, _imageHeader.DeviceName, 0, 0x0D);
         _imageHeader.DeviceType    = BigEndianBitConverter.ToUInt32(header, 0x0C) & 0x00FFFFFF;
         _imageHeader.DeviceBlocks  = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
@@ -76,7 +76,7 @@ public sealed partial class Blu
 
         stream.Seek(0, SeekOrigin.Begin);
         header = new byte[_imageHeader.BytesPerBlock];
-        stream.Read(header, 0, _imageHeader.BytesPerBlock);
+        stream.EnsureRead(header, 0, _imageHeader.BytesPerBlock);
 
         _imageInfo.SectorSize = 0x200;
 
@@ -177,7 +177,7 @@ public sealed partial class Blu
         for(var i = 0; i < length; i++)
         {
             var sector = new byte[read];
-            stream.Read(sector, 0, read);
+            stream.EnsureRead(sector, 0, read);
             ms.Write(sector, 0, read);
             stream.Seek(skip, SeekOrigin.Current);
         }
@@ -215,7 +215,7 @@ public sealed partial class Blu
         {
             stream.Seek(seek, SeekOrigin.Current);
             var sector = new byte[read];
-            stream.Read(sector, 0, read);
+            stream.EnsureRead(sector, 0, read);
             ms.Write(sector, 0, read);
         }
 
@@ -242,7 +242,7 @@ public sealed partial class Blu
         buffer = new byte[length * _imageHeader.BytesPerBlock];
         Stream stream = _bluImageFilter.GetDataForkStream();
         stream.Seek((long)((sectorAddress + 1) * _imageHeader.BytesPerBlock), SeekOrigin.Begin);
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         return ErrorNumber.NoError;
     }

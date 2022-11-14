@@ -33,6 +33,7 @@ using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filters;
+using Aaru.Helpers;
 using NUnit.Framework;
 
 [TestFixture]
@@ -57,7 +58,7 @@ public class Xz
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
         var    data = new byte[1048576];
-        str.Read(data, 0, 1048576);
+        str.EnsureRead(data, 0, 1048576);
         str.Close();
         str.Dispose();
         filter.Close();

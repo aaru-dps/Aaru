@@ -34,6 +34,7 @@ namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class CisCopy
 {
@@ -65,7 +66,7 @@ public sealed partial class CisCopy
         }
 
         var trackBytes = new byte[tracks];
-        stream.Read(trackBytes, 0, tracks);
+        stream.EnsureRead(trackBytes, 0, tracks);
 
         for(var i = 0; i < tracks; i++)
             if(trackBytes[i] != (byte)TrackType.Copied  &&

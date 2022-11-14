@@ -36,6 +36,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class CopyTape
 {
@@ -49,7 +50,7 @@ public sealed partial class CopyTape
 
         Stream strm = imageFilter.GetDataForkStream();
         strm.Position = 0;
-        strm.Read(header, 0, 16);
+        strm.EnsureRead(header, 0, 16);
 
         string mark = Encoding.ASCII.GetString(header);
 

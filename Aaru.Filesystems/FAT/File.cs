@@ -146,7 +146,7 @@ public sealed partial class FAT
 
         ms.Position = offsetInCluster;
         buf         = new byte[size];
-        ms.Read(buf, 0, (int)size);
+        ms.EnsureRead(buf, 0, (int)size);
 
         return ErrorNumber.NoError;
     }

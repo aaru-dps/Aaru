@@ -49,7 +49,7 @@ public sealed partial class Udif
         stream.Seek(-Marshal.SizeOf<Footer>(), SeekOrigin.End);
         var footerB = new byte[Marshal.SizeOf<Footer>()];
 
-        stream.Read(footerB, 0, Marshal.SizeOf<Footer>());
+        stream.EnsureRead(footerB, 0, Marshal.SizeOf<Footer>());
         _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(footerB);
 
         if(_footer.signature == UDIF_SIGNATURE)
@@ -59,7 +59,7 @@ public sealed partial class Udif
         stream.Seek(0, SeekOrigin.Begin);
         var headerB = new byte[Marshal.SizeOf<Footer>()];
 
-        stream.Read(headerB, 0, Marshal.SizeOf<Footer>());
+        stream.EnsureRead(headerB, 0, Marshal.SizeOf<Footer>());
         _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(headerB);
 
         return _footer.signature == UDIF_SIGNATURE;

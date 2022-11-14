@@ -50,7 +50,7 @@ public sealed partial class RsIde
         stream.Seek(0, SeekOrigin.Begin);
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(hdrB, 0, hdrB.Length);
+        stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
@@ -123,7 +123,7 @@ public sealed partial class RsIde
 
         stream.Seek((long)(_dataOff + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
-        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }

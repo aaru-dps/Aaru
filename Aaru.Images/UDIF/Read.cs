@@ -63,7 +63,7 @@ public sealed partial class Udif
         stream.Seek(-Marshal.SizeOf<Footer>(), SeekOrigin.End);
         var footerB = new byte[Marshal.SizeOf<Footer>()];
 
-        stream.Read(footerB, 0, Marshal.SizeOf<Footer>());
+        stream.EnsureRead(footerB, 0, Marshal.SizeOf<Footer>());
         _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(footerB);
 
         if(_footer.signature != UDIF_SIGNATURE)
@@ -71,7 +71,7 @@ public sealed partial class Udif
             stream.Seek(0, SeekOrigin.Begin);
             footerB = new byte[Marshal.SizeOf<Footer>()];
 
-            stream.Read(footerB, 0, Marshal.SizeOf<Footer>());
+            stream.EnsureRead(footerB, 0, Marshal.SizeOf<Footer>());
             _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(footerB);
 
             if(_footer.signature != UDIF_SIGNATURE)
@@ -131,7 +131,7 @@ public sealed partial class Udif
             AaruConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
             var rsrcB = new byte[_footer.rsrcForkLen];
             stream.Seek((long)_footer.rsrcForkOff, SeekOrigin.Begin);
-            stream.Read(rsrcB, 0, rsrcB.Length);
+            stream.EnsureRead(rsrcB, 0, rsrcB.Length);
 
             var rsrc = new ResourceFork(rsrcB);
 
@@ -173,7 +173,7 @@ public sealed partial class Udif
             AaruConsole.DebugWriteLine("UDIF plugin", "Reading property list.");
             var plistB = new byte[_footer.plistLen];
             stream.Seek((long)_footer.plistOff, SeekOrigin.Begin);
-            stream.Read(plistB, 0, plistB.Length);
+            stream.EnsureRead(plistB, 0, plistB.Length);
 
             AaruConsole.DebugWriteLine("UDIF plugin", "Parsing property list.");
             var plist = (NSDictionary)XmlPropertyListParser.Parse(plistB);
@@ -244,7 +244,7 @@ public sealed partial class Udif
 
             var rsrcB = new byte[rsrcStream.Length];
             rsrcStream.Position = 0;
-            rsrcStream.Read(rsrcB, 0, rsrcB.Length);
+            rsrcStream.EnsureRead(rsrcB, 0, rsrcB.Length);
 
             var rsrc = new ResourceFork(rsrcB);
 
@@ -483,7 +483,7 @@ public sealed partial class Udif
             {
                 var cmpBuffer = new byte[readChunk.length];
                 _imageStream.Seek((long)(readChunk.offset + _footer.dataForkOff), SeekOrigin.Begin);
-                _imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
+                _imageStream.EnsureRead(cmpBuffer, 0, cmpBuffer.Length);
                 var    cmpMs     = new MemoryStream(cmpBuffer);
                 Stream decStream = null;
 
@@ -598,7 +598,7 @@ public sealed partial class Udif
             case CHUNK_TYPE_COPY:
                 _imageStream.Seek((long)(readChunk.offset + (ulong)relOff + _footer.dataForkOff), SeekOrigin.Begin);
                 buffer = new byte[SECTOR_SIZE];
-                _imageStream.Read(buffer, 0, buffer.Length);
+                _imageStream.EnsureRead(buffer, 0, buffer.Length);
 
                 if(_sectorCache.Count >= MAX_CACHED_SECTORS)
                     _sectorCache.Clear();

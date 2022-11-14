@@ -35,6 +35,7 @@ namespace Aaru.DiscImages;
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class DiscFerret
 {
@@ -43,7 +44,7 @@ public sealed partial class DiscFerret
     {
         var    magicB = new byte[4];
         Stream stream = imageFilter.GetDataForkStream();
-        stream.Read(magicB, 0, 4);
+        stream.EnsureRead(magicB, 0, 4);
         var magic = BitConverter.ToUInt32(magicB, 0);
 
         return magic is DFI_MAGIC or DFI_MAGIC2;

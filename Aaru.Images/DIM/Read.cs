@@ -59,9 +59,9 @@ public sealed partial class Dim
         stream.Seek(0, SeekOrigin.Begin);
         _dskType = (DiskType)stream.ReadByte();
         stream.Seek(0xAB, SeekOrigin.Begin);
-        stream.Read(_hdrId, 0, 13);
+        stream.EnsureRead(_hdrId, 0, 13);
         stream.Seek(0xC2, SeekOrigin.Begin);
-        stream.Read(_comment, 0, 60);
+        stream.EnsureRead(_comment, 0, 60);
 
         if(!_headerId.SequenceEqual(_hdrId))
             return ErrorNumber.InvalidArgument;
@@ -256,7 +256,7 @@ public sealed partial class Dim
 
         stream.Seek((long)(DATA_OFFSET + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
-        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }

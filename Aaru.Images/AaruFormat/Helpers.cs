@@ -253,7 +253,7 @@ public sealed partial class AaruFormat
         _imageStream.Position =  _outMemoryDdtPosition + Marshal.SizeOf<DdtHeader>();
         _imageStream.Position += (long)(sectorAddress * sizeof(ulong));
         var temp = new byte[sizeof(ulong)];
-        _imageStream.Read(temp, 0, sizeof(ulong));
+        _imageStream.EnsureRead(temp, 0, sizeof(ulong));
         _imageStream.Position = oldPosition;
         entry                 = BitConverter.ToUInt64(temp, 0);
 

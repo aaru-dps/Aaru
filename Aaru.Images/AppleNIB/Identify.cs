@@ -35,6 +35,7 @@ namespace Aaru.DiscImages;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Decoders.Floppy;
+using Aaru.Helpers;
 
 public sealed partial class AppleNib
 {
@@ -48,7 +49,7 @@ public sealed partial class AppleNib
             return false;
 
         var test = new byte[512];
-        stream.Read(test, 0, 512);
+        stream.EnsureRead(test, 0, 512);
 
         return Apple2.IsApple2GCR(test);
     }

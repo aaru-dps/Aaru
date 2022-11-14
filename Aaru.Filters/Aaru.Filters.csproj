@@ -43,19 +43,19 @@
         <NrtShowRevision>true</NrtShowRevision>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="OffsetStream.cs" />
-        <Compile Include="Register.cs" />
-        <Compile Include="SplitJoinStream.cs" />
-        <Compile Include="ZZZNoFilter.cs" />
-        <Compile Include="ForcedSeekStream.cs" />
-        <Compile Include="GZip.cs" />
-        <Compile Include="AppleSingle.cs" />
-        <Compile Include="AppleDouble.cs" />
-        <Compile Include="MacBinary.cs" />
-        <Compile Include="BZip2.cs" />
-        <Compile Include="PCExchange.cs" />
-        <Compile Include="LZip.cs" />
-        <Compile Include="XZ.cs" />
+        <Compile Include="OffsetStream.cs"/>
+        <Compile Include="Register.cs"/>
+        <Compile Include="SplitJoinStream.cs"/>
+        <Compile Include="ZZZNoFilter.cs"/>
+        <Compile Include="ForcedSeekStream.cs"/>
+        <Compile Include="GZip.cs"/>
+        <Compile Include="AppleSingle.cs"/>
+        <Compile Include="AppleDouble.cs"/>
+        <Compile Include="MacBinary.cs"/>
+        <Compile Include="BZip2.cs"/>
+        <Compile Include="PCExchange.cs"/>
+        <Compile Include="LZip.cs"/>
+        <Compile Include="XZ.cs"/>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.LGPL">
@@ -63,13 +63,13 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
+        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="DotNetZip" Version="1.16.0" />
-        <PackageReference Include="SharpCompress" Version="0.32.2" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
+        <PackageReference Include="DotNetZip" Version="1.16.0"/>
+        <PackageReference Include="SharpCompress" Version="0.32.2"/>
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
     </ItemGroup>
 </Project>

@@ -389,11 +389,11 @@ public sealed partial class DiskCopy42
 
         writingStream.Seek(0x54, SeekOrigin.Begin);
         var data = new byte[header.DataSize];
-        writingStream.Read(data, 0, (int)header.DataSize);
+        writingStream.EnsureRead(data, 0, (int)header.DataSize);
         header.DataChecksum = CheckSum(data);
         writingStream.Seek(0x54 + header.DataSize, SeekOrigin.Begin);
         data = new byte[header.TagSize];
-        writingStream.Read(data, 0, (int)header.TagSize);
+        writingStream.EnsureRead(data, 0, (int)header.TagSize);
         header.TagChecksum = CheckSum(data);
 
         writingStream.Seek(0, SeekOrigin.Begin);

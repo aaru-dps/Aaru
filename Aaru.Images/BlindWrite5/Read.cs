@@ -65,7 +65,7 @@ public sealed partial class BlindWrite5
             return ErrorNumber.InvalidArgument;
 
         var hdr = new byte[260];
-        stream.Read(hdr, 0, 260);
+        stream.EnsureRead(hdr, 0, 260);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.signature = {0}",
@@ -127,7 +127,7 @@ public sealed partial class BlindWrite5
 
         if(_mode2A.Length > 0)
         {
-            stream.Read(_mode2A, 0, _mode2A.Length);
+            stream.EnsureRead(_mode2A, 0, _mode2A.Length);
             _mode2A[1] -= 2;
             var decoded2A = ModePage_2A.Decode(_mode2A);
 
@@ -141,14 +141,14 @@ public sealed partial class BlindWrite5
         _unkBlock = new byte[_header.unkBlkLen];
 
         if(_unkBlock.Length > 0)
-            stream.Read(_unkBlock, 0, _unkBlock.Length);
+            stream.EnsureRead(_unkBlock, 0, _unkBlock.Length);
 
         var temp = new byte[_header.pmaLen];
 
         if(temp.Length > 0)
         {
             byte[] tushort = BitConverter.GetBytes((ushort)(temp.Length + 2));
-            stream.Read(temp, 0, temp.Length);
+            stream.EnsureRead(temp, 0, temp.Length);
             _pma    = new byte[temp.Length + 4];
             _pma[0] = tushort[1];
             _pma[1] = tushort[0];
@@ -165,21 +165,21 @@ public sealed partial class BlindWrite5
         _atip = new byte[_header.atipLen];
 
         if(_atip.Length > 0)
-            stream.Read(_atip, 0, _atip.Length);
+            stream.EnsureRead(_atip, 0, _atip.Length);
         else
             _atip = null;
 
         _cdtext = new byte[_header.cdtLen];
 
         if(_cdtext.Length > 0)
-            stream.Read(_cdtext, 0, _cdtext.Length);
+            stream.EnsureRead(_cdtext, 0, _cdtext.Length);
         else
             _cdtext = null;
 
         _bca = new byte[_header.bcaLen];
 
         if(_bca.Length > 0)
-            stream.Read(_bca, 0, _bca.Length);
+            stream.EnsureRead(_bca, 0, _bca.Length);
         else
             _bca = null;
 
@@ -187,7 +187,7 @@ public sealed partial class BlindWrite5
 
         if(temp.Length > 0)
         {
-            stream.Read(temp, 0, temp.Length);
+            stream.EnsureRead(temp, 0, temp.Length);
             _dmi = new byte[2052];
             _pfi = new byte[2052];
 
@@ -233,7 +233,7 @@ public sealed partial class BlindWrite5
 
         if(_discInformation.Length > 0)
         {
-            stream.Read(_discInformation, 0, _discInformation.Length);
+            stream.EnsureRead(_discInformation, 0, _discInformation.Length);
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Disc information: {0}",
                                        PrintHex.ByteArrayToHexArrayString(_discInformation, 40));
@@ -243,13 +243,13 @@ public sealed partial class BlindWrite5
 
         // How many data blocks
         var tmpArray = new byte[4];
-        stream.Read(tmpArray, 0, tmpArray.Length);
+        stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         var dataBlockCount = BitConverter.ToUInt32(tmpArray, 0);
 
-        stream.Read(tmpArray, 0, tmpArray.Length);
+        stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         var dataPathLen   = BitConverter.ToUInt32(tmpArray, 0);
         var dataPathBytes = new byte[dataPathLen];
-        stream.Read(dataPathBytes, 0, dataPathBytes.Length);
+        stream.EnsureRead(dataPathBytes, 0, dataPathBytes.Length);
         _dataPath = Encoding.Unicode.GetString(dataPathBytes);
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Data path: {0}", _dataPath);
 
@@ -265,7 +265,7 @@ public sealed partial class BlindWrite5
                 Unknown2 = new uint[3]
             };
 
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             dataFile.Type          = BitConverter.ToUInt32(tmpArray, 0);
             dataFile.Length        = BitConverter.ToUInt32(tmpArray, 4);
             dataFile.Unknown1[0]   = BitConverter.ToUInt32(tmpArray, 8);
@@ -282,10 +282,10 @@ public sealed partial class BlindWrite5
             dataFile.FilenameBytes = new byte[dataFile.FilenameLen];
 
             tmpArray = new byte[dataFile.FilenameLen];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             dataFile.FilenameBytes = tmpArray;
             tmpArray               = new byte[4];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             dataFile.Unknown3 = BitConverter.ToUInt32(tmpArray, 0);
 
             dataFile.Filename = Encoding.Unicode.GetString(dataFile.FilenameBytes);
@@ -317,7 +317,7 @@ public sealed partial class BlindWrite5
         {
             var session = new SessionDescriptor();
             tmpArray = new byte[16];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             session.Sequence   = BitConverter.ToUInt16(tmpArray, 0);
             session.Entries    = tmpArray[2];
             session.Unknown    = tmpArray[3];
@@ -340,7 +340,7 @@ public sealed partial class BlindWrite5
             for(var tSeq = 0; tSeq < session.Entries; tSeq++)
             {
                 var trk = new byte[72];
-                stream.Read(trk, 0, 72);
+                stream.EnsureRead(trk, 0, 72);
                 session.Tracks[tSeq] = Marshal.ByteArrayToStructureLittleEndian<TrackDescriptor>(trk);
 
                 if(session.Tracks[tSeq].type is TrackType.Dvd or TrackType.NotData)
@@ -440,14 +440,14 @@ public sealed partial class BlindWrite5
         }
 
         _dpm = new byte[_header.dpmLen];
-        stream.Read(_dpm, 0, _dpm.Length);
+        stream.EnsureRead(_dpm, 0, _dpm.Length);
 
         // Unused
         tmpArray = new byte[4];
-        stream.Read(tmpArray, 0, tmpArray.Length);
+        stream.EnsureRead(tmpArray, 0, tmpArray.Length);
 
         var footer = new byte[16];
-        stream.Read(footer, 0, footer.Length);
+        stream.EnsureRead(footer, 0, footer.Length);
 
         if(_bw5Footer.SequenceEqual(footer))
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Correctly arrived end of image");

@@ -39,6 +39,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class HdCopy
 {
@@ -86,7 +87,7 @@ public sealed partial class HdCopy
                     return ErrorNumber.InvalidArgument;
 
                 var blkHeader = new byte[2];
-                stream.Read(blkHeader, 0, 2);
+                stream.EnsureRead(blkHeader, 0, 2);
                 var blkLength = BitConverter.ToInt16(blkHeader, 0);
 
                 // assume block sizes are positive

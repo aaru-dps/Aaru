@@ -53,19 +53,19 @@ public sealed partial class Vhd
         byte[] footer;
 
         imageStream.Seek(0, SeekOrigin.Begin);
-        imageStream.Read(header, 0, 512);
+        imageStream.EnsureRead(header, 0, 512);
 
         if(imageStream.Length % 2 == 0)
         {
             footer = new byte[512];
             imageStream.Seek(-512, SeekOrigin.End);
-            imageStream.Read(footer, 0, 512);
+            imageStream.EnsureRead(footer, 0, 512);
         }
         else
         {
             footer = new byte[511];
             imageStream.Seek(-511, SeekOrigin.End);
-            imageStream.Read(footer, 0, 511);
+            imageStream.EnsureRead(footer, 0, 511);
         }
 
         var headerChecksum = BigEndianBitConverter.ToUInt32(header, 0x40);
@@ -342,7 +342,7 @@ public sealed partial class Vhd
         {
             imageStream.Seek((long)_thisFooter.Offset, SeekOrigin.Begin);
             var dynamicBytes = new byte[1024];
-            imageStream.Read(dynamicBytes, 0, 1024);
+            imageStream.EnsureRead(dynamicBytes, 0, 1024);
 
             var dynamicChecksum = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x24);
 
@@ -468,7 +468,7 @@ public sealed partial class Vhd
 
             var bat = new byte[_thisDynamic.MaxTableEntries * 4];
             imageStream.Seek((long)_thisDynamic.TableOffset, SeekOrigin.Begin);
-            imageStream.Read(bat, 0, bat.Length);
+            imageStream.EnsureRead(bat, 0, bat.Length);
 
             ReadOnlySpan<byte> span = bat;
 
@@ -515,8 +515,8 @@ public sealed partial class Vhd
                         _locatorEntriesData[i] = new byte[_thisDynamic.LocatorEntries[i].PlatformDataLength];
                         imageStream.Seek((long)_thisDynamic.LocatorEntries[i].PlatformDataOffset, SeekOrigin.Begin);
 
-                        imageStream.Read(_locatorEntriesData[i], 0,
-                                         (int)_thisDynamic.LocatorEntries[i].PlatformDataLength);
+                        imageStream.EnsureRead(_locatorEntriesData[i], 0,
+                                               (int)_thisDynamic.LocatorEntries[i].PlatformDataLength);
 
                         switch(_thisDynamic.LocatorEntries[i].PlatformCode)
                         {
@@ -706,7 +706,7 @@ public sealed partial class Vhd
                 Stream thisStream = _thisFilter.GetDataForkStream();
 
                 thisStream.Seek(blockOffset, SeekOrigin.Begin);
-                thisStream.Read(bitmap, 0, (int)_bitmapSize * 512);
+                thisStream.EnsureRead(bitmap, 0, (int)_bitmapSize * 512);
 
                 var  mask  = (byte)(1 << (7 - bitmapBit));
                 bool dirty = (bitmap[bitmapByte] & mask) == mask;
@@ -736,7 +736,7 @@ public sealed partial class Vhd
                 thisStream = _thisFilter.GetDataForkStream();
 
                 thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
-                thisStream.Read(buffer, 0, 512);
+                thisStream.EnsureRead(buffer, 0, 512);
 
                 return ErrorNumber.NoError;
 
@@ -763,8 +763,8 @@ public sealed partial class Vhd
                 buffer = new byte[512 * length];
                 Stream thisStream = _thisFilter.GetDataForkStream();
 
-                thisStream.Seek((long)(sectorAddress * 512), SeekOrigin.Begin);
-                thisStream.Read(buffer, 0, (int)(512 * length));
+                thisStream.Seek((long)(sectorAddress       * 512), SeekOrigin.Begin);
+                thisStream.EnsureRead(buffer, 0, (int)(512 * length));
 
                 return ErrorNumber.NoError;
             }
@@ -815,7 +815,7 @@ public sealed partial class Vhd
                 {
                     Stream thisStream = _thisFilter.GetDataForkStream();
                     thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
-                    thisStream.Read(prefix, 0, (int)(512 * sectorsToReadHere));
+                    thisStream.EnsureRead(prefix, 0, (int)(512 * sectorsToReadHere));
                 }
 
                 // If it is unallocated, just fill with zeroes

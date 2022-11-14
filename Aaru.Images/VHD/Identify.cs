@@ -51,9 +51,9 @@ public sealed partial class Vhd
         else
             imageStream.Seek(-511, SeekOrigin.End);
 
-        imageStream.Read(footerCookieBytes, 0, 8);
+        imageStream.EnsureRead(footerCookieBytes, 0, 8);
         imageStream.Seek(0, SeekOrigin.Begin);
-        imageStream.Read(headerCookieBytes, 0, 8);
+        imageStream.EnsureRead(headerCookieBytes, 0, 8);
 
         var headerCookie = BigEndianBitConverter.ToUInt64(headerCookieBytes, 0);
         var footerCookie = BigEndianBitConverter.ToUInt64(footerCookieBytes, 0);

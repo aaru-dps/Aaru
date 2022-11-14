@@ -54,7 +54,7 @@ public sealed partial class Partimage
             return ErrorNumber.InvalidArgument;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(hdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(hdrB, 0, Marshal.SizeOf<Header>());
         _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
         AaruConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.magic = {0}",
@@ -77,7 +77,7 @@ public sealed partial class Partimage
         }
 
         hdrB = new byte[Marshal.SizeOf<MainHeader>()];
-        stream.Read(hdrB, 0, Marshal.SizeOf<MainHeader>());
+        stream.EnsureRead(hdrB, 0, Marshal.SizeOf<MainHeader>());
         _cMainHeader = Marshal.ByteArrayToStructureLittleEndian<MainHeader>(hdrB);
 
         AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szFileSystem = {0}",
@@ -217,7 +217,7 @@ public sealed partial class Partimage
         if(_cMainHeader.dwMbrCount > 0)
         {
             hdrB = new byte[MAGIC_BEGIN_MBRBACKUP.Length];
-            stream.Read(hdrB, 0, MAGIC_BEGIN_MBRBACKUP.Length);
+            stream.EnsureRead(hdrB, 0, MAGIC_BEGIN_MBRBACKUP.Length);
             magic = StringHandlers.CToString(hdrB);
 
             if(!magic.Equals(MAGIC_BEGIN_MBRBACKUP))
@@ -234,7 +234,7 @@ public sealed partial class Partimage
         stream.Seek((MAGIC_BEGIN_EXT000.Length + 4) * 10, SeekOrigin.Current);
 
         hdrB = new byte[MAGIC_BEGIN_LOCALHEADER.Length];
-        stream.Read(hdrB, 0, MAGIC_BEGIN_LOCALHEADER.Length);
+        stream.EnsureRead(hdrB, 0, MAGIC_BEGIN_LOCALHEADER.Length);
         magic = StringHandlers.CToString(hdrB);
 
         if(!magic.Equals(MAGIC_BEGIN_LOCALHEADER))
@@ -245,7 +245,7 @@ public sealed partial class Partimage
         }
 
         hdrB = new byte[Marshal.SizeOf<CLocalHeader>()];
-        stream.Read(hdrB, 0, Marshal.SizeOf<CLocalHeader>());
+        stream.EnsureRead(hdrB, 0, Marshal.SizeOf<CLocalHeader>());
         CLocalHeader localHeader = Marshal.ByteArrayToStructureLittleEndian<CLocalHeader>(hdrB);
 
         AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlockSize = {0}", localHeader.qwBlockSize);
@@ -267,7 +267,7 @@ public sealed partial class Partimage
         AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.crc = 0x{0:X8}", localHeader.crc);
 
         hdrB = new byte[MAGIC_BEGIN_BITMAP.Length];
-        stream.Read(hdrB, 0, MAGIC_BEGIN_BITMAP.Length);
+        stream.EnsureRead(hdrB, 0, MAGIC_BEGIN_BITMAP.Length);
         magic = StringHandlers.CToString(hdrB);
 
         if(!magic.Equals(MAGIC_BEGIN_BITMAP))
@@ -278,10 +278,10 @@ public sealed partial class Partimage
         }
 
         _bitmap = new byte[localHeader.qwBitmapSize];
-        stream.Read(_bitmap, 0, (int)localHeader.qwBitmapSize);
+        stream.EnsureRead(_bitmap, 0, (int)localHeader.qwBitmapSize);
 
         hdrB = new byte[MAGIC_BEGIN_INFO.Length];
-        stream.Read(hdrB, 0, MAGIC_BEGIN_INFO.Length);
+        stream.EnsureRead(hdrB, 0, MAGIC_BEGIN_INFO.Length);
         magic = StringHandlers.CToString(hdrB);
 
         if(!magic.Equals(MAGIC_BEGIN_INFO))
@@ -295,7 +295,7 @@ public sealed partial class Partimage
         stream.Seek(16384 + 4, SeekOrigin.Current);
 
         hdrB = new byte[MAGIC_BEGIN_DATABLOCKS.Length];
-        stream.Read(hdrB, 0, MAGIC_BEGIN_DATABLOCKS.Length);
+        stream.EnsureRead(hdrB, 0, MAGIC_BEGIN_DATABLOCKS.Length);
         magic = StringHandlers.CToString(hdrB);
 
         if(!magic.Equals(MAGIC_BEGIN_DATABLOCKS))
@@ -313,7 +313,7 @@ public sealed partial class Partimage
         stream.Seek(-(Marshal.SizeOf<CMainTail>() + MAGIC_BEGIN_TAIL.Length), SeekOrigin.End);
 
         hdrB = new byte[MAGIC_BEGIN_TAIL.Length];
-        stream.Read(hdrB, 0, MAGIC_BEGIN_TAIL.Length);
+        stream.EnsureRead(hdrB, 0, MAGIC_BEGIN_TAIL.Length);
         magic = StringHandlers.CToString(hdrB);
 
         if(!magic.Equals(MAGIC_BEGIN_TAIL))
@@ -410,7 +410,7 @@ public sealed partial class Partimage
 
         buffer = new byte[_imageInfo.SectorSize];
         _imageStream.Seek(imageOff, SeekOrigin.Begin);
-        _imageStream.Read(buffer, 0, (int)_imageInfo.SectorSize);
+        _imageStream.EnsureRead(buffer, 0, (int)_imageInfo.SectorSize);
 
         if(_sectorCache.Count > MAX_CACHED_SECTORS)
             _sectorCache.Clear();

@@ -48,13 +48,13 @@ public sealed partial class Nero
 
         _imageStream.Seek(-8, SeekOrigin.End);
         var buffer = new byte[8];
-        _imageStream.Read(buffer, 0, 8);
+        _imageStream.EnsureRead(buffer, 0, 8);
         footerV1.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
         footerV1.FirstChunkOffset = BigEndianBitConverter.ToUInt32(buffer, 4);
 
         _imageStream.Seek(-12, SeekOrigin.End);
         buffer = new byte[12];
-        _imageStream.Read(buffer, 0, 12);
+        _imageStream.EnsureRead(buffer, 0, 12);
         footerV2.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
         footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 

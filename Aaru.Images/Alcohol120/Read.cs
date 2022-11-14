@@ -59,7 +59,7 @@ public sealed partial class Alcohol120
 
         _isDvd = false;
         var hdr = new byte[88];
-        stream.Read(hdr, 0, 88);
+        stream.EnsureRead(hdr, 0, 88);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
         AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.signature = {0}",
@@ -105,7 +105,7 @@ public sealed partial class Alcohol120
         for(var i = 0; i < _header.sessions; i++)
         {
             var sesHdr = new byte[24];
-            stream.Read(sesHdr, 0, 24);
+            stream.EnsureRead(sesHdr, 0, 24);
             Session session = Marshal.SpanToStructureLittleEndian<Session>(sesHdr);
 
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].sessionStart = {0}", session.sessionStart,
@@ -147,7 +147,7 @@ public sealed partial class Alcohol120
             for(var i = 0; i < session.allBlocks; i++)
             {
                 var trkHdr = new byte[80];
-                stream.Read(trkHdr, 0, 80);
+                stream.EnsureRead(trkHdr, 0, 80);
                 Track track = Marshal.ByteArrayToStructureLittleEndian<Track>(trkHdr);
 
                 if(track.mode is TrackMode.Mode2F1Alt or TrackMode.Mode2F1Alt)
@@ -257,7 +257,7 @@ public sealed partial class Alcohol120
             {
                 var extHdr = new byte[8];
                 stream.Seek(track.extraOffset, SeekOrigin.Begin);
-                stream.Read(extHdr, 0, 8);
+                stream.EnsureRead(extHdr, 0, 8);
                 TrackExtra extra = Marshal.SpanToStructureLittleEndian<TrackExtra>(extHdr);
 
                 AaruConsole.DebugWriteLine("Alcohol 120% plugin", "track[{1}].extra.pregap = {0}", extra.pregap,
@@ -288,7 +288,7 @@ public sealed partial class Alcohol120
         {
             var footer = new byte[16];
             stream.Seek(footerOff, SeekOrigin.Begin);
-            stream.Read(footer, 0, 16);
+            stream.EnsureRead(footer, 0, 16);
             _alcFooter = Marshal.SpanToStructureLittleEndian<Footer>(footer);
 
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filenameOffset = {0}", _alcFooter.filenameOffset);
@@ -307,7 +307,7 @@ public sealed partial class Alcohol120
             byte[] filename = _header.dpmOffset == 0 ? new byte[stream.Length - stream.Position]
                                   : new byte[_header.dpmOffset                - stream.Position];
 
-            stream.Read(filename, 0, filename.Length);
+            stream.EnsureRead(filename, 0, filename.Length);
 
             alcFile = _alcFooter.widechar == 1 ? StringHandlers.CToString(filename, Encoding.Unicode, true)
                           : StringHandlers.CToString(filename, Encoding.Default);
@@ -333,7 +333,7 @@ public sealed partial class Alcohol120
         {
             _bca = new byte[_header.bcaLength];
             stream.Seek(_header.bcaOffset, SeekOrigin.Begin);
-            int readBytes = stream.Read(_bca, 0, _bca.Length);
+            int readBytes = stream.EnsureRead(_bca, 0, _bca.Length);
 
             if(readBytes == _bca.Length)
                 switch(_header.type)
@@ -385,7 +385,7 @@ public sealed partial class Alcohol120
             {
                 var structures = new byte[4100];
                 stream.Seek(_header.structuresOffset, SeekOrigin.Begin);
-                stream.Read(structures, 0, 4100);
+                stream.EnsureRead(structures, 0, 4100);
                 _dmi = new byte[2052];
                 _pfi = new byte[2052];
 

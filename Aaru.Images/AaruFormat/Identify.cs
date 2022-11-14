@@ -48,7 +48,7 @@ public sealed partial class AaruFormat
             return false;
 
         _structureBytes = new byte[Marshal.SizeOf<AaruHeader>()];
-        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
         _header = Marshal.ByteArrayToStructureLittleEndian<AaruHeader>(_structureBytes);
 
         return _header.identifier is DIC_MAGIC or AARU_MAGIC && _header.imageMajorVersion <= AARUFMT_VERSION;

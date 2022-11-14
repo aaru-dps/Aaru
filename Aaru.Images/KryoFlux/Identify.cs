@@ -48,14 +48,14 @@ public sealed partial class KryoFlux
             return false;
 
         var hdr = new byte[Marshal.SizeOf<OobBlock>()];
-        stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
+        stream.EnsureRead(hdr, 0, Marshal.SizeOf<OobBlock>());
 
         OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
         stream.Seek(-Marshal.SizeOf<OobBlock>(), SeekOrigin.End);
 
         hdr = new byte[Marshal.SizeOf<OobBlock>()];
-        stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
+        stream.EnsureRead(hdr, 0, Marshal.SizeOf<OobBlock>());
 
         OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 

@@ -207,7 +207,7 @@ public sealed partial class Qcow
         _writingStream.Seek((long)(_l1Table[l1Off] + l2Off * 8), SeekOrigin.Begin);
 
         var entry = new byte[8];
-        _writingStream.Read(entry, 0, 8);
+        _writingStream.EnsureRead(entry, 0, 8);
         var offset = BigEndianBitConverter.ToUInt64(entry, 0);
 
         if(offset == 0)

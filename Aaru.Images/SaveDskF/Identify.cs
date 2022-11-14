@@ -48,7 +48,7 @@ public sealed partial class SaveDskF
             return false;
 
         var hdr = new byte[40];
-        stream.Read(hdr, 0, 40);
+        stream.EnsureRead(hdr, 0, 40);
 
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 

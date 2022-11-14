@@ -48,7 +48,7 @@ public sealed partial class DiskCopy42
         stream.Seek(0, SeekOrigin.Begin);
         var buffer  = new byte[0x58];
         var pString = new byte[64];
-        stream.Read(buffer, 0, 0x58);
+        stream.EnsureRead(buffer, 0, 0x58);
 
         // Incorrect pascal string length, not DC42
         if(buffer[0] > 63)

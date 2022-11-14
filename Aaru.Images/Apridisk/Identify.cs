@@ -35,6 +35,7 @@ namespace Aaru.DiscImages;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class Apridisk
 {
@@ -48,7 +49,7 @@ public sealed partial class Apridisk
             return false;
 
         var sigB = new byte[_signature.Length];
-        stream.Read(sigB, 0, _signature.Length);
+        stream.EnsureRead(sigB, 0, _signature.Length);
 
         return sigB.SequenceEqual(_signature);
     }

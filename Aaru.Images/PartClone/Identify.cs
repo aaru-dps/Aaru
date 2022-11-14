@@ -49,7 +49,7 @@ public sealed partial class PartClone
             return false;
 
         var pHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
         if(stream.Position + (long)_pHdr.totalBlocks > stream.Length)
@@ -58,7 +58,7 @@ public sealed partial class PartClone
         stream.Seek((long)_pHdr.totalBlocks, SeekOrigin.Current);
 
         var bitmagic = new byte[8];
-        stream.Read(bitmagic, 0, 8);
+        stream.EnsureRead(bitmagic, 0, 8);
 
         return _partCloneMagic.SequenceEqual(_pHdr.magic) && _biTmAgIc.SequenceEqual(bitmagic);
     }

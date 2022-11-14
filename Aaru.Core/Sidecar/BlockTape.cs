@@ -34,6 +34,7 @@ namespace Aaru.Core;
 
 using System.Collections.Generic;
 using System.IO;
+using Aaru.Helpers;
 using Schemas;
 
 /// <summary>Sidecar operations</summary>
@@ -133,7 +134,7 @@ public sealed partial class Sidecar
                 if(sectors - doneSectors >= sectorsToRead)
                 {
                     sector = new byte[sectorsToRead * blockSize];
-                    _fs.Read(sector, 0, sector.Length);
+                    _fs.EnsureRead(sector, 0, sector.Length);
 
                     UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
                                     (long)doneSectors, (long)sectors);
@@ -143,7 +144,7 @@ public sealed partial class Sidecar
                 else
                 {
                     sector = new byte[(uint)(sectors - doneSectors) * blockSize];
-                    _fs.Read(sector, 0, sector.Length);
+                    _fs.EnsureRead(sector, 0, sector.Length);
 
                     UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
                                     (long)doneSectors, (long)sectors);

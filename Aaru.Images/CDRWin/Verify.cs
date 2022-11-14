@@ -40,6 +40,7 @@ using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class CdrWin
 {
@@ -68,13 +69,13 @@ public sealed partial class CdrWin
 
                 while(readBytes + verifySize < stream.Length)
                 {
-                    stream.Read(verifyBytes, 0, verifyBytes.Length);
+                    stream.EnsureRead(verifyBytes, 0, verifyBytes.Length);
                     ctx.Update(verifyBytes);
                     readBytes += verifyBytes.LongLength;
                 }
 
                 verifyBytes = new byte[stream.Length - readBytes];
-                stream.Read(verifyBytes, 0, verifyBytes.Length);
+                stream.EnsureRead(verifyBytes, 0, verifyBytes.Length);
                 ctx.Update(verifyBytes);
             }
 
@@ -96,13 +97,13 @@ public sealed partial class CdrWin
 
                 while(readBytes + verifySize < stream.Length)
                 {
-                    stream.Read(verifyBytes, 0, verifyBytes.Length);
+                    stream.EnsureRead(verifyBytes, 0, verifyBytes.Length);
                     ctx.Update(verifyBytes);
                     readBytes += verifyBytes.LongLength;
                 }
 
                 verifyBytes = new byte[stream.Length - readBytes];
-                stream.Read(verifyBytes, 0, verifyBytes.Length);
+                stream.EnsureRead(verifyBytes, 0, verifyBytes.Length);
                 ctx.Update(verifyBytes);
             }
 
@@ -124,13 +125,13 @@ public sealed partial class CdrWin
 
                 while(readBytes + verifySize < stream.Length)
                 {
-                    stream.Read(verifyBytes, 0, verifyBytes.Length);
+                    stream.EnsureRead(verifyBytes, 0, verifyBytes.Length);
                     ctx.Update(verifyBytes);
                     readBytes += verifyBytes.LongLength;
                 }
 
                 verifyBytes = new byte[stream.Length - readBytes];
-                stream.Read(verifyBytes, 0, verifyBytes.Length);
+                stream.EnsureRead(verifyBytes, 0, verifyBytes.Length);
                 ctx.Update(verifyBytes);
             }
 

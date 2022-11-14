@@ -32,6 +32,7 @@ using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using NUnit.Framework;
 
 [TestFixture]
@@ -56,7 +57,7 @@ public class GZip
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
         var    data = new byte[1048576];
-        str.Read(data, 0, 1048576);
+        str.EnsureRead(data, 0, 1048576);
         str.Close();
         str.Dispose();
         filter.Close();

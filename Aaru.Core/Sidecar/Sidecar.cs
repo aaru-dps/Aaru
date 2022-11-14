@@ -40,6 +40,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using Schemas;
 
 public sealed partial class Sidecar
@@ -104,7 +105,7 @@ public sealed partial class Sidecar
                 return _sidecar;
 
             data = new byte[1048576];
-            _fs.Read(data, 0, 1048576);
+            _fs.EnsureRead(data, 0, 1048576);
 
             UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
 
@@ -114,7 +115,7 @@ public sealed partial class Sidecar
         }
 
         data = new byte[_fi.Length - position];
-        _fs.Read(data, 0, (int)(_fi.Length - position));
+        _fs.EnsureRead(data, 0, (int)(_fi.Length - position));
 
         UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
 

@@ -44,6 +44,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders.CD;
+using Aaru.Helpers;
 using Schemas;
 using Session = Aaru.CommonTypes.Structs.Session;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
@@ -1027,7 +1028,7 @@ public sealed partial class CdrWin
 
                     track1Stream.Position = next * 2352;
                     var data = new byte[16];
-                    track1Stream.Read(data, 0, 16);
+                    track1Stream.EnsureRead(data, 0, 16);
 
                     // If the position is not MODEx/2352, it can't be a correct Cuesheet.
                     if(data[0x000] == 0x00 &&

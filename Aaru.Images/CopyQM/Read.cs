@@ -50,7 +50,7 @@ public sealed partial class CopyQm
 
         var hdr = new byte[133];
 
-        stream.Read(hdr, 0, 133);
+        stream.EnsureRead(hdr, 0, 133);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
         AaruConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}", _header.magic);
@@ -84,7 +84,7 @@ public sealed partial class CopyQm
         AaruConsole.DebugWriteLine("CopyQM plugin", "header.drive = {0}", _header.drive);
 
         var cmt = new byte[_header.commentLength];
-        stream.Read(cmt, 0, _header.commentLength);
+        stream.EnsureRead(cmt, 0, _header.commentLength);
         _imageInfo.Comments = StringHandlers.CToString(cmt);
         _decodedImage       = new MemoryStream();
 
@@ -94,7 +94,7 @@ public sealed partial class CopyQm
         {
             var runLengthBytes = new byte[2];
 
-            if(stream.Read(runLengthBytes, 0, 2) != 2)
+            if(stream.EnsureRead(runLengthBytes, 0, 2) != 2)
                 break;
 
             var runLength = BitConverter.ToInt16(runLengthBytes, 0);
@@ -120,7 +120,7 @@ public sealed partial class CopyQm
                 case > 0:
                 {
                     var nonRepeated = new byte[runLength];
-                    stream.Read(nonRepeated, 0, runLength);
+                    stream.EnsureRead(nonRepeated, 0, runLength);
                     _decodedImage.Write(nonRepeated, 0, runLength);
 
                     foreach(byte c in nonRepeated)

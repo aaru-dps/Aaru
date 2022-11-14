@@ -47,7 +47,7 @@ public sealed partial class DiscFerret
     {
         var    magicB = new byte[4];
         Stream stream = imageFilter.GetDataForkStream();
-        stream.Read(magicB, 0, 4);
+        stream.EnsureRead(magicB, 0, 4);
         var magic = BitConverter.ToUInt32(magicB, 0);
 
         if(magic != DFI_MAGIC &&
@@ -65,7 +65,7 @@ public sealed partial class DiscFerret
             long thisOffset = stream.Position;
 
             var blk = new byte[Marshal.SizeOf<BlockHeader>()];
-            stream.Read(blk, 0, Marshal.SizeOf<BlockHeader>());
+            stream.EnsureRead(blk, 0, Marshal.SizeOf<BlockHeader>());
             BlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(blk);
 
             AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,

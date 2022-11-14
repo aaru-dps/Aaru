@@ -49,7 +49,7 @@ public sealed partial class Qcow2
             return false;
 
         var qHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(qHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(qHdrB, 0, Marshal.SizeOf<Header>());
         _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
         AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", _qHdr.magic);

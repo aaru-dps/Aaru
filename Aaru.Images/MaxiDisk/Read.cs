@@ -50,7 +50,7 @@ public sealed partial class MaxiDisk
 
         var buffer = new byte[8];
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         Header tmpHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
@@ -116,7 +116,7 @@ public sealed partial class MaxiDisk
 
         Stream stream = _hdkImageFilter.GetDataForkStream();
         stream.Seek((long)(8 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
-        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }

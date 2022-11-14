@@ -89,7 +89,7 @@ public class Nintendo64 : IByteAddressableImage
 
         stream.Position = 0;
         var magicBytes = new byte[4];
-        stream.Read(magicBytes, 0, 4);
+        stream.EnsureRead(magicBytes, 0, 4);
         var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         switch(magic)
@@ -120,7 +120,7 @@ public class Nintendo64 : IByteAddressableImage
 
         stream.Position = 0;
         var magicBytes = new byte[4];
-        stream.Read(magicBytes, 0, 4);
+        stream.EnsureRead(magicBytes, 0, 4);
         var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         switch(magic)
@@ -154,7 +154,7 @@ public class Nintendo64 : IByteAddressableImage
 
         _data           = new byte[imageFilter.DataForkLength];
         stream.Position = 0;
-        stream.Read(_data, 0, (int)imageFilter.DataForkLength);
+        stream.EnsureRead(_data, 0, (int)imageFilter.DataForkLength);
 
         _imageInfo = new ImageInfo
         {

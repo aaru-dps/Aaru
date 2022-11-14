@@ -10,6 +10,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
@@ -50,7 +51,7 @@ public class MasterSystem : IByteAddressableImage
 
         stream.Position = 0x7ff0;
         var magicBytes = new byte[8];
-        stream.Read(magicBytes, 0, 8);
+        stream.EnsureRead(magicBytes, 0, 8);
         var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic == 0x4147455320524D54)
@@ -58,7 +59,7 @@ public class MasterSystem : IByteAddressableImage
 
         stream.Position = 0x3ff0;
         magicBytes      = new byte[8];
-        stream.Read(magicBytes, 0, 8);
+        stream.EnsureRead(magicBytes, 0, 8);
         magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic == 0x4147455320524D54)
@@ -66,7 +67,7 @@ public class MasterSystem : IByteAddressableImage
 
         stream.Position = 0x1ff0;
         magicBytes      = new byte[8];
-        stream.Read(magicBytes, 0, 8);
+        stream.EnsureRead(magicBytes, 0, 8);
         magic = BitConverter.ToUInt64(magicBytes, 0);
 
         return magic == 0x4147455320524D54;
@@ -88,7 +89,7 @@ public class MasterSystem : IByteAddressableImage
 
         stream.Position = 0x7ff0;
         var magicBytes = new byte[8];
-        stream.Read(magicBytes, 0, 8);
+        stream.EnsureRead(magicBytes, 0, 8);
         var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic != 0x0B000DCC6666EDCE)
@@ -97,7 +98,7 @@ public class MasterSystem : IByteAddressableImage
         {
             stream.Position = 0x3ff0;
             magicBytes      = new byte[8];
-            stream.Read(magicBytes, 0, 8);
+            stream.EnsureRead(magicBytes, 0, 8);
             magic = BitConverter.ToUInt64(magicBytes, 0);
 
             if(magic != 0x0B000DCC6666EDCE)
@@ -106,7 +107,7 @@ public class MasterSystem : IByteAddressableImage
             {
                 stream.Position = 0x1ff0;
                 magicBytes      = new byte[8];
-                stream.Read(magicBytes, 0, 8);
+                stream.EnsureRead(magicBytes, 0, 8);
                 magic = BitConverter.ToUInt64(magicBytes, 0);
 
                 if(magic != 0x0B000DCC6666EDCE)
@@ -118,7 +119,7 @@ public class MasterSystem : IByteAddressableImage
 
         _data           = new byte[imageFilter.DataForkLength];
         stream.Position = 0;
-        stream.Read(_data, 0, (int)imageFilter.DataForkLength);
+        stream.EnsureRead(_data, 0, (int)imageFilter.DataForkLength);
 
         _imageInfo = new ImageInfo
         {

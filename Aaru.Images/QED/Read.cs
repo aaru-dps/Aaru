@@ -40,6 +40,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
 public sealed partial class Qed
@@ -54,7 +55,7 @@ public sealed partial class Qed
             return ErrorNumber.InvalidArgument;
 
         var qHdrB = new byte[68];
-        stream.Read(qHdrB, 0, 68);
+        stream.EnsureRead(qHdrB, 0, 68);
         _qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
 
         AaruConsole.DebugWriteLine("QED plugin", "qHdr.magic = 0x{0:X8}", _qHdr.magic);
@@ -127,7 +128,7 @@ public sealed partial class Qed
 
         var l1TableB = new byte[_tableSize * 8];
         stream.Seek((long)_qHdr.l1_table_offset, SeekOrigin.Begin);
-        stream.Read(l1TableB, 0, (int)_tableSize * 8);
+        stream.EnsureRead(l1TableB, 0, (int)_tableSize * 8);
         AaruConsole.DebugWriteLine("QED plugin", "Reading L1 table");
         _l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
 
@@ -220,7 +221,7 @@ public sealed partial class Qed
         {
             _imageStream.Seek((long)_l1Table[l1Off], SeekOrigin.Begin);
             var l2TableB = new byte[_tableSize * 8];
-            _imageStream.Read(l2TableB, 0, (int)_tableSize * 8);
+            _imageStream.EnsureRead(l2TableB, 0, (int)_tableSize * 8);
             AaruConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
             l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
 
@@ -243,7 +244,7 @@ public sealed partial class Qed
             {
                 cluster = new byte[_qHdr.cluster_size];
                 _imageStream.Seek((long)offset, SeekOrigin.Begin);
-                _imageStream.Read(cluster, 0, (int)_qHdr.cluster_size);
+                _imageStream.EnsureRead(cluster, 0, (int)_qHdr.cluster_size);
 
                 if(_clusterCache.Count >= _maxClusterCache)
                     _clusterCache.Clear();

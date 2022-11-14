@@ -31,6 +31,7 @@ namespace Aaru.Tests.Checksums;
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -70,7 +71,7 @@ public class Crc16Ibm
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         CRC16IBMContext.Data(data, out byte[] result);
@@ -93,7 +94,7 @@ public class Crc16Ibm
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new CRC16IBMContext();
@@ -110,7 +111,7 @@ public class Crc16Ibm
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         CRC16IBMContext.Data(data, out byte[] result);
@@ -133,7 +134,7 @@ public class Crc16Ibm
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new CRC16IBMContext();
@@ -150,7 +151,7 @@ public class Crc16Ibm
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 15);
+        fs.EnsureRead(data, 0, 15);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new CRC16IBMContext();
@@ -167,7 +168,7 @@ public class Crc16Ibm
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 31);
+        fs.EnsureRead(data, 0, 31);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new CRC16IBMContext();
@@ -184,7 +185,7 @@ public class Crc16Ibm
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 63);
+        fs.EnsureRead(data, 0, 63);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new CRC16IBMContext();
@@ -201,7 +202,7 @@ public class Crc16Ibm
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 2352);
+        fs.EnsureRead(data, 0, 2352);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new CRC16IBMContext();

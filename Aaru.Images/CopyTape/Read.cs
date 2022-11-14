@@ -41,6 +41,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class CopyTape
 {
@@ -70,7 +71,7 @@ public sealed partial class CopyTape
 
         while(_imageStream.Position + 9 < _imageStream.Length)
         {
-            _imageStream.Read(header, 0, 9);
+            _imageStream.EnsureRead(header, 0, 9);
             string mark = Encoding.ASCII.GetString(header);
 
             Match partialBlockMt = partialBlockRx.Match(mark);
@@ -111,7 +112,7 @@ public sealed partial class CopyTape
                 inFile           = true;
             }
 
-            _imageStream.Read(blockHeader, 0, 16);
+            _imageStream.EnsureRead(blockHeader, 0, 16);
             mark = Encoding.ASCII.GetString(blockHeader);
             Match blockMt = blockRx.Match(mark);
 
@@ -201,7 +202,7 @@ public sealed partial class CopyTape
         var blockHeader = new byte[16];
         var blockRx     = new Regex(BLOCK_REGEX);
 
-        _imageStream.Read(blockHeader, 0, 16);
+        _imageStream.EnsureRead(blockHeader, 0, 16);
         string mark    = Encoding.ASCII.GetString(blockHeader);
         Match  blockMt = blockRx.Match(mark);
 
@@ -222,7 +223,7 @@ public sealed partial class CopyTape
 
         buffer = new byte[blockSize];
 
-        _imageStream.Read(buffer, 0, (int)blockSize);
+        _imageStream.EnsureRead(buffer, 0, (int)blockSize);
 
         return _imageStream.ReadByte() != 0x0A ? ErrorNumber.InvalidArgument : ErrorNumber.NoError;
     }

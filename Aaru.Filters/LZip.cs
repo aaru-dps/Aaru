@@ -36,6 +36,7 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.LZMA;
 
@@ -86,7 +87,7 @@ public sealed class LZip : IFilter
         var buffer = new byte[5];
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 5);
+        stream.EnsureRead(buffer, 0, 5);
         stream.Seek(0, SeekOrigin.Begin);
 
         return buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 && buffer[3] == 0x50 && buffer[4] == 0x01;
@@ -102,7 +103,7 @@ public sealed class LZip : IFilter
         var buffer = new byte[5];
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 5);
+        stream.EnsureRead(buffer, 0, 5);
         stream.Seek(0, SeekOrigin.Begin);
 
         return buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 && buffer[3] == 0x50 && buffer[4] == 0x01;
@@ -131,7 +132,7 @@ public sealed class LZip : IFilter
         LastWriteTime = CreationTime;
         var tmp = new byte[8];
         _dataStream.Seek(-16, SeekOrigin.End);
-        _dataStream.Read(tmp, 0, 8);
+        _dataStream.EnsureRead(tmp, 0, 8);
         DataForkLength = BitConverter.ToInt64(tmp, 0);
         _dataStream.Seek(0, SeekOrigin.Begin);
         _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength, _dataStream, CompressionMode.Decompress);
@@ -150,7 +151,7 @@ public sealed class LZip : IFilter
         LastWriteTime = fi.LastWriteTimeUtc;
         var tmp = new byte[8];
         _dataStream.Seek(-16, SeekOrigin.End);
-        _dataStream.Read(tmp, 0, 8);
+        _dataStream.EnsureRead(tmp, 0, 8);
         DataForkLength = BitConverter.ToInt64(tmp, 0);
         _dataStream.Seek(0, SeekOrigin.Begin);
         _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength, _dataStream, CompressionMode.Decompress);

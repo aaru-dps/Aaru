@@ -59,13 +59,13 @@ public sealed partial class Nero
 
             _imageStream.Seek(-8, SeekOrigin.End);
             var buffer = new byte[8];
-            _imageStream.Read(buffer, 0, 8);
+            _imageStream.EnsureRead(buffer, 0, 8);
             footerV1.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
             footerV1.FirstChunkOffset = BigEndianBitConverter.ToUInt32(buffer, 4);
 
             _imageStream.Seek(-12, SeekOrigin.End);
             buffer = new byte[12];
-            _imageStream.Read(buffer, 0, 12);
+            _imageStream.EnsureRead(buffer, 0, 12);
             footerV2.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
             footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 
@@ -120,7 +120,7 @@ public sealed partial class Nero
             {
                 var chunkHeaderBuffer = new byte[8];
 
-                _imageStream.Read(chunkHeaderBuffer, 0, 8);
+                _imageStream.EnsureRead(chunkHeaderBuffer, 0, 8);
                 var chunkId     = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 0);
                 var chunkLength = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 4);
 
@@ -148,7 +148,7 @@ public sealed partial class Nero
                         for(var i = 0; i < newCuesheetV1.ChunkSize; i += 8)
                         {
                             var entry = new CueEntryV1();
-                            _imageStream.Read(tmpBuffer, 0, 8);
+                            _imageStream.EnsureRead(tmpBuffer, 0, 8);
                             entry.Mode = tmpBuffer[0];
 
                             entry.TrackNumber = (byte)(((tmpBuffer[1] & 0xF0) >> 4) * 10 + (tmpBuffer[1] & 0xF));
@@ -209,7 +209,7 @@ public sealed partial class Nero
                         for(var i = 0; i < newCuesheetV2.ChunkSize; i += 8)
                         {
                             var entry = new CueEntryV2();
-                            _imageStream.Read(tmpBuffer, 0, 8);
+                            _imageStream.EnsureRead(tmpBuffer, 0, 8);
                             entry.Mode        = tmpBuffer[0];
                             entry.TrackNumber = (byte)(((tmpBuffer[1] & 0xF0) >> 4) * 10 + (tmpBuffer[1] & 0xF));
                             entry.IndexNumber = (byte)(((tmpBuffer[2] & 0xF0) >> 4) * 10 + (tmpBuffer[2] & 0xF));
@@ -256,7 +256,7 @@ public sealed partial class Nero
                         };
 
                         var tmpBuffer = new byte[22];
-                        _imageStream.Read(tmpBuffer, 0, 22);
+                        _imageStream.EnsureRead(tmpBuffer, 0, 22);
                         _neroDaov1.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
                         _neroDaov1.Upc         = new byte[14];
                         Array.Copy(tmpBuffer, 4, _neroDaov1.Upc, 0, 14);
@@ -284,7 +284,7 @@ public sealed partial class Nero
                         for(var i = 0; i < _neroDaov1.ChunkSizeBe - 22; i += 30)
                         {
                             var entry = new DaoEntryV1();
-                            _imageStream.Read(tmpBuffer, 0, 30);
+                            _imageStream.EnsureRead(tmpBuffer, 0, 30);
                             entry.Isrc = new byte[12];
                             Array.Copy(tmpBuffer, 4, entry.Isrc, 0, 12);
                             entry.SectorSize = BigEndianBitConverter.ToUInt16(tmpBuffer, 12);
@@ -372,7 +372,7 @@ public sealed partial class Nero
                         };
 
                         var tmpBuffer = new byte[22];
-                        _imageStream.Read(tmpBuffer, 0, 22);
+                        _imageStream.EnsureRead(tmpBuffer, 0, 22);
                         _neroDaov2.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
                         _neroDaov2.Upc         = new byte[14];
                         Array.Copy(tmpBuffer, 4, _neroDaov2.Upc, 0, 14);
@@ -400,7 +400,7 @@ public sealed partial class Nero
                         for(var i = 0; i < _neroDaov2.ChunkSizeBe - 22; i += 42)
                         {
                             var entry = new DaoEntryV2();
-                            _imageStream.Read(tmpBuffer, 0, 42);
+                            _imageStream.EnsureRead(tmpBuffer, 0, 42);
                             entry.Isrc = new byte[12];
                             Array.Copy(tmpBuffer, 4, entry.Isrc, 0, 12);
                             entry.SectorSize = BigEndianBitConverter.ToUInt16(tmpBuffer, 12);
@@ -494,7 +494,7 @@ public sealed partial class Nero
                         for(var i = 0; i < _cdtxt.ChunkSize; i += 18)
                         {
                             var entry = new CdTextPack();
-                            _imageStream.Read(tmpBuffer, 0, 18);
+                            _imageStream.EnsureRead(tmpBuffer, 0, 18);
 
                             entry.PackType    = tmpBuffer[0];
                             entry.TrackNumber = tmpBuffer[1];
@@ -549,7 +549,7 @@ public sealed partial class Nero
                         for(var i = 0; i < _taoV0.ChunkSize; i += 12)
                         {
                             var entry = new TaoEntryV0();
-                            _imageStream.Read(tmpBuffer, 0, 12);
+                            _imageStream.EnsureRead(tmpBuffer, 0, 12);
 
                             entry.Offset = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
                             entry.Length = BigEndianBitConverter.ToUInt32(tmpBuffer, 4);
@@ -612,7 +612,7 @@ public sealed partial class Nero
                         for(var i = 0; i < _taoV1.ChunkSize; i += 20)
                         {
                             var entry = new TaoEntryV1();
-                            _imageStream.Read(tmpBuffer, 0, 20);
+                            _imageStream.EnsureRead(tmpBuffer, 0, 20);
 
                             entry.Offset   = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
                             entry.Length   = BigEndianBitConverter.ToUInt32(tmpBuffer, 4);
@@ -682,7 +682,7 @@ public sealed partial class Nero
                         for(var i = 0; i < _taoV2.ChunkSize; i += 32)
                         {
                             var entry = new TaoEntryV2();
-                            _imageStream.Read(tmpBuffer, 0, 32);
+                            _imageStream.EnsureRead(tmpBuffer, 0, 32);
 
                             entry.Offset   = BigEndianBitConverter.ToUInt64(tmpBuffer, 0);
                             entry.Length   = BigEndianBitConverter.ToUInt64(tmpBuffer, 8);
@@ -754,7 +754,7 @@ public sealed partial class Nero
                                                    chunkLength);
 
                         var tmpBuffer = new byte[4];
-                        _imageStream.Read(tmpBuffer, 0, 4);
+                        _imageStream.EnsureRead(tmpBuffer, 0, 4);
                         var sessionTracks = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
                         _neroSessions.Add(currentSession, sessionTracks);
 
@@ -778,7 +778,7 @@ public sealed partial class Nero
                         };
 
                         var tmpBuffer = new byte[4];
-                        _imageStream.Read(tmpBuffer, 0, 4);
+                        _imageStream.EnsureRead(tmpBuffer, 0, 4);
                         _mediaType.Type = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
 
                         AaruConsole.DebugWriteLine("Nero plugin", "\tMedia type is {0} ({1})",
@@ -801,7 +801,7 @@ public sealed partial class Nero
                         };
 
                         var tmpBuffer = new byte[4];
-                        _imageStream.Read(tmpBuffer, 0, 4);
+                        _imageStream.EnsureRead(tmpBuffer, 0, 4);
                         _discInfo.Unknown = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
 
                         AaruConsole.DebugWriteLine("Nero plugin", "\tneroDiscInfo.Unknown = 0x{0:X4} ({0})",
@@ -822,7 +822,7 @@ public sealed partial class Nero
                         };
 
                         var tmpBuffer = new byte[4];
-                        _imageStream.Read(tmpBuffer, 0, 4);
+                        _imageStream.EnsureRead(tmpBuffer, 0, 4);
                         _relo.Unknown = BigEndianBitConverter.ToUInt32(tmpBuffer, 0);
 
                         AaruConsole.DebugWriteLine("Nero plugin", "\tneroRELO.Unknown = 0x{0:X4} ({0})", _relo.Unknown);
@@ -842,7 +842,7 @@ public sealed partial class Nero
                         };
 
                         var tmpBuffer = new byte[2];
-                        _imageStream.Read(tmpBuffer, 0, 2);
+                        _imageStream.EnsureRead(tmpBuffer, 0, 2);
                         _toc.Unknown = BigEndianBitConverter.ToUInt16(tmpBuffer, 0);
 
                         _imageInfo.MediaType = tmpBuffer[0] switch

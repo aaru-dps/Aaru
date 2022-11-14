@@ -352,8 +352,8 @@ public sealed partial class ZZZRawImage
             var sync   = new byte[12];
             var header = new byte[4];
             stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(sync, 0, 12);
-            stream.Read(header, 0, 4);
+            stream.EnsureRead(sync, 0, 12);
+            stream.EnsureRead(header, 0, 4);
 
             if(_cdSync.SequenceEqual(sync))
             {
@@ -392,7 +392,7 @@ public sealed partial class ZZZRawImage
 
                 AaruConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
                 var data = new byte[filter.DataForkLength];
-                filter.GetDataForkStream().Read(data, 0, data.Length);
+                filter.GetDataForkStream().EnsureRead(data, 0, data.Length);
                 _mediaTags.Add(sidecar.tag, data);
             }
             catch(IOException) {}

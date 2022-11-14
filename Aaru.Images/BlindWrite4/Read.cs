@@ -63,7 +63,7 @@ public sealed partial class BlindWrite4
         var tmpUInt   = new byte[4];
         var tmpULong  = new byte[8];
 
-        stream.Read(tmpArray, 0, 19);
+        stream.EnsureRead(tmpArray, 0, 19);
 
         if(!_bw4Signature.SequenceEqual(tmpArray))
             return ErrorNumber.InvalidArgument;
@@ -74,56 +74,56 @@ public sealed partial class BlindWrite4
         };
 
         // Seems to always be 2
-        stream.Read(tmpUInt, 0, 4);
+        stream.EnsureRead(tmpUInt, 0, 4);
         _header.Unknown1 = BitConverter.ToUInt32(tmpUInt, 0);
 
         // Seems to be a timetamp
-        stream.Read(tmpULong, 0, 8);
+        stream.EnsureRead(tmpULong, 0, 8);
         _header.Timestamp = BitConverter.ToUInt64(tmpULong, 0);
 
-        stream.Read(tmpUInt, 0, 4);
+        stream.EnsureRead(tmpUInt, 0, 4);
         _header.VolumeIdLength = BitConverter.ToUInt32(tmpUInt, 0);
         tmpArray               = new byte[_header.VolumeIdLength];
-        stream.Read(tmpArray, 0, tmpArray.Length);
+        stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         _header.VolumeIdBytes    = tmpArray;
         _header.VolumeIdentifier = StringHandlers.CToString(_header.VolumeIdBytes, Encoding.Default);
 
-        stream.Read(tmpUInt, 0, 4);
+        stream.EnsureRead(tmpUInt, 0, 4);
         _header.SysIdLength = BitConverter.ToUInt32(tmpUInt, 0);
         tmpArray            = new byte[_header.SysIdLength];
-        stream.Read(tmpArray, 0, tmpArray.Length);
+        stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         _header.SysIdBytes       = tmpArray;
         _header.SystemIdentifier = StringHandlers.CToString(_header.SysIdBytes, Encoding.Default);
 
-        stream.Read(tmpUInt, 0, 4);
+        stream.EnsureRead(tmpUInt, 0, 4);
         _header.CommentsLength = BitConverter.ToUInt32(tmpUInt, 0);
         tmpArray               = new byte[_header.CommentsLength];
-        stream.Read(tmpArray, 0, tmpArray.Length);
+        stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         _header.CommentsBytes = tmpArray;
         _header.Comments      = StringHandlers.CToString(_header.CommentsBytes, Encoding.Default);
 
-        stream.Read(tmpUInt, 0, 4);
+        stream.EnsureRead(tmpUInt, 0, 4);
         _header.TrackDescriptors = BitConverter.ToUInt32(tmpUInt, 0);
 
-        stream.Read(tmpUInt, 0, 4);
+        stream.EnsureRead(tmpUInt, 0, 4);
         _header.DataFileLength = BitConverter.ToUInt32(tmpUInt, 0);
         tmpArray               = new byte[_header.DataFileLength];
-        stream.Read(tmpArray, 0, tmpArray.Length);
+        stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         _header.DataFileBytes = tmpArray;
         _header.DataFile      = StringHandlers.CToString(_header.DataFileBytes, Encoding.Default);
 
-        stream.Read(tmpUInt, 0, 4);
+        stream.EnsureRead(tmpUInt, 0, 4);
         _header.SubchannelFileLength = BitConverter.ToUInt32(tmpUInt, 0);
         tmpArray                     = new byte[_header.SubchannelFileLength];
-        stream.Read(tmpArray, 0, tmpArray.Length);
+        stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         _header.SubchannelFileBytes = tmpArray;
         _header.SubchannelFile      = StringHandlers.CToString(_header.SubchannelFileBytes, Encoding.Default);
 
-        stream.Read(tmpUInt, 0, 4);
+        stream.EnsureRead(tmpUInt, 0, 4);
         _header.Unknown2 = BitConverter.ToUInt32(tmpUInt, 0);
         _header.Unknown3 = (byte)stream.ReadByte();
         tmpArray         = new byte[_header.Unknown3];
-        stream.Read(tmpArray, 0, _header.Unknown3);
+        stream.EnsureRead(tmpArray, 0, _header.Unknown3);
         _header.Unknown4 = tmpArray;
 
         AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.signature = {0}",
@@ -159,22 +159,22 @@ public sealed partial class BlindWrite4
 
             var track = new TrackDescriptor();
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.filenameLen = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray          = new byte[track.filenameLen];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.filenameBytes = tmpArray;
             track.filename      = StringHandlers.CToString(track.filenameBytes, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.offset     = BitConverter.ToUInt32(tmpUInt, 0);
             track.subchannel = (byte)stream.ReadByte();
 
             tmpArray = new byte[3];
-            stream.Read(tmpArray, 0, 3);
+            stream.EnsureRead(tmpArray, 0, 3);
             track.unknown1 = tmpArray;
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unknown2 = BitConverter.ToUInt32(tmpUInt, 0);
             track.unknown3 = (byte)stream.ReadByte();
             track.session  = (byte)stream.ReadByte();
@@ -186,138 +186,138 @@ public sealed partial class BlindWrite4
             track.unknown6  = (byte)stream.ReadByte();
             track.point     = (byte)stream.ReadByte();
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unknown7 = BitConverter.ToUInt32(tmpUInt, 0);
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unknown8 = BitConverter.ToUInt32(tmpUInt, 0);
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.pregapOffsetAdjustment = BitConverter.ToUInt32(tmpUInt, 0);
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unknown10 = BitConverter.ToUInt32(tmpUInt, 0);
-            stream.Read(tmpUShort, 0, 2);
+            stream.EnsureRead(tmpUShort, 0, 2);
             track.unknown11 = BitConverter.ToUInt16(tmpUShort, 0);
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.lastSector = BitConverter.ToUInt32(tmpUInt, 0);
             track.unknown12  = (byte)stream.ReadByte();
 
             // This is off by one
             track.lastSector--;
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.pregap = BitConverter.ToInt32(tmpUInt, 0);
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.startSector = BitConverter.ToInt32(tmpUInt, 0);
 
             track.unknown13 = new uint[2];
 
             for(var j = 0; j < track.unknown13.Length; j++)
             {
-                stream.Read(tmpUInt, 0, 4);
+                stream.EnsureRead(tmpUInt, 0, 4);
                 track.unknown13[j] = BitConverter.ToUInt32(tmpUInt, 0);
             }
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.titleLen = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray       = new byte[track.titleLen];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.titleBytes = tmpArray;
             track.title      = StringHandlers.CToString(track.titleBytes, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.performerLen = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray           = new byte[track.performerLen];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.performerBytes = tmpArray;
             track.performer      = StringHandlers.CToString(track.performerBytes, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen1 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray         = new byte[track.unkStrLen1];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes1 = tmpArray;
             track.unkString1   = StringHandlers.CToString(track.unkStrBytes1, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen2 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray         = new byte[track.unkStrLen2];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes2 = tmpArray;
             track.unkString2   = StringHandlers.CToString(track.unkStrBytes2, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen3 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray         = new byte[track.unkStrLen3];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes3 = tmpArray;
             track.unkString3   = StringHandlers.CToString(track.unkStrBytes3, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen4 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray         = new byte[track.unkStrLen4];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes4 = tmpArray;
             track.unkString4   = StringHandlers.CToString(track.unkStrBytes4, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.discIdLen = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray        = new byte[track.discIdLen];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.discIdBytes = tmpArray;
             track.discId      = StringHandlers.CToString(track.discIdBytes, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen5 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray         = new byte[track.unkStrLen5];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes5 = tmpArray;
             track.unkString5   = StringHandlers.CToString(track.unkStrBytes5, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen6 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray         = new byte[track.unkStrLen6];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes6 = tmpArray;
             track.unkString6   = StringHandlers.CToString(track.unkStrBytes6, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen7 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray         = new byte[track.unkStrLen7];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes7 = tmpArray;
             track.unkString7   = StringHandlers.CToString(track.unkStrBytes7, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen8 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray         = new byte[track.unkStrLen8];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes8 = tmpArray;
             track.unkString8   = StringHandlers.CToString(track.unkStrBytes8, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen9 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray         = new byte[track.unkStrLen9];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes9 = tmpArray;
             track.unkString9   = StringHandlers.CToString(track.unkStrBytes9, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen10 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray          = new byte[track.unkStrLen10];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes10 = tmpArray;
             track.unkString10   = StringHandlers.CToString(track.unkStrBytes10, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen11 = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray          = new byte[track.unkStrLen11];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes11 = tmpArray;
             track.unkString11   = StringHandlers.CToString(track.unkStrBytes11, Encoding.Default);
 
-            stream.Read(tmpUInt, 0, 4);
+            stream.EnsureRead(tmpUInt, 0, 4);
             track.isrcLen = BitConverter.ToUInt32(tmpUInt, 0);
             tmpArray      = new byte[track.isrcLen];
-            stream.Read(tmpArray, 0, tmpArray.Length);
+            stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.isrcBytes = tmpArray;
             track.isrcUpc   = StringHandlers.CToString(track.isrcBytes, Encoding.Default);
 

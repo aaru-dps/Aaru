@@ -51,7 +51,7 @@ public sealed partial class SaveDskF
 
         var hdr = new byte[40];
 
-        stream.Read(hdr, 0, 40);
+        stream.EnsureRead(hdr, 0, 40);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
         AaruConsole.DebugWriteLine("SaveDskF plugin", "header.magic = 0x{0:X4}", _header.magic);
@@ -80,7 +80,7 @@ public sealed partial class SaveDskF
 
         var cmt = new byte[_header.dataOffset - _header.commentOffset];
         stream.Seek(_header.commentOffset, SeekOrigin.Begin);
-        stream.Read(cmt, 0, cmt.Length);
+        stream.EnsureRead(cmt, 0, cmt.Length);
 
         if(cmt.Length > 1)
             _imageInfo.Comments = StringHandlers.CToString(cmt, Encoding.GetEncoding("ibm437"));
@@ -130,7 +130,7 @@ public sealed partial class SaveDskF
         // SaveDskF only omits ending clusters, leaving no gaps behind, so reading all data we have...
         stream.Seek(_header.dataOffset, SeekOrigin.Begin);
         _decodedDisk = new byte[_imageInfo.Sectors * _imageInfo.SectorSize];
-        stream.Read(_decodedDisk, 0, (int)(stream.Length - _header.dataOffset));
+        stream.EnsureRead(_decodedDisk, 0, (int)(stream.Length - _header.dataOffset));
 
         _imageInfo.Cylinders       = _header.cylinders;
         _imageInfo.Heads           = _header.heads;

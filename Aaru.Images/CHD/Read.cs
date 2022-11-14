@@ -58,22 +58,22 @@ public sealed partial class Chd
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
         var magic = new byte[8];
-        stream.Read(magic, 0, 8);
+        stream.EnsureRead(magic, 0, 8);
 
         if(!_chdTag.SequenceEqual(magic))
             return ErrorNumber.InvalidArgument;
 
         // Read length
         var buffer = new byte[4];
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         var length = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
         buffer = new byte[4];
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         var version = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
 
         buffer = new byte[length];
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, (int)length);
+        stream.EnsureRead(buffer, 0, (int)length);
 
         ulong nextMetaOff = 0;
 
@@ -113,7 +113,7 @@ public sealed partial class Chd
 
                 for(var i = 0; i < hunkSectorCount; i++)
                 {
-                    stream.Read(hunkSectorBytes, 0, 512);
+                    stream.EnsureRead(hunkSectorBytes, 0, 512);
 
                     // This does the big-endian trick but reverses the order of elements also
                     Array.Reverse(hunkSectorBytes);
@@ -188,7 +188,7 @@ public sealed partial class Chd
 
                 for(var i = 0; i < hunkSectorCount; i++)
                 {
-                    stream.Read(hunkSectorBytes, 0, 512);
+                    stream.EnsureRead(hunkSectorBytes, 0, 512);
 
                     // This does the big-endian trick but reverses the order of elements also
                     Array.Reverse(hunkSectorBytes);
@@ -259,7 +259,7 @@ public sealed partial class Chd
                 DateTime start = DateTime.UtcNow;
 
                 _hunkMap = new byte[hdrV3.totalhunks * 16];
-                stream.Read(_hunkMap, 0, _hunkMap.Length);
+                stream.EnsureRead(_hunkMap, 0, _hunkMap.Length);
 
                 DateTime end = DateTime.UtcNow;
                 AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
@@ -307,7 +307,7 @@ public sealed partial class Chd
                 DateTime start = DateTime.UtcNow;
 
                 _hunkMap = new byte[hdrV4.totalhunks * 16];
-                stream.Read(_hunkMap, 0, _hunkMap.Length);
+                stream.EnsureRead(_hunkMap, 0, _hunkMap.Length);
 
                 DateTime end = DateTime.UtcNow;
                 AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
@@ -382,7 +382,7 @@ public sealed partial class Chd
 
                     for(var i = 0; i < hunkSectorCount; i++)
                     {
-                        stream.Read(hunkSectorBytes, 0, 512);
+                        stream.EnsureRead(hunkSectorBytes, 0, 512);
 
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
@@ -449,10 +449,10 @@ public sealed partial class Chd
             {
                 var hdrBytes = new byte[16];
                 stream.Seek((long)nextMetaOff, SeekOrigin.Begin);
-                stream.Read(hdrBytes, 0, hdrBytes.Length);
+                stream.EnsureRead(hdrBytes, 0, hdrBytes.Length);
                 MetadataHeader header = Marshal.ByteArrayToStructureBigEndian<MetadataHeader>(hdrBytes);
                 var            meta   = new byte[header.flagsAndLength & 0xFFFFFF];
-                stream.Read(meta, 0, meta.Length);
+                stream.EnsureRead(meta, 0, meta.Length);
 
                 AaruConsole.DebugWriteLine("CHD plugin", "Found metadata \"{0}\"",
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(header.tag)));

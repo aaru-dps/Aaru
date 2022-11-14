@@ -35,6 +35,7 @@ namespace Aaru.DiscImages;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class Dim
 {
@@ -52,9 +53,9 @@ public sealed partial class Dim
         stream.Seek(0, SeekOrigin.Begin);
         _dskType = (DiskType)stream.ReadByte();
         stream.Seek(0xAB, SeekOrigin.Begin);
-        stream.Read(_hdrId, 0, 13);
+        stream.EnsureRead(_hdrId, 0, 13);
         stream.Seek(0xC2, SeekOrigin.Begin);
-        stream.Read(_comment, 0, 60);
+        stream.EnsureRead(_comment, 0, 60);
 
         return _headerId.SequenceEqual(_hdrId);
     }

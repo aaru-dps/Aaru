@@ -35,6 +35,7 @@ namespace Aaru.DiscImages;
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class CopyQm
 {
@@ -48,7 +49,7 @@ public sealed partial class CopyQm
             return false;
 
         var hdr = new byte[133];
-        stream.Read(hdr, 0, 133);
+        stream.EnsureRead(hdr, 0, 133);
 
         var magic = BitConverter.ToUInt16(hdr, 0);
 

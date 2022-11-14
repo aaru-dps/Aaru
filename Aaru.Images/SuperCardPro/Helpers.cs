@@ -35,6 +35,7 @@ namespace Aaru.DiscImages;
 using System;
 using System.IO;
 using System.Text;
+using Aaru.Helpers;
 
 public sealed partial class SuperCardPro
 {
@@ -45,7 +46,7 @@ public sealed partial class SuperCardPro
 
         stream.Position = position;
         var lenB = new byte[2];
-        stream.Read(lenB, 0, 2);
+        stream.EnsureRead(lenB, 0, 2);
         var len = BitConverter.ToUInt16(lenB, 0);
 
         if(len                   == 0 ||
@@ -53,7 +54,7 @@ public sealed partial class SuperCardPro
             return null;
 
         var str = new byte[len];
-        stream.Read(str, 0, len);
+        stream.EnsureRead(str, 0, len);
 
         return Encoding.UTF8.GetString(str);
     }

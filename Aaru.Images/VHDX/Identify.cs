@@ -48,7 +48,7 @@ public sealed partial class Vhdx
             return false;
 
         var vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
-        stream.Read(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
+        stream.EnsureRead(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
         _id = Marshal.ByteArrayToStructureLittleEndian<Identifier>(vhdxIdB);
 
         return _id.signature == VHDX_SIGNATURE;

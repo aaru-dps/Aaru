@@ -49,7 +49,7 @@ public sealed partial class Dart
         stream.Seek(0, SeekOrigin.Begin);
         var headerB = new byte[Marshal.SizeOf<Header>()];
 
-        stream.Read(headerB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(headerB, 0, Marshal.SizeOf<Header>());
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
 
         if(header.srcCmp > COMPRESS_NONE)

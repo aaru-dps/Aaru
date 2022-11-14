@@ -60,7 +60,7 @@ public sealed partial class VMware
         {
             stream.Seek(0, SeekOrigin.Begin);
             var vmEHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
-            stream.Read(vmEHdrB, 0, Marshal.SizeOf<ExtentHeader>());
+            stream.EnsureRead(vmEHdrB, 0, Marshal.SizeOf<ExtentHeader>());
             _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(vmEHdrB);
         }
 
@@ -68,7 +68,7 @@ public sealed partial class VMware
         {
             stream.Seek(0, SeekOrigin.Begin);
             var vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
-            stream.Read(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
+            stream.EnsureRead(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
             _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
         }
 
@@ -92,7 +92,7 @@ public sealed partial class VMware
             var ddfEmbed = new byte[_vmEHdr.descriptorSize * SECTOR_SIZE];
 
             stream.Seek((long)(_vmEHdr.descriptorOffset * SECTOR_SIZE), SeekOrigin.Begin);
-            stream.Read(ddfEmbed, 0, ddfEmbed.Length);
+            stream.EnsureRead(ddfEmbed, 0, ddfEmbed.Length);
             ddfStream.Write(ddfEmbed, 0, ddfEmbed.Length);
 
             embedded = true;
@@ -106,7 +106,7 @@ public sealed partial class VMware
         {
             var ddfMagic = new byte[0x15];
             stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(ddfMagic, 0, 0x15);
+            stream.EnsureRead(ddfMagic, 0, 0x15);
 
             if(!_ddfMagicBytes.SequenceEqual(ddfMagic))
             {
@@ -117,7 +117,7 @@ public sealed partial class VMware
 
             stream.Seek(0, SeekOrigin.Begin);
             var ddfExternal = new byte[imageFilter.DataForkLength];
-            stream.Read(ddfExternal, 0, ddfExternal.Length);
+            stream.EnsureRead(ddfExternal, 0, ddfExternal.Length);
             ddfStream.Write(ddfExternal, 0, ddfExternal.Length);
         }
 
@@ -150,7 +150,7 @@ public sealed partial class VMware
                 {
                     extentStream.Seek(0, SeekOrigin.Begin);
                     var vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
-                    extentStream.Read(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
+                    extentStream.EnsureRead(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
                     CowHeader extHdrCow = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
 
                     if(extHdrCow.magic != VMWARE_COW_MAGIC)
@@ -347,7 +347,7 @@ public sealed partial class VMware
             }
 
             var extentHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
-            extentStream.Read(extentHdrB, 0, Marshal.SizeOf<ExtentHeader>());
+            extentStream.EnsureRead(extentHdrB, 0, Marshal.SizeOf<ExtentHeader>());
             ExtentHeader extentHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(extentHdrB);
 
             if(extentHdr.magic != VMWARE_EXTENT_MAGIC)
@@ -496,7 +496,7 @@ public sealed partial class VMware
 
             AaruConsole.DebugWriteLine("VMware plugin", "Reading grain directory");
             var gdBytes = new byte[gdEntries * 4];
-            gdStream.Read(gdBytes, 0, gdBytes.Length);
+            gdStream.EnsureRead(gdBytes, 0, gdBytes.Length);
             Span<uint> gd = MemoryMarshal.Cast<byte, uint>(gdBytes);
 
             AaruConsole.DebugWriteLine("VMware plugin", "Reading grain tables");
@@ -507,7 +507,7 @@ public sealed partial class VMware
             {
                 var gtBytes = new byte[gtEsPerGt * 4];
                 gdStream.Seek(gtOff * SECTOR_SIZE, SeekOrigin.Begin);
-                gdStream.Read(gtBytes, 0, gtBytes.Length);
+                gdStream.EnsureRead(gtBytes, 0, gtBytes.Length);
 
                 uint[] currentGt = MemoryMarshal.Cast<byte, uint>(gtBytes).ToArray();
                 Array.Copy(currentGt, 0, _gTable, currentGrain, gtEsPerGt);
@@ -627,7 +627,7 @@ public sealed partial class VMware
                                 SeekOrigin.Begin);
 
                 buffer = new byte[SECTOR_SIZE];
-                dataStream.Read(buffer, 0, buffer.Length);
+                dataStream.EnsureRead(buffer, 0, buffer.Length);
 
                 if(_sectorCache.Count >= MAX_CACHED_SECTORS)
                     _sectorCache.Clear();
@@ -663,7 +663,7 @@ public sealed partial class VMware
             grain      = new byte[SECTOR_SIZE * _grainSize];
             dataStream = currentExtent.Filter.GetDataForkStream();
             dataStream.Seek((long)((grainOff - extentStartSector) * SECTOR_SIZE), SeekOrigin.Begin);
-            dataStream.Read(grain, 0, grain.Length);
+            dataStream.EnsureRead(grain, 0, grain.Length);
 
             if(_grainCache.Count >= _maxCachedGrains)
                 _grainCache.Clear();

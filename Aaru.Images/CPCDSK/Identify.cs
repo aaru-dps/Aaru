@@ -37,6 +37,7 @@ using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class Cpcdsk
 {
@@ -50,7 +51,7 @@ public sealed partial class Cpcdsk
             return false;
 
         var headerB = new byte[256];
-        stream.Read(headerB, 0, 256);
+        stream.EnsureRead(headerB, 0, 256);
 
         int pos;
 

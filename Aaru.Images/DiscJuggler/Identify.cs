@@ -36,6 +36,7 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class DiscJuggler
 {
@@ -46,7 +47,7 @@ public sealed partial class DiscJuggler
 
         _imageStream.Seek(-4, SeekOrigin.End);
         var dscLenB = new byte[4];
-        _imageStream.Read(dscLenB, 0, 4);
+        _imageStream.EnsureRead(dscLenB, 0, 4);
         var dscLen = BitConverter.ToInt32(dscLenB, 0);
 
         AaruConsole.DebugWriteLine("DiscJuggler plugin", "dscLen = {0}", dscLen);
@@ -56,7 +57,7 @@ public sealed partial class DiscJuggler
 
         var descriptor = new byte[dscLen];
         _imageStream.Seek(-dscLen, SeekOrigin.End);
-        _imageStream.Read(descriptor, 0, dscLen);
+        _imageStream.EnsureRead(descriptor, 0, dscLen);
 
         // Sessions
         if(descriptor.Length < 1  ||

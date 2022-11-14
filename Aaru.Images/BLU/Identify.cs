@@ -49,7 +49,7 @@ public sealed partial class Blu
             return false;
 
         var header = new byte[0x17];
-        stream.Read(header, 0, 0x17);
+        stream.EnsureRead(header, 0, 0x17);
 
         var tmpHdr = new BluHeader
         {

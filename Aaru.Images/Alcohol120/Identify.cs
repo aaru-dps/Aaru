@@ -49,7 +49,7 @@ public sealed partial class Alcohol120
             return false;
 
         var hdr = new byte[88];
-        stream.Read(hdr, 0, 88);
+        stream.EnsureRead(hdr, 0, 88);
         Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
         return header.signature.SequenceEqual(_alcoholSignature) && header.version[0] <= MAXIMUM_SUPPORTED_VERSION;

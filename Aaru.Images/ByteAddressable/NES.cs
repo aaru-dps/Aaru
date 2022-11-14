@@ -13,6 +13,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Database;
 using Aaru.Database.Models;
+using Aaru.Helpers;
 using Aaru.Settings;
 using Schemas;
 
@@ -64,7 +65,7 @@ public class Nes : IByteAddressableImage
 
         stream.Position = 0;
         var magicBytes = new byte[4];
-        stream.Read(magicBytes, 0, 8);
+        stream.EnsureRead(magicBytes, 0, 8);
         var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         return magic == 0x1A53454E;
@@ -84,7 +85,7 @@ public class Nes : IByteAddressableImage
 
         stream.Position = 0;
         var header = new byte[16];
-        stream.Read(header, 0, 8);
+        stream.EnsureRead(header, 0, 8);
         var magic = BitConverter.ToUInt32(header, 0);
 
         if(magic != 0x1A53454E)
@@ -163,7 +164,7 @@ public class Nes : IByteAddressableImage
 
         _data           = new byte[imageFilter.DataForkLength - 16];
         stream.Position = 16;
-        stream.Read(_data, 0, _data.Length);
+        stream.EnsureRead(_data, 0, _data.Length);
 
         _imageInfo = new ImageInfo
         {

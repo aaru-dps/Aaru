@@ -93,18 +93,18 @@ public sealed partial class Imd
             if((head & 1) == 1)
                 _imageInfo.Heads = 2;
 
-            stream.Read(idmap, 0, idmap.Length);
+            stream.EnsureRead(idmap, 0, idmap.Length);
 
             if((head & SECTOR_CYLINDER_MAP_MASK) == SECTOR_CYLINDER_MAP_MASK)
-                stream.Read(cylmap, 0, cylmap.Length);
+                stream.EnsureRead(cylmap, 0, cylmap.Length);
 
             if((head & SECTOR_HEAD_MAP_MASK) == SECTOR_HEAD_MAP_MASK)
-                stream.Read(headmap, 0, headmap.Length);
+                stream.EnsureRead(headmap, 0, headmap.Length);
 
             if(n == 0xFF)
             {
                 var bpsbytes = new byte[spt * 2];
-                stream.Read(bpsbytes, 0, bpsbytes.Length);
+                stream.EnsureRead(bpsbytes, 0, bpsbytes.Length);
 
                 for(var i = 0; i < spt; i++)
                     bps[i] = BitConverter.ToUInt16(bpsbytes, i * 2);
@@ -138,7 +138,7 @@ public sealed partial class Imd
                     case SectorType.Deleted:
                     case SectorType.Error:
                     case SectorType.DeletedError:
-                        stream.Read(data, 0, data.Length);
+                        stream.EnsureRead(data, 0, data.Length);
 
                         if(!track.ContainsKey(idmap[i]))
                             track.Add(idmap[i], data);

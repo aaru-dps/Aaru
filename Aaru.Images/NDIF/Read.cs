@@ -339,7 +339,7 @@ public sealed partial class Ndif
             {
                 var cmpBuffer = new byte[currentChunk.length];
                 _imageStream.Seek(currentChunk.offset, SeekOrigin.Begin);
-                _imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
+                _imageStream.EnsureRead(cmpBuffer, 0, cmpBuffer.Length);
                 int realSize;
 
                 switch(currentChunk.type)
@@ -402,7 +402,7 @@ public sealed partial class Ndif
             case CHUNK_TYPE_COPY:
                 _imageStream.Seek(currentChunk.offset + relOff, SeekOrigin.Begin);
                 buffer = new byte[SECTOR_SIZE];
-                _imageStream.Read(buffer, 0, buffer.Length);
+                _imageStream.EnsureRead(buffer, 0, buffer.Length);
 
                 if(_sectorCache.Count >= MAX_CACHED_SECTORS)
                     _sectorCache.Clear();

@@ -196,7 +196,7 @@ public sealed partial class Apple2Mg
 
         _writingStream.Seek(0x40 + 17 * 16 * 256, SeekOrigin.Begin);
         var tmp = new byte[256];
-        _writingStream.Read(tmp, 0, tmp.Length);
+        _writingStream.EnsureRead(tmp, 0, tmp.Length);
 
         bool isDos = tmp[0x01] == 17 && tmp[0x02] < 16 && tmp[0x27] <= 122 && tmp[0x34] == 35 && tmp[0x35] == 16 &&
                      tmp[0x36] == 0  && tmp[0x37] == 1;

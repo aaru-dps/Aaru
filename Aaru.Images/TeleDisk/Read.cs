@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Compression;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class TeleDisk
 {
@@ -51,7 +52,7 @@ public sealed partial class TeleDisk
         var stream = new MemoryStream();
         _inStream.Seek(0, SeekOrigin.Begin);
 
-        _inStream.Read(headerBytes, 0, 12);
+        _inStream.EnsureRead(headerBytes, 0, 12);
         stream.Write(headerBytes, 0, 12);
 
         _header.Signature = BitConverter.ToUInt16(headerBytes, 0);
@@ -134,7 +135,7 @@ public sealed partial class TeleDisk
             // Not using Stream.CopyTo() because it's failing with LZIP
             var copybuf = new byte[_inStream.Length];
             _inStream.Seek(0, SeekOrigin.Begin);
-            _inStream.Read(copybuf, 0, copybuf.Length);
+            _inStream.EnsureRead(copybuf, 0, copybuf.Length);
             stream.Seek(0, SeekOrigin.Begin);
             stream.Write(copybuf, 0, copybuf.Length);
         }
@@ -149,7 +150,7 @@ public sealed partial class TeleDisk
 
             var commentHeaderBytes = new byte[10];
 
-            stream.Read(commentHeaderBytes, 0, 10);
+            stream.EnsureRead(commentHeaderBytes, 0, 10);
             _commentHeader.Crc    = BitConverter.ToUInt16(commentHeaderBytes, 0);
             _commentHeader.Length = BitConverter.ToUInt16(commentHeaderBytes, 2);
             _commentHeader.Year   = commentHeaderBytes[4];
@@ -160,7 +161,7 @@ public sealed partial class TeleDisk
             _commentHeader.Second = commentHeaderBytes[9];
 
             _commentBlock = new byte[_commentHeader.Length];
-            stream.Read(_commentBlock, 0, _commentHeader.Length);
+            stream.EnsureRead(_commentBlock, 0, _commentHeader.Length);
 
             var commentBlockForCrc = new byte[_commentHeader.Length + 8];
             Array.Copy(commentHeaderBytes, 2, commentBlockForCrc, 0, 8);
@@ -259,12 +260,12 @@ public sealed partial class TeleDisk
                 if((teleDiskSector.Flags & FLAGS_SECTOR_DATALESS) != FLAGS_SECTOR_DATALESS &&
                    (teleDiskSector.Flags & FLAGS_SECTOR_SKIPPED)  != FLAGS_SECTOR_SKIPPED)
                 {
-                    stream.Read(dataSizeBytes, 0, 2);
+                    stream.EnsureRead(dataSizeBytes, 0, 2);
                     teleDiskData.DataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
                     teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
                     teleDiskData.DataEncoding = (byte)stream.ReadByte();
                     var data = new byte[teleDiskData.DataSize];
-                    stream.Read(data, 0, teleDiskData.DataSize);
+                    stream.EnsureRead(data, 0, teleDiskData.DataSize);
                 }
 
                 if(128 << teleDiskSector.SectorSize < _imageInfo.SectorSize)
@@ -335,12 +336,12 @@ public sealed partial class TeleDisk
                    (teleDiskSector.Flags & FLAGS_SECTOR_SKIPPED)  == FLAGS_SECTOR_SKIPPED)
                     continue;
 
-                stream.Read(dataSizeBytes, 0, 2);
+                stream.EnsureRead(dataSizeBytes, 0, 2);
                 teleDiskData.DataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
                 teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
                 teleDiskData.DataEncoding = (byte)stream.ReadByte();
                 var data = new byte[teleDiskData.DataSize];
-                stream.Read(data, 0, teleDiskData.DataSize);
+                stream.EnsureRead(data, 0, teleDiskData.DataSize);
             }
         }
 
@@ -437,13 +438,13 @@ public sealed partial class TeleDisk
                 if((teleDiskSector.Flags & FLAGS_SECTOR_DATALESS) != FLAGS_SECTOR_DATALESS &&
                    (teleDiskSector.Flags & FLAGS_SECTOR_SKIPPED)  != FLAGS_SECTOR_SKIPPED)
                 {
-                    stream.Read(dataSizeBytes, 0, 2);
+                    stream.EnsureRead(dataSizeBytes, 0, 2);
                     teleDiskData.DataSize = BitConverter.ToUInt16(dataSizeBytes, 0);
                     teleDiskData.DataSize--; // Sydex decided to including dataEncoding byte as part of it
                     _imageInfo.ImageSize      += teleDiskData.DataSize;
                     teleDiskData.DataEncoding =  (byte)stream.ReadByte();
                     var data = new byte[teleDiskData.DataSize];
-                    stream.Read(data, 0, teleDiskData.DataSize);
+                    stream.EnsureRead(data, 0, teleDiskData.DataSize);
 
                     AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}",
                                                teleDiskData.DataSize);

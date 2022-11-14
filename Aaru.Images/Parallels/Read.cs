@@ -54,7 +54,7 @@ public sealed partial class Parallels
             return ErrorNumber.InvalidArgument;
 
         var pHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
         AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}", StringHandlers.CToString(_pHdr.magic));
@@ -75,7 +75,7 @@ public sealed partial class Parallels
         AaruConsole.DebugWriteLine("Parallels plugin", "Reading BAT");
         _bat = new uint[_pHdr.bat_entries];
         var batB = new byte[_pHdr.bat_entries * 4];
-        stream.Read(batB, 0, batB.Length);
+        stream.EnsureRead(batB, 0, batB.Length);
 
         for(var i = 0; i < _bat.Length; i++)
             _bat[i] = BitConverter.ToUInt32(batB, i * 4);
@@ -145,7 +145,7 @@ public sealed partial class Parallels
 
         var cluster = new byte[_clusterBytes];
         _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
-        _imageStream.Read(cluster, 0, (int)_clusterBytes);
+        _imageStream.EnsureRead(cluster, 0, (int)_clusterBytes);
         buffer = new byte[512];
         Array.Copy(cluster, (int)(secOff * 512), buffer, 0, 512);
 

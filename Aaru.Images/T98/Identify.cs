@@ -36,6 +36,7 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class T98
 {
@@ -49,7 +50,7 @@ public sealed partial class T98
             return false;
 
         var hdrB = new byte[256];
-        stream.Read(hdrB, 0, hdrB.Length);
+        stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         for(var i = 4; i < 256; i++)
             if(hdrB[i] != 0)

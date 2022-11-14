@@ -48,7 +48,7 @@ public sealed partial class Qed
             return false;
 
         var qHdrB = new byte[68];
-        stream.Read(qHdrB, 0, 68);
+        stream.EnsureRead(qHdrB, 0, 68);
         _qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
 
         return _qHdr.magic == QED_MAGIC;

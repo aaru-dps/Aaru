@@ -55,14 +55,14 @@ public sealed partial class KryoFlux
             return ErrorNumber.InvalidArgument;
 
         var hdr = new byte[Marshal.SizeOf<OobBlock>()];
-        stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
+        stream.EnsureRead(hdr, 0, Marshal.SizeOf<OobBlock>());
 
         OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
         stream.Seek(-Marshal.SizeOf<OobBlock>(), SeekOrigin.End);
 
         hdr = new byte[Marshal.SizeOf<OobBlock>()];
-        stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
+        stream.EnsureRead(hdr, 0, Marshal.SizeOf<OobBlock>());
 
         OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
@@ -147,7 +147,7 @@ public sealed partial class KryoFlux
                         trackStream.Position--;
 
                         var oob = new byte[Marshal.SizeOf<OobBlock>()];
-                        trackStream.Read(oob, 0, Marshal.SizeOf<OobBlock>());
+                        trackStream.EnsureRead(oob, 0, Marshal.SizeOf<OobBlock>());
 
                         OobBlock oobBlk = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(oob);
 
@@ -166,7 +166,7 @@ public sealed partial class KryoFlux
                         }
 
                         var kfinfo = new byte[oobBlk.length];
-                        trackStream.Read(kfinfo, 0, oobBlk.length);
+                        trackStream.EnsureRead(kfinfo, 0, oobBlk.length);
                         string kfinfoStr = StringHandlers.CToString(kfinfo);
 
                         string[] lines = kfinfoStr.Split(new[]

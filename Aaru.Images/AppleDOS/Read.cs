@@ -37,6 +37,7 @@ using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class AppleDos
 {
@@ -47,7 +48,7 @@ public sealed partial class AppleDos
         stream.Seek(0, SeekOrigin.Begin);
 
         var tmp = new byte[imageFilter.DataForkLength];
-        stream.Read(tmp, 0, tmp.Length);
+        stream.EnsureRead(tmp, 0, tmp.Length);
 
         _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
 

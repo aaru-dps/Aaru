@@ -35,6 +35,7 @@ namespace Aaru.DiscImages;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 public sealed partial class BlindWrite5
 {
@@ -48,11 +49,11 @@ public sealed partial class BlindWrite5
             return false;
 
         var signature = new byte[16];
-        stream.Read(signature, 0, 16);
+        stream.EnsureRead(signature, 0, 16);
 
         var footer = new byte[16];
         stream.Seek(-16, SeekOrigin.End);
-        stream.Read(footer, 0, 16);
+        stream.EnsureRead(footer, 0, 16);
 
         return _bw5Signature.SequenceEqual(signature) && _bw5Footer.SequenceEqual(footer);
     }

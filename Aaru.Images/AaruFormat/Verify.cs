@@ -49,7 +49,7 @@ public sealed partial class AaruFormat
         _imageStream.Position = (long)_header.indexOffset;
 
         _structureBytes = new byte[Marshal.SizeOf<IndexHeader>()];
-        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
         IndexHeader idxHeader = Marshal.SpanToStructureLittleEndian<IndexHeader>(_structureBytes);
 
         if(idxHeader.identifier != BlockType.Index)
@@ -63,7 +63,7 @@ public sealed partial class AaruFormat
                                    idxHeader.entries);
 
         _structureBytes = new byte[Marshal.SizeOf<IndexEntry>() * idxHeader.entries];
-        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
         Crc64Context.Data(_structureBytes, out byte[] verifyCrc);
 
         if(BitConverter.ToUInt64(verifyCrc, 0) != idxHeader.crc64)
@@ -81,7 +81,7 @@ public sealed partial class AaruFormat
         for(ushort i = 0; i < idxHeader.entries; i++)
         {
             _structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
-            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+            _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
             IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(_structureBytes);
 
             AaruConsole.DebugWriteLine("Aaru Format plugin",
@@ -105,7 +105,7 @@ public sealed partial class AaruFormat
             {
                 case BlockType.DataBlock:
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     BlockHeader blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(_structureBytes);
 
                     crcVerify = new Crc64Context();
@@ -117,13 +117,13 @@ public sealed partial class AaruFormat
                     while(readBytes + verifySize < blockHeader.cmpLength)
                     {
                         verifyBytes = new byte[verifySize];
-                        _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
+                        _imageStream.EnsureRead(verifyBytes, 0, verifyBytes.Length);
                         crcVerify.Update(verifyBytes);
                         readBytes += (ulong)verifyBytes.LongLength;
                     }
 
                     verifyBytes = new byte[blockHeader.cmpLength - readBytes];
-                    _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
+                    _imageStream.EnsureRead(verifyBytes, 0, verifyBytes.Length);
                     crcVerify.Update(verifyBytes);
 
                     verifyCrc = crcVerify.Final();
@@ -139,7 +139,7 @@ public sealed partial class AaruFormat
                     break;
                 case BlockType.DeDuplicationTable:
                     _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     DdtHeader ddtHeader = Marshal.SpanToStructureLittleEndian<DdtHeader>(_structureBytes);
 
                     crcVerify = new Crc64Context();
@@ -152,13 +152,13 @@ public sealed partial class AaruFormat
                     while(readBytes + verifySize < ddtHeader.cmpLength)
                     {
                         verifyBytes = new byte[verifySize];
-                        _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
+                        _imageStream.EnsureRead(verifyBytes, 0, verifyBytes.Length);
                         crcVerify.Update(verifyBytes);
                         readBytes += (ulong)verifyBytes.LongLength;
                     }
 
                     verifyBytes = new byte[ddtHeader.cmpLength - readBytes];
-                    _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
+                    _imageStream.EnsureRead(verifyBytes, 0, verifyBytes.Length);
                     crcVerify.Update(verifyBytes);
 
                     verifyCrc = crcVerify.Final();
@@ -174,14 +174,14 @@ public sealed partial class AaruFormat
                     break;
                 case BlockType.TracksBlock:
                     _structureBytes = new byte[Marshal.SizeOf<TracksHeader>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     TracksHeader trkHeader = Marshal.SpanToStructureLittleEndian<TracksHeader>(_structureBytes);
 
                     AaruConsole.DebugWriteLine("Aaru Format plugin", "Track block at {0} contains {1} entries",
                                                _header.indexOffset, trkHeader.entries);
 
                     _structureBytes = new byte[Marshal.SizeOf<TrackEntry>() * trkHeader.entries];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     Crc64Context.Data(_structureBytes, out verifyCrc);
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != trkHeader.crc64)

@@ -32,6 +32,7 @@ using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using NUnit.Framework;
 
 [TestFixture]
@@ -52,7 +53,7 @@ public class PcExchange
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
         var    data = new byte[737280];
-        str.Read(data, 0, 737280);
+        str.EnsureRead(data, 0, 737280);
         str.Close();
         str.Dispose();
         filter.Close();
@@ -83,7 +84,7 @@ public class PcExchange
         filter.Open(_location);
         Stream str  = filter.GetResourceForkStream();
         var    data = new byte[546];
-        str.Read(data, 0, 546);
+        str.EnsureRead(data, 0, 546);
         str.Close();
         str.Dispose();
         filter.Close();

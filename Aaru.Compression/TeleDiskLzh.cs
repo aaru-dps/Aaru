@@ -46,6 +46,7 @@ namespace Aaru.Compression;
 
 using System;
 using System.IO;
+using Aaru.Helpers;
 
 /*
  * Based on Japanese version 29-NOV-1988
@@ -225,7 +226,7 @@ public class TeleDiskLzh
             size = _inStream.Length - _inStream.Position;
 
         buf = new byte[size];
-        _inStream.Read(buf, 0, (int)size);
+        _inStream.EnsureRead(buf, 0, (int)size);
 
         return size;
     }

@@ -47,6 +47,7 @@ using Aaru.Console;
 using Aaru.Decoders.PCMCIA;
 using Aaru.DiscImages;
 using Aaru.Filters;
+using Aaru.Helpers;
 using Schemas;
 using MediaType = Aaru.CommonTypes.Metadata.MediaType;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
@@ -1041,7 +1042,7 @@ public sealed partial class Sidecar
                                              scpImage.Header.offsets[t] + 1];
 
                                 scpStream.Position = scpImage.Header.offsets[t];
-                                scpStream.Read(trackContents, 0, trackContents.Length);
+                                scpStream.EnsureRead(trackContents, 0, trackContents.Length);
                                 scpBlockTrackType.Size      = (ulong)trackContents.Length;
                                 scpBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
                             }
@@ -1146,7 +1147,7 @@ public sealed partial class Sidecar
                             Stream kfStream      = kvp.Value.GetDataForkStream();
                             var    trackContents = new byte[kfStream.Length];
                             kfStream.Position = 0;
-                            kfStream.Read(trackContents, 0, trackContents.Length);
+                            kfStream.EnsureRead(trackContents, 0, trackContents.Length);
                             kfBlockTrackType.Size      = (ulong)trackContents.Length;
                             kfBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
 
@@ -1232,7 +1233,7 @@ public sealed partial class Sidecar
                         dfiBlockTrackType.Image.offset = (ulong)offset;
                         var trackContents = new byte[length];
                         dfiStream.Position = offset;
-                        dfiStream.Read(trackContents, 0, trackContents.Length);
+                        dfiStream.EnsureRead(trackContents, 0, trackContents.Length);
                         dfiBlockTrackType.Size      = (ulong)trackContents.Length;
                         dfiBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
                     }

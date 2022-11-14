@@ -73,7 +73,7 @@ public sealed partial class CisCopy
         }
 
         var trackBytes = new byte[tracks];
-        stream.Read(trackBytes, 0, tracks);
+        stream.EnsureRead(trackBytes, 0, tracks);
 
         var cmpr = (Compression)stream.ReadByte();
 
@@ -121,7 +121,7 @@ public sealed partial class CisCopy
             var track = new byte[trackSize];
 
             if((TrackType)trackBytes[i] == TrackType.Copied)
-                stream.Read(track, 0, trackSize);
+                stream.EnsureRead(track, 0, trackSize);
             else
                 ArrayHelpers.ArrayFill(track, (byte)0xF6);
 

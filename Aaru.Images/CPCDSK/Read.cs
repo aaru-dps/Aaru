@@ -57,7 +57,7 @@ public sealed partial class Cpcdsk
             return ErrorNumber.InvalidArgument;
 
         var headerB = new byte[256];
-        stream.Read(headerB, 0, 256);
+        stream.EnsureRead(headerB, 0, 256);
 
         int pos;
 
@@ -72,7 +72,7 @@ public sealed partial class Cpcdsk
         string magic = Encoding.ASCII.GetString(headerB, 0, pos);
 
         stream.Position = pos + 2;
-        stream.Read(headerB, 0, 256);
+        stream.EnsureRead(headerB, 0, 256);
 
         DiskInfo header = Marshal.ByteArrayToStructureLittleEndian<DiskInfo>(headerB);
 
@@ -125,7 +125,7 @@ public sealed partial class Cpcdsk
                 long trackPos = stream.Position;
 
                 var trackB = new byte[256];
-                stream.Read(trackB, 0, 256);
+                stream.EnsureRead(trackB, 0, 256);
                 TrackInfo trackInfo = Marshal.ByteArrayToStructureLittleEndian<TrackInfo>(trackB);
 
                 if(string.Compare(TRACK_ID, Encoding.ASCII.GetString(trackInfo.magic),
@@ -199,7 +199,7 @@ public sealed partial class Cpcdsk
                                       : SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);
 
                     var sector = new byte[sectLen];
-                    stream.Read(sector, 0, sectLen);
+                    stream.EnsureRead(sector, 0, sectLen);
 
                     if(sectLen < SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size))
                     {

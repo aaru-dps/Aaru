@@ -54,7 +54,7 @@ public sealed partial class SuperCardPro
             return ErrorNumber.InvalidArgument;
 
         var hdr = new byte[Marshal.SizeOf<ScpHeader>()];
-        _scpStream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
+        _scpStream.EnsureRead(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
         Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
@@ -92,7 +92,7 @@ public sealed partial class SuperCardPro
                 Entries   = new TrackEntry[Header.revolutions]
             };
 
-            _scpStream.Read(trk.Signature, 0, trk.Signature.Length);
+            _scpStream.EnsureRead(trk.Signature, 0, trk.Signature.Length);
             trk.TrackNumber = (byte)_scpStream.ReadByte();
 
             if(!trk.Signature.SequenceEqual(_trkSignature))
@@ -116,7 +116,7 @@ public sealed partial class SuperCardPro
             for(byte r = 0; r < Header.revolutions; r++)
             {
                 var rev = new byte[Marshal.SizeOf<TrackEntry>()];
-                _scpStream.Read(rev, 0, Marshal.SizeOf<TrackEntry>());
+                _scpStream.EnsureRead(rev, 0, Marshal.SizeOf<TrackEntry>());
 
                 trk.Entries[r] = Marshal.ByteArrayToStructureLittleEndian<TrackEntry>(rev);
 
@@ -135,7 +135,7 @@ public sealed partial class SuperCardPro
             while(_scpStream.Position >= position)
             {
                 var footerSig = new byte[4];
-                _scpStream.Read(footerSig, 0, 4);
+                _scpStream.EnsureRead(footerSig, 0, 4);
                 var footerMagic = BitConverter.ToUInt32(footerSig, 0);
 
                 if(footerMagic == FOOTER_SIGNATURE)
@@ -145,7 +145,7 @@ public sealed partial class SuperCardPro
                     AaruConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", _scpStream.Position);
 
                     var ftr = new byte[Marshal.SizeOf<Footer>()];
-                    _scpStream.Read(ftr, 0, Marshal.SizeOf<Footer>());
+                    _scpStream.EnsureRead(ftr, 0, Marshal.SizeOf<Footer>());
 
                     Footer footer = Marshal.ByteArrayToStructureLittleEndian<Footer>(ftr);
 

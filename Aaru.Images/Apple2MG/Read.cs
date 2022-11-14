@@ -53,7 +53,7 @@ public sealed partial class Apple2Mg
         _imageHeader = new Header();
 
         var header = new byte[64];
-        stream.Read(header, 0, 64);
+        stream.EnsureRead(header, 0, 64);
         var magic   = new byte[4];
         var creator = new byte[4];
 
@@ -108,7 +108,7 @@ public sealed partial class Apple2Mg
             case SectorOrder.Nibbles:
                 tmp = new byte[_imageHeader.DataSize];
                 stream.Seek(_imageHeader.DataOffset, SeekOrigin.Begin);
-                stream.Read(tmp, 0, tmp.Length);
+                stream.EnsureRead(tmp, 0, tmp.Length);
                 var nibPlugin = new AppleNib();
                 var noFilter  = new ZZZNoFilter();
                 noFilter.Open(tmp);
@@ -126,7 +126,7 @@ public sealed partial class Apple2Mg
             case SectorOrder.ProDos when _imageHeader.DataSize == 143360:
                 stream.Seek(_imageHeader.DataOffset, SeekOrigin.Begin);
                 tmp = new byte[_imageHeader.DataSize];
-                stream.Read(tmp, 0, tmp.Length);
+                stream.EnsureRead(tmp, 0, tmp.Length);
 
                 bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
                              tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
@@ -152,7 +152,7 @@ public sealed partial class Apple2Mg
             case SectorOrder.Dos when _imageHeader.DataSize == 819200:
                 stream.Seek(_imageHeader.DataOffset, SeekOrigin.Begin);
                 tmp = new byte[_imageHeader.DataSize];
-                stream.Read(tmp, 0, tmp.Length);
+                stream.EnsureRead(tmp, 0, tmp.Length);
                 _decodedImage = new byte[_imageHeader.DataSize];
                 offsets       = _interleave;
 
@@ -198,7 +198,7 @@ public sealed partial class Apple2Mg
             stream.Seek(_imageHeader.CommentOffset, SeekOrigin.Begin);
 
             var comments = new byte[_imageHeader.CommentSize];
-            stream.Read(comments, 0, (int)_imageHeader.CommentSize);
+            stream.EnsureRead(comments, 0, (int)_imageHeader.CommentSize);
             _imageInfo.Comments = Encoding.ASCII.GetString(comments);
         }
 
@@ -294,7 +294,7 @@ public sealed partial class Apple2Mg
 
             stream.Seek((long)(_imageHeader.DataOffset + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+            stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
         }
 
         return ErrorNumber.NoError;

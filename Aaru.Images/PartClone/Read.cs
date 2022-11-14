@@ -55,7 +55,7 @@ public sealed partial class PartClone
             return ErrorNumber.InvalidArgument;
 
         var pHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
         AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.magic = {0}", StringHandlers.CToString(_pHdr.magic));
@@ -72,10 +72,10 @@ public sealed partial class PartClone
 
         _byteMap = new byte[_pHdr.totalBlocks];
         AaruConsole.DebugWriteLine("PartClone plugin", "Reading bytemap {0} bytes", _byteMap.Length);
-        stream.Read(_byteMap, 0, _byteMap.Length);
+        stream.EnsureRead(_byteMap, 0, _byteMap.Length);
 
         var bitmagic = new byte[8];
-        stream.Read(bitmagic, 0, 8);
+        stream.EnsureRead(bitmagic, 0, 8);
 
         AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.bitmagic = {0}", StringHandlers.CToString(bitmagic));
 
@@ -161,7 +161,7 @@ public sealed partial class PartClone
 
         buffer = new byte[_pHdr.blockSize];
         _imageStream.Seek(imageOff, SeekOrigin.Begin);
-        _imageStream.Read(buffer, 0, (int)_pHdr.blockSize);
+        _imageStream.EnsureRead(buffer, 0, (int)_pHdr.blockSize);
 
         if(_sectorCache.Count > MAX_CACHED_SECTORS)
             _sectorCache.Clear();

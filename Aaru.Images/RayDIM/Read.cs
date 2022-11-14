@@ -51,7 +51,7 @@ public sealed partial class RayDim
 
         var buffer = new byte[Marshal.SizeOf<Header>()];
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
@@ -76,7 +76,7 @@ public sealed partial class RayDim
 
         for(var i = 0; i < _imageInfo.SectorsPerTrack * _imageInfo.SectorSize; i++)
         {
-            stream.Read(sectors, 0, sectors.Length);
+            stream.EnsureRead(sectors, 0, sectors.Length);
             stream.Seek(_imageInfo.SectorsPerTrack, SeekOrigin.Current);
             _disk.Write(sectors, 0, sectors.Length);
         }
@@ -122,8 +122,8 @@ public sealed partial class RayDim
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
-        _disk.Seek((long)(sectorAddress    * _imageInfo.SectorSize), SeekOrigin.Begin);
-        _disk.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        _disk.Seek((long)(sectorAddress          * _imageInfo.SectorSize), SeekOrigin.Begin);
+        _disk.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }

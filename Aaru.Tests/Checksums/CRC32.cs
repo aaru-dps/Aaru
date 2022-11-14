@@ -31,6 +31,7 @@ namespace Aaru.Tests.Checksums;
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -70,7 +71,7 @@ public class Crc32
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         Crc32Context.Data(data, out byte[] result);
@@ -92,7 +93,7 @@ public class Crc32
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new Crc32Context();
@@ -109,7 +110,7 @@ public class Crc32
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         Crc32Context.Data(data, out byte[] result);
@@ -131,7 +132,7 @@ public class Crc32
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new Crc32Context();
@@ -148,7 +149,7 @@ public class Crc32
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 15);
+        fs.EnsureRead(data, 0, 15);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new Crc32Context();
@@ -165,7 +166,7 @@ public class Crc32
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 31);
+        fs.EnsureRead(data, 0, 31);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new Crc32Context();
@@ -182,7 +183,7 @@ public class Crc32
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 63);
+        fs.EnsureRead(data, 0, 63);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new Crc32Context();
@@ -199,7 +200,7 @@ public class Crc32
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 2352);
+        fs.EnsureRead(data, 0, 2352);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new Crc32Context();

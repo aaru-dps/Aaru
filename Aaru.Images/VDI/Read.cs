@@ -40,6 +40,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
 public sealed partial class Vdi
@@ -54,7 +55,7 @@ public sealed partial class Vdi
             return ErrorNumber.InvalidArgument;
 
         var vHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(vHdrB, 0, Marshal.SizeOf<Header>());
         _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
         AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.creator = {0}", _vHdr.creator);
@@ -98,7 +99,7 @@ public sealed partial class Vdi
         AaruConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
         stream.Seek(_vHdr.offsetBlocks, SeekOrigin.Begin);
         var ibmB = new byte[_vHdr.blocks * 4];
-        stream.Read(ibmB, 0, ibmB.Length);
+        stream.EnsureRead(ibmB, 0, ibmB.Length);
         _ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
         DateTime end = DateTime.UtcNow;
 
@@ -222,7 +223,7 @@ public sealed partial class Vdi
 
         var cluster = new byte[_vHdr.blockSize];
         _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
-        _imageStream.Read(cluster, 0, (int)_vHdr.blockSize);
+        _imageStream.EnsureRead(cluster, 0, (int)_vHdr.blockSize);
         buffer = new byte[_vHdr.sectorSize];
         Array.Copy(cluster, (int)secOff, buffer, 0, _vHdr.sectorSize);
 

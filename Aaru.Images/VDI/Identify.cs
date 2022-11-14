@@ -48,7 +48,7 @@ public sealed partial class Vdi
             return false;
 
         var vHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(vHdrB, 0, Marshal.SizeOf<Header>());
         _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
         return _vHdr.magic == VDI_MAGIC;

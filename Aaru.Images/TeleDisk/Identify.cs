@@ -36,6 +36,7 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class TeleDisk
 {
@@ -47,7 +48,7 @@ public sealed partial class TeleDisk
         Stream stream      = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        stream.Read(headerBytes, 0, 12);
+        stream.EnsureRead(headerBytes, 0, 12);
 
         _header.Signature = BitConverter.ToUInt16(headerBytes, 0);
 

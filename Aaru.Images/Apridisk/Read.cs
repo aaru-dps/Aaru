@@ -59,7 +59,7 @@ public sealed partial class Apridisk
         while(stream.Position < stream.Length)
         {
             var recB = new byte[recordSize];
-            stream.Read(recB, 0, recordSize);
+            stream.EnsureRead(recB, 0, recordSize);
 
             Record record = Marshal.SpanToStructureLittleEndian<Record>(recB);
 
@@ -75,7 +75,7 @@ public sealed partial class Apridisk
                     AaruConsole.DebugWriteLine("Apridisk plugin", "Found comment record at {0}", stream.Position);
                     stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
                     var commentB = new byte[record.dataSize];
-                    stream.Read(commentB, 0, commentB.Length);
+                    stream.EnsureRead(commentB, 0, commentB.Length);
                     _imageInfo.Comments = StringHandlers.CToString(commentB);
                     AaruConsole.DebugWriteLine("Apridisk plugin", "Comment: \"{0}\"", _imageInfo.Comments);
 
@@ -84,7 +84,7 @@ public sealed partial class Apridisk
                     AaruConsole.DebugWriteLine("Apridisk plugin", "Found creator record at {0}", stream.Position);
                     stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
                     var creatorB = new byte[record.dataSize];
-                    stream.Read(creatorB, 0, creatorB.Length);
+                    stream.EnsureRead(creatorB, 0, creatorB.Length);
                     _imageInfo.Creator = StringHandlers.CToString(creatorB);
                     AaruConsole.DebugWriteLine("Apridisk plugin", "Creator: \"{0}\"", _imageInfo.Creator);
 
@@ -155,7 +155,7 @@ public sealed partial class Apridisk
         while(stream.Position < stream.Length)
         {
             var recB = new byte[recordSize];
-            stream.Read(recB, 0, recordSize);
+            stream.EnsureRead(recB, 0, recordSize);
 
             Record record = Marshal.SpanToStructureLittleEndian<Record>(recB);
 
@@ -173,7 +173,7 @@ public sealed partial class Apridisk
                     stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
 
                     var data = new byte[record.dataSize];
-                    stream.Read(data, 0, data.Length);
+                    stream.EnsureRead(data, 0, data.Length);
 
                     spts[record.cylinder][record.head]++;
                     uint realLength = record.dataSize;

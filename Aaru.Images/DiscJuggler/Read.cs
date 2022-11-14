@@ -56,7 +56,7 @@ public sealed partial class DiscJuggler
         // Read size of image descriptor
         _imageStream.Seek(-4, SeekOrigin.End);
         var dscLenB = new byte[4];
-        _imageStream.Read(dscLenB, 0, 4);
+        _imageStream.EnsureRead(dscLenB, 0, 4);
         var dscLen = BitConverter.ToInt32(dscLenB, 0);
 
         if(dscLen >= _imageStream.Length)
@@ -64,7 +64,7 @@ public sealed partial class DiscJuggler
 
         var descriptor = new byte[dscLen];
         _imageStream.Seek(-dscLen, SeekOrigin.End);
-        _imageStream.Read(descriptor, 0, dscLen);
+        _imageStream.EnsureRead(descriptor, 0, dscLen);
 
         // Sessions
         if(descriptor[0] > 99 ||
@@ -945,7 +945,7 @@ public sealed partial class DiscJuggler
             var mode2Ms = new MemoryStream((int)(sectorSize * length));
 
             buffer = new byte[(aaruTrack.RawBytesPerSector + sectorSkip) * length];
-            _imageStream.Read(buffer, 0, buffer.Length);
+            _imageStream.EnsureRead(buffer, 0, buffer.Length);
 
             for(var i = 0; i < length; i++)
             {
@@ -962,13 +962,13 @@ public sealed partial class DiscJuggler
         }
         else if(sectorOffset == 0 &&
                 sectorSkip   == 0)
-            _imageStream.Read(buffer, 0, buffer.Length);
+            _imageStream.EnsureRead(buffer, 0, buffer.Length);
         else
             for(var i = 0; i < length; i++)
             {
                 var sector = new byte[sectorSize];
                 _imageStream.Seek(sectorOffset, SeekOrigin.Current);
-                _imageStream.Read(sector, 0, sector.Length);
+                _imageStream.EnsureRead(sector, 0, sector.Length);
                 _imageStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
@@ -1208,13 +1208,13 @@ public sealed partial class DiscJuggler
 
         if(sectorOffset == 0 &&
            sectorSkip   == 0)
-            _imageStream.Read(buffer, 0, buffer.Length);
+            _imageStream.EnsureRead(buffer, 0, buffer.Length);
         else
             for(var i = 0; i < length; i++)
             {
                 var sector = new byte[sectorSize];
                 _imageStream.Seek(sectorOffset, SeekOrigin.Current);
-                _imageStream.Read(sector, 0, sector.Length);
+                _imageStream.EnsureRead(sector, 0, sector.Length);
                 _imageStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
@@ -1289,12 +1289,12 @@ public sealed partial class DiscJuggler
         _imageStream.Seek((long)(aaruTrack.FileOffset + sectorAddress * (sectorSize + sectorSkip)), SeekOrigin.Begin);
 
         if(sectorSkip == 0)
-            _imageStream.Read(buffer, 0, buffer.Length);
+            _imageStream.EnsureRead(buffer, 0, buffer.Length);
         else
             for(var i = 0; i < length; i++)
             {
                 var sector = new byte[sectorSize];
-                _imageStream.Read(sector, 0, sector.Length);
+                _imageStream.EnsureRead(sector, 0, sector.Length);
                 _imageStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }

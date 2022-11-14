@@ -54,7 +54,7 @@ public sealed partial class Virtual98
             return false;
 
         var hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
-        stream.Read(hdrB, 0, hdrB.Length);
+        stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
 

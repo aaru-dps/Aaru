@@ -48,7 +48,7 @@ public sealed partial class Apple2Mg
             return false;
 
         var header = new byte[64];
-        stream.Read(header, 0, 64);
+        stream.EnsureRead(header, 0, 64);
 
         Header hdr = Marshal.SpanToStructureLittleEndian<Header>(header);
 

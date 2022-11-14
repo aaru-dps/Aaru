@@ -49,7 +49,7 @@ public class AtariLynx : IByteAddressableImage
 
         stream.Position = 0;
         var magicBytes = new byte[4];
-        stream.Read(magicBytes, 0, 4);
+        stream.EnsureRead(magicBytes, 0, 4);
         var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         // "LYNX"
@@ -70,7 +70,7 @@ public class AtariLynx : IByteAddressableImage
 
         stream.Position = 0x0;
         var magicBytes = new byte[4];
-        stream.Read(magicBytes, 0, 4);
+        stream.EnsureRead(magicBytes, 0, 4);
         var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         if(magic != 0x584E594C)
@@ -78,10 +78,10 @@ public class AtariLynx : IByteAddressableImage
 
         var headerBytes = new byte[64];
         stream.Position = 0;
-        stream.Read(headerBytes, 0, 64);
+        stream.EnsureRead(headerBytes, 0, 64);
 
         _data = new byte[imageFilter.DataForkLength - 64];
-        stream.Read(_data, 0, (int)imageFilter.DataForkLength - 64);
+        stream.EnsureRead(_data, 0, (int)imageFilter.DataForkLength - 64);
 
         _imageInfo = new ImageInfo
         {

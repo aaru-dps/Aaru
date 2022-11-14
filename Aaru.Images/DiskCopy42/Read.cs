@@ -53,7 +53,7 @@ public sealed partial class DiskCopy42
         stream.Seek(0, SeekOrigin.Begin);
         var buffer  = new byte[0x58];
         var pString = new byte[64];
-        stream.Read(buffer, 0, 0x58);
+        stream.EnsureRead(buffer, 0, 0x58);
         IsWriting = false;
 
         // Incorrect pascal string length, not DC42
@@ -196,11 +196,11 @@ public sealed partial class DiskCopy42
 
             Stream dataStream = imageFilter.GetDataForkStream();
             dataStream.Seek(dataOffset, SeekOrigin.Begin);
-            dataStream.Read(data, 0, (int)header.DataSize);
+            dataStream.EnsureRead(data, 0, (int)header.DataSize);
 
             Stream tagStream = imageFilter.GetDataForkStream();
             tagStream.Seek(tagOffset, SeekOrigin.Begin);
-            tagStream.Read(tags, 0, (int)header.TagSize);
+            tagStream.EnsureRead(tags, 0, (int)header.TagSize);
 
             var mfsMagic     = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x400);
             var mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x412);
@@ -421,7 +421,7 @@ public sealed partial class DiskCopy42
         {
             Stream stream = dc42ImageFilter.GetDataForkStream();
             stream.Seek((long)(dataOffset + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
-            stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
+            stream.EnsureRead(buffer, 0, (int)(length * imageInfo.SectorSize));
         }
 
         return ErrorNumber.NoError;
@@ -452,7 +452,7 @@ public sealed partial class DiskCopy42
         {
             Stream stream = dc42ImageFilter.GetDataForkStream();
             stream.Seek((long)(tagOffset + sectorAddress * bptag), SeekOrigin.Begin);
-            stream.Read(buffer, 0, (int)(length * bptag));
+            stream.EnsureRead(buffer, 0, (int)(length * bptag));
         }
 
         return ErrorNumber.NoError;

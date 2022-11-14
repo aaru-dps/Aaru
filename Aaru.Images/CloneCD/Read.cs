@@ -43,6 +43,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders.CD;
+using Aaru.Helpers;
 using Session = Aaru.CommonTypes.Structs.Session;
 
 public sealed partial class CloneCd
@@ -634,7 +635,7 @@ public sealed partial class CloneCd
                             break;
 
                         _dataStream.Seek(pos, SeekOrigin.Begin);
-                        _dataStream.Read(sectTest, 0, 2352);
+                        _dataStream.EnsureRead(sectTest, 0, 2352);
                         Array.Copy(sectTest, 0, syncTest, 0, 12);
 
                         if(!Sector.SyncMark.SequenceEqual(syncTest))
@@ -1022,7 +1023,7 @@ public sealed partial class CloneCd
         {
             var mode2Ms = new MemoryStream((int)(sectorSize * length));
 
-            _dataStream.Read(buffer, 0, buffer.Length);
+            _dataStream.EnsureRead(buffer, 0, buffer.Length);
 
             for(var i = 0; i < length; i++)
             {
@@ -1036,13 +1037,13 @@ public sealed partial class CloneCd
         }
         else if(sectorOffset == 0 &&
                 sectorSkip   == 0)
-            _dataStream.Read(buffer, 0, buffer.Length);
+            _dataStream.EnsureRead(buffer, 0, buffer.Length);
         else
             for(var i = 0; i < length; i++)
             {
                 var sector = new byte[sectorSize];
                 _dataStream.Seek(sectorOffset, SeekOrigin.Current);
-                _dataStream.Read(sector, 0, sector.Length);
+                _dataStream.EnsureRead(sector, 0, sector.Length);
                 _dataStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
@@ -1092,7 +1093,7 @@ public sealed partial class CloneCd
             case SectorTagType.CdSectorSubchannel:
                 buffer = new byte[96 * length];
                 _subStream.Seek((long)(aaruTrack.SubchannelOffset + sectorAddress * 96), SeekOrigin.Begin);
-                _subStream.Read(buffer, 0, buffer.Length);
+                _subStream.EnsureRead(buffer, 0, buffer.Length);
 
                 buffer = Subchannel.Interleave(buffer);
 
@@ -1307,13 +1308,13 @@ public sealed partial class CloneCd
 
         if(sectorOffset == 0 &&
            sectorSkip   == 0)
-            _dataStream.Read(buffer, 0, buffer.Length);
+            _dataStream.EnsureRead(buffer, 0, buffer.Length);
         else
             for(var i = 0; i < length; i++)
             {
                 var sector = new byte[sectorSize];
                 _dataStream.Seek(sectorOffset, SeekOrigin.Current);
-                _dataStream.Read(sector, 0, sector.Length);
+                _dataStream.EnsureRead(sector, 0, sector.Length);
                 _dataStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
@@ -1358,7 +1359,7 @@ public sealed partial class CloneCd
         buffer = new byte[2352 * length];
 
         _dataStream.Seek((long)(aaruTrack.FileOffset + sectorAddress * 2352), SeekOrigin.Begin);
-        _dataStream.Read(buffer, 0, buffer.Length);
+        _dataStream.EnsureRead(buffer, 0, buffer.Length);
 
         return ErrorNumber.NoError;
     }

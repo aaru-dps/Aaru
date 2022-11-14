@@ -49,6 +49,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Compression;
 using Aaru.Console;
 using Aaru.Decoders.CD;
+using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 using Session = Aaru.CommonTypes.Structs.Session;
@@ -68,7 +69,7 @@ public sealed partial class AaruFormat
             return ErrorNumber.InvalidArgument;
 
         _structureBytes = new byte[Marshal.SizeOf<AaruHeader>()];
-        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
         _header = Marshal.ByteArrayToStructureLittleEndian<AaruHeader>(_structureBytes);
 
         if(_header.imageMajorVersion > AARUFMT_VERSION)
@@ -88,7 +89,7 @@ public sealed partial class AaruFormat
         // Read the index header
         _imageStream.Position = (long)_header.indexOffset;
         _structureBytes       = new byte[Marshal.SizeOf<IndexHeader>()];
-        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
         IndexHeader idxHeader = Marshal.SpanToStructureLittleEndian<IndexHeader>(_structureBytes);
 
         if(idxHeader.identifier != BlockType.Index &&
@@ -103,7 +104,7 @@ public sealed partial class AaruFormat
         {
             _imageStream.Position = (long)_header.indexOffset;
             _structureBytes       = new byte[Marshal.SizeOf<IndexHeader2>()];
-            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+            _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
             IndexHeader2 idxHeader2 = Marshal.SpanToStructureLittleEndian<IndexHeader2>(_structureBytes);
 
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries", _header.indexOffset,
@@ -117,7 +118,7 @@ public sealed partial class AaruFormat
             for(ulong i = 0; i < idxHeader2.entries; i++)
             {
                 _structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
-                _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                 IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(_structureBytes);
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin",
@@ -140,7 +141,7 @@ public sealed partial class AaruFormat
             for(ushort i = 0; i < idxHeader.entries; i++)
             {
                 _structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
-                _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                 IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(_structureBytes);
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin",
@@ -173,7 +174,7 @@ public sealed partial class AaruFormat
                     _imageStream.Position = (long)entry.offset;
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     BlockHeader blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(_structureBytes);
                     _imageInfo.ImageSize += blockHeader.cmpLength;
 
@@ -228,8 +229,8 @@ public sealed partial class AaruFormat
                         DateTime startDecompress = DateTime.Now;
                         var      compressedTag   = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                         var      lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
-                        _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                        _imageStream.Read(compressedTag, 0, compressedTag.Length);
+                        _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                        _imageStream.EnsureRead(compressedTag, 0, compressedTag.Length);
                         data = new byte[blockHeader.length];
                         int decompressedLength = LZMA.DecodeBuffer(compressedTag, data, lzmaProperties);
 
@@ -256,7 +257,7 @@ public sealed partial class AaruFormat
                     else if(blockHeader.compression == CompressionType.None)
                     {
                         data = new byte[blockHeader.length];
-                        _imageStream.Read(data, 0, (int)blockHeader.length);
+                        _imageStream.EnsureRead(data, 0, (int)blockHeader.length);
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                    GC.GetTotalMemory(false));
@@ -410,7 +411,7 @@ public sealed partial class AaruFormat
                     break;
                 case BlockType.DeDuplicationTable:
                     _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     DdtHeader ddtHeader = Marshal.SpanToStructureLittleEndian<DdtHeader>(_structureBytes);
                     _imageInfo.ImageSize += ddtHeader.cmpLength;
 
@@ -434,8 +435,8 @@ public sealed partial class AaruFormat
                                     DateTime ddtStart       = DateTime.UtcNow;
                                     var      compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                                     var      lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
-                                    _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                                    _imageStream.Read(compressedDdt, 0, compressedDdt.Length);
+                                    _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                                    _imageStream.EnsureRead(compressedDdt, 0, compressedDdt.Length);
                                     var decompressedDdt = new byte[ddtHeader.length];
 
                                     var decompressedLength =
@@ -496,8 +497,8 @@ public sealed partial class AaruFormat
                                     DateTime ddtStart       = DateTime.UtcNow;
                                     var      compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                                     var      lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
-                                    _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                                    _imageStream.Read(compressedDdt, 0, compressedDdt.Length);
+                                    _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                                    _imageStream.EnsureRead(compressedDdt, 0, compressedDdt.Length);
 
                                     var decompressedLength =
                                         (ulong)LZMA.DecodeBuffer(compressedDdt, decompressedDdt, lzmaProperties);
@@ -522,7 +523,7 @@ public sealed partial class AaruFormat
 
                                     break;
                                 case CompressionType.None:
-                                    _imageStream.Read(decompressedDdt, 0, decompressedDdt.Length);
+                                    _imageStream.EnsureRead(decompressedDdt, 0, decompressedDdt.Length);
 
                                     AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                                GC.GetTotalMemory(false));
@@ -563,7 +564,7 @@ public sealed partial class AaruFormat
                 // Logical geometry block. It doesn't have a CRC coz, well, it's not so important
                 case BlockType.GeometryBlock:
                     _structureBytes = new byte[Marshal.SizeOf<GeometryBlock>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     _geometryBlock = Marshal.SpanToStructureLittleEndian<GeometryBlock>(_structureBytes);
 
                     if(_geometryBlock.identifier == BlockType.GeometryBlock)
@@ -586,7 +587,7 @@ public sealed partial class AaruFormat
                 // Metadata block
                 case BlockType.MetadataBlock:
                     _structureBytes = new byte[Marshal.SizeOf<MetadataBlock>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
 
                     MetadataBlock metadataBlock = Marshal.SpanToStructureLittleEndian<MetadataBlock>(_structureBytes);
 
@@ -603,7 +604,7 @@ public sealed partial class AaruFormat
 
                     var metadata = new byte[metadataBlock.blockSize];
                     _imageStream.Position = (long)entry.offset;
-                    _imageStream.Read(metadata, 0, metadata.Length);
+                    _imageStream.EnsureRead(metadata, 0, metadata.Length);
 
                     if(metadataBlock.mediaSequence     > 0 &&
                        metadataBlock.lastMediaSequence > 0)
@@ -752,7 +753,7 @@ public sealed partial class AaruFormat
                 // Optical disc tracks block
                 case BlockType.TracksBlock:
                     _structureBytes = new byte[Marshal.SizeOf<TracksHeader>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     TracksHeader tracksHeader = Marshal.SpanToStructureLittleEndian<TracksHeader>(_structureBytes);
 
                     if(tracksHeader.identifier != BlockType.TracksBlock)
@@ -765,7 +766,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<TrackEntry>() * tracksHeader.entries];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     Crc64Context.Data(_structureBytes, out byte[] trksCrc);
 
                     if(BitConverter.ToUInt64(trksCrc, 0) != tracksHeader.crc64)
@@ -789,7 +790,7 @@ public sealed partial class AaruFormat
                     for(ushort i = 0; i < tracksHeader.entries; i++)
                     {
                         _structureBytes = new byte[Marshal.SizeOf<TrackEntry>()];
-                        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
 
                         TrackEntry trackEntry = Marshal.ByteArrayToStructureLittleEndian<TrackEntry>(_structureBytes);
 
@@ -834,7 +835,7 @@ public sealed partial class AaruFormat
                 // CICM XML metadata block
                 case BlockType.CicmBlock:
                     _structureBytes = new byte[Marshal.SizeOf<CicmMetadataBlock>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
 
                     CicmMetadataBlock cicmBlock =
                         Marshal.SpanToStructureLittleEndian<CicmMetadataBlock>(_structureBytes);
@@ -849,7 +850,7 @@ public sealed partial class AaruFormat
                                                GC.GetTotalMemory(false));
 
                     var cicmBytes = new byte[cicmBlock.length];
-                    _imageStream.Read(cicmBytes, 0, cicmBytes.Length);
+                    _imageStream.EnsureRead(cicmBytes, 0, cicmBytes.Length);
                     var cicmMs = new MemoryStream(cicmBytes);
                     var cicmXs = new XmlSerializer(typeof(CICMMetadataType));
 
@@ -875,7 +876,7 @@ public sealed partial class AaruFormat
                 // Dump hardware block
                 case BlockType.DumpHardwareBlock:
                     _structureBytes = new byte[Marshal.SizeOf<DumpHardwareHeader>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
 
                     DumpHardwareHeader dumpBlock =
                         Marshal.SpanToStructureLittleEndian<DumpHardwareHeader>(_structureBytes);
@@ -890,7 +891,7 @@ public sealed partial class AaruFormat
                                                GC.GetTotalMemory(false));
 
                     _structureBytes = new byte[dumpBlock.length];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     Crc64Context.Data(_structureBytes, out byte[] dumpCrc);
 
                     if(BitConverter.ToUInt64(dumpCrc, 0) != dumpBlock.crc64)
@@ -909,7 +910,7 @@ public sealed partial class AaruFormat
                     for(ushort i = 0; i < dumpBlock.entries; i++)
                     {
                         _structureBytes = new byte[Marshal.SizeOf<DumpHardwareEntry>()];
-                        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
 
                         DumpHardwareEntry dumpEntry =
                             Marshal.SpanToStructureLittleEndian<DumpHardwareEntry>(_structureBytes);
@@ -925,7 +926,7 @@ public sealed partial class AaruFormat
                         if(dumpEntry.manufacturerLength > 0)
                         {
                             tmp = new byte[dumpEntry.manufacturerLength - 1];
-                            _imageStream.Read(tmp, 0, tmp.Length);
+                            _imageStream.EnsureRead(tmp, 0, tmp.Length);
                             _imageStream.Position += 1;
                             dump.Manufacturer     =  Encoding.UTF8.GetString(tmp);
                         }
@@ -933,7 +934,7 @@ public sealed partial class AaruFormat
                         if(dumpEntry.modelLength > 0)
                         {
                             tmp = new byte[dumpEntry.modelLength - 1];
-                            _imageStream.Read(tmp, 0, tmp.Length);
+                            _imageStream.EnsureRead(tmp, 0, tmp.Length);
                             _imageStream.Position += 1;
                             dump.Model            =  Encoding.UTF8.GetString(tmp);
                         }
@@ -941,7 +942,7 @@ public sealed partial class AaruFormat
                         if(dumpEntry.revisionLength > 0)
                         {
                             tmp = new byte[dumpEntry.revisionLength - 1];
-                            _imageStream.Read(tmp, 0, tmp.Length);
+                            _imageStream.EnsureRead(tmp, 0, tmp.Length);
                             _imageStream.Position += 1;
                             dump.Revision         =  Encoding.UTF8.GetString(tmp);
                         }
@@ -949,7 +950,7 @@ public sealed partial class AaruFormat
                         if(dumpEntry.firmwareLength > 0)
                         {
                             tmp = new byte[dumpEntry.firmwareLength - 1];
-                            _imageStream.Read(tmp, 0, tmp.Length);
+                            _imageStream.EnsureRead(tmp, 0, tmp.Length);
                             _imageStream.Position += 1;
                             dump.Firmware         =  Encoding.UTF8.GetString(tmp);
                         }
@@ -957,7 +958,7 @@ public sealed partial class AaruFormat
                         if(dumpEntry.serialLength > 0)
                         {
                             tmp = new byte[dumpEntry.serialLength - 1];
-                            _imageStream.Read(tmp, 0, tmp.Length);
+                            _imageStream.EnsureRead(tmp, 0, tmp.Length);
                             _imageStream.Position += 1;
                             dump.Serial           =  Encoding.UTF8.GetString(tmp);
                         }
@@ -965,7 +966,7 @@ public sealed partial class AaruFormat
                         if(dumpEntry.softwareNameLength > 0)
                         {
                             tmp = new byte[dumpEntry.softwareNameLength - 1];
-                            _imageStream.Read(tmp, 0, tmp.Length);
+                            _imageStream.EnsureRead(tmp, 0, tmp.Length);
                             _imageStream.Position += 1;
                             dump.Software.Name    =  Encoding.UTF8.GetString(tmp);
                         }
@@ -973,7 +974,7 @@ public sealed partial class AaruFormat
                         if(dumpEntry.softwareVersionLength > 0)
                         {
                             tmp = new byte[dumpEntry.softwareVersionLength - 1];
-                            _imageStream.Read(tmp, 0, tmp.Length);
+                            _imageStream.EnsureRead(tmp, 0, tmp.Length);
                             _imageStream.Position += 1;
                             dump.Software.Version =  Encoding.UTF8.GetString(tmp);
                         }
@@ -981,7 +982,7 @@ public sealed partial class AaruFormat
                         if(dumpEntry.softwareOperatingSystemLength > 0)
                         {
                             tmp = new byte[dumpEntry.softwareOperatingSystemLength - 1];
-                            _imageStream.Read(tmp, 0, tmp.Length);
+                            _imageStream.EnsureRead(tmp, 0, tmp.Length);
                             _imageStream.Position         += 1;
                             dump.Software.OperatingSystem =  Encoding.UTF8.GetString(tmp);
                         }
@@ -990,7 +991,7 @@ public sealed partial class AaruFormat
 
                         for(uint j = 0; j < dumpEntry.extents; j++)
                         {
-                            _imageStream.Read(tmp, 0, tmp.Length);
+                            _imageStream.EnsureRead(tmp, 0, tmp.Length);
 
                             dump.Extents[j] = new ExtentType
                             {
@@ -1016,7 +1017,7 @@ public sealed partial class AaruFormat
                 // Tape partition block
                 case BlockType.TapePartitionBlock:
                     _structureBytes = new byte[Marshal.SizeOf<TapePartitionHeader>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
 
                     TapePartitionHeader partitionHeader =
                         Marshal.SpanToStructureLittleEndian<TapePartitionHeader>(_structureBytes);
@@ -1028,7 +1029,7 @@ public sealed partial class AaruFormat
                                                entry.offset);
 
                     var tapePartitionBytes = new byte[partitionHeader.length];
-                    _imageStream.Read(tapePartitionBytes, 0, tapePartitionBytes.Length);
+                    _imageStream.EnsureRead(tapePartitionBytes, 0, tapePartitionBytes.Length);
 
                     Span<TapePartitionEntry> tapePartitions =
                         MemoryMarshal.Cast<byte, TapePartitionEntry>(tapePartitionBytes);
@@ -1050,7 +1051,7 @@ public sealed partial class AaruFormat
                 // Tape file block
                 case BlockType.TapeFileBlock:
                     _structureBytes = new byte[Marshal.SizeOf<TapeFileHeader>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
 
                     TapeFileHeader fileHeader = Marshal.SpanToStructureLittleEndian<TapeFileHeader>(_structureBytes);
 
@@ -1061,7 +1062,7 @@ public sealed partial class AaruFormat
                                                entry.offset);
 
                     var tapeFileBytes = new byte[fileHeader.length];
-                    _imageStream.Read(tapeFileBytes, 0, tapeFileBytes.Length);
+                    _imageStream.EnsureRead(tapeFileBytes, 0, tapeFileBytes.Length);
                     Span<TapeFileEntry> tapeFiles = MemoryMarshal.Cast<byte, TapeFileEntry>(tapeFileBytes);
                     Files = new List<TapeFile>();
 
@@ -1081,7 +1082,7 @@ public sealed partial class AaruFormat
                 // Optical disc tracks block
                 case BlockType.CompactDiscIndexesBlock:
                     _structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexesHeader>()];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
 
                     CompactDiscIndexesHeader indexesHeader =
                         Marshal.SpanToStructureLittleEndian<CompactDiscIndexesHeader>(_structureBytes);
@@ -1096,7 +1097,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexEntry>() * indexesHeader.entries];
-                    _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     Crc64Context.Data(_structureBytes, out byte[] idsxCrc);
 
                     if(BitConverter.ToUInt64(idsxCrc, 0) != indexesHeader.crc64)
@@ -1118,7 +1119,7 @@ public sealed partial class AaruFormat
                     for(ushort i = 0; i < indexesHeader.entries; i++)
                     {
                         _structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexEntry>()];
-                        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
 
                         compactDiscIndexes.Add(Marshal.
                                                    ByteArrayToStructureLittleEndian<
@@ -1495,7 +1496,7 @@ public sealed partial class AaruFormat
         // Read block header
         _imageStream.Position = (long)blockOffset;
         _structureBytes       = new byte[Marshal.SizeOf<BlockHeader>()];
-        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
         blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(_structureBytes);
 
         // Decompress block
@@ -1507,7 +1508,7 @@ public sealed partial class AaruFormat
         {
             case CompressionType.None:
                 block = new byte[blockHeader.length];
-                _imageStream.Read(block, 0, (int)blockHeader.length);
+                _imageStream.EnsureRead(block, 0, (int)blockHeader.length);
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                            GC.GetTotalMemory(false));
@@ -1516,8 +1517,8 @@ public sealed partial class AaruFormat
             case CompressionType.Lzma:
                 var compressedBlock = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                 var lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
-                _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                _imageStream.Read(compressedBlock, 0, compressedBlock.Length);
+                _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                _imageStream.EnsureRead(compressedBlock, 0, compressedBlock.Length);
                 block              = new byte[blockHeader.length];
                 decompressedLength = (ulong)LZMA.DecodeBuffer(compressedBlock, block, lzmaProperties);
 
@@ -1536,7 +1537,7 @@ public sealed partial class AaruFormat
                 break;
             case CompressionType.Flac:
                 var flacBlock = new byte[blockHeader.cmpLength];
-                _imageStream.Read(flacBlock, 0, flacBlock.Length);
+                _imageStream.EnsureRead(flacBlock, 0, flacBlock.Length);
                 block              = new byte[blockHeader.length];
                 decompressedLength = (ulong)FLAC.DecodeBuffer(flacBlock, block);
 
@@ -2010,7 +2011,7 @@ public sealed partial class AaruFormat
 
                                 _sectorPrefixMs.Position = prefixPosition;
 
-                                _sectorPrefixMs.Read(buffer, 0, 16);
+                                _sectorPrefixMs.EnsureRead(buffer, 0, 16);
                             }
                         }
                         else
@@ -2036,7 +2037,7 @@ public sealed partial class AaruFormat
 
                                 _sectorSuffixMs.Position = suffixPosition;
 
-                                _sectorSuffixMs.Read(buffer, 2064, 288);
+                                _sectorSuffixMs.EnsureRead(buffer, 2064, 288);
                             }
                         }
                         else
@@ -2066,7 +2067,7 @@ public sealed partial class AaruFormat
 
                                 _sectorPrefixMs.Position = prefixPosition;
 
-                                _sectorPrefixMs.Read(buffer, 0, 16);
+                                _sectorPrefixMs.EnsureRead(buffer, 0, 16);
                             }
                         }
                         else
@@ -2119,7 +2120,7 @@ public sealed partial class AaruFormat
 
                                             _sectorSuffixMs.Position = suffixPosition;
 
-                                            _sectorSuffixMs.Read(buffer, form2 ? 2348 : 2072, form2 ? 4 : 280);
+                                            _sectorSuffixMs.EnsureRead(buffer, form2 ? 2348 : 2072, form2 ? 4 : 280);
                                             Array.Copy(data, 0, buffer, 24, form2 ? 2324 : 2048);
                                         }
                                     }

@@ -37,6 +37,7 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
+using Aaru.Helpers;
 
 public sealed partial class HdCopy
 {
@@ -68,7 +69,7 @@ public sealed partial class HdCopy
         }
 
         fheader.trackMap = new byte[2 * numTracks];
-        stream.Read(fheader.trackMap, 0, 2 * numTracks);
+        stream.EnsureRead(fheader.trackMap, 0, 2 * numTracks);
 
         /* Some sanity checks on the values we just read.
          * We know the image is from a DOS floppy disk, so assume
@@ -112,12 +113,12 @@ public sealed partial class HdCopy
         stream.Seek(_trackOffset[trackNum], SeekOrigin.Begin);
 
         // read the compressed track data
-        stream.Read(blkHeader, 0, 3);
+        stream.EnsureRead(blkHeader, 0, 3);
         var  compressedLength = (short)(BitConverter.ToInt16(blkHeader, 0) - 1);
         byte escapeByte       = blkHeader[2];
 
         var cBuffer = new byte[compressedLength];
-        stream.Read(cBuffer, 0, compressedLength);
+        stream.EnsureRead(cBuffer, 0, compressedLength);
 
         // decompress the data
         var sIndex = 0; // source buffer position
