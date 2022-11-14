@@ -705,9 +705,11 @@ static partial class Usb
             if(!_portIsHub)
                 return null;
 
-            var    hub = new UsbHub();
-            hub._hubIsRootHub  = false;
-            hub._hubDeviceDesc = "External Hub";
+            var hub = new UsbHub
+            {
+                _hubIsRootHub  = false,
+                _hubDeviceDesc = "External Hub"
+            };
 
             // Open a handle to the Host Controller
             IntPtr h = CreateFile(_portHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,

@@ -1238,22 +1238,24 @@ public sealed partial class Nero
                     return ErrorNumber.InvalidArgument;
                 }
 
-                var track = new Track();
-
-                // Common track data
-                track.Description = StringHandlers.CToString(_neroTracks[1].Isrc);
-
-                track.EndSector = (_imageNewFormat ? footerV2.FirstChunkOffset : footerV1.FirstChunkOffset) /
-                                  _neroTracks[1].SectorSize - 150;
-
-                track.Sequence       = _neroTracks[1].Sequence;
-                track.Session        = currentSession;
-                track.Type           = NeroTrackModeToTrackType((DaoMode)_neroTracks[1].Mode);
-                track.File           = imageFilter.Filename;
-                track.Filter         = imageFilter;
-                track.FileType       = "BINARY";
-                track.SubchannelType = TrackSubchannelType.None;
-                track.Indexes[1]     = 0;
+                var track = new Track
+                {
+                    // Common track data
+                    Description = StringHandlers.CToString(_neroTracks[1].Isrc),
+                    EndSector = (_imageNewFormat ? footerV2.FirstChunkOffset : footerV1.FirstChunkOffset) /
+                                _neroTracks[1].SectorSize - 150,
+                    Sequence       = _neroTracks[1].Sequence,
+                    Session        = currentSession,
+                    Type           = NeroTrackModeToTrackType((DaoMode)_neroTracks[1].Mode),
+                    File           = imageFilter.Filename,
+                    Filter         = imageFilter,
+                    FileType       = "BINARY",
+                    SubchannelType = TrackSubchannelType.None,
+                    Indexes =
+                    {
+                        [1] = 0
+                    }
+                };
 
                 var rawMode1 = false;
                 var rawMode2 = false;

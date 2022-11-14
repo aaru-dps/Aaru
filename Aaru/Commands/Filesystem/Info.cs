@@ -255,8 +255,11 @@ sealed class FilesystemInfoCommand : Command
 
                     for(var i = 0; i < partitionsList.Count; i++)
                     {
-                        Table table = new();
-                        table.Title = new TableTitle($"Partition {partitionsList[i].Sequence}:");
+                        Table table = new()
+                        {
+                            Title = new TableTitle($"Partition {partitionsList[i].Sequence}:")
+                        };
+
                         table.AddColumn("");
                         table.AddColumn("");
                         table.HideHeaders();

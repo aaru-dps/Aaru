@@ -133,10 +133,9 @@ public partial class Device
             Command        = (byte)AtaCommands.ReadLogExt,
             SectorCount    = count,
             LbaMidCurrent  = (byte)(pageNumber & 0xFF),
-            LbaMidPrevious = (byte)((pageNumber & 0xFF00) / 0x100)
+            LbaMidPrevious = (byte)((pageNumber & 0xFF00) / 0x100),
+            LbaLowCurrent  = logAddress
         };
-
-        registers.LbaLowCurrent = logAddress;
 
         LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
                                    ref buffer, timeout, true, out duration, out bool sense);
@@ -167,10 +166,9 @@ public partial class Device
             Command        = (byte)AtaCommands.ReadLogDmaExt,
             SectorCount    = count,
             LbaMidCurrent  = (byte)(pageNumber & 0xFF),
-            LbaMidPrevious = (byte)((pageNumber & 0xFF00) / 0x100)
+            LbaMidPrevious = (byte)((pageNumber & 0xFF00) / 0x100),
+            LbaLowCurrent  = logAddress
         };
-
-        registers.LbaLowCurrent = logAddress;
 
         LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
                                    ref buffer, timeout, true, out duration, out bool sense);

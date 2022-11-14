@@ -260,8 +260,10 @@ public sealed class AtariPartitions : IPartition
                     if(errno != ErrorNumber.NoError)
                         break;
 
-                    var extendedTable = new AtariTable();
-                    extendedTable.Entries = new AtariEntry[4];
+                    var extendedTable = new AtariTable
+                    {
+                        Entries = new AtariEntry[4]
+                    };
 
                     for(var j = 0; j < 4; j++)
                     {

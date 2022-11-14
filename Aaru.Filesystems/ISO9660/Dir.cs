@@ -203,10 +203,9 @@ public sealed partial class ISO9660
                 Filename             = Encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeHighSierraDateTime(record.date),
-                XattrLength          = record.xattr_len
+                XattrLength          = record.xattr_len,
+                Extents              = new List<(uint extent, uint size)>()
             };
-
-            entry.Extents = new List<(uint extent, uint size)>();
 
             if(record.size != 0)
                 entry.Extents.Add((record.start_lbn, record.size));
@@ -286,10 +285,9 @@ public sealed partial class ISO9660
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Filename             = Encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
                 Timestamp            = DecodeHighSierraDateTime(record.date),
-                XattrLength          = record.xattr_len
+                XattrLength          = record.xattr_len,
+                Extents              = new List<(uint extent, uint size)>()
             };
-
-            entry.Extents = new List<(uint extent, uint size)>();
 
             if(record.size != 0)
                 entry.Extents.Add((record.extent, record.size));
@@ -363,10 +361,9 @@ public sealed partial class ISO9660
                 Interleave           = record.interleave,
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeIsoDateTime(record.date),
-                XattrLength          = record.xattr_len
+                XattrLength          = record.xattr_len,
+                Extents              = new List<(uint extent, uint size)>()
             };
-
-            entry.Extents = new List<(uint extent, uint size)>();
 
             if(record.size != 0)
                 entry.Extents.Add((record.extent, record.size));
@@ -581,10 +578,13 @@ public sealed partial class ISO9660
 
                             hasResourceFork = true;
 
-                            fInfo            = new AppleCommon.FInfo();
-                            fInfo.fdCreator  = appleHfsSystemUse.creator;
-                            fInfo.fdFlags    = appleHfsSystemUse.finder_flags;
-                            fInfo.fdType     = appleHfsSystemUse.type;
+                            fInfo = new AppleCommon.FInfo
+                            {
+                                fdCreator = appleHfsSystemUse.creator,
+                                fdFlags   = appleHfsSystemUse.finder_flags,
+                                fdType    = appleHfsSystemUse.type
+                            };
+
                             entry.FinderInfo = fInfo;
 
                             break;
@@ -617,9 +617,12 @@ public sealed partial class ISO9660
 
                             hasResourceFork = true;
 
-                            fInfo            = new AppleCommon.FInfo();
-                            fInfo.fdCreator  = appleHfsTypeCreatorSystemUse.creator;
-                            fInfo.fdType     = appleHfsTypeCreatorSystemUse.type;
+                            fInfo = new AppleCommon.FInfo
+                            {
+                                fdCreator = appleHfsTypeCreatorSystemUse.creator,
+                                fdType    = appleHfsTypeCreatorSystemUse.type
+                            };
+
                             entry.FinderInfo = fInfo;
 
                             systemAreaOff += Marshal.SizeOf<AppleHFSTypeCreatorSystemUse>();
@@ -633,9 +636,12 @@ public sealed partial class ISO9660
 
                             hasResourceFork = true;
 
-                            fInfo            = new AppleCommon.FInfo();
-                            fInfo.fdCreator  = appleHfsIconSystemUse.creator;
-                            fInfo.fdType     = appleHfsIconSystemUse.type;
+                            fInfo = new AppleCommon.FInfo
+                            {
+                                fdCreator = appleHfsIconSystemUse.creator,
+                                fdType    = appleHfsIconSystemUse.type
+                            };
+
                             entry.FinderInfo = fInfo;
                             entry.AppleIcon  = appleHfsIconSystemUse.icon;
 
@@ -649,10 +655,13 @@ public sealed partial class ISO9660
 
                             hasResourceFork = true;
 
-                            fInfo            = new AppleCommon.FInfo();
-                            fInfo.fdCreator  = appleHfsSystemUse.creator;
-                            fInfo.fdFlags    = (AppleCommon.FinderFlags)appleHfsSystemUse.finder_flags;
-                            fInfo.fdType     = appleHfsSystemUse.type;
+                            fInfo = new AppleCommon.FInfo
+                            {
+                                fdCreator = appleHfsSystemUse.creator,
+                                fdFlags   = (AppleCommon.FinderFlags)appleHfsSystemUse.finder_flags,
+                                fdType    = appleHfsSystemUse.type
+                            };
+
                             entry.FinderInfo = fInfo;
 
                             systemAreaOff += Marshal.SizeOf<AppleHFSOldSystemUse>();
@@ -1096,10 +1105,9 @@ public sealed partial class ISO9660
                 Filename             = tEntry.Name,
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeHighSierraDateTime(record.date),
-                XattrLength          = tEntry.XattrLength
+                XattrLength          = tEntry.XattrLength,
+                Extents              = new List<(uint extent, uint size)>()
             };
-
-            entry.Extents = new List<(uint extent, uint size)>();
 
             if(record.size != 0)
                 entry.Extents.Add((record.start_lbn, record.size));
@@ -1152,10 +1160,9 @@ public sealed partial class ISO9660
                 Interleave           = record.interleave,
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeIsoDateTime(record.date),
-                XattrLength          = tEntry.XattrLength
+                XattrLength          = tEntry.XattrLength,
+                Extents              = new List<(uint extent, uint size)>()
             };
-
-            entry.Extents = new List<(uint extent, uint size)>();
 
             if(record.size != 0)
                 entry.Extents.Add((record.extent, record.size));
@@ -1201,10 +1208,9 @@ public sealed partial class ISO9660
                 Interleave           = record.interleave,
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeHighSierraDateTime(record.date),
-                XattrLength          = tEntry.XattrLength
+                XattrLength          = tEntry.XattrLength,
+                Extents              = new List<(uint extent, uint size)>()
             };
-
-            entry.Extents = new List<(uint extent, uint size)>();
 
             if(record.size != 0)
                 entry.Extents.Add((record.extent, record.size));

@@ -379,8 +379,10 @@ public class SuperNintendo : IByteAddressableImage
         if(hasFlash)
             devices++;
 
-        mappings         = new LinearMemoryMap();
-        mappings.Devices = new LinearMemoryDevice[devices];
+        mappings = new LinearMemoryMap
+        {
+            Devices = new LinearMemoryDevice[devices]
+        };
 
         mappings.Devices[0] = new LinearMemoryDevice
         {

@@ -90,10 +90,12 @@ partial class Device : Devices.Device
         }
 
         // Windows is answering SCSI INQUIRY for all device types so it needs to be detected first
-        var query = new StoragePropertyQuery();
-        query.PropertyId           = StoragePropertyId.Device;
-        query.QueryType            = StorageQueryType.Standard;
-        query.AdditionalParameters = new byte[1];
+        var query = new StoragePropertyQuery
+        {
+            PropertyId           = StoragePropertyId.Device,
+            QueryType            = StorageQueryType.Standard,
+            AdditionalParameters = new byte[1]
+        };
 
         IntPtr descriptorPtr = Marshal.AllocHGlobal(1000);
         var    descriptorB   = new byte[1000];
