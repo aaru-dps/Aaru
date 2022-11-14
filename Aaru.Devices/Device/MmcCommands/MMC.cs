@@ -237,10 +237,9 @@ public partial class Device
 
         Error = LastError != 0;
 
-        if(transferLength > 1)
-            AaruConsole.DebugWriteLine("MMC Device", "READ_MULTIPLE_BLOCK took {0} ms.", duration);
-        else
-            AaruConsole.DebugWriteLine("MMC Device", "READ_SINGLE_BLOCK took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("MMC Device",
+                                   transferLength > 1 ? "READ_MULTIPLE_BLOCK took {0} ms."
+                                       : "READ_SINGLE_BLOCK took {0} ms.", duration);
 
         return sense;
     }

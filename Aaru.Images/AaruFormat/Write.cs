@@ -3897,10 +3897,9 @@ public sealed partial class AaruFormat
 
                         subchannelBlock.cmpCrc64 = BitConverter.ToUInt64(blockCrc, 0);
 
-                        if(_compressionAlgorithm == CompressionType.Lzma)
-                            subchannelBlock.compression = CompressionType.LzmaClauniaSubchannelTransform;
-                        else
-                            subchannelBlock.compression = _compressionAlgorithm;
+                        subchannelBlock.compression = _compressionAlgorithm == CompressionType.Lzma
+                                                          ? CompressionType.LzmaClauniaSubchannelTransform
+                                                          : _compressionAlgorithm;
 
                         endCompress = DateTime.Now;
 

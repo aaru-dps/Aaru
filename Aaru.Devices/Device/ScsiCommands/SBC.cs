@@ -70,10 +70,7 @@ public partial class Device
         cdb[3] = (byte)(lba & 0xFF);
         cdb[4] = transferLength;
 
-        if(transferLength == 0)
-            buffer = new byte[256 * blockSize];
-        else
-            buffer = new byte[transferLength * blockSize];
+        buffer = transferLength == 0 ? new byte[256 * blockSize] : new byte[transferLength * blockSize];
 
         LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                     out bool sense);

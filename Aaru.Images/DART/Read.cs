@@ -109,12 +109,8 @@ public sealed partial class Dart
         if(stream.Length > expectedMaxSize)
             return ErrorNumber.InvalidArgument;
 
-        short[] bLength;
-
-        if(header.srcType is DISK_MAC_HD or DISK_DOS_HD)
-            bLength = new short[BLOCK_ARRAY_LEN_HIGH];
-        else
-            bLength = new short[BLOCK_ARRAY_LEN_LOW];
+        var bLength =
+            new short[header.srcType is DISK_MAC_HD or DISK_DOS_HD ? BLOCK_ARRAY_LEN_HIGH : BLOCK_ARRAY_LEN_LOW];
 
         for(var i = 0; i < bLength.Length; i++)
         {
