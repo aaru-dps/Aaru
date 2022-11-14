@@ -522,9 +522,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         try
         {
-            var imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
-
-            if(imageFormat == null)
+            if(ImageFormat.Detect(inputFilter) is not IMediaImage imageFormat)
             {
                 MessageBoxManager.GetMessageBoxStandardWindow("Error", "Image format not identified.", ButtonEnum.Ok,
                                                               Icon.Error);

@@ -414,8 +414,7 @@ public sealed partial class Udif
                         return ErrorNumber.NotImplemented;
                 }
 
-                if(bChnk.type is > CHUNK_TYPE_NOCOPY and < CHUNK_TYPE_COMMNT ||
-                   bChnk.type is > CHUNK_TYPE_LZMA and < CHUNK_TYPE_END)
+                if(bChnk.type is > CHUNK_TYPE_NOCOPY and < CHUNK_TYPE_COMMNT or > CHUNK_TYPE_LZMA and < CHUNK_TYPE_END)
                 {
                     AaruConsole.ErrorWriteLine($"Unsupported chunk type 0x{bChnk.type:X8} found");
 

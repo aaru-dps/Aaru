@@ -285,8 +285,7 @@ public sealed class RBF : IFilesystem
 
     static uint LSNToUInt32(byte[] lsn)
     {
-        if(lsn        == null ||
-           lsn.Length != 3)
+        if(lsn is not { Length: 3 })
             return 0;
 
         return (uint)((lsn[0] << 16) + (lsn[1] << 8) + lsn[2]);

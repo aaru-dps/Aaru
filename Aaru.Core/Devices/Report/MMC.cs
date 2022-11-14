@@ -90,8 +90,7 @@ public sealed partial class DeviceReport
 
         Features.SeparatedFeatures ftr = Features.Separate(buffer);
 
-        if(ftr.Descriptors        == null ||
-           ftr.Descriptors.Length <= 0)
+        if(ftr.Descriptors is not { Length: > 0 })
             return null;
 
         var report = new MmcFeatures

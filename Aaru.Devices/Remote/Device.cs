@@ -133,12 +133,11 @@ public sealed partial class Device : Devices.Device
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
 
         if(dev.Error)
-            if(dev.Error)
-            {
-                errno = (ErrorNumber)dev.LastError;
+        {
+            errno = (ErrorNumber)dev.LastError;
 
-                return null;
-            }
+            return null;
+        }
 
         dev.Type = dev._remote.GetDeviceType();
 

@@ -413,7 +413,7 @@ sealed class ChecksumCommand : Command
 
                 break;
 
-            case ITapeImage { IsTape: true, Files: { Count: > 0 } } tapeImage:
+            case ITapeImage { IsTape: true, Files.Count: > 0 } tapeImage:
             {
                 Checksum trackChecksum = null;
 
@@ -580,7 +580,7 @@ sealed class ChecksumCommand : Command
                 break;
             }
 
-            case IByteAddressableImage { Info: { XmlMediaType: XmlMediaType.LinearMedia } } byteAddressableImage:
+            case IByteAddressableImage { Info.XmlMediaType: XmlMediaType.LinearMedia } byteAddressableImage:
             {
                 mediaChecksum = new Checksum(enabledChecksums);
 

@@ -113,8 +113,7 @@ public sealed partial class DeviceReport
 
         byte[] evpdPages = EVPD.DecodePage00(buffer);
 
-        if(evpdPages        == null ||
-           evpdPages.Length <= 0)
+        if(evpdPages is not { Length: > 0 })
             return null;
 
         List<ScsiPage> evpds = new();

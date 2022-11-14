@@ -77,8 +77,7 @@ public partial class Device
         if(dev is null)
             return null;
 
-        if(dev.Type == DeviceType.SCSI ||
-           dev.Type == DeviceType.ATAPI)
+        if(dev.Type is DeviceType.SCSI or DeviceType.ATAPI)
         {
             dev.ScsiInquiry(out byte[] inqBuf, out _);
 

@@ -216,9 +216,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 Assert.AreEqual(track.FileSystems[i].VolumeSerial, fs.XmlFsType.VolumeSerial,
                                                 $"Volume serial: {testFile}");
 
-                                var rofs = Activator.CreateInstance(plugin.GetType()) as IReadOnlyFilesystem;
-
-                                if(rofs == null)
+                                if(Activator.CreateInstance(plugin.GetType()) is not IReadOnlyFilesystem rofs)
                                 {
                                     if(track.FileSystems[i].Contents     != null ||
                                        track.FileSystems[i].ContentsJson != null ||

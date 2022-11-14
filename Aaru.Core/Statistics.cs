@@ -1196,8 +1196,7 @@ public static class Statistics
         if(string.IsNullOrWhiteSpace(command))
             return;
 
-        if(Settings.Current.Stats == null ||
-           !Settings.Current.Stats.DeviceStats)
+        if(Settings.Current.Stats is not { DeviceStats: true })
             return;
 
         using var ctx = AaruContext.Create(Settings.LocalDbPath);
@@ -1227,8 +1226,7 @@ public static class Statistics
         if(string.IsNullOrWhiteSpace(filesystem))
             return;
 
-        if(Settings.Current.Stats == null ||
-           !Settings.Current.Stats.FilesystemStats)
+        if(Settings.Current.Stats is not { FilesystemStats: true })
             return;
 
         using var ctx = AaruContext.Create(Settings.LocalDbPath);
@@ -1258,8 +1256,7 @@ public static class Statistics
         if(string.IsNullOrWhiteSpace(partition))
             return;
 
-        if(Settings.Current.Stats == null ||
-           !Settings.Current.Stats.PartitionStats)
+        if(Settings.Current.Stats is not { PartitionStats: true })
             return;
 
         using var ctx = AaruContext.Create(Settings.LocalDbPath);
@@ -1289,8 +1286,7 @@ public static class Statistics
         if(string.IsNullOrWhiteSpace(filter))
             return;
 
-        if(Settings.Current.Stats == null ||
-           !Settings.Current.Stats.FilterStats)
+        if(Settings.Current.Stats is not { FilterStats: true })
             return;
 
         using var ctx = AaruContext.Create(Settings.LocalDbPath);
@@ -1320,8 +1316,7 @@ public static class Statistics
         if(string.IsNullOrWhiteSpace(format))
             return;
 
-        if(Settings.Current.Stats == null ||
-           !Settings.Current.Stats.MediaImageStats)
+        if(Settings.Current.Stats is not { MediaImageStats: true })
             return;
 
         using var ctx = AaruContext.Create(Settings.LocalDbPath);
@@ -1348,8 +1343,7 @@ public static class Statistics
     /// <param name="dev">Device</param>
     public static void AddDevice(Device dev)
     {
-        if(Settings.Current.Stats == null ||
-           !Settings.Current.Stats.DeviceStats)
+        if(Settings.Current.Stats is not { DeviceStats: true })
             return;
 
         string deviceBus;
@@ -1392,8 +1386,7 @@ public static class Statistics
     /// <param name="real">Set if media was found on a real device, otherwise found on a media image</param>
     public static void AddMedia(MediaType type, bool real)
     {
-        if(Settings.Current.Stats == null ||
-           !Settings.Current.Stats.MediaStats)
+        if(Settings.Current.Stats is not { MediaStats: true })
             return;
 
         using var ctx = AaruContext.Create(Settings.LocalDbPath);
@@ -1421,8 +1414,7 @@ public static class Statistics
     public static void AddRemote(string serverApplication, string serverVersion, string serverOperatingSystem,
                                  string serverOperatingSystemVersion, string serverArchitecture)
     {
-        if(Settings.Current.Stats == null ||
-           !Settings.Current.Stats.MediaStats)
+        if(Settings.Current.Stats is not { MediaStats: true })
             return;
 
         using var ctx = AaruContext.Create(Settings.LocalDbPath);
