@@ -72,14 +72,12 @@ public static partial class MediaTypeFromDevice
 
                         return MediaType.PD650;
                     }
-                else
-                {
-                    AaruConsole.DebugWriteLine("Media detection",
-                                               "SCSI medium type is {0:X2}h, setting media type to Compact Disc.",
-                                               mediumType);
 
-                    return MediaType.CD;
-                }
+                AaruConsole.DebugWriteLine("Media detection",
+                                           "SCSI medium type is {0:X2}h, setting media type to Compact Disc.",
+                                           mediumType);
+
+                return MediaType.CD;
             case 0x01:
             case 0x05:
                 AaruConsole.DebugWriteLine("Media detection",
