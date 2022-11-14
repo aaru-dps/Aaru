@@ -454,33 +454,29 @@ public static class Marshal
         {
             char c = hex[i];
 
-            if(c < '0'              ||
-               c is > '9' and < 'A' ||
-               c is > 'F' and < 'a' ||
-               c > 'f')
+            if(c is < '0' or > '9' and < 'A' or > 'F' and < 'a' or > 'f')
                 break;
 
-            c -= c is >= 'a' and <= 'f'
-                     ? '\u0057'
-                     : c is >= 'A' and <= 'F'
-                         ? '\u0037'
-                         : '\u0030';
+            c -= c switch
+                 {
+                     >= 'a' and <= 'f' => '\u0057',
+                     >= 'A' and <= 'F' => '\u0037',
+                     _                 => '\u0030'
+                 };
 
             outBuf[(i - off) / 2] = (byte)(c << 4);
 
             c = hex[i + 1];
 
-            if(c < '0'              ||
-               c is > '9' and < 'A' ||
-               c is > 'F' and < 'a' ||
-               c > 'f')
+            if(c is < '0' or > '9' and < 'A' or > 'F' and < 'a' or > 'f')
                 break;
 
-            c -= c is >= 'a' and <= 'f'
-                     ? '\u0057'
-                     : c is >= 'A' and <= 'F'
-                         ? '\u0037'
-                         : '\u0030';
+            c -= c switch
+                 {
+                     >= 'a' and <= 'f' => '\u0057',
+                     >= 'A' and <= 'F' => '\u0037',
+                     _                 => '\u0030'
+                 };
 
             outBuf[(i - off) / 2] += (byte)c;
 
