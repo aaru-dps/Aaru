@@ -3754,10 +3754,7 @@ public static class Features
                     break;
                 default:
                 {
-                    if(ftr.DVDPRead)
-                        sb.Append("Drive can read CD-MRW and DVD+MRW");
-                    else
-                        sb.Append("Drive can read CD-MRW");
+                    sb.Append(ftr.DVDPRead ? "Drive can read CD-MRW and DVD+MRW" : "Drive can read CD-MRW");
 
                     break;
                 }
@@ -4312,10 +4309,8 @@ public static class Features
                 break;
             default:
             {
-                if(ftr.HDDVDRAM)
-                    sb.Append("Drive can read HD DVD-ROM, HD DVD-RW and HD DVD-RAM");
-                else
-                    sb.Append("Drive can read HD DVD-ROM and HD DVD-RW");
+                sb.Append(ftr.HDDVDRAM ? "Drive can read HD DVD-ROM, HD DVD-RW and HD DVD-RAM"
+                              : "Drive can read HD DVD-ROM and HD DVD-RW");
 
                 break;
             }
@@ -4349,10 +4344,7 @@ public static class Features
                 break;
             default:
             {
-                if(ftr.HDDVDRAM)
-                    sb.Append("Drive can write HD DVD-RW and HD DVD-RAM");
-                else
-                    sb.Append("Drive can write HD DVD-RW");
+                sb.Append(ftr.HDDVDRAM ? "Drive can write HD DVD-RW and HD DVD-RAM" : "Drive can write HD DVD-RW");
 
                 break;
             }
