@@ -47,8 +47,7 @@ public static class LisaTag
     /// <returns>Decoded tag in Sony's format</returns>
     public static SonyTag? DecodeSonyTag(byte[] tag)
     {
-        if(tag        == null ||
-           tag.Length != 12)
+        if(tag is not { Length: 12 })
             return null;
 
         var snTag = new SonyTag
@@ -74,8 +73,7 @@ public static class LisaTag
     /// <returns>Decoded tag in Profile's format</returns>
     public static ProfileTag? DecodeProfileTag(byte[] tag)
     {
-        if(tag        == null ||
-           tag.Length != 20)
+        if(tag is not { Length: 20 })
             return null;
 
         var phTag = new ProfileTag();
@@ -122,8 +120,7 @@ public static class LisaTag
     /// <returns>Decoded tag in Priam's format</returns>
     public static PriamTag? DecodePriamTag(byte[] tag)
     {
-        if(tag        == null ||
-           tag.Length != 24)
+        if(tag is not { Length: 24 })
             return null;
 
         var pmTag = new PriamTag();

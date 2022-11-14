@@ -56,8 +56,7 @@ public static class PMA
 {
     public static CDPMA? Decode(byte[] CDPMAResponse)
     {
-        if(CDPMAResponse        == null ||
-           CDPMAResponse.Length <= 4)
+        if(CDPMAResponse is not { Length: > 4 })
             return null;
 
         var decoded = new CDPMA

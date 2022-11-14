@@ -69,8 +69,7 @@ public static class FullTOC
 
     public static CDFullTOC? Decode(byte[] CDFullTOCResponse)
     {
-        if(CDFullTOCResponse        == null ||
-           CDFullTOCResponse.Length <= 4)
+        if(CDFullTOCResponse is not { Length: > 4 })
             return null;
 
         var decoded = new CDFullTOC

@@ -151,8 +151,7 @@ public static class Apple2
     /// <param name="data">5and3 encoded data.</param>
     public static byte[] Decode5and3(byte[] data)
     {
-        if(data        == null ||
-           data.Length != 410)
+        if(data is not { Length: 410 })
             return null;
 
         var  buffer = new byte[data.Length];
@@ -189,8 +188,7 @@ public static class Apple2
     /// <param name="data">6and2 encoded data.</param>
     public static byte[] Decode6and2(byte[] data)
     {
-        if(data        == null ||
-           data.Length != 342)
+        if(data is not { Length: 342 })
             return null;
 
         var  buffer = new byte[data.Length];

@@ -55,8 +55,7 @@ public static class Session
 {
     public static CDSessionInfo? Decode(byte[] CDSessionInfoResponse)
     {
-        if(CDSessionInfoResponse        == null ||
-           CDSessionInfoResponse.Length <= 4)
+        if(CDSessionInfoResponse is not { Length: > 4 })
             return null;
 
         var decoded = new CDSessionInfo

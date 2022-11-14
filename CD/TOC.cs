@@ -58,8 +58,7 @@ public static class TOC
 {
     public static CDTOC? Decode(byte[] CDTOCResponse)
     {
-        if(CDTOCResponse        == null ||
-           CDTOCResponse.Length <= 4)
+        if(CDTOCResponse is not { Length: > 4 })
             return null;
 
         var decoded = new CDTOC

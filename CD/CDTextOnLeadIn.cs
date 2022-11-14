@@ -93,8 +93,7 @@ public static class CDTextOnLeadIn
 
     public static CDText? Decode(byte[] CDTextResponse)
     {
-        if(CDTextResponse        == null ||
-           CDTextResponse.Length <= 4)
+        if(CDTextResponse is not { Length: > 4 })
             return null;
 
         var decoded = new CDText

@@ -57,8 +57,7 @@ public static class ATIP
 {
     public static CDATIP Decode(byte[] CDATIPResponse)
     {
-        if(CDATIPResponse        == null ||
-           CDATIPResponse.Length <= 4)
+        if(CDATIPResponse is not { Length: > 4 })
             return null;
 
         var decoded = new CDATIP();
