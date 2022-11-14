@@ -47,6 +47,7 @@
         <Compile Include="BigEndianBitConverter.cs" />
         <Compile Include="BitEndian.cs" />
         <Compile Include="DateHandlers.cs" />
+        <Compile Include="Extensions.cs"/>
         <Compile Include="Marshal.cs" />
         <Compile Include="MarshallingPropertiesAttribute.cs" />
         <Compile Include="PrintHex.cs" />
