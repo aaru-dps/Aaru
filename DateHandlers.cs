@@ -345,13 +345,9 @@ public static class DateHandlers
     /// <summary>Converts a LIF timestamp to .NET DateTime</summary>
     /// <param name="date">LIF timestamp</param>
     /// <returns>.NET DateTime</returns>
-    public static DateTime LifToDateTime(byte[] date)
-    {
-        if(date is not { Length: 6 })
-            return new DateTime(1970, 1, 1, 0, 0, 0);
-
-        return LifToDateTime(date[0], date[1], date[2], date[3], date[4], date[5]);
-    }
+    public static DateTime LifToDateTime(byte[] date) => date is not { Length: 6 } ? new DateTime(1970, 1, 1, 0, 0, 0)
+                                                             : LifToDateTime(date[0], date[1], date[2], date[3],
+                                                                             date[4], date[5]);
 
     /// <summary>Converts a LIF timestamp to .NET DateTime</summary>
     /// <param name="year">Yer</param>

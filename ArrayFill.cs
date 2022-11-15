@@ -46,8 +46,7 @@ public static partial class ArrayHelpers
     /// <typeparam name="T">Array type</typeparam>
     public static void ArrayFill<T>(T[] destinationArray, T[] value)
     {
-        if(destinationArray == null)
-            throw new ArgumentNullException(nameof(destinationArray));
+        ArgumentNullException.ThrowIfNull(destinationArray);
 
         if(value.Length > destinationArray.Length)
             throw new ArgumentException("Length of value array must not be more than length of destination");
