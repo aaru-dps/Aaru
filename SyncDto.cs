@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Dto;
-
 using System.Collections.Generic;
+
+namespace Aaru.Dto;
 
 /// <summary>DTO for database synchronization.</summary>
 public class SyncDto

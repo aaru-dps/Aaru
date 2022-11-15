@@ -30,14 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable VirtualMemberCallInConstructor
-
-namespace Aaru.Dto;
 
 using System.Collections.Generic;
 using Aaru.CommonTypes.Metadata;
+
+namespace Aaru.Dto;
 
 /// <summary>DTO for known device</summary>
 public class DeviceDto : DeviceReportV2

@@ -1,6 +1,6 @@
-namespace Aaru.Dto;
-
 using Aaru.CommonTypes.Enums;
+
+namespace Aaru.Dto;
 
 /// <summary>DTO for iNES/NES 2.0 headers</summary>
 public class NesHeaderDto

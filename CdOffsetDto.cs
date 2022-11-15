@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Dto;
-
 using Aaru.CommonTypes.Metadata;
+
+namespace Aaru.Dto;
 
 /// <inheritdoc />
 /// <summary>DTO from a CD drive read offset</summary>
