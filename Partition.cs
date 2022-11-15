@@ -41,6 +41,7 @@ namespace Aaru.CommonTypes;
 
 using System;
 
+/// <inheritdoc cref="System.IComparable&lt;Partition&gt;" />
 /// <summary>Partition structure.</summary>
 public struct Partition : IEquatable<Partition>, IComparable<Partition>
 {
@@ -77,7 +78,7 @@ public struct Partition : IEquatable<Partition>, IComparable<Partition>
     /// <inheritdoc />
 
     // ReSharper disable once NonReadonlyMemberInGetHashCode
-    public override int GetHashCode() => Start.GetHashCode() + End.GetHashCode();
+    public readonly override int GetHashCode() => Start.GetHashCode() + End.GetHashCode();
 
     /// <summary>
     ///     Compares this partition with another and returns an integer that indicates whether the current partition
