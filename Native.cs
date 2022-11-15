@@ -34,9 +34,7 @@ namespace Aaru.Checksums;
 
 using System.Runtime.InteropServices;
 
-/// <summary>
-/// Handles native implementations of compression algorithms
-/// </summary>
+/// <summary>Handles native implementations of compression algorithms</summary>
 public static class Native
 {
     static bool _checked;

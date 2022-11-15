@@ -216,8 +216,8 @@ public class Crc16Context : IChecksum
         // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
         // http://sourceforge.net/projects/slicing-by-8/
 
-        var       currentPos   = 0;
-        const int unroll        = 4;
+        var       currentPos  = 0;
+        const int unroll      = 4;
         const int bytesAtOnce = 8 * unroll;
 
         ushort crc = previousCrc;
@@ -254,8 +254,8 @@ public class Crc16Context : IChecksum
         // http://www.intel.com/technology/comms/perfnet/download/CRC_generators.pdf
         // http://sourceforge.net/projects/slicing-by-8/
 
-        var       currentPos   = 0;
-        const int unroll        = 4;
+        var       currentPos  = 0;
+        const int unroll      = 4;
         const int bytesAtOnce = 8 * unroll;
 
         ushort crc = previousCrc;

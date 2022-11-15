@@ -78,7 +78,7 @@ public class ReedSolomon
     bool _initialized;
     int  _mm, _kk, _nn;
     /// <summary>
-    ///     Primitive polynomials - see Lin & Costello, Error Control Coding Appendix A, and  Lee & Messerschmitt, Digital
+    ///     Primitive polynomials - see Lin & Costello, Error Control Coding Appendix A, and Lee & Messerschmitt, Digital
     ///     Communication p. 453.
     /// </summary>
     int[] _pp;

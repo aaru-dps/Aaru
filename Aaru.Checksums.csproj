@@ -43,33 +43,33 @@
         <NrtShowRevision>true</NrtShowRevision>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="Adler32\neon.cs" />
-        <Compile Include="Adler32\ssse3.cs" />
-        <Compile Include="CRC16CCITTContext.cs" />
-        <Compile Include="CRC16IBMContext.cs" />
-        <Compile Include="CRC32\arm_simd.cs" />
-        <Compile Include="CRC32\clmul.cs" />
-        <Compile Include="CRC64\clmul.cs" />
-        <Compile Include="Native.cs" />
-        <Compile Include="Register.cs" />
-        <Compile Include="SpamSumContext.cs" />
-        <Compile Include="Adler32Context.cs" />
-        <Compile Include="CDChecksums.cs" />
-        <Compile Include="CRC16Context.cs" />
-        <Compile Include="CRC32Context.cs" />
-        <Compile Include="CRC64Context.cs" />
-        <Compile Include="FletcherContext.cs" />
-        <Compile Include="MD5Context.cs" />
-        <Compile Include="ReedSolomon.cs" />
-        <Compile Include="SHA1Context.cs" />
-        <Compile Include="SHA256Context.cs" />
-        <Compile Include="SHA384Context.cs" />
-        <Compile Include="SHA512Context.cs" />
+        <Compile Include="Adler32\neon.cs"/>
+        <Compile Include="Adler32\ssse3.cs"/>
+        <Compile Include="CRC16CCITTContext.cs"/>
+        <Compile Include="CRC16IBMContext.cs"/>
+        <Compile Include="CRC32\arm_simd.cs"/>
+        <Compile Include="CRC32\clmul.cs"/>
+        <Compile Include="CRC64\clmul.cs"/>
+        <Compile Include="Native.cs"/>
+        <Compile Include="Register.cs"/>
+        <Compile Include="SpamSumContext.cs"/>
+        <Compile Include="Adler32Context.cs"/>
+        <Compile Include="CDChecksums.cs"/>
+        <Compile Include="CRC16Context.cs"/>
+        <Compile Include="CRC32Context.cs"/>
+        <Compile Include="CRC64Context.cs"/>
+        <Compile Include="FletcherContext.cs"/>
+        <Compile Include="MD5Context.cs"/>
+        <Compile Include="ReedSolomon.cs"/>
+        <Compile Include="SHA1Context.cs"/>
+        <Compile Include="SHA256Context.cs"/>
+        <Compile Include="SHA384Context.cs"/>
+        <Compile Include="SHA512Context.cs"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
+        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.LGPL">
@@ -80,7 +80,7 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Aaru.Checksums.Native" Version="6.0.0-alpha6" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
+        <PackageReference Include="Aaru.Checksums.Native" Version="6.0.0-alpha6"/>
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
     </ItemGroup>
 </Project>

@@ -136,10 +136,10 @@ static class Ssse3
              */
             vS1 =  Sse2.Add(vS1, Sse2.Shuffle(vS1, 177));
             vS1 =  Sse2.Add(vS1, Sse2.Shuffle(vS1, 78));
-            s1   += (uint)Sse2.ConvertToInt32(vS1.AsInt32());
+            s1  += (uint)Sse2.ConvertToInt32(vS1.AsInt32());
             vS2 =  Sse2.Add(vS2, Sse2.Shuffle(vS2, 177));
             vS2 =  Sse2.Add(vS2, Sse2.Shuffle(vS2, 78));
-            s2   =  (uint)Sse2.ConvertToInt32(vS2.AsInt32());
+            s2  =  (uint)Sse2.ConvertToInt32(vS2.AsInt32());
             /*
              * Reduce.
              */
