@@ -50,48 +50,47 @@ public static partial class Modes
         if(modePage is null)
             return null;
 
-        ModePage_2A page = modePage;
         var         sb   = new StringBuilder();
 
         sb.AppendLine("SCSI CD-ROM capabilities page:");
 
-        if(page.PS)
+        if(modePage.PS)
             sb.AppendLine("\tParameters can be saved");
 
-        if(page.AudioPlay)
+        if(modePage.AudioPlay)
             sb.AppendLine("\tDrive can play audio");
 
-        if(page.Mode2Form1)
+        if(modePage.Mode2Form1)
             sb.AppendLine("\tDrive can read sectors in Mode 2 Form 1 format");
 
-        if(page.Mode2Form2)
+        if(modePage.Mode2Form2)
             sb.AppendLine("\tDrive can read sectors in Mode 2 Form 2 format");
 
-        if(page.MultiSession)
+        if(modePage.MultiSession)
             sb.AppendLine("\tDrive supports multi-session discs and/or Photo-CD");
 
-        if(page.CDDACommand)
+        if(modePage.CDDACommand)
             sb.AppendLine("\tDrive can read digital audio");
 
-        if(page.AccurateCDDA)
+        if(modePage.AccurateCDDA)
             sb.AppendLine("\tDrive can continue from streaming loss");
 
-        if(page.Subchannel)
+        if(modePage.Subchannel)
             sb.AppendLine("\tDrive can read uncorrected and interleaved R-W subchannels");
 
-        if(page.DeinterlaveSubchannel)
+        if(modePage.DeinterlaveSubchannel)
             sb.AppendLine("\tDrive can read, deinterleave and correct R-W subchannels");
 
-        if(page.C2Pointer)
+        if(modePage.C2Pointer)
             sb.AppendLine("\tDrive supports C2 pointers");
 
-        if(page.UPC)
+        if(modePage.UPC)
             sb.AppendLine("\tDrive can read Media Catalogue Number");
 
-        if(page.ISRC)
+        if(modePage.ISRC)
             sb.AppendLine("\tDrive can read ISRC");
 
-        switch(page.LoadingMechanism)
+        switch(modePage.LoadingMechanism)
         {
             case 0:
                 sb.AppendLine("\tDrive uses media caddy");
@@ -114,105 +113,109 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\tDrive uses unknown loading mechanism type {0}", page.LoadingMechanism).AppendLine();
+                sb.AppendFormat("\tDrive uses unknown loading mechanism type {0}", modePage.LoadingMechanism).
+                   AppendLine();
 
                 break;
         }
 
-        if(page.Lock)
+        if(modePage.Lock)
             sb.AppendLine("\tDrive can lock media");
 
-        if(page.PreventJumper)
+        if(modePage.PreventJumper)
         {
             sb.AppendLine("\tDrive power ups locked");
 
-            sb.AppendLine(page.LockState ? "\tDrive is locked, media cannot be ejected or inserted"
+            sb.AppendLine(modePage.LockState ? "\tDrive is locked, media cannot be ejected or inserted"
                               : "\tDrive is not locked, media can be ejected and inserted");
         }
         else
-            sb.AppendLine(page.LockState ? "\tDrive is locked, media cannot be ejected, but if empty, can be inserted"
+            sb.AppendLine(modePage.LockState
+                              ? "\tDrive is locked, media cannot be ejected, but if empty, can be inserted"
                               : "\tDrive is not locked, media can be ejected and inserted");
 
-        if(page.Eject)
+        if(modePage.Eject)
             sb.AppendLine("\tDrive can eject media");
 
-        if(page.SeparateChannelMute)
+        if(modePage.SeparateChannelMute)
             sb.AppendLine("\tEach channel can be muted independently");
 
-        if(page.SeparateChannelVolume)
+        if(modePage.SeparateChannelVolume)
             sb.AppendLine("\tEach channel's volume can be controlled independently");
 
-        if(page.SupportedVolumeLevels > 0)
-            sb.AppendFormat("\tDrive supports {0} volume levels", page.SupportedVolumeLevels).AppendLine();
+        if(modePage.SupportedVolumeLevels > 0)
+            sb.AppendFormat("\tDrive supports {0} volume levels", modePage.SupportedVolumeLevels).AppendLine();
 
-        if(page.BufferSize > 0)
-            sb.AppendFormat("\tDrive has {0} Kbyte of buffer", page.BufferSize).AppendLine();
+        if(modePage.BufferSize > 0)
+            sb.AppendFormat("\tDrive has {0} Kbyte of buffer", modePage.BufferSize).AppendLine();
 
-        if(page.MaximumSpeed > 0)
-            sb.AppendFormat("\tDrive's maximum reading speed is {0} Kbyte/sec.", page.MaximumSpeed).AppendLine();
+        if(modePage.MaximumSpeed > 0)
+            sb.AppendFormat("\tDrive's maximum reading speed is {0} Kbyte/sec.", modePage.MaximumSpeed).AppendLine();
 
-        if(page.CurrentSpeed > 0)
-            sb.AppendFormat("\tDrive's current reading speed is {0} Kbyte/sec.", page.CurrentSpeed).AppendLine();
+        if(modePage.CurrentSpeed > 0)
+            sb.AppendFormat("\tDrive's current reading speed is {0} Kbyte/sec.", modePage.CurrentSpeed).AppendLine();
 
-        if(page.ReadCDR)
+        if(modePage.ReadCDR)
         {
-            sb.AppendLine(page.WriteCDR ? "\tDrive can read and write CD-R" : "\tDrive can read CD-R");
+            sb.AppendLine(modePage.WriteCDR ? "\tDrive can read and write CD-R" : "\tDrive can read CD-R");
 
-            if(page.Method2)
+            if(modePage.Method2)
                 sb.AppendLine("\tDrive supports reading CD-R packet media");
         }
 
-        if(page.ReadCDRW)
-            sb.AppendLine(page.WriteCDRW ? "\tDrive can read and write CD-RW" : "\tDrive can read CD-RW");
+        if(modePage.ReadCDRW)
+            sb.AppendLine(modePage.WriteCDRW ? "\tDrive can read and write CD-RW" : "\tDrive can read CD-RW");
 
-        if(page.ReadDVDROM)
+        if(modePage.ReadDVDROM)
             sb.AppendLine("\tDrive can read DVD-ROM");
 
-        if(page.ReadDVDR)
-            sb.AppendLine(page.WriteDVDR ? "\tDrive can read and write DVD-R" : "\tDrive can read DVD-R");
+        if(modePage.ReadDVDR)
+            sb.AppendLine(modePage.WriteDVDR ? "\tDrive can read and write DVD-R" : "\tDrive can read DVD-R");
 
-        if(page.ReadDVDRAM)
-            sb.AppendLine(page.WriteDVDRAM ? "\tDrive can read and write DVD-RAM" : "\tDrive can read DVD-RAM");
+        if(modePage.ReadDVDRAM)
+            sb.AppendLine(modePage.WriteDVDRAM ? "\tDrive can read and write DVD-RAM" : "\tDrive can read DVD-RAM");
 
-        if(page.Composite)
+        if(modePage.Composite)
             sb.AppendLine("\tDrive can deliver a composite audio and video data stream");
 
-        if(page.DigitalPort1)
+        if(modePage.DigitalPort1)
             sb.AppendLine("\tDrive supports IEC-958 digital output on port 1");
 
-        if(page.DigitalPort2)
+        if(modePage.DigitalPort2)
             sb.AppendLine("\tDrive supports IEC-958 digital output on port 2");
 
-        if(page.SDP)
+        if(modePage.SDP)
             sb.AppendLine("\tDrive contains a changer that can report the exact contents of the slots");
 
-        if(page.CurrentWriteSpeedSelected > 0)
-            switch(page.RotationControlSelected)
+        if(modePage.CurrentWriteSpeedSelected > 0)
+            switch(modePage.RotationControlSelected)
             {
                 case 0:
                     sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in CLV mode",
-                                    page.CurrentWriteSpeedSelected).AppendLine();
+                                    modePage.CurrentWriteSpeedSelected).AppendLine();
 
                     break;
                 case 1:
                     sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in pure CAV mode",
-                                    page.CurrentWriteSpeedSelected).AppendLine();
+                                    modePage.CurrentWriteSpeedSelected).AppendLine();
 
                     break;
             }
         else
         {
-            if(page.MaxWriteSpeed > 0)
-                sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", page.MaxWriteSpeed).AppendLine();
+            if(modePage.MaxWriteSpeed > 0)
+                sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", modePage.MaxWriteSpeed).
+                   AppendLine();
 
-            if(page.CurrentWriteSpeed > 0)
-                sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", page.CurrentWriteSpeed).
+            if(modePage.CurrentWriteSpeed > 0)
+                sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", modePage.CurrentWriteSpeed).
                    AppendLine();
         }
 
-        if(page.WriteSpeedPerformanceDescriptors != null)
-            foreach(ModePage_2A_WriteDescriptor descriptor in page.WriteSpeedPerformanceDescriptors.Where(descriptor =>
-                        descriptor.WriteSpeed > 0))
+        if(modePage.WriteSpeedPerformanceDescriptors != null)
+            foreach(ModePage_2A_WriteDescriptor descriptor in
+                    modePage.WriteSpeedPerformanceDescriptors.Where(descriptor =>
+                                                                        descriptor.WriteSpeed > 0))
                 switch(descriptor.RotationControl)
                 {
                     case 0:
@@ -227,22 +230,22 @@ public static partial class Modes
                         break;
                 }
 
-        if(page.TestWrite)
+        if(modePage.TestWrite)
             sb.AppendLine("\tDrive supports test writing");
 
-        if(page.ReadBarcode)
+        if(modePage.ReadBarcode)
             sb.AppendLine("\tDrive can read barcode");
 
-        if(page.SCC)
+        if(modePage.SCC)
             sb.AppendLine("\tDrive can read both sides of a disc");
 
-        if(page.LeadInPW)
+        if(modePage.LeadInPW)
             sb.AppendLine("\tDrive an read raw R-W subchannel from the Lead-In");
 
-        if(page.CMRSupported == 1)
+        if(modePage.CMRSupported == 1)
             sb.AppendLine("\tDrive supports DVD CSS and/or DVD CPPM");
 
-        if(page.BUF)
+        if(modePage.BUF)
             sb.AppendLine("\tDrive supports buffer under-run free recording");
 
         return sb.ToString();
