@@ -559,7 +559,6 @@ partial class Dump
 
         supportedPlextorSubchannel = supportedSubchannel switch
                                      {
-                                         MmcSubchannel.None => PlextorSubchannel.None,
                                          MmcSubchannel.Raw  => PlextorSubchannel.All,
                                          MmcSubchannel.Q16  => PlextorSubchannel.Q16,
                                          MmcSubchannel.Rw   => PlextorSubchannel.Pack,

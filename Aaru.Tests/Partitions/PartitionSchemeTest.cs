@@ -29,6 +29,8 @@ public abstract class PartitionSchemeTest
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             // It arrives here...
             if(!exists)
+
+                // ReSharper disable once HeuristicUnreachableCode
                 continue;
 
             var     filtersList = new FiltersList();

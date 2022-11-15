@@ -63,55 +63,55 @@ sealed partial class Dump
     /// <summary>Dumps a compact disc</summary>
     void CompactDisc()
     {
-        ExtentsULong             audioExtents;                        // Extents with audio sectors
-        ulong                    blocks;                              // Total number of positive sectors
-        uint                     blockSize;                           // Size of the read sector in bytes
-        CdOffset                 cdOffset;                            // Read offset from database
-        byte[]                   cmdBuf;                              // Data buffer
-        DumpHardwareType         currentTry   = null;                 // Current dump hardware try
-        double                   currentSpeed = 0;                    // Current read speed
-        int?                     discOffset   = null;                 // Disc write offset
-        DateTime                 dumpStart    = DateTime.UtcNow;      // Time of dump start
-        DateTime                 end;                                 // Time of operation end
-        ExtentsULong             extents = null;                      // Extents
-        bool                     hiddenData;                          // Hidden track is data
-        IbgLog                   ibgLog;                              // IMGBurn log
-        double                   imageWriteDuration = 0;              // Duration of image write
-        long                     lastSector;                          // Last sector number
+        ExtentsULong             audioExtents; // Extents with audio sectors
+        ulong                    blocks; // Total number of positive sectors
+        uint                     blockSize; // Size of the read sector in bytes
+        CdOffset                 cdOffset; // Read offset from database
+        byte[]                   cmdBuf; // Data buffer
+        DumpHardwareType         currentTry   = null; // Current dump hardware try
+        double                   currentSpeed = 0; // Current read speed
+        int?                     discOffset   = null; // Disc write offset
+        DateTime                 dumpStart    = DateTime.UtcNow; // Time of dump start
+        DateTime                 end; // Time of operation end
+        ExtentsULong             extents = null; // Extents
+        bool                     hiddenData; // Hidden track is data
+        IbgLog                   ibgLog; // IMGBurn log
+        double                   imageWriteDuration = 0; // Duration of image write
+        long                     lastSector; // Last sector number
         var                      leadOutExtents = new ExtentsULong(); // Lead-out extents
-        Dictionary<int, long>    leadOutStarts  = new();              // Lead-out starts
-        double                   maxSpeed       = double.MinValue;    // Maximum speed
-        MhddLog                  mhddLog;                             // MHDD log
-        double                   minSpeed = double.MaxValue;          // Minimum speed
-        bool                     newTrim;                             // Is trim a new one?
-        var                      offsetBytes = 0;                     // Read offset
-        var                      read6       = false;                 // Device supports READ(6)
-        var                      read10      = false;                 // Device supports READ(10)
-        var                      read12      = false;                 // Device supports READ(12)
-        var                      read16      = false;                 // Device supports READ(16)
-        bool                     readcd;                              // Device supports READ CD
-        bool                     ret;                                 // Image writing return status
-        const uint               sectorSize       = 2352;             // Full sector size
-        var                      sectorsForOffset = 0;                // Sectors needed to fix offset
-        var                      sense            = true;             // Sense indicator
-        int                      sessions;                            // Number of sessions in disc
-        DateTime                 start;                               // Start of operation
-        SubchannelLog            subLog = null;                       // Subchannel log
-        uint                     subSize;                             // Subchannel size in bytes
-        TrackSubchannelType      subType;                             // Track subchannel type
-        var                      supportsLongSectors = true;          // Supports reading EDC and ECC
-        bool                     supportsPqSubchannel;                // Supports reading PQ subchannel
-        bool                     supportsRwSubchannel;                // Supports reading RW subchannel
-        byte[]                   tmpBuf;                              // Temporary buffer
-        FullTOC.CDFullTOC?       toc;                                 // Full CD TOC
-        double                   totalDuration = 0;                   // Total commands duration
-        Dictionary<byte, byte>   trackFlags    = new();               // Track flags
-        Track[]                  tracks;                              // Tracks in disc
-        int                      firstTrackLastSession;               // Number of first track in last session
-        bool                     hiddenTrack;                         // Disc has a hidden track before track 1
-        MmcSubchannel            supportedSubchannel;                 // Drive's maximum supported subchannel
-        MmcSubchannel            desiredSubchannel;                   // User requested subchannel
-        var                      bcdSubchannel       = false;         // Subchannel positioning is in BCD
+        Dictionary<int, long>    leadOutStarts  = new(); // Lead-out starts
+        double                   maxSpeed       = double.MinValue; // Maximum speed
+        MhddLog                  mhddLog; // MHDD log
+        double                   minSpeed = double.MaxValue; // Minimum speed
+        bool                     newTrim; // Is trim a new one?
+        var                      offsetBytes = 0; // Read offset
+        var                      read6       = false; // Device supports READ(6)
+        var                      read10      = false; // Device supports READ(10)
+        var                      read12      = false; // Device supports READ(12)
+        var                      read16      = false; // Device supports READ(16)
+        var                      readcd      = true; // Device supports READ CD
+        bool                     ret; // Image writing return status
+        const uint               sectorSize       = 2352; // Full sector size
+        var                      sectorsForOffset = 0; // Sectors needed to fix offset
+        var                      sense            = true; // Sense indicator
+        int                      sessions; // Number of sessions in disc
+        DateTime                 start; // Start of operation
+        SubchannelLog            subLog              = null; // Subchannel log
+        uint                     subSize             = 0; // Subchannel size in bytes
+        TrackSubchannelType      subType             = TrackSubchannelType.None; // Track subchannel type
+        var                      supportsLongSectors = true; // Supports reading EDC and ECC
+        bool                     supportsPqSubchannel; // Supports reading PQ subchannel
+        bool                     supportsRwSubchannel; // Supports reading RW subchannel
+        byte[]                   tmpBuf; // Temporary buffer
+        FullTOC.CDFullTOC?       toc; // Full CD TOC
+        double                   totalDuration = 0; // Total commands duration
+        Dictionary<byte, byte>   trackFlags    = new(); // Track flags
+        Track[]                  tracks; // Tracks in disc
+        int                      firstTrackLastSession; // Number of first track in last session
+        bool                     hiddenTrack; // Disc has a hidden track before track 1
+        MmcSubchannel            supportedSubchannel; // Drive's maximum supported subchannel
+        MmcSubchannel            desiredSubchannel; // User requested subchannel
+        var                      bcdSubchannel       = false; // Subchannel positioning is in BCD
         Dictionary<byte, string> isrcs               = new();
         string                   mcn                 = null;
         HashSet<int>             subchannelExtents   = new();
@@ -338,13 +338,6 @@ sealed partial class Dump
                 readcd  = true;
 
                 break;
-            default:
-                _dumpLog.WriteLine("Handling subchannel type {0} not supported, exiting...", supportedSubchannel);
-
-                StoppingErrorMessage?.Invoke($"Handling subchannel type {supportedSubchannel
-                } not supported, exiting...");
-
-                return;
         }
 
         switch(desiredSubchannel)

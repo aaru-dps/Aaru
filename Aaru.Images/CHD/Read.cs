@@ -1621,7 +1621,6 @@ public sealed partial class Chd
                         {
                             case SectorTagType.CdSectorSync:
                             case SectorTagType.CdSectorHeader:
-                            case SectorTagType.CdSectorSubchannel:
                             case SectorTagType.CdSectorEcc:
                             case SectorTagType.CdSectorEccP:
                             case SectorTagType.CdSectorEccQ: return ErrorNumber.NotSupported;

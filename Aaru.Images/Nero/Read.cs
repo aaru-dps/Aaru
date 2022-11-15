@@ -1757,9 +1757,9 @@ public sealed partial class Nero
         if(length > aaruTrack.Sectors)
             return ErrorNumber.OutOfRange;
 
-        uint sectorOffset;
-        uint sectorSize;
-        uint sectorSkip;
+        uint sectorOffset = 0;
+        uint sectorSize   = 0;
+        uint sectorSkip   = 0;
 
         switch(tag)
         {
@@ -1820,8 +1820,6 @@ public sealed partial class Nero
 
                         break;
                     }
-
-                    default: return ErrorNumber.NotSupported;
                 }
 
                 break;
@@ -1888,8 +1886,6 @@ public sealed partial class Nero
 
                         break;
                     }
-
-                    default: return ErrorNumber.NotSupported;
                 }
 
                 break;
@@ -2014,8 +2010,6 @@ public sealed partial class Nero
 
                         break;
                     }
-
-                    default: return ErrorNumber.NotSupported;
                 }
 
                 break;

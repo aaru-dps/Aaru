@@ -1097,9 +1097,9 @@ public sealed partial class Cdrdao
         if(length > aaruTrack.Sectors)
             return ErrorNumber.OutOfRange;
 
-        uint sectorOffset;
-        uint sectorSize;
-        uint sectorSkip = 0;
+        uint sectorOffset = 0;
+        uint sectorSize   = 0;
+        uint sectorSkip   = 0;
 
         if(!aaruTrack.Subchannel &&
            tag == SectorTagType.CdSectorSubchannel)
@@ -1236,7 +1236,6 @@ public sealed partial class Cdrdao
 
                         break;
                     }
-                    default: return ErrorNumber.NotSupported;
                 }
 
                 break;

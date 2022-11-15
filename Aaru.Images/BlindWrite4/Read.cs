@@ -962,9 +962,9 @@ public sealed partial class BlindWrite4
         if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
             return ErrorNumber.OutOfRange;
 
-        uint sectorOffset;
-        uint sectorSize;
-        uint sectorSkip;
+        uint sectorOffset = 0;
+        uint sectorSize   = 0;
+        uint sectorSkip   = 0;
 
         if(aaruTrack.Type == CommonTypes.Enums.TrackType.Data)
             return ErrorNumber.NotSupported;
@@ -1054,7 +1054,6 @@ public sealed partial class BlindWrite4
 
                         break;
                     }
-                    default: return ErrorNumber.NotSupported;
                 }
 
                 break;
@@ -1091,7 +1090,6 @@ public sealed partial class BlindWrite4
 
                         break;
                     }
-                    default: return ErrorNumber.NotSupported;
                 }
 
                 break;

@@ -555,9 +555,9 @@ public sealed partial class Gdi
         if(length > aaruTrack.Sectors)
             return ErrorNumber.OutOfRange;
 
-        uint sectorOffset;
-        uint sectorSize;
-        uint sectorSkip;
+        uint sectorOffset = 0;
+        uint sectorSize   = 0;
+        uint sectorSkip   = 0;
 
         switch(tag)
         {
@@ -605,8 +605,6 @@ public sealed partial class Gdi
 
                         break;
                     }
-                    case SectorTagType.CdSectorSubchannel:
-                    case SectorTagType.CdSectorSubHeader: return ErrorNumber.NotSupported;
                     case SectorTagType.CdSectorEcc:
                     {
                         sectorOffset = 2076;
@@ -639,7 +637,6 @@ public sealed partial class Gdi
 
                         break;
                     }
-                    default: return ErrorNumber.NotSupported;
                 }
 
                 break;
