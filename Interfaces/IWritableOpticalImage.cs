@@ -36,11 +36,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IOpticalMediaImage" />
 /// <summary>Defines an image that is writable and can store an optical disc (CD, DVD, etc)</summary>

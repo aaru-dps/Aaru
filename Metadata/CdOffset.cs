@@ -36,9 +36,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Metadata;
-
 using System.ComponentModel.DataAnnotations;
+
+namespace Aaru.CommonTypes.Metadata;
 
 /// <summary>Describes CD reading offset</summary>
 public class CdOffset

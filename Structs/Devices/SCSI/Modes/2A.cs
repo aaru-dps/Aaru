@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
-
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
+
+namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 
 #region Mode Page 0x2A: CD-ROM capabilities page
 /// <summary>
@@ -263,14 +263,14 @@ public class ModePage_2A
         decoded.RotationControlSelected   =  (byte)(pageResponse[27] & 0x03);
         decoded.CurrentWriteSpeedSelected =  (ushort)((pageResponse[28] << 8) + pageResponse[29]);
 
-        var descriptors = (ushort)((pageResponse.Length - 32) / 4);
+        ushort descriptors = (ushort)((pageResponse.Length - 32) / 4);
         decoded.WriteSpeedPerformanceDescriptors = new ModePage_2A_WriteDescriptor[descriptors];
 
-        for(var i = 0; i < descriptors; i++)
+        for(int i = 0; i < descriptors; i++)
             decoded.WriteSpeedPerformanceDescriptors[i] = new ModePage_2A_WriteDescriptor
             {
-                RotationControl = (byte)(pageResponse[1                                         + 32 + i * 4] & 0x07),
-                WriteSpeed      = (ushort)((pageResponse[2 + 32 + i * 4] << 8) + pageResponse[3 + 32 + i * 4])
+                RotationControl = (byte)(pageResponse[1 + 32 + (i * 4)] & 0x07),
+                WriteSpeed      = (ushort)((pageResponse[2 + 32 + (i * 4)] << 8) + pageResponse[3 + 32 + (i * 4)])
             };
 
         return decoded;
@@ -281,8 +281,8 @@ public class ModePage_2A
     /// <returns>Raw page 2Ah</returns>
     public static byte[] Encode(ModePage_2A decoded)
     {
-        var  pageResponse = new byte[512];
-        byte length       = 16;
+        byte[] pageResponse = new byte[512];
+        byte   length       = 16;
 
         pageResponse[0] = 0x2A;
 
@@ -480,20 +480,20 @@ public class ModePage_2A
         {
             length = 32;
 
-            for(var i = 0; i < decoded.WriteSpeedPerformanceDescriptors.Length; i++)
+            for(int i = 0; i < decoded.WriteSpeedPerformanceDescriptors.Length; i++)
             {
-                length                       += 4;
-                pageResponse[1 + 32 + i * 4] =  decoded.WriteSpeedPerformanceDescriptors[i].RotationControl;
+                length                         += 4;
+                pageResponse[1 + 32 + (i * 4)] =  decoded.WriteSpeedPerformanceDescriptors[i].RotationControl;
 
-                pageResponse[2 + 32 + i * 4] =
+                pageResponse[2 + 32 + (i * 4)] =
                     (byte)((decoded.WriteSpeedPerformanceDescriptors[i].WriteSpeed & 0xFF00) >> 8);
 
-                pageResponse[3 + 32 + i * 4] = (byte)(decoded.WriteSpeedPerformanceDescriptors[i].WriteSpeed & 0xFF);
+                pageResponse[3 + 32 + (i * 4)] = (byte)(decoded.WriteSpeedPerformanceDescriptors[i].WriteSpeed & 0xFF);
             }
         }
 
         pageResponse[1] = (byte)(length - 2);
-        var buf = new byte[length];
+        byte[] buf = new byte[length];
         Array.Copy(pageResponse, 0, buf, 0, length);
 
         return buf;

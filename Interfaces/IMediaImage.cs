@@ -37,9 +37,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using Aaru.CommonTypes.Enums;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc />
 /// <summary>Abstract class to implement disk image reading plugins.</summary>

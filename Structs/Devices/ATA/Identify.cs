@@ -38,8 +38,6 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace Aaru.CommonTypes.Structs.Devices.ATA;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -48,6 +46,8 @@ using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.CommonTypes.Structs.Devices.ATA;
 
 /// <summary>
 ///     Information from following standards: T10-791D rev. 4c (ATA) T10-948D rev. 4c (ATA-2) T13-1153D rev. 18
@@ -108,18 +108,10 @@ public static class Identify
         /// <summary>MUST be set</summary>
         MustBeSet = 0x4000,
         #pragma warning disable 1591
-        Reserved13 = 0x2000,
-        Reserved12 = 0x1000,
-        Reserved11 = 0x0800,
-        Reserved10 = 0x0400,
-        Reserved09 = 0x0200,
-        Reserved08 = 0x0100,
-        Reserved07 = 0x0080,
-        Reserved06 = 0x0040,
-        Reserved05 = 0x0020,
-        Reserved04 = 0x0010,
-        Reserved03 = 0x0008,
-        Reserved02 = 0x0004,
+        Reserved13 = 0x2000, Reserved12 = 0x1000, Reserved11 = 0x0800,
+        Reserved10 = 0x0400, Reserved09 = 0x0200, Reserved08 = 0x0100,
+        Reserved07 = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
+        Reserved04 = 0x0010, Reserved03 = 0x0008, Reserved02 = 0x0004,
         Reserved01 = 0x0002,
         #pragma warning restore 1591
         /// <summary>Indicates a device specific minimum standby timer value</summary>
@@ -272,9 +264,7 @@ public static class Identify
         /// <summary>MUST be set</summary>
         MustBeSet = 0x4000,
         #pragma warning disable 1591
-        Reserved13 = 0x2000,
-        Reserved12 = 0x1000,
-        Reserved11 = 0x0800,
+        Reserved13 = 0x2000, Reserved12 = 0x1000, Reserved11 = 0x0800,
         Reserved10 = 0x0400,
         #pragma warning restore 1591
         /// <summary>DSN feature set is supported</summary>
@@ -342,21 +332,11 @@ public static class Identify
     public enum DataSetMgmtBit : ushort
     {
         #pragma warning disable 1591
-        Reserved15 = 0x8000,
-        Reserved14 = 0x4000,
-        Reserved13 = 0x2000,
-        Reserved12 = 0x1000,
-        Reserved11 = 0x0800,
-        Reserved10 = 0x0400,
-        Reserved09 = 0x0200,
-        Reserved08 = 0x0100,
-        Reserved07 = 0x0080,
-        Reserved06 = 0x0040,
-        Reserved05 = 0x0020,
-        Reserved04 = 0x0010,
-        Reserved03 = 0x0008,
-        Reserved02 = 0x0004,
-        Reserved01 = 0x0002,
+        Reserved15 = 0x8000, Reserved14 = 0x4000, Reserved13 = 0x2000,
+        Reserved12 = 0x1000, Reserved11 = 0x0800, Reserved10 = 0x0400,
+        Reserved09 = 0x0200, Reserved08 = 0x0100, Reserved07 = 0x0080,
+        Reserved06 = 0x0040, Reserved05 = 0x0020, Reserved04 = 0x0010,
+        Reserved03 = 0x0008, Reserved02 = 0x0004, Reserved01 = 0x0002,
         #pragma warning restore 1591
         /// <summary>TRIM is supported</summary>
         Trim = 0x0001
@@ -446,9 +426,7 @@ public static class Identify
     public enum MajorVersionBit : ushort
     {
         #pragma warning disable 1591
-        Reserved15 = 0x8000,
-        Reserved14 = 0x4000,
-        Reserved13 = 0x2000,
+        Reserved15 = 0x8000, Reserved14 = 0x4000, Reserved13 = 0x2000,
         Reserved12 = 0x1000,
         #pragma warning restore 1591
         /// <summary>ACS-4</summary>
@@ -499,9 +477,7 @@ public static class Identify
         /// <summary>Supports NCQ</summary>
         NCQ = 0x0100,
         #pragma warning disable 1591
-        Reserved07 = 0x0080,
-        Reserved06 = 0x0040,
-        Reserved05 = 0x0020,
+        Reserved07 = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
         Reserved04 = 0x0010,
         #pragma warning restore 1591
         /// <summary>Supports SATA Gen. 3 Signaling Speed (6.0Gb/s)</summary>
@@ -519,15 +495,9 @@ public static class Identify
     public enum SATACapabilitiesBit2 : ushort
     {
         #pragma warning disable 1591
-        Reserved15 = 0x8000,
-        Reserved14 = 0x4000,
-        Reserved13 = 0x2000,
-        Reserved12 = 0x1000,
-        Reserved11 = 0x0800,
-        Reserved10 = 0x0400,
-        Reserved09 = 0x0200,
-        Reserved08 = 0x0100,
-        Reserved07 = 0x0080,
+        Reserved15 = 0x8000, Reserved14 = 0x4000, Reserved13 = 0x2000,
+        Reserved12 = 0x1000, Reserved11 = 0x0800, Reserved10 = 0x0400,
+        Reserved09 = 0x0200, Reserved08 = 0x0100, Reserved07 = 0x0080,
         #pragma warning restore 1591
         /// <summary>Supports RECEIVE FPDMA QUEUED and SEND FPDMA QUEUED</summary>
         FPDMAQ = 0x0040,
@@ -554,14 +524,9 @@ public static class Identify
     public enum SATAFeaturesBit : ushort
     {
         #pragma warning disable 1591
-        Reserved15 = 0x8000,
-        Reserved14 = 0x4000,
-        Reserved13 = 0x2000,
-        Reserved12 = 0x1000,
-        Reserved11 = 0x0800,
-        Reserved10 = 0x0400,
-        Reserved09 = 0x0200,
-        Reserved08 = 0x0100,
+        Reserved15 = 0x8000, Reserved14 = 0x4000, Reserved13 = 0x2000,
+        Reserved12 = 0x1000, Reserved11 = 0x0800, Reserved10 = 0x0400,
+        Reserved09 = 0x0200, Reserved08 = 0x0100,
         #pragma warning restore 1591
         /// <summary>Supports NCQ autosense</summary>
         NCQAutoSense = 0x0080,
@@ -590,15 +555,9 @@ public static class Identify
     public enum SCTCommandTransportBit : ushort
     {
         #pragma warning disable 1591
-        Vendor15   = 0x8000,
-        Vendor14   = 0x4000,
-        Vendor13   = 0x2000,
-        Vendor12   = 0x1000,
-        Reserved11 = 0x0800,
-        Reserved10 = 0x0400,
-        Reserved09 = 0x0200,
-        Reserved08 = 0x0100,
-        Reserved07 = 0x0080,
+        Vendor15   = 0x8000, Vendor14   = 0x4000, Vendor13   = 0x2000,
+        Vendor12   = 0x1000, Reserved11 = 0x0800, Reserved10 = 0x0400,
+        Reserved09 = 0x0200, Reserved08 = 0x0100, Reserved07 = 0x0080,
         Reserved06 = 0x0040,
         #pragma warning restore 1591
         /// <summary>SCT Command Transport Data Tables supported</summary>
@@ -620,19 +579,14 @@ public static class Identify
     public enum SecurityStatusBit : ushort
     {
         #pragma warning disable 1591
-        Reserved15 = 0x8000,
-        Reserved14 = 0x4000,
-        Reserved13 = 0x2000,
-        Reserved12 = 0x1000,
-        Reserved11 = 0x0800,
-        Reserved10 = 0x0400,
+        Reserved15 = 0x8000, Reserved14 = 0x4000, Reserved13 = 0x2000,
+        Reserved12 = 0x1000, Reserved11 = 0x0800, Reserved10 = 0x0400,
         Reserved09 = 0x0200,
         #pragma warning restore 1591
         /// <summary>Maximum security level</summary>
         Maximum = 0x0100,
         #pragma warning disable 1591
-        Reserved07 = 0x0080,
-        Reserved06 = 0x0040,
+        Reserved07 = 0x0080, Reserved06 = 0x0040,
         #pragma warning restore 1591
         /// <summary>Supports enhanced security erase</summary>
         Enhanced = 0x0020,
@@ -666,14 +620,9 @@ public static class Identify
     public enum TransferMode : byte
     {
         #pragma warning disable 1591
-        Mode7 = 0x80,
-        Mode6 = 0x40,
-        Mode5 = 0x20,
-        Mode4 = 0x10,
-        Mode3 = 0x08,
-        Mode2 = 0x04,
-        Mode1 = 0x02,
-        Mode0 = 0x01
+        Mode7 = 0x80, Mode6 = 0x40, Mode5 = 0x20,
+        Mode4 = 0x10, Mode3 = 0x08, Mode2 = 0x04,
+        Mode1 = 0x02, Mode0 = 0x01
         #pragma warning restore 1591
     }
 
@@ -686,18 +635,10 @@ public static class Identify
         /// <summary>MUST be set</summary>
         Set = 0x4000,
         #pragma warning disable 1591
-        Reserved13 = 0x2000,
-        Reserved12 = 0x1000,
-        Reserved11 = 0x0800,
-        Reserved10 = 0x0400,
-        Reserved09 = 0x0200,
-        Reserved08 = 0x0100,
-        Reserved07 = 0x0080,
-        Reserved06 = 0x0040,
-        Reserved05 = 0x0020,
-        Reserved04 = 0x0010,
-        Reserved03 = 0x0008,
-        Reserved02 = 0x0004,
+        Reserved13 = 0x2000, Reserved12 = 0x1000, Reserved11 = 0x0800,
+        Reserved10 = 0x0400, Reserved09 = 0x0200, Reserved08 = 0x0100,
+        Reserved07 = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
+        Reserved04 = 0x0010, Reserved03 = 0x0008, Reserved02 = 0x0004,
         Reserved01 = 0x0002,
         #pragma warning restore 1591
         /// <summary>Trusted Computing feature set is supported</summary>
@@ -1100,8 +1041,8 @@ public static class Identify
         ataId.WWN          = DescrambleWWN(ataId.WWN);
         ataId.WWNExtension = DescrambleWWN(ataId.WWNExtension);
 
-        var    buf = new byte[512];
-        IntPtr ptr = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
+        byte[] buf = new byte[512];
+        nint   ptr = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
         System.Runtime.InteropServices.Marshal.StructureToPtr(ataId, ptr, false);
         System.Runtime.InteropServices.Marshal.Copy(ptr, buf, 0, 512);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
@@ -1125,7 +1066,7 @@ public static class Identify
     static ulong DescrambleWWN(ulong WWN)
     {
         byte[] qwb   = BitConverter.GetBytes(WWN);
-        var    qword = new byte[8];
+        byte[] qword = new byte[8];
 
         qword[7] = qwb[1];
         qword[6] = qwb[0];
@@ -1143,7 +1084,7 @@ public static class Identify
     {
         byte[] outbuf = buffer[offset + length - 1] != 0x00 ? new byte[length + 1] : new byte[length];
 
-        for(var i = 0; i < length; i += 2)
+        for(int i = 0; i < length; i += 2)
         {
             outbuf[i] = buffer[offset + i                  + 1];
             outbuf[i                  + 1] = buffer[offset + i];
@@ -1156,9 +1097,9 @@ public static class Identify
 
     static byte[] ScrambleATAString(string str, int length)
     {
-        var buf = new byte[length];
+        byte[] buf = new byte[length];
 
-        for(var i = 0; i < length; i++)
+        for(int i = 0; i < length; i++)
             buf[i] = 0x20;
 
         if(str is null)
@@ -1168,13 +1109,13 @@ public static class Identify
 
         if(bytes.Length % 2 != 0)
         {
-            var tmp = new byte[bytes.Length + 1];
+            byte[] tmp = new byte[bytes.Length + 1];
             tmp[^1] = 0x20;
             Array.Copy(bytes, 0, tmp, 0, bytes.Length);
             bytes = tmp;
         }
 
-        for(var i = 0; i < bytes.Length; i += 2)
+        for(int i = 0; i < bytes.Length; i += 2)
         {
             buf[i] = bytes[i + 1];
             buf[i            + 1] = bytes[i];

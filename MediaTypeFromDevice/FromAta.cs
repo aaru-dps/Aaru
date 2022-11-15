@@ -32,9 +32,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes;
-
 using Aaru.Console;
+
+namespace Aaru.CommonTypes;
 
 public static partial class MediaTypeFromDevice
 {
@@ -66,6 +66,5 @@ public static partial class MediaTypeFromDevice
                                    "Drive manufacturer is SyQuest, media has 1961069 blocks of 512 bytes, setting media type to SparQ.");
 
         return MediaType.SparQ;
-
     }
 }

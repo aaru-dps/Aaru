@@ -36,11 +36,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>
 ///     Defines a filter, that is, a transformation of the data from a file, like, for example, a compressor (e.g.
@@ -96,8 +96,8 @@ public interface IFilter
 
     /// <summary>
     ///     Gets path to parent folder to the file referenced by this filter. If it's an archive, it's the full path to
-    ///     the archive itself.<br /> UNIX: /path/to/archive.zip/path/to/file.bin =&gt; /path/to/archive.zip <br /> Windows:
-    ///     C:\path\to\archive.zip\path\to\file.bin =&gt; C:\path\to\archive.zip
+    ///     the archive itself. <br /> UNIX: /path/to/archive.zip/path/to/file.bin =&gt; /path/to/archive.zip <br /> Windows:
+    ///     C:\path\to\archive.zip\path\to\file.bin = &gt; C:\path\to\archive.zip
     /// </summary>
     /// <returns>The parent folder.</returns>
     string ParentFolder { get; }

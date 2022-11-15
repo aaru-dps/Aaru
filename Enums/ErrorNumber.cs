@@ -36,9 +36,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Enums;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.CommonTypes.Enums;
 
 /// <summary>Enumerates error codes. Negative for UNIX error number equivalents, positive for Aaru error numbers.</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Global"),

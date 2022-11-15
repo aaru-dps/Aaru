@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Structs.Devices.SCSI;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.CommonTypes.Structs.Devices.SCSI;
 
 /// <summary>List of known SCSI peripheral qualifiers</summary>
 public enum PeripheralQualifiers : byte

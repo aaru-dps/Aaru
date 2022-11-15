@@ -39,11 +39,11 @@
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
 
-namespace Aaru.CommonTypes.Metadata;
-
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
+
+namespace Aaru.CommonTypes.Metadata;
 
 /// <summary>Statistics</summary>
 [XmlRoot("DicStats", Namespace = "", IsNullable = false)]

@@ -36,10 +36,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Metadata;
-
 using Aaru.CommonTypes.Interop;
 using Schemas;
+
+namespace Aaru.CommonTypes.Metadata;
 
 /// <summary>Manages Aaru's version for metadata</summary>
 public static class Version

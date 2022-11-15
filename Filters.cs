@@ -36,8 +36,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,6 +44,8 @@ using System.Reflection;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+
+namespace Aaru.CommonTypes;
 
 /// <summary>Manages the known filters</summary>
 public sealed class FiltersList
@@ -89,7 +89,8 @@ public sealed class FiltersList
                     if(!filter.Identify(path))
                         continue;
 
-                    var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
+                    var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.
+                                                      Invoke(Array.Empty<object>());
 
                     if(foundFilter?.Open(path) == ErrorNumber.NoError)
                         return foundFilter;

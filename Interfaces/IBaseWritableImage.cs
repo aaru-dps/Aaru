@@ -36,13 +36,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc />
 /// <summary>Base interface for all writable images</summary>

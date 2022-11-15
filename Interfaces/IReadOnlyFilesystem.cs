@@ -37,13 +37,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc />
 /// <summary>Defines the interface to implement reading the contents of a filesystem</summary>

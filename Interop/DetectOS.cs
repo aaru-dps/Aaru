@@ -36,13 +36,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interop;
-
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+
+namespace Aaru.CommonTypes.Interop;
 
 /// <summary>Detects the underlying execution framework and operating system</summary>
 public static class DetectOS

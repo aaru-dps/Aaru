@@ -39,10 +39,10 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace Aaru.CommonTypes.Enums;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.CommonTypes.Enums;
 
 /// <summary>Track (as partitioning element) types.</summary>
 public enum TrackType : byte

@@ -36,10 +36,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc cref="IWritableImage" />
 /// <summary>

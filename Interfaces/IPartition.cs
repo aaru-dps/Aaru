@@ -37,10 +37,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using System;
 using System.Collections.Generic;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>Abstract class to implement partitioning schemes interpreting plugins.</summary>
 public interface IPartition

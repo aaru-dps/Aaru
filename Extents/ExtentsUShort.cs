@@ -36,11 +36,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Extents;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+namespace Aaru.CommonTypes.Extents;
 
 /// <summary>Implements extents for <see cref="ushort" /></summary>
 public class ExtentsUShort
@@ -72,7 +72,7 @@ public class ExtentsUShort
         Tuple<ushort, ushort> removeTwo = null;
         Tuple<ushort, ushort> itemToAdd = null;
 
-        for(var i = 0; i < _backend.Count; i++)
+        for(int i = 0; i < _backend.Count; i++)
         {
             // Already contained in an extent
             if(item >= _backend[i].Item1 &&

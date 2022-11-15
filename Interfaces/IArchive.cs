@@ -33,12 +33,12 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Enums;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>Supported archive features</summary>
 [Flags]

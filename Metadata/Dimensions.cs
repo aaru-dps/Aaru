@@ -36,11 +36,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using Schemas;
+
 #pragma warning disable 612
 
 namespace Aaru.CommonTypes.Metadata;
-
-using Schemas;
 
 /// <summary>Physical dimensions for media types</summary>
 public static class Dimensions

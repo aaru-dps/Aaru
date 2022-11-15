@@ -36,10 +36,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+
 #pragma warning disable CS1591
 namespace Aaru.CommonTypes;
-
-using System;
 
 /// <inheritdoc cref="System.IComparable&lt;Partition&gt;" />
 /// <summary>Partition structure.</summary>

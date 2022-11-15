@@ -37,10 +37,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc />
 /// <summary>Defines an image that can store the information from streaming, digital, tapes</summary>

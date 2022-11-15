@@ -37,9 +37,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using System.Collections.Generic;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>Defines an image that can verify the integrity of the sectors it contains</summary>
 public interface IVerifiableSectorsImage

@@ -36,12 +36,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Structs.Devices.SCSI;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Aaru.Console;
+
+namespace Aaru.CommonTypes.Structs.Devices.SCSI;
 
 /// <summary>
 ///     Information from the following standards: T9/375-D revision 10l T10/995-D revision 10 T10/1236-D revision 20
@@ -469,8 +469,8 @@ public struct Inquiry
 
             decoded.VersionDescriptors = new ushort[descriptorsNo];
 
-            for(var i = 0; i < descriptorsNo; i++)
-                decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + i * 2);
+            for(int i = 0; i < descriptorsNo; i++)
+                decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + (i * 2));
         }
 
         switch(SCSIInquiryResponse.Length)
@@ -522,8 +522,8 @@ public struct Inquiry
 
         Inquiry decoded = inq.Value;
 
-        var  buffer = new byte[512];
-        byte length = 0;
+        byte[] buffer = new byte[512];
+        byte   length = 0;
 
         buffer[0] =  (byte)(decoded.PeripheralQualifier << 5);
         buffer[0] += decoded.PeripheralDeviceType;
@@ -686,8 +686,7 @@ public struct Inquiry
             Array.Copy(decoded.Seagate_DriveSerialNumber, 0, buffer, 36, 8);
         }
 
-        if(decoded.KreonIdentifier != null &&
-           decoded.KreonVersion    != null)
+        if(decoded is { KreonIdentifier: {}, KreonVersion: {} })
         {
             length = 46;
             Array.Copy(decoded.KreonIdentifier, 0, buffer, 36, 5);
@@ -717,8 +716,7 @@ public struct Inquiry
                 Array.Copy(decoded.HiMDSpecific, 0, buffer, 44, 12);
         }
 
-        if(decoded.VendorSpecific != null &&
-           !decoded.IsHiMD)
+        if(decoded is { VendorSpecific: {}, IsHiMD: false })
         {
             length = 56;
             Array.Copy(decoded.VendorSpecific, 0, buffer, 36, 20);
@@ -748,10 +746,10 @@ public struct Inquiry
 
         if(decoded.VersionDescriptors != null)
         {
-            length = (byte)(58 + decoded.VersionDescriptors.Length * 2);
+            length = (byte)(58 + (decoded.VersionDescriptors.Length * 2));
 
-            for(var i = 0; i < decoded.VersionDescriptors.Length; i++)
-                Array.Copy(BitConverter.GetBytes(decoded.VersionDescriptors[i]), 0, buffer, 56 + i * 2, 2);
+            for(int i = 0; i < decoded.VersionDescriptors.Length; i++)
+                Array.Copy(BitConverter.GetBytes(decoded.VersionDescriptors[i]), 0, buffer, 56 + (i * 2), 2);
         }
 
         if(decoded.Reserved5 != null)
@@ -779,7 +777,7 @@ public struct Inquiry
         }
 
         buffer[4] = length;
-        var dest = new byte[length];
+        byte[] dest = new byte[length];
         Array.Copy(buffer, 0, dest, 0, length);
 
         return dest;

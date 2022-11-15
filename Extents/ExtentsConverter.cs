@@ -36,11 +36,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Extents;
-
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Schemas;
+
+namespace Aaru.CommonTypes.Extents;
 
 /// <summary>Converts extents</summary>
 public static class ExtentsConverter
@@ -54,7 +55,7 @@ public static class ExtentsConverter
             return null;
 
         Tuple<ulong, ulong>[] tuples = extents.ToArray();
-        var                   array  = new ExtentType[tuples.Length];
+        ExtentType[]          array  = new ExtentType[tuples.Length];
 
         for(ulong i = 0; i < (ulong)array.LongLength; i++)
             array[i] = new ExtentType
@@ -74,7 +75,8 @@ public static class ExtentsConverter
         if(extents == null)
             return null;
 
-        var tuples = extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).ToList();
+        List<Tuple<ulong, ulong>> tuples = extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).
+                                                   ToList();
 
         return new ExtentsULong(tuples);
     }

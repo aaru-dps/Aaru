@@ -36,11 +36,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc cref="IMediaImage" />
 /// <summary>Abstract class to implement disk image reading plugins.</summary>

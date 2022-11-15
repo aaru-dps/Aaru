@@ -36,9 +36,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes;
-
 using System.Linq;
+
+namespace Aaru.CommonTypes;
 
 /// <summary>Handles CHS geometries</summary>
 public static class Geometry

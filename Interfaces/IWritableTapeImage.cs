@@ -37,9 +37,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.CommonTypes.Interfaces;
-
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.ITapeImage" />
 /// <summary>Defines an image that is writable and can store information about a streaming, digital, tape</summary>

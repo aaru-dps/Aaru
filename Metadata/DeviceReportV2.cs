@@ -38,16 +38,6 @@
 
 // TODO: Re-enable CS1591 in this file
 
-#pragma warning disable 1591
-
-// ReSharper disable VirtualMemberNeverOverridden.Global
-// ReSharper disable VirtualMemberCallInConstructor
-
-// ReSharper disable InconsistentNaming
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-
-namespace Aaru.CommonTypes.Metadata;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,6 +49,16 @@ using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 using Newtonsoft.Json;
+
+#pragma warning disable 1591
+
+// ReSharper disable VirtualMemberNeverOverridden.Global
+// ReSharper disable VirtualMemberCallInConstructor
+
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
+namespace Aaru.CommonTypes.Metadata;
 
 public class DeviceReportV2
 {
