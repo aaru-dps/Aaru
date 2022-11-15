@@ -2225,25 +2225,23 @@ public sealed partial class AaruFormat
                             return ErrorNumber.NoError;
                         }
 
-                        if(_sectorPrefixDdt != null &&
-                           _sectorSuffixDdt != null)
+                        if(_sectorPrefixDdt == null ||
+                           _sectorSuffixDdt == null)
+                            return ReadSectors(sectorAddress, length, out buffer);
+
+                        buffer = new byte[2352 * length];
+
+                        for(uint i = 0; i < length; i++)
                         {
-                            buffer = new byte[2352 * length];
+                            errno = ReadSectorLong(sectorAddress + i, out byte[] temp);
 
-                            for(uint i = 0; i < length; i++)
-                            {
-                                errno = ReadSectorLong(sectorAddress + i, out byte[] temp);
+                            if(errno != ErrorNumber.NoError)
+                                return errno;
 
-                                if(errno != ErrorNumber.NoError)
-                                    return errno;
-
-                                Array.Copy(temp, 0, buffer, 2352 * i, 2352);
-                            }
-
-                            return ErrorNumber.NoError;
+                            Array.Copy(temp, 0, buffer, 2352 * i, 2352);
                         }
 
-                        return ReadSectors(sectorAddress, length, out buffer);
+                        return ErrorNumber.NoError;
 
                     // Join prefix (sync, header) with user data
                     case TrackType.CdMode2Formless:
@@ -2268,25 +2266,24 @@ public sealed partial class AaruFormat
                             return ErrorNumber.NoError;
                         }
 
-                        if(_sectorPrefixDdt != null &&
-                           _sectorSuffixDdt != null)
+                        if(_sectorPrefixDdt == null ||
+                           _sectorSuffixDdt == null)
+                            return ReadSectors(sectorAddress, length, out buffer);
+
+                        buffer = new byte[2352 * length];
+
+                        for(uint i = 0; i < length; i++)
                         {
-                            buffer = new byte[2352 * length];
+                            errno = ReadSectorLong(sectorAddress + i, out byte[] temp);
 
-                            for(uint i = 0; i < length; i++)
-                            {
-                                errno = ReadSectorLong(sectorAddress + i, out byte[] temp);
+                            if(errno != ErrorNumber.NoError)
+                                return errno;
 
-                                if(errno != ErrorNumber.NoError)
-                                    return errno;
-
-                                Array.Copy(temp, 0, buffer, 2352 * i, 2352);
-                            }
-
-                            return ErrorNumber.NoError;
+                            Array.Copy(temp, 0, buffer, 2352 * i, 2352);
                         }
 
-                        return ReadSectors(sectorAddress, length, out buffer);
+                        return ErrorNumber.NoError;
+
                 }
 
                 break;

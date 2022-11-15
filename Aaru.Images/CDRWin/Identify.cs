@@ -93,10 +93,10 @@ public sealed partial class CdrWin
 
                 // First line must be SESSION, REM, CATALOG, FILE or CDTEXTFILE.
                 Match sm = sr.Match(line ?? "");
-                Match rm = rr.Match(line);
-                Match cm = cr.Match(line);
-                Match fm = fr.Match(line);
-                Match tm = tr.Match(line);
+                Match rm = rr.Match(line ?? "");
+                Match cm = cr.Match(line ?? "");
+                Match fm = fr.Match(line ?? "");
+                Match tm = tr.Match(line ?? "");
 
                 return sm.Success || rm.Success || cm.Success || fm.Success || tm.Success;
             }

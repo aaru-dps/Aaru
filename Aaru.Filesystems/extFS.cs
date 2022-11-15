@@ -155,6 +155,7 @@ public sealed class extFS : IFilesystem
     }
 
     /// <summary>ext superblock</summary>
+    #pragma warning disable CS0649
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct SuperBlock
     {
@@ -189,4 +190,5 @@ public sealed class extFS : IFilesystem
         /// <summary>0x038, 0x137D (little endian)</summary>
         public ushort magic;
     }
+    #pragma warning restore CS0649
 }

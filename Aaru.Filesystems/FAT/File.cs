@@ -331,7 +331,7 @@ public sealed partial class FAT
         return ErrorNumber.NoError;
     }
 
-    byte LfnChecksum(byte[] name, byte[] extension)
+    static byte LfnChecksum(byte[] name, byte[] extension)
     {
         byte sum = 0;
 

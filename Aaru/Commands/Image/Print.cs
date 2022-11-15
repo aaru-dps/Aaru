@@ -207,7 +207,7 @@ sealed class PrintHexCommand : Command
 
                 AaruConsole.WriteLine("[bold][italic]Sector {0}[/][/]", start + i);
 
-                if(blockImage?.Info.ReadableSectorTags == null)
+                if(blockImage.Info.ReadableSectorTags == null)
                 {
                     AaruConsole.
                         WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");

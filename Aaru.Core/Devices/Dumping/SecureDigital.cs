@@ -125,10 +125,12 @@ public partial class Dump
                             blocks    = ecsdDecoded.SectorCount;
                             blockSize = (uint)(ecsdDecoded.SectorSize == 1 ? 4096 : 512);
 
-                            if(ecsdDecoded.NativeSectorSize == 0)
-                                physicalBlockSize = 512;
-                            else if(ecsdDecoded.NativeSectorSize == 1)
-                                physicalBlockSize = 4096;
+                            physicalBlockSize = ecsdDecoded.NativeSectorSize switch
+                                                {
+                                                    0 => 512,
+                                                    1 => 4096,
+                                                    _ => physicalBlockSize
+                                                };
 
                             blocksToRead = (ushort)(ecsdDecoded.OptimalReadSize * 4096 / blockSize);
 
@@ -758,7 +760,6 @@ public partial class Dump
         {
             var        pass              = 1;
             var        forward           = true;
-            const bool runningPersistent = false;
 
             InitProgress?.Invoke();
         repeatRetryLba:
@@ -775,9 +776,7 @@ public partial class Dump
                     break;
                 }
 
-                PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
-                                                    forward ? "forward" : "reverse",
-                                                    runningPersistent ? "recovering partial data, " : ""));
+                PulseProgress?.Invoke($"Retrying sector {badSector}, pass {pass}, {(forward ? "forward" : "reverse")}");
 
                 error = _dev.ReadSingleBlock(out cmdBuf, out response, (uint)badSector, blockSize, byteAddressed,
                                              timeout, out duration);
@@ -785,18 +784,17 @@ public partial class Dump
                 totalDuration += duration;
 
                 if(error)
+                {
                     _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, byteAddressed, response);
 
-                if(!error)
-                {
-                    _resume.BadBlocks.Remove(badSector);
-                    extents.Add(badSector);
-                    outputFormat.WriteSector(cmdBuf, badSector);
-                    UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
-                    _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
+                    continue;
                 }
-                else if(runningPersistent)
-                    outputFormat.WriteSector(cmdBuf, badSector);
+
+                _resume.BadBlocks.Remove(badSector);
+                extents.Add(badSector);
+                outputFormat.WriteSector(cmdBuf, badSector);
+                UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
+                _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
             }
 
             if(pass < _retryPasses &&

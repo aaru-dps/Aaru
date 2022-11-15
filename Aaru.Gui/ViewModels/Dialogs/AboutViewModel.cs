@@ -136,7 +136,7 @@ Logo and art:
         set => this.RaiseAndSetIfChanged(ref _versionText, value);
     }
 
-    void ExecuteWebsiteCommand()
+    static void ExecuteWebsiteCommand()
     {
         var process = new Process
         {

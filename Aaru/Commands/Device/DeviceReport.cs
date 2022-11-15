@@ -464,102 +464,94 @@ sealed class DeviceReportCommand : Command
                                     Features.Separate(report.SCSI.MultiMediaDevice.Features.BinaryData);
 
                                 if(ftr.Descriptors != null)
-                                    foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
-                                    {
-                                        if(desc.Code != 0x0000)
-                                            continue;
+                                    foreach(Profile prof in from desc in ftr.Descriptors where desc.Code == 0x0000
+                                                            select Features.Decode_0000(desc.Data) into ftr0000
+                                                            where ftr0000 != null from prof in ftr0000.Value.Profiles
+                                                            select prof)
+                                        switch(prof.Number)
+                                        {
+                                            case ProfileNumber.CDROM:
+                                            case ProfileNumber.CDR:
+                                            case ProfileNumber.CDRW:
+                                                mediaTypes.Add("CD-ROM");
+                                                mediaTypes.Add("Audio CD");
+                                                mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
+                                                mediaTypes.Add("CD-R");
+                                                mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                                                mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                                                mediaTypes.Add("CD-RW (marked 4x or lower)");
 
-                                        Feature_0000? ftr0000 = Features.Decode_0000(desc.Data);
+                                                break;
+                                            case ProfileNumber.DVDRWRes:
+                                            case ProfileNumber.DVDRWSeq:
+                                            case ProfileNumber.DVDRDLSeq:
+                                            case ProfileNumber.DVDRDLJump:
+                                            case ProfileNumber.DVDRWDL:
+                                            case ProfileNumber.DVDDownload:
+                                            case ProfileNumber.DVDRWPlus:
+                                            case ProfileNumber.DVDRPlus:
+                                            case ProfileNumber.DVDRSeq:
+                                            case ProfileNumber.DVDRWDLPlus:
+                                            case ProfileNumber.DVDRDLPlus:
 
-                                        if(ftr0000 == null)
-                                            continue;
+                                            case ProfileNumber.DVDROM:
+                                                mediaTypes.Add("DVD-ROM");
+                                                mediaTypes.Add("DVD-R");
+                                                mediaTypes.Add("DVD-RW");
+                                                mediaTypes.Add("DVD+R");
+                                                mediaTypes.Add("DVD+RW");
+                                                mediaTypes.Add("DVD-R DL");
+                                                mediaTypes.Add("DVD+R DL");
+                                                mediaTypes.Add("Nintendo GameCube game");
+                                                mediaTypes.Add("Nintendo Wii game");
 
-                                        foreach(Profile prof in ftr0000.Value.Profiles)
-                                            switch(prof.Number)
-                                            {
-                                                case ProfileNumber.CDROM:
-                                                case ProfileNumber.CDR:
-                                                case ProfileNumber.CDRW:
-                                                    mediaTypes.Add("CD-ROM");
-                                                    mediaTypes.Add("Audio CD");
-                                                    mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
-                                                    mediaTypes.Add("CD-R");
-                                                    mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
-                                                    mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
-                                                    mediaTypes.Add("CD-RW (marked 4x or lower)");
+                                                break;
+                                            case ProfileNumber.DVDRAM:
+                                                mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
+                                                mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
 
-                                                    break;
-                                                case ProfileNumber.DVDRWRes:
-                                                case ProfileNumber.DVDRWSeq:
-                                                case ProfileNumber.DVDRDLSeq:
-                                                case ProfileNumber.DVDRDLJump:
-                                                case ProfileNumber.DVDRWDL:
-                                                case ProfileNumber.DVDDownload:
-                                                case ProfileNumber.DVDRWPlus:
-                                                case ProfileNumber.DVDRPlus:
-                                                case ProfileNumber.DVDRSeq:
-                                                case ProfileNumber.DVDRWDLPlus:
-                                                case ProfileNumber.DVDRDLPlus:
+                                                break;
+                                            case ProfileNumber.DDCDROM:
+                                            case ProfileNumber.DDCDR:
+                                            case ProfileNumber.DDCDRW:
+                                                mediaTypes.Add("DDCD-ROM");
+                                                mediaTypes.Add("DDCD-R");
+                                                mediaTypes.Add("DDCD-RW");
 
-                                                case ProfileNumber.DVDROM:
-                                                    mediaTypes.Add("DVD-ROM");
-                                                    mediaTypes.Add("DVD-R");
-                                                    mediaTypes.Add("DVD-RW");
-                                                    mediaTypes.Add("DVD+R");
-                                                    mediaTypes.Add("DVD+RW");
-                                                    mediaTypes.Add("DVD-R DL");
-                                                    mediaTypes.Add("DVD+R DL");
-                                                    mediaTypes.Add("Nintendo GameCube game");
-                                                    mediaTypes.Add("Nintendo Wii game");
+                                                break;
+                                            case ProfileNumber.BDROM:
+                                            case ProfileNumber.BDRSeq:
+                                            case ProfileNumber.BDRRdm:
+                                            case ProfileNumber.BDRE:
+                                                mediaTypes.Add("BD-ROM");
+                                                mediaTypes.Add("BD-R HTL (not LTH)");
+                                                mediaTypes.Add("BD-RE");
+                                                mediaTypes.Add("BD-R LTH");
+                                                mediaTypes.Add("BD-R Triple Layer (100Gb)");
+                                                mediaTypes.Add("BD-R Quad Layer (128Gb)");
+                                                mediaTypes.Add("Ultra HD Blu-ray movie");
+                                                mediaTypes.Add("PlayStation 3 game");
+                                                mediaTypes.Add("PlayStation 4 game");
+                                                mediaTypes.Add("PlayStation 5 game");
+                                                mediaTypes.Add("Xbox One game");
+                                                mediaTypes.Add("Nintendo Wii U game");
 
-                                                    break;
-                                                case ProfileNumber.DVDRAM:
-                                                    mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
-                                                    mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
+                                                break;
+                                            case ProfileNumber.HDDVDROM:
+                                            case ProfileNumber.HDDVDR:
+                                            case ProfileNumber.HDDVDRW:
+                                            case ProfileNumber.HDDVDRDL:
+                                            case ProfileNumber.HDDVDRWDL:
+                                                mediaTypes.Add("HD DVD-ROM");
+                                                mediaTypes.Add("HD DVD-R");
+                                                mediaTypes.Add("HD DVD-RW");
 
-                                                    break;
-                                                case ProfileNumber.DDCDROM:
-                                                case ProfileNumber.DDCDR:
-                                                case ProfileNumber.DDCDRW:
-                                                    mediaTypes.Add("DDCD-ROM");
-                                                    mediaTypes.Add("DDCD-R");
-                                                    mediaTypes.Add("DDCD-RW");
+                                                break;
+                                            case ProfileNumber.HDDVDRAM:
+                                                mediaTypes.Add("HD DVD-RAM");
 
-                                                    break;
-                                                case ProfileNumber.BDROM:
-                                                case ProfileNumber.BDRSeq:
-                                                case ProfileNumber.BDRRdm:
-                                                case ProfileNumber.BDRE:
-                                                    mediaTypes.Add("BD-ROM");
-                                                    mediaTypes.Add("BD-R HTL (not LTH)");
-                                                    mediaTypes.Add("BD-RE");
-                                                    mediaTypes.Add("BD-R LTH");
-                                                    mediaTypes.Add("BD-R Triple Layer (100Gb)");
-                                                    mediaTypes.Add("BD-R Quad Layer (128Gb)");
-                                                    mediaTypes.Add("Ultra HD Blu-ray movie");
-                                                    mediaTypes.Add("PlayStation 3 game");
-                                                    mediaTypes.Add("PlayStation 4 game");
-                                                    mediaTypes.Add("PlayStation 5 game");
-                                                    mediaTypes.Add("Xbox One game");
-                                                    mediaTypes.Add("Nintendo Wii U game");
-
-                                                    break;
-                                                case ProfileNumber.HDDVDROM:
-                                                case ProfileNumber.HDDVDR:
-                                                case ProfileNumber.HDDVDRW:
-                                                case ProfileNumber.HDDVDRDL:
-                                                case ProfileNumber.HDDVDRWDL:
-                                                    mediaTypes.Add("HD DVD-ROM");
-                                                    mediaTypes.Add("HD DVD-R");
-                                                    mediaTypes.Add("HD DVD-RW");
-
-                                                    break;
-                                                case ProfileNumber.HDDVDRAM:
-                                                    mediaTypes.Add("HD DVD-RAM");
-
-                                                    break;
-                                            }
-                                    }
+                                                break;
+                                        }
                             }
 
                             if(cdromMode != null &&

@@ -53,7 +53,7 @@ public sealed partial class CdrWin
         public string FileType;
     }
 
-    class CdrWinTrack
+    sealed class CdrWinTrack
     {
         /// <summary>Track arranger (from CD-Text)</summary>
         public string Arranger;

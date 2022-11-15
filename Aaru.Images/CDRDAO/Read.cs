@@ -1373,11 +1373,10 @@ public sealed partial class Cdrdao
         _imageStream = aaruTrack.Trackfile.Datafilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.
-           Seek((long)aaruTrack.Trackfile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                SeekOrigin.Begin);
+        br.BaseStream.Seek((long)aaruTrack.Trackfile.Offset + (long)(sectorAddress * (sectorSize + sectorSkip)),
+                           SeekOrigin.Begin);
 
-        if(sectorOffset == 0 &&
+        if(
            sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else

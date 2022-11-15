@@ -307,6 +307,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
             WholeDiscChecked = false;
         }
 
+        // ReSharper disable once AsyncVoidLambda
         var thread = new Thread(async () =>
         {
             if(SeparatedTracksChecked)

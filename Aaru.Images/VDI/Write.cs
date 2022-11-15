@@ -259,7 +259,7 @@ public sealed partial class Vdi
         }
 
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
-            _vHdr.comments = _imageInfo.Comments.Length > 255 ? _imageInfo.Comments.Substring(0, 255)
+            _vHdr.comments = _imageInfo.Comments.Length > 255 ? _imageInfo.Comments[..255]
                                  : _imageInfo.Comments;
 
         if(_vHdr.logicalCylinders == 0)

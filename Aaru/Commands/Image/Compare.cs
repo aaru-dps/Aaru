@@ -36,6 +36,7 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
@@ -275,10 +276,11 @@ sealed class CompareCommand : Command
 
             table.AddRow("Sector size", image1Info.SectorSize.ToString(), image2Info.SectorSize.ToString());
 
-            table.AddRow("Creation time", image1Info.CreationTime.ToString(), image2Info.CreationTime.ToString());
+            table.AddRow("Creation time", image1Info.CreationTime.ToString(CultureInfo.CurrentCulture),
+                         image2Info.CreationTime.ToString(CultureInfo.CurrentCulture));
 
-            table.AddRow("Last modification time", image1Info.LastModificationTime.ToString(),
-                         image2Info.LastModificationTime.ToString());
+            table.AddRow("Last modification time", image1Info.LastModificationTime.ToString(CultureInfo.CurrentCulture),
+                         image2Info.LastModificationTime.ToString(CultureInfo.CurrentCulture));
 
             table.AddRow("Disk type", image1Info.MediaType.ToString(), image2Info.MediaType.ToString());
 

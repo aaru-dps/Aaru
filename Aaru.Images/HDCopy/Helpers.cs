@@ -41,7 +41,7 @@ using Aaru.Helpers;
 
 public sealed partial class HdCopy
 {
-    bool TryReadHeader(Stream stream, ref FileHeader fhdr, ref long dataStartOffset)
+    static bool TryReadHeader(Stream stream, ref FileHeader fhdr, ref long dataStartOffset)
     {
         var numTracks = 82;
 

@@ -399,7 +399,7 @@ public sealed partial class DiskCopy42
         writingStream.Seek(0, SeekOrigin.Begin);
 
         if(header.DiskName.Length > 63)
-            header.DiskName = header.DiskName.Substring(0, 63);
+            header.DiskName = header.DiskName[..63];
 
         writingStream.WriteByte((byte)header.DiskName.Length);
         Encoding macRoman = new MacRoman();

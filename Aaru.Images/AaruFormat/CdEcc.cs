@@ -213,8 +213,8 @@ public sealed partial class AaruFormat
     static (byte minute, byte second, byte frame) LbaToMsf(long pos) =>
         ((byte)((pos + 150) / 75 / 60), (byte)((pos + 150) / 75 % 60), (byte)((pos + 150) % 75));
 
-    void ReconstructPrefix(ref byte[] sector, // must point to a full 2352-byte sector
-                           TrackType type, long lba)
+    static void ReconstructPrefix(ref byte[] sector, // must point to a full 2352-byte sector
+                                  TrackType type, long lba)
     {
         //
         // Sync

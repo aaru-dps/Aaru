@@ -282,8 +282,7 @@ public sealed partial class CdrWin
                     AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM METADATA DUMP EXTENT at line {0}",
                                                lineNumber);
 
-                    if(DumpHardware is null)
-                        DumpHardware = new List<DumpHardwareType>();
+                    DumpHardware ??= new List<DumpHardwareType>();
 
                     DumpHardwareType existingDump =
                         DumpHardware.FirstOrDefault(d =>
@@ -2253,11 +2252,10 @@ public sealed partial class CdrWin
         _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.
-           Seek((long)aaruTrack.TrackFile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                SeekOrigin.Begin);
+        br.BaseStream.Seek((long)aaruTrack.TrackFile.Offset + (long)(sectorAddress * (sectorSize + sectorSkip)),
+                           SeekOrigin.Begin);
 
-        if(sectorOffset == 0 &&
+        if(
            sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else

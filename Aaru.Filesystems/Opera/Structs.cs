@@ -111,7 +111,7 @@ public sealed partial class OperaFS
         public readonly uint last_copy;
     }
 
-    class DirectoryEntryWithPointers
+    sealed class DirectoryEntryWithPointers
     {
         public DirectoryEntry Entry;
         public uint[]         Pointers;

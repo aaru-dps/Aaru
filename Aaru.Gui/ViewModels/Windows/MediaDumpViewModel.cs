@@ -418,11 +418,11 @@ public sealed class MediaDumpViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _useResume, value);
 
-            if(value == false)
+            if(!value)
                 return;
 
             if(_outputPrefix != null)
-                CheckResumeFile();
+                CheckResumeFile().GetAwaiter().GetResult();
         }
     }
 
@@ -485,7 +485,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
                 Title = "Choose existing metadata sidecar"
             };
 
-            dlgMetadata.Filters.Add(new FileDialogFilter
+            dlgMetadata.Filters?.Add(new FileDialogFilter
             {
                 Name = "CICM XML metadata",
                 Extensions = new List<string>(new[]
@@ -643,7 +643,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
             Title = "Choose destination file"
         };
 
-        dlgDestination.Filters.Add(new FileDialogFilter
+        dlgDestination.Filters?.Add(new FileDialogFilter
         {
             Name       = SelectedPlugin.Plugin.Name,
             Extensions = SelectedPlugin.Plugin.KnownExtensions.ToList()

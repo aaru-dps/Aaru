@@ -76,9 +76,7 @@ public sealed class NeXTDisklabel : IPartition
         var    magicFound = false;
         byte[] labelSector;
 
-        uint sectorSize;
-
-        sectorSize = imagePlugin.Info.SectorSize is 2352 or 2448 ? 2048 : imagePlugin.Info.SectorSize;
+        uint sectorSize = imagePlugin.Info.SectorSize is 2352 or 2448 ? 2048 : imagePlugin.Info.SectorSize;
 
         partitions = new List<Partition>();
 

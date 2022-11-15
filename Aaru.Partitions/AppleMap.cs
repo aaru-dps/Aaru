@@ -70,9 +70,7 @@ public sealed class AppleMap : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        uint sectorSize;
-
-        sectorSize = imagePlugin.Info.SectorSize is 2352 or 2448 ? 2048 : imagePlugin.Info.SectorSize;
+        uint sectorSize = imagePlugin.Info.SectorSize is 2352 or 2448 ? 2048 : imagePlugin.Info.SectorSize;
 
         partitions = new List<Partition>();
 

@@ -724,7 +724,7 @@ public class GameBoy : IByteAddressableImage
     }
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
-    string DecodeLicensee(byte headerLicensee, byte[] headerLicenseeNew)
+    static string DecodeLicensee(byte headerLicensee, byte[] headerLicenseeNew)
     {
         if(headerLicensee != 0x33)
             return headerLicensee switch

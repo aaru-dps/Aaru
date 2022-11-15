@@ -603,7 +603,7 @@ public sealed class AcornADFS : IFilesystem
         XmlFsType.Type        =  "Acorn Advanced Disc Filing System";
     }
 
-    byte AcornMapChecksum(byte[] data, int length)
+    static byte AcornMapChecksum(byte[] data, int length)
     {
         var sum   = 0;
         var carry = 0;

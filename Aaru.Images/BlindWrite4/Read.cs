@@ -857,7 +857,7 @@ public sealed partial class BlindWrite4
     public ErrorNumber ReadSectors(ulong sectorAddress, uint length, uint track, out byte[] buffer)
     {
         buffer = null;
-        Track? aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -954,7 +954,7 @@ public sealed partial class BlindWrite4
                                       out byte[] buffer)
     {
         buffer = null;
-        Track? aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -1177,9 +1177,7 @@ public sealed partial class BlindWrite4
         if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
             return ErrorNumber.OutOfRange;
 
-        uint sectorOffset;
         uint sectorSize;
-        uint sectorSkip;
 
         switch(aaruTrack.Type)
         {
@@ -1188,9 +1186,7 @@ public sealed partial class BlindWrite4
             case CommonTypes.Enums.TrackType.CdMode2Formless:
             case CommonTypes.Enums.TrackType.Data:
             {
-                sectorOffset = 0;
                 sectorSize   = (uint)aaruTrack.RawBytesPerSector;
-                sectorSkip   = 0;
 
                 break;
             }
@@ -1200,9 +1196,8 @@ public sealed partial class BlindWrite4
         _imageStream = aaruTrack.Filter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.
-           Seek((long)aaruTrack.FileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                SeekOrigin.Begin);
+        br.BaseStream.Seek((long)aaruTrack.FileOffset + (long)(sectorAddress * sectorSize),
+                           SeekOrigin.Begin);
 
         buffer = br.ReadBytes((int)(sectorSize * length));
 

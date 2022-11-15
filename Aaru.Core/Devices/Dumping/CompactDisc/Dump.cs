@@ -322,7 +322,6 @@ sealed partial class Dump
                 UpdateStatus?.Invoke("Full raw subchannel reading supported...");
                 subType = TrackSubchannelType.Raw;
                 subSize = 96;
-                readcd  = true;
 
                 break;
             case MmcSubchannel.Q16:
@@ -335,7 +334,6 @@ sealed partial class Dump
 
                 subType = TrackSubchannelType.Q16;
                 subSize = 16;
-                readcd  = true;
 
                 break;
         }

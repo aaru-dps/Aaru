@@ -322,7 +322,9 @@ partial class Dump
         var    forward = true;
         bool   sense;
         byte[] buffer;
-        var    outputFormat = _outputPlugin as IWritableImage;
+
+        if(_outputPlugin is not IWritableImage outputFormat)
+            return;
 
         InitProgress?.Invoke();
 

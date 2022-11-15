@@ -183,7 +183,7 @@ public sealed partial class DeviceReport
         return evpds.Count > 0 ? evpds : null;
     }
 
-    byte[] ClearPage83(byte[] pageResponse)
+    static byte[] ClearPage83(byte[] pageResponse)
     {
         if(pageResponse?[1] != 0x83)
             return null;

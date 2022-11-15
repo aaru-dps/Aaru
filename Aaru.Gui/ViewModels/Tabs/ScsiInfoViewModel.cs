@@ -413,8 +413,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     }
 
                     // TODO: Automatic error reporting
-                    if(decodedText == null)
-                        decodedText = "Error decoding page, please open an issue.";
+                    decodedText ??= "Error decoding page, please open an issue.";
 
                     ModeSensePages.Add(new ScsiPageModel
                     {
@@ -763,7 +762,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
     {
         var dlgSaveBinary = new SaveFileDialog();
 
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
             Extensions = new List<string>(new[]
             {
@@ -787,7 +786,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
     {
         var dlgSaveText = new SaveFileDialog();
 
-        dlgSaveText.Filters.Add(new FileDialogFilter
+        dlgSaveText.Filters?.Add(new FileDialogFilter
         {
             Extensions = new List<string>(new[]
             {
@@ -803,7 +802,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         var saveFs = new FileStream(result, FileMode.Create);
         var saveSw = new StreamWriter(saveFs);
-        saveSw.Write(ScsiInquiryText);
+        await saveSw.WriteAsync(ScsiInquiryText);
         saveFs.Close();
     }
 
@@ -811,7 +810,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
     {
         var dlgSaveBinary = new SaveFileDialog();
 
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
             Extensions = new List<string>(new[]
             {
@@ -835,7 +834,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
     {
         var dlgSaveBinary = new SaveFileDialog();
 
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
             Extensions = new List<string>(new[]
             {
@@ -862,7 +861,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         var dlgSaveBinary = new SaveFileDialog();
 
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
             Extensions = new List<string>(new[]
             {
@@ -886,7 +885,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
     {
         var dlgSaveBinary = new SaveFileDialog();
 
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
             Extensions = new List<string>(new[]
             {

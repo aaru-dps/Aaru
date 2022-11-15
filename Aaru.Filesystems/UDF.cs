@@ -121,15 +121,15 @@ public sealed class UDF : IFilesystem
 
         var  anchorFound = false;
         uint ratio       = 1;
+        sector = null;
 
-        foreach(ulong[] position in positions.Where(position => position[0] + partition.Start + position[1] <=
-                                                                partition.End && position[0] < partition.End))
+        foreach(ulong[] position in from position in
+                                        positions.Where(position =>
+                                                            position[0] + partition.Start + position[1] <=
+                                                            partition.End && position[0] < partition.End) let errno =
+                                        imagePlugin.ReadSectors(position[0], (uint)position[1], out sector)
+                                    where errno == ErrorNumber.NoError select position)
         {
-            ErrorNumber errno = imagePlugin.ReadSectors(position[0], (uint)position[1], out sector);
-
-            if(errno != ErrorNumber.NoError)
-                continue;
-
             anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
             AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);

@@ -397,7 +397,7 @@ sealed class ExtractFilesCommand : Command
                                   bool doXattrs)
     {
         if(path.StartsWith('/'))
-            path = path.Substring(1);
+            path = path[1..];
 
         ErrorNumber error = fs.ReadDir(path, out List<string> directory);
 

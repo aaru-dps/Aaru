@@ -267,7 +267,7 @@ partial class Dump
                                 desiredSubchannel, sub, i + r, 1, subLog, isrcs, 1, ref mcn, tracks,
                                 subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
                                 _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
-                                out List<ulong> newPregapSectors);
+                                out List<ulong> _);
 
                             // Set tracks and go back
                             if(indexesChanged)
@@ -347,10 +347,10 @@ partial class Dump
                     outputOptical.WriteSectorsLong(data, i, blocksToRead);
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                        desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, 1, ref mcn, tracks,
-                        subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                        _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
-                        out List<ulong> newPregapSectors);
+                                                                             desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, 1, ref mcn, tracks,
+                                                                             subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
+                                                                             _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
+                                                                             out List<ulong> newPregapSectors);
 
                     // Set tracks and go back
                     if(indexesChanged)

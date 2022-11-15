@@ -264,8 +264,6 @@ public sealed class Xbox : IPartition
 
             return true;
         }
-
-        return false;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

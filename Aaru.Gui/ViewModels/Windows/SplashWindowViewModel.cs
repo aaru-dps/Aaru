@@ -33,6 +33,7 @@
 namespace Aaru.Gui.ViewModels.Windows;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -184,10 +185,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
         Task.Run(() =>
         {
-            var mainDbUpdate = false;
-
-            if(!File.Exists(Settings.MainDbPath))
-                mainDbUpdate = true;
+            bool mainDbUpdate = !File.Exists(Settings.MainDbPath);
 
             // TODO: Update database
 
@@ -217,6 +215,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
         });
     }
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void CheckGdprCompliance()
     {
         CurrentProgress++;

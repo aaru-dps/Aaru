@@ -960,7 +960,7 @@ public sealed partial class FAT
         UMSDOS_HLINK = 2
     }
 
-    class CompleteDirectoryEntry
+    sealed class CompleteDirectoryEntry
     {
         public DirectoryEntry       Dirent;
         public DirectoryEntry       Fat32Ea;

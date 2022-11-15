@@ -175,11 +175,12 @@ partial class Dump
             break;
         }
 
-        AaruConsole.DebugWriteLine("Pregap calculator", bcd == true
-                                                            ? "Subchannel is BCD"
-                                                            : bcd == false
-                                                                ? "Subchannel is not BCD"
-                                                                : "Could not detect drive subchannel BCD");
+        AaruConsole.DebugWriteLine("Pregap calculator", bcd switch
+                                                        {
+                                                            true  => "Subchannel is BCD",
+                                                            false => "Subchannel is not BCD",
+                                                            _     => "Could not detect drive subchannel BCD"
+                                                        });
 
         if(bcd is null)
         {

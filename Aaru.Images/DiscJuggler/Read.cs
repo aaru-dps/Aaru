@@ -868,7 +868,7 @@ public sealed partial class DiscJuggler
     {
         buffer = null;
 
-        Track? aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -985,7 +985,7 @@ public sealed partial class DiscJuggler
         if(tag == SectorTagType.CdTrackFlags)
             track = (uint)sectorAddress;
 
-        Track? aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -1256,7 +1256,7 @@ public sealed partial class DiscJuggler
         if(!_isCd)
             return ReadSectors(sectorAddress, length, track, out buffer);
 
-        Track? aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;

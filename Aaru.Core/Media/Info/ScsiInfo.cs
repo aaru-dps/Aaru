@@ -178,7 +178,7 @@ public sealed class ScsiInfo
             if(DeviceInfo.ScsiMode?.Header.BlockDescriptors?.Length > 0)
                 scsiDensityCode = (byte)DeviceInfo.ScsiMode.Value.Header.BlockDescriptors[0].Density;
 
-            if(DeviceInfo.ScsiMode.Value.Pages != null)
+            if(DeviceInfo.ScsiMode?.Pages != null)
                 containsFloppyPage = DeviceInfo.ScsiMode.Value.Pages.Any(p => p.Page == 0x05);
         }
 
@@ -810,42 +810,49 @@ public sealed class ScsiInfo
                 #endregion HD DVD-ROM
             }
 
-            #region HD DVD-R
-            if(MediaType == MediaType.HDDVDR)
+            switch(MediaType)
             {
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                              MmcDiscStructureFormat.HddvdrMediumStatus, 0, dev.Timeout, out _);
+                #region HD DVD-R
+                case MediaType.HDDVDR:
+                {
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                  MmcDiscStructureFormat.HddvdrMediumStatus, 0, dev.Timeout, out _);
 
-                if(sense)
-                    AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: HD DVD-R Medium Status\n{0}",
-                                               Sense.PrettifySense(senseBuf));
-                else
-                    HddvdrMediumStatus = cmdBuf;
+                    if(sense)
+                        AaruConsole.DebugWriteLine("Media-Info command",
+                                                   "READ DISC STRUCTURE: HD DVD-R Medium Status\n{0}",
+                                                   Sense.PrettifySense(senseBuf));
+                    else
+                        HddvdrMediumStatus = cmdBuf;
 
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                              MmcDiscStructureFormat.HddvdrLastRmd, 0, dev.Timeout, out _);
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                  MmcDiscStructureFormat.HddvdrLastRmd, 0, dev.Timeout, out _);
 
-                if(sense)
-                    AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Last RMD\n{0}",
-                                               Sense.PrettifySense(senseBuf));
-                else
-                    HddvdrLastRmd = cmdBuf;
+                    if(sense)
+                        AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Last RMD\n{0}",
+                                                   Sense.PrettifySense(senseBuf));
+                    else
+                        HddvdrLastRmd = cmdBuf;
+
+                    break;
+                }
+                #endregion HD DVD-R
+                #region DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
+                case MediaType.DVDPRDL or MediaType.DVDRDL or MediaType.DVDRWDL or MediaType.DVDPRWDL:
+                {
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                  MmcDiscStructureFormat.DvdrLayerCapacity, 0, dev.Timeout, out _);
+
+                    if(sense)
+                        AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Layer Capacity\n{0}",
+                                                   Sense.PrettifySense(senseBuf));
+                    else
+                        DvdrLayerCapacity = cmdBuf;
+
+                    break;
+                }
+                #endregion DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
             }
-            #endregion HD DVD-R
-
-            #region DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
-            if(MediaType is MediaType.DVDPRDL or MediaType.DVDRDL or MediaType.DVDRWDL or MediaType.DVDPRWDL)
-            {
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                              MmcDiscStructureFormat.DvdrLayerCapacity, 0, dev.Timeout, out _);
-
-                if(sense)
-                    AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Layer Capacity\n{0}",
-                                               Sense.PrettifySense(senseBuf));
-                else
-                    DvdrLayerCapacity = cmdBuf;
-            }
-            #endregion DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
 
             switch(MediaType)
             {

@@ -75,6 +75,7 @@ public sealed partial class Device : Devices.Device
 
     /// <summary>Opens the device for sending direct commands</summary>
     /// <param name="aaruUri">AaruRemote URI</param>
+    /// <param name="errno">Sets the error if a device cannot be opened</param>
     /// <returns>Device</returns>
     internal static Device Create(Uri aaruUri, out ErrorNumber errno)
     {

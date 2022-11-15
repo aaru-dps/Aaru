@@ -862,6 +862,7 @@ public sealed class SysVfs : IFilesystem
     }
 
     // Old XENIX use different offsets
+    #pragma warning disable CS0649
     struct XenixSuperBlock
     {
         /// <summary>0x000, index of first data zone</summary>
@@ -915,7 +916,9 @@ public sealed class SysVfs : IFilesystem
         /// <summary>0x3FC (0x1F4), filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk, 3 = 2048 bytes/blk)</summary>
         public uint s_type;
     }
+    #pragma warning restore CS0649
 
+    #pragma warning disable CS0649
     struct SystemVRelease4SuperBlock
     {
         /// <summary>0x000, index of first data zone</summary>
@@ -977,7 +980,9 @@ public sealed class SysVfs : IFilesystem
         /// <summary>0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)</summary>
         public uint s_type;
     }
+    #pragma warning restore CS0649
 
+    #pragma warning disable CS0649
     struct SystemVRelease2SuperBlock
     {
         /// <summary>0x000, index of first data zone</summary>
@@ -1031,7 +1036,9 @@ public sealed class SysVfs : IFilesystem
         /// <summary>0x1FC, filesystem type (1 = 512 bytes/blk, 2 = 1024 bytes/blk)</summary>
         public uint s_type;
     }
+    #pragma warning restore CS0649
 
+    #pragma warning disable CS0649
     struct UNIX7thEditionSuperBlock
     {
         /// <summary>0x000, index of first data zone</summary>
@@ -1073,7 +1080,9 @@ public sealed class SysVfs : IFilesystem
         /// <summary>0x1B2, 6 bytes, pack name</summary>
         public string s_fpack;
     }
+    #pragma warning restore CS0649
 
+    #pragma warning disable CS0649
     struct CoherentSuperBlock
     {
         /// <summary>0x000, index of first data zone</summary>
@@ -1117,4 +1126,5 @@ public sealed class SysVfs : IFilesystem
         /// <summary>0x1F4, zero-filled</summary>
         public uint s_unique;
     }
+    #pragma warning restore CS0649
 }

@@ -154,7 +154,7 @@ public sealed partial class DeviceReport
                 tocIsNotBcd = true;
 
                 break;
-            case >= 0xA0 when !tocIsNotBcd:
+            case >= 0xA0:
                 min               += 90;
                 leadOutTrack.PMIN -= 0x90;
 

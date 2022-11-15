@@ -35,6 +35,7 @@ namespace Aaru.Settings;
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using Aaru.CommonTypes.Interop;
 using Claunia.PropertyList;
@@ -357,11 +358,11 @@ public static class Settings
             #if !NETSTANDARD2_0
 
                 // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/Aaru
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                case PlatformID.WindowsPhone:
+                case PlatformID.Win32NT when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.Win32S when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.Win32Windows when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.WinCE when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.WindowsPhone when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
                 {
                     RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE")?.OpenSubKey("Claunia.com");
 
@@ -579,11 +580,11 @@ public static class Settings
             #if !NETSTANDARD2_0
 
                 // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/Aaru
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                case PlatformID.WindowsPhone:
+                case PlatformID.Win32NT when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.Win32S when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.Win32Windows when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.WinCE when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.WindowsPhone when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
                 {
                     RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE", true)?.
                                                      CreateSubKey("Claunia.com");

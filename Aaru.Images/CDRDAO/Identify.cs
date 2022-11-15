@@ -86,7 +86,7 @@ public sealed partial class Cdrdao
                 string line = _tocStream.ReadLine();
 
                 Match dm = dr.Match(line ?? "");
-                Match cm = cr.Match(line);
+                Match cm = cr.Match(line ?? "");
 
                 // Skip comments at start of file
                 if(cm.Success)

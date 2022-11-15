@@ -95,7 +95,7 @@ public sealed class XboxInfoViewModel
     {
         var dlgSaveBinary = new SaveFileDialog();
 
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
             Extensions = new List<string>(new[]
             {

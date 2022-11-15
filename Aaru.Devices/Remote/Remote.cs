@@ -1238,11 +1238,14 @@ public class Remote : IDisposable
             Array.Copy(res.ocr, 0, ocr, 0, res.ocr_len);
         }
 
-        if(res.scr_len <= 0)
-            return res.isSdhci;
+        switch(res.scr_len)
+        {
+            case <= 0: return res.isSdhci;
+            case > 16:
+                res.scr_len = 16;
 
-        if(res.scr_len > 16)
-            res.scr_len = 16;
+                break;
+        }
 
         scr = new byte[res.scr_len];
 
@@ -1588,8 +1591,7 @@ public class Remote : IDisposable
         long packetSize = Marshal.SizeOf<AaruPacketMultiCmdSdhci>() +
                           Marshal.SizeOf<AaruCmdSdhci>() * commands.LongLength;
 
-        foreach(Devices.Device.MmcSingleCommand command in commands)
-            packetSize += command.buffer?.Length ?? 0;
+        packetSize = commands.Aggregate(packetSize, (current, command) => current + (command.buffer?.Length ?? 0));
 
         var packet = new AaruPacketMultiCmdSdhci
         {

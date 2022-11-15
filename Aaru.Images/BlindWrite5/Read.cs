@@ -1407,7 +1407,7 @@ public sealed partial class BlindWrite5
         buffer = null;
 
         // TODO: Cross data files
-        Track? aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -1534,7 +1534,7 @@ public sealed partial class BlindWrite5
         buffer = null;
 
         // TODO: Cross data files
-        Track? aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -2043,7 +2043,7 @@ public sealed partial class BlindWrite5
         buffer = null;
 
         // TODO: Cross data files
-        Track? aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
+        Track aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
         if(aaruTrack is null)
             return ErrorNumber.SectorNotFound;
@@ -2112,12 +2112,10 @@ public sealed partial class BlindWrite5
         _imageStream = aaruTrack.Filter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.
-           Seek((long)aaruTrack.FileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                SeekOrigin.Begin);
+        br.BaseStream.Seek((long)aaruTrack.FileOffset + (long)(sectorAddress * (sectorSize + sectorSkip)),
+                           SeekOrigin.Begin);
 
-        if(sectorOffset == 0 &&
-           sectorSkip   == 0)
+        if(sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
             for(var i = 0; i < length; i++)

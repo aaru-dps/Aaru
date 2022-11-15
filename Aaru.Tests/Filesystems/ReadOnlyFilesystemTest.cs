@@ -18,9 +18,9 @@ using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
 public abstract class ReadOnlyFilesystemTest : FilesystemTest
 {
-    public ReadOnlyFilesystemTest() {}
+    protected ReadOnlyFilesystemTest() {}
 
-    public ReadOnlyFilesystemTest(string fileSystemType) : base(fileSystemType) {}
+    protected ReadOnlyFilesystemTest(string fileSystemType) : base(fileSystemType) {}
 
     [Test]
     public void Contents()

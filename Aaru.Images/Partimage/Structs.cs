@@ -30,6 +30,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+#pragma warning disable CS0649
 namespace Aaru.DiscImages;
 
 using System.Diagnostics.CodeAnalysis;

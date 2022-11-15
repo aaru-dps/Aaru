@@ -756,31 +756,15 @@ public sealed partial class FAT
 
                     bool fat12Valid = fat12[0] >= FAT12_RESERVED && fat12[1] >= FAT12_RESERVED;
 
-                    foreach(ushort entry in fat12)
-                    {
-                        if(entry >= FAT12_RESERVED ||
-                           entry <= clusters)
-                            continue;
-
+                    if(fat12.Any(entry => entry < FAT12_RESERVED && entry > clusters))
                         fat12Valid = false;
-
-                        break;
-                    }
 
                     ushort[] fat16 = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
 
                     bool fat16Valid = fat16[0] >= FAT16_RESERVED && fat16[1] >= 0x3FF0;
 
-                    foreach(ushort entry in fat16)
-                    {
-                        if(entry >= FAT16_RESERVED ||
-                           entry <= clusters)
-                            continue;
-
+                    if(fat16.Any(entry => entry < FAT16_RESERVED && entry > clusters))
                         fat16Valid = false;
-
-                        break;
-                    }
 
                     isFat12 = fat12Valid;
                     isFat16 = fat16Valid;

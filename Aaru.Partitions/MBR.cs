@@ -315,8 +315,7 @@ public sealed class MBR : IPartition
         if(signature == GPT_MAGIC)
             return false;
 
-        if(signature                     != GPT_MAGIC &&
-           imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
         {
             errno = imagePlugin.ReadSector(sectorOffset, out hdrBytes);
 

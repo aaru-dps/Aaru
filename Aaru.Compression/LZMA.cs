@@ -30,6 +30,7 @@ namespace Aaru.Compression;
 
 using System.IO;
 using System.Runtime.InteropServices;
+using Aaru.Helpers;
 using SharpCompress.Compressors.LZMA;
 
 /// <summary>
@@ -69,7 +70,7 @@ public class LZMA
 
         using var cmpMs     = new MemoryStream(source);
         using var lzmaBlock = new LzmaStream(properties, cmpMs);
-        lzmaBlock.Read(destination, 0, destination.Length);
+        lzmaBlock.EnsureRead(destination, 0, destination.Length);
 
         return destination.Length;
     }
@@ -83,7 +84,8 @@ public class LZMA
     /// <param name="lc">Literal context bits</param>
     /// <param name="lp">Literal position bits</param>
     /// <param name="pb">Position bits</param>
-    /// <returns></returns>
+    /// <param name="fb">Forward bits</param>
+    /// <returns>How many bytes have been written to the destination buffer</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, out byte[] properties, int level, uint dictSize,
                                    int lc, int lp, int pb, int fb)
     {

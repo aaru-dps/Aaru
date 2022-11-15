@@ -330,7 +330,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
             Title = "Choose destination file"
         };
 
-        dlgDestination.Filters.Add(new FileDialogFilter
+        dlgDestination.Filters?.Add(new FileDialogFilter
         {
             Name = "CICM XML metadata",
             Extensions = new List<string>(new[]

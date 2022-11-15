@@ -38,6 +38,7 @@ namespace Aaru.Core.Devices.Dumping;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
@@ -75,6 +76,9 @@ partial class Dump
     /// <param name="mcn">Disc media catalogue number</param>
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
+
+    // TODO: Use it
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     void DumpCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
                         IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents, ref double maxSpeed,
                         MhddLog mhddLog, ref double minSpeed, bool read6, bool read10, bool read12, bool read16,
@@ -244,6 +248,9 @@ partial class Dump
     /// <param name="mcn">Disc media catalogue number</param>
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
+
+    // TODO: Use it
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     void RetryCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
                          IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents, ref double maxSpeed,
                          MhddLog mhddLog, ref double minSpeed, bool read6, bool read10, bool read12, bool read16,

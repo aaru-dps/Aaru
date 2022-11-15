@@ -79,8 +79,7 @@ public sealed partial class KryoFlux
         byte heads   = 2;
         var  topHead = false;
 
-        string basename = Path.Combine(imageFilter.ParentFolder,
-                                       imageFilter.Filename.Substring(0, imageFilter.Filename.Length - 8));
+        string basename = Path.Combine(imageFilter.ParentFolder, imageFilter.Filename[..^8]);
 
         for(byte t = 0; t < 166; t += step)
         {

@@ -703,8 +703,7 @@ public sealed partial class ISO9660
 
                     if(amiga.flags.HasFlag(AmigaFlags.Comment))
                     {
-                        if(entry.AmigaComment is null)
-                            entry.AmigaComment = Array.Empty<byte>();
+                        entry.AmigaComment ??= Array.Empty<byte>();
 
                         var newComment = new byte[entry.AmigaComment.Length +
                                                   data
@@ -834,8 +833,7 @@ public sealed partial class ISO9660
                         Array.Copy(data, systemAreaOff + Marshal.SizeOf<AlternateName>(), nm, 0, nm.Length);
                     }
 
-                    if(entry.RockRidgeAlternateName is null)
-                        entry.RockRidgeAlternateName = Array.Empty<byte>();
+                    entry.RockRidgeAlternateName ??= Array.Empty<byte>();
 
                     var newNm = new byte[entry.RockRidgeAlternateName.Length + nm.Length];
                     Array.Copy(entry.RockRidgeAlternateName, 0, newNm, 0, entry.RockRidgeAlternateName.Length);
@@ -1039,7 +1037,7 @@ public sealed partial class ISO9660
         }
     }
 
-    PathTableEntryInternal[] GetPathTableEntries(string path)
+    IEnumerable<PathTableEntryInternal> GetPathTableEntries(string path)
     {
         IEnumerable<PathTableEntryInternal> tableEntries;
         List<PathTableEntryInternal>        pathTableList = new(_pathTable);
@@ -1082,8 +1080,8 @@ public sealed partial class ISO9660
 
     DecodedDirectoryEntry[] GetSubdirsFromCdiPathTable(string path)
     {
-        PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
-        List<DecodedDirectoryEntry> entries      = new();
+        IEnumerable<PathTableEntryInternal> tableEntries = GetPathTableEntries(path);
+        List<DecodedDirectoryEntry>         entries      = new();
 
         foreach(PathTableEntryInternal tEntry in tableEntries)
         {
@@ -1134,8 +1132,8 @@ public sealed partial class ISO9660
 
     DecodedDirectoryEntry[] GetSubdirsFromIsoPathTable(string path)
     {
-        PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
-        List<DecodedDirectoryEntry> entries      = new();
+        IEnumerable<PathTableEntryInternal> tableEntries = GetPathTableEntries(path);
+        List<DecodedDirectoryEntry>         entries      = new();
 
         foreach(PathTableEntryInternal tEntry in tableEntries)
         {
@@ -1186,8 +1184,8 @@ public sealed partial class ISO9660
 
     DecodedDirectoryEntry[] GetSubdirsFromHighSierraPathTable(string path)
     {
-        PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
-        List<DecodedDirectoryEntry> entries      = new();
+        IEnumerable<PathTableEntryInternal> tableEntries = GetPathTableEntries(path);
+        List<DecodedDirectoryEntry>         entries      = new();
 
         foreach(PathTableEntryInternal tEntry in tableEntries)
         {

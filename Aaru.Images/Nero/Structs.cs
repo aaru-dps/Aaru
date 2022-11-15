@@ -76,7 +76,7 @@ public sealed partial class Nero
         public int LbaStart;
     }
 
-    class CuesheetV2
+    sealed class CuesheetV2
     {
         /// <summary>"CUEX"</summary>
         public uint ChunkId;
@@ -112,7 +112,7 @@ public sealed partial class Nero
         public byte Frame;
     }
 
-    class CuesheetV1
+    sealed class CuesheetV1
     {
         /// <summary>"CUES"</summary>
         public uint ChunkId;
@@ -416,7 +416,7 @@ public sealed partial class Nero
     }
 
     // Internal use only
-    class NeroTrack
+    sealed class NeroTrack
     {
         public ulong  EndOfTrack;
         public ulong  Index0;

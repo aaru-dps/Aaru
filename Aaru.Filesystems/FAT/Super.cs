@@ -347,31 +347,15 @@ public sealed partial class FAT
 
                     bool fat12Valid = fat12[0] >= FAT12_RESERVED && fat12[1] >= FAT12_RESERVED;
 
-                    foreach(ushort entry in fat12)
-                    {
-                        if(entry >= FAT12_RESERVED ||
-                           entry <= clusters)
-                            continue;
-
+                    if(fat12.Any(entry => entry < FAT12_RESERVED && entry > clusters))
                         fat12Valid = false;
-
-                        break;
-                    }
 
                     ushort[] fat16 = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
 
                     bool fat16Valid = fat16[0] >= FAT16_RESERVED && fat16[1] >= 0x3FF0;
 
-                    foreach(ushort entry in fat16)
-                    {
-                        if(entry >= FAT16_RESERVED ||
-                           entry <= clusters)
-                            continue;
-
+                    if(fat16.Any(entry => entry < FAT16_RESERVED && entry > clusters))
                         fat16Valid = false;
-
-                        break;
-                    }
 
                     _fat12 = fat12Valid;
                     _fat16 = fat16Valid;
@@ -898,27 +882,11 @@ public sealed partial class FAT
                 secondFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
             }
 
-            foreach(ushort entry in firstFatEntries)
-            {
-                if(entry >= FAT12_RESERVED ||
-                   entry <= _statfs.Blocks)
-                    continue;
-
+            if(firstFatEntries.Any(entry => entry < FAT12_RESERVED && entry > _statfs.Blocks))
                 firstFatValid = false;
 
-                break;
-            }
-
-            foreach(ushort entry in secondFatEntries)
-            {
-                if(entry >= FAT12_RESERVED ||
-                   entry <= _statfs.Blocks)
-                    continue;
-
+            if(secondFatEntries.Any(entry => entry < FAT12_RESERVED && entry > _statfs.Blocks))
                 secondFatValid = false;
-
-                break;
-            }
 
             if(firstFatValid == secondFatValid)
                 _fatEntries = _useFirstFat ? firstFatEntries : secondFatEntries;
@@ -947,27 +915,11 @@ public sealed partial class FAT
             AaruConsole.DebugWriteLine("FAT plugin", "Casting FAT");
             secondFatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
 
-            foreach(ushort entry in firstFatEntries)
-            {
-                if(entry >= FAT16_RESERVED ||
-                   entry <= _statfs.Blocks)
-                    continue;
-
+            if(firstFatEntries.Any(entry => entry < FAT16_RESERVED && entry > _statfs.Blocks))
                 firstFatValid = false;
 
-                break;
-            }
-
-            foreach(ushort entry in secondFatEntries)
-            {
-                if(entry >= FAT16_RESERVED ||
-                   entry <= _statfs.Blocks)
-                    continue;
-
+            if(secondFatEntries.Any(entry => entry < FAT16_RESERVED && entry > _statfs.Blocks))
                 secondFatValid = false;
-
-                break;
-            }
 
             if(firstFatValid == secondFatValid)
                 _fatEntries = _useFirstFat ? firstFatEntries : secondFatEntries;

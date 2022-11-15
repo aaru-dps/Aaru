@@ -268,7 +268,6 @@ public sealed partial class DiskCopy42
                         var version = new Version(vers);
 
                         string release = null;
-                        string dev     = null;
                         string pre     = null;
 
                         string major = $"{version.MajorVersion}";
@@ -277,13 +276,13 @@ public sealed partial class DiskCopy42
                         if(version.MinorVersion % 10 > 0)
                             release = $".{version.MinorVersion % 10}";
 
-                        dev = version.DevStage switch
-                              {
-                                  Version.DevelopmentStage.Alpha    => "a",
-                                  Version.DevelopmentStage.Beta     => "b",
-                                  Version.DevelopmentStage.PreAlpha => "d",
-                                  _                                 => dev
-                              };
+                        string dev = version.DevStage switch
+                                     {
+                                         Version.DevelopmentStage.Alpha    => "a",
+                                         Version.DevelopmentStage.Beta     => "b",
+                                         Version.DevelopmentStage.PreAlpha => "d",
+                                         _                                 => null
+                                     };
 
                         if(dev                       == null &&
                            version.PreReleaseVersion > 0)

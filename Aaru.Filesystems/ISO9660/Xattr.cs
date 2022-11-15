@@ -61,10 +61,10 @@ public sealed partial class ISO9660
         if(entry.AssociatedFile != null)
             xattrs.Add("org.iso.9660.AssociatedFile");
 
-        if(entry.AppleDosType != null)
+        if(entry.AppleDosType is not null)
             xattrs.Add("com.apple.dos.type");
 
-        if(entry.AppleProDosType != null)
+        if(entry.AppleProDosType is not null)
             xattrs.Add("com.apple.prodos.type");
 
         if(entry.ResourceFork != null)

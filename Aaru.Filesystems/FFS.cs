@@ -130,21 +130,20 @@ public sealed class FFSPlugin : IFilesystem
 
         try
         {
-            foreach(ulong loc in locations)
-                if(partition.End > partition.Start + loc + sbSizeInSectors)
-                {
-                    ErrorNumber errno =
-                        imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors, out byte[] ufsSbSectors);
+            foreach(ulong loc in locations.Where(loc => partition.End > partition.Start + loc + sbSizeInSectors))
+            {
+                ErrorNumber errno =
+                    imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors, out byte[] ufsSbSectors);
 
-                    if(errno != ErrorNumber.NoError)
-                        continue;
+                if(errno != ErrorNumber.NoError)
+                    continue;
 
-                    var magic = BitConverter.ToUInt32(ufsSbSectors, 0x055C);
+                var magic = BitConverter.ToUInt32(ufsSbSectors, 0x055C);
 
-                    if(magic is UFS_MAGIC or UFS_CIGAM or UFS_MAGIC_BW or UFS_CIGAM_BW or UFS2_MAGIC or UFS2_CIGAM
-                             or UFS_BAD_MAGIC or UFS_BAD_CIGAM)
-                        return true;
-                }
+                if(magic is UFS_MAGIC or UFS_CIGAM or UFS_MAGIC_BW or UFS_CIGAM_BW or UFS2_MAGIC or UFS2_CIGAM
+                         or UFS_BAD_MAGIC or UFS_BAD_CIGAM)
+                    return true;
+            }
 
             return false;
         }

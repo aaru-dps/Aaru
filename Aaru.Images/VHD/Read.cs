@@ -472,7 +472,7 @@ public sealed partial class Vhd
 
             ReadOnlySpan<byte> span = bat;
 
-            _blockAllocationTable = MemoryMarshal.Cast<byte, uint>(span).Slice(0, (int)_thisDynamic.MaxTableEntries).
+            _blockAllocationTable = MemoryMarshal.Cast<byte, uint>(span)[..(int)_thisDynamic.MaxTableEntries].
                                                   ToArray();
 
             for(var i = 0; i < _blockAllocationTable.Length; i++)

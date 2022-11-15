@@ -2145,11 +2145,10 @@ public sealed partial class Nero
         _imageStream = _neroFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+        br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorSize + sectorSkip)),
                            SeekOrigin.Begin);
 
-        if(sectorOffset == 0 &&
-           sectorSkip   == 0)
+        if(sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
             for(var i = 0; i < length; i++)

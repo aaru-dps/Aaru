@@ -50,6 +50,8 @@ public partial class Device
 {
     /// <summary>Opens the device for sending direct commands</summary>
     /// <param name="devicePath">Device path</param>
+    /// <param name="errno">Sets the error if a device cannot be opened</param>
+    /// <returns>Device</returns>
     public static Device Create(string devicePath, out ErrorNumber errno)
     {
         Device dev = null;

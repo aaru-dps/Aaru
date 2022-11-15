@@ -630,7 +630,7 @@ sealed class ConvertImageCommand : Command
         foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
                     !force || outputFormat.SupportedMediaTags.Contains(mediaTag)))
         {
-            ErrorNumber ErrorNumber = ErrorNumber.NoError;
+            ErrorNumber errorNumber = ErrorNumber.NoError;
 
             AnsiConsole.Progress().AutoClear(false).HideCompleted(false).
                         Columns(new TaskDescriptionColumn(), new SpinnerColumn()).Start(ctx =>
@@ -646,7 +646,7 @@ sealed class ConvertImageCommand : Command
                                 {
                                     AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...", errno);
 
-                                    ErrorNumber = errno;
+                                    errorNumber = errno;
                                 }
 
                                 return;
@@ -663,12 +663,12 @@ sealed class ConvertImageCommand : Command
                                 AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
                                                            outputFormat.ErrorMessage);
 
-                                ErrorNumber = ErrorNumber.WriteError;
+                                errorNumber = ErrorNumber.WriteError;
                             }
                         });
 
-            if(ErrorNumber != ErrorNumber.NoError)
-                return (int)ErrorNumber;
+            if(errorNumber != ErrorNumber.NoError)
+                return (int)errorNumber;
         }
 
         AaruConsole.WriteLine("{0} sectors to convert", inputFormat.Info.Sectors);

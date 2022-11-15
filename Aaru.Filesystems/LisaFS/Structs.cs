@@ -34,6 +34,7 @@
 
 // ReSharper disable NotAccessedField.Local
 
+#pragma warning disable CS0649
 namespace Aaru.Filesystems.LisaFS;
 
 using System;
@@ -205,6 +206,7 @@ public sealed partial class LisaFS
         public byte write_protected;
         /// <summary>Master disk (On-disk position unknown)</summary>
         public byte master;
+        #pragma warning restore CS0649
         /// <summary>Copy disk (On-disk position unknown)</summary>
         public byte copy;
         /// <summary>No idea (On-disk position unknown)</summary>

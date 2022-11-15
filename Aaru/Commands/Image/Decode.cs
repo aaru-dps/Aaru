@@ -362,7 +362,8 @@ sealed class DecodeCommand : Command
                         {
                             errno = inputFormat.ReadMediaTag(MediaTagType.CD_TOC, out byte[] toc);
 
-                            if(toc == null)
+                            if(toc   == null ||
+                               errno != ErrorNumber.NoError)
                                 AaruConsole.WriteLine("Error reading CD TOC from disc image");
                             else
                             {

@@ -57,7 +57,7 @@ public sealed partial class ISO9660
         public uint     Blocks;
     }
 
-    class DecodedDirectoryEntry
+    sealed class DecodedDirectoryEntry
     {
         public byte[]                         AmigaComment;
         public AmigaProtection?               AmigaProtection;
@@ -97,7 +97,7 @@ public sealed partial class ISO9660
         public override string ToString() => Filename;
     }
 
-    class PathTableEntryInternal
+    sealed class PathTableEntryInternal
     {
         public uint   Extent;
         public string Name;

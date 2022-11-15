@@ -88,7 +88,7 @@ public sealed class ConsoleViewModel : ViewModelBase
     {
         var dlgSave = new SaveFileDialog();
 
-        dlgSave.Filters.Add(new FileDialogFilter
+        dlgSave.Filters?.Add(new FileDialogFilter
         {
             Extensions = new List<string>(new[]
             {
@@ -158,5 +158,5 @@ public sealed class ConsoleViewModel : ViewModelBase
         }
     }
 
-    void ExecuteClearCommand() => ConsoleHandler.Entries.Clear();
+    static void ExecuteClearCommand() => ConsoleHandler.Entries.Clear();
 }

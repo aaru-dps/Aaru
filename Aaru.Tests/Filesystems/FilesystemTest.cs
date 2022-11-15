@@ -13,9 +13,9 @@ public abstract class FilesystemTest
 {
     readonly string _fileSystemType;
 
-    public FilesystemTest() => _fileSystemType = null;
+    protected FilesystemTest() => _fileSystemType = null;
 
-    public FilesystemTest(string fileSystemType) => _fileSystemType = fileSystemType;
+    protected FilesystemTest(string fileSystemType) => _fileSystemType = fileSystemType;
 
     public abstract string      DataFolder { get; }
     public abstract IFilesystem Plugin     { get; }

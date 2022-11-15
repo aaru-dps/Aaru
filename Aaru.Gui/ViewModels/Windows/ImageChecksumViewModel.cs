@@ -34,9 +34,9 @@ namespace Aaru.Gui.ViewModels.Windows;
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using System.Threading;
-using System.Threading.Tasks;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -368,6 +368,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
         StopCommandEnabled = false;
     }
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
         var opticalMediaImage = _inputFormat as IOpticalMediaImage;

@@ -72,8 +72,8 @@ public class OpticalImageTestExpected : BlockImageTestExpected
 
 public class TapeImageTestExpected : BlockImageTestExpected
 {
-    public TapeFile[]      Files;
-    public TapePartition[] Partitions;
+    public     TapeFile[]      Files;
+    public new TapePartition[] Partitions;
 }
 
 public class PartitionTest

@@ -110,7 +110,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
     {
         var dlgSaveBinary = new SaveFileDialog();
 
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
             Extensions = new List<string>(new[]
             {
@@ -138,7 +138,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
     {
         var dlgSaveText = new SaveFileDialog();
 
-        dlgSaveText.Filters.Add(new FileDialogFilter
+        dlgSaveText.Filters?.Add(new FileDialogFilter
         {
             Extensions = new List<string>(new[]
             {
@@ -154,7 +154,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         var saveFs = new FileStream(result, FileMode.Create);
         var saveSw = new StreamWriter(saveFs);
-        saveSw.Write(AtaIdentifyText);
+        await saveSw.WriteAsync(AtaIdentifyText);
         saveFs.Close();
     }
 }

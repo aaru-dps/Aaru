@@ -123,7 +123,11 @@ public sealed class PluginsViewModel : ViewModelBase
                 Author  = writableFloppyImage.Author
             });
 
-        foreach(IWritableImage writableImage in GetPluginBase.Instance.WritableImages.Values)
+        foreach(IBaseWritableImage baseWritableImage in GetPluginBase.Instance.WritableImages.Values)
+        {
+            if(baseWritableImage is not IWritableImage writableImage)
+                continue;
+            
             WritableImages.Add(new PluginModel
             {
                 Name    = writableImage.Name,
@@ -131,6 +135,7 @@ public sealed class PluginsViewModel : ViewModelBase
                 Version = Assembly.GetAssembly(writableImage.GetType())?.GetName().Version?.ToString(),
                 Author  = writableImage.Author
             });
+        }
     }
 
     [NotNull]

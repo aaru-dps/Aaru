@@ -224,7 +224,7 @@ public sealed class XZ : IFilter
         _dataStream.Seek(0, SeekOrigin.Begin);
     }
 
-    int Decode(byte[] buf, int sizeMax, ref ulong num)
+    static int Decode(byte[] buf, int sizeMax, ref ulong num)
     {
         switch(sizeMax)
         {

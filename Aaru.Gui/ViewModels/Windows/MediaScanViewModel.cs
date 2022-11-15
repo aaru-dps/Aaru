@@ -576,6 +576,8 @@ public sealed class MediaScanViewModel : ViewModelBase
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+
+    // ReSharper disable once AsyncVoidLambda
     async void StoppingErrorMessage(string text) => await Dispatcher.UIThread.InvokeAsync(action: async () =>
     {
         ProgressText = text;
@@ -583,7 +585,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         await MessageBoxManager.GetMessageBoxStandardWindow("Error", $"{text}", ButtonEnum.Ok, Icon.Error).
                                 ShowDialog(_view);
 
-        WorkFinished();
+        await WorkFinished();
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]

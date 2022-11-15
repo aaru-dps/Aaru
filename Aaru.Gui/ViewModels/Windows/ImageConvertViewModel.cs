@@ -35,6 +35,7 @@ namespace Aaru.Gui.ViewModels.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -54,7 +55,6 @@ using Aaru.Devices;
 using Aaru.Gui.Models;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
@@ -62,6 +62,7 @@ using Schemas;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using Version = Aaru.CommonTypes.Interop.Version;
 
+[SuppressMessage("ReSharper", "AsyncVoidLambda")]
 public sealed class ImageConvertViewModel : ViewModelBase
 {
     readonly IMediaImage   _inputFormat;
@@ -127,7 +128,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
     bool                   _stopVisible;
     string                 _title;
 
-    public ImageConvertViewModel([NotNull] IMediaImage inputFormat, string imageSource, Window view)
+    public ImageConvertViewModel([JetBrains.Annotations.NotNull] IMediaImage inputFormat, string imageSource,
+                                 Window view)
     {
         _view                        = view;
         _inputFormat                 = inputFormat;
@@ -172,8 +174,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         PluginBase plugins = GetPluginBase.Instance;
 
-        foreach(IWritableImage plugin in
-                plugins.WritableImages.Values.Where(p => p.SupportedMediaTypes.Contains(inputFormat.Info.MediaType)))
+        foreach(IWritableImage plugin in plugins.WritableImages.Values.
+                                                 Where(p => p.SupportedMediaTypes.Contains(inputFormat.Info.MediaType)).
+                                                 Select(baseWritableImage => baseWritableImage as IWritableImage).
+                                                 Where(plugin => plugin is not null))
             PluginsList.Add(new ImagePluginModel
             {
                 Plugin = plugin
@@ -569,6 +573,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         new Thread(DoWork).Start(SelectedPlugin.Plugin);
     }
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork(object plugin)
     {
         var warning = false;
@@ -1866,7 +1871,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             Title = "Choose destination file"
         };
 
-        dlgDestination.Filters.Add(new FileDialogFilter
+        dlgDestination.Filters?.Add(new FileDialogFilter
         {
             Name       = SelectedPlugin.Plugin.Name,
             Extensions = SelectedPlugin.Plugin.KnownExtensions.ToList()
@@ -1932,7 +1937,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             Title = "Choose existing metadata sidecar"
         };
 
-        dlgMetadata.Filters.Add(new FileDialogFilter
+        dlgMetadata.Filters?.Add(new FileDialogFilter
         {
             Name = "CICM XML metadata",
             Extensions = new List<string>(new[]
@@ -1979,7 +1984,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             Title = "Choose existing resume file"
         };
 
-        dlgMetadata.Filters.Add(new FileDialogFilter
+        dlgMetadata.Filters?.Add(new FileDialogFilter
         {
             Name = "CICM XML metadata",
             Extensions = new List<string>(new[]
