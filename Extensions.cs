@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Helpers;
-
 using System.IO;
+
+namespace Aaru.Helpers;
 
 public static class Extensions
 {
@@ -58,7 +58,7 @@ public static class Extensions
     /// </returns>
     public static int EnsureRead(this Stream s, byte[] buffer, int offset, int count)
     {
-        var pos = 0;
+        int pos = 0;
         int read;
 
         do

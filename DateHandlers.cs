@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Helpers;
-
 using System;
 using System.Text;
 using Aaru.Console;
+
+namespace Aaru.Helpers;
 
 /// <summary>Helper operations for timestamp management (date and time)</summary>
 public static class DateHandlers
@@ -88,7 +88,7 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime HighSierraToDateTime(byte[] vdDateTime)
     {
-        var isoTime = new byte[17];
+        byte[] isoTime = new byte[17];
         Array.Copy(vdDateTime, 0, isoTime, 0, 16);
 
         return Iso9660ToDateTime(isoTime);
@@ -100,8 +100,8 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime Iso9660ToDateTime(byte[] vdDateTime)
     {
-        var twoCharValue  = new byte[2];
-        var fourCharValue = new byte[4];
+        byte[] twoCharValue  = new byte[2];
+        byte[] fourCharValue = new byte[4];
 
         fourCharValue[0] = vdDateTime[0];
         fourCharValue[1] = vdDateTime[1];
@@ -172,7 +172,7 @@ public static class DateHandlers
                                    "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
                                    year, month, day, hour, minute, second, hundredths * 10);
 
-        var difference = (sbyte)vdDateTime[16];
+        sbyte difference = (sbyte)vdDateTime[16];
 
         var decodedDt = new DateTime(year, month, day, hour, minute, second, hundredths * 10, DateTimeKind.Utc);
 
@@ -257,9 +257,9 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime CpmToDateTime(byte[] timestamp)
     {
-        var days    = BitConverter.ToUInt16(timestamp, 0);
-        int hours   = timestamp[2];
-        int minutes = timestamp[3];
+        ushort days    = BitConverter.ToUInt16(timestamp, 0);
+        int    hours   = timestamp[2];
+        int    minutes = timestamp[3];
 
         DateTime temp = _amigaEpoch.AddDays(days);
         temp = temp.AddHours(hours);
@@ -284,15 +284,15 @@ public static class DateHandlers
                                           byte minute, byte second, byte centiseconds, byte hundredsOfMicroseconds,
                                           byte microseconds)
     {
-        var specification = (byte)((typeAndTimeZone & 0xF000) >> 12);
+        byte specification = (byte)((typeAndTimeZone & 0xF000) >> 12);
 
-        long ticks = (long)centiseconds * 100000 + (long)hundredsOfMicroseconds * 1000 + (long)microseconds * 10;
+        long ticks = ((long)centiseconds * 100000) + ((long)hundredsOfMicroseconds * 1000) + ((long)microseconds * 10);
 
         if(specification == 0)
             return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc).AddTicks(ticks);
 
-        var   preOffset = (ushort)(typeAndTimeZone & 0xFFF);
-        short offset;
+        ushort preOffset = (ushort)(typeAndTimeZone & 0xFFF);
+        short  offset;
 
         if((preOffset & 0x800) == 0x800)
             offset = (short)(preOffset | 0xF000);
@@ -324,7 +324,7 @@ public static class DateHandlers
     public static DateTime Os9ToDateTime(byte[] date)
     {
         if(date == null ||
-           date.Length != 3 && date.Length != 5)
+           (date.Length != 3 && date.Length != 5))
             return DateTime.MinValue;
 
         DateTime os9Date;
@@ -361,12 +361,12 @@ public static class DateHandlers
     {
         try
         {
-            int iyear   = (year   >> 4) * 10 + (year   & 0xF);
-            int imonth  = (month  >> 4) * 10 + (month  & 0xF);
-            int iday    = (day    >> 4) * 10 + (day    & 0xF);
-            int iminute = (minute >> 4) * 10 + (minute & 0xF);
-            int ihour   = (hour   >> 4) * 10 + (hour   & 0xF);
-            int isecond = (second >> 4) * 10 + (second & 0xF);
+            int iyear   = ((year   >> 4) * 10) + (year   & 0xF);
+            int imonth  = ((month  >> 4) * 10) + (month  & 0xF);
+            int iday    = ((day    >> 4) * 10) + (day    & 0xF);
+            int iminute = ((minute >> 4) * 10) + (minute & 0xF);
+            int ihour   = ((hour   >> 4) * 10) + (hour   & 0xF);
+            int isecond = ((second >> 4) * 10) + (second & 0xF);
 
             if(iyear >= 70)
                 iyear += 1900;

@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Helpers;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
+namespace Aaru.Helpers;
 
 /// <summary>Provides methods to marshal binary data into C# structs</summary>
 public static class Marshal
@@ -250,15 +250,15 @@ public static class Marshal
             return ByteArrayToStructureLittleEndian<T>(bytes);
 
         return properties.Endian switch
-               {
-                   BitEndian.Little => properties.HasReferences ? ByteArrayToStructureLittleEndian<T>(bytes)
-                                           : SpanToStructureLittleEndian<T>(bytes),
-                   BitEndian.Big => properties.HasReferences ? ByteArrayToStructureBigEndian<T>(bytes)
-                                        : SpanToStructureBigEndian<T>(bytes),
-                   BitEndian.Pdp => properties.HasReferences ? ByteArrayToStructurePdpEndian<T>(bytes)
-                                        : SpanToStructurePdpEndian<T>(bytes),
-                   _ => throw new ArgumentOutOfRangeException()
-               };
+        {
+            BitEndian.Little => properties.HasReferences ? ByteArrayToStructureLittleEndian<T>(bytes)
+                                    : SpanToStructureLittleEndian<T>(bytes),
+            BitEndian.Big => properties.HasReferences ? ByteArrayToStructureBigEndian<T>(bytes)
+                                 : SpanToStructureBigEndian<T>(bytes),
+            BitEndian.Pdp => properties.HasReferences ? ByteArrayToStructurePdpEndian<T>(bytes)
+                                 : SpanToStructurePdpEndian<T>(bytes),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     /// <summary>Swaps all members of a structure</summary>
@@ -272,22 +272,22 @@ public static class Marshal
 
         foreach(FieldInfo fi in fieldInfo)
             if(fi.FieldType == typeof(short) ||
-               fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(short))
+               (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(short)))
             {
-                var x = (short)(fi.GetValue(str) ?? default(short));
+                short x = (short)(fi.GetValue(str) ?? default(short));
                 fi.SetValue(str, (short)((x << 8) | ((x >> 8) & 0xFF)));
             }
             else if(fi.FieldType == typeof(int) ||
-                    fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(int))
+                    (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(int)))
             {
-                var x = (int)(fi.GetValue(str) ?? default(int));
+                int x = (int)(fi.GetValue(str) ?? default(int));
                 x = (int)(((x                   << 8) & 0xFF00FF00) | (((uint)x >> 8) & 0xFF00FF));
                 fi.SetValue(str, (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF)));
             }
             else if(fi.FieldType == typeof(long) ||
-                    fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(long))
+                    (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(long)))
             {
-                var x = (long)(fi.GetValue(str) ?? default(long));
+                long x = (long)(fi.GetValue(str) ?? default(long));
                 x = ((x & 0x00000000FFFFFFFF) << 32) | (long)(((ulong)x & 0xFFFFFFFF00000000) >> 32);
                 x = ((x & 0x0000FFFF0000FFFF) << 16) | (long)(((ulong)x & 0xFFFF0000FFFF0000) >> 16);
                 x = ((x & 0x00FF00FF00FF00FF) << 8)  | (long)(((ulong)x & 0xFF00FF00FF00FF00) >> 8);
@@ -295,22 +295,22 @@ public static class Marshal
                 fi.SetValue(str, x);
             }
             else if(fi.FieldType == typeof(ushort) ||
-                    fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(ushort))
+                    (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(ushort)))
             {
-                var x = (ushort)(fi.GetValue(str) ?? default(ushort));
+                ushort x = (ushort)(fi.GetValue(str) ?? default(ushort));
                 fi.SetValue(str, (ushort)((x << 8) | (x >> 8)));
             }
             else if(fi.FieldType == typeof(uint) ||
-                    fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(uint))
+                    (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(uint)))
             {
-                var x = (uint)(fi.GetValue(str) ?? default(uint));
+                uint x = (uint)(fi.GetValue(str) ?? default(uint));
                 x = ((x             << 8) & 0xFF00FF00) | ((x >> 8) & 0xFF00FF);
                 fi.SetValue(str, (x << 16) | (x               >> 16));
             }
             else if(fi.FieldType == typeof(ulong) ||
-                    fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(ulong))
+                    (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(ulong)))
             {
-                var x = (ulong)(fi.GetValue(str) ?? default(ulong));
+                ulong x = (ulong)(fi.GetValue(str) ?? default(ulong));
                 x = ((x & 0x00000000FFFFFFFF) << 32) | ((x & 0xFFFFFFFF00000000) >> 32);
                 x = ((x & 0x0000FFFF0000FFFF) << 16) | ((x & 0xFFFF0000FFFF0000) >> 16);
                 x = ((x & 0x00FF00FF00FF00FF) << 8)  | ((x & 0xFF00FF00FF00FF00) >> 8);
@@ -318,7 +318,7 @@ public static class Marshal
             }
             else if(fi.FieldType == typeof(float))
             {
-                var    flt   = (float)(fi.GetValue(str) ?? default(float));
+                float  flt   = (float)(fi.GetValue(str) ?? default(float));
                 byte[] flt_b = BitConverter.GetBytes(flt);
 
                 fi.SetValue(str, BitConverter.ToSingle(new[]
@@ -328,7 +328,7 @@ public static class Marshal
             }
             else if(fi.FieldType == typeof(double))
             {
-                var    dbl   = (double)(fi.GetValue(str) ?? default(double));
+                double dbl   = (double)(fi.GetValue(str) ?? default(double));
                 byte[] dbl_b = BitConverter.GetBytes(dbl);
 
                 fi.SetValue(str, BitConverter.ToDouble(new[]
@@ -348,8 +348,7 @@ public static class Marshal
 
             // TODO: Swap arrays
             else if(fi.FieldType.IsValueType &&
-                    !fi.FieldType.IsEnum     &&
-                    !fi.FieldType.IsArray)
+                    fi.FieldType is { IsEnum: false, IsArray: false })
             {
                 object obj  = fi.GetValue(str);
                 object strc = SwapStructureMembersEndian(obj);
@@ -382,22 +381,21 @@ public static class Marshal
                 // Do nothing
             }
             else if(fi.FieldType == typeof(int) ||
-                    fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(int))
+                    (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(int)))
             {
-                var x = (int)(fi.GetValue(str) ?? default(int));
+                int x = (int)(fi.GetValue(str) ?? default(int));
                 fi.SetValue(str, ((x & 0xffffu) << 16) | ((x & 0xffff0000u) >> 16));
             }
             else if(fi.FieldType == typeof(uint) ||
-                    fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(uint))
+                    (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(uint)))
             {
-                var x = (uint)(fi.GetValue(str) ?? default(uint));
+                uint x = (uint)(fi.GetValue(str) ?? default(uint));
                 fi.SetValue(str, ((x & 0xffffu) << 16) | ((x & 0xffff0000u) >> 16));
             }
 
             // TODO: Swap arrays
             else if(fi.FieldType.IsValueType &&
-                    !fi.FieldType.IsEnum     &&
-                    !fi.FieldType.IsArray)
+                    fi.FieldType is { IsEnum: false, IsArray: false })
             {
                 object obj  = fi.GetValue(str);
                 object strc = SwapStructureMembersEndianPdp(obj);
@@ -414,8 +412,8 @@ public static class Marshal
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] StructureToByteArrayLittleEndian<T>(T str) where T : struct
     {
-        var buf = new byte[SizeOf<T>()];
-        var ptr = GCHandle.Alloc(buf, GCHandleType.Pinned);
+        byte[] buf = new byte[SizeOf<T>()];
+        var    ptr = GCHandle.Alloc(buf, GCHandleType.Pinned);
         System.Runtime.InteropServices.Marshal.StructureToPtr(str, ptr.AddrOfPinnedObject(), false);
         ptr.Free();
 
@@ -441,14 +439,14 @@ public static class Marshal
         if(hex is null or "")
             return -1;
 
-        var off = 0;
+        int off = 0;
 
         if(hex[0] == '0' &&
            (hex[1] == 'x' || hex[1] == 'X'))
             off = 2;
 
         outBuf = new byte[(hex.Length - off) / 2];
-        var count = 0;
+        int count = 0;
 
         for(int i = off; i < hex.Length; i += 2)
         {
@@ -458,11 +456,11 @@ public static class Marshal
                 break;
 
             c -= c switch
-                 {
-                     >= 'a' and <= 'f' => '\u0057',
-                     >= 'A' and <= 'F' => '\u0037',
-                     _                 => '\u0030'
-                 };
+            {
+                >= 'a' and <= 'f' => '\u0057',
+                >= 'A' and <= 'F' => '\u0037',
+                _                 => '\u0030'
+            };
 
             outBuf[(i - off) / 2] = (byte)(c << 4);
 
@@ -472,11 +470,11 @@ public static class Marshal
                 break;
 
             c -= c switch
-                 {
-                     >= 'a' and <= 'f' => '\u0057',
-                     >= 'A' and <= 'F' => '\u0037',
-                     _                 => '\u0030'
-                 };
+            {
+                >= 'a' and <= 'f' => '\u0057',
+                >= 'A' and <= 'F' => '\u0037',
+                _                 => '\u0030'
+            };
 
             outBuf[(i - off) / 2] += (byte)c;
 

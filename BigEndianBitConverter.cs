@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Helpers;
-
 using System;
 using System.Linq;
+
+namespace Aaru.Helpers;
 
 /// <summary>
 ///     Converts base data types to an array of bytes, and an array of bytes to base data types. All info taken from

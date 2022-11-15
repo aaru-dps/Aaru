@@ -24,10 +24,10 @@
 // Copyright(C) 2014 mykohsu
 // ****************************************************************************/
 
-namespace Aaru.Helpers;
-
 using System;
 using System.Text;
+
+namespace Aaru.Helpers;
 
 public static partial class ArrayHelpers
 {

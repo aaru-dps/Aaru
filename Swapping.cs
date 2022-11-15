@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Helpers;
-
 using System.Runtime.CompilerServices;
+
+namespace Aaru.Helpers;
 
 /// <summary>Helper operations to work with swapping endians</summary>
 public static class Swapping

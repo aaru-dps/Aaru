@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Helpers;
-
 using System;
 using System.Text;
+
+namespace Aaru.Helpers;
 
 /// <summary>Helper operations to work with strings</summary>
 public static class StringHandlers
@@ -54,7 +54,7 @@ public static class StringHandlers
         if(cString == null)
             return null;
 
-        var len = 0;
+        int len = 0;
 
         for(int i = start; i < cString.Length; i++)
         {
@@ -78,7 +78,7 @@ public static class StringHandlers
         if(twoBytes && len % 2 > 0)
             len--;
 
-        var dest = new byte[len];
+        byte[] dest = new byte[len];
         Array.Copy(cString, start, dest, 0, len);
 
         return len == 0 ? "" : encoding.GetString(dest);
@@ -100,7 +100,7 @@ public static class StringHandlers
             return null;
 
         byte length = pascalString[start];
-        var  len    = 0;
+        int  len    = 0;
 
         for(int i = start + 1; i < length + 1 && i < pascalString.Length; i++)
         {
@@ -110,7 +110,7 @@ public static class StringHandlers
             len++;
         }
 
-        var dest = new byte[len];
+        byte[] dest = new byte[len];
         Array.Copy(pascalString, start + 1, dest, 0, len);
 
         return len == 0 ? "" : encoding.GetString(dest);
@@ -156,13 +156,13 @@ public static class StringHandlers
     public static string DecompressUnicode(byte[] dstring)
     {
         byte   compId = dstring[0];
-        var    temp   = "";
+        string temp   = "";
 
         if(compId != 8 &&
            compId != 16)
             return null;
 
-        for(var byteIndex = 1; byteIndex < dstring.Length;)
+        for(int byteIndex = 1; byteIndex < dstring.Length;)
         {
             ushort unicode;
 

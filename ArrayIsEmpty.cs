@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Helpers;
-
 using System.Linq;
+
+namespace Aaru.Helpers;
 
 /// <summary>Helper operations to work with arrays</summary>
 public static partial class ArrayHelpers
