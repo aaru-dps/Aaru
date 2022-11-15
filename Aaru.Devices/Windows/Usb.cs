@@ -93,9 +93,8 @@ static partial class Usb
 
                 // now we can get some more detailed information
                 var       nRequiredSize = 0;
-                const int nBytes       = BUFFER_SIZE;
 
-                if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, nBytes, ref nRequiredSize, ref da))
+                if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, BUFFER_SIZE, ref nRequiredSize, ref da))
                 {
                     host._controllerDevicePath = didd.DevicePath;
 
@@ -131,11 +130,10 @@ static partial class Usb
     static string GetDescriptionByKeyName(string driverKeyName)
     {
         var          ans      = "";
-        const string devEnum = REGSTR_KEY_USB;
 
         // Use the "enumerator form" of the SetupDiGetClassDevs API
         // to generate a list of all USB devices
-        IntPtr h = SetupDiGetClassDevs(0, devEnum, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+        IntPtr h = SetupDiGetClassDevs(0, REGSTR_KEY_USB, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 
         if(h == _invalidHandleValue)
             return ans;
@@ -190,11 +188,10 @@ static partial class Usb
     static string GetInstanceIdByKeyName(string driverKeyName)
     {
         var          ans      = "";
-        const string devEnum = REGSTR_KEY_USB;
 
         // Use the "enumerator form" of the SetupDiGetClassDevs API
         // to generate a list of all USB devices
-        IntPtr h = SetupDiGetClassDevs(0, devEnum, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+        IntPtr h = SetupDiGetClassDevs(0, REGSTR_KEY_USB, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 
         if(h == _invalidHandleValue)
             return ans;
@@ -227,9 +224,8 @@ static partial class Usb
                 // is it a match?
                 if(keyName == driverKeyName)
                 {
-                    const int nBytes = BUFFER_SIZE;
-                    var       sb      = new StringBuilder(nBytes);
-                    SetupDiGetDeviceInstanceId(h, ref da, sb, nBytes, out requiredSize);
+                    var sb = new StringBuilder(BUFFER_SIZE);
+                    SetupDiGetDeviceInstanceId(h, ref da, sb, BUFFER_SIZE, out requiredSize);
                     ans = sb.ToString();
 
                     break;

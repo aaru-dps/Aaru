@@ -468,18 +468,16 @@ public sealed partial class Cdrdao
                 return false;
             }
 
-            Track newTrack = track;
+            track.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
+                             : _writingBaseName                    + ".bin";
 
-            newTrack.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
-                                : _writingBaseName                    + ".bin";
+            track.FileOffset = _separateTracksWriting ? 0 : currentOffset;
+            _writingTracks.Add(track);
 
-            newTrack.FileOffset = _separateTracksWriting ? 0 : currentOffset;
-            _writingTracks.Add(newTrack);
-
-            currentOffset += (ulong)newTrack.RawBytesPerSector * (newTrack.EndSector - newTrack.StartSector + 1);
+            currentOffset += (ulong)track.RawBytesPerSector * (track.EndSector - track.StartSector + 1);
 
             if(track.SubchannelType != TrackSubchannelType.None)
-                currentOffset += 96 * (newTrack.EndSector - newTrack.StartSector + 1);
+                currentOffset += 96 * (track.EndSector - track.StartSector + 1);
         }
 
         _writingStreams = new Dictionary<uint, FileStream>();

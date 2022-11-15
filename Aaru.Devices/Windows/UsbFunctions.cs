@@ -241,9 +241,8 @@ static partial class Usb
 
                     // now we can get some more detailed information
                     var       nRequiredSize = 0;
-                    const int nBytes       = BUFFER_SIZE;
 
-                    if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, nBytes, ref nRequiredSize, ref da))
+                    if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, BUFFER_SIZE, ref nRequiredSize, ref da))
                         if(GetDeviceNumber(didd.DevicePath) == devNum)
                         {
                             // current InstanceID is at the "USBSTOR" level, so we
@@ -251,8 +250,8 @@ static partial class Usb
                             CM_Get_Parent(out IntPtr ptrPrevious, da.DevInst, 0);
 
                             // Now we get the InstanceID of the USB level device
-                            IntPtr ptrInstanceBuf = Marshal.AllocHGlobal(nBytes);
-                            CM_Get_Device_ID(ptrPrevious, ptrInstanceBuf, nBytes, 0);
+                            nint ptrInstanceBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
+                            CM_Get_Device_ID(ptrPrevious, ptrInstanceBuf, BUFFER_SIZE, 0);
                             instanceId = Marshal.PtrToStringAuto(ptrInstanceBuf);
 
                             Marshal.FreeHGlobal(ptrInstanceBuf);

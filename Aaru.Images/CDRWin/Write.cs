@@ -389,13 +389,11 @@ public sealed partial class CdrWin
 
         foreach(Track track in tracks.OrderBy(t => t.Sequence))
         {
-            Track newTrack = track;
+            track.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
+                             : _writingBaseName                    + ".bin";
 
-            newTrack.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
-                                : _writingBaseName                    + ".bin";
-
-            newTrack.FileOffset = _separateTracksWriting ? 0 : track.StartSector * 2352;
-            _writingTracks.Add(newTrack);
+            track.FileOffset = _separateTracksWriting ? 0 : track.StartSector * 2352;
+            _writingTracks.Add(track);
         }
 
         _writingStreams = new Dictionary<uint, FileStream>();

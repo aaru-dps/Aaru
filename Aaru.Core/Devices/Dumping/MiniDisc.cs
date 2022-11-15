@@ -165,7 +165,6 @@ partial class Dump
         }
 
         uint blocksToRead      = scsiReader.BlocksToRead;
-        uint logicalBlockSize  = blockSize;
         uint physicalBlockSize = scsiReader.PhysicalBlockSize;
 
         if(blocks == 0)
@@ -794,7 +793,7 @@ partial class Dump
 
                 sidecar.BlockMedia[0].LogicalBlocks     = blocks;
                 sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize;
-                sidecar.BlockMedia[0].LogicalBlockSize  = logicalBlockSize;
+                sidecar.BlockMedia[0].LogicalBlockSize  = blockSize;
                 sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
                 sidecar.BlockMedia[0].Model             = _dev.Model;
 

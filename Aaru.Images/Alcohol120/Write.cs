@@ -457,7 +457,6 @@ public sealed partial class Alcohol120
 
         foreach(CommonTypes.Structs.Track track in tracks.OrderBy(t => t.Sequence))
         {
-            CommonTypes.Structs.Track newTrack = track;
             uint                      subchannelSize;
 
             switch(track.SubchannelType)
@@ -477,12 +476,12 @@ public sealed partial class Alcohol120
                     return false;
             }
 
-            newTrack.FileOffset = currentDataOffset;
+            track.FileOffset = currentDataOffset;
 
-            currentDataOffset += (ulong)(newTrack.RawBytesPerSector + subchannelSize) *
-                                 (newTrack.EndSector                - newTrack.StartSector + 1);
+            currentDataOffset += (ulong)(track.RawBytesPerSector + subchannelSize) *
+                                 (track.EndSector                - track.StartSector + 1);
 
-            _writingTracks.Add(newTrack);
+            _writingTracks.Add(track);
         }
 
         return true;
