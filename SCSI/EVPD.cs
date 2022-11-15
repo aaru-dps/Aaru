@@ -466,7 +466,7 @@ public static class EVPD
 
                     break;
                 default:
-                    sb.AppendFormat("\tIndentifier has unknown association with code {0}",
+                    sb.AppendFormat("\tIdentifier has unknown association with code {0}",
                                     (byte)descriptor.Association).AppendLine();
 
                     break;
@@ -492,7 +492,7 @@ public static class EVPD
                                       _ => $"unknown code {(byte)descriptor.ProtocolIdentifier}"
                                   };
 
-                sb.AppendFormat("\tDescriptor referes to {0} protocol", protocol).AppendLine();
+                sb.AppendFormat("\tDescriptor refers to {0} protocol", protocol).AppendLine();
             }
 
             switch(descriptor.Type)
