@@ -30,12 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedType.Local
 // ReSharper disable UnusedMember.Local
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Runtime.InteropServices;
@@ -45,6 +41,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>
@@ -83,7 +81,7 @@ public sealed class MicroDOS : IFilesystem
 
         Block0 block0 = Marshal.ByteArrayToStructureLittleEndian<Block0>(bk0);
 
-        return block0.label == MAGIC && block0.mklabel == MAGIC2;
+        return block0 is { label: MAGIC, mklabel: MAGIC2 };
     }
 
     /// <inheritdoc />
@@ -179,10 +177,7 @@ public sealed class MicroDOS : IFilesystem
 
     enum FileStatus : byte
     {
-        CommonFile  = 0,
-        Protected   = 1,
-        LogicalDisk = 2,
-        BadFile     = 0x80,
-        Deleted     = 0xFF
+        CommonFile = 0, Protected  = 1, LogicalDisk = 2,
+        BadFile    = 0x80, Deleted = 0xFF
     }
 }

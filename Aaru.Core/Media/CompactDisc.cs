@@ -26,8 +26,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Media;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +38,8 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
 using Aaru.Helpers;
+
+namespace Aaru.Core.Media;
 
 /// <summary>Operations over CD based media</summary>
 public static class CompactDisc
@@ -99,15 +99,15 @@ public static class CompactDisc
         int prePos = int.MinValue;
 
         // Check subchannel
-        for(var subPos = 0; subPos < deSub.Length; subPos += 96)
+        for(int subPos = 0; subPos < deSub.Length; subPos += 96)
         {
             // Expected LBA
-            long lba = (long)sectorAddress + subPos / 96;
+            long lba = (long)sectorAddress + (subPos / 96);
 
             // We fixed the subchannel
-            var @fixed = false;
+            bool @fixed = false;
 
-            var q = new byte[12];
+            byte[] q = new byte[12];
             Array.Copy(deSub, subPos + 12, q, 0, 12);
 
             // Check Q CRC
@@ -115,8 +115,8 @@ public static class CompactDisc
             bool crcOk = crc[0] == q[10] && crc[1] == q[11];
 
             // Start considering P to be OK
-            var pOk     = true;
-            var pWeight = 0;
+            bool pOk     = true;
+            int  pWeight = 0;
 
             // Check P and weight
             for(int p = subPos; p < subPos + 12; p++)
@@ -125,7 +125,7 @@ public static class CompactDisc
                    deSub[p] != 255)
                     pOk = false;
 
-                for(var w = 0; w < 8; w++)
+                for(int w = 0; w < 8; w++)
                     if(((deSub[p] >> w) & 1) > 0)
                         pWeight++;
             }
@@ -150,13 +150,13 @@ public static class CompactDisc
                        deSub.Skip(subPos + 84).Take(12).All(w => w == 0xFF);
 
             bool rwOk         = rOk && sOk && tOk && uOk && vOk && wOk;
-            var  rwPacket     = false;
-            var  cdtextPacket = false;
+            bool rwPacket     = false;
+            bool cdtextPacket = false;
 
             // Check RW contents
             if(!rwOk)
             {
-                var sectorSub = new byte[96];
+                byte[] sectorSub = new byte[96];
                 Array.Copy(sub, subPos, sectorSub, 0, 96);
 
                 DetectRwPackets(sectorSub, out _, out rwPacket, out cdtextPacket);
@@ -200,7 +200,7 @@ public static class CompactDisc
                 subLog.WriteRwFix(lba);
             }
 
-            int  aPos;
+            int aPos;
 
             // Fix Q
             if(!crcOk        &&
@@ -257,22 +257,22 @@ public static class CompactDisc
                !rwOk)
                 continue;
 
-            var aframe = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
+            byte aframe = (byte)((q[9] / 16 * 10) + (q[9] & 0x0F));
 
             if((q[0] & 0x3) == 1)
             {
-                var  amin = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
-                var asec = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
-                aPos = amin * 60 * 75 + asec * 75 + aframe - 150;
+                byte amin = (byte)((q[7] / 16 * 10) + (q[7] & 0x0F));
+                byte asec = (byte)((q[8] / 16 * 10) + (q[8] & 0x0F));
+                aPos = (amin * 60 * 75) + (asec * 75) + aframe - 150;
             }
             else
             {
                 ulong expectedSectorAddress = sectorAddress + (ulong)(subPos / 96) + 150;
-                var  smin                  = (byte)(expectedSectorAddress / 60 / 75);
-                expectedSectorAddress -= (ulong)(smin                 * 60 * 75);
-                var ssec = (byte)(expectedSectorAddress / 75);
+                byte  smin                  = (byte)(expectedSectorAddress / 60 / 75);
+                expectedSectorAddress -= (ulong)(smin * 60 * 75);
+                byte ssec = (byte)(expectedSectorAddress / 75);
 
-                aPos = smin * 60 * 75 + ssec * 75 + aframe - 150;
+                aPos = (smin * 60 * 75) + (ssec * 75) + aframe - 150;
 
                 // Next second
                 if(aPos < prePos)
@@ -285,7 +285,7 @@ public static class CompactDisc
 
             prePos = aPos;
 
-            var posSub = new byte[96];
+            byte[] posSub = new byte[96];
             Array.Copy(deSub, subPos, posSub, 0, 96);
             posSub = Subchannel.Interleave(posSub);
             outputPlugin.WriteSectorTag(posSub, (ulong)aPos, SectorTagType.CdSectorSubchannel);
@@ -316,13 +316,13 @@ public static class CompactDisc
                                            Dictionary<byte, int> smallestPregapLbaPerTrack, bool dumping,
                                            out List<ulong> newPregapSectors, ulong sectorAddress)
     {
-        var status = false;
+        bool status = false;
         newPregapSectors = new List<ulong>();
 
         // Check subchannel
-        for(var subPos = 0; subPos < deSub.Length; subPos += 96)
+        for(int subPos = 0; subPos < deSub.Length; subPos += 96)
         {
-            var q = new byte[12];
+            byte[] q = new byte[12];
             Array.Copy(deSub, subPos + 12, q, 0, 12);
 
             CRC16CCITTContext.Data(q, 10, out byte[] crc);
@@ -351,15 +351,15 @@ public static class CompactDisc
                     else if(isrcs[currentTrackNumber] != isrc)
                     {
                         Track currentTrack =
-                            tracks.FirstOrDefault(t => sectorAddress + (ulong)subPos / 96 >= t.StartSector);
+                            tracks.FirstOrDefault(t => sectorAddress + ((ulong)subPos / 96) >= t.StartSector);
 
                         if(currentTrack?.Sequence == currentTrackNumber)
                         {
-                            dumpLog?.
-                                WriteLine($"ISRC for track {currentTrackNumber} changed from {isrcs[currentTrackNumber]} to {isrc}.");
+                            dumpLog?.WriteLine($"ISRC for track {currentTrackNumber} changed from {
+                                isrcs[currentTrackNumber]} to {isrc}.");
 
-                            updateStatus?.
-                                Invoke($"ISRC for track {currentTrackNumber} changed from {isrcs[currentTrackNumber]} to {isrc}.");
+                            updateStatus?.Invoke($"ISRC for track {currentTrackNumber} changed from {
+                                isrcs[currentTrackNumber]} to {isrc}.");
 
                             isrcs[currentTrackNumber] = isrc;
                         }
@@ -399,9 +399,9 @@ public static class CompactDisc
                 case 1 when !crcOk: continue;
                 case 1:
                 {
-                    var trackNo = (byte)(q[1] / 16 * 10 + (q[1] & 0x0F));
+                    byte trackNo = (byte)((q[1] / 16 * 10) + (q[1] & 0x0F));
 
-                    for(var i = 0; i < tracks.Length; i++)
+                    for(int i = 0; i < tracks.Length; i++)
                     {
                         if(tracks[i].Sequence != trackNo)
                             continue;
@@ -410,10 +410,10 @@ public static class CompactDisc
                         if(q[2]    == 0 &&
                            trackNo > 1)
                         {
-                            var pmin   = (byte)(q[3] / 16 * 10 + (q[3] & 0x0F));
-                            var psec   = (byte)(q[4] / 16 * 10 + (q[4] & 0x0F));
-                            var pframe = (byte)(q[5] / 16 * 10 + (q[5] & 0x0F));
-                            int qPos   = pmin * 60 * 75 + psec * 75 + pframe;
+                            byte pmin   = (byte)((q[3] / 16 * 10) + (q[3] & 0x0F));
+                            byte psec   = (byte)((q[4] / 16 * 10) + (q[4] & 0x0F));
+                            byte pframe = (byte)((q[5] / 16 * 10) + (q[5] & 0x0F));
+                            int  qPos   = (pmin * 60 * 75) + (psec * 75) + pframe;
 
                             // When we are dumping we calculate the pregap in reverse from index 1 back.
                             // When we are not, we go from index 0.
@@ -442,7 +442,7 @@ public static class CompactDisc
 
                                 updateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
 
-                                for(var p = 0; p < dif; p++)
+                                for(int p = 0; p < dif; p++)
                                     newPregapSectors.Add(tracks[i].StartSector + (ulong)p);
 
                                 status = true;
@@ -464,7 +464,7 @@ public static class CompactDisc
 
                             updateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
 
-                            for(var p = 0; p < (int)(tracks[i].Pregap - oldPregap); p++)
+                            for(int p = 0; p < (int)(tracks[i].Pregap - oldPregap); p++)
                                 newPregapSectors.Add(tracks[i].StartSector + (ulong)p);
 
                             status = true;
@@ -475,10 +475,10 @@ public static class CompactDisc
                         if(q[2] == 0)
                             continue;
 
-                        var amin   = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
-                        var asec   = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
-                        var aframe = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
-                        int aPos   = amin * 60 * 75 + asec * 75 + aframe - 150;
+                        byte amin   = (byte)((q[7] / 16 * 10) + (q[7] & 0x0F));
+                        byte asec   = (byte)((q[8] / 16 * 10) + (q[8] & 0x0F));
+                        byte aframe = (byte)((q[9] / 16 * 10) + (q[9] & 0x0F));
+                        int  aPos   = (amin * 60 * 75) + (asec * 75) + aframe - 150;
 
                         // Do not set INDEX 1 to a value higher than what the TOC already said.
                         if(q[2] == 1 &&
@@ -516,18 +516,18 @@ public static class CompactDisc
         rwPacket     = false;
         cdtextPacket = false;
 
-        var cdTextPack1  = new byte[18];
-        var cdTextPack2  = new byte[18];
-        var cdTextPack3  = new byte[18];
-        var cdTextPack4  = new byte[18];
-        var cdSubRwPack1 = new byte[24];
-        var cdSubRwPack2 = new byte[24];
-        var cdSubRwPack3 = new byte[24];
-        var cdSubRwPack4 = new byte[24];
+        byte[] cdTextPack1  = new byte[18];
+        byte[] cdTextPack2  = new byte[18];
+        byte[] cdTextPack3  = new byte[18];
+        byte[] cdTextPack4  = new byte[18];
+        byte[] cdSubRwPack1 = new byte[24];
+        byte[] cdSubRwPack2 = new byte[24];
+        byte[] cdSubRwPack3 = new byte[24];
+        byte[] cdSubRwPack4 = new byte[24];
 
-        var i = 0;
+        int i = 0;
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -546,7 +546,7 @@ public static class CompactDisc
                 cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F));
         }
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -565,7 +565,7 @@ public static class CompactDisc
                 cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F));
         }
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -584,7 +584,7 @@ public static class CompactDisc
                 cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F));
         }
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -605,16 +605,16 @@ public static class CompactDisc
 
         i = 0;
 
-        for(var j = 0; j < 24; j++)
+        for(int j = 0; j < 24; j++)
             cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
+        for(int j = 0; j < 24; j++)
             cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
+        for(int j = 0; j < 24; j++)
             cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
+        for(int j = 0; j < 24; j++)
             cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
 
         switch(cdSubRwPack1[0])
@@ -715,14 +715,14 @@ public static class CompactDisc
     /// <returns><c>true</c> if subchannel contains a TEXT packet, <c>false</c> otherwise</returns>
     static bool CheckCdTextPackets(byte[] subchannel)
     {
-        var cdTextPack1 = new byte[18];
-        var cdTextPack2 = new byte[18];
-        var cdTextPack3 = new byte[18];
-        var cdTextPack4 = new byte[18];
+        byte[] cdTextPack1 = new byte[18];
+        byte[] cdTextPack2 = new byte[18];
+        byte[] cdTextPack3 = new byte[18];
+        byte[] cdTextPack4 = new byte[18];
 
-        var i = 0;
+        int i = 0;
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -741,7 +741,7 @@ public static class CompactDisc
                 cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F));
         }
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -760,7 +760,7 @@ public static class CompactDisc
                 cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F));
         }
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -779,7 +779,7 @@ public static class CompactDisc
                 cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F));
         }
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -798,12 +798,12 @@ public static class CompactDisc
                 cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x3F));
         }
 
-        var status = true;
+        bool status = true;
 
         if((cdTextPack1[0] & 0x80) == 0x80)
         {
-            var cdTextPack1Crc    = BigEndianBitConverter.ToUInt16(cdTextPack1, 16);
-            var cdTextPack1ForCrc = new byte[16];
+            ushort cdTextPack1Crc    = BigEndianBitConverter.ToUInt16(cdTextPack1, 16);
+            byte[] cdTextPack1ForCrc = new byte[16];
             Array.Copy(cdTextPack1, 0, cdTextPack1ForCrc, 0, 16);
             ushort calculatedCdtp1Crc = CRC16CCITTContext.Calculate(cdTextPack1ForCrc);
 
@@ -814,8 +814,8 @@ public static class CompactDisc
 
         if((cdTextPack2[0] & 0x80) == 0x80)
         {
-            var cdTextPack2Crc    = BigEndianBitConverter.ToUInt16(cdTextPack2, 16);
-            var cdTextPack2ForCrc = new byte[16];
+            ushort cdTextPack2Crc    = BigEndianBitConverter.ToUInt16(cdTextPack2, 16);
+            byte[] cdTextPack2ForCrc = new byte[16];
             Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
             ushort calculatedCdtp2Crc = CRC16CCITTContext.Calculate(cdTextPack2ForCrc);
 
@@ -826,8 +826,8 @@ public static class CompactDisc
 
         if((cdTextPack3[0] & 0x80) == 0x80)
         {
-            var cdTextPack3Crc    = BigEndianBitConverter.ToUInt16(cdTextPack3, 16);
-            var cdTextPack3ForCrc = new byte[16];
+            ushort cdTextPack3Crc    = BigEndianBitConverter.ToUInt16(cdTextPack3, 16);
+            byte[] cdTextPack3ForCrc = new byte[16];
             Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
             ushort calculatedCdtp3Crc = CRC16CCITTContext.Calculate(cdTextPack3ForCrc);
 
@@ -839,8 +839,8 @@ public static class CompactDisc
         if((cdTextPack4[0] & 0x80) != 0x80)
             return status;
 
-        var cdTextPack4Crc    = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
-        var cdTextPack4ForCrc = new byte[16];
+        ushort cdTextPack4Crc    = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
+        byte[] cdTextPack4ForCrc = new byte[16];
         Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
         ushort calculatedCdtp4Crc = CRC16CCITTContext.Calculate(cdTextPack4ForCrc);
 
@@ -886,8 +886,8 @@ public static class CompactDisc
         fixedMcn    = false;
         fixedIsrc   = false;
 
-        var preQ  = new byte[12];
-        var nextQ = new byte[12];
+        byte[] preQ  = new byte[12];
+        byte[] nextQ = new byte[12];
         Array.Copy(deSub, subPos + 12 - 96, preQ, 0, 12);
         Array.Copy(deSub, subPos      + 12 + 96, nextQ, 0, 12);
 
@@ -1046,15 +1046,15 @@ public static class CompactDisc
                             return true;
                     }
 
-                var  amin = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
-                var asec = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
-                aframe = (byte)(q[9] / 16 * 10                      + (q[9] & 0x0F));
-                int aPos = amin      * 60 * 75 + asec * 75 + aframe - 150;
+                byte amin = (byte)((q[7] / 16 * 10) + (q[7] & 0x0F));
+                byte asec = (byte)((q[8] / 16 * 10) + (q[8] & 0x0F));
+                aframe = (byte)((q[9] / 16 * 10)                        + (q[9] & 0x0F));
+                int aPos = (amin      * 60 * 75) + (asec * 75) + aframe - 150;
 
-                var pmin   = (byte)(q[3] / 16 * 10 + (q[3] & 0x0F));
-                var psec   = (byte)(q[4] / 16 * 10 + (q[4] & 0x0F));
-                var pframe = (byte)(q[5] / 16 * 10 + (q[5] & 0x0F));
-                int pPos   = pmin * 60 * 75 + psec * 75 + pframe;
+                byte pmin   = (byte)((q[3] / 16 * 10) + (q[3] & 0x0F));
+                byte psec   = (byte)((q[4] / 16 * 10) + (q[4] & 0x0F));
+                byte pframe = (byte)((q[5] / 16 * 10) + (q[5] & 0x0F));
+                int  pPos   = (pmin * 60 * 75) + (psec * 75) + pframe;
 
                 // TODO: pregap
                 // Not pregap
@@ -1071,10 +1071,10 @@ public static class CompactDisc
                     // Previous was not pregap either
                     if(preQ[2] > 0 && preCrcOk)
                     {
-                        rmin   = (byte)(preQ[3] / 16 * 10 + (preQ[3] & 0x0F));
-                        rsec   = (byte)(preQ[4] / 16 * 10 + (preQ[4] & 0x0F));
-                        rframe = (byte)(preQ[5] / 16 * 10 + (preQ[5] & 0x0F));
-                        rPos   = rmin * 60 * 75 + rsec * 75 + rframe;
+                        rmin   = (byte)((preQ[3] / 16 * 10) + (preQ[3] & 0x0F));
+                        rsec   = (byte)((preQ[4] / 16 * 10) + (preQ[4] & 0x0F));
+                        rframe = (byte)((preQ[5] / 16 * 10) + (preQ[5] & 0x0F));
+                        rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe;
 
                         dPos = pPos - rPos;
 
@@ -1128,10 +1128,10 @@ public static class CompactDisc
                        nextCrcOk    &&
                        !fixedRelPos)
                     {
-                        rmin   = (byte)(nextQ[3] / 16 * 10 + (nextQ[3] & 0x0F));
-                        rsec   = (byte)(nextQ[4] / 16 * 10 + (nextQ[4] & 0x0F));
-                        rframe = (byte)(nextQ[5] / 16 * 10 + (nextQ[5] & 0x0F));
-                        rPos   = rmin * 60 * 75 + rsec * 75 + rframe;
+                        rmin   = (byte)((nextQ[3] / 16 * 10) + (nextQ[3] & 0x0F));
+                        rsec   = (byte)((nextQ[4] / 16 * 10) + (nextQ[4] & 0x0F));
+                        rframe = (byte)((nextQ[5] / 16 * 10) + (nextQ[5] & 0x0F));
+                        rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe;
 
                         dPos = rPos - pPos;
 
@@ -1188,10 +1188,10 @@ public static class CompactDisc
                 // Previous Q's CRC is correct
                 if(preCrcOk)
                 {
-                    rmin   = (byte)(preQ[7] / 16 * 10 + (preQ[7] & 0x0F));
-                    rsec   = (byte)(preQ[8] / 16 * 10 + (preQ[8] & 0x0F));
-                    rframe = (byte)(preQ[9] / 16 * 10 + (preQ[9] & 0x0F));
-                    rPos   = rmin * 60 * 75 + rsec * 75 + rframe - 150;
+                    rmin   = (byte)((preQ[7] / 16 * 10) + (preQ[7] & 0x0F));
+                    rsec   = (byte)((preQ[8] / 16 * 10) + (preQ[8] & 0x0F));
+                    rframe = (byte)((preQ[9] / 16 * 10) + (preQ[9] & 0x0F));
+                    rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe - 150;
 
                     dPos = aPos - rPos;
 
@@ -1245,10 +1245,10 @@ public static class CompactDisc
                    nextCrcOk    &&
                    !fixedAbsPos)
                 {
-                    rmin   = (byte)(nextQ[7] / 16 * 10 + (nextQ[7] & 0x0F));
-                    rsec   = (byte)(nextQ[8] / 16 * 10 + (nextQ[8] & 0x0F));
-                    rframe = (byte)(nextQ[9] / 16 * 10 + (nextQ[9] & 0x0F));
-                    rPos   = rmin * 60 * 75 + rsec * 75 + rframe - 150;
+                    rmin   = (byte)((nextQ[7] / 16 * 10) + (nextQ[7] & 0x0F));
+                    rsec   = (byte)((nextQ[8] / 16 * 10) + (nextQ[8] & 0x0F));
+                    rframe = (byte)((nextQ[9] / 16 * 10) + (nextQ[9] & 0x0F));
+                    rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe - 150;
 
                     dPos = rPos - pPos;
 
@@ -1311,19 +1311,19 @@ public static class CompactDisc
                 // Previous Q's CRC is correct
                 if(preCrcOk)
                 {
-                    rmin   = (byte)(preQ[7] / 16 * 10 + (preQ[7] & 0x0F));
-                    rsec   = (byte)(preQ[8] / 16 * 10 + (preQ[8] & 0x0F));
-                    rframe = (byte)(preQ[9] / 16 * 10 + (preQ[9] & 0x0F));
-                    rPos   = rmin * 60 * 75 + rsec * 75 + rframe - 150;
+                    rmin   = (byte)((preQ[7] / 16 * 10) + (preQ[7] & 0x0F));
+                    rsec   = (byte)((preQ[8] / 16 * 10) + (preQ[8] & 0x0F));
+                    rframe = (byte)((preQ[9] / 16 * 10) + (preQ[9] & 0x0F));
+                    rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe - 150;
 
                     dPos = aPos - rPos;
 
                     bool absOk = dPos == 1;
 
-                    rmin   = (byte)(preQ[3] / 16 * 10 + (preQ[3] & 0x0F));
-                    rsec   = (byte)(preQ[4] / 16 * 10 + (preQ[4] & 0x0F));
-                    rframe = (byte)(preQ[5] / 16 * 10 + (preQ[5] & 0x0F));
-                    rPos   = rmin * 60 * 75 + rsec * 75 + rframe;
+                    rmin   = (byte)((preQ[3] / 16 * 10) + (preQ[3] & 0x0F));
+                    rsec   = (byte)((preQ[4] / 16 * 10) + (preQ[4] & 0x0F));
+                    rframe = (byte)((preQ[5] / 16 * 10) + (preQ[5] & 0x0F));
+                    rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe;
 
                     dPos = pPos - rPos;
 
@@ -1349,19 +1349,19 @@ public static class CompactDisc
                 // Next Q's CRC is correct
                 if(nextCrcOk)
                 {
-                    rmin   = (byte)(nextQ[7] / 16 * 10 + (nextQ[7] & 0x0F));
-                    rsec   = (byte)(nextQ[8] / 16 * 10 + (nextQ[8] & 0x0F));
-                    rframe = (byte)(nextQ[9] / 16 * 10 + (nextQ[9] & 0x0F));
-                    rPos   = rmin * 60 * 75 + rsec * 75 + rframe - 150;
+                    rmin   = (byte)((nextQ[7] / 16 * 10) + (nextQ[7] & 0x0F));
+                    rsec   = (byte)((nextQ[8] / 16 * 10) + (nextQ[8] & 0x0F));
+                    rframe = (byte)((nextQ[9] / 16 * 10) + (nextQ[9] & 0x0F));
+                    rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe - 150;
 
                     dPos = rPos - aPos;
 
                     bool absOk = dPos == 1;
 
-                    rmin   = (byte)(nextQ[3] / 16 * 10 + (nextQ[3] & 0x0F));
-                    rsec   = (byte)(nextQ[4] / 16 * 10 + (nextQ[4] & 0x0F));
-                    rframe = (byte)(nextQ[5] / 16 * 10 + (nextQ[5] & 0x0F));
-                    rPos   = rmin * 60 * 75 + rsec * 75 + rframe;
+                    rmin   = (byte)((nextQ[3] / 16 * 10) + (nextQ[3] & 0x0F));
+                    rsec   = (byte)((nextQ[4] / 16 * 10) + (nextQ[4] & 0x0F));
+                    rframe = (byte)((nextQ[5] / 16 * 10) + (nextQ[5] & 0x0F));
+                    rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe;
 
                     dPos = rPos - pPos;
 
@@ -1394,8 +1394,8 @@ public static class CompactDisc
                 // Previous Q's CRC is correct
                 if(preCrcOk)
                 {
-                    rframe = (byte)(preQ[9] / 16 * 10 + (preQ[9] & 0x0F));
-                    aframe = (byte)(q[9]    / 16 * 10 + (q[9]    & 0x0F));
+                    rframe = (byte)((preQ[9] / 16 * 10) + (preQ[9] & 0x0F));
+                    aframe = (byte)((q[9]    / 16 * 10) + (q[9]    & 0x0F));
 
                     if(aframe - rframe != 1)
                     {
@@ -1422,8 +1422,8 @@ public static class CompactDisc
                 // Next Q's CRC is correct
                 else if(nextCrcOk)
                 {
-                    rframe = (byte)(nextQ[9] / 16 * 10 + (nextQ[9] & 0x0F));
-                    aframe = (byte)(q[9]     / 16 * 10 + (q[9]     & 0x0F));
+                    rframe = (byte)((nextQ[9] / 16 * 10) + (nextQ[9] & 0x0F));
+                    aframe = (byte)((q[9]     / 16 * 10) + (q[9]     & 0x0F));
 
                     if(aframe - rframe != 1)
                     {
@@ -1449,13 +1449,13 @@ public static class CompactDisc
                 // We know the MCN
                 if(mcn != null)
                 {
-                    q[1] = (byte)(((mcn[0]  - 0x30) & 0x0F) * 16 + ((mcn[1]  - 0x30) & 0x0F));
-                    q[2] = (byte)(((mcn[2]  - 0x30) & 0x0F) * 16 + ((mcn[3]  - 0x30) & 0x0F));
-                    q[3] = (byte)(((mcn[4]  - 0x30) & 0x0F) * 16 + ((mcn[5]  - 0x30) & 0x0F));
-                    q[4] = (byte)(((mcn[6]  - 0x30) & 0x0F) * 16 + ((mcn[7]  - 0x30) & 0x0F));
-                    q[5] = (byte)(((mcn[8]  - 0x30) & 0x0F) * 16 + ((mcn[9]  - 0x30) & 0x0F));
-                    q[6] = (byte)(((mcn[10] - 0x30) & 0x0F) * 16 + ((mcn[11] - 0x30) & 0x0F));
-                    q[7] = (byte)(((mcn[12]                                  - 0x30) & 0x0F) * 8);
+                    q[1] = (byte)((((mcn[0]  - 0x30) & 0x0F) * 16) + ((mcn[1]  - 0x30) & 0x0F));
+                    q[2] = (byte)((((mcn[2]  - 0x30) & 0x0F) * 16) + ((mcn[3]  - 0x30) & 0x0F));
+                    q[3] = (byte)((((mcn[4]  - 0x30) & 0x0F) * 16) + ((mcn[5]  - 0x30) & 0x0F));
+                    q[4] = (byte)((((mcn[6]  - 0x30) & 0x0F) * 16) + ((mcn[7]  - 0x30) & 0x0F));
+                    q[5] = (byte)((((mcn[8]  - 0x30) & 0x0F) * 16) + ((mcn[9]  - 0x30) & 0x0F));
+                    q[6] = (byte)((((mcn[10] - 0x30) & 0x0F) * 16) + ((mcn[11] - 0x30) & 0x0F));
+                    q[7] = (byte)(((mcn[12]                                    - 0x30) & 0x0F) * 8);
                     q[8] = 0;
 
                     fixedMcn = true;
@@ -1487,8 +1487,8 @@ public static class CompactDisc
                 // Previous Q's CRC is correct
                 if(preCrcOk)
                 {
-                    rframe = (byte)(preQ[9] / 16 * 10 + (preQ[9] & 0x0F));
-                    aframe = (byte)(q[9]    / 16 * 10 + (q[9]    & 0x0F));
+                    rframe = (byte)((preQ[9] / 16 * 10) + (preQ[9] & 0x0F));
+                    aframe = (byte)((q[9]    / 16 * 10) + (q[9]    & 0x0F));
 
                     if(aframe - rframe != 1)
                     {
@@ -1515,8 +1515,8 @@ public static class CompactDisc
                 // Next Q's CRC is correct
                 else if(nextCrcOk)
                 {
-                    rframe = (byte)(nextQ[9] / 16 * 10 + (nextQ[9] & 0x0F));
-                    aframe = (byte)(q[9]     / 16 * 10 + (q[9]     & 0x0F));
+                    rframe = (byte)((nextQ[9] / 16 * 10) + (nextQ[9] & 0x0F));
+                    aframe = (byte)((q[9]     / 16 * 10) + (q[9]     & 0x0F));
 
                     if(aframe - rframe != 1)
                     {
@@ -1552,10 +1552,10 @@ public static class CompactDisc
                     q[2] = (byte)(((i2             & 0xF)  << 4) + (i3 >> 2));
                     q[3] = (byte)(((i3             & 0x3)  << 6) + i4);
                     q[4] = (byte)(i5 << 2);
-                    q[5] = (byte)(((isrc[5] - 0x30) & 0x0F) * 16 + ((isrc[6]  - 0x30) & 0x0F));
-                    q[6] = (byte)(((isrc[7] - 0x30) & 0x0F) * 16 + ((isrc[8]  - 0x30) & 0x0F));
-                    q[7] = (byte)(((isrc[9] - 0x30) & 0x0F) * 16 + ((isrc[10] - 0x30) & 0x0F));
-                    q[8] = (byte)(((isrc[11]                                  - 0x30) & 0x0F) * 16);
+                    q[5] = (byte)((((isrc[5] - 0x30) & 0x0F) * 16) + ((isrc[6]  - 0x30) & 0x0F));
+                    q[6] = (byte)((((isrc[7] - 0x30) & 0x0F) * 16) + ((isrc[8]  - 0x30) & 0x0F));
+                    q[7] = (byte)((((isrc[9] - 0x30) & 0x0F) * 16) + ((isrc[10] - 0x30) & 0x0F));
+                    q[8] = (byte)(((isrc[11]                                    - 0x30) & 0x0F) * 16);
 
                     fixedIsrc = true;
 

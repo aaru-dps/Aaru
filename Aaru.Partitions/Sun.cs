@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Partitions;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of Sun disklabels</summary>
@@ -68,12 +68,12 @@ public sealed class SunDisklabel : IPartition
     /// <summary>Length of v_volume</summary>
     const int LEN_DKL_VVOL = 8;
     /// <summary>Size of padding in SunOS disk label</summary>
-    const int LEN_DKL_PAD = DK_LABEL_SIZE - (LEN_DKL_ASCII + NDKMAP * 8 + 14 * 2);
+    const int LEN_DKL_PAD = DK_LABEL_SIZE - (LEN_DKL_ASCII + (NDKMAP * 8) + (14 * 2));
     /// <summary>Size of padding in Solaris disk label with 8 partitions</summary>
-    const int LEN_DKL_PAD8 = DK_LABEL_SIZE - (LEN_DKL_ASCII + 136    + // sizeof(dk_vtoc8)
-                                              NDKMAP * 8    + 14 * 2 + 2 * 2);
-    const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456   + // sizeof(dk_vtoc16)
-                                               4 * 4 + 12 * 2 + 2 * 2);
+    const int LEN_DKL_PAD8 = DK_LABEL_SIZE - (LEN_DKL_ASCII + 136      + // sizeof(dk_vtoc8)
+                                              (NDKMAP * 8)  + (14 * 2) + (2 * 2));
+    const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456     + // sizeof(dk_vtoc16)
+                                               (4 * 4) + (12 * 2) + (2 * 2));
 
     /// <inheritdoc />
     public string Name => "Sun Disklabel";
@@ -152,7 +152,7 @@ public sealed class SunDisklabel : IPartition
 
         if(useDkl)
         {
-            var sectorsPerCylinder = (ulong)(dkl.dkl_nsect * dkl.dkl_nhead);
+            ulong sectorsPerCylinder = (ulong)(dkl.dkl_nsect * dkl.dkl_nhead);
 
             AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_asciilabel = \"{0}\"",
                                        StringHandlers.CToString(dkl.dkl_asciilabel));
@@ -170,7 +170,7 @@ public sealed class SunDisklabel : IPartition
             AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_bhead = {0}", dkl.dkl_bhead);
             AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_ppart = {0}", dkl.dkl_ppart);
 
-            for(var i = 0; i < NDKMAP; i++)
+            for(int i = 0; i < NDKMAP; i++)
             {
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_map[{0}].dkl_cylno = {1}", i,
                                            dkl.dkl_map[i].dkl_cylno);
@@ -182,18 +182,19 @@ public sealed class SunDisklabel : IPartition
             AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_cksum = 0x{0:X4}", dkl.dkl_cksum);
             AaruConsole.DebugWriteLine("Sun plugin", "sectorsPerCylinder = {0}", sectorsPerCylinder);
 
-            for(var i = 0; i < NDKMAP; i++)
+            for(int i = 0; i < NDKMAP; i++)
                 if(dkl.dkl_map[i].dkl_cylno > 0 &&
                    dkl.dkl_map[i].dkl_nblk  > 0)
                 {
                     var part = new Partition
                     {
-                        Size = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                        Length = (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
+                        Size     = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
+                        Length   = (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
                         Sequence = (ulong)i,
-                        Offset = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
-                        Start = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE /
-                                imagePlugin.Info.SectorSize,
+                        Offset =
+                            (((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) * DK_LABEL_SIZE,
+                        Start = (((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) *
+                                DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
                         Type   = "SunOS partition",
                         Scheme = Name
                     };
@@ -205,7 +206,7 @@ public sealed class SunDisklabel : IPartition
         }
         else if(useDkl8)
         {
-            var sectorsPerCylinder = (ulong)(dkl8.dkl_nsect * dkl8.dkl_nhead);
+            ulong sectorsPerCylinder = (ulong)(dkl8.dkl_nsect * dkl8.dkl_nhead);
 
             AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_asciilabel = \"{0}\"",
                                        StringHandlers.CToString(dkl8.dkl_asciilabel));
@@ -232,7 +233,7 @@ public sealed class SunDisklabel : IPartition
             AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs3 = {0}", dkl8.dkl_obs3);
             AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs4 = {0}", dkl8.dkl_obs4);
 
-            for(var i = 0; i < NDKMAP; i++)
+            for(int i = 0; i < NDKMAP; i++)
             {
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_map[{0}].dkl_cylno = {1}", i,
                                            dkl8.dkl_map[i].dkl_cylno);
@@ -257,7 +258,7 @@ public sealed class SunDisklabel : IPartition
             if(dkl8.dkl_vtoc.v_nparts > NDKMAP)
                 return false;
 
-            for(var i = 0; i < dkl8.dkl_vtoc.v_nparts; i++)
+            for(int i = 0; i < dkl8.dkl_vtoc.v_nparts; i++)
                 if(dkl8.dkl_map[i].dkl_nblk      > 0                &&
                    dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
                    dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunWholeDisk)
@@ -265,12 +266,13 @@ public sealed class SunDisklabel : IPartition
                     var part = new Partition
                     {
                         Description = SunFlagsToString(dkl8.dkl_vtoc.v_part[i].p_flag),
-                        Size = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                        Length = (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
-                        Sequence = (ulong)i,
-                        Offset = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
-                        Start = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE /
-                                imagePlugin.Info.SectorSize,
+                        Size        = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
+                        Length      = (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
+                        Sequence    = (ulong)i,
+                        Offset = (((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) *
+                                 DK_LABEL_SIZE,
+                        Start = (((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) *
+                                DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
                         Type   = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag),
                         Scheme = Name
                     };
@@ -313,7 +315,7 @@ public sealed class SunDisklabel : IPartition
 
             AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_read_reinstruct = {0}", dkl16.dkl_read_reinstruct);
 
-            for(var i = 0; i < NDKMAP16; i++)
+            for(int i = 0; i < NDKMAP16; i++)
             {
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_part[{0}].p_start = {1}", i,
                                            dkl16.dkl_vtoc.v_part[i].p_start);
@@ -337,7 +339,7 @@ public sealed class SunDisklabel : IPartition
             if(dkl16.dkl_vtoc.v_nparts > NDKMAP16)
                 return false;
 
-            for(var i = 0; i < dkl16.dkl_vtoc.v_nparts; i++)
+            for(int i = 0; i < dkl16.dkl_vtoc.v_nparts; i++)
                 if(dkl16.dkl_vtoc.v_part[i].p_size > 0                &&
                    dkl16.dkl_vtoc.v_part[i].p_tag  != SunTag.SunEmpty &&
                    dkl16.dkl_vtoc.v_part[i].p_tag  != SunTag.SunWholeDisk)
@@ -374,7 +376,7 @@ public sealed class SunDisklabel : IPartition
         AaruConsole.DebugWriteLine("Sun plugin", "Swapping dk_label");
         label = (dk_label)Marshal.SwapStructureMembersEndian(label);
 
-        for(var i = 0; i < label.dkl_map.Length; i++)
+        for(int i = 0; i < label.dkl_map.Length; i++)
             label.dkl_map[i] = (dk_map)Marshal.SwapStructureMembersEndian(label.dkl_map[i]);
 
         return label;
@@ -385,22 +387,22 @@ public sealed class SunDisklabel : IPartition
         AaruConsole.DebugWriteLine("Sun plugin", "Swapping dk_label8");
         label = (dk_label8)Marshal.SwapStructureMembersEndian(label);
 
-        for(var i = 0; i < label.dkl_map.Length; i++)
+        for(int i = 0; i < label.dkl_map.Length; i++)
             label.dkl_map[i] = (dk_map)Marshal.SwapStructureMembersEndian(label.dkl_map[i]);
 
-        for(var i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
+        for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
             label.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
 
-        for(var i = 0; i < label.dkl_vtoc.v_part.Length; i++)
+        for(int i = 0; i < label.dkl_vtoc.v_part.Length; i++)
         {
             label.dkl_vtoc.v_part[i].p_flag = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
             label.dkl_vtoc.v_part[i].p_tag  = (SunTag)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_tag);
         }
 
-        for(var i = 0; i < label.dkl_vtoc.v_timestamp.Length; i++)
+        for(int i = 0; i < label.dkl_vtoc.v_timestamp.Length; i++)
             label.dkl_vtoc.v_timestamp[i] = Swapping.Swap(label.dkl_vtoc.v_timestamp[i]);
 
-        for(var i = 0; i < label.dkl_vtoc.v_reserved.Length; i++)
+        for(int i = 0; i < label.dkl_vtoc.v_reserved.Length; i++)
             label.dkl_vtoc.v_reserved[i] = Swapping.Swap(label.dkl_vtoc.v_reserved[i]);
 
         return label;
@@ -411,10 +413,10 @@ public sealed class SunDisklabel : IPartition
         AaruConsole.DebugWriteLine("Sun plugin", "Swapping dk_label16");
         label = (dk_label16)Marshal.SwapStructureMembersEndian(label);
 
-        for(var i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
+        for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
             label.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
 
-        for(var i = 0; i < label.dkl_vtoc.v_part.Length; i++)
+        for(int i = 0; i < label.dkl_vtoc.v_part.Length; i++)
         {
             label.dkl_vtoc.v_part[i].p_flag  = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
             label.dkl_vtoc.v_part[i].p_tag   = (SunTag)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_tag);
@@ -422,10 +424,10 @@ public sealed class SunDisklabel : IPartition
             label.dkl_vtoc.v_part[i].p_start = Swapping.Swap(label.dkl_vtoc.v_part[i].p_start);
         }
 
-        for(var i = 0; i < label.dkl_vtoc.v_timestamp.Length; i++)
+        for(int i = 0; i < label.dkl_vtoc.v_timestamp.Length; i++)
             label.dkl_vtoc.v_timestamp[i] = Swapping.Swap(label.dkl_vtoc.v_timestamp[i]);
 
-        for(var i = 0; i < label.dkl_vtoc.v_reserved.Length; i++)
+        for(int i = 0; i < label.dkl_vtoc.v_reserved.Length; i++)
             label.dkl_vtoc.v_reserved[i] = Swapping.Swap(label.dkl_vtoc.v_reserved[i]);
 
         return label;
@@ -445,67 +447,50 @@ public sealed class SunDisklabel : IPartition
     }
 
     static string SunIdToString(SunTag id) => id switch
-                                              {
-                                                  SunTag.Linux          => "Linux",
-                                                  SunTag.LinuxRaid      => "Linux RAID",
-                                                  SunTag.LinuxSwap      => "Linux swap",
-                                                  SunTag.LVM            => "LVM",
-                                                  SunTag.SunBoot        => "Sun boot",
-                                                  SunTag.SunEmpty       => "Empty",
-                                                  SunTag.SunHome        => "Sun /home",
-                                                  SunTag.SunRoot        => "Sun /",
-                                                  SunTag.SunStand       => "Sun /stand",
-                                                  SunTag.SunSwap        => "Sun swap",
-                                                  SunTag.SunUsr         => "Sun /usr",
-                                                  SunTag.SunVar         => "Sun /var",
-                                                  SunTag.SunWholeDisk   => "Whole disk",
-                                                  SunTag.SunAlt         => "Replacement sectors",
-                                                  SunTag.SunCache       => "Sun cachefs",
-                                                  SunTag.SunReserved    => "Reserved for SMI",
-                                                  SunTag.VxVmPublic     => "Veritas public",
-                                                  SunTag.VxVmPrivate    => "Veritas private",
-                                                  SunTag.NetBSD         => "NetBSD",
-                                                  SunTag.FreeBSD_Swap   => "FreeBSD swap",
-                                                  SunTag.FreeBSD_UFS    => "FreeBSD",
-                                                  SunTag.FreeBSD_Vinum  => "Vinum",
-                                                  SunTag.FreeBSD_ZFS    => "FreeBSD ZFS",
-                                                  SunTag.FreeBSD_NANDFS => "FreeBSD nandfs",
-                                                  _                     => "Unknown"
-                                              };
+    {
+        SunTag.Linux          => "Linux",
+        SunTag.LinuxRaid      => "Linux RAID",
+        SunTag.LinuxSwap      => "Linux swap",
+        SunTag.LVM            => "LVM",
+        SunTag.SunBoot        => "Sun boot",
+        SunTag.SunEmpty       => "Empty",
+        SunTag.SunHome        => "Sun /home",
+        SunTag.SunRoot        => "Sun /",
+        SunTag.SunStand       => "Sun /stand",
+        SunTag.SunSwap        => "Sun swap",
+        SunTag.SunUsr         => "Sun /usr",
+        SunTag.SunVar         => "Sun /var",
+        SunTag.SunWholeDisk   => "Whole disk",
+        SunTag.SunAlt         => "Replacement sectors",
+        SunTag.SunCache       => "Sun cachefs",
+        SunTag.SunReserved    => "Reserved for SMI",
+        SunTag.VxVmPublic     => "Veritas public",
+        SunTag.VxVmPrivate    => "Veritas private",
+        SunTag.NetBSD         => "NetBSD",
+        SunTag.FreeBSD_Swap   => "FreeBSD swap",
+        SunTag.FreeBSD_UFS    => "FreeBSD",
+        SunTag.FreeBSD_Vinum  => "Vinum",
+        SunTag.FreeBSD_ZFS    => "FreeBSD ZFS",
+        SunTag.FreeBSD_NANDFS => "FreeBSD nandfs",
+        _                     => "Unknown"
+    };
 
     enum SunTag : ushort
     {
-        SunEmpty       = 0x0000,
-        SunBoot        = 0x0001,
-        SunRoot        = 0x0002,
-        SunSwap        = 0x0003,
-        SunUsr         = 0x0004,
-        SunWholeDisk   = 0x0005,
-        SunStand       = 0x0006,
-        SunVar         = 0x0007,
-        SunHome        = 0x0008,
-        SunAlt         = 0x0009,
-        SunCache       = 0x000A,
-        SunReserved    = 0x000B,
-        VxVmPublic     = 0x000E,
-        VxVmPrivate    = 0x000F,
-        LinuxSwap      = 0x0082,
-        Linux          = 0x0083,
-        LVM            = 0x008E,
-        LinuxRaid      = 0x00FD,
-        NetBSD         = 0x00FF,
-        FreeBSD_Swap   = 0x0901,
-        FreeBSD_UFS    = 0x0902,
-        FreeBSD_Vinum  = 0x0903,
-        FreeBSD_ZFS    = 0x0904,
-        FreeBSD_NANDFS = 0x0905
+        SunEmpty      = 0x0000, SunBoot      = 0x0001, SunRoot        = 0x0002,
+        SunSwap       = 0x0003, SunUsr       = 0x0004, SunWholeDisk   = 0x0005,
+        SunStand      = 0x0006, SunVar       = 0x0007, SunHome        = 0x0008,
+        SunAlt        = 0x0009, SunCache     = 0x000A, SunReserved    = 0x000B,
+        VxVmPublic    = 0x000E, VxVmPrivate  = 0x000F, LinuxSwap      = 0x0082,
+        Linux         = 0x0083, LVM          = 0x008E, LinuxRaid      = 0x00FD,
+        NetBSD        = 0x00FF, FreeBSD_Swap = 0x0901, FreeBSD_UFS    = 0x0902,
+        FreeBSD_Vinum = 0x0903, FreeBSD_ZFS  = 0x0904, FreeBSD_NANDFS = 0x0905
     }
 
     [Flags]
     enum SunFlags : ushort
     {
-        NoMount  = 0x0001,
-        ReadOnly = 0x0010
+        NoMount = 0x0001, ReadOnly = 0x0010
     }
 
     /// <summary>SunOS logical partitions</summary>

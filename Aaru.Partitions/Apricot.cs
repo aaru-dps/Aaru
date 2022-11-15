@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Partitions;
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of Apricot partitions</summary>
@@ -274,10 +274,10 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine("Apricot partitions", "label.spareRamDisk is null? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(label.spareRamDisk));
 
-        for(var i = 0; i < 32; i++)
+        for(int i = 0; i < 32; i++)
             AaruConsole.DebugWriteLine("Apricot partitions", "label.badBlocks[{1}] = {0}", label.badBlocks[i], i);
 
-        for(var i = 0; i < 8; i++)
+        for(int i = 0; i < 8; i++)
         {
             AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].bps = {0}", label.partitions[i].bps,
                                        i);

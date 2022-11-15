@@ -26,19 +26,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class CopyTape : TapeMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "copytape");
-    public override IMediaImage Plugin    => new DiscImages.CopyTape();
+    public override IMediaImage Plugin     => new DiscImages.CopyTape();
 
     public override TapeImageTestExpected[] Tests => new[]
     {

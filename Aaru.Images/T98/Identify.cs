@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class T98
 {
@@ -49,19 +49,19 @@ public sealed partial class T98
         if(stream.Length % 256 != 0)
             return false;
 
-        var hdrB = new byte[256];
+        byte[] hdrB = new byte[256];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
-        for(var i = 4; i < 256; i++)
+        for(int i = 4; i < 256; i++)
             if(hdrB[i] != 0)
                 return false;
 
-        var cylinders = BitConverter.ToInt32(hdrB, 0);
+        int cylinders = BitConverter.ToInt32(hdrB, 0);
 
         AaruConsole.DebugWriteLine("T98 plugin", "cylinders = {0}", cylinders);
 
         // This format is expanding, so length can be smaller
         // Just grow it, I won't risk false positives...
-        return stream.Length == cylinders * 8 * 33 * 256 + 256;
+        return stream.Length == (cylinders * 8 * 33 * 256) + 256;
     }
 }

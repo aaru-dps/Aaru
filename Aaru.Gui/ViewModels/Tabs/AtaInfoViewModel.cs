@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Tabs;
-
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
@@ -40,6 +38,8 @@ using Aaru.Decoders.ATA;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class AtaInfoViewModel : ViewModelBase
 {
@@ -70,18 +70,19 @@ public sealed class AtaInfoViewModel : ViewModelBase
             if(ataMcptError.HasValue)
             {
                 AtaMcptText = (ataMcptError.Value.DeviceHead & 0x7) switch
-                              {
-                                  0 => "Device reports incorrect media card type",
-                                  1 => "Device contains a Secure Digital card",
-                                  2 => "Device contains a MultiMediaCard ",
-                                  3 => "Device contains a Secure Digital I/O card",
-                                  4 => "Device contains a Smart Media card",
-                                  _ => $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}"
-                              };
+                {
+                    0 => "Device reports incorrect media card type",
+                    1 => "Device contains a Secure Digital card",
+                    2 => "Device contains a MultiMediaCard ",
+                    3 => "Device contains a Secure Digital I/O card",
+                    4 => "Device contains a Smart Media card",
+                    _ => $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}"
+                };
 
                 AtaMcptWriteProtectionChecked = (ataMcptError.Value.DeviceHead & 0x08) == 0x08;
 
-                var specificData = (ushort)(ataMcptError.Value.CylinderHigh * 0x100 + ataMcptError.Value.CylinderLow);
+                ushort specificData =
+                    (ushort)((ataMcptError.Value.CylinderHigh * 0x100) + ataMcptError.Value.CylinderLow);
 
                 AtaMcptSpecificDataText = $"Card specific data: 0x{specificData:X4}";
             }

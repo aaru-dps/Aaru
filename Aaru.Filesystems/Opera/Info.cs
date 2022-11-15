@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Text;
 using Aaru.CommonTypes;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
@@ -53,7 +53,7 @@ public sealed partial class OperaFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var syncBytes = new byte[5];
+        byte[] syncBytes = new byte[5];
 
         byte recordType = sbSector[0x000];
         Array.Copy(sbSector, 0x001, syncBytes, 0, 5);

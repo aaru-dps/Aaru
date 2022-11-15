@@ -26,14 +26,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Logging;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.Decoders.ATA;
 using Aaru.Decoders.SCSI;
+
+namespace Aaru.Core.Logging;
 
 /// <summary>Logs errors</summary>
 public sealed class ErrorLog
@@ -76,8 +76,8 @@ public sealed class ErrorLog
         }
         else
         {
-            var error  = new List<string>();
-            var status = new List<string>();
+            List<string> error  = new();
+            List<string> status = new();
 
             if((registers.Status & 0x01) == 0x01)
                 status.Add("ERR");
@@ -153,8 +153,8 @@ public sealed class ErrorLog
         }
         else
         {
-            var error  = new List<string>();
-            var status = new List<string>();
+            List<string> error  = new();
+            List<string> status = new();
 
             if((registers.Status & 0x01) == 0x01)
                 status.Add("ERR");
@@ -225,8 +225,8 @@ public sealed class ErrorLog
         }
         else
         {
-            var error  = new List<string>();
-            var status = new List<string>();
+            List<string> error  = new();
+            List<string> status = new();
 
             if((registers.Status & 0x01) == 0x01)
                 status.Add("ERR");
@@ -297,8 +297,8 @@ public sealed class ErrorLog
         }
         else
         {
-            var error  = new List<string>();
-            var status = new List<string>();
+            List<string> error  = new();
+            List<string> status = new();
 
             if((registers.Status & 0x01) == 0x01)
                 status.Add("ERR");
@@ -372,7 +372,7 @@ public sealed class ErrorLog
 
         DecodedSense? decodedSense = Sense.Decode(senseBuffer);
         string        prettySense  = Sense.PrettifySense(senseBuffer);
-        var           hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
+        string        hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
 
         if(decodedSense.HasValue)
         {
@@ -436,7 +436,7 @@ public sealed class ErrorLog
 
         DecodedSense? decodedSense = Sense.Decode(senseBuffer);
         string        prettySense  = Sense.PrettifySense(senseBuffer);
-        var           hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
+        string        hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
 
         if(decodedSense.HasValue)
         {

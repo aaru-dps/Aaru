@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using Aaru.CommonTypes;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class ZZZRawImage
 {
@@ -40,17 +40,17 @@ public sealed partial class ZZZRawImage
     {
         if(_imageInfo.SectorSize == 2048)
             return _imageInfo.Sectors switch
-                   {
-                       58620544    => MediaType.REV120,
-                       17090880    => MediaType.REV35,
-                       <= 360000   => MediaType.CD,
-                       <= 2295104  => MediaType.DVDPR,
-                       <= 2298496  => MediaType.DVDR,
-                       <= 4171712  => MediaType.DVDRDL,
-                       <= 4173824  => MediaType.DVDPRDL,
-                       <= 24438784 => MediaType.BDR,
-                       _           => _imageInfo.Sectors <= 62500864 ? MediaType.BDRXL : MediaType.Unknown
-                   };
+            {
+                58620544    => MediaType.REV120,
+                17090880    => MediaType.REV35,
+                <= 360000   => MediaType.CD,
+                <= 2295104  => MediaType.DVDPR,
+                <= 2298496  => MediaType.DVDR,
+                <= 4171712  => MediaType.DVDRDL,
+                <= 4173824  => MediaType.DVDPRDL,
+                <= 24438784 => MediaType.BDR,
+                _           => _imageInfo.Sectors <= 62500864 ? MediaType.BDRXL : MediaType.Unknown
+            };
 
         switch(_imageInfo.ImageSize)
         {
@@ -91,11 +91,11 @@ public sealed partial class ZZZRawImage
                     return MediaType.CBM_35_DD;
 
                 return _extension switch
-                       {
-                           ".adf" or ".adl" when _imageInfo.SectorSize == 1024 => MediaType.ACORN_35_DS_DD,
-                           ".st"                                               => MediaType.ATARI_35_DS_DD,
-                           _                                                   => MediaType.AppleSonyDS
-                       };
+                {
+                    ".adf" or ".adl" when _imageInfo.SectorSize == 1024 => MediaType.ACORN_35_DS_DD,
+                    ".st"                                               => MediaType.ATARI_35_DS_DD,
+                    _                                                   => MediaType.AppleSonyDS
+                };
 
             case 839680: return MediaType.FDFORMAT_35_DD;
             case 901120: return _extension == ".st" ? MediaType.ATARI_35_DS_DD_11 : MediaType.CBM_AMIGA_35_DD;

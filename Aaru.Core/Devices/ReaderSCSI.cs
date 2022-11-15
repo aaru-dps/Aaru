@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices;
-
 using System;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
+
+namespace Aaru.Core.Devices;
 
 sealed partial class Reader
 {
@@ -65,9 +65,9 @@ sealed partial class Reader
             return true;
 
         byte[] senseBuf;
-        var    tries      = 0;
+        int    tries      = 0;
         uint   lba        = 0;
-        var    mediumScan = false;
+        bool   mediumScan = false;
 
         if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
         {
@@ -572,7 +572,7 @@ sealed partial class Reader
                     return true;
                 case false:
                 {
-                    var temp = new byte[8];
+                    byte[] temp = new byte[8];
 
                     Array.Copy(cmdBuf, 0, temp, 0, 8);
                     Array.Reverse(temp);
@@ -716,7 +716,7 @@ sealed partial class Reader
 
     bool ScsiSeek(ulong block, out double duration)
     {
-        var sense = true;
+        bool sense = true;
         duration = 0;
 
         if(_seek6)

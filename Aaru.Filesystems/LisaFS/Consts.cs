@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems.LisaFS;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Filesystems.LisaFS;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class LisaFS

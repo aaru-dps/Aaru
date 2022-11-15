@@ -25,24 +25,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Filesystems.CPM;
-
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+namespace Aaru.Tests.Filesystems.CPM;
+
+[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
 public class Plus3DOS : FilesystemTest
 {
     public Plus3DOS() : base("CP/M") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "+3DOS");
 
-    public override IFilesystem Plugin     => new CPM();
+    public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
     public override bool        Partitions => false;
 
     public override FileSystemTest[] Tests => new[]

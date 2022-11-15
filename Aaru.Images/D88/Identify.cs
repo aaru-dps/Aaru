@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class D88
 {
@@ -53,7 +53,7 @@ public sealed partial class D88
         if(stream.Length < Marshal.SizeOf<Header>())
             return false;
 
-        var hdrB = new byte[Marshal.SizeOf<Header>()];
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
@@ -80,7 +80,7 @@ public sealed partial class D88
         if(!hdr.reserved.SequenceEqual(_reservedEmpty))
             return false;
 
-        var counter = 0;
+        int counter = 0;
 
         foreach(int t in hdr.track_table)
         {

@@ -34,8 +34,6 @@
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +45,8 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -83,7 +83,7 @@ partial class Dump
     {
         DateTime          start;
         DateTime          end;
-        var               sense       = true; // Sense indicator
+        bool              sense       = true; // Sense indicator
         byte[]            cmdBuf      = null; // Data buffer
         double            cmdDuration = 0;    // Command execution time
         const uint        sectorSize  = 2352; // Full sector size
@@ -92,12 +92,12 @@ partial class Dump
         var               outputOptical = _outputPlugin as IWritableOpticalImage;
 
         supportedPlextorSubchannel = supportedSubchannel switch
-                                     {
-                                         MmcSubchannel.None => PlextorSubchannel.None,
-                                         MmcSubchannel.Raw  => PlextorSubchannel.Pack,
-                                         MmcSubchannel.Q16  => PlextorSubchannel.Q16,
-                                         _                  => PlextorSubchannel.None
-                                     };
+        {
+            MmcSubchannel.None => PlextorSubchannel.None,
+            MmcSubchannel.Raw  => PlextorSubchannel.Pack,
+            MmcSubchannel.Q16  => PlextorSubchannel.Q16,
+            _                  => PlextorSubchannel.None
+        };
 
         if(_resume.BadBlocks.Count <= 0 ||
            _aborted                     ||
@@ -110,10 +110,10 @@ partial class Dump
         _dumpLog.WriteLine("Trimming skipped sectors");
         InitProgress?.Invoke();
 
-    trimStart:
+        trimStart:
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
-        for(var b = 0; b < tmpArray.Length; b++)
+        for(int b = 0; b < tmpArray.Length; b++)
         {
             ulong badSector = tmpArray[b];
 
@@ -131,7 +131,7 @@ partial class Dump
             Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
             byte sectorsToTrim   = 1;
-            var  badSectorToRead = (uint)badSector;
+            uint badSectorToRead = (uint)badSector;
 
             if(_fixOffset                       &&
                audioExtents.Contains(badSector) &&
@@ -238,8 +238,8 @@ partial class Dump
 
             if(supportedSubchannel != MmcSubchannel.None)
             {
-                var data = new byte[sectorSize];
-                var sub  = new byte[subSize];
+                byte[] data = new byte[sectorSize];
+                byte[] sub  = new byte[subSize];
                 Array.Copy(cmdBuf, 0, data, 0, sectorSize);
                 Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 

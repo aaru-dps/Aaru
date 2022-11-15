@@ -26,20 +26,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images.Nero;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.Nero;
 
 [TestFixture]
 public class V2 : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "Nero Burning ROM", "V2");
-    public override IMediaImage Plugin => new Nero();
+    public override IMediaImage Plugin => new DiscImages.Nero();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {

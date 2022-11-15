@@ -1,9 +1,9 @@
-namespace Aaru.Tests.Issues._288;
-
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
+
+namespace Aaru.Tests.Issues._288;
 
 /* FakeShemp commented on Mar 3, 2020
  *

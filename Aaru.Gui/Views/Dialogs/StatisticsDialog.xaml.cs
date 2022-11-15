@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Views.Dialogs;
-
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+
+namespace Aaru.Gui.Views.Dialogs;
 
 public sealed class StatisticsDialog : Window
 {

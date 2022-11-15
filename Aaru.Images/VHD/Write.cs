@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,6 +42,8 @@ using Aaru.Helpers;
 using Schemas;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = System.Version;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Vhd
 {
@@ -121,7 +121,7 @@ public sealed partial class Vhd
             return false;
         }
 
-        _writingStream.Seek((long)(0 + sectorAddress * 512), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0 + (sectorAddress * 512)), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -154,7 +154,7 @@ public sealed partial class Vhd
             return false;
         }
 
-        _writingStream.Seek((long)(0 + sectorAddress * 512), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0 + (sectorAddress * 512)), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -208,9 +208,8 @@ public sealed partial class Vhd
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders       == 0 &&
-                   _imageInfo.Heads           == 0 &&
-                   _imageInfo.SectorsPerTrack == 0)
+                if(_imageInfo.Cylinders == 0 &&
+                   _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
                     break;
             }
         }
@@ -235,7 +234,7 @@ public sealed partial class Vhd
 
         footer.Offset = footer.DiskType == TYPE_FIXED ? ulong.MaxValue : 512;
 
-        var footerBytes = new byte[512];
+        byte[] footerBytes = new byte[512];
         Array.Copy(BigEndianBitConverter.GetBytes(footer.Cookie), 0, footerBytes, 0x00, 8);
         Array.Copy(BigEndianBitConverter.GetBytes(footer.Features), 0, footerBytes, 0x08, 4);
         Array.Copy(BigEndianBitConverter.GetBytes(footer.Version), 0, footerBytes, 0x0C, 4);

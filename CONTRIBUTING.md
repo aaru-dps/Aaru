@@ -138,7 +138,8 @@ don't need to create one. When you are creating a bug report, please
 [include as many details as possible](#how-do-i-submit-a-good-bug-report). Fill out the required template, the
 information it asks for helps us resolve issues faster.
 
-> **Note:** If you find a **Closed** issue that seems like it is the same thing that you're experiencing, open a new issue and include a link to the original issue in the body of your new one.
+> **Note:** If you find a **Closed** issue that seems like it is the same thing that you're experiencing, open a new
+> issue and include a link to the original issue in the body of your new one.
 
 #### Before Submitting A Bug Report
 

@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -48,7 +48,7 @@ public partial class Device
                                  out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[2064 * transferLength];
 
         cdb[0]  = (byte)ScsiCommands.HlDtStVendor;

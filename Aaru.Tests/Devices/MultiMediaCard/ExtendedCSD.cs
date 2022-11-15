@@ -1,8 +1,8 @@
-namespace Aaru.Tests.Devices.MultiMediaCard;
-
 using Aaru.Decoders.MMC;
 using FluentAssertions;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Devices.MultiMediaCard;
 
 [TestFixture]
 public class ExtendedCSD
@@ -43,7 +43,7 @@ public class ExtendedCSD
         }
     };
 
-    readonly Aaru.Decoders.MMC.ExtendedCSD[] _decoded =
+    readonly Decoders.MMC.ExtendedCSD[] _decoded =
     {
         new()
         {
@@ -212,9 +212,9 @@ public class ExtendedCSD
     [Test]
     public void Test()
     {
-        for(var i = 0; i < _ecsd.Length; i++)
+        for(int i = 0; i < _ecsd.Length; i++)
         {
-            Aaru.Decoders.MMC.ExtendedCSD csd = Decoders.DecodeExtendedCSD(_ecsd[i]);
+            Decoders.MMC.ExtendedCSD csd = Decoders.MMC.Decoders.DecodeExtendedCSD(_ecsd[i]);
             Assert.IsNotNull(csd, $"Not decoded - {i}");
             csd.Should().BeEquivalentTo(_decoded[i]);
         }

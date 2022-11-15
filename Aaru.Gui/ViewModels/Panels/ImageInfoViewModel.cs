@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Panels;
-
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -59,6 +57,8 @@ using ReactiveUI;
 using Schemas;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
+
+namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class ImageInfoViewModel : ViewModelBase
 {
@@ -122,18 +122,20 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         ImageSizeText = $"Image without headers is {imageFormat.Info.ImageSize} bytes long";
 
-        SectorsText =
-            $"Contains a media of {imageFormat.Info.Sectors} sectors with a maximum sector size of {imageFormat.Info.SectorSize} bytes (if all sectors are of the same size this would be {imageFormat.Info.Sectors * imageFormat.Info.SectorSize} bytes)";
+        SectorsText = $"Contains a media of {imageFormat.Info.Sectors} sectors with a maximum sector size of {
+            imageFormat.Info.SectorSize} bytes (if all sectors are of the same size this would be {
+                imageFormat.Info.Sectors * imageFormat.Info.SectorSize} bytes)";
 
-        MediaTypeText =
-            $"Contains a media of type {imageFormat.Info.MediaType} and XML type {imageFormat.Info.XmlMediaType}";
+        MediaTypeText = $"Contains a media of type {imageFormat.Info.MediaType} and XML type {
+            imageFormat.Info.XmlMediaType}";
 
         HasPartitionsText = $"{(imageFormat.Info.HasPartitions ? "Has" : "Doesn't have")} partitions";
         HasSessionsText   = $"{(imageFormat.Info.HasSessions ? "Has" : "Doesn't have")} sessions";
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
             ApplicationText = !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion)
-                                  ? $"Was created with {imageFormat.Info.Application} version {imageFormat.Info.ApplicationVersion}"
+                                  ? $"Was created with {imageFormat.Info.Application} version {
+                                      imageFormat.Info.ApplicationVersion}"
                                   : $"Was created with {imageFormat.Info.Application}";
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Creator))
@@ -147,8 +149,8 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         if(imageFormat.Info.MediaSequence     != 0 &&
            imageFormat.Info.LastMediaSequence != 0)
-            MediaSequenceText =
-                $"Media is number {imageFormat.Info.MediaSequence} on a set of {imageFormat.Info.LastMediaSequence} medias";
+            MediaSequenceText = $"Media is number {imageFormat.Info.MediaSequence} on a set of {
+                imageFormat.Info.LastMediaSequence} medias";
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
             MediaTitleText = $"Media title: {imageFormat.Info.MediaTitle}";
@@ -180,13 +182,12 @@ public sealed class ImageInfoViewModel : ViewModelBase
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
             DriveFirmwareRevisionText = $"Drive firmware info: {imageFormat.Info.DriveFirmwareRevision}";
 
-        if(imageFormat.Info.Cylinders       > 0                         &&
-           imageFormat.Info.Heads           > 0                         &&
-           imageFormat.Info.SectorsPerTrack > 0                         &&
-           imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
+        if(imageFormat.Info.Cylinders > 0                            &&
+           imageFormat.Info is { Heads: > 0, SectorsPerTrack: > 0 }  &&
+           imageFormat.Info.XmlMediaType != XmlMediaType.OpticalDisc &&
            imageFormat is not ITapeImage { IsTape: true })
-            MediaGeometryText =
-                $"Media geometry: {imageFormat.Info.Cylinders} cylinders, {imageFormat.Info.Heads} heads, {imageFormat.Info.SectorsPerTrack} sectors per track";
+            MediaGeometryText = $"Media geometry: {imageFormat.Info.Cylinders} cylinders, {imageFormat.Info.Heads
+            } heads, {imageFormat.Info.SectorsPerTrack} sectors per track";
 
         if(imageFormat.Info.ReadableMediaTags is { Count: > 0 })
             foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
@@ -276,7 +277,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 2 != toc.Length)
                 {
-                    var tmp = new byte[toc.Length + 2];
+                    byte[] tmp = new byte[toc.Length + 2];
                     Array.Copy(toc, 0, tmp, 2, toc.Length);
                     tmp[0] = (byte)((toc.Length & 0xFF00) >> 8);
                     tmp[1] = (byte)(toc.Length & 0xFF);
@@ -298,7 +299,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 2 != fullToc.Length)
                 {
-                    var tmp = new byte[fullToc.Length + 2];
+                    byte[] tmp = new byte[fullToc.Length + 2];
                     Array.Copy(fullToc, 0, tmp, 2, fullToc.Length);
                     tmp[0]  = (byte)((fullToc.Length & 0xFF00) >> 8);
                     tmp[1]  = (byte)(fullToc.Length & 0xFF);
@@ -320,7 +321,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 2 != pma.Length)
                 {
-                    var tmp = new byte[pma.Length + 2];
+                    byte[] tmp = new byte[pma.Length + 2];
                     Array.Copy(pma, 0, tmp, 2, pma.Length);
                     tmp[0] = (byte)((pma.Length & 0xFF00) >> 8);
                     tmp[1] = (byte)(pma.Length & 0xFF);
@@ -339,7 +340,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 4 != atip.Length)
                 {
-                    var tmp = new byte[atip.Length + 4];
+                    byte[] tmp = new byte[atip.Length + 4];
                     Array.Copy(atip, 0, tmp, 4, atip.Length);
                     tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
                     tmp[1] = (byte)((atip.Length & 0xFF0000)   >> 16);
@@ -362,7 +363,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 4 != cdtext.Length)
                 {
-                    var tmp = new byte[cdtext.Length + 4];
+                    byte[] tmp = new byte[cdtext.Length + 4];
                     Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
                     tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
                     tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);

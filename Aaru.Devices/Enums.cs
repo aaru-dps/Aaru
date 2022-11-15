@@ -30,6 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 #pragma warning disable 1591
 
 // ReSharper disable UnusedType.Global
@@ -39,9 +42,6 @@
 // ReSharper disable InconsistentNaming
 
 namespace Aaru.Devices;
-
-using System;
-using System.Diagnostics.CodeAnalysis;
 
 #region ATA Commands
 /// <summary>All known ATA commands</summary>
@@ -1656,11 +1656,8 @@ public enum ScsiCommands : byte
     #endregion ATA Command Pass-Through
 
     #region 6-byte CDB aliases
-    ModeSelect6 = ModeSelect,
-    ModeSense6  = ModeSense,
-    Read6       = Read,
-    Seek6       = Seek,
-    Write6      = Write,
+    ModeSelect6 = ModeSelect, ModeSense6 = ModeSense, Read6 = Read,
+    Seek6       = Seek, Write6           = Write,
     #endregion 6-byte CDB aliases
 
     #region SCSI Zoned Block Commands
@@ -1672,18 +1669,10 @@ public enum ScsiCommands : byte
     #endregion
 
     #region SCSI Commands with unknown meaning, mostly vendor specific
-    SetCdSpeedUnk              = 0xB8,
-    WriteCdMsf                 = 0xA2,
-    WriteCd                    = 0xAA,
-    ReadDefectTag              = 0xB7,
-    PlayCd                     = 0xBC,
-    SpareIn                    = 0xBC,
-    SpareOut                   = 0xBD,
-    WriteStream16              = 0x9A,
-    WriteAtomic                = 0x9C,
-    ServiceActionBidirectional = 0x9D,
-    WriteLong2                 = 0xEA,
-    UnknownCdCommand           = 0xD4,
+    SetCdSpeedUnk              = 0xB8, WriteCdMsf    = 0xA2, WriteCd          = 0xAA,
+    ReadDefectTag              = 0xB7, PlayCd        = 0xBC, SpareIn          = 0xBC,
+    SpareOut                   = 0xBD, WriteStream16 = 0x9A, WriteAtomic      = 0x9C,
+    ServiceActionBidirectional = 0x9D, WriteLong2    = 0xEA, UnknownCdCommand = 0xD4,
     UnknownCdCommand2          = 0xD5,
     #endregion SCSI Commands with unknown meaning, mostly vendor specific
 
@@ -2433,8 +2422,7 @@ public enum SscSpaceCodes : byte
     SequentialFilemark = 2,
 
     /// <summary>End-of-data</summary>
-    EndOfData = 3, Obsolete1 = 4,
-    Obsolete2                = 5
+    EndOfData = 3, Obsolete1 = 4, Obsolete2 = 5
 }
 
 /// <summary>MMC / SecureDigital commands</summary>
@@ -2503,8 +2491,7 @@ public enum MmcCommands : byte
     GoInactiveState = 15,
 
     /// <summary>The host sends the bus testing data pattern to a device (ADTC, R1)</summary>
-    BusTestWrite = 19, SpiReadOcr = 58,
-    SpicrcOnOff                   = 59,
+    BusTestWrite = 19, SpiReadOcr = 58, SpicrcOnOff = 59,
     #endregion Class 1 MMC Commands (Basic and read-stream)
 
     #region Class 2 MMC Commands (Block-oriented read)
@@ -2683,36 +2670,20 @@ public enum SecureDigitalCommands : byte
 [Flags, SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
 public enum MmcFlags : uint
 {
-    ResponsePresent = 1 << 0,
-    Response136     = 1 << 1,
-    ResponseCrc     = 1 << 2,
-    ResponseBusy    = 1 << 3,
-    ResponseOpcode  = 1 << 4,
-    CommandMask     = 3 << 5,
-    CommandAc       = 0 << 5,
-    CommandAdtc     = 1 << 5,
-    CommandBc       = 2 << 5,
-    CommandBcr      = 3 << 5,
-    ResponseSpiS1   = 1 << 7,
-    ResponseSpiS2   = 1 << 8,
-    ResponseSpiB4   = 1 << 9,
-    ResponseSpiBusy = 1 << 10,
-    ResponseNone    = 0,
+    ResponsePresent = 1 << 0, Response136 = 1 << 1, ResponseCrc = 1 << 2,
+    ResponseBusy    = 1 << 3, ResponseOpcode = 1 << 4, CommandMask = 3 << 5,
+    CommandAc       = 0 << 5, CommandAdtc = 1 << 5, CommandBc = 2 << 5,
+    CommandBcr      = 3 << 5, ResponseSpiS1 = 1 << 7, ResponseSpiS2 = 1 << 8,
+    ResponseSpiB4   = 1 << 9, ResponseSpiBusy = 1 << 10, ResponseNone = 0,
     ResponseR1      = ResponsePresent | ResponseCrc | ResponseOpcode,
     ResponseR1B     = ResponsePresent | ResponseCrc | ResponseOpcode | ResponseBusy,
-    ResponseR2      = ResponsePresent | Response136 | ResponseCrc,
-    ResponseR3      = ResponsePresent,
-    ResponseR4      = ResponsePresent,
-    ResponseR5      = ResponsePresent | ResponseCrc | ResponseOpcode,
+    ResponseR2      = ResponsePresent | Response136 | ResponseCrc, ResponseR3 = ResponsePresent,
+    ResponseR4      = ResponsePresent, ResponseR5 = ResponsePresent | ResponseCrc | ResponseOpcode,
     ResponseR6      = ResponsePresent | ResponseCrc | ResponseOpcode,
-    ResponseR7      = ResponsePresent | ResponseCrc | ResponseOpcode,
-    ResponseSpiR1   = ResponseSpiS1,
-    ResponseSpiR1B  = ResponseSpiS1 | ResponseSpiBusy,
-    ResponseSpiR2   = ResponseSpiS1 | ResponseSpiS2,
-    ResponseSpiR3   = ResponseSpiS1 | ResponseSpiB4,
-    ResponseSpiR4   = ResponseSpiS1 | ResponseSpiB4,
-    ResponseSpiR5   = ResponseSpiS1 | ResponseSpiS2,
-    ResponseSpiR7   = ResponseSpiS1 | ResponseSpiB4
+    ResponseR7      = ResponsePresent | ResponseCrc | ResponseOpcode, ResponseSpiR1 = ResponseSpiS1,
+    ResponseSpiR1B  = ResponseSpiS1 | ResponseSpiBusy, ResponseSpiR2 = ResponseSpiS1 | ResponseSpiS2,
+    ResponseSpiR3   = ResponseSpiS1 | ResponseSpiB4, ResponseSpiR4 = ResponseSpiS1 | ResponseSpiB4,
+    ResponseSpiR5   = ResponseSpiS1 | ResponseSpiS2, ResponseSpiR7 = ResponseSpiS1 | ResponseSpiB4
 }
 
 [Flags]
@@ -2898,40 +2869,28 @@ public enum AtaFeatures : byte
 
 public enum KreonLockStates : byte
 {
-    Locked   = 0,
-    Xtreme   = 1,
-    Wxripper = 2
+    Locked = 0, Xtreme = 1, Wxripper = 2
 }
 
 public enum RotationalControl : byte
 {
-    ClvAndImpureCav = 0,
-    PureCav         = 1
+    ClvAndImpureCav = 0, PureCav = 1
 }
 
 public enum TrackInformationType : byte
 {
-    LogicalBlockAddress = 0,
-    LogicalTrackNumber  = 1,
-    SessionNumber       = 2
+    LogicalBlockAddress = 0, LogicalTrackNumber = 1, SessionNumber = 2
 }
 
 public enum CssReportKeyFormat : byte
 {
-    AgidForCssCppm = 0x00,
-    ChallengeKey   = 0x01,
-    Key1           = 0x02,
-    TitleKey       = 0x04,
-    Asf            = 0x05,
-    RpcState       = 0x08,
-    AgidForCprm    = 0x11,
-    InvalidateAgid = 0x3f
+    AgidForCssCppm = 0x00, ChallengeKey   = 0x01, Key1     = 0x02,
+    TitleKey       = 0x04, Asf            = 0x05, RpcState = 0x08,
+    AgidForCprm    = 0x11, InvalidateAgid = 0x3f
 }
 
 public enum CssSendKeyFormat : byte
 {
-    ChallengeKey   = 0x01,
-    Key2           = 0x03,
-    RpcStructure   = 0x06,
+    ChallengeKey   = 0x01, Key2 = 0x03, RpcStructure = 0x06,
     InvalidateAgid = 0x3f
 }

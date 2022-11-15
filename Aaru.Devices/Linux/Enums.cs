@@ -31,9 +31,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Linux;
-
 using System;
+
+namespace Aaru.Devices.Linux;
 
 [Flags]
 enum FileFlags
@@ -92,12 +92,10 @@ enum ScsiIoctlDirection
 enum LinuxIoctl : uint
 {
     // SCSI IOCtls
-    SgGetVersionNum = 0x2282,
-    SgIo            = 0x2285,
+    SgGetVersionNum = 0x2282, SgIo = 0x2285,
 
     // MMC IOCtl
-    MmcIocCmd      = 0xC048B300,
-    MmcIocMultiCmd = 0xC008B301
+    MmcIocCmd = 0xC048B300, MmcIocMultiCmd = 0xC008B301
 }
 
 [Flags]
@@ -123,19 +121,12 @@ enum SgInfo : uint
 [Flags]
 enum SgFlags : uint
 {
-    DirectIo         = 1,
-    UnusedLunInhibit = 2,
-    MmapIo           = 4,
-    NoDxfer          = 0x10000,
-    QAtTail          = 0x10,
-    QAtHead          = 0x20
+    DirectIo = 1, UnusedLunInhibit = 2, MmapIo     = 4,
+    NoDxfer  = 0x10000, QAtTail    = 0x10, QAtHead = 0x20
 }
 
 enum SeekWhence
 {
-    Begin   = 0,
-    Current = 1,
-    End     = 2,
-    Data    = 3,
-    Hole    = 4
+    Begin = 0, Current = 1, End = 2,
+    Data  = 3, Hole    = 4
 }

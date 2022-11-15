@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Nero
 {
@@ -47,7 +47,7 @@ public sealed partial class Nero
         var footerV2 = new FooterV2();
 
         _imageStream.Seek(-8, SeekOrigin.End);
-        var buffer = new byte[8];
+        byte[] buffer = new byte[8];
         _imageStream.EnsureRead(buffer, 0, 8);
         footerV1.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
         footerV1.FirstChunkOffset = BigEndianBitConverter.ToUInt32(buffer, 4);

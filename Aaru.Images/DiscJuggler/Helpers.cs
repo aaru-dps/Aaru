@@ -30,16 +30,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using Aaru.CommonTypes;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class DiscJuggler
 {
     static MediaType DecodeCdiMediumType(ushort type) => type switch
-                                                         {
-                                                             56  => MediaType.DVDROM,
-                                                             152 => MediaType.CDROM,
-                                                             _   => MediaType.Unknown
-                                                         };
+    {
+        56  => MediaType.DVDROM,
+        152 => MediaType.CDROM,
+        _   => MediaType.Unknown
+    };
 }

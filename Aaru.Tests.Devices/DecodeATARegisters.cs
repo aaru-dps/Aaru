@@ -26,17 +26,17 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices;
-
 using System;
 using System.Text;
 using Aaru.Decoders.ATA;
+
+namespace Aaru.Tests.Devices;
 
 static partial class MainClass
 {
     static string DecodeAtaStatus(byte status)
     {
-        var ret = "";
+        string ret = "";
 
         if((status & 0x80) == 0x80)
             ret += "BSY ";
@@ -67,7 +67,7 @@ static partial class MainClass
 
     static string DecodeAtaError(byte status)
     {
-        var ret = "";
+        string ret = "";
 
         if((status & 0x80) == 0x80)
             ret += "BBK ";

@@ -1,242 +1,242 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <SchemaVersion>2.0</SchemaVersion>
-        <ProjectGuid>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <RootNamespace>Aaru.Filesystems</RootNamespace>
-        <AssemblyName>Aaru.Filesystems</AssemblyName>
-        <ReleaseVersion>$(Version)</ReleaseVersion>
-        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>6.0.0-alpha8</Version>
-        <Company>Claunia.com</Company>
-        <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
-        <Product>Aaru Data Preservation Suite</Product>
-        <Title>Aaru.Filesystems</Title>
-        <ApplicationVersion>$(Version)</ApplicationVersion>
-        <TargetFramework>net7.0</TargetFramework>
-        <NoWarn>CS0649</NoWarn>
-        <LangVersion>11</LangVersion>
-        <Description>Filesystem implementations used by the Aaru Data Preservation Suite.</Description>
-        <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
-        <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/aaru-dps/Aaru</RepositoryUrl>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <NeutralLanguage>en-US</NeutralLanguage>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
-        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <NoWarn>CS1591;CS1574</NoWarn>
-    </PropertyGroup>
-    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <InternalsVisibleTo Include="Aaru.Tests"/>
-        <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
-    </ItemGroup>
-    <PropertyGroup>
-        <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
-        <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-        <NrtShowRevision>true</NrtShowRevision>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageReference Include="Claunia.Encoding" Version="1.9.2" />
-        <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="AppleCommon\Consts.cs" />
-        <Compile Include="AppleCommon\Enums.cs" />
-        <Compile Include="AppleCommon\Info.cs" />
-        <Compile Include="AppleCommon\Structs.cs" />
-        <Compile Include="AppleHFS\AppleHFS.cs" />
-        <Compile Include="AppleHFS\Consts.cs" />
-        <Compile Include="AppleHFS\Enums.cs" />
-        <Compile Include="AppleHFS\Info.cs" />
-        <Compile Include="AppleHFS\Structs.cs" />
-        <Compile Include="FATX\Consts.cs" />
-        <Compile Include="FATX\Dir.cs" />
-        <Compile Include="FATX\FATX.cs" />
-        <Compile Include="FATX\File.cs" />
-        <Compile Include="FATX\Info.cs" />
-        <Compile Include="FATX\Structs.cs" />
-        <Compile Include="FATX\Super.cs" />
-        <Compile Include="FAT\BPB.cs" />
-        <Compile Include="FAT\Consts.cs" />
-        <Compile Include="FAT\Dir.cs" />
-        <Compile Include="FAT\FAT.cs" />
-        <Compile Include="FAT\File.cs" />
-        <Compile Include="FAT\Info.cs" />
-        <Compile Include="FAT\Structs.cs" />
-        <Compile Include="FAT\Super.cs" />
-        <Compile Include="FAT\Xattr.cs" />
-        <Compile Include="HPOFS\Consts.cs" />
-        <Compile Include="HPOFS\HPOFS.cs" />
-        <Compile Include="HPOFS\Info.cs" />
-        <Compile Include="HPOFS\Structs.cs" />
-        <Compile Include="ISO9660\Consts\Internal.cs" />
-        <Compile Include="ISO9660\Date.cs" />
-        <Compile Include="ISO9660\Dir.cs" />
-        <Compile Include="ISO9660\File.cs" />
-        <Compile Include="ISO9660\Mode2.cs" />
-        <Compile Include="ISO9660\PathTable.cs" />
-        <Compile Include="ISO9660\Super.cs" />
-        <Compile Include="ISO9660\Xattr.cs" />
-        <Compile Include="Opera\Consts.cs" />
-        <Compile Include="Opera\Dir.cs" />
-        <Compile Include="Opera\File.cs" />
-        <Compile Include="Opera\Info.cs" />
-        <Compile Include="Opera\Opera.cs" />
-        <Compile Include="Opera\Structs.cs" />
-        <Compile Include="Opera\Super.cs" />
-        <Compile Include="PCFX.cs" />
-        <Compile Include="AmigaDOS.cs" />
-        <Compile Include="AppleHFSPlus.cs" />
-        <Compile Include="BFS.cs" />
-        <Compile Include="ext2FS.cs" />
-        <Compile Include="extFS.cs" />
-        <Compile Include="FFS.cs" />
-        <Compile Include="HPFS.cs" />
-        <Compile Include="MinixFS.cs" />
-        <Compile Include="NTFS.cs" />
-        <Compile Include="ODS.cs" />
-        <Compile Include="PCEngine.cs" />
-        <Compile Include="ProDOS.cs" />
-        <Compile Include="ReFS.cs" />
-        <Compile Include="Register.cs" />
-        <Compile Include="SolarFS.cs" />
-        <Compile Include="Symbian.cs" />
-        <Compile Include="SysV.cs" />
-        <Compile Include="UNIXBFS.cs" />
-        <Compile Include="Acorn.cs" />
-        <Compile Include="Nintendo.cs" />
-        <Compile Include="BTRFS.cs" />
-        <Compile Include="APFS.cs" />
-        <Compile Include="LisaFS\LisaFS.cs" />
-        <Compile Include="LisaFS\Consts.cs" />
-        <Compile Include="LisaFS\Structs.cs" />
-        <Compile Include="LisaFS\Info.cs" />
-        <Compile Include="LisaFS\Super.cs" />
-        <Compile Include="LisaFS\Xattr.cs" />
-        <Compile Include="LisaFS\Dir.cs" />
-        <Compile Include="LisaFS\File.cs" />
-        <Compile Include="LisaFS\Extent.cs" />
-        <Compile Include="UCSDPascal\UCSDPascal.cs" />
-        <Compile Include="UCSDPascal\Consts.cs" />
-        <Compile Include="UCSDPascal\File.cs" />
-        <Compile Include="UCSDPascal\Info.cs" />
-        <Compile Include="UCSDPascal\Structs.cs" />
-        <Compile Include="UCSDPascal\Super.cs" />
-        <Compile Include="UCSDPascal\Dir.cs" />
-        <Compile Include="AppleMFS\AppleMFS.cs" />
-        <Compile Include="AppleMFS\Consts.cs" />
-        <Compile Include="AppleMFS\Dir.cs" />
-        <Compile Include="AppleMFS\File.cs" />
-        <Compile Include="AppleMFS\Info.cs" />
-        <Compile Include="AppleMFS\Structs.cs" />
-        <Compile Include="AppleMFS\Super.cs" />
-        <Compile Include="AppleMFS\Xattr.cs" />
-        <Compile Include="exFAT.cs" />
-        <Compile Include="CPM\Info.cs" />
-        <Compile Include="CPM\CPM.cs" />
-        <Compile Include="CPM\Structs.cs" />
-        <Compile Include="CPM\Definitions.cs" />
-        <Compile Include="CPM\Dir.cs" />
-        <Compile Include="CPM\Super.cs" />
-        <Compile Include="CPM\Consts.cs" />
-        <Compile Include="CPM\File.cs" />
-        <Compile Include="CPM\Xattr.cs" />
-        <Compile Include="QNX4.cs" />
-        <Compile Include="QNX6.cs" />
-        <Compile Include="JFS.cs" />
-        <Compile Include="F2FS.cs" />
-        <Compile Include="NILFS2.cs" />
-        <Compile Include="Reiser.cs" />
-        <Compile Include="Reiser4.cs" />
-        <Compile Include="XFS.cs" />
-        <Compile Include="PFS.cs" />
-        <Compile Include="SFS.cs" />
-        <Compile Include="VMfs.cs" />
-        <Compile Include="VxFS.cs" />
-        <Compile Include="Squash.cs" />
-        <Compile Include="Cram.cs" />
-        <Compile Include="CBM.cs" />
-        <Compile Include="UDF.cs" />
-        <Compile Include="ECMA67.cs" />
-        <Compile Include="Xia.cs" />
-        <Compile Include="ZFS.cs" />
-        <Compile Include="AppleDOS\Dir.cs" />
-        <Compile Include="AppleDOS\File.cs" />
-        <Compile Include="AppleDOS\Info.cs" />
-        <Compile Include="AppleDOS\AppleDOS.cs" />
-        <Compile Include="AppleDOS\Structs.cs" />
-        <Compile Include="AppleDOS\Super.cs" />
-        <Compile Include="AppleDOS\Xattr.cs" />
-        <Compile Include="AtheOS.cs" />
-        <Compile Include="HAMMER.cs" />
-        <Compile Include="Fossil.cs" />
-        <Compile Include="EFS.cs" />
-        <Compile Include="UNICOS.cs" />
-        <Compile Include="RBF.cs" />
-        <Compile Include="AODOS.cs" />
-        <Compile Include="RT11.cs" />
-        <Compile Include="LIF.cs" />
-        <Compile Include="Locus.cs" />
-        <Compile Include="dump.cs" />
-        <Compile Include="MicroDOS.cs" />
-        <Compile Include="ISO9660\Info.cs" />
-        <Compile Include="ISO9660\ISO9660.cs" />
-        <Compile Include="ISO9660\Structs\ISO.cs" />
-        <Compile Include="ISO9660\Structs\RRIP.cs" />
-        <Compile Include="ISO9660\Structs\SUSP.cs" />
-        <Compile Include="ISO9660\Structs\Amiga.cs" />
-        <Compile Include="ISO9660\Structs\HighSierra.cs" />
-        <Compile Include="ISO9660\Structs\Apple.cs" />
-        <Compile Include="ISO9660\Structs\ElTorito.cs" />
-        <Compile Include="ISO9660\Structs\XA.cs" />
-        <Compile Include="ISO9660\Structs\Ziso.cs" />
-        <Compile Include="ISO9660\Structs\Joliet.cs" />
-        <Compile Include="ISO9660\Structs\Internal.cs" />
-        <Compile Include="ISO9660\Consts\ISO.cs" />
-        <Compile Include="ISO9660\Consts\HighSierra.cs" />
-        <Compile Include="ISO9660\Consts\XA.cs" />
-        <Compile Include="ISO9660\Consts\ElTorito.cs" />
-        <Compile Include="ISO9660\Consts\Apple.cs" />
-        <Compile Include="ISO9660\Consts\RRIP.cs" />
-        <Compile Include="ISO9660\Consts\Amiga.cs" />
-        <Compile Include="ISO9660\Consts\SUSP.cs" />
-        <Compile Include="ISO9660\Consts\Ziso.cs" />
-        <Compile Include="ISO9660\Consts\AAIP.cs" />
-        <Compile Include="ISO9660\Structs\CDi.cs" />
-        <Compile Include="ISO9660\Consts\CDi.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
-        <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj" />
-        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj" />
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="LisaFS\" />
-        <Folder Include="UCSDPascal\" />
-        <Folder Include="AppleMFS\" />
-        <Folder Include="CPM\" />
-        <Folder Include="AppleDOS\" />
-        <Folder Include="ISO9660\" />
-        <Folder Include="ISO9660\Structs\" />
-        <Folder Include="ISO9660\Consts\" />
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="..\LICENSE.LGPL">
-            <Link>LICENSE.LGPL</Link>
-        </EmbeddedResource>
-        <EmbeddedResource Include="CPM\cpmdefs.xml" />
-    </ItemGroup>
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Aaru.Filesystems</RootNamespace>
+    <AssemblyName>Aaru.Filesystems</AssemblyName>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>6.0.0-alpha8</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
+    <Product>Aaru Data Preservation Suite</Product>
+    <Title>Aaru.Filesystems</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <TargetFramework>net7.0</TargetFramework>
+    <NoWarn>CS0649</NoWarn>
+    <LangVersion>11</LangVersion>
+    <Description>Filesystem implementations used by the Aaru Data Preservation Suite.</Description>
+    <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/aaru-dps/Aaru</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Claunia.Encoding" Version="1.9.2"/>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppleCommon\Consts.cs"/>
+    <Compile Include="AppleCommon\Enums.cs"/>
+    <Compile Include="AppleCommon\Info.cs"/>
+    <Compile Include="AppleCommon\Structs.cs"/>
+    <Compile Include="AppleHFS\AppleHFS.cs"/>
+    <Compile Include="AppleHFS\Consts.cs"/>
+    <Compile Include="AppleHFS\Enums.cs"/>
+    <Compile Include="AppleHFS\Info.cs"/>
+    <Compile Include="AppleHFS\Structs.cs"/>
+    <Compile Include="FATX\Consts.cs"/>
+    <Compile Include="FATX\Dir.cs"/>
+    <Compile Include="FATX\FATX.cs"/>
+    <Compile Include="FATX\File.cs"/>
+    <Compile Include="FATX\Info.cs"/>
+    <Compile Include="FATX\Structs.cs"/>
+    <Compile Include="FATX\Super.cs"/>
+    <Compile Include="FAT\BPB.cs"/>
+    <Compile Include="FAT\Consts.cs"/>
+    <Compile Include="FAT\Dir.cs"/>
+    <Compile Include="FAT\FAT.cs"/>
+    <Compile Include="FAT\File.cs"/>
+    <Compile Include="FAT\Info.cs"/>
+    <Compile Include="FAT\Structs.cs"/>
+    <Compile Include="FAT\Super.cs"/>
+    <Compile Include="FAT\Xattr.cs"/>
+    <Compile Include="HPOFS\Consts.cs"/>
+    <Compile Include="HPOFS\HPOFS.cs"/>
+    <Compile Include="HPOFS\Info.cs"/>
+    <Compile Include="HPOFS\Structs.cs"/>
+    <Compile Include="ISO9660\Consts\Internal.cs"/>
+    <Compile Include="ISO9660\Date.cs"/>
+    <Compile Include="ISO9660\Dir.cs"/>
+    <Compile Include="ISO9660\File.cs"/>
+    <Compile Include="ISO9660\Mode2.cs"/>
+    <Compile Include="ISO9660\PathTable.cs"/>
+    <Compile Include="ISO9660\Super.cs"/>
+    <Compile Include="ISO9660\Xattr.cs"/>
+    <Compile Include="Opera\Consts.cs"/>
+    <Compile Include="Opera\Dir.cs"/>
+    <Compile Include="Opera\File.cs"/>
+    <Compile Include="Opera\Info.cs"/>
+    <Compile Include="Opera\Opera.cs"/>
+    <Compile Include="Opera\Structs.cs"/>
+    <Compile Include="Opera\Super.cs"/>
+    <Compile Include="PCFX.cs"/>
+    <Compile Include="AmigaDOS.cs"/>
+    <Compile Include="AppleHFSPlus.cs"/>
+    <Compile Include="BFS.cs"/>
+    <Compile Include="ext2FS.cs"/>
+    <Compile Include="extFS.cs"/>
+    <Compile Include="FFS.cs"/>
+    <Compile Include="HPFS.cs"/>
+    <Compile Include="MinixFS.cs"/>
+    <Compile Include="NTFS.cs"/>
+    <Compile Include="ODS.cs"/>
+    <Compile Include="PCEngine.cs"/>
+    <Compile Include="ProDOS.cs"/>
+    <Compile Include="ReFS.cs"/>
+    <Compile Include="Register.cs"/>
+    <Compile Include="SolarFS.cs"/>
+    <Compile Include="Symbian.cs"/>
+    <Compile Include="SysV.cs"/>
+    <Compile Include="UNIXBFS.cs"/>
+    <Compile Include="Acorn.cs"/>
+    <Compile Include="Nintendo.cs"/>
+    <Compile Include="BTRFS.cs"/>
+    <Compile Include="APFS.cs"/>
+    <Compile Include="LisaFS\LisaFS.cs"/>
+    <Compile Include="LisaFS\Consts.cs"/>
+    <Compile Include="LisaFS\Structs.cs"/>
+    <Compile Include="LisaFS\Info.cs"/>
+    <Compile Include="LisaFS\Super.cs"/>
+    <Compile Include="LisaFS\Xattr.cs"/>
+    <Compile Include="LisaFS\Dir.cs"/>
+    <Compile Include="LisaFS\File.cs"/>
+    <Compile Include="LisaFS\Extent.cs"/>
+    <Compile Include="UCSDPascal\UCSDPascal.cs"/>
+    <Compile Include="UCSDPascal\Consts.cs"/>
+    <Compile Include="UCSDPascal\File.cs"/>
+    <Compile Include="UCSDPascal\Info.cs"/>
+    <Compile Include="UCSDPascal\Structs.cs"/>
+    <Compile Include="UCSDPascal\Super.cs"/>
+    <Compile Include="UCSDPascal\Dir.cs"/>
+    <Compile Include="AppleMFS\AppleMFS.cs"/>
+    <Compile Include="AppleMFS\Consts.cs"/>
+    <Compile Include="AppleMFS\Dir.cs"/>
+    <Compile Include="AppleMFS\File.cs"/>
+    <Compile Include="AppleMFS\Info.cs"/>
+    <Compile Include="AppleMFS\Structs.cs"/>
+    <Compile Include="AppleMFS\Super.cs"/>
+    <Compile Include="AppleMFS\Xattr.cs"/>
+    <Compile Include="exFAT.cs"/>
+    <Compile Include="CPM\Info.cs"/>
+    <Compile Include="CPM\CPM.cs"/>
+    <Compile Include="CPM\Structs.cs"/>
+    <Compile Include="CPM\Definitions.cs"/>
+    <Compile Include="CPM\Dir.cs"/>
+    <Compile Include="CPM\Super.cs"/>
+    <Compile Include="CPM\Consts.cs"/>
+    <Compile Include="CPM\File.cs"/>
+    <Compile Include="CPM\Xattr.cs"/>
+    <Compile Include="QNX4.cs"/>
+    <Compile Include="QNX6.cs"/>
+    <Compile Include="JFS.cs"/>
+    <Compile Include="F2FS.cs"/>
+    <Compile Include="NILFS2.cs"/>
+    <Compile Include="Reiser.cs"/>
+    <Compile Include="Reiser4.cs"/>
+    <Compile Include="XFS.cs"/>
+    <Compile Include="PFS.cs"/>
+    <Compile Include="SFS.cs"/>
+    <Compile Include="VMfs.cs"/>
+    <Compile Include="VxFS.cs"/>
+    <Compile Include="Squash.cs"/>
+    <Compile Include="Cram.cs"/>
+    <Compile Include="CBM.cs"/>
+    <Compile Include="UDF.cs"/>
+    <Compile Include="ECMA67.cs"/>
+    <Compile Include="Xia.cs"/>
+    <Compile Include="ZFS.cs"/>
+    <Compile Include="AppleDOS\Dir.cs"/>
+    <Compile Include="AppleDOS\File.cs"/>
+    <Compile Include="AppleDOS\Info.cs"/>
+    <Compile Include="AppleDOS\AppleDOS.cs"/>
+    <Compile Include="AppleDOS\Structs.cs"/>
+    <Compile Include="AppleDOS\Super.cs"/>
+    <Compile Include="AppleDOS\Xattr.cs"/>
+    <Compile Include="AtheOS.cs"/>
+    <Compile Include="HAMMER.cs"/>
+    <Compile Include="Fossil.cs"/>
+    <Compile Include="EFS.cs"/>
+    <Compile Include="UNICOS.cs"/>
+    <Compile Include="RBF.cs"/>
+    <Compile Include="AODOS.cs"/>
+    <Compile Include="RT11.cs"/>
+    <Compile Include="LIF.cs"/>
+    <Compile Include="Locus.cs"/>
+    <Compile Include="dump.cs"/>
+    <Compile Include="MicroDOS.cs"/>
+    <Compile Include="ISO9660\Info.cs"/>
+    <Compile Include="ISO9660\ISO9660.cs"/>
+    <Compile Include="ISO9660\Structs\ISO.cs"/>
+    <Compile Include="ISO9660\Structs\RRIP.cs"/>
+    <Compile Include="ISO9660\Structs\SUSP.cs"/>
+    <Compile Include="ISO9660\Structs\Amiga.cs"/>
+    <Compile Include="ISO9660\Structs\HighSierra.cs"/>
+    <Compile Include="ISO9660\Structs\Apple.cs"/>
+    <Compile Include="ISO9660\Structs\ElTorito.cs"/>
+    <Compile Include="ISO9660\Structs\XA.cs"/>
+    <Compile Include="ISO9660\Structs\Ziso.cs"/>
+    <Compile Include="ISO9660\Structs\Joliet.cs"/>
+    <Compile Include="ISO9660\Structs\Internal.cs"/>
+    <Compile Include="ISO9660\Consts\ISO.cs"/>
+    <Compile Include="ISO9660\Consts\HighSierra.cs"/>
+    <Compile Include="ISO9660\Consts\XA.cs"/>
+    <Compile Include="ISO9660\Consts\ElTorito.cs"/>
+    <Compile Include="ISO9660\Consts\Apple.cs"/>
+    <Compile Include="ISO9660\Consts\RRIP.cs"/>
+    <Compile Include="ISO9660\Consts\Amiga.cs"/>
+    <Compile Include="ISO9660\Consts\SUSP.cs"/>
+    <Compile Include="ISO9660\Consts\Ziso.cs"/>
+    <Compile Include="ISO9660\Consts\AAIP.cs"/>
+    <Compile Include="ISO9660\Structs\CDi.cs"/>
+    <Compile Include="ISO9660\Consts\CDi.cs"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+    <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"/>
+    <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="LisaFS\"/>
+    <Folder Include="UCSDPascal\"/>
+    <Folder Include="AppleMFS\"/>
+    <Folder Include="CPM\"/>
+    <Folder Include="AppleDOS\"/>
+    <Folder Include="ISO9660\"/>
+    <Folder Include="ISO9660\Structs\"/>
+    <Folder Include="ISO9660\Consts\"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CPM\cpmdefs.xml"/>
+  </ItemGroup>
 </Project>

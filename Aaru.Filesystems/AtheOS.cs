@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection for the AtheOS filesystem</summary>
@@ -86,14 +86,14 @@ public sealed class AtheOS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var sbSector = new byte[AFS_SUPERBLOCK_SIZE];
+        byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
 
         if(offset + AFS_SUPERBLOCK_SIZE > tmp.Length)
             return false;
 
         Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
-        var magic = BitConverter.ToUInt32(sbSector, 0x20);
+        uint magic = BitConverter.ToUInt32(sbSector, 0x20);
 
         return magic == AFS_MAGIC1;
     }
@@ -118,7 +118,7 @@ public sealed class AtheOS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        var sbSector = new byte[AFS_SUPERBLOCK_SIZE];
+        byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
         Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
         SuperBlock afsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);

@@ -26,13 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Filesystems.QNX4;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Filesystems.QNX4;
 
 [TestFixture]
 public class MBR : FilesystemTest
@@ -40,7 +39,7 @@ public class MBR : FilesystemTest
     public MBR() : base("QNX4 filesystem") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem (MBR)");
-    public override IFilesystem Plugin => new QNX4();
+    public override IFilesystem Plugin => new Aaru.Filesystems.QNX4();
     public override bool Partitions => true;
 
     public override FileSystemTest[] Tests => new[]

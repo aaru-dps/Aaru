@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class ZZZRawImage
 {
@@ -59,7 +59,7 @@ public sealed partial class ZZZRawImage
             case ".256": return imageFilter.DataForkLength % 256 == 0;
             case ".2352" when imageFilter.DataForkLength % 2352 == 0 && imageFilter.DataForkLength <= 846720000:
             case ".2448" when imageFilter.DataForkLength % 2448 == 0 && imageFilter.DataForkLength <= 881280000:
-                var    sync   = new byte[12];
+                byte[] sync   = new byte[12];
                 Stream stream = imageFilter.GetDataForkStream();
                 stream.Position = 0;
                 stream.EnsureRead(sync, 0, 12);
@@ -76,10 +76,10 @@ public sealed partial class ZZZRawImage
             return true;
 
         // Only for single track data CDs
-        if(imageFilter.DataForkLength % 2352 == 0 && imageFilter.DataForkLength <= 846720000 ||
-           imageFilter.DataForkLength % 2448 == 0 && imageFilter.DataForkLength <= 881280000)
+        if((imageFilter.DataForkLength % 2352 == 0 && imageFilter.DataForkLength <= 846720000) ||
+           (imageFilter.DataForkLength % 2448 == 0 && imageFilter.DataForkLength <= 881280000))
         {
-            var    sync   = new byte[12];
+            byte[] sync   = new byte[12];
             Stream stream = imageFilter.GetDataForkStream();
             stream.Position = 0;
             stream.EnsureRead(sync, 0, 12);

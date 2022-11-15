@@ -31,13 +31,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Windows;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Aaru.Decoders.ATA;
 using Microsoft.Win32.SafeHandles;
+
+namespace Aaru.Devices.Windows;
 
 [SuppressMessage("ReSharper", "UnusedParameter.Global")]
 partial class Device
@@ -58,11 +58,11 @@ partial class Device
             return -1;
 
         ScsiIoctlDirection dir = direction switch
-                                 {
-                                     ScsiDirection.In  => ScsiIoctlDirection.In,
-                                     ScsiDirection.Out => ScsiIoctlDirection.Out,
-                                     _                 => ScsiIoctlDirection.Unspecified
-                                 };
+        {
+            ScsiDirection.In  => ScsiIoctlDirection.In,
+            ScsiDirection.Out => ScsiIoctlDirection.Out,
+            _                 => ScsiIoctlDirection.Unspecified
+        };
 
         var sptdSb = new ScsiPassThroughDirectAndSenseBuffer
         {

@@ -30,9 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,6 +40,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 
+namespace Aaru.DiscImages;
+
 public sealed partial class Apple2Mg
 {
     /// <inheritdoc />
@@ -51,7 +50,7 @@ public sealed partial class Apple2Mg
     {
         if(sectorSize != 512)
             if(sectorSize != 256 ||
-               mediaType != MediaType.Apple32SS && mediaType != MediaType.Apple33SS)
+               (mediaType != MediaType.Apple32SS && mediaType != MediaType.Apple33SS))
             {
                 ErrorMessage = "Unsupported sector size";
 
@@ -128,7 +127,7 @@ public sealed partial class Apple2Mg
             return false;
         }
 
-        _writingStream.Seek((long)(0x40 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0x40 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -160,7 +159,7 @@ public sealed partial class Apple2Mg
             return false;
         }
 
-        _writingStream.Seek((long)(0x40 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0x40 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -194,8 +193,8 @@ public sealed partial class Apple2Mg
             return false;
         }
 
-        _writingStream.Seek(0x40 + 17 * 16 * 256, SeekOrigin.Begin);
-        var tmp = new byte[256];
+        _writingStream.Seek(0x40 + (17 * 16 * 256), SeekOrigin.Begin);
+        byte[] tmp = new byte[256];
         _writingStream.EnsureRead(tmp, 0, tmp.Length);
 
         bool isDos = tmp[0x01] == 17 && tmp[0x02] < 16 && tmp[0x27] <= 122 && tmp[0x34] == 35 && tmp[0x35] == 16 &&
@@ -225,8 +224,8 @@ public sealed partial class Apple2Mg
             _writingStream.WriteByte(0);
         }
 
-        var    hdr    = new byte[Marshal.SizeOf<Header>()];
-        IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(_imageHeader, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

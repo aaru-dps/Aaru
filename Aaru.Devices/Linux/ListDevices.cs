@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Linux;
-
 using System;
 using System.IO;
 using System.Runtime.Versioning;
 using System.Text;
+
+namespace Aaru.Devices.Linux;
 
 [SupportedOSPlatform("linux")]
 static class ListDevices

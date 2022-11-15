@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Anex86
 {
@@ -48,7 +48,7 @@ public sealed partial class Anex86
         if(stream.Length < Marshal.SizeOf<Header>())
             return false;
 
-        var hdrB = new byte[Marshal.SizeOf<Header>()];
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _header = Marshal.SpanToStructureLittleEndian<Header>(hdrB);

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -43,6 +41,8 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of Microsoft's Resilient filesystem (ReFS)</summary>
@@ -67,7 +67,7 @@ public sealed class ReFS : IFilesystem
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        var sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
+        uint sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<VolumeHeader>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -95,7 +95,7 @@ public sealed class ReFS : IFilesystem
         Encoding    = Encoding.UTF8;
         information = "";
 
-        var sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
+        uint sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<VolumeHeader>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;

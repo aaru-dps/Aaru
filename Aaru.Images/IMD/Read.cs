@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Imd
 {
@@ -54,7 +54,7 @@ public sealed partial class Imd
 
         for(uint i = 0; i < stream.Length; i++)
         {
-            var b = (byte)stream.ReadByte();
+            byte b = (byte)stream.ReadByte();
 
             if(b == 0x1A)
                 break;
@@ -75,14 +75,14 @@ public sealed partial class Imd
         while(stream.Position + 5 < stream.Length)
         {
             mode = (TransferRate)stream.ReadByte();
-            var cylinder = (byte)stream.ReadByte();
-            var head     = (byte)stream.ReadByte();
-            var spt      = (byte)stream.ReadByte();
-            var n        = (byte)stream.ReadByte();
-            var idmap    = new byte[spt];
-            var cylmap   = new byte[spt];
-            var headmap  = new byte[spt];
-            var bps      = new ushort[spt];
+            byte     cylinder = (byte)stream.ReadByte();
+            byte     head     = (byte)stream.ReadByte();
+            byte     spt      = (byte)stream.ReadByte();
+            byte     n        = (byte)stream.ReadByte();
+            byte[]   idmap    = new byte[spt];
+            byte[]   cylmap   = new byte[spt];
+            byte[]   headmap  = new byte[spt];
+            ushort[] bps      = new ushort[spt];
 
             if(cylinder != currentCylinder)
             {
@@ -103,14 +103,14 @@ public sealed partial class Imd
 
             if(n == 0xFF)
             {
-                var bpsbytes = new byte[spt * 2];
+                byte[] bpsbytes = new byte[spt * 2];
                 stream.EnsureRead(bpsbytes, 0, bpsbytes.Length);
 
-                for(var i = 0; i < spt; i++)
+                for(int i = 0; i < spt; i++)
                     bps[i] = BitConverter.ToUInt16(bpsbytes, i * 2);
             }
             else
-                for(var i = 0; i < spt; i++)
+                for(int i = 0; i < spt; i++)
                     bps[i] = (ushort)(128 << n);
 
             if(spt > _imageInfo.SectorsPerTrack)
@@ -118,10 +118,10 @@ public sealed partial class Imd
 
             SortedDictionary<byte, byte[]> track = new();
 
-            for(var i = 0; i < spt; i++)
+            for(int i = 0; i < spt; i++)
             {
-                var type = (SectorType)stream.ReadByte();
-                var data = new byte[bps[i]];
+                var    type = (SectorType)stream.ReadByte();
+                byte[] data = new byte[bps[i]];
 
                 // TODO; Handle disks with different bps in track 0
                 if(bps[i] > _imageInfo.SectorSize)
@@ -150,7 +150,7 @@ public sealed partial class Imd
                     case SectorType.CompressedDeleted:
                     case SectorType.CompressedError:
                     case SectorType.CompressedDeletedError:
-                        var filling = (byte)stream.ReadByte();
+                        byte filling = (byte)stream.ReadByte();
                         ArrayHelpers.ArrayFill(data, filling);
 
                         if(!track.ContainsKey(idmap[i]))
@@ -232,7 +232,7 @@ public sealed partial class Imd
 
         var ms = new MemoryStream();
 
-        for(var i = 0; i < length; i++)
+        for(int i = 0; i < length; i++)
             ms.Write(_sectorsData[(int)sectorAddress + i], 0, _sectorsData[(int)sectorAddress + i].Length);
 
         buffer = ms.ToArray();

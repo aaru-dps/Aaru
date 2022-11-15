@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the filesystem used by Nintendo Gamecube and Wii discs</summary>
@@ -71,8 +71,8 @@ public sealed class NintendoPlugin : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
-        var magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
+        uint magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
+        uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
         return magicGc == 0xC2339F3D || magicWii == 0x5D1C9EA3;
     }
@@ -92,10 +92,10 @@ public sealed class NintendoPlugin : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        var wii = false;
+        bool wii = false;
 
-        var magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
-        var magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
+        uint magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
+        uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
         if(magicWii == 0x5D1C9EA3)
             wii = true;
@@ -111,7 +111,7 @@ public sealed class NintendoPlugin : IFilesystem
         fields.DiscVersion      =  header[7];
         fields.Streaming        |= header[8] > 0;
         fields.StreamBufferSize =  header[9];
-        var temp = new byte[64];
+        byte[] temp = new byte[64];
         Array.Copy(header, 0x20, temp, 0, 64);
         fields.Title = StringHandlers.CToString(temp, Encoding);
 
@@ -137,40 +137,44 @@ public sealed class NintendoPlugin : IFilesystem
             fields.ThirdPartitions  = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40010)];
             fields.FourthPartitions = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40018)];
 
-            for(var i = 0; i < fields.FirstPartitions.Length; i++)
-                if(offset1 + i * 8 + 8 < 0x50000)
+            for(int i = 0; i < fields.FirstPartitions.Length; i++)
+                if(offset1 + (i * 8) + 8 < 0x50000)
                 {
                     fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 0)) << 2;
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset1 + (i * 8) + 0)) << 2;
 
-                    fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 4));
+                    fields.FirstPartitions[i].Type =
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset1 + (i * 8) + 4));
                 }
 
-            for(var i = 0; i < fields.SecondPartitions.Length; i++)
-                if(offset1 + i * 8 + 8 < 0x50000)
+            for(int i = 0; i < fields.SecondPartitions.Length; i++)
+                if(offset1 + (i * 8) + 8 < 0x50000)
                 {
                     fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 0)) << 2;
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset2 + (i * 8) + 0)) << 2;
 
-                    fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 4));
+                    fields.FirstPartitions[i].Type =
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset2 + (i * 8) + 4));
                 }
 
-            for(var i = 0; i < fields.ThirdPartitions.Length; i++)
-                if(offset1 + i * 8 + 8 < 0x50000)
+            for(int i = 0; i < fields.ThirdPartitions.Length; i++)
+                if(offset1 + (i * 8) + 8 < 0x50000)
                 {
                     fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 0)) << 2;
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset3 + (i * 8) + 0)) << 2;
 
-                    fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 4));
+                    fields.FirstPartitions[i].Type =
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset3 + (i * 8) + 4));
                 }
 
-            for(var i = 0; i < fields.FourthPartitions.Length; i++)
-                if(offset1 + i * 8 + 8 < 0x50000)
+            for(int i = 0; i < fields.FourthPartitions.Length; i++)
+                if(offset1 + (i * 8) + 8 < 0x50000)
                 {
                     fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 0)) << 2;
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset4 + (i * 8) + 0)) << 2;
 
-                    fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
+                    fields.FirstPartitions[i].Type =
+                        BigEndianBitConverter.ToUInt32(header, (int)(offset4 + (i * 8) + 4));
                 }
 
             fields.Region       = header[0x4E000];
@@ -209,7 +213,7 @@ public sealed class NintendoPlugin : IFilesystem
         AaruConsole.DebugWriteLine("Nintendo plugin", "fstSize = {0}", fields.FstSize);
         AaruConsole.DebugWriteLine("Nintendo plugin", "fstMax = {0}", fields.FstMax);
 
-        for(var i = 0; i < fields.FirstPartitions.Length; i++)
+        for(int i = 0; i < fields.FirstPartitions.Length; i++)
         {
             AaruConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].offset = {0}",
                                        fields.FirstPartitions[i].Offset, i);
@@ -218,7 +222,7 @@ public sealed class NintendoPlugin : IFilesystem
                                        fields.FirstPartitions[i].Type, i);
         }
 
-        for(var i = 0; i < fields.SecondPartitions.Length; i++)
+        for(int i = 0; i < fields.SecondPartitions.Length; i++)
         {
             AaruConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].offset = {0}",
                                        fields.SecondPartitions[i].Offset, i);
@@ -227,7 +231,7 @@ public sealed class NintendoPlugin : IFilesystem
                                        fields.SecondPartitions[i].Type, i);
         }
 
-        for(var i = 0; i < fields.ThirdPartitions.Length; i++)
+        for(int i = 0; i < fields.ThirdPartitions.Length; i++)
         {
             AaruConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].offset = {0}",
                                        fields.ThirdPartitions[i].Offset, i);
@@ -236,7 +240,7 @@ public sealed class NintendoPlugin : IFilesystem
                                        fields.ThirdPartitions[i].Type, i);
         }
 
-        for(var i = 0; i < fields.FourthPartitions.Length; i++)
+        for(int i = 0; i < fields.FourthPartitions.Length; i++)
         {
             AaruConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].offset = {0}",
                                        fields.FourthPartitions[i].Offset, i);
@@ -277,22 +281,22 @@ public sealed class NintendoPlugin : IFilesystem
 
         if(wii)
         {
-            for(var i = 0; i < fields.FirstPartitions.Length; i++)
+            for(int i = 0; i < fields.FirstPartitions.Length; i++)
                 sbInformation.AppendFormat("First {0} partition starts at sector {1}",
                                            PartitionTypeToString(fields.FirstPartitions[i].Type),
                                            fields.FirstPartitions[i].Offset / 2048).AppendLine();
 
-            for(var i = 0; i < fields.SecondPartitions.Length; i++)
+            for(int i = 0; i < fields.SecondPartitions.Length; i++)
                 sbInformation.AppendFormat("Second {0} partition starts at sector {1}",
                                            PartitionTypeToString(fields.SecondPartitions[i].Type),
                                            fields.SecondPartitions[i].Offset / 2048).AppendLine();
 
-            for(var i = 0; i < fields.ThirdPartitions.Length; i++)
+            for(int i = 0; i < fields.ThirdPartitions.Length; i++)
                 sbInformation.AppendFormat("Third {0} partition starts at sector {1}",
                                            PartitionTypeToString(fields.ThirdPartitions[i].Type),
                                            fields.ThirdPartitions[i].Offset / 2048).AppendLine();
 
-            for(var i = 0; i < fields.FourthPartitions.Length; i++)
+            for(int i = 0; i < fields.FourthPartitions.Length; i++)
                 sbInformation.AppendFormat("Fourth {0} partition starts at sector {1}",
                                            PartitionTypeToString(fields.FourthPartitions[i].Type),
                                            fields.FourthPartitions[i].Offset / 2048).AppendLine();
@@ -395,38 +399,38 @@ public sealed class NintendoPlugin : IFilesystem
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     static string PublisherCodeToString(string publisherCode) => publisherCode switch
-                                                                 {
-                                                                     "01" => "Nintendo",
-                                                                     "08" => "CAPCOM",
-                                                                     "41" => "Ubisoft",
-                                                                     "4F" => "Eidos",
-                                                                     "51" => "Acclaim",
-                                                                     "52" => "Activision",
-                                                                     "5D" => "Midway",
-                                                                     "5G" => "Hudson",
-                                                                     "64" => "LucasArts",
-                                                                     "69" => "Electronic Arts",
-                                                                     "6S" => "TDK Mediactive",
-                                                                     "8P" => "SEGA",
-                                                                     "A4" => "Mirage Studios",
-                                                                     "AF" => "Namco",
-                                                                     "B2" => "Bandai",
-                                                                     "DA" => "Tomy",
-                                                                     "EM" => "Konami",
-                                                                     "70" => "Atari",
-                                                                     "4Q" => "Disney Interactive",
-                                                                     "GD" => "Square Enix",
-                                                                     "7D" => "Sierra",
-                                                                     _    => $"Unknown publisher '{publisherCode}'"
-                                                                 };
+    {
+        "01" => "Nintendo",
+        "08" => "CAPCOM",
+        "41" => "Ubisoft",
+        "4F" => "Eidos",
+        "51" => "Acclaim",
+        "52" => "Activision",
+        "5D" => "Midway",
+        "5G" => "Hudson",
+        "64" => "LucasArts",
+        "69" => "Electronic Arts",
+        "6S" => "TDK Mediactive",
+        "8P" => "SEGA",
+        "A4" => "Mirage Studios",
+        "AF" => "Namco",
+        "B2" => "Bandai",
+        "DA" => "Tomy",
+        "EM" => "Konami",
+        "70" => "Atari",
+        "4Q" => "Disney Interactive",
+        "GD" => "Square Enix",
+        "7D" => "Sierra",
+        _    => $"Unknown publisher '{publisherCode}'"
+    };
 
     static string PartitionTypeToString(uint type) => type switch
-                                                      {
-                                                          0 => "data",
-                                                          1 => "update",
-                                                          2 => "channel",
-                                                          _ => $"unknown type {type}"
-                                                      };
+    {
+        0 => "data",
+        1 => "update",
+        2 => "channel",
+        _ => $"unknown type {type}"
+    };
 
     struct NintendoFields
     {

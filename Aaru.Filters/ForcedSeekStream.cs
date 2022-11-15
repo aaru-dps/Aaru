@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filters;
-
 using System;
 using System.IO;
 using Aaru.Helpers;
+
+namespace Aaru.Filters;
 
 /// <summary>
 ///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams) by doing the
@@ -106,7 +106,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
         do
         {
-            var buffer = new byte[BUFFER_LEN];
+            byte[] buffer = new byte[BUFFER_LEN];
             read = _baseStream.EnsureRead(buffer, 0, BUFFER_LEN);
             _backStream.Write(buffer, 0, read);
         } while(read == BUFFER_LEN);
@@ -132,13 +132,13 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
         _backStream.Position = _backStream.Length;
         long   toPosition      = position - _backStream.Position;
-        var    fullBufferReads = (int)(toPosition / BUFFER_LEN);
-        var    restToRead      = (int)(toPosition % BUFFER_LEN);
+        int    fullBufferReads = (int)(toPosition / BUFFER_LEN);
+        int    restToRead      = (int)(toPosition % BUFFER_LEN);
         byte[] buffer;
         int    bufPos;
         int    left;
 
-        for(var i = 0; i < fullBufferReads; i++)
+        for(int i = 0; i < fullBufferReads; i++)
         {
             buffer = new byte[BUFFER_LEN];
             bufPos = 0;

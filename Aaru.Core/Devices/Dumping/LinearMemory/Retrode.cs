@@ -30,15 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Core.Devices.Dumping;
 
 public partial class Dump
 {
@@ -91,7 +90,7 @@ public partial class Dump
             return;
         }
 
-        var tmp = new byte[8];
+        byte[] tmp = new byte[8];
 
         Array.Copy(buffer, 0x36, tmp, 0, 8);
 
@@ -104,11 +103,11 @@ public partial class Dump
             return;
         }
 
-        var  fatStart          = (ushort)((buffer[0x0F] << 8)                      + buffer[0x0E]);
-        var  sectorsPerFat     = (ushort)((buffer[0x17] << 8)                      + buffer[0x16]);
-        var  rootStart         = (ushort)(sectorsPerFat                        * 2 + fatStart);
-        var  rootSize          = (ushort)(((buffer[0x12] << 8) + buffer[0x11]) * 32 / 512);
-        byte sectorsPerCluster = buffer[0x0D];
+        ushort fatStart          = (ushort)((buffer[0x0F] << 8) + buffer[0x0E]);
+        ushort sectorsPerFat     = (ushort)((buffer[0x17] << 8) + buffer[0x16]);
+        ushort rootStart         = (ushort)((sectorsPerFat * 2) + fatStart);
+        ushort rootSize          = (ushort)(((buffer[0x12] << 8) + buffer[0x11]) * 32 / 512);
+        byte   sectorsPerCluster = buffer[0x0D];
 
         UpdateStatus?.Invoke($"Reading root directory in sector {rootStart}...");
         _dumpLog.WriteLine("Reading root directory in sector {0}...", rootStart);
@@ -123,14 +122,14 @@ public partial class Dump
             return;
         }
 
-        int romPos;
-        var sfcFound     = false;
-        var genesisFound = false;
-        var smsFound     = false;
-        var n64Found     = false;
-        var gbFound      = false;
-        var gbcFound     = false;
-        var gbaFound     = false;
+        int  romPos;
+        bool sfcFound     = false;
+        bool genesisFound = false;
+        bool smsFound     = false;
+        bool n64Found     = false;
+        bool gbFound      = false;
+        bool gbcFound     = false;
+        bool gbaFound     = false;
         tmp = new byte[3];
 
         for(romPos = 0; romPos < buffer.Length; romPos += 0x20)
@@ -198,8 +197,8 @@ public partial class Dump
             return;
         }
 
-        var cluster = BitConverter.ToUInt16(buffer, romPos + 0x1A);
-        var romSize = BitConverter.ToUInt32(buffer, romPos + 0x1C);
+        ushort cluster = BitConverter.ToUInt16(buffer, romPos + 0x1A);
+        uint   romSize = BitConverter.ToUInt32(buffer, romPos + 0x1C);
 
         MediaType mediaType = gbaFound
                                   ? MediaType.GameBoyAdvanceGamePak
@@ -240,7 +239,7 @@ public partial class Dump
             return;
         }
 
-        var  startSector  = (uint)(rootStart + rootSize + (cluster - 2) * sectorsPerCluster);
+        uint startSector  = (uint)(rootStart + rootSize + ((cluster - 2) * sectorsPerCluster));
         uint romSectors   = romSize / 512;
         uint romRemaining = romSize % 512;
 
@@ -405,7 +404,7 @@ public partial class Dump
         _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
                            512 * (double)(romSectors + 1) / 1024 / imageWriteDuration);
 
-        var metadata = new ImageInfo
+        var metadata = new CommonTypes.Structs.ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()

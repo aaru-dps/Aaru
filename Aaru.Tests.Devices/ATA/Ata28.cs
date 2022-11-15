@@ -26,13 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices.ATA;
-
-using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Devices;
 using Aaru.Helpers;
+
+namespace Aaru.Tests.Devices.ATA;
 
 static class Ata28
 {
@@ -40,7 +39,7 @@ static class Ata28
     {
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send a 28-bit ATA command to the device:");
             AaruConsole.WriteLine("1.- Send READ BUFFER command.");
@@ -57,12 +56,12 @@ static class Ata28
             AaruConsole.WriteLine("0.- Return to ATA commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -119,7 +118,7 @@ static class Ata28
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    System.Console.ReadKey();
 
                     continue;
             }
@@ -128,13 +127,13 @@ static class Ata28
 
     static void ReadBuffer(string devPath, Device dev)
     {
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.ReadBuffer(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                     out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ BUFFER to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -149,13 +148,13 @@ static class Ata28
         AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = Console.ReadLine();
+        string strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -167,7 +166,7 @@ static class Ata28
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ BUFFER response:");
 
@@ -175,27 +174,27 @@ static class Ata28
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ BUFFER status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -203,13 +202,13 @@ static class Ata28
 
     static void ReadBufferDma(string devPath, Device dev)
     {
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.ReadBufferDma(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                        out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ BUFFER DMA to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -224,13 +223,13 @@ static class Ata28
         AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = Console.ReadLine();
+        string strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -242,7 +241,7 @@ static class Ata28
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ BUFFER DMA response:");
 
@@ -250,27 +249,27 @@ static class Ata28
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ BUFFER DMA status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -283,11 +282,11 @@ static class Ata28
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ DMA {0}command:", retries ? "WITH RETRIES " : "");
             AaruConsole.WriteLine("LBA: {0}", lba);
@@ -298,12 +297,12 @@ static class Ata28
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -316,13 +315,13 @@ static class Ata28
                     return;
                 case 1:
                     AaruConsole.Write("What logical block address?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         lba = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -336,13 +335,13 @@ static class Ata28
                     }
 
                     AaruConsole.Write("How many sectors?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out count))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         count = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -350,13 +349,13 @@ static class Ata28
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, retries, lba, count,
                                  dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ DMA {0}to the device:", retries ? "WITH RETRIES " : "");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -372,13 +371,13 @@ static class Ata28
         AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -390,7 +389,7 @@ static class Ata28
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DMA {0}response:", retries ? "WITH RETRIES " : "");
 
@@ -398,19 +397,19 @@ static class Ata28
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DMA {0}status registers:", retries ? "WITH RETRIES " : "");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -418,8 +417,8 @@ static class Ata28
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -432,11 +431,11 @@ static class Ata28
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ LONG {0}command:", retries ? "WITH RETRIES " : "");
             AaruConsole.WriteLine("LBA: {0}", lba);
@@ -447,12 +446,12 @@ static class Ata28
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -465,13 +464,13 @@ static class Ata28
                     return;
                 case 1:
                     AaruConsole.Write("What logical block address?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         lba = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -485,13 +484,13 @@ static class Ata28
                     }
 
                     AaruConsole.Write("How many bytes to expect?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out blockSize))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         blockSize = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -499,13 +498,13 @@ static class Ata28
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.ReadLong(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, retries, lba, blockSize,
                                   dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ LONG {0}to the device:", retries ? "WITH RETRIES " : "");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -521,13 +520,13 @@ static class Ata28
         AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -539,7 +538,7 @@ static class Ata28
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ LONG {0}response:", retries ? "WITH RETRIES " : "");
 
@@ -547,19 +546,19 @@ static class Ata28
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ LONG {0}status registers:", retries ? "WITH RETRIES " : "");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -567,8 +566,8 @@ static class Ata28
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -581,11 +580,11 @@ static class Ata28
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ MULTIPLE command:");
             AaruConsole.WriteLine("LBA: {0}", lba);
@@ -596,12 +595,12 @@ static class Ata28
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -614,13 +613,13 @@ static class Ata28
                     return;
                 case 1:
                     AaruConsole.Write("What logical block address?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         lba = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -634,13 +633,13 @@ static class Ata28
                     }
 
                     AaruConsole.Write("How many sectors?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out count))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         count = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -648,13 +647,13 @@ static class Ata28
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, lba, count,
                                       dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ MULTIPLE to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -670,13 +669,13 @@ static class Ata28
         AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -688,7 +687,7 @@ static class Ata28
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ MULTIPLE response:");
 
@@ -696,19 +695,19 @@ static class Ata28
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ MULTIPLE status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -716,8 +715,8 @@ static class Ata28
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -725,13 +724,13 @@ static class Ata28
 
     static void ReadNativeMaxAddress(string devPath, Device dev)
     {
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.ReadNativeMaxAddress(out uint lba, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                               out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ NATIVE MAX ADDRESS to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -744,13 +743,13 @@ static class Ata28
         AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = Console.ReadLine();
+        string strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -762,21 +761,21 @@ static class Ata28
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ NATIVE MAX ADDRESS status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -789,11 +788,11 @@ static class Ata28
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ SECTORS {0}command:", retries ? "WITH RETRIES " : "");
             AaruConsole.WriteLine("LBA: {0}", lba);
@@ -804,12 +803,12 @@ static class Ata28
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -822,13 +821,13 @@ static class Ata28
                     return;
                 case 1:
                     AaruConsole.Write("What logical block address?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         lba = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -842,13 +841,13 @@ static class Ata28
                     }
 
                     AaruConsole.Write("How many sectors?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out count))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         count = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -856,13 +855,13 @@ static class Ata28
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, retries, lba, count,
                               dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ SECTORS {0}to the device:", retries ? "WITH RETRIES " : "");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -878,13 +877,13 @@ static class Ata28
         AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -896,7 +895,7 @@ static class Ata28
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ SECTORS {0}response:", retries ? "WITH RETRIES " : "");
 
@@ -904,19 +903,19 @@ static class Ata28
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ SECTORS {0}status registers:", retries ? "WITH RETRIES " : "");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -924,8 +923,8 @@ static class Ata28
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -937,11 +936,11 @@ static class Ata28
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for SEEK command:");
             AaruConsole.WriteLine("LBA: {0}", lba);
@@ -951,12 +950,12 @@ static class Ata28
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -969,13 +968,13 @@ static class Ata28
                     return;
                 case 1:
                     AaruConsole.Write("What logical block address?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         lba = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -993,11 +992,11 @@ static class Ata28
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
         bool sense = dev.Seek(out AtaErrorRegistersLba28 errorRegisters, lba, dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SEEK to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1010,13 +1009,13 @@ static class Ata28
         AaruConsole.WriteLine("0.- Return to 28-bit ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -1028,13 +1027,13 @@ static class Ata28
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEEK status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -1042,8 +1041,8 @@ static class Ata28
             case 3: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }

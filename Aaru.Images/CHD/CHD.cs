@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
+
+namespace Aaru.DiscImages;
 
 // TODO: Implement PCMCIA support
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IOpticalMediaImage" />

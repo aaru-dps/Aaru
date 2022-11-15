@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Issues;
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +7,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Issues;
 
 /// <summary>This will extract (and discard data) all files in all filesystems detected in an image.</summary>
 public abstract class FsExtractIssueTest
@@ -48,7 +48,7 @@ public abstract class FsExtractIssueTest
 
         Assert.AreEqual(ErrorNumber.NoError, imageFormat.Open(inputFilter), "Unable to open image format");
 
-        List<Partition> partitions = Partitions.GetAll(imageFormat);
+        List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
 
         if(partitions.Count == 0)
         {
@@ -65,11 +65,11 @@ public abstract class FsExtractIssueTest
             });
         }
 
-        var filesystemFound = false;
+        bool filesystemFound = false;
 
-        for(var i = 0; i < partitions.Count; i++)
+        for(int i = 0; i < partitions.Count; i++)
         {
-            Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
+            Core.Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
 
             if(idPlugins.Count == 0)
                 continue;
@@ -105,7 +105,8 @@ public abstract class FsExtractIssueTest
                 if(plugin is null)
                     continue;
 
-                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
+                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
+                                                     Invoke(Array.Empty<object>());
 
                 Assert.IsNotNull(fs, $"Could not instantiate filesystem {plugin.Name}");
 

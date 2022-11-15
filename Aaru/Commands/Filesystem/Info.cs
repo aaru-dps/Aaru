@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Filesystem;
-
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
+
+namespace Aaru.Commands.Filesystem;
 
 sealed class FilesystemInfoCommand : Command
 {
@@ -83,7 +83,7 @@ sealed class FilesystemInfoCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -116,7 +116,7 @@ sealed class FilesystemInfoCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -148,14 +148,14 @@ sealed class FilesystemInfoCommand : Command
 
         PluginBase plugins = GetPluginBase.Instance;
 
-        var checkRaw = false;
+        bool checkRaw = false;
 
         try
         {
             IMediaImage imageFormat = null;
             IBaseImage  baseImage   = null;
 
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Identifying image format...").IsIndeterminate();
                 baseImage   = ImageFormat.Detect(inputFilter);
@@ -187,7 +187,7 @@ sealed class FilesystemInfoCommand : Command
             {
                 ErrorNumber opened = ErrorNumber.NoData;
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Opening image file...").IsIndeterminate();
                     opened = imageFormat.Open(inputFilter);
@@ -228,13 +228,13 @@ sealed class FilesystemInfoCommand : Command
             {
                 List<Partition> partitionsList = null;
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Enumerating partitions...").IsIndeterminate();
-                    partitionsList = Partitions.GetAll(imageFormat);
+                    partitionsList = Core.Partitions.GetAll(imageFormat);
                 });
 
-                Partitions.AddSchemesToStats(partitionsList);
+                Core.Partitions.AddSchemesToStats(partitionsList);
 
                 if(partitionsList.Count == 0)
                 {
@@ -253,7 +253,7 @@ sealed class FilesystemInfoCommand : Command
                 {
                     AaruConsole.WriteLine("{0} partitions found.", partitionsList.Count);
 
-                    for(var i = 0; i < partitionsList.Count; i++)
+                    for(int i = 0; i < partitionsList.Count; i++)
                     {
                         Table table = new()
                         {
@@ -278,10 +278,10 @@ sealed class FilesystemInfoCommand : Command
                         if(!filesystems)
                             continue;
 
-                        Spectre.ProgressSingleSpinner(ctx =>
+                        Core.Spectre.ProgressSingleSpinner(ctx =>
                         {
                             ctx.AddTask("Identifying filesystems on partition...").IsIndeterminate();
-                            Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
+                            Core.Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
                         });
 
                         switch(idPlugins.Count)
@@ -338,10 +338,10 @@ sealed class FilesystemInfoCommand : Command
                     Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                 };
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Identifying filesystems...").IsIndeterminate();
-                    Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
                 });
 
                 switch(idPlugins.Count)

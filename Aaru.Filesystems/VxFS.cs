@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the Veritas filesystem</summary>
@@ -74,7 +74,7 @@ public sealed class VxFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var magic = BitConverter.ToUInt32(sector, 0x00);
+        uint magic = BitConverter.ToUInt32(sector, 0x00);
 
         return magic == VXFS_MAGIC;
     }

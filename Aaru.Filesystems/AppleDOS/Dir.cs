@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class AppleDOS
 {
@@ -77,8 +77,8 @@ public sealed partial class AppleDOS
 
     ErrorNumber ReadCatalog()
     {
-        var catalogMs = new MemoryStream();
-        var lba       = (ulong)(_vtoc.catalogTrack * _sectorsPerTrack + _vtoc.catalogSector);
+        var   catalogMs = new MemoryStream();
+        ulong lba       = (ulong)((_vtoc.catalogTrack * _sectorsPerTrack) + _vtoc.catalogSector);
         _totalFileEntries = 0;
         _catalogCache     = new Dictionary<string, ushort>();
         _fileTypeCache    = new Dictionary<string, byte>();
@@ -110,11 +110,11 @@ public sealed partial class AppleDOS
                 _track1UsedByFiles |= entry.extentTrack == 1;
                 _track2UsedByFiles |= entry.extentTrack == 2;
 
-                var filenameB = new byte[30];
-                var ts        = (ushort)((entry.extentTrack << 8) | entry.extentSector);
+                byte[] filenameB = new byte[30];
+                ushort ts        = (ushort)((entry.extentTrack << 8) | entry.extentSector);
 
                 // Apple DOS has high byte set over ASCII.
-                for(var i = 0; i < 30; i++)
+                for(int i = 0; i < 30; i++)
                     filenameB[i] = (byte)(entry.filename[i] & 0x7F);
 
                 string filename = StringHandlers.SpacePaddedToString(filenameB, Encoding);
@@ -133,7 +133,7 @@ public sealed partial class AppleDOS
                     _lockedFiles.Add(filename);
             }
 
-            lba = (ulong)(catSector.trackOfNext * _sectorsPerTrack + catSector.sectorOfNext);
+            lba = (ulong)((catSector.trackOfNext * _sectorsPerTrack) + catSector.sectorOfNext);
 
             if(lba > _device.Info.Sectors)
                 break;

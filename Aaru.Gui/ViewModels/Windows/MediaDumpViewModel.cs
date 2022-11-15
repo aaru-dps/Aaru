@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -63,6 +61,8 @@ using ReactiveUI;
 using Schemas;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using MediaType = Aaru.CommonTypes.MediaType;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MediaDumpViewModel : ViewModelBase
 {
@@ -693,7 +693,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         if(_resume           == null              ||
            _resume.NextBlock <= _resume.LastBlock ||
-           _resume.BadBlocks.Count != 0 && !_resume.Tape)
+           (_resume.BadBlocks.Count != 0 && !_resume.Tape))
             return;
 
         await MessageBoxManager.
@@ -772,7 +772,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
                 return;
             }
 
-        var parsedOptions = new Dictionary<string, string>();
+        Dictionary<string, string> parsedOptions = new();
 
         /* TODO: Options
         if(grpOptions.Content is StackLayout stkFormatOptions)

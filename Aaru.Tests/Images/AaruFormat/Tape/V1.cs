@@ -26,21 +26,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images.AaruFormat.Tape;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using Aaru.DiscImages;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.AaruFormat.Tape;
 
 [TestFixture]
 public class V1 : TapeMediaImageTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
-    public override IMediaImage Plugin => new AaruFormat();
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
+    public override IMediaImage Plugin => new DiscImages.AaruFormat();
 
     public override TapeImageTestExpected[] Tests => new[]
     {

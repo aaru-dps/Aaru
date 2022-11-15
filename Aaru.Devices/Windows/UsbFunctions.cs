@@ -31,11 +31,11 @@
 // Copyright © 2007 Fort Hood TX, herethen, Public Domain
 // ****************************************************************************/
 
-namespace Aaru.Devices.Windows;
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+
+namespace Aaru.Devices.Windows;
 
 //
 // A place for "higher level" related functions
@@ -46,10 +46,10 @@ using System.Runtime.InteropServices;
 static partial class Usb
 {
     const          int    IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
-    internal const string GUID_DEVINTERFACE_DISK            = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-    internal const string GUID_DEVINTERFACE_CDROM           = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
-    internal const string GUID_DEVINTERFACE_FLOPPY          = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
-    internal const string GUID_DEVINTERFACE_TAPE            = "53f5630b-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_DISK          = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_CDROM         = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_FLOPPY        = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_TAPE          = "53f5630b-b6bf-11d0-94f2-00a0c91efb8b";
 
     /// <summary>Get a list of all connected devices</summary>
     /// <returns>List of usb devices</returns>
@@ -240,7 +240,7 @@ static partial class Usb
                     }; // trust me :)
 
                     // now we can get some more detailed information
-                    var       nRequiredSize = 0;
+                    var nRequiredSize = 0;
 
                     if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, BUFFER_SIZE, ref nRequiredSize, ref da))
                         if(GetDeviceNumber(didd.DevicePath) == devNum)

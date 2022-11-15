@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Decoders.Floppy;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class AppleNib
 {
@@ -48,7 +48,7 @@ public sealed partial class AppleNib
         if(stream.Length < 512)
             return false;
 
-        var test = new byte[512];
+        byte[] test = new byte[512];
         stream.EnsureRead(test, 0, 512);
 
         return Apple2.IsApple2GCR(test);

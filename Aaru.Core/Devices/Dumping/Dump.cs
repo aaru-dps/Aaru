@@ -31,8 +31,6 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,8 +44,9 @@ using Aaru.CommonTypes.Metadata;
 using Aaru.Core.Logging;
 using Aaru.Database;
 using Aaru.Devices;
-using Aaru.Settings;
 using Schemas;
+
+namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Subchannel requested to dump</summary>
 public enum DumpSubchannel
@@ -80,6 +79,7 @@ public partial class Dump
     readonly bool                       _force;
     readonly Dictionary<string, string> _formatOptions;
     readonly bool                       _generateSubchannels;
+    readonly uint                       _ignoreCdrRunOuts;
     readonly bool                       _metadata;
     readonly string                     _outputPath;
     readonly IBaseWritableImage         _outputPlugin;
@@ -99,7 +99,6 @@ public partial class Dump
     Database.Models.Device              _dbDev; // Device database entry
     bool                                _dumpFirstTrackPregap;
     bool                                _fixOffset;
-    readonly uint                       _ignoreCdrRunOuts;
     uint                                _maximumReadable; // Maximum number of sectors drive can read at once
     Resume                              _resume;
     Sidecar                             _sidecarClass;
@@ -205,7 +204,7 @@ public partial class Dump
     public void Start()
     {
         // Open main database
-        _ctx = AaruContext.Create(Settings.MainDbPath);
+        _ctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
         // Search for device in main database
         _dbDev = _ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model &&

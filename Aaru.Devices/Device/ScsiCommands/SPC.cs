@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+
+namespace Aaru.Devices;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public partial class Device
@@ -87,7 +87,7 @@ public partial class Device
         if(sense)
             return true;
 
-        var pagesLength = (byte)(buffer[4] + 5);
+        byte pagesLength = (byte)(buffer[4] + 5);
 
         cdb = new byte[]
         {
@@ -168,7 +168,7 @@ public partial class Device
         if(buffer[1] != page)
             return true;
 
-        var pagesLength = (byte)(buffer[3] + 4);
+        byte pagesLength = (byte)(buffer[3] + 4);
 
         cdb = new byte[]
         {
@@ -250,7 +250,7 @@ public partial class Device
                            byte pageCode, byte subPageCode, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         buffer = new byte[255];
 
         cdb[0] = (byte)ScsiCommands.ModeSense;
@@ -272,7 +272,7 @@ public partial class Device
         if(sense)
             return true;
 
-        var modeLength = (byte)(buffer[0] + 1);
+        byte modeLength = (byte)(buffer[0] + 1);
         buffer      = new byte[modeLength];
         cdb[4]      = (byte)buffer.Length;
         senseBuffer = new byte[64];
@@ -330,7 +330,7 @@ public partial class Device
                             out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[10];
+        byte[] cdb = new byte[10];
         buffer = new byte[4096];
 
         cdb[0] = (byte)ScsiCommands.ModeSense10;
@@ -356,7 +356,7 @@ public partial class Device
         if(sense)
             return true;
 
-        var modeLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
+        ushort modeLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
         buffer      = new byte[modeLength];
         cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[8]      = (byte)(buffer.Length & 0xFF);
@@ -408,7 +408,7 @@ public partial class Device
                                              out double duration)
     {
         senseBuffer = new byte[64];
-        var    cdb    = new byte[6];
+        byte[] cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
@@ -446,7 +446,7 @@ public partial class Device
                              uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[10];
+        byte[] cdb = new byte[10];
         buffer = new byte[8];
 
         cdb[0] = (byte)ScsiCommands.ReadCapacity;
@@ -495,7 +495,7 @@ public partial class Device
                                out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[16];
+        byte[] cdb = new byte[16];
         buffer = new byte[32];
 
         cdb[0] = (byte)ScsiCommands.ServiceActionIn;
@@ -539,7 +539,7 @@ public partial class Device
     public bool ReadMediaSerialNumber(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[4];
 
         cdb[0] = (byte)ScsiCommands.ReadSerialNumber;
@@ -557,7 +557,7 @@ public partial class Device
         if(sense)
             return true;
 
-        var strctLength = (uint)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3] + 4);
+        uint strctLength = (uint)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3] + 4);
         buffer      = new byte[strctLength];
         cdb[6]      = (byte)((buffer.Length & 0xFF000000) >> 24);
         cdb[7]      = (byte)((buffer.Length & 0xFF0000)   >> 16);
@@ -686,7 +686,7 @@ public partial class Device
             return true;
         }
 
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
 
         cdb[0] = (byte)ScsiCommands.ModeSelect;
 
@@ -740,7 +740,7 @@ public partial class Device
             return true;
         }
 
-        var cdb = new byte[10];
+        byte[] cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.ModeSelect10;
 
@@ -779,7 +779,7 @@ public partial class Device
     /// <returns><c>true</c> if the command failed.</returns>
     public bool RequestSense(bool descriptor, out byte[] buffer, uint timeout, out double duration)
     {
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         buffer = new byte[252];
 
         cdb[0] = (byte)ScsiCommands.RequestSense;

@@ -26,13 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices.SCSI;
-
-using System;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Aaru.Helpers;
+
+namespace Aaru.Tests.Devices.SCSI;
 
 static class Adaptec
 {
@@ -40,7 +39,7 @@ static class Adaptec
     {
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send an Adaptec vendor command to the device:");
             AaruConsole.WriteLine("1.- Send READ/RESET USAGE COUNTER command.");
@@ -50,12 +49,12 @@ static class Adaptec
             AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -84,7 +83,7 @@ static class Adaptec
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    System.Console.ReadKey();
 
                     continue;
             }
@@ -93,15 +92,15 @@ static class Adaptec
 
     static void ReadResetUsageCounter(string devPath, Device dev)
     {
-        var    drive1 = false;
+        bool   drive1 = false;
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ/RESET USAGE COUNTER command:");
             AaruConsole.WriteLine("Drive 1?: {0}", drive1);
@@ -111,12 +110,12 @@ static class Adaptec
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Adaptec vendor commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -129,13 +128,13 @@ static class Adaptec
                     return;
                 case 1:
                     AaruConsole.Write("Drive 1?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out drive1))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         drive1 = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -143,13 +142,13 @@ static class Adaptec
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, drive1, dev.Timeout,
                                                  out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ/RESET USAGE COUNTER to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -168,13 +167,13 @@ static class Adaptec
         AaruConsole.WriteLine("0.- Return to Adaptec vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -186,7 +185,7 @@ static class Adaptec
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ/RESET USAGE COUNTER response:");
 
@@ -194,13 +193,13 @@ static class Adaptec
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ/RESET USAGE COUNTER sense:");
 
@@ -208,19 +207,19 @@ static class Adaptec
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ/RESET USAGE COUNTER decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -228,8 +227,8 @@ static class Adaptec
             case 5: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -237,12 +236,12 @@ static class Adaptec
 
     static void ReadDataBuffer(string devPath, Device dev)
     {
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.AdaptecReadBuffer(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ DATA BUFFER to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -260,13 +259,13 @@ static class Adaptec
         AaruConsole.WriteLine("0.- Return to Adaptec vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = Console.ReadLine();
+        string strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -278,7 +277,7 @@ static class Adaptec
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DATA BUFFER response:");
 
@@ -286,13 +285,13 @@ static class Adaptec
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DATA BUFFER sense:");
 
@@ -300,27 +299,27 @@ static class Adaptec
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DATA BUFFER decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -328,16 +327,16 @@ static class Adaptec
 
     static void SetErrorThreshold(string devPath, Device dev)
     {
-        var    drive1    = false;
+        bool   drive1    = false;
         byte   threshold = 0;
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for SET ERROR THRESHOLD command:");
             AaruConsole.WriteLine("Drive 1?: {0}", drive1);
@@ -348,12 +347,12 @@ static class Adaptec
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Adaptec vendor commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -366,25 +365,25 @@ static class Adaptec
                     return;
                 case 1:
                     AaruConsole.Write("Drive 1?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out drive1))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         drive1 = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("Error threshold?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out threshold))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         threshold = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -392,13 +391,13 @@ static class Adaptec
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense =
             dev.AdaptecSetErrorThreshold(threshold, out byte[] senseBuffer, drive1, dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SET ERROR THRESHOLD to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -415,13 +414,13 @@ static class Adaptec
         AaruConsole.WriteLine("0.- Return to Adaptec vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -433,7 +432,7 @@ static class Adaptec
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SET ERROR THRESHOLD sense:");
 
@@ -441,8 +440,8 @@ static class Adaptec
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -450,8 +449,8 @@ static class Adaptec
             case 3: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -459,16 +458,16 @@ static class Adaptec
 
     static void Translate(string devPath, Device dev)
     {
-        var    drive1 = false;
+        bool   drive1 = false;
         uint   lba    = 0;
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for TRANSLATE command:");
             AaruConsole.WriteLine("Drive 1?: {0}", drive1);
@@ -479,12 +478,12 @@ static class Adaptec
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Adaptec vendor commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -497,25 +496,25 @@ static class Adaptec
                     return;
                 case 1:
                     AaruConsole.Write("Drive 1?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out drive1))
                     {
                         AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                         drive1 = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("LBA?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         lba = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -523,13 +522,13 @@ static class Adaptec
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, drive1, lba, dev.Timeout,
                                           out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending TRANSLATE to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -548,13 +547,13 @@ static class Adaptec
         AaruConsole.WriteLine("0.- Return to Adaptec vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -566,7 +565,7 @@ static class Adaptec
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("TRANSLATE response:");
 
@@ -574,13 +573,13 @@ static class Adaptec
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("TRANSLATE sense:");
 
@@ -588,19 +587,19 @@ static class Adaptec
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("TRANSLATE decoded sense:");
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -608,8 +607,8 @@ static class Adaptec
             case 5: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }

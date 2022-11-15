@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Image;
-
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -54,6 +52,8 @@ using Spectre.Console;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Commands.Image;
 
 sealed class ConvertImageCommand : Command
 {
@@ -177,7 +177,7 @@ sealed class ConvertImageCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -347,7 +347,7 @@ sealed class ConvertImageCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(inputPath);
@@ -371,7 +371,7 @@ sealed class ConvertImageCommand : Command
         IMediaImage inputFormat = null;
         IBaseImage  baseImage   = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             baseImage   = ImageFormat.Detect(inputFilter);
@@ -403,7 +403,7 @@ sealed class ConvertImageCommand : Command
         {
             ErrorNumber opened = ErrorNumber.NoData;
 
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Opening image file...").IsIndeterminate();
                 opened = inputFormat.Open(inputFilter);
@@ -422,12 +422,12 @@ sealed class ConvertImageCommand : Command
             // Obsolete types
             #pragma warning disable 612
             mediaType = mediaType switch
-                        {
-                            MediaType.SQ1500     => MediaType.SyJet,
-                            MediaType.Bernoulli  => MediaType.Bernoulli10,
-                            MediaType.Bernoulli2 => MediaType.BernoulliBox2_20,
-                            _                    => inputFormat.Info.MediaType
-                        };
+            {
+                MediaType.SQ1500     => MediaType.SyJet,
+                MediaType.Bernoulli  => MediaType.Bernoulli10,
+                MediaType.Bernoulli2 => MediaType.BernoulliBox2_20,
+                _                    => inputFormat.Info.MediaType
+            };
             #pragma warning restore 612
 
             AaruConsole.DebugWriteLine("Convert-image command", "Correctly opened image file.");
@@ -540,7 +540,7 @@ sealed class ConvertImageCommand : Command
             return (int)ErrorNumber.UnsupportedMedia;
         }
 
-        var ret = false;
+        bool ret = false;
 
         if(inputTape?.IsTape == true &&
            outputTape        != null)
@@ -573,9 +573,9 @@ sealed class ConvertImageCommand : Command
             AaruConsole.ErrorWriteLine("Output format does not support sessions, this will end in a loss of data, continuing...");*/
         }
 
-        var created = false;
+        bool created = false;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
 
@@ -720,8 +720,8 @@ sealed class ConvertImageCommand : Command
                                     trackTask.Description = $"Converting sectors {doneSectors + track.StartSector} to {
                                         doneSectors + sectorsToDo + track.StartSector} in track {track.Sequence}";
 
-                                    var useNotLong = false;
-                                    var result     = false;
+                                    bool useNotLong = false;
+                                    bool result     = false;
 
                                     if(useLong)
                                     {
@@ -843,9 +843,9 @@ sealed class ConvertImageCommand : Command
             string                   mcn                       = null;
             HashSet<int>             subchannelExtents         = new();
             Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
-            var                      tracks                    = new Track[inputOptical.Tracks.Count];
+            Track[]                  tracks                    = new Track[inputOptical.Tracks.Count];
 
-            for(var i = 0; i < tracks.Length; i++)
+            for(int i = 0; i < tracks.Length; i++)
             {
                 tracks[i] = new Track
                 {
@@ -1155,18 +1155,15 @@ sealed class ConvertImageCommand : Command
 
             // TODO: Progress
             if(inputOptical.Info.MediaType is MediaType.CD or MediaType.CDDA or MediaType.CDG or MediaType.CDEG
-                                           or MediaType.CDI or MediaType.CDROM or MediaType.CDROMXA or MediaType.CDPLUS
-                                           or MediaType.CDMO or MediaType.CDR or MediaType.CDRW or MediaType.CDMRW
-                                           or MediaType.VCD or MediaType.SVCD or MediaType.PCD or MediaType.DTSCD
-                                           or MediaType.CDMIDI or MediaType.CDV or MediaType.CDIREADY
-                                           or MediaType.FMTOWNS or MediaType.PS1CD or MediaType.PS2CD
-                                           or MediaType.MEGACD or MediaType.SATURNCD or MediaType.GDROM or MediaType.GDR
-                                           or MediaType.MilCD or MediaType.SuperCDROM2 or MediaType.JaguarCD
-                                           or MediaType.ThreeDO or MediaType.PCFX or MediaType.NeoGeoCD
-                                           or MediaType.CDTV or MediaType.CD32 or MediaType.Playdia or MediaType.Pippin
-                                           or MediaType.VideoNow or MediaType.VideoNowColor or MediaType.VideoNowXp
-                                           or MediaType.CVD && generateSubchannels)
-                Spectre.ProgressSingleSpinner(ctx =>
+                   or MediaType.CDI or MediaType.CDROM or MediaType.CDROMXA or MediaType.CDPLUS or MediaType.CDMO
+                   or MediaType.CDR or MediaType.CDRW or MediaType.CDMRW or MediaType.VCD or MediaType.SVCD
+                   or MediaType.PCD or MediaType.DTSCD or MediaType.CDMIDI or MediaType.CDV or MediaType.CDIREADY
+                   or MediaType.FMTOWNS or MediaType.PS1CD or MediaType.PS2CD or MediaType.MEGACD or MediaType.SATURNCD
+                   or MediaType.GDROM or MediaType.GDR or MediaType.MilCD or MediaType.SuperCDROM2 or MediaType.JaguarCD
+                   or MediaType.ThreeDO or MediaType.PCFX or MediaType.NeoGeoCD or MediaType.CDTV or MediaType.CD32
+                   or MediaType.Playdia or MediaType.Pippin or MediaType.VideoNow or MediaType.VideoNowColor
+                   or MediaType.VideoNowXp or MediaType.CVD && generateSubchannels)
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Generating subchannels...").IsIndeterminate();
 
@@ -1419,7 +1416,7 @@ sealed class ConvertImageCommand : Command
         if(resume       != null ||
            dumpHardware != null)
         {
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Writing dump hardware list...").IsIndeterminate();
 
@@ -1438,7 +1435,7 @@ sealed class ConvertImageCommand : Command
         if(sidecar      != null ||
            cicmMetadata != null)
         {
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Writing metadata...").IsIndeterminate();
 
@@ -1452,9 +1449,9 @@ sealed class ConvertImageCommand : Command
                 AaruConsole.WriteLine("Written CICM XML metadata to output image.");
         }
 
-        var closed = false;
+        bool closed = false;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Closing output image...").IsIndeterminate();
             closed = outputFormat.Close();

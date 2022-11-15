@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class RsIde
 {
@@ -45,7 +45,7 @@ public sealed partial class RsIde
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        var magic = new byte[7];
+        byte[] magic = new byte[7];
         stream.EnsureRead(magic, 0, magic.Length);
 
         return magic.SequenceEqual(_signature);

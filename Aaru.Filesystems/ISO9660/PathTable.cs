@@ -31,10 +31,10 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Collections.Generic;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -44,9 +44,9 @@ public sealed partial class ISO9660
            data.Length == 0)
             return null;
 
-        var table = new List<PathTableEntryInternal>();
+        List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
 
-        var off = 0;
+        int off = 0;
 
         PathTableEntry entry =
             Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
@@ -90,9 +90,9 @@ public sealed partial class ISO9660
         if(data is null)
             return null;
 
-        var table = new List<PathTableEntryInternal>();
+        List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
 
-        var off = 0;
+        int off = 0;
 
         while(off < data.Length)
         {

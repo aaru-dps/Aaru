@@ -26,18 +26,17 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images.QEMU;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images.QEMU;
+
 [TestFixture]
 public class Parallels : BlockMediaImageTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "Parallels");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "Parallels");
     public override IMediaImage Plugin => new DiscImages.Parallels();
 
     public override BlockImageTestExpected[] Tests => new[]

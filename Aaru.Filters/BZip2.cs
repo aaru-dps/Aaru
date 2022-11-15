@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filters;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Ionic.BZip2;
+
+namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Decompress bz2 files while reading</summary>
@@ -95,7 +95,7 @@ public class BZip2 : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        var buffer = new byte[4];
+        byte[] buffer = new byte[4];
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, 4);
@@ -125,8 +125,8 @@ public class BZip2 : IFilter
         if(!File.Exists(path))
             return false;
 
-        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        var buffer = new byte[4];
+        var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        byte[] buffer = new byte[4];
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, 4);

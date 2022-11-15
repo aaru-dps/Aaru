@@ -30,9 +30,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands;
-
-using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
+
+namespace Aaru.Commands;
 
 sealed class ListEncodingsCommand : Command
 {
@@ -55,7 +55,7 @@ sealed class ListEncodingsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -81,7 +81,7 @@ sealed class ListEncodingsCommand : Command
         AaruConsole.DebugWriteLine("List-Encodings command", "--debug={0}", debug);
         AaruConsole.DebugWriteLine("List-Encodings command", "--verbose={0}", verbose);
 
-        var encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
+        List<CommonEncodingInfo> encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
         {
             Name        = info.Name,
             DisplayName = info.GetEncoding().EncodingName

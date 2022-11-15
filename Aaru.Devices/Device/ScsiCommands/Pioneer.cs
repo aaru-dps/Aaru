@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -50,7 +50,7 @@ public partial class Device
                                 uint transferLength, PioneerSubchannel subchannel, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReadCdDa;
         cdb[2]  = (byte)((lba & 0xFF000000) >> 24);
@@ -88,7 +88,7 @@ public partial class Device
                                    uint blockSize, PioneerSubchannel subchannel, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReadCdDaMsf;
         cdb[3]  = (byte)((startMsf & 0xFF0000) >> 16);
@@ -99,7 +99,7 @@ public partial class Device
         cdb[9]  = (byte)(endMsf & 0xFF);
         cdb[10] = (byte)subchannel;
 
-        var transferLength = (uint)((cdb[7] - cdb[3]) * 60 * 75 + (cdb[8] - cdb[4]) * 75 + (cdb[9] - cdb[5]));
+        uint transferLength = (uint)(((cdb[7] - cdb[3]) * 60 * 75) + ((cdb[8] - cdb[4]) * 75) + (cdb[9] - cdb[5]));
         buffer = new byte[blockSize * transferLength];
 
         LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -129,7 +129,7 @@ public partial class Device
                                 bool errorFlags, bool wholeSector, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.ReadCdXa;
         cdb[2] = (byte)((lba & 0xFF000000) >> 24);

@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Issues;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +13,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+
+namespace Aaru.Tests.Issues;
 
 /// <summary>This will extract (and discard data) all files in all filesystems detected in an image.</summary>
 public abstract class FsExtractHashIssueTest
@@ -54,7 +54,7 @@ public abstract class FsExtractHashIssueTest
 
         Assert.AreEqual(ErrorNumber.NoError, imageFormat.Open(inputFilter), "Unable to open image format");
 
-        List<Partition> partitions = Partitions.GetAll(imageFormat);
+        List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
 
         if(partitions.Count == 0)
         {
@@ -71,7 +71,7 @@ public abstract class FsExtractHashIssueTest
             });
         }
 
-        var filesystemFound = false;
+        bool filesystemFound = false;
 
         Assert.True(File.Exists($"{TestFile}.unittest.json"));
 
@@ -92,9 +92,9 @@ public abstract class FsExtractHashIssueTest
         Assert.AreEqual(expectedData.Partitions.Length, partitions.Count,
                         $"Excepted {expectedData.Partitions.Length} partitions but found {partitions.Count}");
 
-        for(var i = 0; i < partitions.Count; i++)
+        for(int i = 0; i < partitions.Count; i++)
         {
-            Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
+            Core.Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
 
             if(idPlugins.Count == 0)
             {
@@ -108,9 +108,10 @@ public abstract class FsExtractHashIssueTest
                 continue;
 
             Assert.AreEqual(expectedData.Partitions[i].Volumes.Length, idPlugins.Count,
-                            $"Expected {expectedData.Partitions[i].Volumes.Length} filesystems identified in partition {i} but found {idPlugins.Count}");
+                            $"Expected {expectedData.Partitions[i].Volumes.Length} filesystems identified in partition {
+                                i} but found {idPlugins.Count}");
 
-            for(var j = 0; j < idPlugins.Count; j++)
+            for(int j = 0; j < idPlugins.Count; j++)
             {
                 string pluginName = idPlugins[j];
 
@@ -119,7 +120,8 @@ public abstract class FsExtractHashIssueTest
 
                 Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
 
-                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
+                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
+                                                     Invoke(Array.Empty<object>());
 
                 Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName}");
 
@@ -130,7 +132,8 @@ public abstract class FsExtractHashIssueTest
                 Assert.AreEqual(ErrorNumber.NoError, error, $"Could not mount {pluginName} in partition {i}.");
 
                 Assert.AreEqual(expectedData.Partitions[i].Volumes[j].VolumeName, fs.XmlFsType.VolumeName,
-                                $"Excepted volume name \"{expectedData.Partitions[i].Volumes[j].VolumeName}\" for filesystem {j} in partition {i} but found \"{fs.XmlFsType.VolumeName}\"");
+                                $"Excepted volume name \"{expectedData.Partitions[i].Volumes[j].VolumeName
+                                }\" for filesystem {j} in partition {i} but found \"{fs.XmlFsType.VolumeName}\"");
 
                 VolumeData volumeData = expectedData.Partitions[i].Volumes[j];
 

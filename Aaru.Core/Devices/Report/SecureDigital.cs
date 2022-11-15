@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Report;
-
 using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
-using global::Spectre.Console;
+using Spectre.Console;
+
+namespace Aaru.Core.Devices.Report;
 
 /// <summary>Implements creating a device report for a SecureDigital or MultiMediaCard flash card</summary>
 public sealed partial class DeviceReport
@@ -45,7 +45,7 @@ public sealed partial class DeviceReport
     public MmcSd MmcSdReport()
     {
         var    report = new MmcSd();
-        var    sense  = true;
+        bool   sense  = true;
         byte[] cid    = Array.Empty<byte>();
         byte[] csd    = Array.Empty<byte>();
         byte[] ecsd   = Array.Empty<byte>();
@@ -111,11 +111,11 @@ public sealed partial class DeviceReport
             ctx.AddTask("Trying to get OCR...").IsIndeterminate();
 
             sense = _dev.Type switch
-                    {
-                        DeviceType.MMC           => _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _),
-                        DeviceType.SecureDigital => _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _),
-                        _                        => sense
-                    };
+            {
+                DeviceType.MMC           => _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _),
+                DeviceType.SecureDigital => _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _),
+                _                        => sense
+            };
         });
 
         if(!sense)

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +41,8 @@ using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the filesystem used in 8-bit Commodore microcomputers</summary>
@@ -86,8 +86,7 @@ public sealed class CBM : IFilesystem
             Header cbmHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
             if(cbmHdr.diskDosVersion == 0x44 &&
-               cbmHdr.dosVersion     == 0x33 &&
-               cbmHdr.diskVersion    == 0x44)
+               cbmHdr is { dosVersion: 0x33, diskVersion: 0x44 })
                 return true;
         }
         else
@@ -99,10 +98,7 @@ public sealed class CBM : IFilesystem
 
             BAM cbmBam = Marshal.ByteArrayToStructureLittleEndian<BAM>(sector);
 
-            if(cbmBam.dosVersion == 0x41          &&
-               cbmBam.doubleSided is 0x00 or 0x80 &&
-               cbmBam.unused1        == 0x00      &&
-               cbmBam.directoryTrack == 0x12)
+            if(cbmBam is { dosVersion: 0x41, doubleSided: 0x00 or 0x80 } and { unused1: 0x00, directoryTrack: 0x12 })
                 return true;
         }
 

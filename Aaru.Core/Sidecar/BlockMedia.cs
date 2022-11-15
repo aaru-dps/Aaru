@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,6 +49,8 @@ using Aaru.Helpers;
 using Schemas;
 using MediaType = Aaru.CommonTypes.Metadata.MediaType;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
+
+namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
@@ -520,8 +520,8 @@ public sealed partial class Sidecar
 
                             if(errno != ErrorNumber.NoError)
                             {
-                                AaruConsole.
-                                    ErrorWriteLine($"Error {errno} reading sector {tapePartition.FirstBlock + doneSectors}");
+                                AaruConsole.ErrorWriteLine($"Error {errno} reading sector {
+                                    tapePartition.FirstBlock + doneSectors}");
 
                                 EndProgress2();
 
@@ -538,8 +538,8 @@ public sealed partial class Sidecar
 
                             if(errno != ErrorNumber.NoError)
                             {
-                                AaruConsole.
-                                    ErrorWriteLine($"Error {errno} reading sector {tapePartition.FirstBlock + doneSectors}");
+                                AaruConsole.ErrorWriteLine($"Error {errno} reading sector {
+                                    tapePartition.FirstBlock + doneSectors}");
 
                                 EndProgress2();
 
@@ -619,8 +619,8 @@ public sealed partial class Sidecar
 
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.
-                                        ErrorWriteLine($"Error {errno} reading sector {tapeFile.FirstBlock + doneSectors}");
+                                    AaruConsole.ErrorWriteLine($"Error {errno} reading sector {
+                                        tapeFile.FirstBlock + doneSectors}");
 
                                     EndProgress2();
 
@@ -637,8 +637,8 @@ public sealed partial class Sidecar
 
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.
-                                        ErrorWriteLine($"Error {errno} reading sector {tapeFile.FirstBlock + doneSectors}");
+                                    AaruConsole.ErrorWriteLine($"Error {errno} reading sector {
+                                        tapeFile.FirstBlock + doneSectors}");
 
                                     EndProgress2();
 
@@ -691,7 +691,7 @@ public sealed partial class Sidecar
         {
             sidecar.BlockMedia[0].FileSystemInformation = new PartitionType[partitions.Count];
 
-            for(var i = 0; i < partitions.Count; i++)
+            for(int i = 0; i < partitions.Count; i++)
             {
                 if(_aborted)
                     return;
@@ -800,9 +800,8 @@ public sealed partial class Sidecar
 
         UpdateStatus("Saving metadata...");
 
-        if(image.Info.Cylinders       > 0 &&
-           image.Info.Heads           > 0 &&
-           image.Info.SectorsPerTrack > 0)
+        if(image.Info.Cylinders > 0 &&
+           image.Info is { Heads: > 0, SectorsPerTrack: > 0 })
         {
             sidecar.BlockMedia[0].CylindersSpecified       = true;
             sidecar.BlockMedia[0].HeadsSpecified           = true;
@@ -1000,8 +999,8 @@ public sealed partial class Sidecar
                 }
                 catch(NotImplementedException) {}
 
-                if(image.Info.Heads == 2 && scpImage.Header.heads == 0 ||
-                   image.Info.Heads == 1 && scpImage.Header.heads is 1 or 2)
+                if((image.Info.Heads == 2 && scpImage.Header.heads == 0) ||
+                   (image.Info.Heads == 1 && scpImage.Header.heads is 1 or 2))
                     if(scpImage.Header.end + 1 >= image.Info.Cylinders)
                     {
                         List<BlockTrackType> scpBlockTrackTypes = new();
@@ -1037,7 +1036,7 @@ public sealed partial class Sidecar
 
                             if(scpImage.ScpTracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
                             {
-                                var trackContents =
+                                byte[] trackContents =
                                     new byte[scpTrack.Entries.Last().dataOffset + scpTrack.Entries.Last().trackLength -
                                              scpImage.Header.offsets[t] + 1];
 
@@ -1070,7 +1069,7 @@ public sealed partial class Sidecar
 
         string basename = Path.Combine(Path.GetDirectoryName(imagePath), Path.GetFileNameWithoutExtension(imagePath));
 
-        var kfDir = false;
+        bool kfDir = false;
 
         if(_aborted)
             return;
@@ -1145,7 +1144,7 @@ public sealed partial class Sidecar
                             }
 
                             Stream kfStream      = kvp.Value.GetDataForkStream();
-                            var    trackContents = new byte[kfStream.Length];
+                            byte[] trackContents = new byte[kfStream.Length];
                             kfStream.Position = 0;
                             kfStream.EnsureRead(trackContents, 0, trackContents.Length);
                             kfBlockTrackType.Size      = (ulong)trackContents.Length;
@@ -1231,7 +1230,7 @@ public sealed partial class Sidecar
                        dfiImage.TrackLengths.TryGetValue(t, out long length))
                     {
                         dfiBlockTrackType.Image.offset = (ulong)offset;
-                        var trackContents = new byte[length];
+                        byte[] trackContents = new byte[length];
                         dfiStream.Position = offset;
                         dfiStream.EnsureRead(trackContents, 0, trackContents.Length);
                         dfiBlockTrackType.Size      = (ulong)trackContents.Length;

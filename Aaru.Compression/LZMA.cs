@@ -26,24 +26,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Compression;
-
 using System.IO;
 using System.Runtime.InteropServices;
 using Aaru.Helpers;
 using SharpCompress.Compressors.LZMA;
 
-/// <summary>
-/// Implements the LZMA compression algorithm
-/// </summary>
+namespace Aaru.Compression;
+
+/// <summary>Implements the LZMA compression algorithm</summary>
 public class LZMA
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzma_decode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer,
-                                              ref nuint srcSize, byte[] props, nuint propsSize);
+    static extern int AARU_lzma_decode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer, ref nuint srcSize,
+                                              byte[] props, nuint propsSize);
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern int AARU_lzma_encode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer, nuint srcSize,
@@ -59,8 +57,8 @@ public class LZMA
     {
         if(Native.IsSupported)
         {
-            var srcSize = (nuint)source.Length;
-            var dstSize = (nuint)destination.Length;
+            nuint srcSize = (nuint)source.Length;
+            nuint dstSize = (nuint)destination.Length;
 
             AARU_lzma_decode_buffer(destination, ref dstSize, source, ref srcSize, properties,
                                     (nuint)properties.Length);
@@ -92,9 +90,9 @@ public class LZMA
         if(Native.IsSupported)
         {
             properties = new byte[5];
-            var dstSize   = (nuint)destination.Length;
-            var propsSize = (nuint)properties.Length;
-            var srcSize   = (nuint)source.Length;
+            nuint dstSize   = (nuint)destination.Length;
+            nuint propsSize = (nuint)properties.Length;
+            nuint srcSize   = (nuint)source.Length;
 
             AARU_lzma_encode_buffer(destination, ref dstSize, source, srcSize, properties, ref propsSize, level,
                                     dictSize, lc, lp, pb, fb, 0);

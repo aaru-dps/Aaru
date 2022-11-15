@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class ZZZRawImage
 {
@@ -69,20 +69,16 @@ public sealed partial class ZZZRawImage
 
             var trk = new Track
             {
-                BytesPerSector = _rawCompactDisc ? _mode2
-                                                       ? 2336
-                                                       : 2048 : (int)_imageInfo.SectorSize,
-                EndSector         = _imageInfo.Sectors - 1,
-                File              = _rawImageFilter?.Filename ?? _basePath,
-                FileOffset        = 0,
-                FileType          = "BINARY",
+                BytesPerSector = _rawCompactDisc ? _mode2 ? 2336 : 2048 : (int)_imageInfo.SectorSize,
+                EndSector = _imageInfo.Sectors - 1,
+                File = _rawImageFilter?.Filename ?? _basePath,
+                FileOffset = 0,
+                FileType = "BINARY",
                 RawBytesPerSector = _rawCompactDisc ? 2352 : (int)_imageInfo.SectorSize,
-                Sequence          = 1,
-                StartSector       = 0,
-                SubchannelType    = _hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
-                Type = _rawCompactDisc ? _mode2
-                                             ? TrackType.CdMode2Formless
-                                             : TrackType.CdMode1 : TrackType.Data,
+                Sequence = 1,
+                StartSector = 0,
+                SubchannelType = _hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
+                Type = _rawCompactDisc ? _mode2 ? TrackType.CdMode2Formless : TrackType.CdMode1 : TrackType.Data,
                 Session = 1
             };
 
@@ -148,9 +144,7 @@ public sealed partial class ZZZRawImage
                 Offset   = 0,
                 Sequence = 0,
                 Type = _rawCompactDisc
-                           ? _mode2
-                                 ? "MODE2/2352"
-                                 : "MODE1/2352"
+                           ? _mode2 ? "MODE2/2352" : "MODE1/2352"
                            : _imageInfo.MediaType is MediaType.PD650 or MediaType.PD650_WORM
                                ? "DATA/512"
                                : "MODE1/2048",

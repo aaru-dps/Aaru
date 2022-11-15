@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -53,6 +51,8 @@ using DMI = Aaru.Decoders.Xbox.DMI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class ZZZRawImage
 {
@@ -349,8 +349,8 @@ public sealed partial class ZZZRawImage
         if(_imageInfo.ImageSize % 2352 == 0 ||
            _imageInfo.ImageSize % 2448 == 0)
         {
-            var sync   = new byte[12];
-            var header = new byte[4];
+            byte[] sync   = new byte[12];
+            byte[] header = new byte[4];
             stream.Seek(0, SeekOrigin.Begin);
             stream.EnsureRead(sync, 0, 12);
             stream.EnsureRead(header, 0, 4);
@@ -391,7 +391,7 @@ public sealed partial class ZZZRawImage
                     continue;
 
                 AaruConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
-                var data = new byte[filter.DataForkLength];
+                byte[] data = new byte[filter.DataForkLength];
                 filter.GetDataForkStream().EnsureRead(data, 0, data.Length);
                 _mediaTags.Add(sidecar.tag, data);
             }
@@ -437,24 +437,22 @@ public sealed partial class ZZZRawImage
             PFI.PhysicalFormatInformation decPfi = PFI.Decode(pfi, _imageInfo.MediaType).Value;
 
             _imageInfo.MediaType = decPfi.DiskCategory switch
-                                   {
-                                       DiskCategory.DVDPR => MediaType.DVDPR,
-                                       DiskCategory.DVDPRDL => MediaType.DVDPRDL,
-                                       DiskCategory.DVDPRW => MediaType.DVDPRW,
-                                       DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
-                                       DiskCategory.DVDR => decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
-                                       DiskCategory.DVDRAM => MediaType.DVDRAM,
-                                       DiskCategory.DVDRW => decPfi.PartVersion >= 15 ? MediaType.DVDRWDL
-                                                                 : MediaType.DVDRW,
-                                       DiskCategory.HDDVDR   => MediaType.HDDVDR,
-                                       DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
-                                       DiskCategory.HDDVDROM => MediaType.HDDVDROM,
-                                       DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
-                                       DiskCategory.Nintendo => decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD
-                                                                    : MediaType.WOD,
-                                       DiskCategory.UMD => MediaType.UMD,
-                                       _                => MediaType.DVDROM
-                                   };
+            {
+                DiskCategory.DVDPR    => MediaType.DVDPR,
+                DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                DiskCategory.DVDR     => decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
+                DiskCategory.DVDRAM   => MediaType.DVDRAM,
+                DiskCategory.DVDRW    => decPfi.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW,
+                DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                DiskCategory.Nintendo => decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD,
+                DiskCategory.UMD      => MediaType.UMD,
+                _                     => MediaType.DVDROM
+            };
 
             if(_imageInfo.MediaType is MediaType.DVDR or MediaType.DVDRW or MediaType.HDDVDR &&
                _mediaTags.TryGetValue(MediaTagType.DVD_MediaIdentifier, out byte[] mid))
@@ -1227,9 +1225,9 @@ public sealed partial class ZZZRawImage
 
             buffer = br.ReadBytes((int)((sectorSize + sectorSkip) * length));
 
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
-                var sector = new byte[sectorSize];
+                byte[] sector = new byte[sectorSize];
                 Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
                 sector = Sector.GetUserDataFromMode2(sector);
                 mode2Ms.Write(sector, 0, sector.Length);
@@ -1241,7 +1239,7 @@ public sealed partial class ZZZRawImage
                 sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -1368,7 +1366,7 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-           !_rawCompactDisc && tag != SectorTagType.CdTrackFlags)
+           (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
             return ErrorNumber.NotSupported;
 
         return ReadSectorsTag(sectorAddress, 1, tag, out buffer);
@@ -1380,7 +1378,7 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-           !_rawCompactDisc && tag != SectorTagType.CdTrackFlags)
+           (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
             return ErrorNumber.NotSupported;
 
         if(tag == SectorTagType.CdTrackFlags)
@@ -1495,7 +1493,7 @@ public sealed partial class ZZZRawImage
            sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -1541,7 +1539,7 @@ public sealed partial class ZZZRawImage
         if(sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 byte[] sector = br.ReadBytes((int)sectorSize);
                 br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);

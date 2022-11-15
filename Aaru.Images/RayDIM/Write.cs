@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class RayDim
 {
@@ -132,7 +132,7 @@ public sealed partial class RayDim
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -166,7 +166,7 @@ public sealed partial class RayDim
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -227,8 +227,8 @@ public sealed partial class RayDim
             return false;
         }
 
-        string headerSignature =
-            $"Disk IMage VER 1.0 Copyright (C) {DateTime.Now.Year:D4} Ray Arachelian, All Rights Reserved. Aaru ";
+        string headerSignature = $"Disk IMage VER 1.0 Copyright (C) {DateTime.Now.Year
+            :D4} Ray Arachelian, All Rights Reserved. Aaru ";
 
         var header = new Header
         {
@@ -241,8 +241,8 @@ public sealed partial class RayDim
 
         header.signature[0x4A] = 0x00;
 
-        var    hdr    = new byte[Marshal.SizeOf<Header>()];
-        IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

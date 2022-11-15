@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Anex86
 {
@@ -50,7 +50,7 @@ public sealed partial class Anex86
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        var hdrB = new byte[Marshal.SizeOf<Header>()];
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _header = Marshal.SpanToStructureLittleEndian<Header>(hdrB);
@@ -98,7 +98,7 @@ public sealed partial class Anex86
 
         Stream stream = _anexImageFilter.GetDataForkStream();
 
-        stream.Seek((long)((ulong)_header.hdrSize + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+        stream.Seek((long)((ulong)_header.hdrSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
         stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 

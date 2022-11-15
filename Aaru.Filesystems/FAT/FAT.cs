@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -39,6 +37,8 @@ using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 // TODO: Differentiate between Atari and X68k FAT, as this one uses a standard BPB.
 // X68K uses cdate/adate from direntry for extending filename

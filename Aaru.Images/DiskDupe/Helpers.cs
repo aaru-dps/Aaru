@@ -31,18 +31,18 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Linq;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.DiscImages;
+
 public sealed partial class DiskDupe
 {
     bool TryReadHeader(Stream stream, ref FileHeader fhdr, ref TrackInfo[] tmap, ref long[] toffsets)
     {
-        var        buffer = new byte[6];
+        byte[]     buffer = new byte[6];
         FileHeader fHeader;
 
         stream.Seek(0, SeekOrigin.Begin);
@@ -65,17 +65,17 @@ public sealed partial class DiskDupe
 
         // seek to start of the trackmap
         stream.Seek(TRACKMAP_OFFSET, SeekOrigin.Begin);
-        int numTracks    = _diskTypes[fHeader.diskType].cyl * _diskTypes[fHeader.diskType].hd;
-        int trackLen     = 512 * _diskTypes[fHeader.diskType].spt; // the length of a single track, in bytes
-        var trackMap     = new TrackInfo[numTracks];
-        var trackOffsets = new long[numTracks];
+        int         numTracks    = _diskTypes[fHeader.diskType].cyl * _diskTypes[fHeader.diskType].hd;
+        int         trackLen     = 512 * _diskTypes[fHeader.diskType].spt; // the length of a single track, in bytes
+        TrackInfo[] trackMap     = new TrackInfo[numTracks];
+        long[]      trackOffsets = new long[numTracks];
 
         AaruConsole.DebugWriteLine("DiskDupe plugin", "Identified image with C/H/S = {0}/{1}/{2}",
                                    _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].hd,
                                    _diskTypes[fHeader.diskType].spt);
 
         // read the trackmap and store the track offsets
-        for(var i = 0; i < numTracks; i++)
+        for(int i = 0; i < numTracks; i++)
         {
             stream.EnsureRead(buffer, 0, 6);
             trackMap[i]     = Marshal.ByteArrayToStructureBigEndian<TrackInfo>(buffer);

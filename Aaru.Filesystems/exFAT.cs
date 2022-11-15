@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -43,10 +41,13 @@ using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
+namespace Aaru.Filesystems;
+
 // Information from https://www.sans.org/reading-room/whitepapers/forensics/reverse-engineering-microsoft-exfat-file-system-33274
 /// <inheritdoc />
 /// <summary>Implements detection of the exFAT filesystem</summary>
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
+
 // ReSharper disable once InconsistentNaming
 public sealed class exFAT : IFilesystem
 {
@@ -152,7 +153,7 @@ public sealed class exFAT : IFilesystem
         if(vbr.flags.HasFlag(VolumeFlags.MediaFailure))
             sb.AppendLine("Underlying media presented errors");
 
-        var count = 1;
+        int count = 1;
 
         foreach(OemParameter parameter in parametersTable.parameters)
         {
@@ -187,9 +188,7 @@ public sealed class exFAT : IFilesystem
     [Flags]
     enum VolumeFlags : ushort
     {
-        SecondFatActive = 1,
-        VolumeDirty     = 2,
-        MediaFailure    = 4,
+        SecondFatActive = 1, VolumeDirty = 2, MediaFailure = 4,
         ClearToZero     = 8
     }
 

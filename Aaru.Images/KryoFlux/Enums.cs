@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class KryoFlux
@@ -40,29 +40,16 @@ public sealed partial class KryoFlux
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum BlockIds : byte
     {
-        Flux2   = 0x00,
-        Flux2_1 = 0x01,
-        Flux2_2 = 0x02,
-        Flux2_3 = 0x03,
-        Flux2_4 = 0x04,
-        Flux2_5 = 0x05,
-        Flux2_6 = 0x06,
-        Flux2_7 = 0x07,
-        Nop1    = 0x08,
-        Nop2    = 0x09,
-        Nop3    = 0x0A,
-        Ovl16   = 0x0B,
-        Flux3   = 0x0C,
-        Oob     = 0x0D
+        Flux2   = 0x00, Flux2_1 = 0x01, Flux2_2 = 0x02,
+        Flux2_3 = 0x03, Flux2_4 = 0x04, Flux2_5 = 0x05,
+        Flux2_6 = 0x06, Flux2_7 = 0x07, Nop1    = 0x08,
+        Nop2    = 0x09, Nop3    = 0x0A, Ovl16   = 0x0B,
+        Flux3   = 0x0C, Oob     = 0x0D
     }
 
     enum OobTypes : byte
     {
-        Invalid    = 0x00,
-        StreamInfo = 0x01,
-        Index      = 0x02,
-        StreamEnd  = 0x03,
-        KFInfo     = 0x04,
-        EOF        = 0x0D
+        Invalid   = 0x00, StreamInfo = 0x01, Index = 0x02,
+        StreamEnd = 0x03, KFInfo     = 0x04, EOF   = 0x0D
     }
 }

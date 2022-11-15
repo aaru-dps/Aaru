@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Partitions;
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of NEC PC-9800 partitions</summary>
@@ -135,8 +135,8 @@ public sealed class PC98 : IPartition
             AaruConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}", part.Length);
             AaruConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
 
-            if((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44 ||
-               part.Start >= imagePlugin.Info.Sectors                         ||
+            if(((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44) ||
+               part.Start >= imagePlugin.Info.Sectors                           ||
                part.End   > imagePlugin.Info.Sectors)
                 continue;
 

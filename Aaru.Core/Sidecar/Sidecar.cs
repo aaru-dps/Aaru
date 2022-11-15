@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {

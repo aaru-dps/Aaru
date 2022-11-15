@@ -1,7 +1,7 @@
-namespace Aaru.Tests;
-
 using System.Text;
 using NUnit.Framework;
+
+namespace Aaru.Tests;
 
 [SetUpFixture]
 public class Tests

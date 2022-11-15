@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems.LisaFS;
-
 using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems.LisaFS;
 
 public sealed partial class LisaFS
 {
@@ -207,7 +207,7 @@ public sealed partial class LisaFS
            !tags)
             return ErrorNumber.NoError;
 
-        var count = 0;
+        int count = 0;
 
         if(fileId == FILEID_SRECORD)
             if(!tags)
@@ -394,7 +394,7 @@ public sealed partial class LisaFS
         tags &= _debug;
 
         if(fileId < 4 ||
-           fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
+           (fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1))
             return ErrorNumber.InvalidArgument;
 
         if(!tags &&
@@ -413,11 +413,11 @@ public sealed partial class LisaFS
         else
             sectorSize = (int)_device.Info.SectorSize;
 
-        var temp = new byte[file.length * sectorSize];
+        byte[] temp = new byte[file.length * sectorSize];
 
-        var offset = 0;
+        int offset = 0;
 
-        for(var i = 0; i < file.extents.Length; i++)
+        for(int i = 0; i < file.extents.Length; i++)
         {
             byte[] sector;
 
@@ -521,7 +521,7 @@ public sealed partial class LisaFS
             }
         }
 
-        for(var lvl = 0; lvl < pathElements.Length; lvl++)
+        for(int lvl = 0; lvl < pathElements.Length; lvl++)
         {
             string wantedFilename = pathElements[0].Replace('-', '/');
 

@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using Aaru.CommonTypes.Interop;
+
+namespace Aaru.Core;
 
 /// <summary>Prints the description of a system error number.</summary>
 public static class Error

@@ -1,117 +1,117 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <SchemaVersion>2.0</SchemaVersion>
-        <ProjectGuid>{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <RootNamespace>Aaru.Devices</RootNamespace>
-        <AssemblyName>Aaru.Devices</AssemblyName>
-        <ReleaseVersion>$(Version)</ReleaseVersion>
-        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>6.0.0-alpha8</Version>
-        <Company>Claunia.com</Company>
-        <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
-        <Product>Aaru Data Preservation Suite</Product>
-        <Title>Aaru.Devices</Title>
-        <ApplicationVersion>$(Version)</ApplicationVersion>
-        <TargetFramework>net7.0</TargetFramework>
-        <LangVersion>11</LangVersion>
-        <Description>Media device hardware interface implementation used by the Aaru Data Preservation Suite.</Description>
-        <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
-        <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/aaru-dps/Aaru</RepositoryUrl>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <NeutralLanguage>en-US</NeutralLanguage>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
-        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <NoWarn>CS1591;CS1574</NoWarn>
-    </PropertyGroup>
-    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <InternalsVisibleTo Include="Aaru.Tests"/>
-        <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
-    </ItemGroup>
-    <PropertyGroup>
-        <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
-        <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-        <NrtShowRevision>true</NrtShowRevision>
-    </PropertyGroup>
-    <ItemGroup>
-        <Compile Include="Device\ScsiCommands\MediaTek.cs" />
-        <Compile Include="Device\ScsiCommands\MiniDisc.cs" />
-        <Compile Include="Device\ScsiCommands\Optical.cs" />
-        <Compile Include="Linux\Device.cs" />
-        <Compile Include="Linux\Extern.cs" />
-        <Compile Include="Linux\Structs.cs" />
-        <Compile Include="Linux\Enums.cs" />
-        <Compile Include="Enums.cs" />
-        <Compile Include="Remote\Command.cs" />
-        <Compile Include="Remote\Consts.cs" />
-        <Compile Include="Remote\Device.cs" />
-        <Compile Include="Remote\Enums.cs" />
-        <Compile Include="Remote\Remote.cs" />
-        <Compile Include="Remote\Structs.cs" />
-        <Compile Include="Windows\Device.cs" />
-        <Compile Include="Windows\Extern.cs" />
-        <Compile Include="Windows\ListDevices.cs" />
-        <Compile Include="Windows\Structs.cs" />
-        <Compile Include="Windows\Enums.cs" />
-        <Compile Include="Windows\Command.cs" />
-        <Compile Include="Linux\Command.cs" />
-        <Compile Include="Device\Constructor.cs" />
-        <Compile Include="Device\Variables.cs" />
-        <Compile Include="Device\Destructor.cs" />
-        <Compile Include="Device\Commands.cs" />
-        <Compile Include="Device\ScsiCommands\MMC.cs" />
-        <Compile Include="Device\ScsiCommands\SPC.cs" />
-        <Compile Include="Device\ScsiCommands\SBC.cs" />
-        <Compile Include="Device\ScsiCommands\Pioneer.cs" />
-        <Compile Include="Device\ScsiCommands\Plextor.cs" />
-        <Compile Include="Device\ScsiCommands\NEC.cs" />
-        <Compile Include="Device\ScsiCommands\HL-DT-ST.cs" />
-        <Compile Include="Device\ScsiCommands\SSC.cs" />
-        <Compile Include="Device\ScsiCommands\SMC.cs" />
-        <Compile Include="Device\ScsiCommands\Adaptec.cs" />
-        <Compile Include="Device\ScsiCommands\ArchiveCorp.cs" />
-        <Compile Include="Device\ScsiCommands\Certance.cs" />
-        <Compile Include="Device\ScsiCommands\Fujitsu.cs" />
-        <Compile Include="Device\ScsiCommands\HP.cs" />
-        <Compile Include="Device\ScsiCommands\Plasmon.cs" />
-        <Compile Include="Device\ScsiCommands\SyQuest.cs" />
-        <Compile Include="Device\AtaCommands\AtaCHS.cs" />
-        <Compile Include="Device\AtaCommands\Atapi.cs" />
-        <Compile Include="Device\AtaCommands\Ata28.cs" />
-        <Compile Include="Device\AtaCommands\Ata48.cs" />
-        <Compile Include="Device\AtaCommands\Smart.cs" />
-        <Compile Include="Device\AtaCommands\Cfa.cs" />
-        <Compile Include="Device\AtaCommands\MCPT.cs" />
-        <Compile Include="Device\MmcCommands\MMC.cs" />
-        <Compile Include="Device\MmcCommands\SecureDigital.cs" />
-        <Compile Include="Device\ScsiCommands\Kreon.cs" />
-        <Compile Include="Device\List.cs" />
-        <Compile Include="Linux\ListDevices.cs" />
-        <Compile Include="Windows\Usb.cs" />
-        <Compile Include="Windows\UsbFunctions.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="System.Management" Version="7.0.0" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj" />
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="..\LICENSE.LGPL">
-            <Link>LICENSE.LGPL</Link>
-        </EmbeddedResource>
-    </ItemGroup>
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Aaru.Devices</RootNamespace>
+    <AssemblyName>Aaru.Devices</AssemblyName>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>6.0.0-alpha8</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
+    <Product>Aaru Data Preservation Suite</Product>
+    <Title>Aaru.Devices</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <TargetFramework>net7.0</TargetFramework>
+    <LangVersion>11</LangVersion>
+    <Description>Media device hardware interface implementation used by the Aaru Data Preservation Suite.</Description>
+    <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/aaru-dps/Aaru</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Device\ScsiCommands\MediaTek.cs"/>
+    <Compile Include="Device\ScsiCommands\MiniDisc.cs"/>
+    <Compile Include="Device\ScsiCommands\Optical.cs"/>
+    <Compile Include="Linux\Device.cs"/>
+    <Compile Include="Linux\Extern.cs"/>
+    <Compile Include="Linux\Structs.cs"/>
+    <Compile Include="Linux\Enums.cs"/>
+    <Compile Include="Enums.cs"/>
+    <Compile Include="Remote\Command.cs"/>
+    <Compile Include="Remote\Consts.cs"/>
+    <Compile Include="Remote\Device.cs"/>
+    <Compile Include="Remote\Enums.cs"/>
+    <Compile Include="Remote\Remote.cs"/>
+    <Compile Include="Remote\Structs.cs"/>
+    <Compile Include="Windows\Device.cs"/>
+    <Compile Include="Windows\Extern.cs"/>
+    <Compile Include="Windows\ListDevices.cs"/>
+    <Compile Include="Windows\Structs.cs"/>
+    <Compile Include="Windows\Enums.cs"/>
+    <Compile Include="Windows\Command.cs"/>
+    <Compile Include="Linux\Command.cs"/>
+    <Compile Include="Device\Constructor.cs"/>
+    <Compile Include="Device\Variables.cs"/>
+    <Compile Include="Device\Destructor.cs"/>
+    <Compile Include="Device\Commands.cs"/>
+    <Compile Include="Device\ScsiCommands\MMC.cs"/>
+    <Compile Include="Device\ScsiCommands\SPC.cs"/>
+    <Compile Include="Device\ScsiCommands\SBC.cs"/>
+    <Compile Include="Device\ScsiCommands\Pioneer.cs"/>
+    <Compile Include="Device\ScsiCommands\Plextor.cs"/>
+    <Compile Include="Device\ScsiCommands\NEC.cs"/>
+    <Compile Include="Device\ScsiCommands\HL-DT-ST.cs"/>
+    <Compile Include="Device\ScsiCommands\SSC.cs"/>
+    <Compile Include="Device\ScsiCommands\SMC.cs"/>
+    <Compile Include="Device\ScsiCommands\Adaptec.cs"/>
+    <Compile Include="Device\ScsiCommands\ArchiveCorp.cs"/>
+    <Compile Include="Device\ScsiCommands\Certance.cs"/>
+    <Compile Include="Device\ScsiCommands\Fujitsu.cs"/>
+    <Compile Include="Device\ScsiCommands\HP.cs"/>
+    <Compile Include="Device\ScsiCommands\Plasmon.cs"/>
+    <Compile Include="Device\ScsiCommands\SyQuest.cs"/>
+    <Compile Include="Device\AtaCommands\AtaCHS.cs"/>
+    <Compile Include="Device\AtaCommands\Atapi.cs"/>
+    <Compile Include="Device\AtaCommands\Ata28.cs"/>
+    <Compile Include="Device\AtaCommands\Ata48.cs"/>
+    <Compile Include="Device\AtaCommands\Smart.cs"/>
+    <Compile Include="Device\AtaCommands\Cfa.cs"/>
+    <Compile Include="Device\AtaCommands\MCPT.cs"/>
+    <Compile Include="Device\MmcCommands\MMC.cs"/>
+    <Compile Include="Device\MmcCommands\SecureDigital.cs"/>
+    <Compile Include="Device\ScsiCommands\Kreon.cs"/>
+    <Compile Include="Device\List.cs"/>
+    <Compile Include="Linux\ListDevices.cs"/>
+    <Compile Include="Windows\Usb.cs"/>
+    <Compile Include="Windows\UsbFunctions.cs"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="7.0.0"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

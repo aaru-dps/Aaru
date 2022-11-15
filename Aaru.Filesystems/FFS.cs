@@ -30,11 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using time_t = System.Int32;
-using ufs_daddr_t = System.Int32;
-
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -47,6 +42,10 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+using time_t = System.Int32;
+using ufs_daddr_t = System.Int32;
+
+namespace Aaru.Filesystems;
 
 // Using information from Linux kernel headers
 /// <inheritdoc />
@@ -138,10 +137,10 @@ public sealed class FFSPlugin : IFilesystem
                 if(errno != ErrorNumber.NoError)
                     continue;
 
-                var magic = BitConverter.ToUInt32(ufsSbSectors, 0x055C);
+                uint magic = BitConverter.ToUInt32(ufsSbSectors, 0x055C);
 
                 if(magic is UFS_MAGIC or UFS_CIGAM or UFS_MAGIC_BW or UFS_CIGAM_BW or UFS2_MAGIC or UFS2_CIGAM
-                         or UFS_BAD_MAGIC or UFS_BAD_CIGAM)
+                   or UFS_BAD_MAGIC or UFS_BAD_CIGAM)
                     return true;
             }
 
@@ -164,13 +163,13 @@ public sealed class FFSPlugin : IFilesystem
         uint   sb_size_in_sectors;
         byte[] ufs_sb_sectors;
         ulong  sb_offset     = partition.Start;
-        var    fs_type_42bsd = false;
-        var    fs_type_43bsd = false;
-        var    fs_type_44bsd = false;
-        var    fs_type_ufs   = false;
-        var    fs_type_ufs2  = false;
-        var    fs_type_sun   = false;
-        var    fs_type_sun86 = false;
+        bool   fs_type_42bsd = false;
+        bool   fs_type_43bsd = false;
+        bool   fs_type_44bsd = false;
+        bool   fs_type_ufs   = false;
+        bool   fs_type_ufs2  = false;
+        bool   fs_type_sun   = false;
+        bool   fs_type_sun86 = false;
 
         if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
             sb_size_in_sectors = block_size / 2048;
@@ -196,7 +195,7 @@ public sealed class FFSPlugin : IFilesystem
             magic = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
             if(magic is UFS_MAGIC or UFS_CIGAM or UFS_MAGIC_BW or UFS_CIGAM_BW or UFS2_MAGIC or UFS2_CIGAM
-                     or UFS_BAD_MAGIC or UFS_BAD_CIGAM)
+               or UFS_BAD_MAGIC or UFS_BAD_CIGAM)
             {
                 sb_offset = partition.Start + loc;
 
@@ -271,10 +270,10 @@ public sealed class FFSPlugin : IFilesystem
 
         SuperBlock bs_sfu = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(ufs_sb_sectors);
 
-        if(bs_sfu.fs_magic == UFS_MAGIC     && sb.fs_magic == UFS_CIGAM    ||
-           bs_sfu.fs_magic == UFS_MAGIC_BW  && sb.fs_magic == UFS_CIGAM_BW ||
-           bs_sfu.fs_magic == UFS2_MAGIC    && sb.fs_magic == UFS2_CIGAM   ||
-           bs_sfu.fs_magic == UFS_BAD_MAGIC && sb.fs_magic == UFS_BAD_CIGAM)
+        if((bs_sfu.fs_magic == UFS_MAGIC     && sb.fs_magic == UFS_CIGAM)    ||
+           (bs_sfu.fs_magic == UFS_MAGIC_BW  && sb.fs_magic == UFS_CIGAM_BW) ||
+           (bs_sfu.fs_magic == UFS2_MAGIC    && sb.fs_magic == UFS2_CIGAM)   ||
+           (bs_sfu.fs_magic == UFS_BAD_MAGIC && sb.fs_magic == UFS_BAD_CIGAM))
         {
             sb                           = bs_sfu;
             sb.fs_old_cstotal.cs_nbfree  = Swapping.Swap(sb.fs_old_cstotal.cs_nbfree);
@@ -375,7 +374,7 @@ public sealed class FFSPlugin : IFilesystem
             }
 
             // 4.3BSD code does not use these fields, they are always set up to 0
-            fs_type_43bsd &= sb.fs_id_2 == 0 && sb.fs_id_1 == 0;
+            fs_type_43bsd &= sb is { fs_id_2: 0, fs_id_1: 0 };
 
             // This is the only 4.4BSD inode format
             fs_type_44bsd |= sb.fs_old_inodefmt == 2;
@@ -479,11 +478,11 @@ public sealed class FFSPlugin : IFilesystem
 
         switch(fs_type_43bsd)
         {
-            case false when sb.fs_id_1 > 0 && sb.fs_id_2 > 0:
+            case false when sb is { fs_id_1: > 0, fs_id_2: > 0 }:
                 sbInformation.AppendFormat("Volume ID: 0x{0:X8}{1:X8}", sb.fs_id_1, sb.fs_id_2).AppendLine();
 
                 break;
-            case true when sb.fs_id_1 > 0 && sb.fs_id_2 > 0:
+            case true when sb is { fs_id_1: > 0, fs_id_2: > 0 }:
                 sbInformation.AppendFormat("{0} µsec for head switch", sb.fs_id_1).AppendLine();
                 sbInformation.AppendFormat("{0} µsec for track-to-track seek", sb.fs_id_2).AppendLine();
 

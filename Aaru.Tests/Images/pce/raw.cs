@@ -26,19 +26,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images.pce;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images.pce;
+
 [TestFixture]
 public class Raw : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "pce", "raw");
-    public override IMediaImage Plugin    => new ZZZRawImage();
+    public override IMediaImage Plugin     => new ZZZRawImage();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Partitions;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of Xbox partitions</summary>
@@ -146,8 +146,8 @@ public sealed class Xbox : IPartition
                     var dataPart = new Partition
                     {
                         Description = "Data volume",
-                        Size        = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize - MEMORY_UNIT_DATA_OFF,
-                        Length      = imagePlugin.Info.Sectors                               - sysCachePart.Length,
+                        Size        = (imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize) - MEMORY_UNIT_DATA_OFF,
+                        Length      = imagePlugin.Info.Sectors                                 - sysCachePart.Length,
                         Sequence    = 2,
                         Offset      = MEMORY_UNIT_DATA_OFF,
                         Start       = sysCachePart.Length,

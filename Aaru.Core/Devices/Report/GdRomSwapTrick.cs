@@ -32,8 +32,6 @@
 
 // ReSharper disable InlineOutVariableDeclaration
 
-namespace Aaru.Core.Devices.Report;
-
 using System;
 using System.Linq;
 using System.Threading;
@@ -42,6 +40,8 @@ using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Report;
 
 public sealed partial class DeviceReport
 {
@@ -59,7 +59,7 @@ public sealed partial class DeviceReport
             AaruConsole.
                 Write("Have you previously tried with a GD-ROM disc and did the computer hang or crash? (Y/N): ");
 
-            pressedKey = Console.ReadKey();
+            pressedKey = System.Console.ReadKey();
             AaruConsole.WriteLine();
         }
 
@@ -77,11 +77,11 @@ public sealed partial class DeviceReport
 
         AaruConsole.WriteLine("Please insert trap disc inside...");
         AaruConsole.WriteLine("Press any key to continue...");
-        Console.ReadLine();
+        System.Console.ReadLine();
 
         AaruConsole.WriteLine("Sending READ FULL TOC to the device...");
 
-        var    retries = 0;
+        int    retries = 0;
         bool   sense;
         byte[] buffer;
         byte[] senseBuffer;
@@ -141,8 +141,8 @@ public sealed partial class DeviceReport
             return;
         }
 
-        int min         = 0, sec, frame;
-        var tocIsNotBcd = false;
+        int  min         = 0, sec, frame;
+        bool tocIsNotBcd = false;
 
         report.GdRomSwapDiscCapabilities.SwapDiscLeadOutPMIN  = leadOutTrack.PMIN;
         report.GdRomSwapDiscCapabilities.SwapDiscLeadOutPSEC  = leadOutTrack.PSEC;
@@ -169,12 +169,12 @@ public sealed partial class DeviceReport
         }
         else
         {
-            min   += (leadOutTrack.PMIN   >> 4) * 10 + (leadOutTrack.PMIN   & 0x0F);
-            sec   =  (leadOutTrack.PSEC   >> 4) * 10 + (leadOutTrack.PSEC   & 0x0F);
-            frame =  (leadOutTrack.PFRAME >> 4) * 10 + (leadOutTrack.PFRAME & 0x0F);
+            min   += ((leadOutTrack.PMIN   >> 4) * 10) + (leadOutTrack.PMIN   & 0x0F);
+            sec   =  ((leadOutTrack.PSEC   >> 4) * 10) + (leadOutTrack.PSEC   & 0x0F);
+            frame =  ((leadOutTrack.PFRAME >> 4) * 10) + (leadOutTrack.PFRAME & 0x0F);
         }
 
-        int sectors = min * 60 * 75 + sec * 75 + frame - 150;
+        int sectors = (min * 60 * 75) + (sec * 75) + frame - 150;
 
         AaruConsole.WriteLine("Trap disc shows {0} sectors...", sectors);
 
@@ -196,7 +196,7 @@ public sealed partial class DeviceReport
 
         AaruConsole.WriteLine("Please MANUALLY get the trap disc out and put the GD-ROM disc inside...");
         AaruConsole.WriteLine("Press any key to continue...");
-        Console.ReadLine();
+        System.Console.ReadLine();
 
         AaruConsole.WriteLine("Waiting 5 seconds...");
         Thread.Sleep(5000);
@@ -1434,7 +1434,7 @@ public sealed partial class DeviceReport
                 Write("The next part of the test will read the whole high density area of a GD-ROM from the smallest known readable sector until the first error happens\n" +
                       "Do you want to proceed? (Y/N): ");
 
-            pressedKey = Console.ReadKey();
+            pressedKey = System.Console.ReadKey();
             AaruConsole.WriteLine();
         }
 
@@ -1442,8 +1442,8 @@ public sealed partial class DeviceReport
             return;
 
         uint          startingSector = 45000;
-        var           readAsAudio    = false;
-        var           aborted        = false;
+        bool          readAsAudio    = false;
+        bool          aborted        = false;
         MmcSubchannel subchannel     = MmcSubchannel.None;
         uint          blockSize      = 2352;
 
@@ -1558,7 +1558,7 @@ public sealed partial class DeviceReport
                 subchannel = MmcSubchannel.Q16;
         }
 
-        Console.CancelKeyPress += (_, e) =>
+        System.Console.CancelKeyPress += (_, e) =>
         {
             e.Cancel = true;
             aborted  = true;
@@ -1580,7 +1580,7 @@ public sealed partial class DeviceReport
 
         byte[] lastSuccessfulPq = null;
         byte[] lastSuccessfulRw = null;
-        var    trackModeChange  = false;
+        bool   trackModeChange  = false;
 
         AaruConsole.WriteLine();
 

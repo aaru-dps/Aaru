@@ -30,15 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable NotAccessedField.Local
-
-#pragma warning disable CS0649
-namespace Aaru.Filesystems.LisaFS;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+
+#pragma warning disable CS0649
+namespace Aaru.Filesystems.LisaFS;
 
 public sealed partial class LisaFS
 {

@@ -30,14 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using hammer_crc_t = System.UInt32;
-using hammer_off_t = System.UInt64;
-using hammer_tid_t = System.UInt64;
-
-#pragma warning disable 169
-
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -47,7 +39,14 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
+using hammer_crc_t = System.UInt32;
+using hammer_off_t = System.UInt64;
+using hammer_tid_t = System.UInt64;
 using Marshal = Aaru.Helpers.Marshal;
+
+#pragma warning disable 169
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection for the HAMMER filesystem</summary>
@@ -85,7 +84,7 @@ public sealed class HAMMER : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var magic = BitConverter.ToUInt64(sbSector, 0);
+        ulong magic = BitConverter.ToUInt64(sbSector, 0);
 
         return magic is HAMMER_FSBUF_VOLUME or HAMMER_FSBUF_VOLUME_REV;
     }
@@ -108,7 +107,7 @@ public sealed class HAMMER : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        var magic = BitConverter.ToUInt64(sbSector, 0);
+        ulong magic = BitConverter.ToUInt64(sbSector, 0);
 
         SuperBlock superBlock = magic == HAMMER_FSBUF_VOLUME
                                     ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)

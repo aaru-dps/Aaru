@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Helpers;
 using Schemas;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class RsIde
 {
@@ -143,7 +143,7 @@ public sealed partial class RsIde
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -177,7 +177,7 @@ public sealed partial class RsIde
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -231,9 +231,8 @@ public sealed partial class RsIde
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders       == 0 &&
-                   _imageInfo.Heads           == 0 &&
-                   _imageInfo.SectorsPerTrack == 0)
+                if(_imageInfo.Cylinders == 0 &&
+                   _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
                     break;
             }
         }
@@ -287,8 +286,8 @@ public sealed partial class RsIde
             if(string.IsNullOrEmpty(_imageInfo.DriveSerialNumber))
                 _imageInfo.DriveSerialNumber = $"{new Random().NextDouble():16X}";
 
-            var    ataIdBytes = new byte[Marshal.SizeOf<Identify.IdentifyDevice>()];
-            IntPtr ptr        = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
+            byte[] ataIdBytes = new byte[Marshal.SizeOf<Identify.IdentifyDevice>()];
+            nint   ptr        = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
             System.Runtime.InteropServices.Marshal.StructureToPtr(ataId, ptr, true);
 
             System.Runtime.InteropServices.Marshal.Copy(ptr, ataIdBytes, 0, Marshal.SizeOf<Identify.IdentifyDevice>());
@@ -305,8 +304,8 @@ public sealed partial class RsIde
         else
             Array.Copy(_identify, 0, header.identify, 0, 106);
 
-        var    hdr    = new byte[Marshal.SizeOf<Header>()];
-        IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 // Information from the Linux kernel
 /// <inheritdoc />
@@ -71,8 +71,8 @@ public sealed class Xia : IFilesystem
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -98,8 +98,8 @@ public sealed class Xia : IFilesystem
 
         var sb = new StringBuilder();
 
-        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;

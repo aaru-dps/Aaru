@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filters;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using SharpCompress.Compressors.Xz;
+
+namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Decompress xz files while reading</summary>
@@ -84,8 +84,8 @@ public sealed class XZ : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        var buffer = new byte[6];
-        var footer = new byte[2];
+        byte[] buffer = new byte[6];
+        byte[] footer = new byte[2];
 
         if(stream.Length < 8)
             return false;
@@ -106,9 +106,9 @@ public sealed class XZ : IFilter
         if(!File.Exists(path))
             return false;
 
-        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        var buffer = new byte[6];
-        var footer = new byte[2];
+        var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        byte[] buffer = new byte[6];
+        byte[] footer = new byte[2];
 
         if(stream.Length < 8)
             return false;
@@ -201,7 +201,7 @@ public sealed class XZ : IFilter
 
         // Seek to footer backwards size field
         _dataStream.Seek(-8, SeekOrigin.End);
-        var tmp = new byte[4];
+        byte[] tmp = new byte[4];
         _dataStream.EnsureRead(tmp, 0, 4);
         uint backwardSize = (BitConverter.ToUInt32(tmp, 0) + 1) * 4;
 
@@ -236,7 +236,7 @@ public sealed class XZ : IFilter
         }
 
         num = (ulong)(buf[0] & 0x7F);
-        var i = 0;
+        int i = 0;
 
         while((buf[i++] & 0x80) == 0x80)
         {

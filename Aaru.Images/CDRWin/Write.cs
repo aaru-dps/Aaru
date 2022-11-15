@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {
@@ -105,10 +105,10 @@ public sealed partial class CdrWin
             Tracks    = new List<CdrWinTrack>()
         };
 
-        var mediaTypeAsInt = (int)_discImage.MediaType;
+        int mediaTypeAsInt = (int)_discImage.MediaType;
 
         _isCd = mediaTypeAsInt is >= 10 and <= 39 or 112 or 113 or >= 150 and <= 152 or 154 or 155 or >= 171 and <= 179
-                               or >= 740 and <= 749;
+                    or >= 740 and <= 749;
 
         if(_isCd)
         {
@@ -198,7 +198,7 @@ public sealed partial class CdrWin
         }
 
         trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                  SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
@@ -257,7 +257,7 @@ public sealed partial class CdrWin
         }
 
         trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                  SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
@@ -302,7 +302,7 @@ public sealed partial class CdrWin
         }
 
         trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                  SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
@@ -354,7 +354,7 @@ public sealed partial class CdrWin
         }
 
         trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                  SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
@@ -437,7 +437,7 @@ public sealed partial class CdrWin
             _writingStreams.First().Value.Close();
         }
 
-        var currentSession = 0;
+        int currentSession = 0;
 
         if(!string.IsNullOrWhiteSpace(_discImage.Comment))
         {
@@ -476,8 +476,9 @@ public sealed partial class CdrWin
                                         extent.Start,
                                         extent.End
                                     })
-                _descriptorStream.
-                    WriteLine($"REM METADATA DUMP EXTENT: {dumpData.Application} | {dumpData.ApplicationVersion} | {dumpData.OperatingSystem} | {dumpData.Manufacturer} | {dumpData.Model} | {dumpData.Firmware} | {dumpData.Serial} | {dumpData.Start}:{dumpData.End}");
+                _descriptorStream.WriteLine($"REM METADATA DUMP EXTENT: {dumpData.Application} | {
+                    dumpData.ApplicationVersion} | {dumpData.OperatingSystem} | {dumpData.Manufacturer} | {
+                        dumpData.Model} | {dumpData.Firmware} | {dumpData.Serial} | {dumpData.Start}:{dumpData.End}");
 
         if(!string.IsNullOrEmpty(_discImage.CdTextFile))
             _descriptorStream.WriteLine("CDTEXTFILE \"{0}\"", Path.GetFileName(_discImage.CdTextFile));

@@ -26,12 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images.ShrinkWrap;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.ShrinkWrap;
 
 [TestFixture]
 public class DiskCopy42 : BlockMediaImageTest

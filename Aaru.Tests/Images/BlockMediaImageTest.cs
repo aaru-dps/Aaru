@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Images;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +11,8 @@ using FluentAssertions.Execution;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images;
 
 public abstract class BlockMediaImageTest : BaseMediaImageTest
 {
@@ -160,7 +160,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 if(opened != ErrorNumber.NoError)
                     continue;
 
-                List<Partition> partitions = Partitions.GetAll(image);
+                List<Partition> partitions = Core.Partitions.GetAll(image);
 
                 if(partitions.Count == 0)
                     partitions.Add(new Partition
@@ -174,21 +174,24 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                     });
 
                 Assert.AreEqual(test.Partitions.Length, partitions.Count,
-                                $"Expected {test.Partitions.Length} partitions in {testFile} but found {partitions.Count}");
+                                $"Expected {test.Partitions.Length} partitions in {testFile} but found {partitions.Count
+                                }");
 
                 using(new AssertionScope())
                     Assert.Multiple(() =>
                     {
-                        for(var i = 0; i < test.Partitions.Length; i++)
+                        for(int i = 0; i < test.Partitions.Length; i++)
                         {
                             BlockPartitionVolumes expectedPartition = test.Partitions[i];
                             Partition             foundPartition    = partitions[i];
 
                             Assert.AreEqual(expectedPartition.Start, foundPartition.Start,
-                                            $"Expected partition {i} to start at sector {expectedPartition.Start} but found it starts at {foundPartition.Start} in {testFile}");
+                                            $"Expected partition {i} to start at sector {expectedPartition.Start
+                                            } but found it starts at {foundPartition.Start} in {testFile}");
 
                             Assert.AreEqual(expectedPartition.Length, foundPartition.Length,
-                                            $"Expected partition {i} to have {expectedPartition.Length} sectors but found it has {foundPartition.Length} sectors in {testFile}");
+                                            $"Expected partition {i} to have {expectedPartition.Length
+                                            } sectors but found it has {foundPartition.Length} sectors in {testFile}");
 
                             string expectedDataFilename = $"{testFile}.contents.partition{i}.json";
 
@@ -210,7 +213,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                             Assert.NotNull(expectedData);
 
-                            Filesystems.Identify(image, out List<string> idPlugins, partitions[i]);
+                            Core.Filesystems.Identify(image, out List<string> idPlugins, partitions[i]);
 
                             if(expectedData.Length != idPlugins.Count)
                                 continue;
@@ -258,9 +261,10 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                                 continue;
 
                             Assert.AreEqual(expectedData.Length, idPlugins.Count,
-                                            $"Expected {expectedData.Length} filesystems identified in partition {i} but found {idPlugins.Count} in {testFile}");
+                                            $"Expected {expectedData.Length} filesystems identified in partition {i
+                                            } but found {idPlugins.Count} in {testFile}");
 
-                            for(var j = 0; j < idPlugins.Count; j++)
+                            for(int j = 0; j < idPlugins.Count; j++)
                             {
                                 string pluginName = idPlugins[j];
 

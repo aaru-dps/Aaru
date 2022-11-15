@@ -36,13 +36,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filters;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Aaru.CommonTypes.Interfaces;
+
+namespace Aaru.Filters;
 
 /// <inheritdoc />
 public class Register : IPluginRegister

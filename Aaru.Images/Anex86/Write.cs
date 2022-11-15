@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Anex86
 {
@@ -133,7 +133,7 @@ public sealed partial class Anex86
             return false;
         }
 
-        _writingStream.Seek((long)(4096 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+        _writingStream.Seek((long)(4096 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -165,7 +165,7 @@ public sealed partial class Anex86
             return false;
         }
 
-        _writingStream.Seek((long)(4096 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+        _writingStream.Seek((long)(4096 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -200,8 +200,8 @@ public sealed partial class Anex86
         }
 
         if(_imageInfo.MediaType is MediaType.Unknown or MediaType.GENERIC_HDD or MediaType.FlashDrive
-                                or MediaType.CompactFlash or MediaType.CompactFlashType2 or MediaType.PCCardTypeI
-                                or MediaType.PCCardTypeII or MediaType.PCCardTypeIII or MediaType.PCCardTypeIV &&
+               or MediaType.CompactFlash or MediaType.CompactFlashType2 or MediaType.PCCardTypeI
+               or MediaType.PCCardTypeII or MediaType.PCCardTypeIII or MediaType.PCCardTypeIV &&
            _header.cylinders == 0)
         {
             _header.cylinders = (int)(_imageInfo.Sectors / 8 / 33);
@@ -221,13 +221,12 @@ public sealed partial class Anex86
                 _header.cylinders = (int)_imageInfo.Sectors / _header.heads / _header.spt;
 
                 if(_header.cylinders == 0 &&
-                   _header.heads     == 0 &&
-                   _header.spt       == 0)
+                   _header is { heads: 0, spt: 0 })
                     break;
             }
         }
 
-        var hdr = new byte[Marshal.SizeOf<Header>()];
+        byte[] hdr = new byte[Marshal.SizeOf<Header>()];
         MemoryMarshal.Write(hdr, ref _header);
 
         _writingStream.Seek(0, SeekOrigin.Begin);

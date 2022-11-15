@@ -30,17 +30,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+using System.IO;
+using Aaru.Helpers;
+using Microsoft.Win32.SafeHandles;
 #if !NETSTANDARD2_0
 
 #endif
 
 namespace Aaru.Filters
 {
-    using System;
-    using System.IO;
-    using Aaru.Helpers;
-    using Microsoft.Win32.SafeHandles;
-
     /// <summary>Creates a stream that is a subset of another stream.</summary>
     /// <inheritdoc />
     public sealed class OffsetStream : Stream

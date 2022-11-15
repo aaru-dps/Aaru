@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages.ByteAddressable;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -45,6 +43,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.DiscImages.ByteAddressable;
 
 /// <inheritdoc />
 /// <summary>Implements support for Nintendo 64 cartridge dumps</summary>
@@ -88,9 +88,9 @@ public class Nintendo64 : IByteAddressableImage
             return false;
 
         stream.Position = 0;
-        var magicBytes = new byte[4];
+        byte[] magicBytes = new byte[4];
         stream.EnsureRead(magicBytes, 0, 4);
-        var magic = BitConverter.ToUInt32(magicBytes, 0);
+        uint magic = BitConverter.ToUInt32(magicBytes, 0);
 
         switch(magic)
         {
@@ -119,9 +119,9 @@ public class Nintendo64 : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 0;
-        var magicBytes = new byte[4];
+        byte[] magicBytes = new byte[4];
         stream.EnsureRead(magicBytes, 0, 4);
-        var magic = BitConverter.ToUInt32(magicBytes, 0);
+        uint magic = BitConverter.ToUInt32(magicBytes, 0);
 
         switch(magic)
         {
@@ -169,9 +169,9 @@ public class Nintendo64 : IByteAddressableImage
 
         if(_littleEndian)
         {
-            var tmp = new byte[_data.Length];
+            byte[] tmp = new byte[_data.Length];
 
-            for(var i = 0; i < _data.Length; i += 4)
+            for(int i = 0; i < _data.Length; i += 4)
             {
                 tmp[i] = _data[i + 3];
                 tmp[i            + 1] = _data[i + 2];
@@ -184,9 +184,9 @@ public class Nintendo64 : IByteAddressableImage
 
         if(_interleaved)
         {
-            var tmp = new byte[_data.Length];
+            byte[] tmp = new byte[_data.Length];
 
-            for(var i = 0; i < _data.Length; i += 2)
+            for(int i = 0; i < _data.Length; i += 2)
             {
                 tmp[i] = _data[i + 1];
                 tmp[i            + 1] = _data[i];
@@ -216,7 +216,7 @@ public class Nintendo64 : IByteAddressableImage
         sb.AppendFormat("Region: {0}", DecodeCountryCode(header.CountryCode)).AppendLine();
         sb.AppendFormat("Cartridge ID: {0}", _imageInfo.MediaPartNumber).AppendLine();
         sb.AppendFormat("Cartridge type: {0}", (char)header.CartridgeType).AppendLine();
-        sb.AppendFormat("Version: {0}.{1}", header.Version / 10 + 1, header.Version % 10).AppendLine();
+        sb.AppendFormat("Version: {0}.{1}", (header.Version / 10) + 1, header.Version % 10).AppendLine();
         sb.AppendFormat("CRC1: 0x{0:X8}", header.Crc1).AppendLine();
         sb.AppendFormat("CRC2: 0x{0:X8}", header.Crc2).AppendLine();
 
@@ -669,8 +669,8 @@ public class Nintendo64 : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        var foundRom     = false;
-        var foundSaveRam = false;
+        bool foundRom     = false;
+        bool foundSaveRam = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
@@ -828,9 +828,9 @@ public class Nintendo64 : IByteAddressableImage
 
         if(_interleaved)
         {
-            var tmp = new byte[_data.Length];
+            byte[] tmp = new byte[_data.Length];
 
-            for(var i = 0; i < _data.Length; i += 2)
+            for(int i = 0; i < _data.Length; i += 2)
             {
                 tmp[i] = _data[i + 1];
                 tmp[i            + 1] = _data[i];
@@ -859,29 +859,29 @@ public class Nintendo64 : IByteAddressableImage
     public bool SetMetadata(ImageInfo metadata) => true;
 
     static string DecodeCountryCode(byte countryCode) => countryCode switch
-                                                         {
-                                                             0x37 => "Beta",
-                                                             0x41 => "Asia (NTSC)",
-                                                             0x42 => "Brazil",
-                                                             0x43 => "China",
-                                                             0x44 => "Germany",
-                                                             0x45 => "North America",
-                                                             0x46 => "France",
-                                                             0x47 => "Gateway 64 (NTSC)",
-                                                             0x48 => "Netherlands",
-                                                             0x49 => "Italy",
-                                                             0x4A => "Japan",
-                                                             0x4B => "Korea",
-                                                             0x4C => "Gateway 64 (PAL)",
-                                                             0x4E => "Canada",
-                                                             0x50 => "Europe",
-                                                             0x53 => "Spain",
-                                                             0x55 => "Australia",
-                                                             0x57 => "Scandinavia",
-                                                             0x58 => "Europe",
-                                                             0x59 => "Europe",
-                                                             _    => "Unknown"
-                                                         };
+    {
+        0x37 => "Beta",
+        0x41 => "Asia (NTSC)",
+        0x42 => "Brazil",
+        0x43 => "China",
+        0x44 => "Germany",
+        0x45 => "North America",
+        0x46 => "France",
+        0x47 => "Gateway 64 (NTSC)",
+        0x48 => "Netherlands",
+        0x49 => "Italy",
+        0x4A => "Japan",
+        0x4B => "Korea",
+        0x4C => "Gateway 64 (PAL)",
+        0x4E => "Canada",
+        0x50 => "Europe",
+        0x53 => "Spain",
+        0x55 => "Australia",
+        0x57 => "Scandinavia",
+        0x58 => "Europe",
+        0x59 => "Europe",
+        _    => "Unknown"
+    };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
     struct Header

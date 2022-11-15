@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Tabs;
-
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -43,6 +41,8 @@ using Aaru.Gui.Models;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Tabs;
 
 public class PcmciaInfoViewModel : ViewModelBase
 {

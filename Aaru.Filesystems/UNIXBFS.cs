@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 // Information from the Linux kernel
 /// <inheritdoc />
@@ -71,7 +71,7 @@ public sealed class BFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var magic = BitConverter.ToUInt32(tmp, 0);
+        uint magic = BitConverter.ToUInt32(tmp, 0);
 
         return magic == BFS_MAGIC;
     }
@@ -88,7 +88,7 @@ public sealed class BFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        var sbStrings = new byte[6];
+        byte[] sbStrings = new byte[6];
 
         var bfsSb = new SuperBlock
         {

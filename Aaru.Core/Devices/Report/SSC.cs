@@ -30,15 +30,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Report;
-
 using System;
 using System.Linq;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
-using global::Spectre.Console;
+using Spectre.Console;
+
+namespace Aaru.Core.Devices.Report;
 
 public sealed partial class DeviceReport
 {
@@ -47,7 +47,7 @@ public sealed partial class DeviceReport
     public Ssc ReportScsiSsc()
     {
         var    report = new Ssc();
-        var    sense  = true;
+        bool   sense  = true;
         byte[] buffer = Array.Empty<byte>();
 
         Spectre.ProgressSingleSpinner(ctx =>
@@ -82,9 +82,9 @@ public sealed partial class DeviceReport
 
             if(dsh.HasValue)
             {
-                var array = new SupportedDensity[dsh.Value.descriptors.Length];
+                SupportedDensity[] array = new SupportedDensity[dsh.Value.descriptors.Length];
 
-                for(var i = 0; i < dsh.Value.descriptors.Length; i++)
+                for(int i = 0; i < dsh.Value.descriptors.Length; i++)
                     array[i] = new SupportedDensity
                     {
                         BitsPerMm      = dsh.Value.descriptors[i].bpmm,
@@ -119,9 +119,9 @@ public sealed partial class DeviceReport
         if(!mtsh.HasValue)
             return report;
 
-        var array2 = new SscSupportedMedia[mtsh.Value.descriptors.Length];
+        SscSupportedMedia[] array2 = new SscSupportedMedia[mtsh.Value.descriptors.Length];
 
-        for(var i = 0; i < mtsh.Value.descriptors.Length; i++)
+        for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
         {
             array2[i] = new SscSupportedMedia
             {
@@ -136,9 +136,9 @@ public sealed partial class DeviceReport
             if(mtsh.Value.descriptors[i].densityCodes == null)
                 continue;
 
-            var array3 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
+            DensityCode[] array3 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
 
-            for(var j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
+            for(int j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
                 array3[j] = new DensityCode
                 {
                     Code = mtsh.Value.descriptors[i].densityCodes[j]
@@ -157,7 +157,7 @@ public sealed partial class DeviceReport
     public TestedSequentialMedia ReportSscMedia()
     {
         var    seqTest = new TestedSequentialMedia();
-        var    sense   = true;
+        bool   sense   = true;
         byte[] buffer  = Array.Empty<byte>();
 
         Modes.DecodedMode? decMode = null;
@@ -211,9 +211,9 @@ public sealed partial class DeviceReport
 
             if(dsh.HasValue)
             {
-                var array = new SupportedDensity[dsh.Value.descriptors.Length];
+                SupportedDensity[] array = new SupportedDensity[dsh.Value.descriptors.Length];
 
-                for(var i = 0; i < dsh.Value.descriptors.Length; i++)
+                for(int i = 0; i < dsh.Value.descriptors.Length; i++)
                     array[i] = new SupportedDensity
                     {
                         BitsPerMm      = dsh.Value.descriptors[i].bpmm,
@@ -247,9 +247,9 @@ public sealed partial class DeviceReport
 
             if(mtsh.HasValue)
             {
-                var array = new SscSupportedMedia[mtsh.Value.descriptors.Length];
+                SscSupportedMedia[] array = new SscSupportedMedia[mtsh.Value.descriptors.Length];
 
-                for(var i = 0; i < mtsh.Value.descriptors.Length; i++)
+                for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
                 {
                     array[i] = new SscSupportedMedia
                     {
@@ -264,9 +264,9 @@ public sealed partial class DeviceReport
                     if(mtsh.Value.descriptors[i].densityCodes == null)
                         continue;
 
-                    var array2 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
+                    DensityCode[] array2 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
 
-                    for(var j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
+                    for(int j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
                         array2[j] = new DensityCode
                         {
                             Code = mtsh.Value.descriptors[i].densityCodes[j]

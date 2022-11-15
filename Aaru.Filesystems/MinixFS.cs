@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 // Information from the Linux kernel
 /// <inheritdoc />
@@ -103,15 +103,15 @@ public sealed class MinixFS : IFilesystem
         // Optical media
         if(offset > 0)
         {
-            var tmp = new byte[0x200];
+            byte[] tmp = new byte[0x200];
             Array.Copy(minixSbSector, offset, tmp, 0, 0x200);
             minixSbSector = tmp;
         }
 
-        var magic = BitConverter.ToUInt16(minixSbSector, 0x010);
+        ushort magic = BitConverter.ToUInt16(minixSbSector, 0x010);
 
         if(magic is MINIX_MAGIC or MINIX_MAGIC2 or MINIX2_MAGIC or MINIX2_MAGIC2 or MINIX_CIGAM or MINIX_CIGAM2
-                 or MINIX2_CIGAM or MINIX2_CIGAM2)
+           or MINIX2_CIGAM or MINIX2_CIGAM2)
             return true;
 
         magic = BitConverter.ToUInt16(minixSbSector, 0x018); // Here should reside magic number on Minix v3
@@ -136,7 +136,7 @@ public sealed class MinixFS : IFilesystem
             offset = 0x400;
         }
 
-        var         minix3 = false;
+        bool        minix3 = false;
         int         filenamesize;
         string      minixVersion;
         ErrorNumber errno = imagePlugin.ReadSector(sector + partition.Start, out byte[] minixSbSector);
@@ -147,12 +147,12 @@ public sealed class MinixFS : IFilesystem
         // Optical media
         if(offset > 0)
         {
-            var tmp = new byte[0x200];
+            byte[] tmp = new byte[0x200];
             Array.Copy(minixSbSector, offset, tmp, 0, 0x200);
             minixSbSector = tmp;
         }
 
-        var magic = BitConverter.ToUInt16(minixSbSector, 0x018);
+        ushort magic = BitConverter.ToUInt16(minixSbSector, 0x018);
 
         XmlFsType = new FileSystemType();
 

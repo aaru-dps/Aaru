@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -40,9 +38,12 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
+namespace Aaru.Filesystems;
+
 // Information from the Linux kernel
 /// <inheritdoc />
 /// <summary>Implements detection of the Linux extended filesystem</summary>
+
 // ReSharper disable once InconsistentNaming
 public sealed class extFS : IFilesystem
 {
@@ -79,14 +80,14 @@ public sealed class extFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var sb = new byte[512];
+        byte[] sb = new byte[512];
 
         if(sbOff + 512 > sbSector.Length)
             return false;
 
         Array.Copy(sbSector, sbOff, sb, 0, 512);
 
-        var magic = BitConverter.ToUInt16(sb, 0x038);
+        ushort magic = BitConverter.ToUInt16(sb, 0x038);
 
         return magic == EXT_MAGIC;
     }
@@ -113,7 +114,7 @@ public sealed class extFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        var sbSector = new byte[512];
+        byte[] sbSector = new byte[512];
         Array.Copy(sblock, sbOff, sbSector, 0, 512);
 
         var extSb = new SuperBlock

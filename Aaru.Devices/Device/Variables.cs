@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -158,5 +158,5 @@ public partial class Device
     /// <summary>Contains the PCMCIA CIS if applicable</summary>
     public byte[] Cis { get; private protected set; }
 
-    private protected string        _devicePath;
+    private protected string _devicePath;
 }

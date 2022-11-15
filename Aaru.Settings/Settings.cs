@@ -31,8 +31,6 @@
 // Copyright © 2021 Rebecca Wallander
 // ****************************************************************************/
 
-namespace Aaru.Settings;
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interop;
 using Claunia.PropertyList;
 using Microsoft.Win32;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+
+namespace Aaru.Settings;
 
 /// <summary>Settings</summary>
 public class DicSettings
@@ -128,7 +128,7 @@ public static class Settings
         PlatformID ptId     = DetectOS.GetRealPlatformID();
         string     homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         LocalDbPath = "local.db";
-        var oldMainDbPath = "master.db";
+        string oldMainDbPath = "master.db";
         MainDbPath = "main.db";
 
         try

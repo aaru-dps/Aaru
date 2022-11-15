@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Partitions;
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Partitions;
 
 // TODO: Find better documentation, this is working for XENIX 2 but not for SCO OpenServer...
 /// <inheritdoc />
@@ -80,7 +80,7 @@ public sealed class XENIX : IPartition
         if(xnxtbl.p_magic != PAMAGIC)
             return false;
 
-        for(var i = 0; i < MAXPARTS; i++)
+        for(int i = 0; i < MAXPARTS; i++)
         {
             AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_off = {1}", i, xnxtbl.p[i].p_off);
             AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_size = {1}", i, xnxtbl.p[i].p_size);
@@ -90,11 +90,11 @@ public sealed class XENIX : IPartition
 
             var part = new CommonTypes.Partition
             {
-                Start = (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.Info.SectorSize +
+                Start = ((ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.Info.SectorSize) +
                         sectorOffset,
                 Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.Info.SectorSize,
                 Offset = (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
-                         imagePlugin.Info.SectorSize * sectorOffset,
+                         (imagePlugin.Info.SectorSize * sectorOffset),
                 Size     = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
                 Sequence = (ulong)i,
                 Type     = "XENIX",

@@ -30,10 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using ufs_daddr_t = System.Int32;
-
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -45,6 +41,9 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+using ufs_daddr_t = System.Int32;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements identification of a dump(8) image (virtual filesystem on a file)</summary>
@@ -113,7 +112,7 @@ public sealed class dump : IFilesystem
         if(partition.Start != 0)
             return false;
 
-        var sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
+        uint sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -151,7 +150,7 @@ public sealed class dump : IFilesystem
         if(partition.Start != 0)
             return;
 
-        var sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
+        uint sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -168,8 +167,8 @@ public sealed class dump : IFilesystem
         spcl_aix aixHdr = Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
         s_spcl   newHdr = Marshal.ByteArrayToStructureLittleEndian<s_spcl>(sector);
 
-        var useOld = false;
-        var useAix = false;
+        bool useOld = false;
+        bool useAix = false;
 
         if(newHdr.c_magic == OFS_MAGIC  ||
            newHdr.c_magic == NFS_MAGIC  ||

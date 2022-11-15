@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -45,6 +43,8 @@ using Claunia.Encoding;
 using Claunia.RsrcFork;
 using Version = Resources.Version;
 
+namespace Aaru.DiscImages;
+
 public sealed partial class Dart
 {
     /// <inheritdoc />
@@ -56,7 +56,7 @@ public sealed partial class Dart
             return ErrorNumber.InvalidArgument;
 
         stream.Seek(0, SeekOrigin.Begin);
-        var headerB = new byte[Marshal.SizeOf<Header>()];
+        byte[] headerB = new byte[Marshal.SizeOf<Header>()];
 
         stream.EnsureRead(headerB, 0, Marshal.SizeOf<Header>());
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
@@ -64,7 +64,7 @@ public sealed partial class Dart
         if(header.srcCmp > COMPRESS_NONE)
             return ErrorNumber.NotSupported;
 
-        int expectedMaxSize = 84 + header.srcSize * 2 * 524;
+        int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
 
         switch(header.srcType)
         {
@@ -109,12 +109,12 @@ public sealed partial class Dart
         if(stream.Length > expectedMaxSize)
             return ErrorNumber.InvalidArgument;
 
-        var bLength =
+        short[] bLength =
             new short[header.srcType is DISK_MAC_HD or DISK_DOS_HD ? BLOCK_ARRAY_LEN_HIGH : BLOCK_ARRAY_LEN_LOW];
 
-        for(var i = 0; i < bLength.Length; i++)
+        for(int i = 0; i < bLength.Length; i++)
         {
-            var tmpShort = new byte[2];
+            byte[] tmpShort = new byte[2];
             stream.EnsureRead(tmpShort, 0, 2);
             bLength[i] = BigEndianBitConverter.ToInt16(tmpShort, 0);
         }
@@ -125,7 +125,7 @@ public sealed partial class Dart
         foreach(short l in bLength)
             if(l != 0)
             {
-                var buffer = new byte[BUFFER_SIZE];
+                byte[] buffer = new byte[BUFFER_SIZE];
 
                 if(l == -1)
                 {
@@ -195,12 +195,12 @@ public sealed partial class Dart
                             release = $".{version.MinorVersion % 10}";
 
                         string dev = version.DevStage switch
-                                     {
-                                         Version.DevelopmentStage.Alpha    => "a",
-                                         Version.DevelopmentStage.Beta     => "b",
-                                         Version.DevelopmentStage.PreAlpha => "d",
-                                         _                                 => null
-                                     };
+                        {
+                            Version.DevelopmentStage.Alpha    => "a",
+                            Version.DevelopmentStage.Beta     => "b",
+                            Version.DevelopmentStage.PreAlpha => "d",
+                            _                                 => null
+                        };
 
                         if(dev                       == null &&
                            version.PreReleaseVersion > 0)
@@ -389,7 +389,7 @@ public sealed partial class Dart
                        _imageInfo.SectorSize);
 
             Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
-                       i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
+                       (i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE)) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
         }
 
         return ErrorNumber.NoError;

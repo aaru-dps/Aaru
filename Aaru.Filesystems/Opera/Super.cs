@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
@@ -99,7 +99,7 @@ public sealed partial class OperaFS
         };
 
         _image = imagePlugin;
-        var firstRootBlock = BigEndianBitConverter.ToInt32(sbSector, Marshal.SizeOf<SuperBlock>());
+        int firstRootBlock = BigEndianBitConverter.ToInt32(sbSector, Marshal.SizeOf<SuperBlock>());
         _rootDirectoryCache = DecodeDirectory(firstRootBlock);
         _directoryCache     = new Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>>();
         _mounted            = true;

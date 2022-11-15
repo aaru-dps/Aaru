@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
@@ -90,7 +90,7 @@ public sealed partial class AppleMFS
         _volMdb.drNxtFNum  = BigEndianBitConverter.ToUInt32(_mdbBlocks, 0x01E);
         _volMdb.drFreeBks  = BigEndianBitConverter.ToUInt16(_mdbBlocks, 0x022);
         _volMdb.drVNSiz    = _mdbBlocks[0x024];
-        var variableSize = new byte[_volMdb.drVNSiz + 1];
+        byte[] variableSize = new byte[_volMdb.drVNSiz + 1];
         Array.Copy(_mdbBlocks, 0x024, variableSize, 0, _volMdb.drVNSiz + 1);
         _volMdb.drVN = StringHandlers.PascalToString(variableSize, Encoding);
 
@@ -99,11 +99,11 @@ public sealed partial class AppleMFS
         if(errno != ErrorNumber.NoError)
             return errno;
 
-        int bytesInBlockMap = _volMdb.drNmAlBlks * 12 / 8 + _volMdb.drNmAlBlks * 12 % 8;
-        int bytesInWholeMdb = bytesInBlockMap             + BYTES_BEFORE_BLOCK_MAP;
+        int bytesInBlockMap = (_volMdb.drNmAlBlks * 12 / 8) + (_volMdb.drNmAlBlks * 12 % 8);
+        int bytesInWholeMdb = bytesInBlockMap               + BYTES_BEFORE_BLOCK_MAP;
 
-        int sectorsInWholeMdb = bytesInWholeMdb / (int)_device.Info.SectorSize +
-                                bytesInWholeMdb % (int)_device.Info.SectorSize;
+        int sectorsInWholeMdb = (bytesInWholeMdb / (int)_device.Info.SectorSize) +
+                                (bytesInWholeMdb % (int)_device.Info.SectorSize);
 
         errno = _device.ReadSectors(_partitionStart + 2, (uint)sectorsInWholeMdb, out byte[] wholeMdb);
 
@@ -113,10 +113,10 @@ public sealed partial class AppleMFS
         _blockMapBytes = new byte[bytesInBlockMap];
         Array.Copy(wholeMdb, BYTES_BEFORE_BLOCK_MAP, _blockMapBytes, 0, _blockMapBytes.Length);
 
-        var offset = 0;
+        int offset = 0;
         _blockMap = new uint[_volMdb.drNmAlBlks + 2 + 1];
 
-        for(var i = 2; i < _volMdb.drNmAlBlks + 2; i += 8)
+        for(int i = 2; i < _volMdb.drNmAlBlks + 2; i += 8)
         {
             uint tmp1 = 0;
             uint tmp2 = 0;
@@ -177,7 +177,7 @@ public sealed partial class AppleMFS
 
         _mounted = true;
 
-        var bbSig = BigEndianBitConverter.ToUInt16(_bootBlocks, 0x000);
+        ushort bbSig = BigEndianBitConverter.ToUInt16(_bootBlocks, 0x000);
 
         if(bbSig != AppleCommon.BB_MAGIC)
             _bootBlocks = null;

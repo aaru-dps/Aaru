@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +41,8 @@ using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 // Information from http://www.trailing-edge.com/~shoppa/rt11fs/
 /// <inheritdoc />
@@ -66,7 +66,7 @@ public sealed class RT11 : IFilesystem
         if(1 + partition.Start >= partition.End)
             return false;
 
-        var         magicB = new byte[12];
+        byte[]      magicB = new byte[12];
         ErrorNumber errno  = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
 
         if(errno != ErrorNumber.NoError)
@@ -107,7 +107,7 @@ public sealed class RT11 : IFilesystem
          */
         ushort check = 0;
 
-        for(var i = 0; i < 512; i += 2)
+        for(int i = 0; i < 512; i += 2)
             check += BitConverter.ToUInt16(hbSector, i);
 
         sb.AppendFormat("Volume format is {0}", StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII)).

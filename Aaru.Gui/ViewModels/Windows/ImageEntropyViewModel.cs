@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -45,6 +43,8 @@ using Aaru.Gui.Models;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageEntropyViewModel : ViewModelBase
 {
@@ -349,10 +349,10 @@ public sealed class ImageEntropyViewModel : ViewModelBase
             foreach(EntropyResults trackEntropy in _tracksEntropy)
                 TrackEntropy.Add(new TrackEntropyModel
                 {
-                    Track = trackEntropy.Track.ToString(),
+                    Track   = trackEntropy.Track.ToString(),
                     Entropy = trackEntropy.Entropy.ToString(CultureInfo.CurrentUICulture),
-                    UniqueSectors =
-                        $"{trackEntropy.UniqueSectors} ({(trackEntropy.UniqueSectors ?? 0) / (double)trackEntropy.Sectors:P3})"
+                    UniqueSectors = $"{trackEntropy.UniqueSectors} ({
+                        (trackEntropy.UniqueSectors ?? 0) / (double)trackEntropy.Sectors:P3})"
                 });
 
         if(WholeDiscChecked != true)
@@ -364,8 +364,8 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         if(_entropy.UniqueSectors == null)
             return;
 
-        MediaUniqueSectorsText =
-            $"Disk has {_entropy.UniqueSectors} unique sectors ({(double)_entropy.UniqueSectors / _entropy.Sectors:P3})";
+        MediaUniqueSectorsText = $"Disk has {_entropy.UniqueSectors} unique sectors ({
+            (double)_entropy.UniqueSectors / _entropy.Sectors:P3})";
 
         MediaUniqueSectorsVisible = true;
     }

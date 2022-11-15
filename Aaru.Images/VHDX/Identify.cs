@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Vhdx
 {
@@ -47,7 +47,7 @@ public sealed partial class Vhdx
         if(stream.Length < 512)
             return false;
 
-        var vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
+        byte[] vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
         stream.EnsureRead(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
         _id = Marshal.ByteArrayToStructureLittleEndian<Identifier>(vhdxIdB);
 

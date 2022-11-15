@@ -30,16 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -60,20 +58,20 @@ partial class Dump
         if(cmdBuf.Length == 0)
             return;
 
-        int offsetFix = offsetBytes < 0 ? (int)(sectorSize * sectorsForOffset + offsetBytes) : offsetBytes;
+        int offsetFix = offsetBytes < 0 ? (int)((sectorSize * sectorsForOffset) + offsetBytes) : offsetBytes;
 
         byte[] tmpBuf;
 
         if(supportedSubchannel != MmcSubchannel.None)
         {
             // De-interleave subchannel
-            var data = new byte[sectorSize * blocksToRead];
-            var sub  = new byte[subSize    * blocksToRead];
+            byte[] data = new byte[sectorSize * blocksToRead];
+            byte[] sub  = new byte[subSize    * blocksToRead];
 
-            for(var b = 0; b < blocksToRead; b++)
+            for(int b = 0; b < blocksToRead; b++)
             {
-                Array.Copy(cmdBuf, (int)(0          + b * blockSize), data, sectorSize * b, sectorSize);
-                Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize     * b, subSize);
+                Array.Copy(cmdBuf, (int)(0          + (b * blockSize)), data, sectorSize * b, sectorSize);
+                Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize     * b, subSize);
             }
 
             if(failedCrossingLeadOut)
@@ -97,10 +95,10 @@ partial class Dump
             // Re-interleave subchannel
             cmdBuf = new byte[blockSize * blocksToRead];
 
-            for(var b = 0; b < blocksToRead; b++)
+            for(int b = 0; b < blocksToRead; b++)
             {
-                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0          + b * blockSize), sectorSize);
-                Array.Copy(sub, subSize     * b, cmdBuf, (int)(sectorSize + b * blockSize), subSize);
+                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0          + (b * blockSize)), sectorSize);
+                Array.Copy(sub, subSize     * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
             }
         }
         else

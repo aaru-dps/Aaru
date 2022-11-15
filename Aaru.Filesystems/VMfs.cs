@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the VMware filesystem</summary>
@@ -80,7 +80,7 @@ public sealed class VMfs : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var magic = BitConverter.ToUInt32(sector, 0x00);
+        uint magic = BitConverter.ToUInt32(sector, 0x00);
 
         return magic == VMFS_MAGIC;
     }
@@ -102,10 +102,10 @@ public sealed class VMfs : IFilesystem
 
         sbInformation.AppendLine("VMware file system");
 
-        var ctimeSecs     = (uint)(volInfo.ctime / 1000000);
-        var ctimeNanoSecs = (uint)(volInfo.ctime % 1000000);
-        var mtimeSecs     = (uint)(volInfo.mtime / 1000000);
-        var mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
+        uint ctimeSecs     = (uint)(volInfo.ctime / 1000000);
+        uint ctimeNanoSecs = (uint)(volInfo.ctime % 1000000);
+        uint mtimeSecs     = (uint)(volInfo.mtime / 1000000);
+        uint mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
 
         sbInformation.AppendFormat("Volume version {0}", volInfo.version).AppendLine();
 
@@ -139,8 +139,7 @@ public sealed class VMfs : IFilesystem
     [Flags]
     enum Flags : byte
     {
-        RecyledFolder = 64,
-        CaseSensitive = 128
+        RecyledFolder = 64, CaseSensitive = 128
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

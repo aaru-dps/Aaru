@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Threading;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.SCSI;
+
+namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping SCSI and ATAPI devices</summary>
 public partial class Dump
@@ -46,12 +46,12 @@ public partial class Dump
     /// <summary>Dumps a SCSI Block Commands device or a Reduced Block Commands devices</summary>
     void Scsi()
     {
-        var resets = 0;
+        int resets = 0;
 
         if(_dev.IsRemovable)
         {
             InitProgress?.Invoke();
-        deviceGotReset:
+            deviceGotReset:
             bool sense = _dev.ScsiTestUnitReady(out byte[] senseBuf, _dev.Timeout, out _);
 
             if(sense)
@@ -79,7 +79,7 @@ public partial class Dump
                     {
                         case 0x3A:
                         {
-                            var leftRetries = 5;
+                            int leftRetries = 5;
 
                             while(leftRetries > 0)
                             {
@@ -116,7 +116,7 @@ public partial class Dump
                         }
                         case 0x04 when decSense.Value.ASCQ == 0x01:
                         {
-                            var leftRetries = 50;
+                            int leftRetries = 50;
 
                             while(leftRetries > 0)
                             {
@@ -168,7 +168,7 @@ public partial class Dump
                         // These should be trapped by the OS but seems in some cases they're not
                         case 0x28:
                         {
-                            var leftRetries = 10;
+                            int leftRetries = 10;
 
                             while(leftRetries > 0)
                             {

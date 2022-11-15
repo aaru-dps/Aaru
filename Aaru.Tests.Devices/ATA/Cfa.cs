@@ -26,13 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices.ATA;
-
-using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Devices;
 using Aaru.Helpers;
+
+namespace Aaru.Tests.Devices.ATA;
 
 static class Cfa
 {
@@ -40,7 +39,7 @@ static class Cfa
     {
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send a CompactFlash command to the device:");
             AaruConsole.WriteLine("1.- Send REQUEST EXTENDED ERROR CODE command.");
@@ -49,12 +48,12 @@ static class Cfa
             AaruConsole.WriteLine("0.- Return to ATA commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -79,7 +78,7 @@ static class Cfa
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    System.Console.ReadKey();
 
                     continue;
             }
@@ -88,13 +87,13 @@ static class Cfa
 
     static void RequestExtendedErrorCode(string devPath, Device dev)
     {
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLba28 errorRegisters,
                                                   dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending REQUEST EXTENDED ERROR CODE to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -107,13 +106,13 @@ static class Cfa
         AaruConsole.WriteLine("0.- Return to CompactFlash commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = Console.ReadLine();
+        string strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -125,21 +124,21 @@ static class Cfa
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("REQUEST EXTENDED ERROR CODE status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -153,11 +152,11 @@ static class Cfa
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for TRANSLATE SECTOR command:");
             AaruConsole.WriteLine("Cylinder: {0}", cylinder);
@@ -169,12 +168,12 @@ static class Cfa
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to CompactFlash commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -187,25 +186,25 @@ static class Cfa
                     return;
                 case 1:
                     AaruConsole.Write("What cylinder?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out cylinder))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         cylinder = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("What head?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out head))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         head = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -217,13 +216,13 @@ static class Cfa
                     }
 
                     AaruConsole.Write("What sector?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out sector))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         sector = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -231,13 +230,13 @@ static class Cfa
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, cylinder, head,
                                          sector, dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending TRANSLATE SECTOR to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -253,13 +252,13 @@ static class Cfa
         AaruConsole.WriteLine("0.- Return to CompactFlash commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -271,7 +270,7 @@ static class Cfa
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("TRANSLATE SECTOR response:");
 
@@ -279,19 +278,19 @@ static class Cfa
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("TRANSLATE SECTOR status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -299,8 +298,8 @@ static class Cfa
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -312,11 +311,11 @@ static class Cfa
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for TRANSLATE SECTOR command:");
             AaruConsole.WriteLine("LBA: {0}", lba);
@@ -326,12 +325,12 @@ static class Cfa
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to CompactFlash commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -344,13 +343,13 @@ static class Cfa
                     return;
                 case 1:
                     AaruConsole.Write("What logical block address?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         lba = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -368,13 +367,13 @@ static class Cfa
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, lba, dev.Timeout,
                                          out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending TRANSLATE SECTOR to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -390,13 +389,13 @@ static class Cfa
         AaruConsole.WriteLine("0.- Return to CompactFlash commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -408,7 +407,7 @@ static class Cfa
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("TRANSLATE SECTOR response:");
 
@@ -416,19 +415,19 @@ static class Cfa
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("TRANSLATE SECTOR status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -436,8 +435,8 @@ static class Cfa
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }

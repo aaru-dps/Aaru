@@ -26,13 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Filesystems.FATX;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Filesystems.FATX;
 
 [TestFixture]
 public class Xbox360 : ReadOnlyFilesystemTest

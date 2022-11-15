@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Qed
 {
@@ -47,7 +47,7 @@ public sealed partial class Qed
         if(stream.Length < 512)
             return false;
 
-        var qHdrB = new byte[68];
+        byte[] qHdrB = new byte[68];
         stream.EnsureRead(qHdrB, 0, 68);
         _qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
 

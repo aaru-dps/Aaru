@@ -1,7 +1,7 @@
-namespace Aaru.Tests.Issues;
-
 using System.Collections.Generic;
 using System.IO;
+
+namespace Aaru.Tests.Issues;
 
 /* https://github.com/aaru-dps/Aaru/issues/360
  *

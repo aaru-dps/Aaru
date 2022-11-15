@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Database.Models;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Metadata;
+
+namespace Aaru.Database.Models;
 
 /// <summary>Device report</summary>
 public class Report : DeviceReportV2

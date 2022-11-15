@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Partitions;
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Spectre.Console;
+
+namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of Atari GEMDOS partitions</summary>
@@ -88,22 +88,22 @@ public sealed class AtariPartitions : IPartition
 
         Array.Copy(sector, 0, table.Boot, 0, 342);
 
-        for(var i = 0; i < 8; i++)
+        for(int i = 0; i < 8; i++)
         {
-            table.IcdEntries[i].Type   = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 0);
-            table.IcdEntries[i].Start  = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 4);
-            table.IcdEntries[i].Length = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 8);
+            table.IcdEntries[i].Type   = BigEndianBitConverter.ToUInt32(sector, 342 + (i * 12) + 0);
+            table.IcdEntries[i].Start  = BigEndianBitConverter.ToUInt32(sector, 342 + (i * 12) + 4);
+            table.IcdEntries[i].Length = BigEndianBitConverter.ToUInt32(sector, 342 + (i * 12) + 8);
         }
 
         Array.Copy(sector, 438, table.Unused, 0, 12);
 
         table.Size = BigEndianBitConverter.ToUInt32(sector, 450);
 
-        for(var i = 0; i < 4; i++)
+        for(int i = 0; i < 4; i++)
         {
-            table.Entries[i].Type   = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 0);
-            table.Entries[i].Start  = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 4);
-            table.Entries[i].Length = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 8);
+            table.Entries[i].Type   = BigEndianBitConverter.ToUInt32(sector, 454 + (i * 12) + 0);
+            table.Entries[i].Start  = BigEndianBitConverter.ToUInt32(sector, 454 + (i * 12) + 4);
+            table.Entries[i].Length = BigEndianBitConverter.ToUInt32(sector, 454 + (i * 12) + 8);
         }
 
         table.BadStart  = BigEndianBitConverter.ToUInt32(sector, 502);
@@ -114,7 +114,7 @@ public sealed class AtariPartitions : IPartition
         sha1Ctx.Update(table.Boot);
         AaruConsole.DebugWriteLine("Atari partition plugin", "Boot code SHA1: {0}", sha1Ctx.End());
 
-        for(var i = 0; i < 8; i++)
+        for(int i = 0; i < 8; i++)
         {
             AaruConsole.DebugWriteLine("Atari partition plugin", Markup.Escape("table.icdEntries[{0}].flag = 0x{1:X2}"),
                                        i, (table.IcdEntries[i].Type & 0xFF000000) >> 24);
@@ -131,7 +131,7 @@ public sealed class AtariPartitions : IPartition
 
         AaruConsole.DebugWriteLine("Atari partition plugin", "table.size = {0}", table.Size);
 
-        for(var i = 0; i < 4; i++)
+        for(int i = 0; i < 4; i++)
         {
             AaruConsole.DebugWriteLine("Atari partition plugin", Markup.Escape("table.entries[{0}].flag = 0x{1:X2}"), i,
                                        (table.Entries[i].Type & 0xFF000000) >> 24);
@@ -150,10 +150,10 @@ public sealed class AtariPartitions : IPartition
         AaruConsole.DebugWriteLine("Atari partition plugin", "table.badLength = {0}", table.BadLength);
         AaruConsole.DebugWriteLine("Atari partition plugin", "table.checksum = 0x{0:X4}", table.Checksum);
 
-        var   validTable        = false;
+        bool  validTable        = false;
         ulong partitionSequence = 0;
 
-        for(var i = 0; i < 4; i++)
+        for(int i = 0; i < 4; i++)
         {
             uint type = table.Entries[i].Type & 0x00FFFFFF;
 
@@ -183,7 +183,7 @@ public sealed class AtariPartitions : IPartition
                         if(sectorSize is 2448 or 2352)
                             sectorSize = 2048;
 
-                        var partType = new byte[3];
+                        byte[] partType = new byte[3];
                         partType[0] = (byte)((type & 0xFF0000) >> 16);
                         partType[1] = (byte)((type & 0x00FF00) >> 8);
                         partType[2] = (byte)(type & 0x0000FF);
@@ -265,19 +265,19 @@ public sealed class AtariPartitions : IPartition
                         Entries = new AtariEntry[4]
                     };
 
-                    for(var j = 0; j < 4; j++)
+                    for(int j = 0; j < 4; j++)
                     {
                         extendedTable.Entries[j].Type =
-                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + j * 12 + 0);
+                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + (j * 12) + 0);
 
                         extendedTable.Entries[j].Start =
-                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + j * 12 + 4);
+                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + (j * 12) + 4);
 
                         extendedTable.Entries[j].Length =
-                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + j * 12 + 8);
+                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + (j * 12) + 8);
                     }
 
-                    for(var j = 0; j < 4; j++)
+                    for(int j = 0; j < 4; j++)
                     {
                         uint extendedType = extendedTable.Entries[j].Type & 0x00FFFFFF;
 
@@ -308,7 +308,7 @@ public sealed class AtariPartitions : IPartition
                         if(sectorSize is 2448 or 2352)
                             sectorSize = 2048;
 
-                        var partType = new byte[3];
+                        byte[] partType = new byte[3];
                         partType[0] = (byte)((extendedType & 0xFF0000) >> 16);
                         partType[1] = (byte)((extendedType & 0x00FF00) >> 8);
                         partType[2] = (byte)(extendedType & 0x0000FF);
@@ -385,7 +385,7 @@ public sealed class AtariPartitions : IPartition
         if(!validTable)
             return partitions.Count > 0;
 
-        for(var i = 0; i < 8; i++)
+        for(int i = 0; i < 8; i++)
         {
             uint type = table.IcdEntries[i].Type & 0x00FFFFFF;
 
@@ -414,7 +414,7 @@ public sealed class AtariPartitions : IPartition
             if(sectorSize is 2448 or 2352)
                 sectorSize = 2048;
 
-            var partType = new byte[3];
+            byte[] partType = new byte[3];
             partType[0] = (byte)((type & 0xFF0000) >> 16);
             partType[1] = (byte)((type & 0x00FF00) >> 8);
             partType[2] = (byte)(type & 0x0000FF);

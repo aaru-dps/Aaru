@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +13,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+
+namespace Aaru.Tests.Filesystems;
 
 public abstract class ReadOnlyFilesystemTest : FilesystemTest
 {
@@ -32,7 +32,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             foreach(FileSystemTest test in Tests)
             {
                 string testFile  = test.TestFile;
-                var    found     = false;
+                bool   found     = false;
                 var    partition = new Partition();
 
                 bool exists = File.Exists(testFile);
@@ -65,7 +65,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                     // In reverse to skip boot partitions we're not interested in
                     for(int index = partitionsList.Count - 1; index >= 0; index--)
                     {
-                        Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
+                        Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
 
                         if(idPlugins.Count == 0)
                             continue;
@@ -88,7 +88,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                         Size   = image.Info.Sectors * image.Info.SectorSize
                     };
 
-                    Filesystems.Identify(image, out idPlugins, partition, true);
+                    Core.Filesystems.Identify(image, out idPlugins, partition, true);
 
                     Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {testFile}");
 
@@ -148,7 +148,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         foreach(FileSystemTest test in Tests)
         {
             string testFile  = test.TestFile;
-            var    found     = false;
+            bool   found     = false;
             var    partition = new Partition();
 
             bool exists = File.Exists(testFile);
@@ -158,13 +158,13 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             if(!exists)
                 continue;
 
-            var         filtersList = new FiltersList();
-            IFilter     inputFilter = filtersList.GetFilter(testFile);
+            var     filtersList = new FiltersList();
+            IFilter inputFilter = filtersList.GetFilter(testFile);
 
             if(ImageFormat.Detect(inputFilter) is not IMediaImage image)
                 continue;
 
-            ErrorNumber opened      = image.Open(inputFilter);
+            ErrorNumber opened = image.Open(inputFilter);
 
             if(opened != ErrorNumber.NoError)
                 continue;
@@ -178,7 +178,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 // In reverse to skip boot partitions we're not interested in
                 for(int index = partitionsList.Count - 1; index >= 0; index--)
                 {
-                    Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
+                    Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
 
                     if(idPlugins.Count == 0)
                         continue;
@@ -201,7 +201,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Filesystems.Identify(image, out idPlugins, partition, true);
+                Core.Filesystems.Identify(image, out idPlugins, partition, true);
 
                 found = idPlugins.Contains(Plugin.Id.ToString());
             }
@@ -247,7 +247,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         foreach(string child in contents)
         {
-            var childPath = $"{path}/{child}";
+            string childPath = $"{path}/{child}";
             fs.Stat(childPath, out FileEntryInfo stat);
 
             var data = new FileData
@@ -273,7 +273,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
     static string BuildFile(IReadOnlyFilesystem fs, string path, long length)
     {
-        var buffer = new byte[length];
+        byte[] buffer = new byte[length];
         fs.Read(path, 0, length, ref buffer);
 
         return Md5Context.Data(buffer, out _);
@@ -298,12 +298,12 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         foreach(KeyValuePair<string, FileData> child in children)
         {
-            var childPath = $"{path}/{child.Key}";
+            string childPath = $"{path}/{child.Key}";
             ret = fs.Stat(childPath, out FileEntryInfo stat);
 
             if(ret == ErrorNumber.NoSuchFile ||
                contents is null              ||
-               ret == ErrorNumber.NoError && !contents.Contains(child.Key))
+               (ret == ErrorNumber.NoError && !contents.Contains(child.Key)))
             {
                 expectedNotFound.Add(child.Key);
 
@@ -327,7 +327,8 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                                 $"Got wrong data for directory \"{childPath}\" in {testFile}");
 
                 Assert.IsNotNull(child.Value.Children,
-                                 $"Contents for \"{childPath}\" in {testFile} must be defined in unit test declaration!");
+                                 $"Contents for \"{childPath}\" in {testFile
+                                 } must be defined in unit test declaration!");
 
                 if(child.Value.Children != null)
                     TestDirectory(fs, childPath, child.Value.Children, testFile, testXattr);
@@ -355,17 +356,20 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             if(ret == ErrorNumber.NotSupported)
             {
                 Assert.IsNull(child.Value.XattrsWithMd5,
-                              $"Defined extended attributes for \"{childPath}\" in {testFile} are not supported by filesystem.");
+                              $"Defined extended attributes for \"{childPath}\" in {testFile
+                              } are not supported by filesystem.");
 
                 continue;
             }
 
             Assert.AreEqual(ErrorNumber.NoError, ret,
-                            $"Unexpected error {ret} when listing extended attributes for \"{childPath}\" in {testFile}");
+                            $"Unexpected error {ret} when listing extended attributes for \"{childPath}\" in {testFile
+                            }");
 
             if(xattrs.Count > 0)
                 Assert.IsNotNull(child.Value.XattrsWithMd5,
-                                 $"Extended attributes for \"{childPath}\" in {testFile} must be defined in unit test declaration!");
+                                 $"Extended attributes for \"{childPath}\" in {testFile
+                                 } must be defined in unit test declaration!");
 
             if(xattrs.Count                     > 0 ||
                child.Value.XattrsWithMd5?.Count > 0)
@@ -373,16 +377,18 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         }
 
         Assert.IsEmpty(expectedNotFound,
-                       $"Could not find the children of \"{path}\" in {testFile}: {string.Join(" ", expectedNotFound)}");
+                       $"Could not find the children of \"{path}\" in {testFile}: {string.Join(" ", expectedNotFound)
+                       }");
 
         if(contents != null)
             Assert.IsEmpty(contents,
-                           $"Found the following unexpected children of \"{path}\" in {testFile}: {string.Join(" ", contents)}");
+                           $"Found the following unexpected children of \"{path}\" in {testFile}: {
+                               string.Join(" ", contents)}");
     }
 
     static void TestFile(IReadOnlyFilesystem fs, string path, string md5, long length, string testFile)
     {
-        var         buffer = new byte[length];
+        byte[]      buffer = new byte[length];
         ErrorNumber ret    = fs.Read(path, 0, length, ref buffer);
 
         Assert.AreEqual(ErrorNumber.NoError, ret, $"Unexpected error {ret} when reading \"{path}\" in {testFile}");
@@ -431,9 +437,11 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         }
 
         Assert.IsEmpty(expectedNotFound,
-                       $"Could not find the following extended attributes of \"{path}\" in {testFile}: {string.Join(" ", expectedNotFound)}");
+                       $"Could not find the following extended attributes of \"{path}\" in {testFile}: {
+                           string.Join(" ", expectedNotFound)}");
 
         Assert.IsEmpty(contents,
-                       $"Found the following unexpected extended attributes of \"{path}\" in {testFile}: {string.Join(" ", contents)}");
+                       $"Found the following unexpected extended attributes of \"{path}\" in {testFile}: {
+                           string.Join(" ", contents)}");
     }
 }

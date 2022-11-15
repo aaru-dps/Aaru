@@ -30,18 +30,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Database;
-
-using System;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Database;
 using Aaru.Database.Models;
-using Aaru.Settings;
 using Spectre.Console;
 using Command = System.CommandLine.Command;
+
+namespace Aaru.Commands.Database;
 
 sealed class StatisticsCommand : Command
 {
@@ -56,7 +54,7 @@ sealed class StatisticsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -77,7 +75,7 @@ sealed class StatisticsCommand : Command
                     AnsiConsole.Markup(format, objects);
             };
 
-        var ctx = AaruContext.Create(Settings.LocalDbPath);
+        var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         if(!ctx.Commands.Any()     &&
            !ctx.Filesystems.Any()  &&
@@ -92,7 +90,7 @@ sealed class StatisticsCommand : Command
             return (int)ErrorNumber.NothingFound;
         }
 
-        var   thereAreStats = false;
+        bool  thereAreStats = false;
         Table table;
 
         if(ctx.Commands.Any())

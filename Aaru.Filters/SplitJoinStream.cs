@@ -1,5 +1,3 @@
-namespace Aaru.Filters;
-
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,6 +5,8 @@ using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Microsoft.Win32.SafeHandles;
+
+namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Implements a stream that joins two or more files (sequentially) as a single stream</summary>
@@ -310,7 +310,7 @@ public class SplitJoinStream : Stream
     /// <inheritdoc />
     public override int Read(byte[] buffer, int offset, int count)
     {
-        var read = 0;
+        int read = 0;
 
         while(count > 0)
         {

@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Apridisk
 {
@@ -58,7 +58,7 @@ public sealed partial class Apridisk
         // Count cylinders
         while(stream.Position < stream.Length)
         {
-            var recB = new byte[recordSize];
+            byte[] recB = new byte[recordSize];
             stream.EnsureRead(recB, 0, recordSize);
 
             Record record = Marshal.SpanToStructureLittleEndian<Record>(recB);
@@ -74,7 +74,7 @@ public sealed partial class Apridisk
                 case RecordType.Comment:
                     AaruConsole.DebugWriteLine("Apridisk plugin", "Found comment record at {0}", stream.Position);
                     stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
-                    var commentB = new byte[record.dataSize];
+                    byte[] commentB = new byte[record.dataSize];
                     stream.EnsureRead(commentB, 0, commentB.Length);
                     _imageInfo.Comments = StringHandlers.CToString(commentB);
                     AaruConsole.DebugWriteLine("Apridisk plugin", "Comment: \"{0}\"", _imageInfo.Comments);
@@ -83,7 +83,7 @@ public sealed partial class Apridisk
                 case RecordType.Creator:
                     AaruConsole.DebugWriteLine("Apridisk plugin", "Found creator record at {0}", stream.Position);
                     stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
-                    var creatorB = new byte[record.dataSize];
+                    byte[] creatorB = new byte[record.dataSize];
                     stream.EnsureRead(creatorB, 0, creatorB.Length);
                     _imageInfo.Creator = StringHandlers.CToString(creatorB);
                     AaruConsole.DebugWriteLine("Apridisk plugin", "Creator: \"{0}\"", _imageInfo.Creator);
@@ -126,7 +126,7 @@ public sealed partial class Apridisk
         _sectorsData = new byte[totalCylinders][][][];
 
         // Total sectors per track
-        var spts = new uint[totalCylinders][];
+        uint[][] spts = new uint[totalCylinders][];
 
         _imageInfo.Cylinders = (ushort)totalCylinders;
         _imageInfo.Heads     = (byte)totalHeads;
@@ -136,12 +136,12 @@ public sealed partial class Apridisk
                                    totalCylinders, totalHeads, maxSector);
 
         // Create heads
-        for(var i = 0; i < totalCylinders; i++)
+        for(int i = 0; i < totalCylinders; i++)
         {
             _sectorsData[i] = new byte[totalHeads][][];
             spts[i]         = new uint[totalHeads];
 
-            for(var j = 0; j < totalHeads; j++)
+            for(int j = 0; j < totalHeads; j++)
                 _sectorsData[i][j] = new byte[maxSector + 1][];
         }
 
@@ -154,7 +154,7 @@ public sealed partial class Apridisk
 
         while(stream.Position < stream.Length)
         {
-            var recB = new byte[recordSize];
+            byte[] recB = new byte[recordSize];
             stream.EnsureRead(recB, 0, recordSize);
 
             Record record = Marshal.SpanToStructureLittleEndian<Record>(recB);
@@ -172,7 +172,7 @@ public sealed partial class Apridisk
                 case RecordType.Sector:
                     stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
 
-                    var data = new byte[record.dataSize];
+                    byte[] data = new byte[record.dataSize];
                     stream.EnsureRead(data, 0, data.Length);
 
                     spts[record.cylinder][record.head]++;

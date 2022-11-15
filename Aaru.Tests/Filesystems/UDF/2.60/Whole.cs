@@ -26,24 +26,21 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable CheckNamespace
-
-namespace Aaru.Tests.Filesystems.UDF._260;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Filesystems.UDF._260;
 
 [TestFixture]
 public class Whole : FilesystemTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Universal Disc Format", "2.60");
-    public override IFilesystem Plugin     => new UDF();
+    public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
     public override bool        Partitions => false;
 
     public override FileSystemTest[] Tests => new[]

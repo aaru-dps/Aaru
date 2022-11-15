@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Remote;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Decoders.ATA;
+
+namespace Aaru.Devices.Remote;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public partial class Device
@@ -166,7 +166,7 @@ public partial class Device
         if(_remote.ServerProtocolVersion >= 2)
             return _remote.SendMultipleMmcCommands(commands, out duration, out sense, timeout);
 
-        var error = 0;
+        int error = 0;
         duration = 0;
         sense    = false;
 

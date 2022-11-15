@@ -31,12 +31,6 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
-
-// ReSharper disable JoinDeclarationAndInitializer
-
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -49,12 +43,16 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decryption;
 using Aaru.Decryption.DVD;
 using Aaru.Devices;
-using Aaru.Settings;
 using Schemas;
 using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Spare = Aaru.Decoders.DVD.Spare;
+
+// ReSharper disable JoinDeclarationAndInitializer
+
+namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implement dumping optical discs from MultiMedia devices</summary>
 partial class Dump
@@ -65,9 +63,9 @@ partial class Dump
         MediaType     dskType = MediaType.Unknown;
         bool          sense;
         byte[]        tmpBuf;
-        var           compactDisc      = true;
-        var           gotConfiguration = false;
-        var           isXbox           = false;
+        bool          compactDisc      = true;
+        bool          gotConfiguration = false;
+        bool          isXbox           = false;
         DVDDecryption dvdDecrypt       = null;
         _speedMultiplier = 1;
 
@@ -259,7 +257,7 @@ partial class Dump
            _dev.IsUsb        &&
            !gotConfiguration &&
            decMode.Value.Header.MediumType is MediumTypes.UnknownBlockDevice or MediumTypes.ReadOnlyBlockDevice
-            or MediumTypes.ReadWriteBlockDevice)
+               or MediumTypes.ReadWriteBlockDevice)
         {
             _speedMultiplier = -1;
             Sbc(null, MediaType.Unknown, false);
@@ -280,17 +278,17 @@ partial class Dump
         var   scsiReader = new Reader(_dev, _dev.Timeout, null, _errorLog, _dumpRaw);
         ulong blocks     = scsiReader.GetDeviceBlocks();
         _dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
-        var mediaTags = new Dictionary<MediaTagType, byte[]>();
+        Dictionary<MediaTagType, byte[]> mediaTags = new();
 
         if(dskType == MediaType.PD650)
             dskType = (blocks + 1) switch
-                      {
-                          1281856  => MediaType.PD650_WORM,
-                          58620544 => MediaType.REV120,
-                          17090880 => MediaType.REV35,
-                          34185728 => MediaType.REV70,
-                          _        => dskType
-                      };
+            {
+                1281856  => MediaType.PD650_WORM,
+                58620544 => MediaType.REV120,
+                17090880 => MediaType.REV35,
+                34185728 => MediaType.REV70,
+                _        => dskType
+            };
 
         #region Nintendo
         switch(dskType)
@@ -353,24 +351,22 @@ partial class Dump
 
                         // False book types
                         dskType = decPfi.DiskCategory switch
-                                  {
-                                      DiskCategory.DVDPR => MediaType.DVDPR,
-                                      DiskCategory.DVDPRDL => MediaType.DVDPRDL,
-                                      DiskCategory.DVDPRW => MediaType.DVDPRW,
-                                      DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
-                                      DiskCategory.DVDR => decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
-                                      DiskCategory.DVDRAM => MediaType.DVDRAM,
-                                      DiskCategory.DVDRW => decPfi.PartVersion >= 15 ? MediaType.DVDRWDL
-                                                                : MediaType.DVDRW,
-                                      DiskCategory.HDDVDR   => MediaType.HDDVDR,
-                                      DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
-                                      DiskCategory.HDDVDROM => MediaType.HDDVDROM,
-                                      DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
-                                      DiskCategory.Nintendo => decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD
-                                                                   : MediaType.WOD,
-                                      DiskCategory.UMD => MediaType.UMD,
-                                      _                => MediaType.DVDROM
-                                  };
+                        {
+                            DiskCategory.DVDPR    => MediaType.DVDPR,
+                            DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                            DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                            DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                            DiskCategory.DVDR     => decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
+                            DiskCategory.DVDRAM   => MediaType.DVDRAM,
+                            DiskCategory.DVDRW    => decPfi.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW,
+                            DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                            DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                            DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                            DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                            DiskCategory.Nintendo => decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD,
+                            DiskCategory.UMD      => MediaType.UMD,
+                            _                     => MediaType.DVDROM
+                        };
                     }
                 }
 
@@ -461,7 +457,7 @@ partial class Dump
                         UpdateStatus?.Invoke("Drive reports no copy protection on disc.");
                     else
                     {
-                        if(!Settings.Current.EnableDecryption)
+                        if(!Settings.Settings.Current.EnableDecryption)
                             UpdateStatus?.Invoke("Drive reports the disc uses copy protection. " +
                                                  "The dump will be incorrect unless decryption is enabled.");
                         else
@@ -828,7 +824,7 @@ partial class Dump
                     Checksums = Checksum.GetChecksums(tag).ToArray()
                 };
 
-                var tmp = new byte[tag.Length + 4];
+                byte[] tmp = new byte[tag.Length + 4];
                 Array.Copy(tag, 0, tmp, 4, tag.Length);
                 tmp[0] = (byte)((tag.Length & 0xFF00) >> 8);
                 tmp[1] = (byte)(tag.Length & 0xFF);

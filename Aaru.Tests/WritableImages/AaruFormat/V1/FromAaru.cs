@@ -1,17 +1,15 @@
-namespace Aaru.Tests.WritableImages.AaruFormat.V1;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+
+namespace Aaru.Tests.WritableImages.AaruFormat.V1;
 
 public class FromAaru : WritableOpticalMediaImageTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
-    public override IMediaImage    InputPlugin     => new AaruFormat();
-    public override IWritableImage OutputPlugin    => new AaruFormat();
-    public override string         OutputExtension => "aif";
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
+    public override IMediaImage InputPlugin => new DiscImages.AaruFormat();
+    public override IWritableImage OutputPlugin => new DiscImages.AaruFormat();
+    public override string OutputExtension => "aif";
     public override OpticalImageTestExpected[] Tests => new[]
     {
         new OpticalImageTestExpected

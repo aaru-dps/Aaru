@@ -26,14 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Compression;
-
 using System.Runtime.InteropServices;
 
+namespace Aaru.Compression;
+
 // ReSharper disable once InconsistentNaming
-/// <summary>
-/// Implements the LZIP compression algorithm
-/// </summary>
+/// <summary>Implements the LZIP compression algorithm</summary>
 public class LZIP
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>

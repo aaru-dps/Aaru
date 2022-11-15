@@ -1,9 +1,9 @@
-namespace Aaru.Tests;
-
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.Tests;
 
 /// <summary>Class to define expected data when testing media info</summary>
 public class MediaInfoTest

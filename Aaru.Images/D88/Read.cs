@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Decoders.Floppy;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class D88
 {
@@ -57,7 +57,7 @@ public sealed partial class D88
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        var hdrB = new byte[Marshal.SizeOf<Header>()];
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
@@ -83,7 +83,7 @@ public sealed partial class D88
         if(!hdr.reserved.SequenceEqual(_reservedEmpty))
             return ErrorNumber.InvalidArgument;
 
-        var trkCounter = 0;
+        int trkCounter = 0;
 
         foreach(int t in hdr.track_table)
         {
@@ -118,10 +118,10 @@ public sealed partial class D88
 
         short             spt      = sechdr.spt;
         IBMSectorSizeCode bps      = sechdr.n;
-        var               allEqual = true;
+        bool              allEqual = true;
         _sectorsData = new List<byte[]>();
 
-        for(var i = 0; i < trkCounter; i++)
+        for(int i = 0; i < trkCounter; i++)
         {
             stream.Seek(hdr.track_table[i], SeekOrigin.Begin);
             stream.EnsureRead(hdrB, 0, hdrB.Length);
@@ -181,14 +181,14 @@ public sealed partial class D88
                 _imageInfo.MediaType = MediaType.NEC_8_SD;
             else if(bps == IBMSectorSizeCode.QuarterKilo)
                 _imageInfo.MediaType = trkCounter switch
-                                       {
-                                           35 when spt  == 16 => MediaType.MetaFloppy_Mod_I,
-                                           77 when spt  == 16 => MediaType.MetaFloppy_Mod_II,
-                                           80 when spt  == 16 => MediaType.NEC_525_SS,
-                                           154 when spt == 26 => MediaType.NEC_8_DD,
-                                           160 when spt == 16 => MediaType.NEC_525_DS,
-                                           _                  => _imageInfo.MediaType
-                                       };
+                {
+                    35 when spt  == 16 => MediaType.MetaFloppy_Mod_I,
+                    77 when spt  == 16 => MediaType.MetaFloppy_Mod_II,
+                    80 when spt  == 16 => MediaType.NEC_525_SS,
+                    154 when spt == 26 => MediaType.NEC_8_DD,
+                    160 when spt == 16 => MediaType.NEC_525_DS,
+                    _                  => _imageInfo.MediaType
+                };
             else if(trkCounter == 154 &&
                     spt        == 8   &&
                     bps        == IBMSectorSizeCode.Kilo)
@@ -199,35 +199,35 @@ public sealed partial class D88
                     case 40:
                     {
                         _imageInfo.MediaType = spt switch
-                                               {
-                                                   8 => MediaType.DOS_525_SS_DD_8,
-                                                   9 => MediaType.DOS_525_SS_DD_9,
-                                                   _ => _imageInfo.MediaType
-                                               };
+                        {
+                            8 => MediaType.DOS_525_SS_DD_8,
+                            9 => MediaType.DOS_525_SS_DD_9,
+                            _ => _imageInfo.MediaType
+                        };
                     }
 
                         break;
                     case 80:
                     {
                         _imageInfo.MediaType = spt switch
-                                               {
-                                                   8 => MediaType.DOS_525_DS_DD_8,
-                                                   9 => MediaType.DOS_525_DS_DD_9,
-                                                   _ => _imageInfo.MediaType
-                                               };
+                        {
+                            8 => MediaType.DOS_525_DS_DD_8,
+                            9 => MediaType.DOS_525_DS_DD_9,
+                            _ => _imageInfo.MediaType
+                        };
                     }
 
                         break;
                     case 160:
                     {
                         _imageInfo.MediaType = spt switch
-                                               {
-                                                   15 => MediaType.NEC_35_HD_15,
-                                                   9  => MediaType.DOS_35_DS_DD_9,
-                                                   18 => MediaType.DOS_35_HD,
-                                                   36 => MediaType.DOS_35_ED,
-                                                   _  => _imageInfo.MediaType
-                                               };
+                        {
+                            15 => MediaType.NEC_35_HD_15,
+                            9  => MediaType.DOS_35_DS_DD_9,
+                            18 => MediaType.DOS_35_HD,
+                            36 => MediaType.DOS_35_ED,
+                            _  => _imageInfo.MediaType
+                        };
                     }
 
                         break;
@@ -363,7 +363,7 @@ public sealed partial class D88
 
         var ms = new MemoryStream();
 
-        for(var i = 0; i < length; i++)
+        for(int i = 0; i < length; i++)
             ms.Write(_sectorsData[(int)sectorAddress + i], 0, _sectorsData[(int)sectorAddress + i].Length);
 
         buffer = ms.ToArray();

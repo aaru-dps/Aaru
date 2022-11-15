@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Models;
-
 using System;
 using Aaru.CommonTypes.Structs;
 using JetBrains.Annotations;
+
+namespace Aaru.Gui.Models;
 
 public sealed class FileModel
 {

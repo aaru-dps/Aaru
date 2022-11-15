@@ -26,13 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices.ATA;
-
-using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Devices;
 using Aaru.Helpers;
+
+namespace Aaru.Tests.Devices.ATA;
 
 static class AtaChs
 {
@@ -40,7 +39,7 @@ static class AtaChs
     {
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send a CHS ATA command to the device:");
             AaruConsole.WriteLine("1.- Send IDENTIFY DEVICE command.");
@@ -56,12 +55,12 @@ static class AtaChs
             AaruConsole.WriteLine("0.- Return to ATA commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -114,7 +113,7 @@ static class AtaChs
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    System.Console.ReadKey();
 
                     continue;
             }
@@ -123,12 +122,12 @@ static class AtaChs
 
     static void Identify(string devPath, Device dev)
     {
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.AtaIdentify(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending IDENTIFY DEVICE to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -144,13 +143,13 @@ static class AtaChs
         AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = Console.ReadLine();
+        string strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -162,7 +161,7 @@ static class AtaChs
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("IDENTIFY DEVICE response:");
 
@@ -170,13 +169,13 @@ static class AtaChs
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("IDENTIFY DEVICE decoded response:");
 
@@ -184,27 +183,27 @@ static class AtaChs
                     AaruConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("IDENTIFY DEVICE status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 4: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -219,11 +218,11 @@ static class AtaChs
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ DMA {0}command:", retries ? "WITH RETRIES " : "");
             AaruConsole.WriteLine("Cylinder: {0}", cylinder);
@@ -236,12 +235,12 @@ static class AtaChs
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -254,25 +253,25 @@ static class AtaChs
                     return;
                 case 1:
                     AaruConsole.Write("What cylinder?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out cylinder))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         cylinder = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("What head?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out head))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         head = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -284,25 +283,25 @@ static class AtaChs
                     }
 
                     AaruConsole.Write("What sector?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out sector))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         sector = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("How many sectors?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out count))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         count = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -310,13 +309,13 @@ static class AtaChs
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, retries, cylinder, head,
                                  sector, count, dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ DMA {0}to the device:", retries ? "WITH RETRIES " : "");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -332,13 +331,13 @@ static class AtaChs
         AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -350,7 +349,7 @@ static class AtaChs
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DMA {0}response:", retries ? "WITH RETRIES " : "");
 
@@ -358,19 +357,19 @@ static class AtaChs
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ DMA {0}status registers:", retries ? "WITH RETRIES " : "");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -378,8 +377,8 @@ static class AtaChs
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -394,11 +393,11 @@ static class AtaChs
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ LONG {0}command:", retries ? "WITH RETRIES " : "");
             AaruConsole.WriteLine("Cylinder: {0}", cylinder);
@@ -411,12 +410,12 @@ static class AtaChs
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -429,25 +428,25 @@ static class AtaChs
                     return;
                 case 1:
                     AaruConsole.Write("What cylinder?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out cylinder))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         cylinder = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("What head?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out head))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         head = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -459,25 +458,25 @@ static class AtaChs
                     }
 
                     AaruConsole.Write("What sector?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out sector))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         sector = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("How many bytes to expect?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out blockSize))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         blockSize = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -485,13 +484,13 @@ static class AtaChs
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.ReadLong(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, retries, cylinder, head,
                                   sector, blockSize, dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ LONG {0}to the device:", retries ? "WITH RETRIES " : "");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -507,13 +506,13 @@ static class AtaChs
         AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -525,7 +524,7 @@ static class AtaChs
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ LONG {0}response:", retries ? "WITH RETRIES " : "");
 
@@ -533,19 +532,19 @@ static class AtaChs
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ LONG {0}status registers:", retries ? "WITH RETRIES " : "");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -553,8 +552,8 @@ static class AtaChs
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -569,11 +568,11 @@ static class AtaChs
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ MULTIPLE command:");
             AaruConsole.WriteLine("Cylinder: {0}", cylinder);
@@ -586,12 +585,12 @@ static class AtaChs
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -604,25 +603,25 @@ static class AtaChs
                     return;
                 case 1:
                     AaruConsole.Write("What cylinder?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out cylinder))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         cylinder = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("What head?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out head))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         head = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -634,25 +633,25 @@ static class AtaChs
                     }
 
                     AaruConsole.Write("What sector?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out sector))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         sector = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("How many sectors?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out count))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         count = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -660,13 +659,13 @@ static class AtaChs
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, cylinder, head,
                                       sector, count, dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ MULTIPLE to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -682,13 +681,13 @@ static class AtaChs
         AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -700,7 +699,7 @@ static class AtaChs
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ MULTIPLE response:");
 
@@ -708,19 +707,19 @@ static class AtaChs
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ MULTIPLE status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -728,8 +727,8 @@ static class AtaChs
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -744,11 +743,11 @@ static class AtaChs
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for READ SECTORS {0}command:", retries ? "WITH RETRIES " : "");
             AaruConsole.WriteLine("Cylinder: {0}", cylinder);
@@ -761,12 +760,12 @@ static class AtaChs
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -779,25 +778,25 @@ static class AtaChs
                     return;
                 case 1:
                     AaruConsole.Write("What cylinder?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out cylinder))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         cylinder = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("What head?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out head))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         head = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -809,25 +808,25 @@ static class AtaChs
                     }
 
                     AaruConsole.Write("What sector?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out sector))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         sector = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("How many sectors?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out count))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         count = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -835,13 +834,13 @@ static class AtaChs
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, retries, cylinder, head,
                               sector, count, dev.Timeout, out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending READ SECTORS {0}to the device:", retries ? "WITH RETRIES " : "");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -857,13 +856,13 @@ static class AtaChs
         AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -875,7 +874,7 @@ static class AtaChs
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ SECTORS {0}response:", retries ? "WITH RETRIES " : "");
 
@@ -883,19 +882,19 @@ static class AtaChs
                     PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("READ SECTORS {0}status registers:", retries ? "WITH RETRIES " : "");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -903,8 +902,8 @@ static class AtaChs
             case 4: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -918,11 +917,11 @@ static class AtaChs
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for SEEK command:");
             AaruConsole.WriteLine("Cylinder: {0}", cylinder);
@@ -934,12 +933,12 @@ static class AtaChs
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -952,25 +951,25 @@ static class AtaChs
                     return;
                 case 1:
                     AaruConsole.Write("What cylinder?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out cylinder))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         cylinder = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("What head?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out head))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         head = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -982,13 +981,13 @@ static class AtaChs
                     }
 
                     AaruConsole.Write("What sector?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out sector))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         sector = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -996,13 +995,13 @@ static class AtaChs
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.Seek(out AtaErrorRegistersChs errorRegisters, cylinder, head, sector, dev.Timeout,
                               out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SEEK to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1015,13 +1014,13 @@ static class AtaChs
         AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -1033,13 +1032,13 @@ static class AtaChs
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SEEK status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -1047,8 +1046,8 @@ static class AtaChs
             case 3: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -1064,11 +1063,11 @@ static class AtaChs
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for SET FEATURES command:");
             AaruConsole.WriteLine("Cylinder: {0}", cylinder);
@@ -1082,12 +1081,12 @@ static class AtaChs
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -1100,25 +1099,25 @@ static class AtaChs
                     return;
                 case 1:
                     AaruConsole.Write("What cylinder?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out cylinder))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         cylinder = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("What head?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out head))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         head = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -1130,33 +1129,33 @@ static class AtaChs
                     }
 
                     AaruConsole.Write("What sector?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out sector))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         sector = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     AaruConsole.Write("What sector count?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out sectorCount))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         sectorCount = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     AaruConsole.Write("What feature?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out feature))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         feature = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -1164,13 +1163,13 @@ static class AtaChs
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.Seek(out AtaErrorRegistersChs errorRegisters, cylinder, head, sector, dev.Timeout,
                               out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending SET FEATURES to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -1183,13 +1182,13 @@ static class AtaChs
         AaruConsole.WriteLine("0.- Return to CHS ATA commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -1201,13 +1200,13 @@ static class AtaChs
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("SET FEATURES status registers:");
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -1215,8 +1214,8 @@ static class AtaChs
             case 3: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }

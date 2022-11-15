@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Partimage
 {
@@ -48,7 +48,7 @@ public sealed partial class Partimage
         if(stream.Length < 512)
             return false;
 
-        var pHdrB = new byte[Marshal.SizeOf<Header>()];
+        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 

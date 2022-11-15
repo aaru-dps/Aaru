@@ -31,8 +31,6 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -44,6 +42,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -457,7 +457,7 @@ public sealed partial class ISO9660
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;
 
-        var parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
+        string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
         if(!_directoryCache.TryGetValue(parentPath, out _))
         {
@@ -518,7 +518,7 @@ public sealed partial class ISO9660
         var  ms             = new MemoryStream();
         long currentFilePos = 0;
 
-        for(var i = 0; i < extents.Count; i++)
+        for(int i = 0; i < extents.Count; i++)
         {
             if(offset - currentFilePos >= extents[i].size)
             {
@@ -589,7 +589,7 @@ public sealed partial class ISO9660
     {
         var ms = new MemoryStream();
 
-        for(var i = 0; i < extents.Count; i++)
+        for(int i = 0; i < extents.Count; i++)
         {
             long leftExtentSize      = extents[i].size;
             uint currentExtentSector = 0;

@@ -25,14 +25,6 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
@@ -42,8 +34,14 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.DVD;
 using Aaru.Decryption;
 using Aaru.Decryption.DVD;
-using Aaru.Settings;
 using Schemas;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -109,8 +107,8 @@ partial class Dump
             if(!sense &&
                !_dev.Error)
             {
-                if(Settings.Current.EnableDecryption &&
-                   discKey != null                   &&
+                if(Settings.Settings.Current.EnableDecryption &&
+                   discKey != null                            &&
                    _titleKeys)
                 {
                     for(ulong j = 0; j < blocksToRead; j++)

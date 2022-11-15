@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Alcohol120
 {
@@ -48,7 +48,7 @@ public sealed partial class Alcohol120
         if(stream.Length < 88)
             return false;
 
-        var hdr = new byte[88];
+        byte[] hdr = new byte[88];
         stream.EnsureRead(hdr, 0, 88);
         Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 

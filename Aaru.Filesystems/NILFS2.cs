@@ -30,11 +30,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Local
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Runtime.InteropServices;
@@ -45,6 +41,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the New Implementation of a Log-structured File System v2</summary>
@@ -75,7 +73,7 @@ public sealed class NILFS2 : IFilesystem
         if(sbAddr == 0)
             sbAddr = 1;
 
-        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -110,7 +108,7 @@ public sealed class NILFS2 : IFilesystem
         if(sbAddr == 0)
             sbAddr = 1;
 
-        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -173,9 +171,7 @@ public sealed class NILFS2 : IFilesystem
 
     enum State : ushort
     {
-        Valid  = 0x0001,
-        Error  = 0x0002,
-        Resize = 0x0004
+        Valid = 0x0001, Error = 0x0002, Resize = 0x0004
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

@@ -26,11 +26,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Partitions;
-
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Partitions;
 
 // TODO: Get SunOS and VTOC16 disk labels
 [TestFixture]

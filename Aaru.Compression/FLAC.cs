@@ -26,12 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Compression;
-
 using System.IO;
 using System.Runtime.InteropServices;
 using CUETools.Codecs;
 using CUETools.Codecs.Flake;
+
+namespace Aaru.Compression;
 
 // ReSharper disable once InconsistentNaming
 /// <summary>Implements the FLAC lossless audio compression algorithm</summary>
@@ -138,7 +138,7 @@ public class FLAC
         flakeWriter.Write(audioBuffer);
         flakeWriter.Close();
 
-        var len = (int)flacMs.Length;
+        int len = (int)flacMs.Length;
         flacMs.ReallyClose();
 
         return len;

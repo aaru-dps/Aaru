@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Cpcdsk
 {
@@ -50,7 +50,7 @@ public sealed partial class Cpcdsk
         if(stream.Length < 512)
             return false;
 
-        var headerB = new byte[256];
+        byte[] headerB = new byte[256];
         stream.EnsureRead(headerB, 0, 256);
 
         int pos;

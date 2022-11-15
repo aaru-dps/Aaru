@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Virtual98
 {
@@ -53,7 +53,7 @@ public sealed partial class Virtual98
         if(stream.Length < Marshal.SizeOf<Virtual98Header>())
             return false;
 
-        var hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
+        byte[] hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);

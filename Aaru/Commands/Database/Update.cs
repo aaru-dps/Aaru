@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Database;
-
 using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
@@ -41,9 +39,10 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
-using Aaru.Settings;
 using Microsoft.EntityFrameworkCore;
 using Spectre.Console;
+
+namespace Aaru.Commands.Database;
 
 sealed class UpdateCommand : Command
 {
@@ -70,7 +69,7 @@ sealed class UpdateCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -97,9 +96,9 @@ sealed class UpdateCommand : Command
         if(clearAll)
             try
             {
-                File.Delete(Settings.LocalDbPath);
+                File.Delete(Settings.Settings.LocalDbPath);
 
-                var ctx = AaruContext.Create(Settings.LocalDbPath);
+                var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
                 ctx.Database.Migrate();
                 ctx.SaveChanges();
             }
@@ -116,7 +115,7 @@ sealed class UpdateCommand : Command
         if(clear || clearAll)
             try
             {
-                File.Delete(Settings.MainDbPath);
+                File.Delete(Settings.Settings.MainDbPath);
             }
             catch(Exception)
             {

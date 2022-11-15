@@ -31,8 +31,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -44,7 +42,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
@@ -52,6 +49,8 @@ using Aaru.Devices;
 using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Core.Devices.Dumping;
 
 public partial class Dump
 {
@@ -88,7 +87,7 @@ public partial class Dump
             return;
         }
 
-        var blocks = (uint)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
+        uint blocks = (uint)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
 
         blocks++;
 
@@ -188,7 +187,7 @@ public partial class Dump
         if(_resume.NextBlock > 0)
             _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
 
-        var newTrim = false;
+        bool newTrim = false;
 
         DateTime timeSpeedStart   = DateTime.UtcNow;
         ulong    sectorSpeedStart = 0;
@@ -350,9 +349,9 @@ public partial class Dump
            !_aborted                   &&
            _retryPasses > 0)
         {
-            var pass              = 1;
-            var forward           = true;
-            var runningPersistent = false;
+            int  pass              = 1;
+            bool forward           = true;
+            bool runningPersistent = false;
 
             Modes.ModePage? currentModePage = null;
             byte[]          md6;
@@ -375,7 +374,7 @@ public partial class Dump
 
                         if(dcMode10.HasValue)
                             foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                        modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                                        modePage is { Page: 0x01, Subpage: 0x00 }))
                                 currentModePage = modePage;
                     }
                 }
@@ -385,7 +384,7 @@ public partial class Dump
 
                     if(dcMode6.HasValue)
                         foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                                                                   modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                                    modePage is { Page: 0x01, Subpage: 0x00 }))
                             currentModePage = modePage;
                 }
 
@@ -461,7 +460,7 @@ public partial class Dump
             }
 
             InitProgress?.Invoke();
-        repeatRetry:
+            repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             foreach(ulong badSector in tmpArray)
@@ -542,7 +541,7 @@ public partial class Dump
 
         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
-        var metadata = new ImageInfo
+        var metadata = new CommonTypes.Structs.ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()

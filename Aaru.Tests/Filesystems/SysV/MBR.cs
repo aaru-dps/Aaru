@@ -26,23 +26,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Filesystems.SysV;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.SysV;
+
 [TestFixture]
 public class MBR : FilesystemTest
 {
     public MBR() : base("SVR4 fs") {}
 
-    public override string DataFolder =>
-        Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (MBR)");
-    public override IFilesystem Plugin     => new SysVfs();
-    public override bool        Partitions => true;
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (MBR)");
+    public override IFilesystem Plugin => new SysVfs();
+    public override bool Partitions => true;
 
     public override FileSystemTest[] Tests => new[]
     {

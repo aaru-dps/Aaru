@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 // Information from Practical Filesystem Design, ISBN 1-55860-497-9
 /// <inheritdoc />
@@ -85,8 +85,8 @@ public sealed class BeFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var magic   = BitConverter.ToUInt32(sbSector, 0x20);
-        var magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
+        uint magic   = BitConverter.ToUInt32(sbSector, 0x20);
+        uint magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
         if(magic   == BEFS_MAGIC1 ||
            magicBe == BEFS_MAGIC1)

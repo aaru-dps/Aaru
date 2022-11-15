@@ -30,9 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Image;
-
-using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes;
@@ -41,6 +38,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
+
+namespace Aaru.Commands.Image;
 
 sealed class EntropyCommand : Command
 {
@@ -83,7 +82,7 @@ sealed class EntropyCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -116,7 +115,7 @@ sealed class EntropyCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -131,7 +130,7 @@ sealed class EntropyCommand : Command
 
         IBaseImage inputFormat = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             inputFormat = ImageFormat.Detect(inputFilter);
@@ -146,7 +145,7 @@ sealed class EntropyCommand : Command
 
         ErrorNumber opened = ErrorNumber.NoData;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
             opened = inputFormat.Open(inputFilter);

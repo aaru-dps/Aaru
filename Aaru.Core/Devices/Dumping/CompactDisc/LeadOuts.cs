@@ -34,8 +34,6 @@
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -47,6 +45,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Devices;
 using Schemas;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -89,7 +89,7 @@ partial class Dump
     {
         byte[]     cmdBuf        = null; // Data buffer
         const uint sectorSize    = 2352; // Full sector size
-        var        sense         = true; // Sense indicator
+        bool       sense         = true; // Sense indicator
         byte[]     senseBuf      = null;
         var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
@@ -152,14 +152,14 @@ partial class Dump
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        var data = new byte[sectorSize * _maximumReadable];
-                        var sub  = new byte[subSize    * _maximumReadable];
+                        byte[] data = new byte[sectorSize * _maximumReadable];
+                        byte[] sub  = new byte[subSize    * _maximumReadable];
 
-                        for(var b = 0; b < _maximumReadable; b++)
+                        for(int b = 0; b < _maximumReadable; b++)
                         {
-                            Array.Copy(cmdBuf, (int)(0 + b * blockSize), data, sectorSize * b, sectorSize);
+                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
 
-                            Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize * b, subSize);
+                            Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                         }
 
                         outputOptical.WriteSectorsLong(data, i, _maximumReadable);
@@ -261,7 +261,7 @@ partial class Dump
     {
         byte[]     cmdBuf        = null; // Data buffer
         const uint sectorSize    = 2352; // Full sector size
-        var        sense         = true; // Sense indicator
+        bool       sense         = true; // Sense indicator
         byte[]     senseBuf      = null;
         var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
@@ -323,14 +323,14 @@ partial class Dump
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        var data = new byte[sectorSize * _maximumReadable];
-                        var sub  = new byte[subSize    * _maximumReadable];
+                        byte[] data = new byte[sectorSize * _maximumReadable];
+                        byte[] sub  = new byte[subSize    * _maximumReadable];
 
-                        for(var b = 0; b < _maximumReadable; b++)
+                        for(int b = 0; b < _maximumReadable; b++)
                         {
-                            Array.Copy(cmdBuf, (int)(0 + b * blockSize), data, sectorSize * b, sectorSize);
+                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
 
-                            Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize * b, subSize);
+                            Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                         }
 
                         outputOptical.WriteSectorsLong(data, i, _maximumReadable);

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the b-tree filesystem (btrfs)</summary>
@@ -210,7 +210,7 @@ public sealed class BTRFS : IFilesystem
             Type                  = Name
         };
 
-        XmlFsType.FreeClusters = XmlFsType.Clusters - btrfsSb.bytes_used / btrfsSb.sectorsize;
+        XmlFsType.FreeClusters = XmlFsType.Clusters - (btrfsSb.bytes_used / btrfsSb.sectorsize);
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

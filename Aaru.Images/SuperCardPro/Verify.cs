@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
@@ -44,13 +44,13 @@ public sealed partial class SuperCardPro
         if(Header.flags.HasFlag(ScpFlags.Writable))
             return null;
 
-        var  wholeFile = new byte[_scpStream.Length];
-        uint sum       = 0;
+        byte[] wholeFile = new byte[_scpStream.Length];
+        uint   sum       = 0;
 
         _scpStream.Position = 0;
         _scpStream.EnsureRead(wholeFile, 0, wholeFile.Length);
 
-        for(var i = 0x10; i < wholeFile.Length; i++)
+        for(int i = 0x10; i < wholeFile.Length; i++)
             sum += wholeFile[i];
 
         return Header.checksum == sum;

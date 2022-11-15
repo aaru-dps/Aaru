@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Dart
 {
@@ -47,7 +47,7 @@ public sealed partial class Dart
             return false;
 
         stream.Seek(0, SeekOrigin.Begin);
-        var headerB = new byte[Marshal.SizeOf<Header>()];
+        byte[] headerB = new byte[Marshal.SizeOf<Header>()];
 
         stream.EnsureRead(headerB, 0, Marshal.SizeOf<Header>());
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
@@ -55,7 +55,7 @@ public sealed partial class Dart
         if(header.srcCmp > COMPRESS_NONE)
             return false;
 
-        int expectedMaxSize = 84 + header.srcSize * 2 * 524;
+        int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
 
         switch(header.srcType)
         {

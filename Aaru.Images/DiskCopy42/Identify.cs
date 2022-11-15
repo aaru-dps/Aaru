@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Claunia.Encoding;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class DiskCopy42
 {
@@ -46,8 +46,8 @@ public sealed partial class DiskCopy42
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
-        var buffer  = new byte[0x58];
-        var pString = new byte[64];
+        byte[] buffer  = new byte[0x58];
+        byte[] pString = new byte[64];
         stream.EnsureRead(buffer, 0, 0x58);
 
         // Incorrect pascal string length, not DC42

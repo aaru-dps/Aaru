@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -48,6 +46,8 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
 using Schemas;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageSidecarViewModel : ViewModelBase
 {

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {
@@ -167,10 +167,10 @@ public sealed partial class CdrWin
         if(errno != ErrorNumber.NoError)
             return null;
 
-        var bps    = (int)(buffer.Length / length);
-        var sector = new byte[bps];
+        int    bps    = (int)(buffer.Length / length);
+        byte[] sector = new byte[bps];
 
-        for(var i = 0; i < length; i++)
+        for(int i = 0; i < length; i++)
         {
             Array.Copy(buffer, i * bps, sector, 0, bps);
             bool? sectorStatus = CdChecksums.CheckCdSector(sector);
@@ -205,10 +205,10 @@ public sealed partial class CdrWin
         if(errno != ErrorNumber.NoError)
             return null;
 
-        var bps    = (int)(buffer.Length / length);
-        var sector = new byte[bps];
+        int    bps    = (int)(buffer.Length / length);
+        byte[] sector = new byte[bps];
 
-        for(var i = 0; i < length; i++)
+        for(int i = 0; i < length; i++)
         {
             Array.Copy(buffer, i * bps, sector, 0, bps);
             bool? sectorStatus = CdChecksums.CheckCdSector(sector);

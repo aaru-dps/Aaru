@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Dart
@@ -73,7 +73,7 @@ public sealed partial class Dart
     const int TAG_SECTOR_SIZE   = 12;
     const int DATA_SIZE         = SECTORS_PER_BLOCK * SECTOR_SIZE;
     const int TAG_SIZE          = SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
-    const int BUFFER_SIZE       = SECTORS_PER_BLOCK * SECTOR_SIZE + SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
+    const int BUFFER_SIZE       = (SECTORS_PER_BLOCK * SECTOR_SIZE) + (SECTORS_PER_BLOCK * TAG_SECTOR_SIZE);
 
     const string DART_REGEX =
         @"(?<version>\S+), tag checksum=\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\$(?<datachk>[0123456789ABCDEF]{8})$";

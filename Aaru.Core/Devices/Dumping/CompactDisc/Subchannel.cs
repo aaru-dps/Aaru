@@ -30,17 +30,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using Aaru.CommonTypes;
 using Aaru.Core.Logging;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {

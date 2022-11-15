@@ -32,12 +32,12 @@
 
 // ReSharper disable NotAccessedField.Local
 
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {

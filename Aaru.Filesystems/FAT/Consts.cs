@@ -30,13 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Local
 
-namespace Aaru.Filesystems;
-
 using System;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class FAT
 {
@@ -179,52 +177,31 @@ public sealed partial class FAT
     [Flags]
     enum FatAttributes : byte
     {
-        ReadOnly     = 0x01,
-        Hidden       = 0x02,
-        System       = 0x04,
-        VolumeLabel  = 0x08,
-        Subdirectory = 0x10,
-        Archive      = 0x20,
-        Device       = 0x40,
-        Reserved     = 0x80,
-        LFN          = 0x0F
+        ReadOnly    = 0x01, Hidden       = 0x02, System  = 0x04,
+        VolumeLabel = 0x08, Subdirectory = 0x10, Archive = 0x20,
+        Device      = 0x40, Reserved     = 0x80, LFN     = 0x0F
     }
 
     enum BpbKind
     {
-        None,
-        Hardcoded,
-        Atari,
-        Msx,
-        Dos2,
-        Dos3,
-        Dos32,
-        Dos33,
-        ShortExtended,
-        Extended,
-        ShortFat32,
-        LongFat32,
-        Andos,
-        Apricot,
-        DecRainbow,
+        None, Hardcoded, Atari,
+        Msx, Dos2, Dos3,
+        Dos32, Dos33, ShortExtended,
+        Extended, ShortFat32, LongFat32,
+        Andos, Apricot, DecRainbow,
         Human
     }
 
     enum Namespace
     {
-        Dos,
-        Nt,
-        Lfn,
-        Os2,
-        Ecs,
-        Human
+        Dos, Nt, Lfn,
+        Os2, Ecs, Human
     }
 
     [Flags]
     enum EaFlags : uint
     {
-        Normal   = 0,
-        Critical = 1
+        Normal = 0, Critical = 1
     }
 
     [Flags]

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Scanning;
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -42,6 +40,8 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Scanning;
 
 /// <summary>Implements scanning the media from an SCSI device</summary>
 public sealed partial class MediaScan
@@ -55,8 +55,8 @@ public sealed partial class MediaScan
         bool    sense;
         uint    blockSize        = 0;
         ushort  currentProfile   = 0x0001;
-        var     foundReadCommand = false;
-        var     readcd           = false;
+        bool    foundReadCommand = false;
+        bool    readcd           = false;
 
         results.Blocks = 0;
 
@@ -74,7 +74,7 @@ public sealed partial class MediaScan
                     {
                         case 0x3A:
                         {
-                            var leftRetries = 5;
+                            int leftRetries = 5;
 
                             while(leftRetries > 0)
                             {
@@ -99,7 +99,7 @@ public sealed partial class MediaScan
                         }
                         case 0x04 when decSense.Value.ASCQ == 0x01:
                         {
-                            var leftRetries = 10;
+                            int leftRetries = 10;
 
                             while(leftRetries > 0)
                             {
@@ -127,7 +127,7 @@ public sealed partial class MediaScan
                         // These should be trapped by the OS but seems in some cases they're not
                         case 0x28:
                         {
-                            var leftRetries = 10;
+                            int leftRetries = 10;
 
                             while(leftRetries > 0)
                             {
@@ -245,7 +245,7 @@ public sealed partial class MediaScan
             return results;
         }
 
-        var                compactDisc = true;
+        bool               compactDisc = true;
         FullTOC.CDFullTOC? toc         = null;
 
         if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
@@ -626,12 +626,12 @@ public sealed partial class MediaScan
 
         InitProgress?.Invoke();
 
-        for(var i = 0; i < seekTimes; i++)
+        for(int i = 0; i < seekTimes; i++)
         {
             if(_aborted || !_seekTest)
                 break;
 
-            var seekPos = (uint)rnd.Next((int)results.Blocks);
+            uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
             PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Image;
-
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -47,6 +45,8 @@ using Aaru.Core;
 using Aaru.Helpers;
 using Spectre.Console;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
+
+namespace Aaru.Commands.Image;
 
 sealed class CompareCommand : Command
 {
@@ -79,7 +79,7 @@ sealed class CompareCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -111,7 +111,7 @@ sealed class CompareCommand : Command
         IFilter inputFilter1 = null;
         IFilter inputFilter2 = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file 1 filter...").IsIndeterminate();
             inputFilter1 = filtersList.GetFilter(imagePath1);
@@ -119,7 +119,7 @@ sealed class CompareCommand : Command
 
         filtersList = new FiltersList();
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file 2 filter...").IsIndeterminate();
             inputFilter2 = filtersList.GetFilter(imagePath2);
@@ -142,13 +142,13 @@ sealed class CompareCommand : Command
         IBaseImage input1Format = null;
         IBaseImage input2Format = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image 1 format...").IsIndeterminate();
             input1Format = ImageFormat.Detect(inputFilter1);
         });
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image 1 format...").IsIndeterminate();
             input2Format = ImageFormat.Detect(inputFilter2);
@@ -183,7 +183,7 @@ sealed class CompareCommand : Command
         ErrorNumber opened1 = ErrorNumber.NoData;
         ErrorNumber opened2 = ErrorNumber.NoData;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image 1 file...").IsIndeterminate();
             opened1 = input1Format.Open(inputFilter1);
@@ -197,7 +197,7 @@ sealed class CompareCommand : Command
             return (int)opened1;
         }
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image 2 file...").IsIndeterminate();
             opened2 = input2Format.Open(inputFilter2);
@@ -236,7 +236,7 @@ sealed class CompareCommand : Command
             sb.AppendFormat("[bold]Media image 2:[/] {0}", imagePath2).AppendLine();
         }
 
-        var         imagesDiffer = false;
+        bool        imagesDiffer = false;
         ErrorNumber errno;
 
         ImageInfo                        image1Info       = input1Format.Info;
@@ -329,7 +329,7 @@ sealed class CompareCommand : Command
 
         ulong leastSectors = 0;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Comparing disk image characteristics").IsIndeterminate();
 
@@ -431,14 +431,14 @@ sealed class CompareCommand : Command
                                     errno = input1MediaImage.ReadSector(sector, out byte[] image1Sector);
 
                                     if(errno != ErrorNumber.NoError)
-                                        AaruConsole.
-                                            ErrorWriteLine($"Error {errno} reading sector {sector} from image 1.");
+                                        AaruConsole.ErrorWriteLine($"Error {errno} reading sector {sector
+                                        } from image 1.");
 
                                     errno = input1MediaImage.ReadSector(sector, out byte[] image2Sector);
 
                                     if(errno != ErrorNumber.NoError)
-                                        AaruConsole.
-                                            ErrorWriteLine($"Error {errno} reading sector {sector} from image 1.");
+                                        AaruConsole.ErrorWriteLine($"Error {errno} reading sector {sector
+                                        } from image 1.");
 
                                     ArrayHelpers.CompareBytes(out bool different, out bool sameSize, image1Sector,
                                                               image2Sector);
@@ -471,8 +471,8 @@ sealed class CompareCommand : Command
                             ProgressTask task = ctx.AddTask("Comparing images...");
                             task.IsIndeterminate = true;
 
-                            var    data1 = new byte[input1ByteAddressable.Info.Sectors];
-                            var    data2 = new byte[input2ByteAddressable.Info.Sectors];
+                            byte[] data1 = new byte[input1ByteAddressable.Info.Sectors];
+                            byte[] data2 = new byte[input2ByteAddressable.Info.Sectors];
                             byte[] tmp;
 
                             input1ByteAddressable.ReadBytes(data1, 0, data1.Length, out int bytesRead);

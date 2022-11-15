@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -47,7 +47,7 @@ public partial class Device
                                                out double duration)
     {
         buffer = new byte[3];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ArchiveRequestBlockAddress;
@@ -84,7 +84,7 @@ public partial class Device
                                      out double duration)
     {
         byte[] buffer = Array.Empty<byte>();
-        var    cdb    = new byte[6];
+        byte[] cdb    = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ArchiveSeekBlock;

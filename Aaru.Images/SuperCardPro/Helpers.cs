@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using System.Text;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
@@ -45,15 +45,15 @@ public sealed partial class SuperCardPro
             return null;
 
         stream.Position = position;
-        var lenB = new byte[2];
+        byte[] lenB = new byte[2];
         stream.EnsureRead(lenB, 0, 2);
-        var len = BitConverter.ToUInt16(lenB, 0);
+        ushort len = BitConverter.ToUInt16(lenB, 0);
 
         if(len                   == 0 ||
            len + stream.Position >= stream.Length)
             return null;
 
-        var str = new byte[len];
+        byte[] str = new byte[len];
         stream.EnsureRead(str, 0, len);
 
         return Encoding.UTF8.GetString(str);

@@ -26,12 +26,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices.ATA;
-
-using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Devices;
+
+namespace Aaru.Tests.Devices.ATA;
 
 static class Mcpt
 {
@@ -39,19 +38,19 @@ static class Mcpt
     {
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send a Media Card Pass Through command to the device:");
             AaruConsole.WriteLine("1.- Send CHECK MEDIA CARD TYPE command.");
             AaruConsole.WriteLine("0.- Return to ATA commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -68,7 +67,7 @@ static class Mcpt
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    System.Console.ReadKey();
 
                     continue;
             }
@@ -81,11 +80,11 @@ static class Mcpt
         string strDev;
         int    item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for CHECK MEDIA CARD TYPE command:");
             AaruConsole.WriteLine("Feature: {0}", feature);
@@ -95,12 +94,12 @@ static class Mcpt
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Media Card Pass Through commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -113,13 +112,13 @@ static class Mcpt
                     return;
                 case 1:
                     AaruConsole.Write("Feature?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out feature))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         feature = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
@@ -127,13 +126,13 @@ static class Mcpt
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.CheckMediaCardType(feature, out AtaErrorRegistersChs errorRegisters, dev.Timeout,
                                             out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending CHECK MEDIA CARD TYPE to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -147,13 +146,13 @@ static class Mcpt
         AaruConsole.WriteLine("0.- Return to Media Card Pass Through commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -168,8 +167,8 @@ static class Mcpt
             case 2: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 // Information from the Linux kernel
 /// <inheritdoc />
@@ -189,8 +189,8 @@ public sealed class ext2FS : IFilesystem
         if(sbSectorOff + partition.Start >= partition.End)
             return false;
 
-        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -201,14 +201,14 @@ public sealed class ext2FS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var sb = new byte[sbSizeInBytes];
+        byte[] sb = new byte[sbSizeInBytes];
 
         if(sbOff + sbSizeInBytes > sbSector.Length)
             return false;
 
         Array.Copy(sbSector, sbOff, sb, 0, sbSizeInBytes);
 
-        var magic = BitConverter.ToUInt16(sb, 0x038);
+        ushort magic = BitConverter.ToUInt16(sb, 0x038);
 
         return magic is EXT2_MAGIC or EXT2_MAGIC_OLD;
     }
@@ -221,12 +221,12 @@ public sealed class ext2FS : IFilesystem
 
         var sb = new StringBuilder();
 
-        var newExt2 = false;
-        var ext3    = false;
-        var ext4    = false;
+        bool newExt2 = false;
+        bool ext3    = false;
+        bool ext4    = false;
 
-        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -240,7 +240,7 @@ public sealed class ext2FS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        var sblock = new byte[sbSizeInBytes];
+        byte[] sblock = new byte[sbSizeInBytes];
         Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
         SuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sblock);
 
@@ -300,14 +300,14 @@ public sealed class ext2FS : IFilesystem
         }
 
         string extOs = supblk.creator_os switch
-                       {
-                           EXT2_OS_FREEBSD => "FreeBSD",
-                           EXT2_OS_HURD    => "Hurd",
-                           EXT2_OS_LINUX   => "Linux",
-                           EXT2_OS_LITES   => "Lites",
-                           EXT2_OS_MASIX   => "MasIX",
-                           _               => $"Unknown OS ({supblk.creator_os})"
-                       };
+        {
+            EXT2_OS_FREEBSD => "FreeBSD",
+            EXT2_OS_HURD    => "Hurd",
+            EXT2_OS_LINUX   => "Linux",
+            EXT2_OS_LITES   => "Lites",
+            EXT2_OS_MASIX   => "MasIX",
+            _               => $"Unknown OS ({supblk.creator_os})"
+        };
 
         XmlFsType.SystemIdentifier = extOs;
 
@@ -322,8 +322,8 @@ public sealed class ext2FS : IFilesystem
         else
             sb.AppendFormat("Volume was created for {0}", extOs).AppendLine();
 
-        var   tempBytes = new byte[8];
-        ulong blocks, reserved, free;
+        byte[] tempBytes = new byte[8];
+        ulong  blocks, reserved, free;
 
         if((supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT) == EXT4_FEATURE_INCOMPAT_64BIT)
         {
@@ -515,8 +515,7 @@ public sealed class ext2FS : IFilesystem
             sb.AppendFormat("{0} bytes per fragment", supblk.frag_size).AppendLine();
 
         if(supblk.blocks_per_grp > 0 &&
-           supblk.flags_per_grp  > 0 &&
-           supblk.inodes_per_grp > 0)
+           supblk is { flags_per_grp: > 0, inodes_per_grp: > 0 })
             sb.AppendFormat("{0} blocks, {1} flags and {2} inodes per group", supblk.blocks_per_grp,
                             supblk.flags_per_grp, supblk.inodes_per_grp).AppendLine();
 
@@ -540,18 +539,14 @@ public sealed class ext2FS : IFilesystem
         if(supblk.raid_stripe_width > 0)
             sb.AppendFormat("{0} blocks on all data disks", supblk.raid_stripe_width).AppendLine();
 
-        if(supblk.mmp_interval > 0 &&
-           supblk.mmp_block    > 0)
+        if(supblk is { mmp_interval: > 0, mmp_block: > 0 })
             sb.AppendFormat("{0} seconds for multi-mount protection wait, on block {1}", supblk.mmp_interval,
                             supblk.mmp_block).AppendLine();
 
         if(supblk.flex_bg_grp_size > 0)
             sb.AppendFormat("{0} Flexible block group size", supblk.flex_bg_grp_size).AppendLine();
 
-        if(supblk.hash_seed_1 > 0 &&
-           supblk.hash_seed_2 > 0 &&
-           supblk.hash_seed_3 > 0 &&
-           supblk.hash_seed_4 > 0)
+        if(supblk is { hash_seed_1: > 0, hash_seed_2: > 0 } and { hash_seed_3: > 0, hash_seed_4: > 0 })
             sb.AppendFormat("Hash seed: {0:X8}{1:X8}{2:X8}{3:X8}, version {4}", supblk.hash_seed_1, supblk.hash_seed_2,
                             supblk.hash_seed_3, supblk.hash_seed_4, supblk.hash_version).AppendLine();
 

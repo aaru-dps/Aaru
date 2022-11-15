@@ -32,16 +32,15 @@
 
 // ReSharper disable JoinDeclarationAndInitializer
 
-namespace Aaru.Core.Devices.Scanning;
-
 using System;
 using System.Collections.Generic;
 using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
 using Aaru.Decoders.SecureDigital;
 using CSD = Aaru.Decoders.MMC.CSD;
-using Decoders = Aaru.Decoders.MMC.Decoders;
 using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
+
+namespace Aaru.Core.Devices.Scanning;
 
 /// <summary>Implements scanning a SecureDigital or MultiMediaCard flash card</summary>
 public sealed partial class MediaScan
@@ -57,8 +56,8 @@ public sealed partial class MediaScan
         const ushort sdProfile     = 0x0001;
         ushort       blocksToRead  = 128;
         uint         blockSize     = 512;
-        var          byteAddressed = true;
-        var          supportsCmd23 = false;
+        bool         byteAddressed = true;
+        bool         supportsCmd23 = false;
 
         switch(_dev.Type)
         {
@@ -68,7 +67,7 @@ public sealed partial class MediaScan
 
                 if(!sense)
                 {
-                    CSD csd = Decoders.DecodeCSD(cmdBuf);
+                    CSD csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
                     results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
                     blockSize      = (uint)Math.Pow(2, csd.ReadBlockLength);
 
@@ -81,7 +80,7 @@ public sealed partial class MediaScan
 
                         if(!sense)
                         {
-                            ExtendedCSD ecsd = Decoders.DecodeExtendedCSD(cmdBuf);
+                            ExtendedCSD ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
                             results.Blocks = ecsd.SectorCount;
                             blockSize      = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
 
@@ -105,7 +104,7 @@ public sealed partial class MediaScan
 
                 if(!sense)
                 {
-                    Aaru.Decoders.SecureDigital.CSD csd = Aaru.Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
+                    Decoders.SecureDigital.CSD csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
 
                     results.Blocks = (ulong)(csd.Structure == 0 ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
                                                  : (csd.Size                + 1) * 1024);
@@ -125,8 +124,8 @@ public sealed partial class MediaScan
                     sense = _dev.ReadScr(out cmdBuf, out _, timeout, out _);
 
                     if(!sense)
-                        supportsCmd23 = Aaru.Decoders.SecureDigital.Decoders.DecodeSCR(cmdBuf)?.CommandSupport.
-                                             HasFlag(CommandSupport.SetBlockCount) ?? false;
+                        supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(cmdBuf)?.CommandSupport.
+                                                 HasFlag(CommandSupport.SetBlockCount) ?? false;
                 }
 
                 break;
@@ -324,12 +323,12 @@ public sealed partial class MediaScan
 
         InitProgress?.Invoke();
 
-        for(var i = 0; i < seekTimes; i++)
+        for(int i = 0; i < seekTimes; i++)
         {
             if(_aborted || !_seekTest)
                 break;
 
-            var seekPos = (uint)rnd.Next((int)results.Blocks);
+            uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
             PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 

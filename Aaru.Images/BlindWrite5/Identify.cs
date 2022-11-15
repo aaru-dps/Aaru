@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class BlindWrite5
 {
@@ -48,10 +48,10 @@ public sealed partial class BlindWrite5
         if(stream.Length < 276)
             return false;
 
-        var signature = new byte[16];
+        byte[] signature = new byte[16];
         stream.EnsureRead(signature, 0, 16);
 
-        var footer = new byte[16];
+        byte[] footer = new byte[16];
         stream.Seek(-16, SeekOrigin.End);
         stream.EnsureRead(footer, 0, 16);
 

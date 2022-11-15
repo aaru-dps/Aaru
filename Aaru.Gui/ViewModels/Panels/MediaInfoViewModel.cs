@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Panels;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,6 +48,8 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 using ScsiInfo = Aaru.Core.Media.Info.ScsiInfo;
+
+namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class MediaInfoViewModel : ViewModelBase
 {
@@ -108,25 +108,25 @@ public sealed class MediaInfoViewModel : ViewModelBase
             ulong totalSize = scsiInfo.Blocks * scsiInfo.BlockSize;
 
             MediaSize = totalSize switch
-                        {
-                            > 1099511627776 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                            } bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)",
-                            > 1073741824 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                            } bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)",
-                            > 1048576 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                            } bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)",
-                            > 1024 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                            } bytes/each. (for a total of {totalSize / 1024d:F3} KiB)",
-                            _ => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                            } bytes/each. (for a total of {totalSize} bytes)"
-                        };
+            {
+                > 1099511627776 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                } bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)",
+                > 1073741824 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
+                } bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)",
+                > 1048576 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {
+                    totalSize / 1048576d:F3} MiB)",
+                > 1024 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {
+                    totalSize / 1024d:F3} KiB)",
+                _ => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize
+                } bytes)"
+            };
         }
 
         if(scsiInfo.MediaSerialNumber != null)
         {
             var sbSerial = new StringBuilder();
 
-            for(var i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
+            for(int i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
                 sbSerial.AppendFormat("{0:X2}", scsiInfo.MediaSerialNumber[i]);
 
             MediaSerial = sbSerial.ToString();

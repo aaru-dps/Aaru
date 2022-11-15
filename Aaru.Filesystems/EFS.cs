@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -43,6 +41,8 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements identification for the SGI Extent FileSystem</summary>
@@ -71,7 +71,7 @@ public sealed class EFS : IFilesystem
         // Misaligned
         if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
         {
-            var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
 
             if((Marshal.SizeOf<Superblock>() + 0x200) % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -84,7 +84,7 @@ public sealed class EFS : IFilesystem
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
 
-            var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
+            byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
             Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
@@ -98,7 +98,7 @@ public sealed class EFS : IFilesystem
         }
         else
         {
-            var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -137,7 +137,7 @@ public sealed class EFS : IFilesystem
         // Misaligned
         if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
         {
-            var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
             if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -150,7 +150,7 @@ public sealed class EFS : IFilesystem
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
-            var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
+            byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
             Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
@@ -161,7 +161,7 @@ public sealed class EFS : IFilesystem
         }
         else
         {
-            var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;

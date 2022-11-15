@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -46,7 +44,6 @@ using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
 using Aaru.Database;
 using Aaru.Database.Models;
-using Aaru.Settings;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -54,6 +51,8 @@ using Device = Aaru.Devices.Device;
 using MediaType = Aaru.CommonTypes.MediaType;
 using OperatingSystem = Aaru.Database.Models.OperatingSystem;
 using Version = Aaru.Database.Models.Version;
+
+namespace Aaru.Core;
 
 /// <summary>Handles anonymous usage statistics</summary>
 public static class Statistics
@@ -66,15 +65,15 @@ public static class Statistics
     {
         try
         {
-            using var ctx = AaruContext.Create(Settings.LocalDbPath);
+            using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
-            if(File.Exists(Path.Combine(Settings.StatsPath, "Statistics.xml")))
+            if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
                 try
                 {
                     var allStats = new Stats();
                     var xs       = new XmlSerializer(allStats.GetType());
 
-                    var sr = new StreamReader(Path.Combine(Settings.StatsPath, "Statistics.xml"));
+                    var sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
 
                     allStats = (Stats)xs.Deserialize(sr);
                     sr.Close();
@@ -518,14 +517,15 @@ public static class Statistics
                             }
 
                         ctx.SaveChanges();
-                        File.Delete(Path.Combine(Settings.StatsPath, "Statistics.xml"));
-                    }                }
+                        File.Delete(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
+                    }
+                }
                 catch
                 {
                     // Do not care about it
                 }
 
-            if(Settings.Current.Stats == null)
+            if(Settings.Settings.Current.Stats == null)
                 return;
 
             ctx.OperatingSystems.Add(new OperatingSystem
@@ -557,7 +557,7 @@ public static class Statistics
     {
         try
         {
-            using var ctx = AaruContext.Create(Settings.LocalDbPath);
+            using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             ctx.SaveChanges();
         }
@@ -567,7 +567,7 @@ public static class Statistics
             AaruConsole.DebugWriteLine("Stats", "{0}", ex);
         }
 
-        if(Settings.Current.Stats is { ShareStats: true })
+        if(Settings.Settings.Current.Stats is { ShareStats: true })
             SubmitStats();
     }
 
@@ -576,7 +576,7 @@ public static class Statistics
     {
         var submitThread = new Thread(() =>
         {
-            using var ctx = AaruContext.Create(Settings.LocalDbPath);
+            using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             try
             {
@@ -789,7 +789,7 @@ public static class Statistics
                     }
 
                 #if DEBUG
-                    Console.WriteLine("Uploading statistics");
+                    System.Console.WriteLine("Uploading statistics");
                 #else
                             Aaru.Console.AaruConsole.DebugWriteLine("Submit stats", "Uploading statistics");
                 #endif
@@ -1117,7 +1117,8 @@ public static class Statistics
             }
 
             IEnumerable<string> statsFiles =
-                Directory.EnumerateFiles(Settings.StatsPath, "PartialStats_*.xml", SearchOption.TopDirectoryOnly);
+                Directory.EnumerateFiles(Settings.Settings.StatsPath, "PartialStats_*.xml",
+                                         SearchOption.TopDirectoryOnly);
 
             foreach(string statsFile in statsFiles)
                 try
@@ -1129,7 +1130,7 @@ public static class Statistics
 
                     // This can execute before debug console has been inited
                 #if DEBUG
-                    Console.WriteLine("Uploading partial statistics file {0}", statsFile);
+                    System.Console.WriteLine("Uploading partial statistics file {0}", statsFile);
                 #else
                     Aaru.Console.AaruConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
                 #endif
@@ -1196,10 +1197,10 @@ public static class Statistics
         if(string.IsNullOrWhiteSpace(command))
             return;
 
-        if(Settings.Current.Stats is not { DeviceStats: true })
+        if(Settings.Settings.Current.Stats is not { DeviceStats: true })
             return;
 
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         ctx.Commands.Add(new Command
         {
@@ -1226,10 +1227,10 @@ public static class Statistics
         if(string.IsNullOrWhiteSpace(filesystem))
             return;
 
-        if(Settings.Current.Stats is not { FilesystemStats: true })
+        if(Settings.Settings.Current.Stats is not { FilesystemStats: true })
             return;
 
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         ctx.Filesystems.Add(new Filesystem
         {
@@ -1256,10 +1257,10 @@ public static class Statistics
         if(string.IsNullOrWhiteSpace(partition))
             return;
 
-        if(Settings.Current.Stats is not { PartitionStats: true })
+        if(Settings.Settings.Current.Stats is not { PartitionStats: true })
             return;
 
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         ctx.Partitions.Add(new Partition
         {
@@ -1286,10 +1287,10 @@ public static class Statistics
         if(string.IsNullOrWhiteSpace(filter))
             return;
 
-        if(Settings.Current.Stats is not { FilterStats: true })
+        if(Settings.Settings.Current.Stats is not { FilterStats: true })
             return;
 
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         ctx.Filters.Add(new Filter
         {
@@ -1316,10 +1317,10 @@ public static class Statistics
         if(string.IsNullOrWhiteSpace(format))
             return;
 
-        if(Settings.Current.Stats is not { MediaImageStats: true })
+        if(Settings.Settings.Current.Stats is not { MediaImageStats: true })
             return;
 
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         ctx.MediaFormats.Add(new MediaFormat
         {
@@ -1343,7 +1344,7 @@ public static class Statistics
     /// <param name="dev">Device</param>
     public static void AddDevice(Device dev)
     {
-        if(Settings.Current.Stats is not { DeviceStats: true })
+        if(Settings.Settings.Current.Stats is not { DeviceStats: true })
             return;
 
         string deviceBus;
@@ -1355,7 +1356,7 @@ public static class Statistics
         else
             deviceBus = dev.Type.ToString();
 
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         if(ctx.SeenDevices.Any(d => d.Manufacturer == dev.Manufacturer     && d.Model == dev.Model &&
                                     d.Revision     == dev.FirmwareRevision && d.Bus   == deviceBus))
@@ -1386,10 +1387,10 @@ public static class Statistics
     /// <param name="real">Set if media was found on a real device, otherwise found on a media image</param>
     public static void AddMedia(MediaType type, bool real)
     {
-        if(Settings.Current.Stats is not { MediaStats: true })
+        if(Settings.Settings.Current.Stats is not { MediaStats: true })
             return;
 
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         ctx.Medias.Add(new Database.Models.Media
         {
@@ -1414,10 +1415,10 @@ public static class Statistics
     public static void AddRemote(string serverApplication, string serverVersion, string serverOperatingSystem,
                                  string serverOperatingSystemVersion, string serverArchitecture)
     {
-        if(Settings.Current.Stats is not { MediaStats: true })
+        if(Settings.Settings.Current.Stats is not { MediaStats: true })
             return;
 
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         ctx.RemoteApplications.Add(new RemoteApplication
         {

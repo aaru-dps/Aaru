@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class CisCopy
 {
@@ -65,10 +65,10 @@ public sealed partial class CisCopy
             default: return false;
         }
 
-        var trackBytes = new byte[tracks];
+        byte[] trackBytes = new byte[tracks];
         stream.EnsureRead(trackBytes, 0, tracks);
 
-        for(var i = 0; i < tracks; i++)
+        for(int i = 0; i < tracks; i++)
             if(trackBytes[i] != (byte)TrackType.Copied  &&
                trackBytes[i] != (byte)TrackType.Omitted &&
                trackBytes[i] != (byte)TrackType.OmittedAlternate)
@@ -84,37 +84,37 @@ public sealed partial class CisCopy
         switch(type)
         {
             case DiskType.MD1DD8:
-                if(stream.Length > 40 * 1 * 8 * 512 + 82)
+                if(stream.Length > (40 * 1 * 8 * 512) + 82)
                     return false;
 
                 break;
             case DiskType.MD1DD:
-                if(stream.Length > 40 * 1 * 9 * 512 + 82)
+                if(stream.Length > (40 * 1 * 9 * 512) + 82)
                     return false;
 
                 break;
             case DiskType.MD2DD8:
-                if(stream.Length > 40 * 2 * 8 * 512 + 82)
+                if(stream.Length > (40 * 2 * 8 * 512) + 82)
                     return false;
 
                 break;
             case DiskType.MD2DD:
-                if(stream.Length > 40 * 2 * 9 * 512 + 82)
+                if(stream.Length > (40 * 2 * 9 * 512) + 82)
                     return false;
 
                 break;
             case DiskType.MF2DD:
-                if(stream.Length > 80 * 2 * 9 * 512 + 162)
+                if(stream.Length > (80 * 2 * 9 * 512) + 162)
                     return false;
 
                 break;
             case DiskType.MD2HD:
-                if(stream.Length > 80 * 2 * 15 * 512 + 162)
+                if(stream.Length > (80 * 2 * 15 * 512) + 162)
                     return false;
 
                 break;
             case DiskType.MF2HD:
-                if(stream.Length > 80 * 2 * 18 * 512 + 162)
+                if(stream.Length > (80 * 2 * 18 * 512) + 162)
                     return false;
 
                 break;

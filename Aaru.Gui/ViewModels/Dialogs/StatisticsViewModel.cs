@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Dialogs;
-
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
@@ -39,10 +37,11 @@ using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
-using Aaru.Settings;
 using JetBrains.Annotations;
 using ReactiveUI;
 using NameCountModel = Aaru.Gui.Models.NameCountModel;
+
+namespace Aaru.Gui.ViewModels.Dialogs;
 
 public sealed class StatisticsViewModel : ViewModelBase
 {
@@ -98,7 +97,7 @@ public sealed class StatisticsViewModel : ViewModelBase
         Devices      = new ObservableCollection<DeviceStatsModel>();
         Medias       = new ObservableCollection<MediaStatsModel>();
         CloseCommand = ReactiveCommand.Create(ExecuteCloseCommand);
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         if(ctx.Commands.Any())
         {

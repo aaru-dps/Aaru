@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -63,7 +63,7 @@ public partial class Device
                            out uint foundBlocks, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var    cdb    = new byte[10];
+        byte[] cdb    = new byte[10];
         byte[] buffer = Array.Empty<byte>();
         foundLba    = 0;
         foundBlocks = 0;

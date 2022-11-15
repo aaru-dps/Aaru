@@ -30,9 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Device;
-
-using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
@@ -42,6 +39,8 @@ using Aaru.Core;
 using Aaru.Devices;
 using JetBrains.Annotations;
 using Spectre.Console;
+
+namespace Aaru.Commands.Device;
 
 sealed class ListDevicesCommand : Command
 {
@@ -65,7 +64,7 @@ sealed class ListDevicesCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -91,10 +90,10 @@ sealed class ListDevicesCommand : Command
         AaruConsole.DebugWriteLine("List-Devices command", "--debug={0}", debug);
         AaruConsole.DebugWriteLine("List-Devices command", "--verbose={0}", verbose);
 
-        DeviceInfo[] devices = Device.ListDevices(out bool isRemote, out string serverApplication,
-                                                  out string serverVersion, out string serverOperatingSystem,
-                                                  out string serverOperatingSystemVersion,
-                                                  out string serverArchitecture, aaruRemoteHost);
+        DeviceInfo[] devices = Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
+                                                          out string serverVersion, out string serverOperatingSystem,
+                                                          out string serverOperatingSystemVersion,
+                                                          out string serverArchitecture, aaruRemoteHost);
 
         if(isRemote)
             Statistics.AddRemote(serverApplication, serverVersion, serverOperatingSystem, serverOperatingSystemVersion,

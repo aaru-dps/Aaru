@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Image;
-
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
+
+namespace Aaru.Commands.Image;
 
 sealed class VerifyCommand : Command
 {
@@ -77,7 +77,7 @@ sealed class VerifyCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -109,7 +109,7 @@ sealed class VerifyCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -124,7 +124,7 @@ sealed class VerifyCommand : Command
 
         IBaseImage inputFormat = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             inputFormat = ImageFormat.Detect(inputFilter);
@@ -139,7 +139,7 @@ sealed class VerifyCommand : Command
 
         ErrorNumber opened = ErrorNumber.NoData;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
             opened = inputFormat.Open(inputFilter);
@@ -177,10 +177,10 @@ sealed class VerifyCommand : Command
 
         if(verifyDisc && verifiableImage != null)
         {
-            bool?    discCheckStatus = null;
+            bool? discCheckStatus = null;
             checkTime = new TimeSpan();
 
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Verifying image checksums...").IsIndeterminate();
 
@@ -212,11 +212,11 @@ sealed class VerifyCommand : Command
 
         if(!verifySectors)
             return correctImage switch
-                   {
-                       null  => (int)ErrorNumber.NotVerifiable,
-                       false => (int)ErrorNumber.BadImageSectorsNotVerified,
-                       true  => (int)ErrorNumber.CorrectImageSectorsNotVerified
-                   };
+            {
+                null  => (int)ErrorNumber.NotVerifiable,
+                false => (int)ErrorNumber.BadImageSectorsNotVerified,
+                true  => (int)ErrorNumber.CorrectImageSectorsNotVerified
+            };
 
         DateTime    startCheck  = DateTime.Now;
         DateTime    endCheck    = startCheck;
@@ -385,16 +385,16 @@ sealed class VerifyCommand : Command
             correctSectors = true;
 
         return correctImage switch
-               {
-                   null when correctSectors is null   => (int)ErrorNumber.NotVerifiable,
-                   null when correctSectors == false  => (int)ErrorNumber.BadSectorsImageNotVerified,
-                   null                               => (int)ErrorNumber.CorrectSectorsImageNotVerified,
-                   false when correctSectors is null  => (int)ErrorNumber.BadImageSectorsNotVerified,
-                   false when correctSectors == false => (int)ErrorNumber.BadImageBadSectors,
-                   false                              => (int)ErrorNumber.CorrectSectorsBadImage,
-                   true when correctSectors is null   => (int)ErrorNumber.CorrectImageSectorsNotVerified,
-                   true when correctSectors == false  => (int)ErrorNumber.CorrectImageBadSectors,
-                   true                               => (int)ErrorNumber.NoError
-               };
+        {
+            null when correctSectors is null   => (int)ErrorNumber.NotVerifiable,
+            null when correctSectors == false  => (int)ErrorNumber.BadSectorsImageNotVerified,
+            null                               => (int)ErrorNumber.CorrectSectorsImageNotVerified,
+            false when correctSectors is null  => (int)ErrorNumber.BadImageSectorsNotVerified,
+            false when correctSectors == false => (int)ErrorNumber.BadImageBadSectors,
+            false                              => (int)ErrorNumber.CorrectSectorsBadImage,
+            true when correctSectors is null   => (int)ErrorNumber.CorrectImageSectorsNotVerified,
+            true when correctSectors == false  => (int)ErrorNumber.CorrectImageBadSectors,
+            true                               => (int)ErrorNumber.NoError
+        };
     }
 }

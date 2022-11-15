@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -44,6 +42,8 @@ using Claunia.Encoding;
 using Claunia.RsrcFork;
 using Version = Resources.Version;
 
+namespace Aaru.DiscImages;
+
 public sealed partial class DiskCopy42
 {
     /// <inheritdoc />
@@ -51,8 +51,8 @@ public sealed partial class DiskCopy42
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
-        var buffer  = new byte[0x58];
-        var pString = new byte[64];
+        byte[] buffer  = new byte[0x58];
+        byte[] pString = new byte[64];
         stream.EnsureRead(buffer, 0, 0x58);
         IsWriting = false;
 
@@ -160,35 +160,34 @@ public sealed partial class DiskCopy42
             imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
         }
 
-        imageInfo.ImageSize            = imageInfo.Sectors * imageInfo.SectorSize + imageInfo.Sectors * bptag;
+        imageInfo.ImageSize            = (imageInfo.Sectors * imageInfo.SectorSize) + (imageInfo.Sectors * bptag);
         imageInfo.CreationTime         = imageFilter.CreationTime;
         imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         imageInfo.MediaTitle           = header.DiskName;
 
         imageInfo.MediaType = header.Format switch
-                              {
-                                  kSonyFormat400K => imageInfo.Sectors == 1600 ? MediaType.AppleSonyDS
-                                                         : MediaType.AppleSonySS,
-                                  kSonyFormat800K    => MediaType.AppleSonyDS,
-                                  kSonyFormat720K    => MediaType.DOS_35_DS_DD_9,
-                                  kSonyFormat1440K   => MediaType.DOS_35_HD,
-                                  kSonyFormat1680K   => MediaType.DMF,
-                                  kSigmaFormatTwiggy => MediaType.AppleFileWare,
-                                  kNotStandardFormat => imageInfo.Sectors switch
-                                                        {
-                                                            9728  => MediaType.AppleProfile,
-                                                            19456 => MediaType.AppleProfile,
-                                                            38912 => MediaType.AppleWidget,
-                                                            39040 => MediaType.AppleHD20,
-                                                            _     => MediaType.Unknown
-                                                        },
-                                  _ => MediaType.Unknown
-                              };
+        {
+            kSonyFormat400K    => imageInfo.Sectors == 1600 ? MediaType.AppleSonyDS : MediaType.AppleSonySS,
+            kSonyFormat800K    => MediaType.AppleSonyDS,
+            kSonyFormat720K    => MediaType.DOS_35_DS_DD_9,
+            kSonyFormat1440K   => MediaType.DOS_35_HD,
+            kSonyFormat1680K   => MediaType.DMF,
+            kSigmaFormatTwiggy => MediaType.AppleFileWare,
+            kNotStandardFormat => imageInfo.Sectors switch
+            {
+                9728  => MediaType.AppleProfile,
+                19456 => MediaType.AppleProfile,
+                38912 => MediaType.AppleWidget,
+                39040 => MediaType.AppleHD20,
+                _     => MediaType.Unknown
+            },
+            _ => MediaType.Unknown
+        };
 
         if(imageInfo.MediaType == MediaType.AppleFileWare)
         {
-            var data = new byte[header.DataSize];
-            var tags = new byte[header.TagSize];
+            byte[] data = new byte[header.DataSize];
+            byte[] tags = new byte[header.TagSize];
 
             twiggyCache     = new byte[header.DataSize];
             twiggyCacheTags = new byte[header.TagSize];
@@ -202,8 +201,8 @@ public sealed partial class DiskCopy42
             tagStream.Seek(tagOffset, SeekOrigin.Begin);
             tagStream.EnsureRead(tags, 0, (int)header.TagSize);
 
-            var mfsMagic     = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x400);
-            var mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x412);
+            ushort mfsMagic     = BigEndianBitConverter.ToUInt16(data, (data.Length / 2) + 0x400);
+            ushort mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, (data.Length / 2) + 0x412);
 
             // Detect a Macintosh Twiggy
             if(mfsMagic     == 0xD2D7 &&
@@ -221,29 +220,29 @@ public sealed partial class DiskCopy42
                 Array.Copy(data, 0, twiggyCache, 0, header.DataSize    / 2);
                 Array.Copy(tags, 0, twiggyCacheTags, 0, header.TagSize / 2);
 
-                var copiedSectors = 0;
-                var sectorsToCopy = 0;
+                int copiedSectors = 0;
+                int sectorsToCopy = 0;
 
-                for(var i = 0; i < 46; i++)
+                for(int i = 0; i < 46; i++)
                 {
                     sectorsToCopy = i switch
-                                    {
-                                        >= 0 and <= 3   => 22,
-                                        >= 4 and <= 10  => 21,
-                                        >= 11 and <= 16 => 20,
-                                        >= 17 and <= 22 => 19,
-                                        >= 23 and <= 28 => 18,
-                                        >= 29 and <= 34 => 17,
-                                        >= 35 and <= 41 => 16,
-                                        >= 42 and <= 45 => 15,
-                                        _               => sectorsToCopy
-                                    };
+                    {
+                        >= 0 and <= 3   => 22,
+                        >= 4 and <= 10  => 21,
+                        >= 11 and <= 16 => 20,
+                        >= 17 and <= 22 => 19,
+                        >= 23 and <= 28 => 18,
+                        >= 29 and <= 34 => 17,
+                        >= 35 and <= 41 => 16,
+                        >= 42 and <= 45 => 15,
+                        _               => sectorsToCopy
+                    };
 
-                    Array.Copy(data, header.DataSize / 2 + copiedSectors * 512, twiggyCache,
-                               twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
+                    Array.Copy(data, (header.DataSize / 2) + (copiedSectors * 512), twiggyCache,
+                               twiggyCache.Length - (copiedSectors * 512) - (sectorsToCopy * 512), sectorsToCopy * 512);
 
-                    Array.Copy(tags, header.TagSize / 2 + copiedSectors * bptag, twiggyCacheTags,
-                               twiggyCacheTags.Length   - copiedSectors * bptag - sectorsToCopy * bptag,
+                    Array.Copy(tags, (header.TagSize / 2) + (copiedSectors * bptag), twiggyCacheTags,
+                               twiggyCacheTags.Length     - (copiedSectors * bptag) - (sectorsToCopy * bptag),
                                sectorsToCopy * bptag);
 
                     copiedSectors += sectorsToCopy;
@@ -277,12 +276,12 @@ public sealed partial class DiskCopy42
                             release = $".{version.MinorVersion % 10}";
 
                         string dev = version.DevStage switch
-                                     {
-                                         Version.DevelopmentStage.Alpha    => "a",
-                                         Version.DevelopmentStage.Beta     => "b",
-                                         Version.DevelopmentStage.PreAlpha => "d",
-                                         _                                 => null
-                                     };
+                        {
+                            Version.DevelopmentStage.Alpha    => "a",
+                            Version.DevelopmentStage.Beta     => "b",
+                            Version.DevelopmentStage.PreAlpha => "d",
+                            _                                 => null
+                        };
 
                         if(dev                       == null &&
                            version.PreReleaseVersion > 0)
@@ -360,11 +359,11 @@ public sealed partial class DiskCopy42
                 break;
             case MediaType.AppleProfile:
                 imageInfo.Cylinders = imageInfo.Sectors switch
-                                      {
-                                          9728  => 152,
-                                          19456 => 304,
-                                          _     => imageInfo.Cylinders
-                                      };
+                {
+                    9728  => 152,
+                    19456 => 304,
+                    _     => imageInfo.Cylinders
+                };
 
                 imageInfo.Heads           = 4;
                 imageInfo.SectorsPerTrack = 16;
@@ -419,7 +418,7 @@ public sealed partial class DiskCopy42
         else
         {
             Stream stream = dc42ImageFilter.GetDataForkStream();
-            stream.Seek((long)(dataOffset + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            stream.Seek((long)(dataOffset + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
             stream.EnsureRead(buffer, 0, (int)(length * imageInfo.SectorSize));
         }
 
@@ -450,7 +449,7 @@ public sealed partial class DiskCopy42
         else
         {
             Stream stream = dc42ImageFilter.GetDataForkStream();
-            stream.Seek((long)(tagOffset + sectorAddress * bptag), SeekOrigin.Begin);
+            stream.Seek((long)(tagOffset + (sectorAddress * bptag)), SeekOrigin.Begin);
             stream.EnsureRead(buffer, 0, (int)(length * bptag));
         }
 
@@ -489,7 +488,7 @@ public sealed partial class DiskCopy42
             Array.Copy(data, i * imageInfo.SectorSize, buffer, i * (imageInfo.SectorSize + bptag),
                        imageInfo.SectorSize);
 
-            Array.Copy(tags, i * bptag, buffer, i * (imageInfo.SectorSize + bptag) + imageInfo.SectorSize, bptag);
+            Array.Copy(tags, i * bptag, buffer, (i * (imageInfo.SectorSize + bptag)) + imageInfo.SectorSize, bptag);
         }
 
         return ErrorNumber.NoError;

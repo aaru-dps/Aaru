@@ -30,17 +30,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Media;
-
-using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
-using Aaru.Devices;
 using Spectre.Console;
+
+namespace Aaru.Commands.Media;
 
 sealed class MediaScanCommand : Command
 {
@@ -82,7 +80,7 @@ sealed class MediaScanCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -118,13 +116,13 @@ sealed class MediaScanCommand : Command
            char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-        Device      dev      = null;
-        ErrorNumber devErrno = ErrorNumber.NoError;
+        Devices.Device dev      = null;
+        ErrorNumber    devErrno = ErrorNumber.NoError;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening device...").IsIndeterminate();
-            dev = Device.Create(devicePath, out devErrno);
+            dev = Devices.Device.Create(devicePath, out devErrno);
         });
 
         switch(dev)
@@ -196,7 +194,7 @@ sealed class MediaScanCommand : Command
                             _progressTask1 = null;
                         };
 
-                        Console.CancelKeyPress += (_, e) =>
+                        System.Console.CancelKeyPress += (_, e) =>
                         {
                             e.Cancel = true;
                             scanner.Abort();

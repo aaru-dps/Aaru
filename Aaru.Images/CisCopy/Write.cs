@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class CisCopy
 {
@@ -137,12 +137,12 @@ public sealed partial class CisCopy
                 break;
         }
 
-        var headStep = 1;
+        int headStep = 1;
 
         if(diskType is DiskType.MD1DD or DiskType.MD1DD8)
             headStep = 2;
 
-        for(var i = 0; i < tracks; i += headStep)
+        for(int i = 0; i < tracks; i += headStep)
         {
             _writingStream.WriteByte((byte)TrackType.Copied);
 

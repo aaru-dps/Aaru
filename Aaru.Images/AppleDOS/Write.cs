@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class AppleDos
 {
@@ -61,8 +61,8 @@ public sealed partial class AppleDos
             return false;
         }
 
-        if(mediaType == MediaType.Apple32SS && sectors != 455 ||
-           mediaType == MediaType.Apple33SS && sectors != 560)
+        if((mediaType == MediaType.Apple32SS && sectors != 455) ||
+           (mediaType == MediaType.Apple33SS && sectors != 560))
         {
             ErrorMessage = "Incorrect number of sectors for media";
 
@@ -184,16 +184,15 @@ public sealed partial class AppleDos
             tmp = new byte[_deinterleaved.Length];
 
             int[] offsets = _extension == ".do"
-                                ? isDos
-                                      ? _deinterleave
-                                      : _interleave
+                                ? isDos ? _deinterleave : _interleave
                                 : isDos
                                     ? _interleave
                                     : _deinterleave;
 
-            for(var t = 0; t < 35; t++)
-                for(var s = 0; s < 16; s++)
-                    Array.Copy(_deinterleaved, t * 16 * 256 + offsets[s] * 256, tmp, t * 16 * 256 + s * 256, 256);
+            for(int t = 0; t < 35; t++)
+                for(int s = 0; s < 16; s++)
+                    Array.Copy(_deinterleaved, (t * 16 * 256) + (offsets[s] * 256), tmp, (t * 16 * 256) + (s * 256),
+                               256);
         }
 
         _writingStream.Seek(0, SeekOrigin.Begin);

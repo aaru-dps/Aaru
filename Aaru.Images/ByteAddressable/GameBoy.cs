@@ -1,5 +1,3 @@
-namespace Aaru.DiscImages.ByteAddressable;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,6 +11,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.DiscImages.ByteAddressable;
 
 public class GameBoy : IByteAddressableImage
 {
@@ -48,9 +48,9 @@ public class GameBoy : IByteAddressableImage
             return false;
 
         stream.Position = 0x104;
-        var magicBytes = new byte[8];
+        byte[] magicBytes = new byte[8];
         stream.EnsureRead(magicBytes, 0, 8);
-        var magic = BitConverter.ToUInt64(magicBytes, 0);
+        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
 
         return magic == 0x0B000DCC6666EDCE;
     }
@@ -68,9 +68,9 @@ public class GameBoy : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 0x104;
-        var magicBytes = new byte[8];
+        byte[] magicBytes = new byte[8];
         stream.EnsureRead(magicBytes, 0, 8);
-        var magic = BitConverter.ToUInt64(magicBytes, 0);
+        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic != 0x0B000DCC6666EDCE)
             return ErrorNumber.InvalidArgument;
@@ -92,7 +92,7 @@ public class GameBoy : IByteAddressableImage
 
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(_data, 0x100, Marshal.SizeOf<Header>());
 
-        var name = new byte[(header.Name[^1] & 0x80) == 0x80 ? 15 : 16];
+        byte[] name = new byte[(header.Name[^1] & 0x80) == 0x80 ? 15 : 16];
         Array.Copy(header.Name, 0, name, 0, name.Length);
 
         _imageInfo.MediaTitle = StringHandlers.CToString(name);
@@ -251,8 +251,8 @@ public class GameBoy : IByteAddressableImage
 
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(_data, 0x100, Marshal.SizeOf<Header>());
 
-        var    hasMapper          = false;
-        var    hasSaveRam         = false;
+        bool   hasMapper          = false;
+        bool   hasSaveRam         = false;
         string mapperManufacturer = null;
         string mapperName         = null;
 
@@ -472,7 +472,7 @@ public class GameBoy : IByteAddressableImage
         if(header.SramSize > 0)
             hasSaveRam = true;
 
-        var devices = 1;
+        int devices = 1;
 
         if(hasSaveRam)
             devices++;
@@ -606,9 +606,9 @@ public class GameBoy : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        var foundRom     = false;
-        var foundSaveRam = false;
-        var foundMapper  = false;
+        bool foundRom     = false;
+        bool foundSaveRam = false;
+        bool foundMapper  = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
@@ -728,289 +728,287 @@ public class GameBoy : IByteAddressableImage
     {
         if(headerLicensee != 0x33)
             return headerLicensee switch
-                   {
-                       0x00 => "none",
-                       0x01 => "nintendo",
-                       0x08 => "capcom",
-                       0x09 => "hot-b",
-                       0x0A => "jaleco",
-                       0x0B => "coconuts",
-                       0x0C => "elite systems",
-                       0x13 => "electronic arts",
-                       0x18 => "hudsonsoft",
-                       0x19 => "itc entertainment",
-                       0x1A => "yanoman",
-                       0x1D => "clary",
-                       0x1F => "virgin",
-                       0x20 => "KSS",
-                       0x24 => "pcm complete",
-                       0x25 => "san-x",
-                       0x28 => "kotobuki systems",
-                       0x29 => "seta",
-                       0x30 => "infogrames",
-                       0x31 => "nintendo",
-                       0x32 => "bandai",
-                       0x33 => "'''GBC - see above'''",
-                       0x34 => "konami",
-                       0x35 => "hector",
-                       0x38 => "Capcom",
-                       0x39 => "Banpresto",
-                       0x3C => "*entertainment i",
-                       0x3E => "gremlin",
-                       0x41 => "Ubisoft",
-                       0x42 => "Atlus",
-                       0x44 => "Malibu",
-                       0x46 => "angel",
-                       0x47 => "spectrum holoby",
-                       0x49 => "irem",
-                       0x4A => "virgin",
-                       0x4D => "malibu",
-                       0x4F => "u.s. gold",
-                       0x50 => "absolute",
-                       0x51 => "acclaim",
-                       0x52 => "activision",
-                       0x53 => "american sammy",
-                       0x54 => "gametek",
-                       0x55 => "park place",
-                       0x56 => "ljn",
-                       0x57 => "matchbox",
-                       0x59 => "milton bradley",
-                       0x5A => "mindscape",
-                       0x5B => "romstar",
-                       0x5C => "naxat soft",
-                       0x5D => "tradewest",
-                       0x60 => "titus",
-                       0x61 => "virgin",
-                       0x67 => "ocean",
-                       0x69 => "electronic arts",
-                       0x6E => "elite systems",
-                       0x6F => "electro brain",
-                       0x70 => "Infogrammes",
-                       0x71 => "Interplay",
-                       0x72 => "broderbund",
-                       0x73 => "sculptered soft",
-                       0x75 => "the sales curve",
-                       0x78 => "t*hq",
-                       0x79 => "accolade",
-                       0x7A => "triffix entertainment",
-                       0x7C => "microprose",
-                       0x7F => "kemco",
-                       0x80 => "misawa entertainment",
-                       0x83 => "lozc",
-                       0x86 => "tokuma shoten intermedia",
-                       0x8B => "bullet-proof software",
-                       0x8C => "vic tokai",
-                       0x8E => "ape",
-                       0x8F => "i'max",
-                       0x91 => "chun soft",
-                       0x92 => "video system",
-                       0x93 => "tsuburava",
-                       0x95 => "varie",
-                       0x96 => "yonezawa/s'pal",
-                       0x97 => "kaneko",
-                       0x99 => "arc",
-                       0x9A => "nihon bussan",
-                       0x9B => "Tecmo",
-                       0x9C => "imagineer",
-                       0x9D => "Banpresto",
-                       0x9F => "nova",
-                       0xA1 => "Hori electric",
-                       0xA2 => "Bandai",
-                       0xA4 => "Konami",
-                       0xA6 => "kawada",
-                       0xA7 => "takara",
-                       0xA9 => "technos japan",
-                       0xAA => "broderbund",
-                       0xAC => "Toei animation",
-                       0xAD => "toho",
-                       0xAF => "Namco",
-                       0xB0 => "Acclaim",
-                       0xB1 => "ascii or nexoft",
-                       0xB2 => "Bandai",
-                       0xB4 => "Enix",
-                       0xB6 => "HAL",
-                       0xB7 => "SNK",
-                       0xB9 => "pony canyon",
-                       0xBA => "*culture brain o",
-                       0xBB => "Sunsoft",
-                       0xBD => "Sony imagesoft",
-                       0xBF => "sammy",
-                       0xC0 => "Taito",
-                       0xC2 => "Kemco",
-                       0xC3 => "Squaresoft",
-                       0xC4 => "tokuma shoten intermedia",
-                       0xC5 => "data east",
-                       0xC6 => "tonkin house",
-                       0xC8 => "koei",
-                       0xC9 => "ufl",
-                       0xCA => "ultra",
-                       0xCB => "vap",
-                       0xCC => "use",
-                       0xCD => "meldac",
-                       0xCE => "*pony canyon or",
-                       0xCF => "angel",
-                       0xD0 => "Taito",
-                       0xD1 => "sofel",
-                       0xD2 => "quest",
-                       0xD3 => "sigma enterprises",
-                       0xD4 => "ask kodansha",
-                       0xD6 => "naxat soft",
-                       0xD7 => "copya systems",
-                       0xD9 => "Banpresto",
-                       0xDA => "tomy",
-                       0xDB => "ljn",
-                       0xDD => "ncs",
-                       0xDE => "human",
-                       0xDF => "altron",
-                       0xE0 => "jaleco",
-                       0xE1 => "towachiki",
-                       0xE2 => "uutaka",
-                       0xE3 => "varie",
-                       0xE5 => "epoch",
-                       0xE7 => "athena",
-                       0xE8 => "asmik",
-                       0xE9 => "natsume",
-                       0xEA => "king records",
-                       0xEB => "atlus",
-                       0xEC => "Epic/Sony records",
-                       0xEE => "igs",
-                       0xF0 => "a wave",
-                       0xF3 => "extreme entertainment",
-                       0xFF => "ljn",
-                       _    => "Unknown"
-                   };
+            {
+                0x00 => "none",
+                0x01 => "nintendo",
+                0x08 => "capcom",
+                0x09 => "hot-b",
+                0x0A => "jaleco",
+                0x0B => "coconuts",
+                0x0C => "elite systems",
+                0x13 => "electronic arts",
+                0x18 => "hudsonsoft",
+                0x19 => "itc entertainment",
+                0x1A => "yanoman",
+                0x1D => "clary",
+                0x1F => "virgin",
+                0x20 => "KSS",
+                0x24 => "pcm complete",
+                0x25 => "san-x",
+                0x28 => "kotobuki systems",
+                0x29 => "seta",
+                0x30 => "infogrames",
+                0x31 => "nintendo",
+                0x32 => "bandai",
+                0x33 => "'''GBC - see above'''",
+                0x34 => "konami",
+                0x35 => "hector",
+                0x38 => "Capcom",
+                0x39 => "Banpresto",
+                0x3C => "*entertainment i",
+                0x3E => "gremlin",
+                0x41 => "Ubisoft",
+                0x42 => "Atlus",
+                0x44 => "Malibu",
+                0x46 => "angel",
+                0x47 => "spectrum holoby",
+                0x49 => "irem",
+                0x4A => "virgin",
+                0x4D => "malibu",
+                0x4F => "u.s. gold",
+                0x50 => "absolute",
+                0x51 => "acclaim",
+                0x52 => "activision",
+                0x53 => "american sammy",
+                0x54 => "gametek",
+                0x55 => "park place",
+                0x56 => "ljn",
+                0x57 => "matchbox",
+                0x59 => "milton bradley",
+                0x5A => "mindscape",
+                0x5B => "romstar",
+                0x5C => "naxat soft",
+                0x5D => "tradewest",
+                0x60 => "titus",
+                0x61 => "virgin",
+                0x67 => "ocean",
+                0x69 => "electronic arts",
+                0x6E => "elite systems",
+                0x6F => "electro brain",
+                0x70 => "Infogrammes",
+                0x71 => "Interplay",
+                0x72 => "broderbund",
+                0x73 => "sculptered soft",
+                0x75 => "the sales curve",
+                0x78 => "t*hq",
+                0x79 => "accolade",
+                0x7A => "triffix entertainment",
+                0x7C => "microprose",
+                0x7F => "kemco",
+                0x80 => "misawa entertainment",
+                0x83 => "lozc",
+                0x86 => "tokuma shoten intermedia",
+                0x8B => "bullet-proof software",
+                0x8C => "vic tokai",
+                0x8E => "ape",
+                0x8F => "i'max",
+                0x91 => "chun soft",
+                0x92 => "video system",
+                0x93 => "tsuburava",
+                0x95 => "varie",
+                0x96 => "yonezawa/s'pal",
+                0x97 => "kaneko",
+                0x99 => "arc",
+                0x9A => "nihon bussan",
+                0x9B => "Tecmo",
+                0x9C => "imagineer",
+                0x9D => "Banpresto",
+                0x9F => "nova",
+                0xA1 => "Hori electric",
+                0xA2 => "Bandai",
+                0xA4 => "Konami",
+                0xA6 => "kawada",
+                0xA7 => "takara",
+                0xA9 => "technos japan",
+                0xAA => "broderbund",
+                0xAC => "Toei animation",
+                0xAD => "toho",
+                0xAF => "Namco",
+                0xB0 => "Acclaim",
+                0xB1 => "ascii or nexoft",
+                0xB2 => "Bandai",
+                0xB4 => "Enix",
+                0xB6 => "HAL",
+                0xB7 => "SNK",
+                0xB9 => "pony canyon",
+                0xBA => "*culture brain o",
+                0xBB => "Sunsoft",
+                0xBD => "Sony imagesoft",
+                0xBF => "sammy",
+                0xC0 => "Taito",
+                0xC2 => "Kemco",
+                0xC3 => "Squaresoft",
+                0xC4 => "tokuma shoten intermedia",
+                0xC5 => "data east",
+                0xC6 => "tonkin house",
+                0xC8 => "koei",
+                0xC9 => "ufl",
+                0xCA => "ultra",
+                0xCB => "vap",
+                0xCC => "use",
+                0xCD => "meldac",
+                0xCE => "*pony canyon or",
+                0xCF => "angel",
+                0xD0 => "Taito",
+                0xD1 => "sofel",
+                0xD2 => "quest",
+                0xD3 => "sigma enterprises",
+                0xD4 => "ask kodansha",
+                0xD6 => "naxat soft",
+                0xD7 => "copya systems",
+                0xD9 => "Banpresto",
+                0xDA => "tomy",
+                0xDB => "ljn",
+                0xDD => "ncs",
+                0xDE => "human",
+                0xDF => "altron",
+                0xE0 => "jaleco",
+                0xE1 => "towachiki",
+                0xE2 => "uutaka",
+                0xE3 => "varie",
+                0xE5 => "epoch",
+                0xE7 => "athena",
+                0xE8 => "asmik",
+                0xE9 => "natsume",
+                0xEA => "king records",
+                0xEB => "atlus",
+                0xEC => "Epic/Sony records",
+                0xEE => "igs",
+                0xF0 => "a wave",
+                0xF3 => "extreme entertainment",
+                0xFF => "ljn",
+                _    => "Unknown"
+            };
 
         string licenseeNew = StringHandlers.CToString(headerLicenseeNew);
 
         return licenseeNew switch
-               {
-                   "00" => "none",
-                   "01" => "Nintendo R&D1",
-                   "08" => "Capcom",
-                   "13" => "Electronic Arts",
-                   "18" => "Hudson Soft",
-                   "19" => "b-ai",
-                   "20" => "kss",
-                   "22" => "pow",
-                   "24" => "PCM Complete",
-                   "25" => "san-x",
-                   "28" => "Kemco Japan",
-                   "29" => "seta",
-                   "30" => "Viacom",
-                   "31" => "Nintendo",
-                   "32" => "Bandai",
-                   "33" => "Ocean / Acclaim",
-                   "34" => "Konami",
-                   "35" => "Hector",
-                   "37" => "Taito",
-                   "38" => "Hudson",
-                   "39" => "Banpresto",
-                   "41" => "Ubi Soft",
-                   "42" => "Atlus",
-                   "44" => "Malibu",
-                   "46" => "angel",
-                   "47" => "Bullet -Proof",
-                   "49" => "irem",
-                   "50" => "Absolute",
-                   "51" => "Acclaim",
-                   "52" => "Activision",
-                   "53" => "American sammy",
-                   "54" => "Konami",
-                   "55" => "Hi tech entertainment",
-                   "56" => "LJN",
-                   "57" => "Matchbox",
-                   "58" => "Mattel",
-                   "59" => "Milton Bradley",
-                   "60" => "Titus",
-                   "61" => "Virgin",
-                   "64" => "LucasArts",
-                   "67" => "Ocean",
-                   "69" => "Electronic Arts",
-                   "70" => "Infogrames",
-                   "71" => "Interplay",
-                   "72" => "Brøderbund",
-                   "73" => "sculptured",
-                   "75" => "sci",
-                   "78" => "THQ",
-                   "79" => "Accolade",
-                   "80" => "misawa",
-                   "83" => "lozc",
-                   "86" => "tokuma shoten i",
-                   "87" => "tsukuda ori",
-                   "91" => "Chunsoft",
-                   "92" => "Video  system",
-                   "93" => "Ocean / Acclaim",
-                   "95" => "Varie",
-                   "96" => "Yonezawa / s'pal",
-                   "97" => "Kaneko",
-                   "99" => "Pack in soft",
-                   "A4" => "Konami",
-                   _    => "Unknown"
-               };
-
+        {
+            "00" => "none",
+            "01" => "Nintendo R&D1",
+            "08" => "Capcom",
+            "13" => "Electronic Arts",
+            "18" => "Hudson Soft",
+            "19" => "b-ai",
+            "20" => "kss",
+            "22" => "pow",
+            "24" => "PCM Complete",
+            "25" => "san-x",
+            "28" => "Kemco Japan",
+            "29" => "seta",
+            "30" => "Viacom",
+            "31" => "Nintendo",
+            "32" => "Bandai",
+            "33" => "Ocean / Acclaim",
+            "34" => "Konami",
+            "35" => "Hector",
+            "37" => "Taito",
+            "38" => "Hudson",
+            "39" => "Banpresto",
+            "41" => "Ubi Soft",
+            "42" => "Atlus",
+            "44" => "Malibu",
+            "46" => "angel",
+            "47" => "Bullet -Proof",
+            "49" => "irem",
+            "50" => "Absolute",
+            "51" => "Acclaim",
+            "52" => "Activision",
+            "53" => "American sammy",
+            "54" => "Konami",
+            "55" => "Hi tech entertainment",
+            "56" => "LJN",
+            "57" => "Matchbox",
+            "58" => "Mattel",
+            "59" => "Milton Bradley",
+            "60" => "Titus",
+            "61" => "Virgin",
+            "64" => "LucasArts",
+            "67" => "Ocean",
+            "69" => "Electronic Arts",
+            "70" => "Infogrames",
+            "71" => "Interplay",
+            "72" => "Brøderbund",
+            "73" => "sculptured",
+            "75" => "sci",
+            "78" => "THQ",
+            "79" => "Accolade",
+            "80" => "misawa",
+            "83" => "lozc",
+            "86" => "tokuma shoten i",
+            "87" => "tsukuda ori",
+            "91" => "Chunsoft",
+            "92" => "Video  system",
+            "93" => "Ocean / Acclaim",
+            "95" => "Varie",
+            "96" => "Yonezawa / s'pal",
+            "97" => "Kaneko",
+            "99" => "Pack in soft",
+            "A4" => "Konami",
+            _    => "Unknown"
+        };
     }
 
     static uint DecodeRomSize(byte headerRomType) => headerRomType switch
-                                                     {
-                                                         0    => 32768,
-                                                         1    => 65536,
-                                                         2    => 131072,
-                                                         3    => 262144,
-                                                         4    => 524288,
-                                                         5    => 1048576,
-                                                         6    => 2097152,
-                                                         7    => 4194304,
-                                                         8    => 8388608,
-                                                         0x52 => 1179648,
-                                                         0x53 => 1310720,
-                                                         0x54 => 1572864,
-                                                         _    => 0
-                                                     };
+    {
+        0    => 32768,
+        1    => 65536,
+        2    => 131072,
+        3    => 262144,
+        4    => 524288,
+        5    => 1048576,
+        6    => 2097152,
+        7    => 4194304,
+        8    => 8388608,
+        0x52 => 1179648,
+        0x53 => 1310720,
+        0x54 => 1572864,
+        _    => 0
+    };
 
     static uint DecodeSaveRamSize(byte headerRamType) => headerRamType switch
-                                                         {
-                                                             0 => 0,
-                                                             1 => 2048,
-                                                             2 => 8192,
-                                                             3 => 32768,
-                                                             4 => 131072,
-                                                             5 => 65536,
-                                                             _ => 0
-                                                         };
+    {
+        0 => 0,
+        1 => 2048,
+        2 => 8192,
+        3 => 32768,
+        4 => 131072,
+        5 => 65536,
+        _ => 0
+    };
 
     static string DecodeCartridgeType(byte headerRomType) => headerRomType switch
-                                                             {
-                                                                 0x00 => "ROM only",
-                                                                 0x01 => "ROM and MBC1",
-                                                                 0x02 => "ROM, MBC1 and RAM",
-                                                                 0x03 => "ROM, MBC1, RAM and battery",
-                                                                 0x05 => "ROM and MBC2",
-                                                                 0x06 => "ROM, MBC2 and battery",
-                                                                 0x08 => "ROM and RAM",
-                                                                 0x09 => "ROM, RAM and battery",
-                                                                 0x0B => "ROM and MMM01",
-                                                                 0x0C => "ROM, MMM01 and RAM",
-                                                                 0x0D => "ROM, MMM01, RAM and battery",
-                                                                 0x0F => "ROM, MBC3, timer and battery",
-                                                                 0x10 => "ROM, MBC3, RAM, timer and battery",
-                                                                 0x11 => "ROM and MBC3",
-                                                                 0x12 => "ROM, MBC3 and RAM",
-                                                                 0x13 => "ROM, MBC3, RAM and battery",
-                                                                 0x19 => "ROM and MBC5",
-                                                                 0x1A => "ROM, MBC5 and RAM",
-                                                                 0x1B => "ROM, MBC5, RAM and battery",
-                                                                 0x1C => "ROM, MBC5 and vibration motor",
-                                                                 0x1D => "ROM, MBC5, RAM and vibration motor",
-                                                                 0x1E => "ROM, MBC5, RAM, battery and vibration motor",
-                                                                 0x20 => "ROM and MBC6",
-                                                                 0x22 =>
-                                                                     "ROM, MBC7, RAM, battery, light sensor and vibration motor",
-                                                                 0xFC => "Pocket Camera",
-                                                                 0xFD => "ROM and TAMA5",
-                                                                 0xFE => "ROM and HuC-3",
-                                                                 0xFF => "ROM and HuC-1",
-                                                                 _    => "Unknown"
-                                                             };
+    {
+        0x00 => "ROM only",
+        0x01 => "ROM and MBC1",
+        0x02 => "ROM, MBC1 and RAM",
+        0x03 => "ROM, MBC1, RAM and battery",
+        0x05 => "ROM and MBC2",
+        0x06 => "ROM, MBC2 and battery",
+        0x08 => "ROM and RAM",
+        0x09 => "ROM, RAM and battery",
+        0x0B => "ROM and MMM01",
+        0x0C => "ROM, MMM01 and RAM",
+        0x0D => "ROM, MMM01, RAM and battery",
+        0x0F => "ROM, MBC3, timer and battery",
+        0x10 => "ROM, MBC3, RAM, timer and battery",
+        0x11 => "ROM and MBC3",
+        0x12 => "ROM, MBC3 and RAM",
+        0x13 => "ROM, MBC3, RAM and battery",
+        0x19 => "ROM and MBC5",
+        0x1A => "ROM, MBC5 and RAM",
+        0x1B => "ROM, MBC5, RAM and battery",
+        0x1C => "ROM, MBC5 and vibration motor",
+        0x1D => "ROM, MBC5, RAM and vibration motor",
+        0x1E => "ROM, MBC5, RAM, battery and vibration motor",
+        0x20 => "ROM and MBC6",
+        0x22 => "ROM, MBC7, RAM, battery, light sensor and vibration motor",
+        0xFC => "Pocket Camera",
+        0xFD => "ROM and TAMA5",
+        0xFE => "ROM and HuC-3",
+        0xFF => "ROM and HuC-1",
+        _    => "Unknown"
+    };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
     struct Header

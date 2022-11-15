@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,6 +42,8 @@ using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class CloneCd
 {
@@ -177,7 +177,7 @@ public sealed partial class CloneCd
         }
 
         _dataStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                  SeekOrigin.Begin);
 
         _dataStream.Write(data, 0, data.Length);
@@ -219,7 +219,7 @@ public sealed partial class CloneCd
         }
 
         _dataStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                  SeekOrigin.Begin);
 
         _dataStream.Write(data, 0, data.Length);
@@ -304,7 +304,7 @@ public sealed partial class CloneCd
         // Easy, just decode the real toc
         if(_fullToc != null)
         {
-            var tmp = new byte[_fullToc.Length + 2];
+            byte[] tmp = new byte[_fullToc.Length + 2];
             Array.Copy(BigEndianBitConverter.GetBytes((ushort)_fullToc.Length), 0, tmp, 0, 2);
             Array.Copy(_fullToc, 0, tmp, 2, _fullToc.Length);
             nullableToc = FullTOC.Decode(tmp);
@@ -324,7 +324,7 @@ public sealed partial class CloneCd
         if(!string.IsNullOrEmpty(_catalog))
             _descriptorStream.WriteLine("CATALOG={0}", _catalog);
 
-        for(var i = 1; i <= toc.LastCompleteSession; i++)
+        for(int i = 1; i <= toc.LastCompleteSession; i++)
         {
             _descriptorStream.WriteLine("[Session {0}]", i);
 
@@ -351,8 +351,8 @@ public sealed partial class CloneCd
 
                     break;
                 default:
-                    ErrorMessage =
-                        $"Unexpected first session track type {firstSessionTrack?.Type.ToString() ?? "null"}";
+                    ErrorMessage = $"Unexpected first session track type {firstSessionTrack?.Type.ToString() ?? "null"
+                    }";
 
                     return false;
             }
@@ -360,7 +360,7 @@ public sealed partial class CloneCd
             _descriptorStream.WriteLine("PreGapSubC=0");
         }
 
-        for(var i = 0; i < toc.TrackDescriptors.Length; i++)
+        for(int i = 0; i < toc.TrackDescriptors.Length; i++)
         {
             long alba = MsfToLba((toc.TrackDescriptors[i].Min, toc.TrackDescriptors[i].Sec,
                                   toc.TrackDescriptors[i].Frame));
@@ -453,8 +453,8 @@ public sealed partial class CloneCd
             {
                 if(track.SubchannelType == 0)
                 {
-                    ErrorMessage =
-                        $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+                    ErrorMessage = $"Trying to write subchannel to track {track.Sequence
+                    }, that does not have subchannel";
 
                     return false;
                 }
@@ -479,7 +479,7 @@ public sealed partial class CloneCd
                         return false;
                     }
 
-                _subStream.Seek((long)(track.SubchannelOffset + (sectorAddress - track.StartSector) * 96),
+                _subStream.Seek((long)(track.SubchannelOffset + ((sectorAddress - track.StartSector) * 96)),
                                 SeekOrigin.Begin);
 
                 _subStream.Write(Subchannel.Deinterleave(data), 0, data.Length);
@@ -520,8 +520,8 @@ public sealed partial class CloneCd
             {
                 if(track.SubchannelType == 0)
                 {
-                    ErrorMessage =
-                        $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+                    ErrorMessage = $"Trying to write subchannel to track {track.Sequence
+                    }, that does not have subchannel";
 
                     return false;
                 }
@@ -546,7 +546,7 @@ public sealed partial class CloneCd
                         return false;
                     }
 
-                _subStream.Seek((long)(track.SubchannelOffset + (sectorAddress - track.StartSector) * 96),
+                _subStream.Seek((long)(track.SubchannelOffset + ((sectorAddress - track.StartSector) * 96)),
                                 SeekOrigin.Begin);
 
                 _subStream.Write(Subchannel.Deinterleave(data), 0, data.Length);

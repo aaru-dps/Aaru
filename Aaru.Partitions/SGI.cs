@@ -30,11 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-#pragma warning disable 169
-#pragma warning disable 649
-
-namespace Aaru.Partitions;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -44,6 +39,11 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
+
+#pragma warning disable 169
+#pragma warning disable 649
+
+namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of the SGI Disk Volume Header</summary>
@@ -72,10 +72,10 @@ public sealed class SGI : IPartition
 
         Label dvh = Marshal.ByteArrayToStructureBigEndian<Label>(sector);
 
-        for(var i = 0; i < dvh.volume.Length; i++)
+        for(int i = 0; i < dvh.volume.Length; i++)
             dvh.volume[i] = (Volume)Marshal.SwapStructureMembersEndian(dvh.volume[i]);
 
-        for(var i = 0; i < dvh.partitions.Length; i++)
+        for(int i = 0; i < dvh.partitions.Length; i++)
             dvh.partitions[i] = (Partition)Marshal.SwapStructureMembersEndian(dvh.partitions[i]);
 
         AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.magic = 0x{0:X8} (should be 0x{1:X8})", dvh.magic, SGI_MAGIC);
@@ -132,7 +132,7 @@ public sealed class SGI : IPartition
 
         ulong counter = 0;
 
-        for(var i = 0; i < dvh.partitions.Length; i++)
+        for(int i = 0; i < dvh.partitions.Length; i++)
         {
             AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].num_blocks = {1}", i,
                                        dvh.partitions[i].num_blocks);
@@ -167,26 +167,26 @@ public sealed class SGI : IPartition
     }
 
     static string TypeToString(SGIType typ) => typ switch
-                                               {
-                                                   SGIType.Header    => "Volume header",
-                                                   SGIType.TrkRepl   => "Track replacements",
-                                                   SGIType.SecRepl   => "Sector replacements",
-                                                   SGIType.Swap      => "Raw data (swap)",
-                                                   SGIType.Bsd       => "4.2BSD Fast File System",
-                                                   SGIType.SystemV   => "UNIX System V",
-                                                   SGIType.Volume    => "Whole device",
-                                                   SGIType.EFS       => "EFS",
-                                                   SGIType.Lvol      => "Logical volume",
-                                                   SGIType.Rlvol     => "Raw logical volume",
-                                                   SGIType.XFS       => "XFS",
-                                                   SGIType.Xlvol     => "XFS log device",
-                                                   SGIType.Rxlvol    => "XLV volume",
-                                                   SGIType.Xvm       => "SGI XVM",
-                                                   SGIType.LinuxSwap => "Linux swap",
-                                                   SGIType.Linux     => "Linux",
-                                                   SGIType.LinuxRAID => "Linux RAID",
-                                                   _                 => "Unknown"
-                                               };
+    {
+        SGIType.Header    => "Volume header",
+        SGIType.TrkRepl   => "Track replacements",
+        SGIType.SecRepl   => "Sector replacements",
+        SGIType.Swap      => "Raw data (swap)",
+        SGIType.Bsd       => "4.2BSD Fast File System",
+        SGIType.SystemV   => "UNIX System V",
+        SGIType.Volume    => "Whole device",
+        SGIType.EFS       => "EFS",
+        SGIType.Lvol      => "Logical volume",
+        SGIType.Rlvol     => "Raw logical volume",
+        SGIType.XFS       => "XFS",
+        SGIType.Xlvol     => "XFS log device",
+        SGIType.Rxlvol    => "XLV volume",
+        SGIType.Xvm       => "SGI XVM",
+        SGIType.LinuxSwap => "Linux swap",
+        SGIType.Linux     => "Linux",
+        SGIType.LinuxRAID => "Linux RAID",
+        _                 => "Unknown"
+    };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Label
@@ -228,23 +228,12 @@ public sealed class SGI : IPartition
 
     enum SGIType : uint
     {
-        Header    = 0,
-        TrkRepl   = 1,
-        SecRepl   = 2,
-        Swap      = 3,
-        Bsd       = 4,
-        SystemV   = 5,
-        Volume    = 6,
-        EFS       = 7,
-        Lvol      = 8,
-        Rlvol     = 9,
-        XFS       = 0xA,
-        Xlvol     = 0xB,
-        Rxlvol    = 0xC,
-        Xvm       = 0x0D,
-        LinuxSwap = 0x82,
-        Linux     = 0x83,
-        LinuxRAID = 0xFD
+        Header = 0, TrkRepl      = 1, SecRepl      = 2,
+        Swap   = 3, Bsd          = 4, SystemV      = 5,
+        Volume = 6, EFS          = 7, Lvol         = 8,
+        Rlvol  = 9, XFS          = 0xA, Xlvol      = 0xB,
+        Rxlvol = 0xC, Xvm        = 0x0D, LinuxSwap = 0x82,
+        Linux  = 0x83, LinuxRAID = 0xFD
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

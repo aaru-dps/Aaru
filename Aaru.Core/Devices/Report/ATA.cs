@@ -30,15 +30,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Report;
-
 using System;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Devices;
-using global::Spectre.Console;
+using Spectre.Console;
 using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
+
+namespace Aaru.Core.Devices.Report;
 
 public sealed partial class DeviceReport
 {
@@ -46,7 +46,7 @@ public sealed partial class DeviceReport
     /// <returns>Media report</returns>
     public TestedMedia ReportAtaMedia()
     {
-        var                    sense      = true;
+        bool                   sense      = true;
         AtaErrorRegistersChs   errorChs   = new();
         AtaErrorRegistersLba28 errorLba   = new();
         AtaErrorRegistersLba48 errorLba48 = new();
@@ -79,9 +79,8 @@ public sealed partial class DeviceReport
             if(ataId.UnformattedBPS != 0)
                 mediaTest.UnformattedBPS = ataId.UnformattedBPS;
 
-            if(ataId.Cylinders       > 0 &&
-               ataId.Heads           > 0 &&
-               ataId.SectorsPerTrack > 0)
+            if(ataId.Cylinders > 0 &&
+               ataId is { Heads: > 0, SectorsPerTrack: > 0 })
             {
                 mediaTest.CHS = new Chs
                 {
@@ -93,9 +92,8 @@ public sealed partial class DeviceReport
                 mediaTest.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
             }
 
-            if(ataId.CurrentCylinders       > 0 &&
-               ataId.CurrentHeads           > 0 &&
-               ataId.CurrentSectorsPerTrack > 0)
+            if(ataId.CurrentCylinders > 0 &&
+               ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
             {
                 mediaTest.CurrentCHS = new Chs
                 {
@@ -186,7 +184,7 @@ public sealed partial class DeviceReport
                     mediaTest.Manufacturer = ataId.MediaManufacturer;
             }
 
-            var checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
+            ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -445,7 +443,7 @@ public sealed partial class DeviceReport
     /// <summary>Creates a report of an ATA device</summary>
     public TestedMedia ReportAta(Identify.IdentifyDevice ataId)
     {
-        var                    sense        = true;
+        bool                   sense        = true;
         byte[]                 readBuf      = Array.Empty<byte>();
         AtaErrorRegistersChs   errorChs     = new();
         AtaErrorRegistersLba28 errorLba     = new();
@@ -458,9 +456,8 @@ public sealed partial class DeviceReport
         if(ataId.UnformattedBPS != 0)
             capabilities.UnformattedBPS = ataId.UnformattedBPS;
 
-        if(ataId.Cylinders       > 0 &&
-           ataId.Heads           > 0 &&
-           ataId.SectorsPerTrack > 0)
+        if(ataId.Cylinders > 0 &&
+           ataId is { Heads: > 0, SectorsPerTrack: > 0 })
         {
             capabilities.CHS = new Chs
             {
@@ -472,9 +469,8 @@ public sealed partial class DeviceReport
             capabilities.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
         }
 
-        if(ataId.CurrentCylinders       > 0 &&
-           ataId.CurrentHeads           > 0 &&
-           ataId.CurrentSectorsPerTrack > 0)
+        if(ataId.CurrentCylinders > 0 &&
+           ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
         {
             capabilities.CurrentCHS = new Chs
             {
@@ -821,7 +817,7 @@ public sealed partial class DeviceReport
     /// <returns>IDENTIFY ATA DEVICE response without the private fields</returns>
     public static byte[] ClearIdentify(byte[] buffer)
     {
-        var empty = new byte[512];
+        byte[] empty = new byte[512];
 
         Array.Copy(empty, 0, buffer, 20, 20);
         Array.Copy(empty, 0, buffer, 216, 8);

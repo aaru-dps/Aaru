@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class ZZZRawImage
 {

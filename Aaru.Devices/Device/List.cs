@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Interop;
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 /// <summary>Contains device information</summary>
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]

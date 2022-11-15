@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
@@ -48,6 +46,8 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using OxyPlot;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MediaScanViewModel : ViewModelBase
 {
@@ -432,7 +432,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         ChartPoints.Add(new DataPoint(sector, currentSpeed));
 
         if(currentSpeed > MaxY)
-            MaxY = currentSpeed + currentSpeed / 10d;
+            MaxY = currentSpeed + (currentSpeed / 10d);
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
@@ -455,12 +455,12 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0021:
                 case 0x0022:
                     MaxX = blocks switch
-                           {
-                               <= 360000 => 360000,
-                               <= 405000 => 405000,
-                               <= 445500 => 445500,
-                               _         => blocks
-                           };
+                    {
+                        <= 360000 => 360000,
+                        <= 405000 => 405000,
+                        <= 445500 => 445500,
+                        _         => blocks
+                    };
 
                     StepsX = MaxX   / 10;
                     StepsY = 150    * 4;
@@ -497,13 +497,13 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0043:
                 case 0x0040: // BD
                     MaxX = blocks switch
-                           {
-                               <= 12219392 => 12219392,
-                               <= 24438784 => 24438784,
-                               <= 48878592 => 48878592,
-                               <= 62500864 => 62500864,
-                               _           => blocks
-                           };
+                    {
+                        <= 12219392 => 12219392,
+                        <= 24438784 => 24438784,
+                        <= 48878592 => 48878592,
+                        <= 62500864 => 62500864,
+                        _           => blocks
+                    };
 
                     StepsX = MaxX / 10;
                     StepsY = 4394.5;
@@ -517,11 +517,11 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0058:
                 case 0x005A:
                     MaxX = blocks switch
-                           {
-                               <= 7361599  => 7361599,
-                               <= 16305407 => 16305407,
-                               _           => blocks
-                           };
+                    {
+                        <= 7361599  => 7361599,
+                        <= 16305407 => 16305407,
+                        _           => blocks
+                    };
 
                     StepsX = MaxX / 10;
                     StepsY = 4394.5;

@@ -1,16 +1,16 @@
-namespace Aaru.Tests.Issues;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using Aaru.Tests.WritableImages;
 
+namespace Aaru.Tests.Issues;
+
 public class _623 : WritableOpticalMediaImageTest
 {
-    public override string         DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue623");
-    public override IMediaImage    InputPlugin => new AaruFormat();
-    public override IWritableImage OutputPlugin => new Alcohol120();
+    public override string         DataFolder      => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue623");
+    public override IMediaImage    InputPlugin     => new AaruFormat();
+    public override IWritableImage OutputPlugin    => new Alcohol120();
     public override string         OutputExtension => "mds";
     public override OpticalImageTestExpected[] Tests => new[]
     {

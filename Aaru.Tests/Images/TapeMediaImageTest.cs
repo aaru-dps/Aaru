@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Images;
-
 using System;
 using System.IO;
 using Aaru.Checksums;
@@ -9,6 +7,8 @@ using Aaru.CommonTypes.Interfaces;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images;
 
 public abstract class TapeMediaImageTest : BaseMediaImageTest
 {

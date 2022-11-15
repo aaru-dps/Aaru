@@ -32,8 +32,6 @@
 
 // ReSharper disable JoinDeclarationAndInitializer
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +53,8 @@ using Device = Aaru.Devices.Remote.Device;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping an Xbox Game Disc using a Kreon drive</summary>
 partial class Dump
@@ -149,7 +149,7 @@ partial class Dump
             return;
         }
 
-        var tmpBuf = new byte[ssBuf.Length - 4];
+        byte[] tmpBuf = new byte[ssBuf.Length - 4];
         Array.Copy(ssBuf, 4, tmpBuf, 0, ssBuf.Length - 4);
         mediaTags.Add(MediaTagType.Xbox_SecuritySector, tmpBuf);
 
@@ -377,8 +377,8 @@ partial class Dump
         Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
         mediaTags.Add(MediaTagType.Xbox_DMI, tmpBuf);
 
-        totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
-        ulong layerBreak = l0Video + middleZone + gameSize / 2;
+        totalSize = l0Video + l1Video + (middleZone * 2) + gameSize;
+        ulong layerBreak = l0Video + middleZone + (gameSize / 2);
 
         UpdateStatus?.Invoke($"Video layer 0 size: {l0Video} sectors");
         UpdateStatus?.Invoke($"Video layer 1 size: {l1Video} sectors");
@@ -447,7 +447,7 @@ partial class Dump
         if(_skip < blocksToRead)
             _skip = blocksToRead;
 
-        var ret = true;
+        bool ret = true;
 
         foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !outputFormat.SupportedMediaTags.Contains(tag)))
         {
@@ -528,7 +528,7 @@ partial class Dump
             _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
         }
 
-        var newTrim = false;
+        bool newTrim = false;
 
         _dumpLog.WriteLine("Reading game partition.");
         UpdateStatus?.Invoke("Reading game partition.");
@@ -536,7 +536,7 @@ partial class Dump
         ulong    sectorSpeedStart = 0;
         InitProgress?.Invoke();
 
-        for(var e = 0; e <= 16; e++)
+        for(int e = 0; e <= 16; e++)
         {
             if(_aborted)
             {
@@ -559,13 +559,13 @@ partial class Dump
                 if(xboxSs.Value.Extents[e].StartPSN <= xboxSs.Value.Layer0EndPSN)
                     extentStart = xboxSs.Value.Extents[e].StartPSN - 0x30000;
                 else
-                    extentStart = (xboxSs.Value.Layer0EndPSN + 1) * 2                 -
+                    extentStart = ((xboxSs.Value.Layer0EndPSN + 1) * 2)               -
                                   ((xboxSs.Value.Extents[e].StartPSN ^ 0xFFFFFF) + 1) - 0x30000;
 
                 if(xboxSs.Value.Extents[e].EndPSN <= xboxSs.Value.Layer0EndPSN)
                     extentEnd = xboxSs.Value.Extents[e].EndPSN - 0x30000;
                 else
-                    extentEnd = (xboxSs.Value.Layer0EndPSN + 1) * 2               -
+                    extentEnd = ((xboxSs.Value.Layer0EndPSN + 1) * 2)             -
                                 ((xboxSs.Value.Extents[e].EndPSN ^ 0xFFFFFF) + 1) - 0x30000;
             }
 
@@ -896,11 +896,11 @@ partial class Dump
 
         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
-        UpdateStatus?.
-            Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000)
+            :F3} KiB/sec.");
 
-        UpdateStatus?.
-            Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+        UpdateStatus?.Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration
+            :F3} KiB/sec.");
 
         _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
@@ -964,7 +964,7 @@ partial class Dump
            !_aborted                   &&
            _retryPasses > 0)
         {
-            var tmpList = new List<ulong>();
+            List<ulong> tmpList = new();
 
             foreach(ulong ur in _resume.BadBlocks)
                 for(ulong i = ur; i < ur + blocksToRead; i++)
@@ -972,9 +972,9 @@ partial class Dump
 
             tmpList.Sort();
 
-            var pass              = 1;
-            var forward           = true;
-            var runningPersistent = false;
+            int  pass              = 1;
+            bool forward           = true;
+            bool runningPersistent = false;
 
             _resume.BadBlocks = tmpList;
             Modes.ModePage? currentModePage = null;
@@ -1000,7 +1000,7 @@ partial class Dump
 
                         if(dcMode10.HasValue)
                             foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                        modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                                        modePage is { Page: 0x01, Subpage: 0x00 }))
                                 currentModePage = modePage;
                     }
                 }
@@ -1010,7 +1010,7 @@ partial class Dump
 
                     if(dcMode6.HasValue)
                         foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                                                                   modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                                    modePage is { Page: 0x01, Subpage: 0x00 }))
                             currentModePage = modePage;
                 }
 
@@ -1076,7 +1076,7 @@ partial class Dump
             }
 
             InitProgress?.Invoke();
-        repeatRetry:
+            repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             foreach(ulong badSector in tmpArray)
@@ -1190,7 +1190,7 @@ partial class Dump
 
         outputFormat.SetDumpHardware(_resume.Tries);
 
-        var metadata = new ImageInfo
+        var metadata = new CommonTypes.Structs.ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()
@@ -1240,11 +1240,12 @@ partial class Dump
 
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.
-            Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+        UpdateStatus?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000
+            :F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {
+            (closeEnd - closeStart).TotalSeconds:F3} closing).");
 
-        UpdateStatus?.
-            Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+        UpdateStatus?.Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000)
+            :F3} MiB/sec.");
 
         if(maxSpeed > 0)
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

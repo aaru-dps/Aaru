@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Virtual98
 {
@@ -126,7 +126,7 @@ public sealed partial class Virtual98
             return false;
         }
 
-        _writingStream.Seek((long)(0xDC + sectorAddress * 512), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -158,7 +158,7 @@ public sealed partial class Virtual98
             return false;
         }
 
-        _writingStream.Seek((long)(0xDC + sectorAddress * 512), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -210,9 +210,8 @@ public sealed partial class Virtual98
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders       == 0 &&
-                   _imageInfo.Heads           == 0 &&
-                   _imageInfo.SectorsPerTrack == 0)
+                if(_imageInfo.Cylinders == 0 &&
+                   _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
                     break;
             }
         }
@@ -237,8 +236,8 @@ public sealed partial class Virtual98
         if(commentsBytes != null)
             Array.Copy(commentsBytes, 0, _v98Hdr.comment, 0, commentsBytes.Length >= 128 ? 128 : commentsBytes.Length);
 
-        var    hdr    = new byte[Marshal.SizeOf<Virtual98Header>()];
-        IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Virtual98Header>());
+        byte[] hdr    = new byte[Marshal.SizeOf<Virtual98Header>()];
+        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Virtual98Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(_v98Hdr, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

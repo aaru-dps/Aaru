@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Filters;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Apple2Mg
 {
@@ -52,10 +52,10 @@ public sealed partial class Apple2Mg
 
         _imageHeader = new Header();
 
-        var header = new byte[64];
+        byte[] header = new byte[64];
         stream.EnsureRead(header, 0, 64);
-        var magic   = new byte[4];
-        var creator = new byte[4];
+        byte[] magic   = new byte[4];
+        byte[] creator = new byte[4];
 
         Array.Copy(header, 0, magic, 0, 4);
         Array.Copy(header, 4, creator, 0, 4);
@@ -95,8 +95,7 @@ public sealed partial class Apple2Mg
         AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", _imageHeader.Reserved3);
         AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", _imageHeader.Reserved4);
 
-        if(_imageHeader.DataSize    == 0 &&
-           _imageHeader.Blocks      == 0 &&
+        if(_imageHeader is { DataSize: 0, Blocks: 0 } &&
            _imageHeader.ImageFormat != SectorOrder.ProDos)
             return ErrorNumber.InvalidArgument;
 
@@ -139,10 +138,11 @@ public sealed partial class Apple2Mg
                                   ? _interleave
                                   : _deinterleave;
 
-                for(var t = 0; t < 35; t++)
+                for(int t = 0; t < 35; t++)
                 {
-                    for(var s = 0; s < 16; s++)
-                        Array.Copy(tmp, t * 16 * 256 + s * 256, _decodedImage, t * 16 * 256 + offsets[s] * 256, 256);
+                    for(int s = 0; s < 16; s++)
+                        Array.Copy(tmp, (t * 16 * 256) + (s * 256), _decodedImage, (t * 16 * 256) + (offsets[s] * 256),
+                                   256);
                 }
 
                 _imageInfo.Sectors    = 560;
@@ -156,10 +156,11 @@ public sealed partial class Apple2Mg
                 _decodedImage = new byte[_imageHeader.DataSize];
                 offsets       = _interleave;
 
-                for(var t = 0; t < 200; t++)
+                for(int t = 0; t < 200; t++)
                 {
-                    for(var s = 0; s < 16; s++)
-                        Array.Copy(tmp, t * 16 * 256 + s * 256, _decodedImage, t * 16 * 256 + offsets[s] * 256, 256);
+                    for(int s = 0; s < 16; s++)
+                        Array.Copy(tmp, (t * 16 * 256) + (s * 256), _decodedImage, (t * 16 * 256) + (offsets[s] * 256),
+                                   256);
                 }
 
                 _imageInfo.Sectors    = 1600;
@@ -177,18 +178,18 @@ public sealed partial class Apple2Mg
         _imageInfo.ImageSize = _imageHeader.DataSize;
 
         _imageInfo.Application = _imageHeader.Creator switch
-                                 {
-                                     CREATOR_ASIMOV  => "ASIMOV2",
-                                     CREATOR_BERNIE  => "Bernie ][ the Rescue",
-                                     CREATOR_CATAKIG => "Catakig",
-                                     CREATOR_SHEPPY  => "Sheppy's ImageMaker",
-                                     CREATOR_SWEET   => "Sweet16",
-                                     CREATOR_XGS     => "XGS",
-                                     CREATOR_CIDER   => "CiderPress",
-                                     CREATOR_DIC     => "DiscImageChef",
-                                     CREATOR_AARU    => "Aaru",
-                                     _               => $"Unknown creator code \"{Encoding.ASCII.GetString(creator)}\""
-                                 };
+        {
+            CREATOR_ASIMOV  => "ASIMOV2",
+            CREATOR_BERNIE  => "Bernie ][ the Rescue",
+            CREATOR_CATAKIG => "Catakig",
+            CREATOR_SHEPPY  => "Sheppy's ImageMaker",
+            CREATOR_SWEET   => "Sweet16",
+            CREATOR_XGS     => "XGS",
+            CREATOR_CIDER   => "CiderPress",
+            CREATOR_DIC     => "DiscImageChef",
+            CREATOR_AARU    => "Aaru",
+            _               => $"Unknown creator code \"{Encoding.ASCII.GetString(creator)}\""
+        };
 
         _imageInfo.Version = _imageHeader.Version.ToString();
 
@@ -197,7 +198,7 @@ public sealed partial class Apple2Mg
         {
             stream.Seek(_imageHeader.CommentOffset, SeekOrigin.Begin);
 
-            var comments = new byte[_imageHeader.CommentSize];
+            byte[] comments = new byte[_imageHeader.CommentSize];
             stream.EnsureRead(comments, 0, (int)_imageHeader.CommentSize);
             _imageInfo.Comments = Encoding.ASCII.GetString(comments);
         }
@@ -292,7 +293,7 @@ public sealed partial class Apple2Mg
         {
             Stream stream = _a2MgImageFilter.GetDataForkStream();
 
-            stream.Seek((long)(_imageHeader.DataOffset + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+            stream.Seek((long)(_imageHeader.DataOffset + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
             stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
         }

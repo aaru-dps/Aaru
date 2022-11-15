@@ -34,8 +34,6 @@
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +52,8 @@ using Aaru.Devices;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implement dumping Compact Discs</summary>
 
@@ -84,22 +84,22 @@ sealed partial class Dump
         MhddLog                  mhddLog; // MHDD log
         double                   minSpeed = double.MaxValue; // Minimum speed
         bool                     newTrim; // Is trim a new one?
-        var                      offsetBytes = 0; // Read offset
-        var                      read6       = false; // Device supports READ(6)
-        var                      read10      = false; // Device supports READ(10)
-        var                      read12      = false; // Device supports READ(12)
-        var                      read16      = false; // Device supports READ(16)
-        var                      readcd      = true; // Device supports READ CD
+        int                      offsetBytes = 0; // Read offset
+        bool                     read6       = false; // Device supports READ(6)
+        bool                     read10      = false; // Device supports READ(10)
+        bool                     read12      = false; // Device supports READ(12)
+        bool                     read16      = false; // Device supports READ(16)
+        bool                     readcd      = true; // Device supports READ CD
         bool                     ret; // Image writing return status
         const uint               sectorSize       = 2352; // Full sector size
-        var                      sectorsForOffset = 0; // Sectors needed to fix offset
-        var                      sense            = true; // Sense indicator
+        int                      sectorsForOffset = 0; // Sectors needed to fix offset
+        bool                     sense            = true; // Sense indicator
         int                      sessions; // Number of sessions in disc
         DateTime                 start; // Start of operation
         SubchannelLog            subLog              = null; // Subchannel log
         uint                     subSize             = 0; // Subchannel size in bytes
         TrackSubchannelType      subType             = TrackSubchannelType.None; // Track subchannel type
-        var                      supportsLongSectors = true; // Supports reading EDC and ECC
+        bool                     supportsLongSectors = true; // Supports reading EDC and ECC
         bool                     supportsPqSubchannel; // Supports reading PQ subchannel
         bool                     supportsRwSubchannel; // Supports reading RW subchannel
         byte[]                   tmpBuf; // Temporary buffer
@@ -111,11 +111,11 @@ sealed partial class Dump
         bool                     hiddenTrack; // Disc has a hidden track before track 1
         MmcSubchannel            supportedSubchannel; // Drive's maximum supported subchannel
         MmcSubchannel            desiredSubchannel; // User requested subchannel
-        var                      bcdSubchannel       = false; // Subchannel positioning is in BCD
+        bool                     bcdSubchannel       = false; // Subchannel positioning is in BCD
         Dictionary<byte, string> isrcs               = new();
         string                   mcn                 = null;
         HashSet<int>             subchannelExtents   = new();
-        var                      cdiReadyReadAsAudio = false;
+        bool                     cdiReadyReadAsAudio = false;
         uint                     firstLba;
         var                      outputOptical = _outputPlugin as IWritableOpticalImage;
 
@@ -356,9 +356,9 @@ sealed partial class Dump
         // Check if subchannel is BCD
         if(supportedSubchannel != MmcSubchannel.None)
         {
-            sense = _dev.ReadCd(out cmdBuf, out _, (firstLba / 75 + 1) * 75 + 35, blockSize, 1, MmcSectorTypes.AllTypes,
-                                false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                supportedSubchannel, _dev.Timeout, out _);
+            sense = _dev.ReadCd(out cmdBuf, out _, (((firstLba / 75) + 1) * 75) + 35, blockSize, 1,
+                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
 
             if(!sense)
             {
@@ -453,7 +453,7 @@ sealed partial class Dump
                 Invoke("Output format does not support pregaps, this may end in a loss of data, continuing...");
         }
 
-        for(var t = 1; t < tracks.Length; t++)
+        for(int t = 1; t < tracks.Length; t++)
             tracks[t - 1].EndSector = tracks[t].StartSector - 1;
 
         tracks[^1].EndSector = (ulong)lastSector;
@@ -531,7 +531,7 @@ sealed partial class Dump
 
             Tuple<ulong, ulong>[] dataExtentsArray = dataExtents.ToArray();
 
-            for(var i = 0; i < dataExtentsArray.Length - 1; i++)
+            for(int i = 0; i < dataExtentsArray.Length - 1; i++)
                 leadOutExtents.Add(dataExtentsArray[i].Item2 + 1, dataExtentsArray[i + 1].Item1 - 1);
         }
 
@@ -600,7 +600,7 @@ sealed partial class Dump
                 continue;
             }
 
-            var bufOffset = 0;
+            int bufOffset = 0;
 
             while(cmdBuf[0  + bufOffset] != 0x00 ||
                   cmdBuf[1  + bufOffset] != 0xFF ||
@@ -773,7 +773,7 @@ sealed partial class Dump
             StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
         }
 
-        var cdiWithHiddenTrack1 = false;
+        bool cdiWithHiddenTrack1 = false;
 
         if(dskType is MediaType.CDIREADY &&
            tracks.Min(t => t.Sequence) == 1)
@@ -990,8 +990,8 @@ sealed partial class Dump
                                                 d.Manufacturer == _dev.Manufacturer.Replace('/', '-')) &&
                                                (d.Model == _dev.Model || d.Model == _dev.Model.Replace('/', '-')));
 
-        Core.Media.Info.CompactDisc.GetOffset(cdOffset, _dbDev, _debug, _dev, dskType, _dumpLog, tracks, UpdateStatus,
-                                              out int? driveOffset, out int? combinedOffset, out _supportsPlextorD8);
+        Media.Info.CompactDisc.GetOffset(cdOffset, _dbDev, _debug, _dev, dskType, _dumpLog, tracks, UpdateStatus,
+                                         out int? driveOffset, out int? combinedOffset, out _supportsPlextorD8);
 
         if(combinedOffset is null)
         {
@@ -1290,11 +1290,11 @@ sealed partial class Dump
         if(_generateSubchannels                                                         &&
            outputOptical.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
            !_aborted)
-            Core.Media.CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, blocks, subLog, _dumpLog,
-                                                       InitProgress, UpdateProgress, EndProgress, outputOptical);
+            Media.CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, blocks, subLog, _dumpLog,
+                                                  InitProgress, UpdateProgress, EndProgress, outputOptical);
 
         // TODO: Disc ID
-        var metadata = new ImageInfo
+        var metadata = new CommonTypes.Structs.ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()
@@ -1329,8 +1329,7 @@ sealed partial class Dump
         foreach(Track trk in tracks)
         {
             // Fix track starts in each session's first track
-            if(tracks.Where(t => t.Session == trk.Session).MinBy(t => t.Sequence).Sequence ==
-               trk.Sequence)
+            if(tracks.Where(t => t.Session == trk.Session).MinBy(t => t.Sequence).Sequence == trk.Sequence)
             {
                 if(trk.Sequence == 1)
                     continue;

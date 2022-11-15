@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Panels;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,6 +42,8 @@ using Aaru.Gui.Views.Tabs;
 using Avalonia.Controls;
 using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
+
+namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class DeviceInfoViewModel : ViewModelBase
 {
@@ -350,8 +350,8 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                         MinBlockSize = $"Device's minimum block size is {blockLimits.Value.minBlockLen} bytes";
 
                         if(blockLimits.Value.granularity > 0)
-                            BlockSizeGranularity =
-                                $"Device's needs a block size granularity of 2^{blockLimits.Value.granularity} ({Math.Pow(2, blockLimits.Value.granularity)}) bytes";
+                            BlockSizeGranularity = $"Device's needs a block size granularity of 2^{
+                                blockLimits.Value.granularity} ({Math.Pow(2, blockLimits.Value.granularity)}) bytes";
                     }
                 }
             }

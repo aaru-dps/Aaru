@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Device;
-
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -51,13 +49,13 @@ using Aaru.Database.Models;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Helpers;
-using Aaru.Settings;
 using Newtonsoft.Json;
 using Spectre.Console;
 using Command = System.CommandLine.Command;
-using Device = Aaru.Devices.Device;
 using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
 using Profile = Aaru.Decoders.SCSI.MMC.Profile;
+
+namespace Aaru.Commands.Device;
 
 sealed class DeviceReportCommand : Command
 {
@@ -86,7 +84,7 @@ sealed class DeviceReportCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -119,7 +117,7 @@ sealed class DeviceReportCommand : Command
            char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-        var dev = Device.Create(devicePath, out ErrorNumber devErrno);
+        var dev = Devices.Device.Create(devicePath, out ErrorNumber devErrno);
 
         switch(dev)
         {
@@ -164,7 +162,7 @@ sealed class DeviceReportCommand : Command
             Type         = dev.Type
         };
 
-        var    removable = false;
+        bool   removable = false;
         string jsonFile;
 
         switch(string.IsNullOrWhiteSpace(dev.Manufacturer))
@@ -202,7 +200,7 @@ sealed class DeviceReportCommand : Command
         if(dev.IsUsb)
             if(AnsiConsole.Confirm("[italic]Is the device natively USB (in case of doubt, press Y)?[/]"))
             {
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Querying USB information...").IsIndeterminate();
                     report.USB = reporter.UsbReport();
@@ -217,7 +215,7 @@ sealed class DeviceReportCommand : Command
         if(dev.IsFireWire)
             if(AnsiConsole.Confirm("[italic]Is the device natively FireWire (in case of doubt, press Y)?[/]"))
             {
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Querying FireWire information...").IsIndeterminate();
                     report.FireWire = reporter.FireWireReport();
@@ -230,7 +228,7 @@ sealed class DeviceReportCommand : Command
             }
 
         if(dev.IsPcmcia)
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Querying PCMCIA information...").IsIndeterminate();
                 report.PCMCIA = reporter.PcmciaReport();
@@ -244,7 +242,7 @@ sealed class DeviceReportCommand : Command
         {
             case DeviceType.ATA:
             {
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Querying ATA IDENTIFY...").IsIndeterminate();
                     dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
@@ -276,9 +274,9 @@ sealed class DeviceReportCommand : Command
                 {
                     AaruConsole.WriteLine("Please remove any media from the device and press any key when it is out.");
 
-                    Console.ReadKey(true);
+                    System.Console.ReadKey(true);
 
-                    Spectre.ProgressSingleSpinner(ctx =>
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
                         ctx.AddTask("Querying ATA IDENTIFY...").IsIndeterminate();
                         dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
@@ -290,7 +288,7 @@ sealed class DeviceReportCommand : Command
                     while(AnsiConsole.Confirm("[italic]Do you have media that you can insert in the drive?[/]"))
                     {
                         AaruConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
-                        Console.ReadKey(true);
+                        System.Console.ReadKey(true);
 
                         mediumTypeName =
                             AnsiConsole.Ask<string>("Please write a description of the media type and press enter: ");
@@ -322,7 +320,7 @@ sealed class DeviceReportCommand : Command
                 break;
             case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
             case DeviceType.ATAPI:
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Querying ATAPI IDENTIFY...").IsIndeterminate();
                     dev.AtapiIdentify(out buffer, out _, dev.Timeout, out _);
@@ -377,7 +375,7 @@ sealed class DeviceReportCommand : Command
                         case PeripheralDeviceTypes.SequentialAccess:
                             dev.SpcAllowMediumRemoval(out buffer, dev.Timeout, out _);
 
-                            Spectre.ProgressSingleSpinner(ctx =>
+                            Core.Spectre.ProgressSingleSpinner(ctx =>
                             {
                                 ctx.AddTask("Asking drive to unload tape (can take a few minutes)...").
                                     IsIndeterminate();
@@ -390,7 +388,7 @@ sealed class DeviceReportCommand : Command
 
                     AaruConsole.WriteLine("Please remove any media from the device and press any key when it is out.");
 
-                    Console.ReadKey(true);
+                    System.Console.ReadKey(true);
                 }
 
                 report.SCSI = reporter.ReportScsiInquiry();
@@ -406,7 +404,7 @@ sealed class DeviceReportCommand : Command
 
                 string mediumManufacturer;
                 byte[] senseBuffer = Array.Empty<byte>();
-                var    sense       = true;
+                bool   sense       = true;
 
                 switch(dev.ScsiType)
                 {
@@ -414,7 +412,7 @@ sealed class DeviceReportCommand : Command
                     {
                         if(dev.IsUsb &&
                            mediumType is MediumTypes.UnknownBlockDevice or MediumTypes.ReadOnlyBlockDevice
-                                                                        or MediumTypes.ReadWriteBlockDevice)
+                               or MediumTypes.ReadWriteBlockDevice)
                             goto default;
 
                         bool iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" && dev.Model.
@@ -745,11 +743,11 @@ sealed class DeviceReportCommand : Command
                                 AaruConsole.
                                     WriteLine("Please insert it in the drive and press any key when it is ready.");
 
-                                Console.ReadKey(true);
+                                System.Console.ReadKey(true);
 
-                                var mediaIsRecognized = true;
+                                bool mediaIsRecognized = true;
 
-                                Spectre.ProgressSingleSpinner(ctx =>
+                                Core.Spectre.ProgressSingleSpinner(ctx =>
                                 {
                                     ctx.AddTask("Waiting for drive to become ready").IsIndeterminate();
                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
@@ -764,7 +762,7 @@ sealed class DeviceReportCommand : Command
                                         {
                                             case 0x3A:
                                             {
-                                                var leftRetries = 50;
+                                                int leftRetries = 50;
 
                                                 while(leftRetries > 0)
                                                 {
@@ -788,7 +786,7 @@ sealed class DeviceReportCommand : Command
                                             // These should be trapped by the OS but seems in some cases they're not
                                             case 0x04 when decSense.Value.ASCQ == 0x01:
                                             {
-                                                var leftRetries = 50;
+                                                int leftRetries = 50;
 
                                                 while(leftRetries > 0)
                                                 {
@@ -810,7 +808,7 @@ sealed class DeviceReportCommand : Command
                                             }
                                             case 0x28:
                                             {
-                                                var leftRetries = 50;
+                                                int leftRetries = 50;
 
                                                 while(leftRetries > 0)
                                                 {
@@ -870,7 +868,7 @@ sealed class DeviceReportCommand : Command
                                                         ProgressTask task = ctx.AddTask("Trying to READ LONG...");
                                                         task.MaxValue = ushort.MaxValue;
 
-                                                        for(var i = (ushort)mediaTest.BlockSize;; i++)
+                                                        for(ushort i = (ushort)mediaTest.BlockSize;; i++)
                                                         {
                                                             task.Description = $"Trying to READ LONG with a size of {i
                                                             } bytes...";
@@ -899,7 +897,7 @@ sealed class DeviceReportCommand : Command
                                     if(mediaTest.SupportsReadLong == true &&
                                        mediaTest.LongBlockSize    != mediaTest.BlockSize)
                                     {
-                                        Spectre.ProgressSingleSpinner(ctx =>
+                                        Core.Spectre.ProgressSingleSpinner(ctx =>
                                         {
                                             ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
 
@@ -914,7 +912,7 @@ sealed class DeviceReportCommand : Command
                                     if(mediaTest.SupportsReadLong16 == true &&
                                        mediaTest.LongBlockSize      != mediaTest.BlockSize)
                                     {
-                                        Spectre.ProgressSingleSpinner(ctx =>
+                                        Core.Spectre.ProgressSingleSpinner(ctx =>
                                         {
                                             ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
 
@@ -950,7 +948,7 @@ sealed class DeviceReportCommand : Command
                         {
                             AaruConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
 
-                            Console.ReadKey(true);
+                            System.Console.ReadKey(true);
 
                             mediumTypeName =
                                 AnsiConsole.
@@ -961,9 +959,9 @@ sealed class DeviceReportCommand : Command
 
                             mediumModel = AnsiConsole.Ask<string>("Please write the media model and press enter: ");
 
-                            var mediaIsRecognized = true;
+                            bool mediaIsRecognized = true;
 
-                            Spectre.ProgressSingleSpinner(ctx =>
+                            Core.Spectre.ProgressSingleSpinner(ctx =>
                             {
                                 ctx.AddTask("Waiting for drive to become ready").IsIndeterminate();
 
@@ -980,7 +978,7 @@ sealed class DeviceReportCommand : Command
                                     {
                                         case 0x3A:
                                         {
-                                            var leftRetries = 50;
+                                            int leftRetries = 50;
 
                                             while(leftRetries > 0)
                                             {
@@ -1004,7 +1002,7 @@ sealed class DeviceReportCommand : Command
                                         // These should be trapped by the OS but seems in some cases they're not
                                         case 0x04 when decSense.Value.ASCQ == 0x01:
                                         {
-                                            var leftRetries = 50;
+                                            int leftRetries = 50;
 
                                             while(leftRetries > 0)
                                             {
@@ -1026,7 +1024,7 @@ sealed class DeviceReportCommand : Command
                                         }
                                         case 0x28:
                                         {
-                                            var leftRetries = 50;
+                                            int leftRetries = 50;
 
                                             while(leftRetries > 0)
                                             {
@@ -1077,7 +1075,7 @@ sealed class DeviceReportCommand : Command
 
                             seqTests.Add(seqTest);
 
-                            Spectre.ProgressSingleSpinner(ctx =>
+                            Core.Spectre.ProgressSingleSpinner(ctx =>
                             {
                                 ctx.AddTask("Asking drive to unload tape (can take a few minutes)...").
                                     IsIndeterminate();
@@ -1116,11 +1114,11 @@ sealed class DeviceReportCommand : Command
 
                             AaruConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
 
-                            Console.ReadKey(true);
+                            System.Console.ReadKey(true);
 
-                            var mediaIsRecognized = true;
+                            bool mediaIsRecognized = true;
 
-                            Spectre.ProgressSingleSpinner(ctx =>
+                            Core.Spectre.ProgressSingleSpinner(ctx =>
                             {
                                 ctx.AddTask("Waiting for drive to become ready").IsIndeterminate();
 
@@ -1136,7 +1134,7 @@ sealed class DeviceReportCommand : Command
                                     {
                                         case 0x3A:
                                         {
-                                            var leftRetries = 50;
+                                            int leftRetries = 50;
 
                                             while(leftRetries > 0)
                                             {
@@ -1158,7 +1156,7 @@ sealed class DeviceReportCommand : Command
                                         // These should be trapped by the OS but seems in some cases they're not
                                         case 0x04 when decSense.Value.ASCQ == 0x01:
                                         {
-                                            var leftRetries = 50;
+                                            int leftRetries = 50;
 
                                             while(leftRetries > 0)
                                             {
@@ -1178,7 +1176,7 @@ sealed class DeviceReportCommand : Command
                                         }
                                         case 0x28:
                                         {
-                                            var leftRetries = 50;
+                                            int leftRetries = 50;
 
                                             while(leftRetries > 0)
                                             {
@@ -1235,7 +1233,7 @@ sealed class DeviceReportCommand : Command
                                                     ProgressTask task = ctx.AddTask("Trying to READ LONG...");
                                                     task.MaxValue = ushort.MaxValue;
 
-                                                    for(var i = (ushort)mediaTest.BlockSize;; i++)
+                                                    for(ushort i = (ushort)mediaTest.BlockSize;; i++)
                                                     {
                                                         task.Value = i;
 
@@ -1265,7 +1263,7 @@ sealed class DeviceReportCommand : Command
                                 if(mediaTest.SupportsReadLong == true &&
                                    mediaTest.LongBlockSize    != mediaTest.BlockSize)
                                 {
-                                    Spectre.ProgressSingleSpinner(ctx =>
+                                    Core.Spectre.ProgressSingleSpinner(ctx =>
                                     {
                                         ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
 
@@ -1280,7 +1278,7 @@ sealed class DeviceReportCommand : Command
                                 if(mediaTest.SupportsReadLong16 == true &&
                                    mediaTest.LongBlockSize      != mediaTest.BlockSize)
                                 {
-                                    Spectre.ProgressSingleSpinner(ctx =>
+                                    Core.Spectre.ProgressSingleSpinner(ctx =>
                                     {
                                         ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
 
@@ -1294,14 +1292,14 @@ sealed class DeviceReportCommand : Command
                             }
 
                             mediaTest.MediumTypeName = mediaType switch
-                                                       {
-                                                           "MD DATA (140Mb data MiniDisc)"  => "MMD-140A",
-                                                           "60 minutes rewritable MiniDisc" => "MDW-60",
-                                                           "74 minutes rewritable MiniDisc" => "MDW-74",
-                                                           "80 minutes rewritable MiniDisc" => "MDW-80",
-                                                           "Embossed Audio MiniDisc"        => "MiniDisc",
-                                                           _                                => mediaTest.MediumTypeName
-                                                       };
+                            {
+                                "MD DATA (140Mb data MiniDisc)"  => "MMD-140A",
+                                "60 minutes rewritable MiniDisc" => "MDW-60",
+                                "74 minutes rewritable MiniDisc" => "MDW-74",
+                                "80 minutes rewritable MiniDisc" => "MDW-80",
+                                "Embossed Audio MiniDisc"        => "MiniDisc",
+                                _                                => mediaTest.MediumTypeName
+                            };
 
                             mediaTest.Manufacturer      = "SONY";
                             mediaTest.MediaIsRecognized = mediaIsRecognized;
@@ -1326,7 +1324,7 @@ sealed class DeviceReportCommand : Command
                                 AaruConsole.
                                     WriteLine("Please insert it in the drive and press any key when it is ready.");
 
-                                Console.ReadKey(true);
+                                System.Console.ReadKey(true);
 
                                 mediumTypeName =
                                     AnsiConsole.
@@ -1337,9 +1335,9 @@ sealed class DeviceReportCommand : Command
 
                                 mediumModel = AnsiConsole.Ask<string>("Please write the media model and press enter: ");
 
-                                var mediaIsRecognized = true;
+                                bool mediaIsRecognized = true;
 
-                                Spectre.ProgressSingleSpinner(ctx =>
+                                Core.Spectre.ProgressSingleSpinner(ctx =>
                                 {
                                     ctx.AddTask("Waiting for drive to become ready").IsIndeterminate();
                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
@@ -1354,7 +1352,7 @@ sealed class DeviceReportCommand : Command
                                         {
                                             case 0x3A:
                                             {
-                                                var leftRetries = 20;
+                                                int leftRetries = 20;
 
                                                 while(leftRetries > 0)
                                                 {
@@ -1374,7 +1372,7 @@ sealed class DeviceReportCommand : Command
                                             }
                                             case 0x04 when decSense.Value.ASCQ == 0x01:
                                             {
-                                                var leftRetries = 20;
+                                                int leftRetries = 20;
 
                                                 while(leftRetries > 0)
                                                 {
@@ -1418,7 +1416,7 @@ sealed class DeviceReportCommand : Command
                                                         ProgressTask task = ctx.AddTask("Trying to READ LONG...");
                                                         task.MaxValue = ushort.MaxValue;
 
-                                                        for(var i = (ushort)mediaTest.BlockSize;; i++)
+                                                        for(ushort i = (ushort)mediaTest.BlockSize;; i++)
                                                         {
                                                             task.Value = i;
 
@@ -1449,7 +1447,7 @@ sealed class DeviceReportCommand : Command
                                     if(mediaTest.SupportsReadLong == true &&
                                        mediaTest.LongBlockSize    != mediaTest.BlockSize)
                                     {
-                                        Spectre.ProgressSingleSpinner(ctx =>
+                                        Core.Spectre.ProgressSingleSpinner(ctx =>
                                         {
                                             ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
 
@@ -1464,7 +1462,7 @@ sealed class DeviceReportCommand : Command
                                     if(mediaTest.SupportsReadLong16 == true &&
                                        mediaTest.LongBlockSize      != mediaTest.BlockSize)
                                     {
-                                        Spectre.ProgressSingleSpinner(ctx =>
+                                        Core.Spectre.ProgressSingleSpinner(ctx =>
                                         {
                                             ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
 
@@ -1506,7 +1504,7 @@ sealed class DeviceReportCommand : Command
                                                     ProgressTask task = ctx.AddTask("Trying to READ LONG...");
                                                     task.MaxValue = ushort.MaxValue;
 
-                                                    for(var i = (ushort)report.SCSI.ReadCapabilities.BlockSize;; i++)
+                                                    for(ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize;; i++)
                                                     {
                                                         task.Value = i;
 
@@ -1536,7 +1534,7 @@ sealed class DeviceReportCommand : Command
                             if(report.SCSI.ReadCapabilities.SupportsReadLong == true &&
                                report.SCSI.ReadCapabilities.LongBlockSize    != report.SCSI.ReadCapabilities.BlockSize)
                             {
-                                Spectre.ProgressSingleSpinner(ctx =>
+                                Core.Spectre.ProgressSingleSpinner(ctx =>
                                 {
                                     ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
 
@@ -1552,7 +1550,7 @@ sealed class DeviceReportCommand : Command
                             if(report.SCSI.ReadCapabilities.SupportsReadLong16 == true &&
                                report.SCSI.ReadCapabilities.LongBlockSize != report.SCSI.ReadCapabilities.BlockSize)
                             {
-                                Spectre.ProgressSingleSpinner(ctx =>
+                                Core.Spectre.ProgressSingleSpinner(ctx =>
                                 {
                                     ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
 
@@ -1585,14 +1583,14 @@ sealed class DeviceReportCommand : Command
         jsonSw.Close();
         jsonFs.Close();
 
-        using(var ctx = AaruContext.Create(Settings.LocalDbPath))
+        using(var ctx = AaruContext.Create(Settings.Settings.LocalDbPath))
         {
             ctx.Reports.Add(new Report(report));
             ctx.SaveChanges();
         }
 
         // TODO:
-        if(Settings.Current.ShareReports)
+        if(Settings.Settings.Current.ShareReports)
             Remote.SubmitReport(report);
 
         return (int)ErrorNumber.NoError;

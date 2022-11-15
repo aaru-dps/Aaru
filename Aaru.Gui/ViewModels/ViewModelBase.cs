@@ -30,8 +30,8 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels;
-
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels;
 
 public class ViewModelBase : ReactiveObject {}

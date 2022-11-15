@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Image;
-
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -44,6 +42,8 @@ using Aaru.Console;
 using Aaru.Core;
 using Schemas;
 using Spectre.Console;
+
+namespace Aaru.Commands.Image;
 
 sealed class ChecksumCommand : Command
 {
@@ -122,7 +122,7 @@ sealed class ChecksumCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -166,7 +166,7 @@ sealed class ChecksumCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -181,7 +181,7 @@ sealed class ChecksumCommand : Command
 
         IBaseImage inputFormat = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             inputFormat = ImageFormat.Detect(inputFilter);
@@ -196,7 +196,7 @@ sealed class ChecksumCommand : Command
 
         ErrorNumber opened = ErrorNumber.NoData;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
             opened = inputFormat.Open(inputFilter);
@@ -322,8 +322,9 @@ sealed class ChecksumCommand : Command
 
                                                 if(errno != ErrorNumber.NoError)
                                                 {
-                                                    AaruConsole.
-                                                        ErrorWriteLine($"Error {errno} while reading {SECTORS_TO_READ} sectors from sector {doneSectors}, not continuing...");
+                                                    AaruConsole.ErrorWriteLine($"Error {errno} while reading {
+                                                        SECTORS_TO_READ} sectors from sector {doneSectors
+                                                        }, not continuing...");
 
                                                     return;
                                                 }
@@ -343,8 +344,9 @@ sealed class ChecksumCommand : Command
 
                                                 if(errno != ErrorNumber.NoError)
                                                 {
-                                                    AaruConsole.
-                                                        ErrorWriteLine($"Error {errno} while reading {sectors - doneSectors} sectors from sector {doneSectors}, not continuing...");
+                                                    AaruConsole.ErrorWriteLine($"Error {errno} while reading {
+                                                        sectors - doneSectors} sectors from sector {doneSectors
+                                                        }, not continuing...");
 
                                                     return;
                                                 }
@@ -447,8 +449,8 @@ sealed class ChecksumCommand : Command
 
                                             if(errno != ErrorNumber.NoError)
                                             {
-                                                AaruConsole.
-                                                    ErrorWriteLine($"Error {errno} while reading sector {i}, not continuing...");
+                                                AaruConsole.ErrorWriteLine($"Error {errno} while reading sector {i
+                                                }, not continuing...");
 
                                                 return;
                                             }
@@ -485,8 +487,9 @@ sealed class ChecksumCommand : Command
 
                                             if(errno != ErrorNumber.NoError)
                                             {
-                                                AaruConsole.
-                                                    ErrorWriteLine($"Error {errno} while reading {SECTORS_TO_READ} sectors from sector {doneSectors + currentFile.FirstBlock}, not continuing...");
+                                                AaruConsole.ErrorWriteLine($"Error {errno} while reading {
+                                                    SECTORS_TO_READ} sectors from sector {
+                                                        doneSectors + currentFile.FirstBlock}, not continuing...");
 
                                                 return;
                                             }
@@ -504,8 +507,9 @@ sealed class ChecksumCommand : Command
 
                                             if(errno != ErrorNumber.NoError)
                                             {
-                                                AaruConsole.
-                                                    ErrorWriteLine($"Error {errno} while reading {sectors - doneSectors} sectors from sector {doneSectors + currentFile.FirstBlock}, not continuing...");
+                                                AaruConsole.ErrorWriteLine($"Error {errno} while reading {
+                                                    sectors         - doneSectors} sectors from sector {
+                                                        doneSectors + currentFile.FirstBlock}, not continuing...");
 
                                                 return;
                                             }
@@ -555,8 +559,8 @@ sealed class ChecksumCommand : Command
 
                                     if(errno != ErrorNumber.NoError)
                                     {
-                                        AaruConsole.
-                                            ErrorWriteLine($"Error {errno} while reading sector {i}, not continuing...");
+                                        AaruConsole.ErrorWriteLine($"Error {errno} while reading sector {i
+                                        }, not continuing...");
 
                                         return;
                                     }
@@ -591,8 +595,8 @@ sealed class ChecksumCommand : Command
                                 ProgressTask imageTask = ctx.AddTask("Hashing image...");
                                 ulong        length    = byteAddressableImage.Info.Sectors;
                                 imageTask.MaxValue = length;
-                                ulong doneBytes = 0;
-                                var   data      = new byte[BYTES_TO_READ];
+                                ulong  doneBytes = 0;
+                                byte[] data      = new byte[BYTES_TO_READ];
 
                                 while(doneBytes < length)
                                 {
@@ -604,8 +608,8 @@ sealed class ChecksumCommand : Command
 
                                         if(errno != ErrorNumber.NoError)
                                         {
-                                            AaruConsole.
-                                                ErrorWriteLine($"Error {errno} while reading {BYTES_TO_READ} bytes from {doneBytes}, not continuing...");
+                                            AaruConsole.ErrorWriteLine($"Error {errno} while reading {BYTES_TO_READ
+                                            } bytes from {doneBytes}, not continuing...");
 
                                             return;
                                         }
@@ -625,14 +629,14 @@ sealed class ChecksumCommand : Command
 
                                         if(errno != ErrorNumber.NoError)
                                         {
-                                            AaruConsole.
-                                                ErrorWriteLine($"Error {errno} while reading {length - doneBytes} bytes from {doneBytes}, not continuing...");
+                                            AaruConsole.ErrorWriteLine($"Error {errno} while reading {length - doneBytes
+                                            } bytes from {doneBytes}, not continuing...");
 
                                             return;
                                         }
 
-                                        imageTask.Description =
-                                            $"Hashing bytes {doneBytes} to {doneBytes + (length - doneBytes)}";
+                                        imageTask.Description = $"Hashing bytes {doneBytes} to {
+                                            doneBytes + (length - doneBytes)}";
 
                                         doneBytes += length - doneBytes;
                                     }
@@ -677,14 +681,14 @@ sealed class ChecksumCommand : Command
 
                                         if(errno != ErrorNumber.NoError)
                                         {
-                                            AaruConsole.
-                                                ErrorWriteLine($"Error {errno} while reading {SECTORS_TO_READ} sectors from sector {doneSectors}, not continuing...");
+                                            AaruConsole.ErrorWriteLine($"Error {errno} while reading {SECTORS_TO_READ
+                                            } sectors from sector {doneSectors}, not continuing...");
 
                                             return;
                                         }
 
-                                        diskTask.Description =
-                                            $"Hashing sectors {doneSectors} to {doneSectors + SECTORS_TO_READ}";
+                                        diskTask.Description = $"Hashing sectors {doneSectors} to {
+                                            doneSectors + SECTORS_TO_READ}";
 
                                         doneSectors += SECTORS_TO_READ;
                                     }
@@ -695,14 +699,15 @@ sealed class ChecksumCommand : Command
 
                                         if(errno != ErrorNumber.NoError)
                                         {
-                                            AaruConsole.
-                                                ErrorWriteLine($"Error {errno} while reading {sectors - doneSectors} sectors from sector {doneSectors}, not continuing...");
+                                            AaruConsole.ErrorWriteLine($"Error {errno} while reading {
+                                                sectors - doneSectors} sectors from sector {doneSectors
+                                                }, not continuing...");
 
                                             return;
                                         }
 
-                                        diskTask.Description =
-                                            $"Hashing sectors {doneSectors} to {doneSectors + (sectors - doneSectors)}";
+                                        diskTask.Description = $"Hashing sectors {doneSectors} to {
+                                            doneSectors + (sectors - doneSectors)}";
 
                                         doneSectors += sectors - doneSectors;
                                     }

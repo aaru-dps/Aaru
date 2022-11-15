@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Scanning;
-
 using System;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Scanning;
 
 public sealed partial class MediaScan
 {

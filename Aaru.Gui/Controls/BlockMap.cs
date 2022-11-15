@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Controls;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -44,6 +42,8 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 using Avalonia.Visuals.Media.Imaging;
 using JetBrains.Annotations;
+
+namespace Aaru.Gui.Controls;
 
 // TODO: Partially fill clusters
 // TODO: React to size changes
@@ -418,13 +418,13 @@ public sealed class BlockMap : ItemsControl
 
         ulong clustersPerRow = (ulong)Width / BLOCK_SIZE;
 
-        var allBlocksDrawn = false;
+        bool allBlocksDrawn = false;
 
         for(ulong y = 0; y < Height && !allBlocksDrawn; y += BLOCK_SIZE)
         {
             for(ulong x = 0; x < Width; x += BLOCK_SIZE)
             {
-                ulong currentBlockValue = y * clustersPerRow / BLOCK_SIZE + x / BLOCK_SIZE;
+                ulong currentBlockValue = (y * clustersPerRow / BLOCK_SIZE) + (x / BLOCK_SIZE);
 
                 if(currentBlockValue >= _maxBlocks ||
                    currentBlockValue >= Blocks)
@@ -444,20 +444,20 @@ public sealed class BlockMap : ItemsControl
         using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
         using var                 ctx  = new DrawingContext(ctxi, false);
 
-        int squareWidth = (sideLength - 2 * borderWidth) / colors.Length;
-        var x           = 0;
-        var y           = 0;
+        int squareWidth = (sideLength - (2 * borderWidth)) / colors.Length;
+        int x           = 0;
+        int y           = 0;
 
         foreach(Color color in colors)
         {
             ctx.FillRectangle(new SolidColorBrush(color), new Rect(x, y, squareWidth, squareWidth));
-            x += squareWidth + 2 * borderWidth;
+            x += squareWidth + (2 * borderWidth);
 
             if(x < sideLength)
                 continue;
 
             x =  0;
-            y += squareWidth + 2 * borderWidth;
+            y += squareWidth + (2 * borderWidth);
         }
     }
 

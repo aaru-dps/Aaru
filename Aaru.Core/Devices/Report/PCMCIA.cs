@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Report;
-
 using Aaru.CommonTypes.Metadata;
 using Aaru.Decoders.PCMCIA;
+
+namespace Aaru.Core.Devices.Report;
 
 /// <summary>Implements creating a report for a PCMCIA device</summary>
 public sealed partial class DeviceReport

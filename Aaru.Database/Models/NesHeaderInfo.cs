@@ -1,8 +1,8 @@
-namespace Aaru.Database.Models;
-
 using System;
 using System.ComponentModel.DataAnnotations;
 using Aaru.CommonTypes.Enums;
+
+namespace Aaru.Database.Models;
 
 /// <inheritdoc />
 /// <summary>Information needed to rebuild an iNES/NES 2.0 header from a ROM hash</summary>

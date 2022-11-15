@@ -26,18 +26,17 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images.UltraISO;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images.UltraISO;
+
 [TestFixture]
 public class Nero : OpticalMediaImageTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TestFilesRoot, "Media image formats", "UltraISO", "Nero");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "UltraISO", "Nero");
     public override IMediaImage Plugin => new DiscImages.Nero();
 
     public override OpticalImageTestExpected[] Tests => new[]

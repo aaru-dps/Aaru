@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class T98
 {
@@ -50,14 +50,14 @@ public sealed partial class T98
         if(stream.Length % 256 != 0)
             return ErrorNumber.InvalidArgument;
 
-        var hdrB = new byte[256];
+        byte[] hdrB = new byte[256];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
-        for(var i = 4; i < 256; i++)
+        for(int i = 4; i < 256; i++)
             if(hdrB[i] != 0)
                 return ErrorNumber.InvalidArgument;
 
-        var cylinders = BitConverter.ToInt32(hdrB, 0);
+        int cylinders = BitConverter.ToInt32(hdrB, 0);
 
         _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
@@ -65,7 +65,7 @@ public sealed partial class T98
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-        _imageInfo.Sectors              = (ulong)(stream.Length / 256 - 1);
+        _imageInfo.Sectors              = (ulong)((stream.Length / 256) - 1);
         _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
         _imageInfo.SectorSize           = 256;
         _imageInfo.Cylinders            = (uint)cylinders;
@@ -95,7 +95,7 @@ public sealed partial class T98
 
         Stream stream = _t98ImageFilter.GetDataForkStream();
 
-        stream.Seek((long)(256 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+        stream.Seek((long)(256 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
         stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 

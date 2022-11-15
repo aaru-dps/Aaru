@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -155,7 +155,7 @@ public partial class Device
     public bool Read(out byte[] buffer, out uint[] response, uint lba, uint blockSize, ushort transferLength,
                      bool byteAddressed, uint timeout, out double duration)
     {
-        var sense = true;
+        bool sense = true;
         buffer   = null;
         response = null;
         duration = -1;
@@ -222,7 +222,7 @@ public partial class Device
                                   ushort transferLength, bool byteAddressed, uint timeout, out double duration)
     {
         buffer = new byte[transferLength * blockSize];
-        uint   address;
+        uint address;
         response = null;
 
         if(byteAddressed)
@@ -258,9 +258,9 @@ public partial class Device
                                         ushort transferLength, bool byteAddressed, uint timeout, out double duration)
     {
         buffer = new byte[transferLength * blockSize];
-        var blockBuffer = new byte[blockSize];
+        byte[] blockBuffer = new byte[blockSize];
         duration = 0;
-        var sense = true;
+        bool sense = true;
         response = null;
 
         for(uint i = 0; i < transferLength; i++)
@@ -326,8 +326,8 @@ public partial class Device
     public bool ReadWithBlockCount(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
                                    ushort transferLength, bool byteAddressed, uint timeout, out double duration)
     {
-        uint address  = byteAddressed ? lba * blockSize : lba;
-        var  commands = new MmcSingleCommand[3];
+        uint               address  = byteAddressed ? lba * blockSize : lba;
+        MmcSingleCommand[] commands = new MmcSingleCommand[3];
 
         // SET_BLOCK_COUNT
         commands[0] = new MmcSingleCommand

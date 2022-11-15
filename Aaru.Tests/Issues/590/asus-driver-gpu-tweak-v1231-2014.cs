@@ -1,12 +1,10 @@
-
-
 // ReSharper disable StringLiteralTypo
-
-namespace Aaru.Tests.Issues._590;
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+
+namespace Aaru.Tests.Issues._590;
 
 /* https://github.com/aaru-dps/Aaru/issues/590
  *

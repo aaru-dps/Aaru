@@ -1,13 +1,10 @@
-
-
 // ReSharper disable InconsistentNaming
 
-namespace Aaru.Tests.Devices.MultiMediaCard;
-
-using Aaru.Decoders.MMC;
 using Aaru.Helpers;
 using FluentAssertions.Execution;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Devices.MultiMediaCard;
 
 [TestFixture]
 public class CID
@@ -60,13 +57,13 @@ public class CID
     [Test]
     public void Test()
     {
-        for(var i = 0; i < cards.Length; i++)
+        for(int i = 0; i < cards.Length; i++)
             using(new AssertionScope())
                 Assert.Multiple(() =>
                 {
                     int count = Marshal.ConvertFromHexAscii(cids[i], out byte[] response);
                     Assert.AreEqual(16, count, $"Size - {cards[i]}");
-                    Aaru.Decoders.MMC.CID cid = Decoders.DecodeCID(response);
+                    Decoders.MMC.CID cid = Decoders.MMC.Decoders.DecodeCID(response);
                     Assert.IsNotNull(cid, $"Decoded - {cards[i]}");
                     Assert.AreEqual(manufacturers[i], cid.Manufacturer, $"Manufacturer - {cards[i]}");
                     Assert.AreEqual(applications[i], cid.ApplicationID, $"Application ID - {cards[i]}");

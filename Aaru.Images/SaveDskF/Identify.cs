@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class SaveDskF
 {
@@ -47,12 +47,13 @@ public sealed partial class SaveDskF
         if(stream.Length < 41)
             return false;
 
-        var hdr = new byte[40];
+        byte[] hdr = new byte[40];
         stream.EnsureRead(hdr, 0, 40);
 
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
-        return _header.magic is SDF_MAGIC or SDF_MAGIC_COMPRESSED or SDF_MAGIC_OLD && _header.fatCopies <= 2 &&
-               _header.padding == 0 && _header.commentOffset < stream.Length && _header.dataOffset < stream.Length;
+        return _header.magic is SDF_MAGIC or SDF_MAGIC_COMPRESSED or SDF_MAGIC_OLD &&
+               _header is { fatCopies: <= 2, padding: 0 } && _header.commentOffset < stream.Length &&
+               _header.dataOffset < stream.Length;
     }
 }

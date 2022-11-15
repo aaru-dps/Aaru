@@ -26,18 +26,18 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class DiskCopy42 : BlockMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 4.2");
-    public override IMediaImage Plugin => new DiscImages.DiskCopy42();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 4.2");
+    public override IMediaImage Plugin     => new DiscImages.DiskCopy42();
     public override BlockImageTestExpected[] Tests => new[]
     {
         new BlockImageTestExpected

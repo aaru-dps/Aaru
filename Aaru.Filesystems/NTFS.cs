@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Windows NT
 /// <inheritdoc />
@@ -65,7 +65,7 @@ public sealed class NTFS : IFilesystem
         if(2 + partition.Start >= partition.End)
             return false;
 
-        var eigthBytes = new byte[8];
+        byte[] eigthBytes = new byte[8];
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] ntfsBpb);
 
@@ -78,9 +78,9 @@ public sealed class NTFS : IFilesystem
         if(oemName != "NTFS    ")
             return false;
 
-        byte fatsNo    = ntfsBpb[0x010];
-        var  spFat     = BitConverter.ToUInt16(ntfsBpb, 0x016);
-        var  signature = BitConverter.ToUInt16(ntfsBpb, 0x1FE);
+        byte   fatsNo    = ntfsBpb[0x010];
+        ushort spFat     = BitConverter.ToUInt16(ntfsBpb, 0x016);
+        ushort signature = BitConverter.ToUInt16(ntfsBpb, 0x1FE);
 
         if(fatsNo != 0)
             return false;

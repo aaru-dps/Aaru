@@ -31,12 +31,6 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
-
-// ReSharper disable JoinDeclarationAndInitializer
-
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,12 +50,16 @@ using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
-using Aaru.Settings;
 using Schemas;
 using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using MediaType = Aaru.CommonTypes.MediaType;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+// ReSharper disable JoinDeclarationAndInitializer
+
+namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping SCSI Block Commands and Reduced Block Commands devices</summary>
 partial class Dump
@@ -77,7 +75,7 @@ partial class Dump
         bool               sense;
         byte               scsiMediumType     = 0;
         byte               scsiDensityCode    = 0;
-        var                containsFloppyPage = false;
+        bool               containsFloppyPage = false;
         const ushort       sbcProfile         = 0x0001;
         DateTime           start;
         DateTime           end;
@@ -357,9 +355,9 @@ partial class Dump
         UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
         _dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-        var mhddLog      = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
-        var ibgLog       = new IbgLog(_outputPrefix  + ".ibg", sbcProfile);
-        var imageCreated = false;
+        var  mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
+        var  ibgLog = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
+        bool imageCreated = false;
 
         if(!opticalDisc)
         {
@@ -382,14 +380,14 @@ partial class Dump
 
         start = DateTime.UtcNow;
         double imageWriteDuration      = 0;
-        var    writeSingleOpticalTrack = true;
+        bool   writeSingleOpticalTrack = true;
 
         if(opticalDisc)
         {
             if(outputFormat is IWritableOpticalImage opticalPlugin)
             {
-                sense = _dev.ReadDiscInformation(out byte[] readBuffer, out _, MmcDiscInformationDataTypes.DiscInformation,
-                                                 _dev.Timeout, out _);
+                sense = _dev.ReadDiscInformation(out byte[] readBuffer, out _,
+                                                 MmcDiscInformationDataTypes.DiscInformation, _dev.Timeout, out _);
 
                 if(!sense)
                 {
@@ -582,7 +580,7 @@ partial class Dump
         }
         else if(decMode?.Pages != null)
         {
-            var setGeometry = false;
+            bool setGeometry = false;
 
             foreach(Modes.ModePage page in decMode.Value.Pages)
                 switch(page.Page)
@@ -710,10 +708,10 @@ partial class Dump
         if(_resume?.BlankExtents != null)
             blankExtents = ExtentsConverter.FromMetadata(_resume.BlankExtents);
 
-        var newTrim = false;
+        bool newTrim = false;
 
         if(mediaTags.TryGetValue(MediaTagType.DVD_CMI, out byte[] cmi) &&
-           Settings.Current.EnableDecryption                           &&
+           Settings.Settings.Current.EnableDecryption                  &&
            _titleKeys                                                  &&
            dskType               == MediaType.DVDROM                   &&
            (CopyrightType)cmi[0] == CopyrightType.CSS)
@@ -782,11 +780,11 @@ partial class Dump
            _retryPasses > 0)
             RetrySbcData(scsiReader, currentTry, extents, ref totalDuration, blankExtents);
 
-        if(_resume.MissingTitleKeys?.Count > 0 &&
-           !_aborted                           &&
-           _retryPasses > 0                    &&
-           Settings.Current.EnableDecryption   &&
-           _titleKeys                          &&
+        if(_resume.MissingTitleKeys?.Count > 0        &&
+           !_aborted                                  &&
+           _retryPasses > 0                           &&
+           Settings.Settings.Current.EnableDecryption &&
+           _titleKeys                                 &&
            mediaTags.ContainsKey(MediaTagType.DVD_DiscKey_Decrypted))
             RetryTitleKeys(dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted], ref totalDuration);
         #endregion Error handling
@@ -958,7 +956,7 @@ partial class Dump
 
         // TODO: Media Serial Number
         // TODO: Non-removable drive information
-        var metadata = new ImageInfo
+        var metadata = new CommonTypes.Structs.ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()

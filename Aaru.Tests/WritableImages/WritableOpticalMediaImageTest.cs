@@ -1,5 +1,3 @@
-namespace Aaru.Tests.WritableImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +13,8 @@ using Aaru.Devices;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using NUnit.Framework;
+
+namespace Aaru.Tests.WritableImages;
 
 public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
 {
@@ -81,10 +81,10 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         image.Tracks.Select(t => t.Pregap).Should().
                               BeEquivalentTo(test.Tracks.Select(s => s.Pregap), $"Track pregap: {testFile}");
 
-                        var trackNo = 0;
+                        int trackNo = 0;
 
-                        var   flags           = new byte?[image.Tracks.Count];
-                        ulong latestEndSector = 0;
+                        byte?[] flags           = new byte?[image.Tracks.Count];
+                        ulong   latestEndSector = 0;
 
                         foreach(Track currentTrack in image.Tracks)
                         {
@@ -106,7 +106,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         flags.Should().BeEquivalentTo(test.Tracks.Select(s => s.Flags), $"Track flags: {testFile}");
 
                         Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
-                                        $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors} for image");
+                                        $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors
+                                        } for image");
                     });
             }
         });
@@ -191,8 +192,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         else
                             sectorsToDo = (uint)(trackSectors - doneSectors);
 
-                        var useNotLong = false;
-                        var result     = false;
+                        bool useNotLong = false;
+                        bool result     = false;
 
                         if(useLong)
                         {
@@ -230,7 +231,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         }
 
                         Assert.IsTrue(result,
-                                      $"Error {outputFormat.ErrorMessage} writing sector {doneSectors + track.StartSector}...");
+                                      $"Error {outputFormat.ErrorMessage} writing sector {
+                                          doneSectors + track.StartSector}...");
 
                         doneSectors += sectorsToDo;
                     }
@@ -241,9 +243,9 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 string                   mcn                       = null;
                 HashSet<int>             subchannelExtents         = new();
                 Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
-                var                      tracks                    = new Track[inputFormat.Tracks.Count];
+                Track[]                  tracks                    = new Track[inputFormat.Tracks.Count];
 
-                for(var i = 0; i < tracks.Length; i++)
+                for(int i = 0; i < tracks.Length; i++)
                 {
                     tracks[i] = new Track
                     {
@@ -403,7 +405,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                             }
 
                             Assert.IsTrue(result,
-                                          $"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors + track.StartSector}, not continuing...");
+                                          $"Error {outputFormat.ErrorMessage} writing tag for sector {
+                                              doneSectors + track.StartSector}, not continuing...");
 
                             doneSectors += sectorsToDo;
                         }
@@ -427,18 +430,14 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
 
                 // TODO: Progress
                 if(inputFormat.Info.MediaType is MediaType.CD or MediaType.CDDA or MediaType.CDG or MediaType.CDEG
-                                              or MediaType.CDI or MediaType.CDROM or MediaType.CDROMXA
-                                              or MediaType.CDPLUS or MediaType.CDMO or MediaType.CDR or MediaType.CDRW
-                                              or MediaType.CDMRW or MediaType.VCD or MediaType.SVCD or MediaType.PCD
-                                              or MediaType.DTSCD or MediaType.CDMIDI or MediaType.CDV
-                                              or MediaType.CDIREADY or MediaType.FMTOWNS or MediaType.PS1CD
-                                              or MediaType.PS2CD or MediaType.MEGACD or MediaType.SATURNCD
-                                              or MediaType.GDROM or MediaType.GDR or MediaType.MilCD
-                                              or MediaType.SuperCDROM2 or MediaType.JaguarCD or MediaType.ThreeDO
-                                              or MediaType.PCFX or MediaType.NeoGeoCD or MediaType.CDTV
-                                              or MediaType.CD32 or MediaType.Playdia or MediaType.Pippin
-                                              or MediaType.VideoNow or MediaType.VideoNowColor or MediaType.VideoNowXp
-                                              or MediaType.CVD)
+                   or MediaType.CDI or MediaType.CDROM or MediaType.CDROMXA or MediaType.CDPLUS or MediaType.CDMO
+                   or MediaType.CDR or MediaType.CDRW or MediaType.CDMRW or MediaType.VCD or MediaType.SVCD
+                   or MediaType.PCD or MediaType.DTSCD or MediaType.CDMIDI or MediaType.CDV or MediaType.CDIREADY
+                   or MediaType.FMTOWNS or MediaType.PS1CD or MediaType.PS2CD or MediaType.MEGACD or MediaType.SATURNCD
+                   or MediaType.GDROM or MediaType.GDR or MediaType.MilCD or MediaType.SuperCDROM2 or MediaType.JaguarCD
+                   or MediaType.ThreeDO or MediaType.PCFX or MediaType.NeoGeoCD or MediaType.CDTV or MediaType.CD32
+                   or MediaType.Playdia or MediaType.Pippin or MediaType.VideoNow or MediaType.VideoNowColor
+                   or MediaType.VideoNowXp or MediaType.CVD)
                     CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, inputFormat.Info.Sectors,
                                                     null, null, null, null, null, outputFormat);
 
@@ -484,10 +483,10 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         image.Tracks.Select(t => t.Pregap).Should().
                               BeEquivalentTo(test.Tracks.Select(s => s.Pregap), $"Track pregap (output): {testFile}");
 
-                        var trackNo = 0;
+                        int trackNo = 0;
 
-                        var   flags           = new byte?[image.Tracks.Count];
-                        ulong latestEndSector = 0;
+                        byte?[] flags           = new byte?[image.Tracks.Count];
+                        ulong   latestEndSector = 0;
 
                         foreach(Track currentTrack in image.Tracks)
                         {
@@ -510,7 +509,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                                                       $"Track flags (output): {testFile}");
 
                         Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
-                                        $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors} for image (output)");
+                                        $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors
+                                        } for image (output)");
                     });
 
                 Md5Context ctx;

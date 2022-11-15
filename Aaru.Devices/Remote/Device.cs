@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Remote;
-
 using System;
 using System.Net.Sockets;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.SecureDigital;
+
+namespace Aaru.Devices.Remote;
 
 /// <inheritdoc />
 public sealed partial class Device : Devices.Device
@@ -165,7 +165,7 @@ public sealed partial class Device : Devices.Device
             if(dev._cachedScr != null)
             {
                 dev.Type = DeviceType.SecureDigital;
-                CID decoded = Decoders.DecodeCID(dev._cachedCid);
+                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(dev._cachedCid);
                 dev.Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -177,8 +177,8 @@ public sealed partial class Device : Devices.Device
             else
             {
                 dev.Type = DeviceType.MMC;
-                Aaru.Decoders.MMC.CID decoded = Aaru.Decoders.MMC.Decoders.DecodeCID(dev._cachedCid);
-                dev.Manufacturer = Aaru.Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
+                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(dev._cachedCid);
+                dev.Manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
                 dev.FirmwareRevision =

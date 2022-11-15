@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class T98
 {
@@ -117,7 +117,7 @@ public sealed partial class T98
             return false;
         }
 
-        _writingStream.Seek((long)(256 + sectorAddress * 256), SeekOrigin.Begin);
+        _writingStream.Seek((long)(256 + (sectorAddress * 256)), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -149,7 +149,7 @@ public sealed partial class T98
             return false;
         }
 
-        _writingStream.Seek((long)(256 + sectorAddress * 256), SeekOrigin.Begin);
+        _writingStream.Seek((long)(256 + (sectorAddress * 256)), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -183,7 +183,7 @@ public sealed partial class T98
             return false;
         }
 
-        var cylinders = (int)(_imageInfo.Sectors / 33 / 8);
+        int cylinders = (int)(_imageInfo.Sectors / 33 / 8);
         _writingStream.Seek(0, SeekOrigin.Begin);
         _writingStream.Write(BitConverter.GetBytes(cylinders), 0, 4);
 

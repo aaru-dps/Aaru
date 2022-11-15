@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Dim
 {
@@ -254,7 +254,7 @@ public sealed partial class Dim
 
         Stream stream = _dimImageFilter.GetDataForkStream();
 
-        stream.Seek((long)(DATA_OFFSET + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+        stream.Seek((long)(DATA_OFFSET + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
         stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 

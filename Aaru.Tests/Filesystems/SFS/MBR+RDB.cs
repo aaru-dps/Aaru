@@ -26,24 +26,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Filesystems.SFS;
-
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+namespace Aaru.Tests.Filesystems.SFS;
+
+[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
 public class MBR_RDB : FilesystemTest
 {
     public MBR_RDB() : base("SmartFileSystem") {}
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (MBR+RDB)");
-    public override IFilesystem Plugin     => new SFS();
+    public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();
     public override bool        Partitions => true;
 
     public override FileSystemTest[] Tests => new[]

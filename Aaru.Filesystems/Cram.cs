@@ -32,8 +32,6 @@
 
 // ReSharper disable UnusedMember.Local
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -44,6 +42,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the CRAM filesystem</summary>
@@ -76,7 +76,7 @@ public sealed class Cram : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var magic = BitConverter.ToUInt32(sector, 0x00);
+        uint magic = BitConverter.ToUInt32(sector, 0x00);
 
         return magic is CRAM_MAGIC or CRAM_CIGAM;
     }
@@ -91,10 +91,10 @@ public sealed class Cram : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        var magic = BitConverter.ToUInt32(sector, 0x00);
+        uint magic = BitConverter.ToUInt32(sector, 0x00);
 
-        var crSb         = new SuperBlock();
-        var littleEndian = true;
+        var  crSb         = new SuperBlock();
+        bool littleEndian = true;
 
         switch(magic)
         {
@@ -135,11 +135,8 @@ public sealed class Cram : IFilesystem
 
     enum CramCompression : ushort
     {
-        Zlib = 1,
-        Lzma = 2,
-        Lzo  = 3,
-        Xz   = 4,
-        Lz4  = 5
+        Zlib = 1, Lzma = 2, Lzo = 3,
+        Xz   = 4, Lz4  = 5
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

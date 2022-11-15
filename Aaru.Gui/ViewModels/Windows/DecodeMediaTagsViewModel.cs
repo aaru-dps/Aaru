@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System.Collections.ObjectModel;
 using System.Text;
 using Aaru.CommonTypes;
@@ -55,6 +53,8 @@ using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Inquiry = Aaru.Decoders.SCSI.Inquiry;
 using Spare = Aaru.Decoders.DVD.Spare;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class DecodeMediaTagsViewModel : ViewModelBase
 {

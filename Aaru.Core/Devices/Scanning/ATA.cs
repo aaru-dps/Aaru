@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Scanning;
-
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Core.Logging;
+
+namespace Aaru.Core.Devices.Scanning;
 
 /// <summary>Implements scanning the media from an ATA device</summary>
 public sealed partial class MediaScan
@@ -225,12 +225,12 @@ public sealed partial class MediaScan
                 InitProgress?.Invoke();
 
                 if(ataReader.CanSeekLba && _seekTest)
-                    for(var i = 0; i < seekTimes; i++)
+                    for(int i = 0; i < seekTimes; i++)
                     {
                         if(_aborted)
                             break;
 
-                        var seekPos = (uint)rnd.Next((int)results.Blocks);
+                        uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
                         PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 
@@ -356,14 +356,14 @@ public sealed partial class MediaScan
                 InitProgress?.Invoke();
 
                 if(ataReader.CanSeek)
-                    for(var i = 0; i < seekTimes; i++)
+                    for(int i = 0; i < seekTimes; i++)
                     {
                         if(_aborted)
                             break;
 
-                        var seekCy = (ushort)rnd.Next(cylinders);
-                        var seekHd = (byte)rnd.Next(heads);
-                        var seekSc = (byte)rnd.Next(sectors);
+                        ushort seekCy = (ushort)rnd.Next(cylinders);
+                        byte   seekHd = (byte)rnd.Next(heads);
+                        byte   seekSc = (byte)rnd.Next(sectors);
 
                         PulseProgress?.Invoke($"\rSeeking to cylinder {seekCy}, head {seekHd}, sector {seekSc}...\t\t");
 

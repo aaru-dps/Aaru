@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -46,6 +44,8 @@ using Aaru.Gui.Models;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageVerifyViewModel : ViewModelBase
 {
@@ -422,11 +422,11 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     ImageResultVisible = true;
 
                     ImageResultText = discCheckStatus switch
-                                      {
-                                          true  => "Disc image checksums are correct",
-                                          false => "Disc image checksums are incorrect",
-                                          null  => "Disc image does not contain checksums"
-                                      };
+                    {
+                        true  => "Disc image checksums are correct",
+                        false => "Disc image checksums are incorrect",
+                        null  => "Disc image does not contain checksums"
+                    };
                 });
 
                 AaruConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);

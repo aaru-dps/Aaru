@@ -24,17 +24,15 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -50,7 +48,7 @@ partial class Dump
         bool    recoveredError;
         bool    blankCheck;
         byte[]  buffer;
-        var     newBlank     = false;
+        bool    newBlank = false;
 
         if(_outputPlugin is not IWritableImage outputFormat)
         {

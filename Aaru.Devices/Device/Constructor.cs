@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -42,6 +40,8 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Helpers;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
+
+namespace Aaru.Devices;
 
 /// <summary>Implements a device or media containing drive</summary>
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnusedMember.Global"),
@@ -128,7 +128,7 @@ public partial class Device
             dev.Error     = false;
         }
 
-        if(dev.Type != DeviceType.SCSI && dev.Type != DeviceType.ATAPI && !(dev.IsUsb || dev.IsFireWire) ||
+        if((dev.Type != DeviceType.SCSI && dev.Type != DeviceType.ATAPI && !(dev.IsUsb || dev.IsFireWire)) ||
            dev.Manufacturer == "ATA")
         {
             bool ataSense = dev.AtaIdentify(out byte[] ataBuf, out _);

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -40,6 +38,8 @@ using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class AppleDOS
 {

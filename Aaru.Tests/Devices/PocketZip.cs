@@ -26,8 +26,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes;
@@ -36,6 +34,8 @@ using Aaru.DiscImages;
 using Aaru.Filters;
 using FluentAssertions.Execution;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Devices;
 
 [TestFixture]
 public class PocketZip
@@ -69,7 +69,7 @@ public class PocketZip
 
         Assert.Multiple(() =>
         {
-            for(var i = 0; i < _testFiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
                 var filter = new LZip();
                 filter.Open(_testFiles[i]);

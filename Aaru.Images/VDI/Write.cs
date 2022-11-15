@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Vdi
 {
@@ -89,12 +89,12 @@ public sealed partial class Vdi
             return false;
         }
 
-        var ibmEntries = (uint)(sectors * sectorSize / DEFAULT_BLOCK_SIZE);
+        uint ibmEntries = (uint)(sectors * sectorSize / DEFAULT_BLOCK_SIZE);
 
         if(sectors * sectorSize % DEFAULT_BLOCK_SIZE > 0)
             ibmEntries++;
 
-        uint headerSectors = 1 + ibmEntries * 4 / sectorSize;
+        uint headerSectors = 1 + (ibmEntries * 4 / sectorSize);
 
         if(ibmEntries * 4 % sectorSize != 0)
             headerSectors++;
@@ -178,7 +178,7 @@ public sealed partial class Vdi
             _vHdr.allocatedBlocks++;
         }
 
-        ulong imageOff = _vHdr.offsetData + (ulong)ibmOff * _vHdr.blockSize;
+        ulong imageOff = _vHdr.offsetData + ((ulong)ibmOff * _vHdr.blockSize);
 
         _writingStream.Seek((long)imageOff, SeekOrigin.Begin);
         _writingStream.Seek((long)secOff, SeekOrigin.Current);
@@ -220,7 +220,7 @@ public sealed partial class Vdi
 
         for(uint i = 0; i < length; i++)
         {
-            var tmp = new byte[_imageInfo.SectorSize];
+            byte[] tmp = new byte[_imageInfo.SectorSize];
             Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
             if(!WriteSector(tmp, sectorAddress + i))
@@ -259,8 +259,7 @@ public sealed partial class Vdi
         }
 
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
-            _vHdr.comments = _imageInfo.Comments.Length > 255 ? _imageInfo.Comments[..255]
-                                 : _imageInfo.Comments;
+            _vHdr.comments = _imageInfo.Comments.Length > 255 ? _imageInfo.Comments[..255] : _imageInfo.Comments;
 
         if(_vHdr.logicalCylinders == 0)
         {
@@ -281,14 +280,13 @@ public sealed partial class Vdi
                 _vHdr.logicalCylinders = (uint)(_imageInfo.Sectors / _vHdr.logicalHeads / _vHdr.logicalSpt);
 
                 if(_vHdr.logicalCylinders == 0 &&
-                   _vHdr.logicalHeads     == 0 &&
-                   _vHdr.logicalSpt       == 0)
+                   _vHdr is { logicalHeads: 0, logicalSpt: 0 })
                     break;
             }
         }
 
-        var    hdr    = new byte[Marshal.SizeOf<Header>()];
-        IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(_vHdr, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

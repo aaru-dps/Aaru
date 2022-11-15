@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
@@ -83,7 +83,7 @@ public sealed partial class XboxFatPlugin
 
         currentDirectory = _rootDirectory;
 
-        for(var p = 0; p < pieces.Length; p++)
+        for(int p = 0; p < pieces.Length; p++)
         {
             entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
 
@@ -104,12 +104,12 @@ public sealed partial class XboxFatPlugin
             if(clusters is null)
                 return ErrorNumber.InvalidArgument;
 
-            var directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
+            byte[] directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
 
-            for(var i = 0; i < clusters.Length; i++)
+            for(int i = 0; i < clusters.Length; i++)
             {
                 ErrorNumber errno =
-                    _imagePlugin.ReadSectors(_firstClusterSector + (clusters[i] - 1) * _sectorsPerCluster,
+                    _imagePlugin.ReadSectors(_firstClusterSector + ((clusters[i] - 1) * _sectorsPerCluster),
                                              _sectorsPerCluster, out byte[] buffer);
 
                 if(errno != ErrorNumber.NoError)
@@ -120,7 +120,7 @@ public sealed partial class XboxFatPlugin
 
             currentDirectory = new Dictionary<string, DirectoryEntry>();
 
-            var pos = 0;
+            int pos = 0;
 
             while(pos < directoryBuffer.Length)
             {

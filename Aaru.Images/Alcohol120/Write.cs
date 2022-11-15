@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,6 +42,8 @@ using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Alcohol120
 {
@@ -244,7 +244,7 @@ public sealed partial class Alcohol120
         }
 
         _imageStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                  SeekOrigin.Begin);
 
         _imageStream.Write(data, 0, data.Length);
@@ -304,7 +304,7 @@ public sealed partial class Alcohol120
         {
             case TrackSubchannelType.None:
                 _imageStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                    Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
                          SeekOrigin.Begin);
 
                 _imageStream.Write(data, 0, data.Length);
@@ -315,7 +315,7 @@ public sealed partial class Alcohol120
             case TrackSubchannelType.Raw:
             case TrackSubchannelType.RawInterleaved:
                 _imageStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)),
+                    Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))),
                          SeekOrigin.Begin);
 
                 for(uint i = 0; i < length; i++)
@@ -361,10 +361,10 @@ public sealed partial class Alcohol120
             return false;
         }
 
-        var subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
+        uint subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
 
         _imageStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize)),
+            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize))),
                  SeekOrigin.Begin);
 
         _imageStream.Write(data, 0, data.Length);
@@ -406,12 +406,12 @@ public sealed partial class Alcohol120
             return false;
         }
 
-        var subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
+        uint subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
 
         for(uint i = 0; i < length; i++)
         {
             _imageStream.
-                Seek((long)(track.FileOffset + (i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize)),
+                Seek((long)(track.FileOffset + ((i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize))),
                      SeekOrigin.Begin);
 
             _imageStream.Write(data, (int)(i * track.RawBytesPerSector), track.RawBytesPerSector);
@@ -431,7 +431,7 @@ public sealed partial class Alcohol120
         {
             CommonTypes.Structs.Track[] tmpTracks = tracks.OrderBy(t => t.Sequence).ToArray();
 
-            for(var i = 1; i < tmpTracks.Length; i++)
+            for(int i = 1; i < tmpTracks.Length; i++)
             {
                 CommonTypes.Structs.Track firstTrackInSession =
                     tracks.FirstOrDefault(t => t.Session == tmpTracks[i].Session);
@@ -457,7 +457,7 @@ public sealed partial class Alcohol120
 
         foreach(CommonTypes.Structs.Track track in tracks.OrderBy(t => t.Sequence))
         {
-            uint                      subchannelSize;
+            uint subchannelSize;
 
             switch(track.SubchannelType)
             {
@@ -527,7 +527,7 @@ public sealed partial class Alcohol120
         _alcToc         = new Dictionary<int, Dictionary<int, Track>>();
         _writingTracks  = _writingTracks.OrderBy(t => t.Session).ThenBy(t => t.Sequence).ToList();
         _alcTrackExtras = new Dictionary<int, TrackExtra>();
-        long currentTrackOffset = header.sessionOffset + Marshal.SizeOf<Session>() * sessions;
+        long currentTrackOffset = header.sessionOffset + (Marshal.SizeOf<Session>() * sessions);
 
         byte[] tmpToc = null;
 
@@ -543,9 +543,9 @@ public sealed partial class Alcohol120
         FullTOC.CDFullTOC? decodedToc = FullTOC.Decode(tmpToc);
 
         long currentExtraOffset = currentTrackOffset;
-        var  extraCount         = 0;
+        int  extraCount         = 0;
 
-        for(var i = 1; i <= sessions; i++)
+        for(int i = 1; i <= sessions; i++)
             if(decodedToc.HasValue)
             {
                 extraCount += decodedToc.Value.TrackDescriptors.Count(t => t.SessionNumber == i);
@@ -569,7 +569,7 @@ public sealed partial class Alcohol120
                 extraCount         += 2;
             }
 
-        long footerOffset = currentExtraOffset + Marshal.SizeOf<TrackExtra>() * extraCount;
+        long footerOffset = currentExtraOffset + (Marshal.SizeOf<TrackExtra>() * extraCount);
 
         if(_bca != null)
         {
@@ -611,7 +611,7 @@ public sealed partial class Alcohol120
             _alcToc.Add(1, _alcTracks);
         }
         else
-            for(var i = 1; i <= sessions; i++)
+            for(int i = 1; i <= sessions; i++)
             {
                 CommonTypes.Structs.Track firstTrack = _writingTracks.First(t => t.Session == i);
                 CommonTypes.Structs.Track lastTrack  = _writingTracks.Last(t => t.Session  == i);
@@ -685,8 +685,8 @@ public sealed partial class Alcohol120
                         psec = (byte)(_imageInfo.MediaType == MediaType.CDI
                                           ? 0x10
                                           : _writingTracks.Any(t => t.Type is TrackType.CdMode2Form1
-                                                                           or TrackType.CdMode2Form2
-                                                                           or TrackType.CdMode2Formless)
+                                                                        or TrackType.CdMode2Form2
+                                                                        or TrackType.CdMode2Formless)
                                               ? 0x20
                                               : 0),
                         extraOffset = (uint)currentExtraOffset
@@ -769,7 +769,7 @@ public sealed partial class Alcohol120
                                                  (track.SubchannelType != TrackSubchannelType.None ? 96 : 0));
 
                     alcTrk.startLba     = (uint)(track.StartSector + track.Pregap);
-                    alcTrk.startOffset  = track.FileOffset + alcTrk.sectorSize * track.Pregap;
+                    alcTrk.startOffset  = track.FileOffset + (alcTrk.sectorSize * track.Pregap);
                     alcTrk.files        = 1;
                     alcTrk.extraOffset  = (uint)currentExtraOffset;
                     alcTrk.footerOffset = (uint)footerOffset;
@@ -894,8 +894,8 @@ public sealed partial class Alcohol120
 
         // Write header
         _descriptorStream.Seek(0, SeekOrigin.Begin);
-        var    block    = new byte[Marshal.SizeOf<Header>()];
-        IntPtr blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        byte[] block    = new byte[Marshal.SizeOf<Header>()];
+        nint   blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(header, blockPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
@@ -1075,8 +1075,8 @@ public sealed partial class Alcohol120
             {
                 if(track.SubchannelType == 0)
                 {
-                    ErrorMessage =
-                        $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+                    ErrorMessage = $"Trying to write subchannel to track {track.Sequence
+                    }, that does not have subchannel";
 
                     return false;
                 }
@@ -1089,7 +1089,7 @@ public sealed partial class Alcohol120
                 }
 
                 _imageStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) + track.RawBytesPerSector,
+                    Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))) + track.RawBytesPerSector,
                          SeekOrigin.Begin);
 
                 _imageStream.Write(data, 0, data.Length);
@@ -1130,8 +1130,8 @@ public sealed partial class Alcohol120
             {
                 if(track.SubchannelType == 0)
                 {
-                    ErrorMessage =
-                        $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+                    ErrorMessage = $"Trying to write subchannel to track {track.Sequence
+                    }, that does not have subchannel";
 
                     return false;
                 }
@@ -1146,7 +1146,7 @@ public sealed partial class Alcohol120
                 for(uint i = 0; i < length; i++)
                 {
                     _imageStream.
-                        Seek((long)(track.FileOffset + (i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) + track.RawBytesPerSector,
+                        Seek((long)(track.FileOffset + ((i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96))) + track.RawBytesPerSector,
                              SeekOrigin.Begin);
 
                     _imageStream.Write(data, (int)(i * 96), 96);

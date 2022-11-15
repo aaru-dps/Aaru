@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Dialogs;
-
 using System.Reactive;
 using Aaru.Gui.Views.Dialogs;
 using Aaru.Settings;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Dialogs;
 
 public sealed class SettingsViewModel : ViewModelBase
 {
@@ -61,22 +61,22 @@ public sealed class SettingsViewModel : ViewModelBase
     {
         _view                      = view;
         GdprVisible                = gdprChange;
-        SaveReportsGloballyChecked = Settings.Current.SaveReportsGlobally;
-        ShareReportsChecked        = Settings.Current.ShareReports;
+        SaveReportsGloballyChecked = Settings.Settings.Current.SaveReportsGlobally;
+        ShareReportsChecked        = Settings.Settings.Current.ShareReports;
 
-        if(Settings.Current.Stats != null)
+        if(Settings.Settings.Current.Stats != null)
         {
             SaveStatsChecked       = true;
-            ShareStatsChecked      = Settings.Current.Stats.ShareStats;
-            CommandStatsChecked    = Settings.Current.Stats.CommandStats;
-            DeviceStatsChecked     = Settings.Current.Stats.DeviceStats;
-            FilesystemStatsChecked = Settings.Current.Stats.FilesystemStats;
-            FilterStatsChecked     = Settings.Current.Stats.FilterStats;
-            MediaImageStatsChecked = Settings.Current.Stats.MediaImageStats;
-            MediaScanStatsChecked  = Settings.Current.Stats.MediaScanStats;
-            PartitionStatsChecked  = Settings.Current.Stats.PartitionStats;
-            MediaStatsChecked      = Settings.Current.Stats.MediaStats;
-            VerifyStatsChecked     = Settings.Current.Stats.VerifyStats;
+            ShareStatsChecked      = Settings.Settings.Current.Stats.ShareStats;
+            CommandStatsChecked    = Settings.Settings.Current.Stats.CommandStats;
+            DeviceStatsChecked     = Settings.Settings.Current.Stats.DeviceStats;
+            FilesystemStatsChecked = Settings.Settings.Current.Stats.FilesystemStats;
+            FilterStatsChecked     = Settings.Settings.Current.Stats.FilterStats;
+            MediaImageStatsChecked = Settings.Settings.Current.Stats.MediaImageStats;
+            MediaScanStatsChecked  = Settings.Settings.Current.Stats.MediaScanStats;
+            PartitionStatsChecked  = Settings.Settings.Current.Stats.PartitionStats;
+            MediaStatsChecked      = Settings.Settings.Current.Stats.MediaStats;
+            VerifyStatsChecked     = Settings.Settings.Current.Stats.VerifyStats;
         }
         else
             SaveStatsChecked = false;
@@ -265,11 +265,11 @@ pool with no way of using them to identify you.";
 
     void ExecuteSaveCommand()
     {
-        Settings.Current.SaveReportsGlobally = SaveReportsGloballyChecked;
-        Settings.Current.ShareReports        = ShareReportsChecked;
+        Settings.Settings.Current.SaveReportsGlobally = SaveReportsGloballyChecked;
+        Settings.Settings.Current.ShareReports        = ShareReportsChecked;
 
         if(SaveStatsChecked)
-            Settings.Current.Stats = new StatsSettings
+            Settings.Settings.Current.Stats = new StatsSettings
             {
                 ShareStats      = ShareStatsChecked,
                 CommandStats    = CommandStatsChecked,
@@ -283,10 +283,10 @@ pool with no way of using them to identify you.";
                 VerifyStats     = VerifyStatsChecked
             };
         else
-            Settings.Current.Stats = null;
+            Settings.Settings.Current.Stats = null;
 
-        Settings.Current.GdprCompliance = DicSettings.GDPR_LEVEL;
-        Settings.SaveSettings();
+        Settings.Settings.Current.GdprCompliance = DicSettings.GDPR_LEVEL;
+        Settings.Settings.SaveSettings();
         _view.Close();
     }
 

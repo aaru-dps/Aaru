@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Decoders.ATA;
+
+namespace Aaru.Devices;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public partial class Device
@@ -80,7 +80,7 @@ public partial class Device
     {
         duration       = 0;
         sense          = true;
-        errorRegisters = default(AtaErrorRegistersChs);
+        errorRegisters = default;
 
         return -1;
     }
@@ -103,7 +103,7 @@ public partial class Device
                                       AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                       uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
-        errorRegisters = default(AtaErrorRegistersLba28);
+        errorRegisters = default;
         duration       = 0;
         sense          = true;
 
@@ -128,7 +128,7 @@ public partial class Device
                                       AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
                                       uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
-        errorRegisters = default(AtaErrorRegistersLba48);
+        errorRegisters = default;
         duration       = 0;
         sense          = true;
 

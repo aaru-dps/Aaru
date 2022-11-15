@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
@@ -65,7 +65,7 @@ public sealed partial class XboxFatPlugin
         if(fileBlock >= clusters.Length)
             return ErrorNumber.InvalidArgument;
 
-        deviceBlock = (long)(_firstClusterSector + (clusters[fileBlock] - 1) * _sectorsPerCluster);
+        deviceBlock = (long)(_firstClusterSector + ((clusters[fileBlock] - 1) * _sectorsPerCluster));
 
         return ErrorNumber.NoError;
     }
@@ -120,13 +120,13 @@ public sealed partial class XboxFatPlugin
 
         var ms = new MemoryStream();
 
-        for(var i = 0; i < sizeInClusters; i++)
+        for(int i = 0; i < sizeInClusters; i++)
         {
             if(i + firstCluster >= clusters.Length)
                 return ErrorNumber.InvalidArgument;
 
             ErrorNumber errno =
-                _imagePlugin.ReadSectors(_firstClusterSector + (clusters[i + firstCluster] - 1) * _sectorsPerCluster,
+                _imagePlugin.ReadSectors(_firstClusterSector + ((clusters[i + firstCluster] - 1) * _sectorsPerCluster),
                                          _sectorsPerCluster, out byte[] buffer);
 
             if(errno != ErrorNumber.NoError)
@@ -262,7 +262,7 @@ public sealed partial class XboxFatPlugin
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;
 
-        var parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
+        string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
         ErrorNumber err = ReadDir(parentPath, out _);
 

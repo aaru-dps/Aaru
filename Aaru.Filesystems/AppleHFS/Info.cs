@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Linq;
 using System.Text;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
@@ -113,7 +113,7 @@ public sealed partial class AppleHFS
         ushort      drSigWord;
         ErrorNumber errno;
 
-        var apmFromHddOnCd = false;
+        bool apmFromHddOnCd = false;
 
         if(imagePlugin.Info.SectorSize is 2352 or 2448 or 2048)
         {

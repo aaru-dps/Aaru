@@ -31,8 +31,6 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-namespace Aaru.Commands.Media;
-
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -52,9 +50,10 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Devices.Dumping;
 using Aaru.Core.Logging;
-using Aaru.Devices;
 using Schemas;
 using Spectre.Console;
+
+namespace Aaru.Commands.Media;
 
 // TODO: Add raw dumping
 sealed class DumpMediaCommand : Command
@@ -224,7 +223,7 @@ sealed class DumpMediaCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -409,7 +408,7 @@ sealed class DumpMediaCommand : Command
                 AaruConsole.WriteLine("Please insert media with title {0} and press any key to continue...",
                                       responseLine);
 
-                Console.ReadKey();
+                System.Console.ReadKey();
                 Thread.Sleep(1000);
             }
 
@@ -427,13 +426,13 @@ sealed class DumpMediaCommand : Command
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Device      dev      = null;
-            ErrorNumber devErrno = ErrorNumber.NoError;
+            Devices.Device dev      = null;
+            ErrorNumber    devErrno = ErrorNumber.NoError;
 
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask("Opening device...").IsIndeterminate();
-                dev = Device.Create(devicePath, out devErrno);
+                dev = Devices.Device.Create(devicePath, out devErrno);
             });
 
             switch(dev)
@@ -646,7 +645,7 @@ sealed class DumpMediaCommand : Command
                                 _progressTask2.MaxValue    =   maximum;
                             };
 
-                            Console.CancelKeyPress += (_, e) =>
+                            System.Console.CancelKeyPress += (_, e) =>
                             {
                                 e.Cancel = true;
                                 dumper.Abort();
@@ -656,7 +655,7 @@ sealed class DumpMediaCommand : Command
                         });
 
             if(eject && dev.IsRemovable)
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask("Ejecting media...").IsIndeterminate();
 

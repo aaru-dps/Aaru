@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -48,6 +46,8 @@ using Aaru.Helpers;
 using Schemas;
 using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class FAT
 {
@@ -176,8 +176,7 @@ public sealed partial class FAT
                 XmlFsType.ClusterSize = (uint)(fat32Bpb.bps * fat32Bpb.spc);
                 _reservedSectors      = fat32Bpb.rsectors;
 
-                if(fat32Bpb.big_sectors == 0 &&
-                   fat32Bpb.signature   == 0x28)
+                if(fat32Bpb is { big_sectors: 0, signature: 0x28 })
                     XmlFsType.Clusters = shortFat32Bpb.huge_sectors / shortFat32Bpb.spc;
                 else if(fat32Bpb.sectors == 0)
                     XmlFsType.Clusters = fat32Bpb.big_sectors / fat32Bpb.spc;
@@ -209,18 +208,18 @@ public sealed partial class FAT
                 // Check that jumps to a correct boot code position and has boot signature set.
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
                 XmlFsType.Bootable =
-                    fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] >= minBootNearJump && fat32Bpb.jump[1] < 0x80 ||
-                    fat32Bpb.jump[0]                        == 0xE9            && fat32Bpb.jump.Length >= 3 &&
-                    BitConverter.ToUInt16(fat32Bpb.jump, 1) >= minBootNearJump &&
-                    BitConverter.ToUInt16(fat32Bpb.jump, 1) <= 0x1FC;
+                    (fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] >= minBootNearJump && fat32Bpb.jump[1] < 0x80) ||
+                    (fat32Bpb.jump[0]                        == 0xE9            && fat32Bpb.jump.Length >= 3 &&
+                     BitConverter.ToUInt16(fat32Bpb.jump, 1) >= minBootNearJump &&
+                     BitConverter.ToUInt16(fat32Bpb.jump, 1) <= 0x1FC);
 
                 sectorsPerRealSector =  fat32Bpb.bps / imagePlugin.Info.SectorSize;
                 _sectorsPerCluster   *= sectorsPerRealSector;
 
                 // First root directory sector
                 _firstClusterSector =
-                    (ulong)(fat32Bpb.big_spfat * fat32Bpb.fats_no + fat32Bpb.rsectors) * sectorsPerRealSector -
-                    2                                                                  * _sectorsPerCluster;
+                    ((ulong)((fat32Bpb.big_spfat * fat32Bpb.fats_no) + fat32Bpb.rsectors) * sectorsPerRealSector) -
+                    (2                                                                    * _sectorsPerCluster);
 
                 if(fat32Bpb.fsinfo_sector + partition.Start <= partition.End)
                 {
@@ -231,14 +230,12 @@ public sealed partial class FAT
 
                     FsInfoSector fsInfo = Marshal.ByteArrayToStructureLittleEndian<FsInfoSector>(fsinfoSector);
 
-                    if(fsInfo.signature1 == FSINFO_SIGNATURE1 &&
-                       fsInfo.signature2 == FSINFO_SIGNATURE2 &&
-                       fsInfo.signature3 == FSINFO_SIGNATURE3)
-                        if(fsInfo.free_clusters < 0xFFFFFFFF)
-                        {
-                            XmlFsType.FreeClusters          = fsInfo.free_clusters;
-                            XmlFsType.FreeClustersSpecified = true;
-                        }
+                    if(fsInfo is { signature1: FSINFO_SIGNATURE1, signature2   : FSINFO_SIGNATURE2 }
+                       and { signature3      : FSINFO_SIGNATURE3, free_clusters: < 0xFFFFFFFF })
+                    {
+                        XmlFsType.FreeClusters          = fsInfo.free_clusters;
+                        XmlFsType.FreeClustersSpecified = true;
+                    }
                 }
 
                 break;
@@ -249,7 +246,7 @@ public sealed partial class FAT
             {
                 ushort sum = 0;
 
-                for(var i = 0; i < bpbSector.Length; i += 2)
+                for(int i = 0; i < bpbSector.Length; i += 2)
                     sum += BigEndianBitConverter.ToUInt16(bpbSector, i);
 
                 // TODO: Check this
@@ -301,8 +298,8 @@ public sealed partial class FAT
 
             if(bpbKind != BpbKind.Human)
             {
-                int reservedSectors = fakeBpb.rsectors + fakeBpb.fats_no * fakeBpb.spfat +
-                                      fakeBpb.root_ent * 32              / fakeBpb.bps;
+                int reservedSectors = fakeBpb.rsectors + (fakeBpb.fats_no * fakeBpb.spfat) +
+                                      (fakeBpb.root_ent * 32              / fakeBpb.bps);
 
                 if(fakeBpb.sectors == 0)
                     clusters = (ulong)(fakeBpb.spc == 0 ? fakeBpb.big_sectors - reservedSectors
@@ -322,20 +319,20 @@ public sealed partial class FAT
             {
                 if(clusters < 4089)
                 {
-                    var fat12 = new ushort[clusters];
+                    ushort[] fat12 = new ushort[clusters];
 
                     _reservedSectors     = fakeBpb.rsectors;
                     sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
-                    _fatFirstSector      = partition.Start + _reservedSectors * sectorsPerRealSector;
+                    _fatFirstSector      = partition.Start + (_reservedSectors * sectorsPerRealSector);
 
                     errno = imagePlugin.ReadSectors(_fatFirstSector, fakeBpb.spfat, out byte[] fatBytes);
 
                     if(errno != ErrorNumber.NoError)
                         return errno;
 
-                    var pos = 0;
+                    int pos = 0;
 
-                    for(var i = 0; i + 3 < fatBytes.Length && pos < fat12.Length; i += 3)
+                    for(int i = 0; i + 3 < fatBytes.Length && pos < fat12.Length; i += 3)
                     {
                         fat12[pos++] = (ushort)(((fatBytes[i + 1] & 0xF) << 8) + fatBytes[i + 0]);
 
@@ -412,41 +409,29 @@ public sealed partial class FAT
                    fakeBpb.oem_name[6] != 0x48 ||
                    fakeBpb.oem_name[7] != 0x43)
                     XmlFsType.SystemIdentifier = fakeBpb.oem_name[0] switch
-                                                 {
-                                                     // Later versions of Windows create a DOS 3 BPB without OEM name on 8 sectors/track floppies
-                                                     // OEM ID should be ASCII, otherwise ignore it
-                                                     >= 0x20 and <= 0x7F when fakeBpb.oem_name[1] >= 0x20 &&
-                                                                              fakeBpb.oem_name[1] <= 0x7F &&
-                                                                              fakeBpb.oem_name[2] >= 0x20 &&
-                                                                              fakeBpb.oem_name[2] <= 0x7F &&
-                                                                              fakeBpb.oem_name[3] >= 0x20 &&
-                                                                              fakeBpb.oem_name[3] <= 0x7F &&
-                                                                              fakeBpb.oem_name[4] >= 0x20 &&
-                                                                              fakeBpb.oem_name[4] <= 0x7F &&
-                                                                              fakeBpb.oem_name[5] >= 0x20 &&
-                                                                              fakeBpb.oem_name[5] <= 0x7F &&
-                                                                              fakeBpb.oem_name[6] >= 0x20 &&
-                                                                              fakeBpb.oem_name[6] <= 0x7F &&
-                                                                              fakeBpb.oem_name[7] >= 0x20 &&
-                                                                              fakeBpb.oem_name[7] <= 0x7F =>
-                                                         StringHandlers.CToString(fakeBpb.oem_name),
-                                                     < 0x20 when fakeBpb.oem_name[1] >= 0x20 &&
-                                                                 fakeBpb.oem_name[1] <= 0x7F &&
-                                                                 fakeBpb.oem_name[2] >= 0x20 &&
-                                                                 fakeBpb.oem_name[2] <= 0x7F &&
-                                                                 fakeBpb.oem_name[3] >= 0x20 &&
-                                                                 fakeBpb.oem_name[3] <= 0x7F &&
-                                                                 fakeBpb.oem_name[4] >= 0x20 &&
-                                                                 fakeBpb.oem_name[4] <= 0x7F &&
-                                                                 fakeBpb.oem_name[5] >= 0x20 &&
-                                                                 fakeBpb.oem_name[5] <= 0x7F &&
-                                                                 fakeBpb.oem_name[6] >= 0x20 &&
-                                                                 fakeBpb.oem_name[6] <= 0x7F &&
-                                                                 fakeBpb.oem_name[7] >= 0x20 &&
-                                                                 fakeBpb.oem_name[7] <= 0x7F =>
-                                                         StringHandlers.CToString(fakeBpb.oem_name, Encoding, start: 1),
-                                                     _ => XmlFsType.SystemIdentifier
-                                                 };
+                    {
+                        // Later versions of Windows create a DOS 3 BPB without OEM name on 8 sectors/track floppies
+                        // OEM ID should be ASCII, otherwise ignore it
+                        >= 0x20 and <= 0x7F when fakeBpb.oem_name[1] >= 0x20 && fakeBpb.oem_name[1] <= 0x7F &&
+                                                 fakeBpb.oem_name[2] >= 0x20 && fakeBpb.oem_name[2] <= 0x7F &&
+                                                 fakeBpb.oem_name[3] >= 0x20 && fakeBpb.oem_name[3] <= 0x7F &&
+                                                 fakeBpb.oem_name[4] >= 0x20 && fakeBpb.oem_name[4] <= 0x7F &&
+                                                 fakeBpb.oem_name[5] >= 0x20 && fakeBpb.oem_name[5] <= 0x7F &&
+                                                 fakeBpb.oem_name[6] >= 0x20 && fakeBpb.oem_name[6] <= 0x7F &&
+                                                 fakeBpb.oem_name[7] >= 0x20 &&
+                                                 fakeBpb.oem_name[7] <= 0x7F =>
+                            StringHandlers.CToString(fakeBpb.oem_name),
+                        < 0x20 when fakeBpb.oem_name[1] >= 0x20 && fakeBpb.oem_name[1] <= 0x7F &&
+                                    fakeBpb.oem_name[2] >= 0x20 && fakeBpb.oem_name[2] <= 0x7F &&
+                                    fakeBpb.oem_name[3] >= 0x20 && fakeBpb.oem_name[3] <= 0x7F &&
+                                    fakeBpb.oem_name[4] >= 0x20 && fakeBpb.oem_name[4] <= 0x7F &&
+                                    fakeBpb.oem_name[5] >= 0x20 && fakeBpb.oem_name[5] <= 0x7F &&
+                                    fakeBpb.oem_name[6] >= 0x20 && fakeBpb.oem_name[6] <= 0x7F &&
+                                    fakeBpb.oem_name[7] >= 0x20 &&
+                                    fakeBpb.oem_name[7] <= 0x7F => StringHandlers.CToString(fakeBpb.oem_name, Encoding,
+                            start: 1),
+                        _ => XmlFsType.SystemIdentifier
+                    };
 
                 if(fakeBpb.signature is 0x28 or 0x29)
                 {
@@ -488,13 +473,13 @@ public sealed partial class FAT
             if(XmlFsType.Bootable == false &&
                fakeBpb.jump       != null)
                 XmlFsType.Bootable |=
-                    fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] >= minBootNearJump && fakeBpb.jump[1] < 0x80 ||
-                    fakeBpb.jump[0]                        == 0xE9            && fakeBpb.jump.Length >= 3 &&
-                    BitConverter.ToUInt16(fakeBpb.jump, 1) >= minBootNearJump &&
-                    BitConverter.ToUInt16(fakeBpb.jump, 1) <= 0x1FC;
+                    (fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] >= minBootNearJump && fakeBpb.jump[1] < 0x80) ||
+                    (fakeBpb.jump[0]                        == 0xE9            && fakeBpb.jump.Length >= 3 &&
+                     BitConverter.ToUInt16(fakeBpb.jump, 1) >= minBootNearJump &&
+                     BitConverter.ToUInt16(fakeBpb.jump, 1) <= 0x1FC);
 
             // First root directory sector
-            firstRootSector = (ulong)(fakeBpb.spfat * fakeBpb.fats_no + fakeBpb.rsectors) * sectorsPerRealSector +
+            firstRootSector = ((ulong)((fakeBpb.spfat * fakeBpb.fats_no) + fakeBpb.rsectors) * sectorsPerRealSector) +
                               partition.Start;
 
             sectorsForRootDirectory = (uint)(fakeBpb.root_ent * 32 / imagePlugin.Info.SectorSize);
@@ -514,14 +499,14 @@ public sealed partial class FAT
         else
             _fatEntriesPerSector = imagePlugin.Info.SectorSize * 2 / 3;
 
-        _fatFirstSector = partition.Start + _reservedSectors * sectorsPerRealSector;
+        _fatFirstSector = partition.Start + (_reservedSectors * sectorsPerRealSector);
 
         _rootDirectoryCache = new Dictionary<string, CompleteDirectoryEntry>();
         byte[] rootDirectory;
 
         if(!_fat32)
         {
-            _firstClusterSector = firstRootSector + sectorsForRootDirectory - _sectorsPerCluster * 2;
+            _firstClusterSector = firstRootSector + sectorsForRootDirectory - (_sectorsPerCluster * 2);
             errno               = imagePlugin.ReadSectors(firstRootSector, sectorsForRootDirectory, out rootDirectory);
 
             if(errno != ErrorNumber.NoError)
@@ -557,8 +542,8 @@ public sealed partial class FAT
 
             foreach(uint cluster in rootDirectoryClusters)
             {
-                errno = imagePlugin.ReadSectors(_firstClusterSector + cluster * _sectorsPerCluster, _sectorsPerCluster,
-                                                out byte[] buffer);
+                errno = imagePlugin.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
+                                                _sectorsPerCluster, out byte[] buffer);
 
                 if(errno != ErrorNumber.NoError)
                     return errno;
@@ -579,7 +564,7 @@ public sealed partial class FAT
         byte[] lastLfnName     = null;
         byte   lastLfnChecksum = 0;
 
-        for(var i = 0; i < rootDirectory.Length; i += Marshal.SizeOf<DirectoryEntry>())
+        for(int i = 0; i < rootDirectory.Length; i += Marshal.SizeOf<DirectoryEntry>())
         {
             DirectoryEntry entry =
                 Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectory, i,
@@ -617,8 +602,8 @@ public sealed partial class FAT
                 lfnSequence--;
 
                 Array.Copy(lfnEntry.name1, 0, lastLfnName, lfnSequence * 26, 10);
-                Array.Copy(lfnEntry.name2, 0, lastLfnName, lfnSequence * 26 + 10, 12);
-                Array.Copy(lfnEntry.name3, 0, lastLfnName, lfnSequence * 26 + 22, 4);
+                Array.Copy(lfnEntry.name2, 0, lastLfnName, (lfnSequence * 26) + 10, 12);
+                Array.Copy(lfnEntry.name3, 0, lastLfnName, (lfnSequence * 26) + 22, 4);
 
                 continue;
             }
@@ -644,7 +629,7 @@ public sealed partial class FAT
 
             if(entry.attributes.HasFlag(FatAttributes.VolumeLabel))
             {
-                var fullname = new byte[11];
+                byte[] fullname = new byte[11];
                 Array.Copy(entry.filename, 0, fullname, 0, 8);
                 Array.Copy(entry.extension, 0, fullname, 8, 3);
                 string volname = Encoding.GetString(fullname).Trim();
@@ -655,8 +640,7 @@ public sealed partial class FAT
 
                 XmlFsType.VolumeName = XmlFsType.VolumeName?.Replace("\0", "");
 
-                if(entry.ctime > 0 &&
-                   entry.cdate > 0)
+                if(entry is { ctime: > 0, cdate: > 0 })
                 {
                     XmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
 
@@ -666,8 +650,7 @@ public sealed partial class FAT
                     XmlFsType.CreationDateSpecified = true;
                 }
 
-                if(entry.mtime > 0 &&
-                   entry.mdate > 0)
+                if(entry is { mtime: > 0, mdate: > 0 })
                 {
                     XmlFsType.ModificationDate          = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
                     XmlFsType.ModificationDateSpecified = true;
@@ -722,14 +705,14 @@ public sealed partial class FAT
                 AaruConsole.DebugWriteLine("FAT filesystem", "Found empty filename in root directory");
 
                 if(!_debug ||
-                   entry.size > 0 && entry.start_cluster == 0)
+                   entry is { size: > 0, start_cluster: 0 })
                     continue; // Skip invalid name
 
                 // If debug, add it
                 name = ":{EMPTYNAME}:";
 
                 // Try to create a unique filename with an extension from 000 to 999
-                for(var uniq = 0; uniq < 1000; uniq++)
+                for(int uniq = 0; uniq < 1000; uniq++)
                 {
                     extension = $"{uniq:D03}";
 
@@ -837,10 +820,10 @@ public sealed partial class FAT
 
         _bytesPerCluster = _sectorsPerCluster * imagePlugin.Info.SectorSize;
 
-        var firstFatEntries  = new ushort[_statfs.Blocks];
-        var secondFatEntries = new ushort[_statfs.Blocks];
-        var firstFatValid    = true;
-        var secondFatValid   = true;
+        ushort[] firstFatEntries  = new ushort[_statfs.Blocks];
+        ushort[] secondFatEntries = new ushort[_statfs.Blocks];
+        bool     firstFatValid    = true;
+        bool     secondFatValid   = true;
 
         if(_fat12)
         {
@@ -851,9 +834,9 @@ public sealed partial class FAT
             if(errno != ErrorNumber.NoError)
                 return errno;
 
-            var pos = 0;
+            int pos = 0;
 
-            for(var i = 0; i + 3 < fatBytes.Length && pos < firstFatEntries.Length; i += 3)
+            for(int i = 0; i + 3 < fatBytes.Length && pos < firstFatEntries.Length; i += 3)
             {
                 firstFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF) << 8) + fatBytes[i + 0]);
 
@@ -872,7 +855,7 @@ public sealed partial class FAT
 
             pos = 0;
 
-            for(var i = 0; i + 3 < fatBytes.Length && pos < secondFatEntries.Length; i += 3)
+            for(int i = 0; i + 3 < fatBytes.Length && pos < secondFatEntries.Length; i += 3)
             {
                 secondFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF) << 8) + fatBytes[i + 0]);
 
@@ -937,7 +920,7 @@ public sealed partial class FAT
         if(_eaDirEntry.start_cluster != 0)
         {
             CacheEaData();
-            var eamagic = BitConverter.ToUInt16(_cachedEaData, 0);
+            ushort eamagic = BitConverter.ToUInt16(_cachedEaData, 0);
 
             if(eamagic != EADATA_MAGIC)
             {
@@ -955,7 +938,8 @@ public sealed partial class FAT
            _namespace is Namespace.Os2 or Namespace.Ecs &&
            !_fat32)
         {
-            var rootFilesWithEas = _rootDirectoryCache.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
+            List<KeyValuePair<string, CompleteDirectoryEntry>> rootFilesWithEas =
+                _rootDirectoryCache.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
 
             foreach(KeyValuePair<string, CompleteDirectoryEntry> fileWithEa in rootFilesWithEas)
             {
@@ -970,12 +954,12 @@ public sealed partial class FAT
                 if(BitConverter.ToUInt16(longnameEa, 0) != EAT_ASCII)
                     continue;
 
-                var longnameSize = BitConverter.ToUInt16(longnameEa, 2);
+                ushort longnameSize = BitConverter.ToUInt16(longnameEa, 2);
 
                 if(longnameSize + 4 > longnameEa.Length)
                     continue;
 
-                var longnameBytes = new byte[longnameSize];
+                byte[] longnameBytes = new byte[longnameSize];
 
                 Array.Copy(longnameEa, 4, longnameBytes, 0, longnameSize);
 
@@ -996,8 +980,8 @@ public sealed partial class FAT
         // Check FAT32.IFS EAs
         if(_fat32 || _debug)
         {
-            var fat32EaSidecars = _rootDirectoryCache.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).
-                                                      ToList();
+            List<KeyValuePair<string, CompleteDirectoryEntry>> fat32EaSidecars =
+                _rootDirectoryCache.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).ToList();
 
             foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
             {

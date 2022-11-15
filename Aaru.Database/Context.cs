@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Database;
-
 using Aaru.Database.Models;
 using Microsoft.EntityFrameworkCore;
+
+namespace Aaru.Database;
 
 /// <inheritdoc />
 /// <summary>Database context</summary>

@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Imd
@@ -44,6 +44,7 @@ public sealed partial class Imd
         @"IMD (?<version>\d.\d+):\s+(?<day>\d+)\/\s*(?<month>\d+)\/(?<year>\d+)\s+(?<hour>\d+):(?<minute>\d+):(?<second>\d+)\r\n";
     const string REGEX_SAMDISK =
         @"IMD SAMdisk(?<version>\d.\d+),\s+(?<day>\d+)\/\s*(?<month>\d+)\/(?<year>\d+)\s+(?<hour>\d+):\s*(?<minute>\d+):(?<second>\d+)";
+
     // ReSharper disable once InconsistentNaming
     const string REGEX_Z88DK =
         @"IMD z88dk:\s+(?<day>\d+)\/\s*(?<month>\d+)\/(?<year>\d+)\s+(?<hour>\d+):\s*(?<minute>\d+):(?<second>\d+)\r\n";

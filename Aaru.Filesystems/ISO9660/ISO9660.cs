@@ -31,8 +31,6 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -40,6 +38,8 @@ using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 // This is coded following ECMA-119.
 /// <inheritdoc />

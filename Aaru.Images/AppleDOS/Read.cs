@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class AppleDos
 {
@@ -47,7 +47,7 @@ public sealed partial class AppleDos
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        var tmp = new byte[imageFilter.DataForkLength];
+        byte[] tmp = new byte[imageFilter.DataForkLength];
         stream.EnsureRead(tmp, 0, tmp.Length);
 
         _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
@@ -66,17 +66,16 @@ public sealed partial class AppleDos
             _deinterleaved = new byte[tmp.Length];
 
             int[] offsets = _extension == ".do"
-                                ? isDos
-                                      ? _deinterleave
-                                      : _interleave
+                                ? isDos ? _deinterleave : _interleave
                                 : isDos
                                     ? _interleave
                                     : _deinterleave;
 
-            for(var t = 0; t < 35; t++)
+            for(int t = 0; t < 35; t++)
             {
-                for(var s = 0; s < 16; s++)
-                    Array.Copy(tmp, t * 16 * 256 + s * 256, _deinterleaved, t * 16 * 256 + offsets[s] * 256, 256);
+                for(int s = 0; s < 16; s++)
+                    Array.Copy(tmp, (t * 16 * 256) + (s * 256), _deinterleaved, (t * 16 * 256) + (offsets[s] * 256),
+                               256);
             }
         }
 

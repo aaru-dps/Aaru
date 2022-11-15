@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Views.Tabs;
-
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+
+namespace Aaru.Gui.Views.Tabs;
 
 public sealed class DvdWritableInfo : UserControl
 {

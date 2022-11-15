@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,6 +40,8 @@ using Aaru.Console;
 using Aaru.Helpers;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Chd
 {
@@ -73,7 +73,7 @@ public sealed partial class Chd
                 ulong offset = _hunkTable[hunkNo] & 0x00000FFFFFFFFFFF;
                 ulong length = _hunkTable[hunkNo] >> 44;
 
-                var compHunk = new byte[length];
+                byte[] compHunk = new byte[length];
                 _imageStream.Seek((long)offset, SeekOrigin.Begin);
                 _imageStream.EnsureRead(compHunk, 0, compHunk.Length);
 
@@ -93,8 +93,8 @@ public sealed partial class Chd
 
                     if(read != _sectorsPerHunk * _imageInfo.SectorSize)
                     {
-                        AaruConsole.
-                            ErrorWriteLine($"Unable to decompress hunk correctly, got {read} bytes, expected {_sectorsPerHunk * _imageInfo.SectorSize}");
+                        AaruConsole.ErrorWriteLine($"Unable to decompress hunk correctly, got {read} bytes, expected {
+                            _sectorsPerHunk * _imageInfo.SectorSize}");
 
                         return ErrorNumber.InOutError;
                     }
@@ -104,7 +104,7 @@ public sealed partial class Chd
 
                 break;
             case 3:
-                var entryBytes = new byte[16];
+                byte[] entryBytes = new byte[16];
                 Array.Copy(_hunkMap, (int)(hunkNo * 16), entryBytes, 0, 16);
                 MapEntryV3 entry = Marshal.ByteArrayToStructureBigEndian<MapEntryV3>(entryBytes);
 
@@ -122,7 +122,7 @@ public sealed partial class Chd
                             case Compression.ZlibPlus:
                                 if(_isHdd)
                                 {
-                                    var zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
+                                    byte[] zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
                                     _imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
                                     _imageStream.EnsureRead(zHunk, 0, zHunk.Length);
 
@@ -134,8 +134,8 @@ public sealed partial class Chd
 
                                     if(read != _bytesPerHunk)
                                     {
-                                        AaruConsole.
-                                            ErrorWriteLine($"Unable to decompress hunk correctly, got {read} bytes, expected {_bytesPerHunk}");
+                                        AaruConsole.ErrorWriteLine($"Unable to decompress hunk correctly, got {read
+                                        } bytes, expected {_bytesPerHunk}");
 
                                         return ErrorNumber.InOutError;
                                     }
@@ -160,7 +160,7 @@ public sealed partial class Chd
 
                         break;
                     case EntryFlagsV3.Uncompressed:
-                    uncompressedV3:
+                        uncompressedV3:
                         buffer = new byte[_bytesPerHunk];
                         _imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
                         _imageStream.EnsureRead(buffer, 0, buffer.Length);
@@ -170,7 +170,7 @@ public sealed partial class Chd
                         buffer = new byte[_bytesPerHunk];
                         byte[] mini = BigEndianBitConverter.GetBytes(entry.offset);
 
-                        for(var i = 0; i < _bytesPerHunk; i++)
+                        for(int i = 0; i < _bytesPerHunk; i++)
                             buffer[i] = mini[i % 8];
 
                         break;

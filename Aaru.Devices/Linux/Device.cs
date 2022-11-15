@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Linux;
-
 using System;
 using System.Globalization;
 using System.IO;
@@ -44,6 +42,8 @@ using Aaru.Helpers;
 using Marshal = System.Runtime.InteropServices.Marshal;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using VendorString = Aaru.Decoders.MMC.VendorString;
+
+namespace Aaru.Devices.Linux;
 
 /// <inheritdoc />
 [SupportedOSPlatform("linux")]
@@ -165,7 +165,7 @@ partial class Device : Devices.Device
             if(dev._cachedScr != null)
             {
                 dev.Type = DeviceType.SecureDigital;
-                CID decoded = Decoders.DecodeCID(dev._cachedCid);
+                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(dev._cachedCid);
                 dev.Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -177,7 +177,7 @@ partial class Device : Devices.Device
             else
             {
                 dev.Type = DeviceType.MMC;
-                Aaru.Decoders.MMC.CID decoded = Aaru.Decoders.MMC.Decoders.DecodeCID(dev._cachedCid);
+                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(dev._cachedCid);
                 dev.Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -219,8 +219,8 @@ partial class Device : Devices.Device
 
                         var usbFs = new FileStream(resolvedLink + "/descriptors", FileMode.Open, FileAccess.Read);
 
-                        var usbBuf   = new byte[65536];
-                        int usbCount = usbFs.EnsureRead(usbBuf, 0, 65536);
+                        byte[] usbBuf   = new byte[65536];
+                        int    usbCount = usbFs.EnsureRead(usbBuf, 0, 65536);
                         dev.UsbDescriptors = new byte[usbCount];
                         Array.Copy(usbBuf, 0, dev.UsbDescriptors, 0, usbCount);
                         usbFs.Close();
@@ -377,8 +377,8 @@ partial class Device : Devices.Device
 
             var cisFs = new FileStream(possibleDir + "/cis", FileMode.Open, FileAccess.Read);
 
-            var cisBuf   = new byte[65536];
-            int cisCount = cisFs.EnsureRead(cisBuf, 0, 65536);
+            byte[] cisBuf   = new byte[65536];
+            int    cisCount = cisFs.EnsureRead(cisBuf, 0, 65536);
             dev.Cis = new byte[cisCount];
             Array.Copy(cisBuf, 0, dev.Cis, 0, cisCount);
             cisFs.Close();

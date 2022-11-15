@@ -31,13 +31,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Linux;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interop;
 using Aaru.Decoders.ATA;
+
+namespace Aaru.Devices.Linux;
 
 partial class Device
 {
@@ -57,13 +57,13 @@ partial class Device
             return -1;
 
         ScsiIoctlDirection dir = direction switch
-                                 {
-                                     ScsiDirection.In            => ScsiIoctlDirection.In,
-                                     ScsiDirection.Out           => ScsiIoctlDirection.Out,
-                                     ScsiDirection.Bidirectional => ScsiIoctlDirection.Unspecified,
-                                     ScsiDirection.None          => ScsiIoctlDirection.None,
-                                     _                           => ScsiIoctlDirection.Unknown
-                                 };
+        {
+            ScsiDirection.In            => ScsiIoctlDirection.In,
+            ScsiDirection.Out           => ScsiIoctlDirection.Out,
+            ScsiDirection.Bidirectional => ScsiIoctlDirection.Unspecified,
+            ScsiDirection.None          => ScsiIoctlDirection.None,
+            _                           => ScsiIoctlDirection.Unknown
+        };
 
         var ioHdr = new SgIoHdrT();
 
@@ -143,7 +143,7 @@ partial class Device
         if(buffer == null)
             return -1;
 
-        var cdb = new byte[16];
+        byte[] cdb = new byte[16];
         cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
         cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
 
@@ -183,7 +183,7 @@ partial class Device
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
         if(senseBuffer.Length < 22 ||
-           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
+           (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
             return error;
 
         errorRegisters.Error = senseBuffer[11];
@@ -216,7 +216,7 @@ partial class Device
         if(buffer == null)
             return -1;
 
-        var cdb = new byte[16];
+        byte[] cdb = new byte[16];
         cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
         cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
 
@@ -256,7 +256,7 @@ partial class Device
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
         if(senseBuffer.Length < 22 ||
-           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
+           (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
             return error;
 
         errorRegisters.Error = senseBuffer[11];
@@ -289,7 +289,7 @@ partial class Device
         if(buffer == null)
             return -1;
 
-        var cdb = new byte[16];
+        byte[] cdb = new byte[16];
         cdb[0] =  (byte)ScsiCommands.AtaPassThrough16;
         cdb[1] =  (byte)(((byte)protocol << 1) & 0x1E);
         cdb[1] |= 0x01;
@@ -335,7 +335,7 @@ partial class Device
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
         if(senseBuffer.Length < 22 ||
-           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
+           (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
             return error;
 
         errorRegisters.Error = senseBuffer[11];
@@ -482,17 +482,17 @@ partial class Device
         sense    = false;
 
         // Create array for buffers
-        var bufferPointers = new nint[commands.Length];
+        nint[] bufferPointers = new nint[commands.Length];
 
         // Allocate memory for the array for commands
-        var ioMultiCmd = new byte[sizeof(ulong) + Marshal.SizeOf<MmcIocCmd>() * commands.Length];
+        byte[] ioMultiCmd = new byte[sizeof(ulong) + (Marshal.SizeOf<MmcIocCmd>() * commands.Length)];
 
         // First value of array is uint64 with count of commands
         Array.Copy(BitConverter.GetBytes((ulong)commands.Length), 0, ioMultiCmd, 0, sizeof(ulong));
 
         int off = sizeof(ulong);
 
-        for(var i = 0; i < commands.Length; i++)
+        for(int i = 0; i < commands.Length; i++)
         {
             // Create command
             var ioCmd = new MmcIocCmd();
@@ -552,9 +552,9 @@ partial class Device
         Marshal.Copy(ioMultiCmdPtr, ioMultiCmd, 0, ioMultiCmd.Length);
 
         // TODO: Use real pointers this is too slow
-        for(var i = 0; i < commands.Length; i++)
+        for(int i = 0; i < commands.Length; i++)
         {
-            var tmp = new byte[Marshal.SizeOf<MmcIocCmd>()];
+            byte[] tmp = new byte[Marshal.SizeOf<MmcIocCmd>()];
 
             // Copy command to managed space
             Array.Copy(ioMultiCmd, off, tmp, 0, tmp.Length);
@@ -657,7 +657,7 @@ partial class Device
             resultSize = result;
         }
 
-        var resultString = new byte[resultSize];
+        byte[] resultString = new byte[resultSize];
         Marshal.Copy(buf, resultString, 0, resultSize);
         Marshal.FreeHGlobal(buf);
 

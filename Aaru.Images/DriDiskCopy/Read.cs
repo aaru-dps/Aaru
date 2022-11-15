@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class DriDiskCopy
 {
@@ -50,7 +50,7 @@ public sealed partial class DriDiskCopy
         if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0)
             return ErrorNumber.InvalidArgument;
 
-        var buffer = new byte[Marshal.SizeOf<Footer>()];
+        byte[] buffer = new byte[Marshal.SizeOf<Footer>()];
         stream.Seek(-buffer.Length, SeekOrigin.End);
         stream.EnsureRead(buffer, 0, buffer.Length);
 
@@ -67,7 +67,7 @@ public sealed partial class DriDiskCopy
         if(_footer.bpb.sptrack * _footer.bpb.cylinders * _footer.bpb.heads != _footer.bpb.sectors)
             return ErrorNumber.InvalidArgument;
 
-        if(_footer.bpb.sectors * _footer.bpb.bps + Marshal.SizeOf<Footer>() != stream.Length)
+        if((_footer.bpb.sectors * _footer.bpb.bps) + Marshal.SizeOf<Footer>() != stream.Length)
             return ErrorNumber.InvalidArgument;
 
         _imageInfo.Cylinders          = _footer.bpb.cylinders;
@@ -87,10 +87,7 @@ public sealed partial class DriDiskCopy
                                    _imageInfo.ApplicationVersion);
 
         // Correct some incorrect data in images of NEC 2HD disks
-        if(_imageInfo.Cylinders       == 77  &&
-           _imageInfo.Heads           == 2   &&
-           _imageInfo.SectorsPerTrack == 16  &&
-           _imageInfo.SectorSize      == 512 &&
+        if(_imageInfo is { Cylinders: 77, Heads: 2 } and { SectorsPerTrack: 16, SectorSize: 512 } &&
            _footer.bpb._driveCode is DriveCode.md2hd or DriveCode.mf2hd)
         {
             _imageInfo.SectorsPerTrack = 8;

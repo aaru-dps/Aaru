@@ -42,11 +42,11 @@
 // Copyright © 1988 Kenji RIKITAKE
 // ****************************************************************************/
 
-namespace Aaru.Compression;
-
 using System;
 using System.IO;
 using Aaru.Helpers;
+
+namespace Aaru.Compression;
 
 /*
  * Based on Japanese version 29-NOV-1988
@@ -69,8 +69,8 @@ public class TeleDiskLzh
 
     const int N_CHAR = 256 - THRESHOLD + F;
     /* character code (= 0..N_CHAR-1) */
-    const int T        = N_CHAR * 2 - 1; /* Size of table */
-    const int ROOT     = T          - 1; /* root position */
+    const int T        = (N_CHAR * 2) - 1; /* Size of table */
+    const int ROOT     = T            - 1; /* root position */
     const int MAX_FREQ = 0x8000;
 
     /*
@@ -257,7 +257,7 @@ public class TeleDiskLzh
         if(NextWord() < 0)
             return -1;
 
-        var i = (short)_getbuf;
+        short i = (short)_getbuf;
         _getbuf <<= 1;
         _getlen--;
 
@@ -332,7 +332,7 @@ public class TeleDiskLzh
             for(k = (short)(j - 1); f < _freq[k]; k--) {}
 
             k++;
-            var l = (ushort)((j - k) * 2);
+            ushort l = (ushort)((j - k) * 2);
 
             Array.ConstrainedCopy(_freq, k, _freq, k + 1, l);
             _freq[k] = f;
@@ -395,7 +395,7 @@ public class TeleDiskLzh
 
     short DecodeChar()
     {
-        var c = (ushort)_son[ROOT];
+        ushort c = (ushort)_son[ROOT];
 
         /*
          * start searching tree from the root to leaves.
@@ -427,8 +427,8 @@ public class TeleDiskLzh
         if((bit = (short)GetByte()) < 0)
             return -1;
 
-        var    i = (ushort)bit;
-        var    c = (ushort)(_dCode[i] << 6);
+        ushort i = (ushort)bit;
+        ushort c = (ushort)(_dCode[i] << 6);
         ushort j = _dLen[i];
 
         /* input lower 6 bits directly */

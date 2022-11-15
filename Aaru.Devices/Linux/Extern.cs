@@ -31,10 +31,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Linux;
-
-using System;
 using System.Runtime.InteropServices;
+
+namespace Aaru.Devices.Linux;
 
 static class Extern
 {
@@ -54,22 +53,22 @@ static class Extern
     internal static extern int ioctlMmc(int fd, LinuxIoctl request, ref MmcIocCmd value);
 
     [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]
-    internal static extern int readlink(string path, IntPtr buf, int bufsize);
+    internal static extern int readlink(string path, nint buf, int bufsize);
 
     [DllImport("libc", CharSet = CharSet.Ansi, EntryPoint = "readlink", SetLastError = true)]
-    internal static extern long readlink64(string path, IntPtr buf, long bufsize);
+    internal static extern long readlink64(string path, nint buf, long bufsize);
 
     [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
-    internal static extern IntPtr udev_new();
+    internal static extern nint udev_new();
 
     [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
-    internal static extern IntPtr udev_device_new_from_subsystem_sysname(IntPtr udev, string subsystem, string sysname);
+    internal static extern nint udev_device_new_from_subsystem_sysname(nint udev, string subsystem, string sysname);
 
     [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
-    internal static extern string udev_device_get_property_value(IntPtr udevDevice, string key);
+    internal static extern string udev_device_get_property_value(nint udevDevice, string key);
 
     [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-    internal static extern int ioctlMmcMulti(int fd, LinuxIoctl request, IntPtr value);
+    internal static extern int ioctlMmcMulti(int fd, LinuxIoctl request, nint value);
 
     [DllImport("libc", SetLastError = true)]
     internal static extern long lseek(int fd, long offset, SeekWhence whence);

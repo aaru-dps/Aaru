@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Qcow2
 {
@@ -48,13 +48,13 @@ public sealed partial class Qcow2
         if(stream.Length < 512)
             return false;
 
-        var qHdrB = new byte[Marshal.SizeOf<Header>()];
+        byte[] qHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(qHdrB, 0, Marshal.SizeOf<Header>());
         _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
         AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", _qHdr.magic);
         AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}", _qHdr.version);
 
-        return _qHdr.magic == QCOW_MAGIC && _qHdr.version is QCOW_VERSION2 or QCOW_VERSION3;
+        return _qHdr is { magic: QCOW_MAGIC, version: QCOW_VERSION2 or QCOW_VERSION3 };
     }
 }

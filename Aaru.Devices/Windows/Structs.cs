@@ -31,11 +31,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Windows;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+
+namespace Aaru.Devices.Windows;
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct ScsiPassThroughDirect
@@ -49,10 +49,10 @@ struct ScsiPassThroughDirect
     public byte   SenseInfoLength;
     [MarshalAs(UnmanagedType.U1)]
     public ScsiIoctlDirection DataIn;
-    public uint   DataTransferLength;
-    public uint   TimeOutValue;
-    public IntPtr DataBuffer;
-    public uint   SenseInfoOffset;
+    public uint DataTransferLength;
+    public uint TimeOutValue;
+    public nint DataBuffer;
+    public uint SenseInfoOffset;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
     public byte[] Cdb;
@@ -99,7 +99,7 @@ struct AtaPassThroughDirect
     public uint ReservedAsUlong;
 
     /// <summary>Pointer to data buffer</summary>
-    public IntPtr DataBuffer;
+    public nint DataBuffer;
 
     /// <summary>Previous ATA registers, for LBA48</summary>
     public AtaTaskFile PreviousTaskFile;
@@ -202,19 +202,19 @@ struct StorageDeviceNumber
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct DeviceInfoData
 {
-    public int    cbSize;
-    public Guid   classGuid;
-    public uint   devInst;
-    public IntPtr reserved;
+    public int  cbSize;
+    public Guid classGuid;
+    public uint devInst;
+    public nint reserved;
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct DeviceInterfaceData
 {
-    public   int    cbSize;
-    public   Guid   interfaceClassGuid;
-    public   uint   flags;
-    readonly IntPtr reserved;
+    public   int  cbSize;
+    public   Guid interfaceClassGuid;
+    public   uint flags;
+    readonly nint reserved;
 }
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]

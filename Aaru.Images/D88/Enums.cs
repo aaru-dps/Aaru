@@ -30,24 +30,21 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class D88
 {
     enum DiskType : byte
     {
-        D2  = 0x00,
-        Dd2 = 0x10,
-        Hd2 = 0x20
+        D2 = 0x00, Dd2 = 0x10, Hd2 = 0x20
     }
 
     enum DensityType : byte
     {
-        Mfm = 0x00,
-        Fm  = 0x40
+        Mfm = 0x00, Fm = 0x40
     }
 
     /// <summary>Status as returned by PC-98 BIOS ステータスは、PC-98x1 のBIOS が返してくるステータスで、</summary>

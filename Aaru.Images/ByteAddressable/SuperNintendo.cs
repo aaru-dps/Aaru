@@ -1,5 +1,3 @@
-namespace Aaru.DiscImages.ByteAddressable;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,6 +11,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.DiscImages.ByteAddressable;
 
 public class SuperNintendo : IByteAddressableImage
 {
@@ -56,7 +56,7 @@ public class SuperNintendo : IByteAddressableImage
             return false;
 
         Header header;
-        var    headerBytes = new byte[48];
+        byte[] headerBytes = new byte[48];
 
         switch(stream.Length)
         {
@@ -110,8 +110,8 @@ public class SuperNintendo : IByteAddressableImage
         if(stream.Length % 32768 != 0)
             return ErrorNumber.InvalidArgument;
 
-        var found       = false;
-        var headerBytes = new byte[48];
+        bool   found       = false;
+        byte[] headerBytes = new byte[48];
 
         switch(stream.Length)
         {
@@ -364,11 +364,11 @@ public class SuperNintendo : IByteAddressableImage
         int chipset = _header.Chipset & 0xF;
 
         bool hasRam      = _header.RamSize > 0;
-        bool hasExtraRam = _header.OldMakerCode == 0x33 && _header.ExpansionRamSize   > 0;
-        bool hasFlash    = _header.OldMakerCode == 0x33 && _header.ExpansionFlashSize > 0;
+        bool hasExtraRam = _header is { OldMakerCode: 0x33, ExpansionRamSize  : > 0 };
+        bool hasFlash    = _header is { OldMakerCode: 0x33, ExpansionFlashSize: > 0 };
         bool hasBattery  = chipset is 2 or 5 or 6 or 9 or 0xA;
 
-        var devices = 1;
+        int devices = 1;
 
         if(hasRam)
             devices++;
@@ -394,8 +394,8 @@ public class SuperNintendo : IByteAddressableImage
             }
         };
 
-        var pos  = 1;
-        var addr = (ulong)_data.Length;
+        int   pos  = 1;
+        ulong addr = (ulong)_data.Length;
 
         if(hasRam)
         {
@@ -537,10 +537,10 @@ public class SuperNintendo : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        var foundRom      = false;
-        var foundRam      = false;
-        var foundExtraRam = false;
-        var foundFlash    = false;
+        bool foundRom      = false;
+        bool foundRam      = false;
+        bool foundExtraRam = false;
+        bool foundFlash    = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
@@ -674,24 +674,24 @@ public class SuperNintendo : IByteAddressableImage
             return "None";
 
         return ((chipset & 0xF0) >> 4) switch
-               {
-                   0   => "DSP",
-                   1   => "GSU",
-                   2   => "OBC1",
-                   3   => "SA-1",
-                   4   => "S-DD1",
-                   5   => "S-RTC",
-                   0xE => "Other",
-                   0xF => subtype switch
-                          {
-                              0    => "SPC7110",
-                              1    => "ST010/ST011",
-                              2    => "ST018",
-                              0x10 => "CX4",
-                              _    => "Unknown"
-                          },
-                   _ => "Unknown"
-               };
+        {
+            0   => "DSP",
+            1   => "GSU",
+            2   => "OBC1",
+            3   => "SA-1",
+            4   => "S-DD1",
+            5   => "S-RTC",
+            0xE => "Other",
+            0xF => subtype switch
+            {
+                0    => "SPC7110",
+                1    => "ST010/ST011",
+                2    => "ST018",
+                0x10 => "CX4",
+                _    => "Unknown"
+            },
+            _ => "Unknown"
+        };
     }
 
     static string DecodeChipset(byte chipset)
@@ -743,38 +743,38 @@ public class SuperNintendo : IByteAddressableImage
     }
 
     static string DecodeRegion(byte headerRegion) => headerRegion switch
-                                                     {
-                                                         0  => "Japan",
-                                                         1  => "USA and Canada",
-                                                         2  => "Europe, Oceania, Asia",
-                                                         3  => "Sweden/Scandinavia",
-                                                         4  => "Finland",
-                                                         5  => "Denmark",
-                                                         6  => "France",
-                                                         7  => "Netherlands",
-                                                         8  => "Spain",
-                                                         9  => "Germany, Austria, Switzerland",
-                                                         10 => "Italy",
-                                                         11 => "China, Hong Kong",
-                                                         12 => "Indonesia",
-                                                         13 => "South Korea",
-                                                         15 => "Canada",
-                                                         16 => "Brazil",
-                                                         17 => "Australia",
-                                                         _  => "Unknown"
-                                                     };
+    {
+        0  => "Japan",
+        1  => "USA and Canada",
+        2  => "Europe, Oceania, Asia",
+        3  => "Sweden/Scandinavia",
+        4  => "Finland",
+        5  => "Denmark",
+        6  => "France",
+        7  => "Netherlands",
+        8  => "Spain",
+        9  => "Germany, Austria, Switzerland",
+        10 => "Italy",
+        11 => "China, Hong Kong",
+        12 => "Indonesia",
+        13 => "South Korea",
+        15 => "Canada",
+        16 => "Brazil",
+        17 => "Australia",
+        _  => "Unknown"
+    };
 
     static string DecodeManufacturer(byte oldMakerCode, string makerCode)
     {
         // TODO: Add full table
         if(oldMakerCode != 0x33)
-            makerCode = $"{(oldMakerCode >> 4) * 36 + (oldMakerCode & 0x0f)}";
+            makerCode = $"{((oldMakerCode >> 4) * 36) + (oldMakerCode & 0x0f)}";
 
         return makerCode switch
-               {
-                   "01" => "Nintendo",
-                   _    => "Unknown"
-               };
+        {
+            "01" => "Nintendo",
+            _    => "Unknown"
+        };
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local"),

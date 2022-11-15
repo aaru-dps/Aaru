@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using Aaru.Console;
 using Aaru.Decoders.ATA;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {

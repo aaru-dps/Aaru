@@ -31,11 +31,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Linux;
-
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+
+namespace Aaru.Devices.Linux;
 
 [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct SgIoHdrT
@@ -47,13 +46,13 @@ struct SgIoHdrT
     public byte               mx_sb_len;       /* [i] */
     public ushort             iovec_count;     /* [i] */
     public uint               dxfer_len;       /* [i] */
-    public IntPtr             dxferp;          /* [i], [*io] */
-    public IntPtr             cmdp;            /* [i], [*i]  */
-    public IntPtr             sbp;             /* [i], [*o]  */
+    public nint               dxferp;          /* [i], [*io] */
+    public nint               cmdp;            /* [i], [*i]  */
+    public nint               sbp;             /* [i], [*o]  */
     public uint               timeout;         /* [i] unit: millisecs */
     public uint               flags;           /* [i] */
     public int                pack_id;         /* [i->o] */
-    public IntPtr             usr_ptr;         /* [i->o] */
+    public nint               usr_ptr;         /* [i->o] */
     public byte               status;          /* [o] */
     public byte               masked_status;   /* [o] */
     public byte               msg_status;      /* [o] */

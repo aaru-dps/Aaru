@@ -31,8 +31,6 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-namespace Aaru;
-
 using System;
 using System.CommandLine;
 using System.IO;
@@ -54,6 +52,8 @@ using Aaru.Settings;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Spectre.Console;
+
+namespace Aaru;
 
 class MainClass
 {
@@ -136,7 +136,8 @@ class MainClass
 
             foreach(string migration in ctx.Database.GetPendingMigrations())
                 ctx.Database.
-                    ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
+                    ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
+                        migration}', '0.0.0')");
 
             ctx.SaveChanges();
         }
@@ -158,7 +159,7 @@ class MainClass
 
         ctx.SaveChanges();
 
-        var mainDbUpdate = false;
+        bool mainDbUpdate = false;
 
         if(!File.Exists(Settings.Settings.MainDbPath))
         {
@@ -191,8 +192,8 @@ class MainClass
 
         // GDPR level compliance does not match and there are no arguments or the arguments are neither GUI neither configure.
         if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL &&
-           (args.Length < 1 || args.Length >= 1 && args[0].ToLowerInvariant() != "gui" &&
-            args[0].ToLowerInvariant()     != "configure"))
+           (args.Length < 1 || (args.Length                >= 1 && args[0].ToLowerInvariant() != "gui" &&
+                                args[0].ToLowerInvariant() != "configure")))
             new ConfigureCommand().DoConfigure(true);
 
         Statistics.LoadStats();
@@ -211,7 +212,7 @@ class MainClass
             "--debug", "-d"
         }, () => false, "Shows debug output from plugins."));
 
-        var pauseOption = new Option<bool>(new[]
+        Option<bool> pauseOption = new(new[]
         {
             "--pause"
         }, () => false, "Pauses before exiting.");

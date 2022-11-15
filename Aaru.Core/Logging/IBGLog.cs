@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Logging;
-
 using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using Aaru.Devices;
+
+namespace Aaru.Core.Logging;
 
 /// <summary>Implements a log in the format used by IMGBurn</summary>
 sealed class IbgLog

@@ -1,36 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
 
-        <IsPackable>false</IsPackable>
+    <IsPackable>false</IsPackable>
 
-        <LangVersion>11</LangVersion>
-        <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
-        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-        <ReleaseVersion>$(Version)</ReleaseVersion>
-    </PropertyGroup>
+    <LangVersion>11</LangVersion>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+  </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <NoWarn>CS1591;CS1574</NoWarn>
-    </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Claunia.Encoding" Version="1.9.2" />
-        <PackageReference Include="FluentAssertions" Version="6.8.0" />
-        <PackageReference Include="nunit" Version="3.13.3" />
-        <PackageReference Include="NUnit3TestAdapter" Version="4.3.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Claunia.Encoding" Version="1.9.2"/>
+    <PackageReference Include="FluentAssertions" Version="6.8.0"/>
+    <PackageReference Include="nunit" Version="3.13.3"/>
+    <PackageReference Include="NUnit3TestAdapter" Version="4.3.0"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0"/>
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0"/>
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-        <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj" />
-        <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj" />
-        <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj" />
-        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj"/>
+    <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"/>
+    <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"/>
+    <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
+  </ItemGroup>
 
 </Project>

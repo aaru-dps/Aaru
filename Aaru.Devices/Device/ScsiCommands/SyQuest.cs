@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -76,8 +76,8 @@ public partial class Device
                              bool inhibitDma, bool readLong, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var  cdb = new byte[6];
-        bool sense;
+        byte[] cdb = new byte[6];
+        bool   sense;
 
         cdb[0] = (byte)ScsiCommands.Read6;
         cdb[1] = (byte)((lba & 0x1F0000) >> 16);
@@ -151,8 +151,8 @@ public partial class Device
                               ushort transferLength, bool inhibitDma, bool readLong, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var  cdb = new byte[10];
-        bool sense;
+        byte[] cdb = new byte[10];
+        bool   sense;
 
         cdb[0] = (byte)ScsiCommands.Read10;
         cdb[2] = (byte)((lba & 0xFF000000) >> 24);

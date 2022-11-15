@@ -31,14 +31,14 @@
 // Copyright © 2007 Fort Hood TX, herethen, Public Domain
 // ****************************************************************************/
 
-namespace Aaru.Devices.Windows;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
+
+namespace Aaru.Devices.Windows;
 
 // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
 /// <summary>Implements functions for getting and accessing information from the USB bus</summary>
@@ -92,7 +92,7 @@ static partial class Usb
                 // trust me :)
 
                 // now we can get some more detailed information
-                var       nRequiredSize = 0;
+                var nRequiredSize = 0;
 
                 if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, BUFFER_SIZE, ref nRequiredSize, ref da))
                 {
@@ -129,7 +129,7 @@ static partial class Usb
     /// <returns>USB device description</returns>
     static string GetDescriptionByKeyName(string driverKeyName)
     {
-        var          ans      = "";
+        var ans = "";
 
         // Use the "enumerator form" of the SetupDiGetClassDevs API
         // to generate a list of all USB devices
@@ -187,7 +187,7 @@ static partial class Usb
     /// <returns>Device instance ID</returns>
     static string GetInstanceIdByKeyName(string driverKeyName)
     {
-        var          ans      = "";
+        var ans = "";
 
         // Use the "enumerator form" of the SetupDiGetClassDevs API
         // to generate a list of all USB devices
@@ -297,6 +297,7 @@ static partial class Usb
             {
                 hubName = (UsbRootHubName)(Marshal.PtrToStructure(ptrHubName, typeof(UsbRootHubName)) ??
                                            default(UsbRootHubName));
+
                 root._hubDevicePath = @"\\.\" + hubName.RootHubName;
             }
 
@@ -430,13 +431,14 @@ static partial class Usb
                 // load up the USBPort class
                 var port = new UsbPort
                 {
-                    _portPortNumber        = i,
-                    _portHubDevicePath     = _hubDevicePath,
-                    _portStatus            = ((UsbConnectionStatus)nodeConnection.ConnectionStatus).ToString(),
-                    _portSpeed             = ((UsbDeviceSpeed)nodeConnection.Speed).ToString(),
-                    _portIsDeviceConnected = nodeConnection.ConnectionStatus == (int)UsbConnectionStatus.DeviceConnected,
-                    _portIsHub             = Convert.ToBoolean(nodeConnection.DeviceIsHub),
-                    _portDeviceDescriptor  = nodeConnection.DeviceDescriptor
+                    _portPortNumber    = i,
+                    _portHubDevicePath = _hubDevicePath,
+                    _portStatus        = ((UsbConnectionStatus)nodeConnection.ConnectionStatus).ToString(),
+                    _portSpeed         = ((UsbDeviceSpeed)nodeConnection.Speed).ToString(),
+                    _portIsDeviceConnected =
+                        nodeConnection.ConnectionStatus == (int)UsbConnectionStatus.DeviceConnected,
+                    _portIsHub            = Convert.ToBoolean(nodeConnection.DeviceIsHub),
+                    _portDeviceDescriptor = nodeConnection.DeviceDescriptor
                 };
 
                 // add it to the list
@@ -830,10 +832,10 @@ static partial class Usb
     #region "API Region"
     // ********************** Constants ************************
 
-    const           int    GENERIC_WRITE        = 0x40000000;
-    const           int    FILE_SHARE_READ      = 0x1;
-    const           int    FILE_SHARE_WRITE     = 0x2;
-    const           int    OPEN_EXISTING        = 0x3;
+    const           int    GENERIC_WRITE       = 0x40000000;
+    const           int    FILE_SHARE_READ     = 0x1;
+    const           int    FILE_SHARE_WRITE    = 0x2;
+    const           int    OPEN_EXISTING       = 0x3;
     static readonly IntPtr _invalidHandleValue = new(-1);
 
     const int IOCTL_GET_HCD_DRIVERKEY_NAME                  = 0x220424;
@@ -864,28 +866,19 @@ static partial class Usb
 
     enum UsbHubNode
     {
-        UsbHub,
-        UsbMiParent
+        UsbHub, UsbMiParent
     }
 
     enum UsbConnectionStatus
     {
-        NoDeviceConnected,
-        DeviceConnected,
-        DeviceFailedEnumeration,
-        DeviceGeneralFailure,
-        DeviceCausedOvercurrent,
-        DeviceNotEnoughPower,
-        DeviceNotEnoughBandwidth,
-        DeviceHubNestedTooDeeply,
-        DeviceInLegacyHub
+        NoDeviceConnected, DeviceConnected, DeviceFailedEnumeration,
+        DeviceGeneralFailure, DeviceCausedOvercurrent, DeviceNotEnoughPower,
+        DeviceNotEnoughBandwidth, DeviceHubNestedTooDeeply, DeviceInLegacyHub
     }
 
     enum UsbDeviceSpeed : byte
     {
-        UsbLowSpeed,
-        UsbFullSpeed,
-        UsbHighSpeed
+        UsbLowSpeed, UsbFullSpeed, UsbHighSpeed
     }
 
     // ********************** Stuctures ************************

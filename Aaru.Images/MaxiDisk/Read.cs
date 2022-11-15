@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class MaxiDisk
 {
@@ -48,7 +48,7 @@ public sealed partial class MaxiDisk
         if(stream.Length < 8)
             return ErrorNumber.InvalidArgument;
 
-        var buffer = new byte[8];
+        byte[] buffer = new byte[8];
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, buffer.Length);
 
@@ -71,8 +71,8 @@ public sealed partial class MaxiDisk
         if(tmpHeader.bytesPerSector > 7)
             return ErrorNumber.InvalidArgument;
 
-        int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
-                               (128 << tmpHeader.bytesPerSector) + 8;
+        int expectedFileSize = (tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
+                                (128 << tmpHeader.bytesPerSector)) + 8;
 
         if(expectedFileSize != stream.Length)
             return ErrorNumber.InvalidArgument;
@@ -115,7 +115,7 @@ public sealed partial class MaxiDisk
         buffer = new byte[length * _imageInfo.SectorSize];
 
         Stream stream = _hdkImageFilter.GetDataForkStream();
-        stream.Seek((long)(8 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+        stream.Seek((long)(8 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;

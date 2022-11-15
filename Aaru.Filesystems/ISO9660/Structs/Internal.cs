@@ -31,10 +31,10 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -91,8 +91,8 @@ public sealed partial class ISO9660
         public ushort                         VolumeSequenceNumber;
 
         // ReSharper disable once InconsistentNaming
-        public CdromXa?                       XA;
-        public byte                           XattrLength;
+        public CdromXa? XA;
+        public byte     XattrLength;
 
         public override string ToString() => Filename;
     }

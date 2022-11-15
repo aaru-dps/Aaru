@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Dialogs;
-
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -44,6 +42,8 @@ using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Dialogs;
 
 public sealed class AboutViewModel : ViewModelBase
 {

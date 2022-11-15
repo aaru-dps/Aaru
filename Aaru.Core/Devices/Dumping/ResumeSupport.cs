@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Extents;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes.Metadata;
 using Schemas;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements resume support</summary>
 static class ResumeSupport
@@ -77,19 +77,20 @@ static class ResumeSupport
                 throw new NotImplementedException("Resuming CHS devices is currently not supported.");
 
             if(resume.Tape != isTape)
-                throw new
-                    InvalidOperationException($"Resume file specifies a {(resume.Tape ? "tape" : "not tape")} device but you're requesting to dump a {(isTape ? "tape" : "not tape")} device, not continuing...");
+                throw new InvalidOperationException($"Resume file specifies a {(resume.Tape ? "tape" : "not tape")
+                } device but you're requesting to dump a {(isTape ? "tape" : "not tape")} device, not continuing...");
 
             if(resume.Removable != removable &&
                !force)
-                throw new
-                    InvalidOperationException($"Resume file specifies a {(resume.Removable ? "removable" : "non removable")} device but you're requesting to dump a {(removable ? "removable" : "non removable")} device, not continuing...");
+                throw new InvalidOperationException($"Resume file specifies a {
+                    (resume.Removable ? "removable" : "non removable")} device but you're requesting to dump a {
+                        (removable ? "removable" : "non removable")} device, not continuing...");
 
             if(!isTape                        &&
                resume.LastBlock != blocks - 1 &&
                !force)
-                throw new
-                    InvalidOperationException($"Resume file specifies a device with {resume.LastBlock + 1} blocks but you're requesting to dump one with {blocks} blocks, not continuing...");
+                throw new InvalidOperationException($"Resume file specifies a device with {resume.LastBlock + 1
+                } blocks but you're requesting to dump one with {blocks} blocks, not continuing...");
 
             foreach(DumpHardwareType oldTry in resume.Tries)
             {
@@ -97,20 +98,22 @@ static class ResumeSupport
                    !force)
                 {
                     if(oldTry.Manufacturer != manufacturer)
-                        throw new
-                            InvalidOperationException($"Resume file specifies a device manufactured by {oldTry.Manufacturer} but you're requesting to dump one by {manufacturer}, not continuing...");
+                        throw new InvalidOperationException($"Resume file specifies a device manufactured by {
+                            oldTry.Manufacturer} but you're requesting to dump one by {manufacturer
+                            }, not continuing...");
 
                     if(oldTry.Model != model)
-                        throw new
-                            InvalidOperationException($"Resume file specifies a device model {oldTry.Model} but you're requesting to dump model {model}, not continuing...");
+                        throw new InvalidOperationException($"Resume file specifies a device model {oldTry.Model
+                        } but you're requesting to dump model {model}, not continuing...");
 
                     if(oldTry.Serial != serial)
-                        throw new
-                            InvalidOperationException($"Resume file specifies a device with serial {oldTry.Serial} but you're requesting to dump one with serial {serial}, not continuing...");
+                        throw new InvalidOperationException($"Resume file specifies a device with serial {oldTry.Serial
+                        } but you're requesting to dump one with serial {serial}, not continuing...");
 
                     if(oldTry.Firmware != firmware)
-                        throw new
-                            InvalidOperationException($"Resume file specifies a device with firmware version {oldTry.Firmware} but you're requesting to dump one with firmware version {firmware}, not continuing...");
+                        throw new InvalidOperationException($"Resume file specifies a device with firmware version {
+                            oldTry.Firmware} but you're requesting to dump one with firmware version {firmware
+                            }, not continuing...");
                 }
 
                 if(oldTry.Software == null)

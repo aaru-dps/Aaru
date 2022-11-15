@@ -32,8 +32,6 @@
 
 // TODO: Fix errors returned
 
-namespace Aaru.Commands;
-
 using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
@@ -42,6 +40,8 @@ using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
 using Remote = Aaru.Devices.Remote.Remote;
+
+namespace Aaru.Commands;
 
 sealed class RemoteCommand : Command
 {
@@ -65,7 +65,7 @@ sealed class RemoteCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -111,7 +111,8 @@ sealed class RemoteCommand : Command
             table.AddRow("Server application", $"{remote.ServerApplication} {remote.ServerVersion}");
 
             table.AddRow("Server operating system",
-                         $"{remote.ServerOperatingSystem} {remote.ServerOperatingSystemVersion} ({remote.ServerArchitecture})");
+                         $"{remote.ServerOperatingSystem} {remote.ServerOperatingSystemVersion} ({
+                             remote.ServerArchitecture})");
 
             table.AddRow("Server maximum protocol", $"{remote.ServerProtocolVersion}");
 

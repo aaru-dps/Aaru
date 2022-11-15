@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,6 +44,8 @@ using Aaru.Decoders.DVD;
 using Aaru.Helpers;
 using DMI = Aaru.Decoders.Xbox.DMI;
 
+namespace Aaru.DiscImages;
+
 public sealed partial class Alcohol120
 {
     /// <inheritdoc />
@@ -58,7 +58,7 @@ public sealed partial class Alcohol120
             return ErrorNumber.InvalidArgument;
 
         _isDvd = false;
-        var hdr = new byte[88];
+        byte[] hdr = new byte[88];
         stream.EnsureRead(hdr, 0, 88);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
@@ -71,25 +71,25 @@ public sealed partial class Alcohol120
         AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.type = {0}", _header.type);
         AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.sessions = {0}", _header.sessions);
 
-        for(var i = 0; i < _header.unknown1.Length; i++)
+        for(int i = 0; i < _header.unknown1.Length; i++)
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown1[{1}] = 0x{0:X4}", _header.unknown1[i],
                                        i);
 
         AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.bcaLength = {0}", _header.bcaLength);
 
-        for(var i = 0; i < _header.unknown2.Length; i++)
+        for(int i = 0; i < _header.unknown2.Length; i++)
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown2[{1}] = 0x{0:X8}", _header.unknown2[i],
                                        i);
 
         AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.bcaOffset = {0}", _header.bcaOffset);
 
-        for(var i = 0; i < _header.unknown3.Length; i++)
+        for(int i = 0; i < _header.unknown3.Length; i++)
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown3[{1}] = 0x{0:X8}", _header.unknown3[i],
                                        i);
 
         AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.structuresOffset = {0}", _header.structuresOffset);
 
-        for(var i = 0; i < _header.unknown4.Length; i++)
+        for(int i = 0; i < _header.unknown4.Length; i++)
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i],
                                        i);
 
@@ -102,9 +102,9 @@ public sealed partial class Alcohol120
         stream.Seek(_header.sessionOffset, SeekOrigin.Begin);
         _alcSessions = new Dictionary<int, Session>();
 
-        for(var i = 0; i < _header.sessions; i++)
+        for(int i = 0; i < _header.sessions; i++)
         {
-            var sesHdr = new byte[24];
+            byte[] sesHdr = new byte[24];
             stream.EnsureRead(sesHdr, 0, 24);
             Session session = Marshal.SpanToStructureLittleEndian<Session>(sesHdr);
 
@@ -133,7 +133,7 @@ public sealed partial class Alcohol120
         }
 
         long footerOff         = 0;
-        var  oldIncorrectImage = false;
+        bool oldIncorrectImage = false;
 
         _alcTracks = new Dictionary<int, Track>();
         _alcToc    = new Dictionary<int, Dictionary<int, Track>>();
@@ -144,9 +144,9 @@ public sealed partial class Alcohol120
             stream.Seek(session.trackOffset, SeekOrigin.Begin);
             Dictionary<int, Track> sesToc = new();
 
-            for(var i = 0; i < session.allBlocks; i++)
+            for(int i = 0; i < session.allBlocks; i++)
             {
-                var trkHdr = new byte[80];
+                byte[] trkHdr = new byte[80];
                 stream.EnsureRead(trkHdr, 0, 80);
                 Track track = Marshal.ByteArrayToStructureLittleEndian<Track>(trkHdr);
 
@@ -154,8 +154,7 @@ public sealed partial class Alcohol120
                     oldIncorrectImage = true;
 
                 // Solve our own mistake here, sorry, but anyway seems Alcohol doesn't support DDCD
-                if(track.zero > 0 &&
-                   track.point is >= 1 and <= 99)
+                if(track is { zero: > 0, point: >= 1 and <= 99 })
                 {
                     track.pmin        += (byte)(track.zero * 60);
                     track.zero        =  0;
@@ -224,8 +223,7 @@ public sealed partial class Alcohol120
                 if(track.subMode == SubchannelMode.Interleaved)
                     track.sectorSize -= 96;
 
-                if(track.point    == 1 &&
-                   track.startLba > 0)
+                if(track is { point: 1, startLba: > 0 })
                 {
                     AaruConsole.
                         ErrorWriteLine("The disc this image represents contained a hidden track in the first pregap, that this image format cannot store. This dump is therefore, incorrect.");
@@ -255,7 +253,7 @@ public sealed partial class Alcohol120
             if(track.extraOffset > 0 &&
                !_isDvd)
             {
-                var extHdr = new byte[8];
+                byte[] extHdr = new byte[8];
                 stream.Seek(track.extraOffset, SeekOrigin.Begin);
                 stream.EnsureRead(extHdr, 0, 8);
                 TrackExtra extra = Marshal.SpanToStructureLittleEndian<TrackExtra>(extHdr);
@@ -286,7 +284,7 @@ public sealed partial class Alcohol120
 
         if(footerOff > 0)
         {
-            var footer = new byte[16];
+            byte[] footer = new byte[16];
             stream.Seek(footerOff, SeekOrigin.Begin);
             stream.EnsureRead(footer, 0, 16);
             _alcFooter = Marshal.SpanToStructureLittleEndian<Footer>(footer);
@@ -298,7 +296,7 @@ public sealed partial class Alcohol120
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.unknown2 = 0x{0:X8}", _alcFooter.unknown2);
         }
 
-        var alcFile = "*.mdf";
+        string alcFile = "*.mdf";
 
         if(_alcFooter.filenameOffset > 0)
         {
@@ -327,9 +325,7 @@ public sealed partial class Alcohol120
         else if(string.Compare(alcFile, "*.xmf", StringComparison.InvariantCultureIgnoreCase) == 0)
             alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".xmf";
 
-        if(_header.bcaLength > 0 &&
-           _header.bcaOffset > 0 &&
-           _isDvd)
+        if(_header is { bcaLength: > 0, bcaOffset: > 0 } && _isDvd)
         {
             _bca = new byte[_header.bcaLength];
             stream.Seek(_header.bcaOffset, SeekOrigin.Begin);
@@ -383,7 +379,7 @@ public sealed partial class Alcohol120
             // TODO: Second layer
             if(_header.structuresOffset > 0)
             {
-                var structures = new byte[4100];
+                byte[] structures = new byte[4100];
                 stream.Seek(_header.structuresOffset, SeekOrigin.Begin);
                 stream.EnsureRead(structures, 0, 4100);
                 _dmi = new byte[2052];
@@ -405,32 +401,29 @@ public sealed partial class Alcohol120
                 if(pfi0.HasValue)
                 {
                     _imageInfo.MediaType = pfi0.Value.DiskCategory switch
-                                           {
-                                               DiskCategory.DVDPR    => MediaType.DVDPR,
-                                               DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
-                                               DiskCategory.DVDPRW   => MediaType.DVDPRW,
-                                               DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
-                                               DiskCategory.DVDR => pfi0.Value.PartVersion >= 6 ? MediaType.DVDRDL
-                                                                        : MediaType.DVDR,
-                                               DiskCategory.DVDRAM => MediaType.DVDRAM,
-                                               DiskCategory.DVDRW => pfi0.Value.PartVersion >= 15 ? MediaType.DVDRWDL
-                                                                         : MediaType.DVDRW,
-                                               DiskCategory.HDDVDR   => MediaType.HDDVDR,
-                                               DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
-                                               DiskCategory.HDDVDROM => MediaType.HDDVDROM,
-                                               DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
-                                               DiskCategory.Nintendo => pfi0.Value.DiscSize == DVDSize.Eighty
-                                                                            ? MediaType.GOD : MediaType.WOD,
-                                               DiskCategory.UMD => MediaType.UMD,
-                                               _                => MediaType.DVDROM
-                                           };
+                    {
+                        DiskCategory.DVDPR    => MediaType.DVDPR,
+                        DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                        DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                        DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                        DiskCategory.DVDR     => pfi0.Value.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
+                        DiskCategory.DVDRAM   => MediaType.DVDRAM,
+                        DiskCategory.DVDRW    => pfi0.Value.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW,
+                        DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                        DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                        DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                        DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                        DiskCategory.Nintendo => pfi0.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD,
+                        DiskCategory.UMD      => MediaType.UMD,
+                        _                     => MediaType.DVDROM
+                    };
 
                     if(DMI.IsXbox(_dmi))
                         _imageInfo.MediaType = MediaType.XGD;
                     else if(DMI.IsXbox360(_dmi))
                         _imageInfo.MediaType = MediaType.XGD2;
 
-                    var tmp = new byte[2048];
+                    byte[] tmp = new byte[2048];
                     Array.Copy(_dmi, 4, tmp, 0, 2048);
                     _dmi = tmp;
                     tmp  = new byte[2048];
@@ -444,23 +437,24 @@ public sealed partial class Alcohol120
         }
         else if(_header.type == MediumType.CD)
         {
-            var data       = false;
-            var mode2      = false;
-            var firstAudio = false;
-            var firstData  = false;
-            var audio      = false;
+            bool data       = false;
+            bool mode2      = false;
+            bool firstAudio = false;
+            bool firstData  = false;
+            bool audio      = false;
 
             foreach(Track alcoholTrack in _alcTracks.Values)
             {
                 // First track is audio
-                firstAudio |= alcoholTrack.point == 1 && alcoholTrack.mode is TrackMode.Audio or TrackMode.AudioAlt;
+                firstAudio |= alcoholTrack is { point: 1, mode: TrackMode.Audio or TrackMode.AudioAlt };
 
                 // First track is data
-                firstData |= alcoholTrack.point == 1 &&
-                             alcoholTrack.mode != TrackMode.Audio && alcoholTrack.mode != TrackMode.AudioAlt;
+                firstData |= alcoholTrack.point == 1 && alcoholTrack.mode != TrackMode.Audio &&
+                             alcoholTrack.mode  != TrackMode.AudioAlt;
 
                 // Any non first track is data
-                data |= alcoholTrack.point != 1 && alcoholTrack.mode != TrackMode.Audio && alcoholTrack.mode != TrackMode.AudioAlt;
+                data |= alcoholTrack.point != 1 && alcoholTrack.mode != TrackMode.Audio &&
+                        alcoholTrack.mode  != TrackMode.AudioAlt;
 
                 // Any non first track is audio
                 audio |= alcoholTrack.point != 1 && alcoholTrack.mode is TrackMode.Audio or TrackMode.AudioAlt;
@@ -486,7 +480,7 @@ public sealed partial class Alcohol120
                     Sessions.Count > 1 &&
                     mode2)
                 _imageInfo.MediaType = MediaType.CDPLUS;
-            else if(firstData && audio || mode2)
+            else if((firstData && audio) || mode2)
                 _imageInfo.MediaType = MediaType.CDROMXA;
             else if(!audio)
                 _imageInfo.MediaType = MediaType.CDROM;
@@ -680,9 +674,10 @@ public sealed partial class Alcohol120
             _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
         }
 
-        if(_imageInfo.MediaType == MediaType.XGD2)
-            if(_imageInfo.Sectors is 25063 or 4229664 or 4246304) // Wxripper unlock
-                _imageInfo.MediaType = MediaType.XGD3;
+        if(_imageInfo is { MediaType: MediaType.XGD2, Sectors: 25063 or 4229664 or 4246304 })
+
+            // Wxripper unlock
+            _imageInfo.MediaType = MediaType.XGD3;
 
         AaruConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", _imageInfo.MediaType);
 
@@ -798,7 +793,7 @@ public sealed partial class Alcohol120
         uint sectorOffset;
         uint sectorSize;
         uint sectorSkip;
-        var  mode2 = false;
+        bool mode2 = false;
 
         switch(alcTrack.mode)
         {
@@ -873,7 +868,7 @@ public sealed partial class Alcohol120
         }
 
         uint pregapBytes = alcExtra.pregap * (sectorOffset + sectorSize + sectorSkip);
-        var  fileOffset  = (long)alcTrack.startOffset;
+        long fileOffset  = (long)alcTrack.startOffset;
 
         if(alcTrack.startOffset >= pregapBytes)
             fileOffset = (long)(alcTrack.startOffset - pregapBytes);
@@ -890,9 +885,9 @@ public sealed partial class Alcohol120
 
             buffer = br.ReadBytes((int)((sectorSize + sectorSkip) * length));
 
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
-                var sector = new byte[sectorSize];
+                byte[] sector = new byte[sectorSize];
                 Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
                 sector = Sector.GetUserDataFromMode2(sector);
                 mode2Ms.Write(sector, 0, sector.Length);
@@ -904,7 +899,7 @@ public sealed partial class Alcohol120
                 sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -1296,7 +1291,7 @@ public sealed partial class Alcohol120
         }
 
         uint pregapBytes = alcExtra.pregap * (sectorOffset + sectorSize + sectorSkip);
-        var  fileOffset  = (long)alcTrack.startOffset;
+        long fileOffset  = (long)alcTrack.startOffset;
 
         if(alcTrack.startOffset >= pregapBytes)
             fileOffset = (long)(alcTrack.startOffset - pregapBytes);
@@ -1311,7 +1306,7 @@ public sealed partial class Alcohol120
            sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -1406,7 +1401,7 @@ public sealed partial class Alcohol120
         }
 
         uint pregapBytes = alcExtra.pregap * (sectorSize + sectorSkip);
-        var  fileOffset  = (long)alcTrack.startOffset;
+        long fileOffset  = (long)alcTrack.startOffset;
 
         if(alcTrack.startOffset >= pregapBytes)
             fileOffset = (long)(alcTrack.startOffset - pregapBytes);
@@ -1414,13 +1409,12 @@ public sealed partial class Alcohol120
         _imageStream = _alcImage.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.Seek(fileOffset + (long)(sectorAddress * (sectorSize + sectorSkip)),
-                           SeekOrigin.Begin);
+        br.BaseStream.Seek(fileOffset + (long)(sectorAddress * (sectorSize + sectorSkip)), SeekOrigin.Begin);
 
         if(sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);

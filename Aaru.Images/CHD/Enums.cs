@@ -30,25 +30,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Chd
 {
     enum Compression : uint
     {
-        None     = 0,
-        Zlib     = 1,
-        ZlibPlus = 2,
-        Av       = 3
+        None = 0, Zlib = 1, ZlibPlus = 2,
+        Av   = 3
     }
 
     enum Flags : uint
     {
-        HasParent = 1,
-        Writable  = 2
+        HasParent = 1, Writable = 2
     }
 
     enum EntryFlagsV3 : byte
@@ -71,20 +68,13 @@ public sealed partial class Chd
 
     enum TrackTypeOld : uint
     {
-        Mode1 = 0,
-        Mode1Raw,
-        Mode2,
-        Mode2Form1,
-        Mode2Form2,
-        Mode2FormMix,
-        Mode2Raw,
-        Audio
+        Mode1 = 0, Mode1Raw, Mode2,
+        Mode2Form1, Mode2Form2, Mode2FormMix,
+        Mode2Raw, Audio
     }
 
     enum SubTypeOld : uint
     {
-        Cooked = 0,
-        Raw,
-        None
+        Cooked = 0, Raw, None
     }
 }

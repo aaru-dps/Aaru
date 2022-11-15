@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui;
-
 using System.IO;
 using System.Reflection;
 using JetBrains.Annotations;
+
+namespace Aaru.Gui;
 
 static class ResourceHandler
 {

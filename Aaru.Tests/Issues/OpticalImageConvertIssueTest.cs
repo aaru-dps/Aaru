@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Issues;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +17,8 @@ using NUnit.Framework;
 using Schemas;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Tests.Issues;
 
 /// <summary>
 ///     This tests the conversion of an input image (autodetected) to an output image and checks that the resulting
@@ -134,8 +134,8 @@ public abstract class OpticalImageConvertIssueTest
                 else
                     sectorsToDo = (uint)(trackSectors - doneSectors);
 
-                var useNotLong = false;
-                var result     = false;
+                bool useNotLong = false;
+                bool result     = false;
 
                 if(UseLong)
                 {
@@ -167,7 +167,8 @@ public abstract class OpticalImageConvertIssueTest
                 }
 
                 Assert.IsTrue(result,
-                              $"Error {outputOptical.ErrorMessage} writing sector {doneSectors + track.StartSector}, not continuing...");
+                              $"Error {outputOptical.ErrorMessage} writing sector {doneSectors + track.StartSector
+                              }, not continuing...");
 
                 doneSectors += sectorsToDo;
             }
@@ -178,9 +179,9 @@ public abstract class OpticalImageConvertIssueTest
         string                   mcn                       = null;
         HashSet<int>             subchannelExtents         = new();
         Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
-        var                      tracks                    = new Track[inputOptical.Tracks.Count];
+        Track[]                  tracks                    = new Track[inputOptical.Tracks.Count];
 
-        for(var i = 0; i < tracks.Length; i++)
+        for(int i = 0; i < tracks.Length; i++)
         {
             tracks[i] = new Track
             {
@@ -333,7 +334,8 @@ public abstract class OpticalImageConvertIssueTest
                     }
 
                     Assert.IsTrue(result,
-                                  $"Error {outputOptical.ErrorMessage} writing tag for sector {doneSectors + track.StartSector}, not continuing...");
+                                  $"Error {outputOptical.ErrorMessage} writing tag for sector {
+                                      doneSectors + track.StartSector}, not continuing...");
 
                     doneSectors += sectorsToDo;
                 }

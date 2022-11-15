@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the squash filesystem</summary>
@@ -72,7 +72,7 @@ public sealed class Squash : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var magic = BitConverter.ToUInt32(sector, 0x00);
+        uint magic = BitConverter.ToUInt32(sector, 0x00);
 
         return magic is SQUASH_MAGIC or SQUASH_CIGAM;
     }
@@ -87,10 +87,10 @@ public sealed class Squash : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        var magic = BitConverter.ToUInt32(sector, 0x00);
+        uint magic = BitConverter.ToUInt32(sector, 0x00);
 
-        var sqSb         = new SuperBlock();
-        var littleEndian = true;
+        var  sqSb         = new SuperBlock();
+        bool littleEndian = true;
 
         switch(magic)
         {
@@ -169,12 +169,8 @@ public sealed class Squash : IFilesystem
 
     enum SquashCompression : ushort
     {
-        Zlib = 1,
-        Lzma = 2,
-        Lzo  = 3,
-        Xz   = 4,
-        Lz4  = 5,
-        Zstd = 6
+        Zlib = 1, Lzma = 2, Lzo  = 3,
+        Xz   = 4, Lz4  = 5, Zstd = 6
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -46,12 +44,13 @@ using Aaru.Console;
 using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Dto;
-using Aaru.Settings;
-using global::Spectre.Console;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Spectre.Console;
 using CdOffset = Aaru.Database.Models.CdOffset;
 using Version = Aaru.CommonTypes.Metadata.Version;
+
+namespace Aaru.Core;
 
 /// <summary>Handles connections to Aaru.Server</summary>
 public static class Remote
@@ -118,7 +117,7 @@ public static class Remote
     /// <param name="create">If <c>true</c> creates the database from scratch, otherwise updates an existing database</param>
     public static void UpdateMainDatabase(bool create)
     {
-        var mctx = AaruContext.Create(Settings.MainDbPath);
+        var mctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
         if(create)
         {
@@ -129,7 +128,8 @@ public static class Remote
 
             foreach(string migration in mctx.Database.GetPendingMigrations())
                 mctx.Database.
-                     ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
+                     ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
+                         migration}', '0.0.0')");
         }
         else
             mctx.Database.Migrate();

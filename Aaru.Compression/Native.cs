@@ -30,13 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Compression;
-
 using System.Runtime.InteropServices;
 
-/// <summary>
-/// Handles native implementations of compression algorithms
-/// </summary>
+namespace Aaru.Compression;
+
+/// <summary>Handles native implementations of compression algorithms</summary>
 public static class Native
 {
     static bool _checked;

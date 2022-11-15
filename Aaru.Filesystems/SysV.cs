@@ -32,8 +32,6 @@
 
 // ReSharper disable NotAccessedField.Local
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 // Information from the Linux kernel
 /// <inheritdoc />
@@ -98,12 +98,12 @@ public sealed class SysVfs : IFilesystem
             sb_size_in_sectors = 1; // If not a single sector can store it
 
         if(partition.End <=
-           partition.Start + 4 * (ulong)sb_size_in_sectors +
+           partition.Start + (4 * (ulong)sb_size_in_sectors) +
            sb_size_in_sectors) // Device must be bigger than SB location + SB size + offset
             return false;
 
         // Sectors in a cylinder
-        var spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
+        int spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
 
         // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
         int[] locations =
@@ -124,7 +124,7 @@ public sealed class SysVfs : IFilesystem
                sb_sector.Length < 0x400)
                 continue;
 
-            var magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
+            uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
             if(magic is XENIX_MAGIC or XENIX_CIGAM or SYSV_MAGIC or SYSV_CIGAM)
                 return true;
@@ -139,21 +139,21 @@ public sealed class SysVfs : IFilesystem
             if(magic is XENIX_MAGIC or XENIX_CIGAM)
                 return true;
 
-            var coherent_string = new byte[6];
+            byte[] coherent_string = new byte[6];
             Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
             string s_fname = StringHandlers.CToString(coherent_string);
             Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
             string s_fpack = StringHandlers.CToString(coherent_string);
 
-            if(s_fname == COH_FNAME && s_fpack == COH_FPACK ||
-               s_fname == COH_XXXXX && s_fpack == COH_XXXXX ||
-               s_fname == COH_XXXXS && s_fpack == COH_XXXXN)
+            if((s_fname == COH_FNAME && s_fpack == COH_FPACK) ||
+               (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
+               (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
                 return true;
 
             // Now try to identify 7th edition
-            var s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
-            var s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
-            var s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
+            uint   s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
+            ushort s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
+            ushort s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
 
             if(s_fsize is <= 0 or >= 0xFFFFFFFF ||
                s_nfree is <= 0 or >= 0xFFFF     ||
@@ -197,16 +197,16 @@ public sealed class SysVfs : IFilesystem
         information = "";
 
         var    sb        = new StringBuilder();
-        var    bigEndian = false; // Start in little endian until we know what are we handling here
-        var    start     = 0;
-        var    xenix     = false;
-        var    sysv      = false;
-        var    sys7th    = false;
-        var    coherent  = false;
-        var    xenix3    = false;
+        bool   bigEndian = false; // Start in little endian until we know what are we handling here
+        int    start     = 0;
+        bool   xenix     = false;
+        bool   sysv      = false;
+        bool   sys7th    = false;
+        bool   coherent  = false;
+        bool   xenix3    = false;
         byte[] sb_sector;
         byte   sb_size_in_sectors;
-        var    offset = 0;
+        int    offset = 0;
 
         if(imagePlugin.Info.SectorSize <=
            0x400) // Check if underlying device sector size is smaller than SuperBlock size
@@ -215,7 +215,7 @@ public sealed class SysVfs : IFilesystem
             sb_size_in_sectors = 1; // If not a single sector can store it
 
         // Sectors in a cylinder
-        var spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
+        int spc = (int)(imagePlugin.Info.Heads * imagePlugin.Info.SectorsPerTrack);
 
         // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
         int[] locations =
@@ -235,7 +235,7 @@ public sealed class SysVfs : IFilesystem
             if(errno != ErrorNumber.NoError)
                 continue;
 
-            var magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
+            uint magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
             if(magic is XENIX_MAGIC or SYSV_MAGIC)
             {
@@ -307,15 +307,15 @@ public sealed class SysVfs : IFilesystem
                 break;
             }
 
-            var coherent_string = new byte[6];
+            byte[] coherent_string = new byte[6];
             Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
             string s_fname = StringHandlers.CToString(coherent_string, Encoding);
             Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
             string s_fpack = StringHandlers.CToString(coherent_string, Encoding);
 
-            if(s_fname == COH_FNAME && s_fpack == COH_FPACK ||
-               s_fname == COH_XXXXX && s_fpack == COH_XXXXX ||
-               s_fname == COH_XXXXS && s_fpack == COH_XXXXN)
+            if((s_fname == COH_FNAME && s_fpack == COH_FPACK) ||
+               (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
+               (s_fname == COH_XXXXS && s_fpack == COH_XXXXN))
             {
                 coherent = true;
                 start    = i;
@@ -324,9 +324,9 @@ public sealed class SysVfs : IFilesystem
             }
 
             // Now try to identify 7th edition
-            var s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
-            var s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
-            var s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
+            uint   s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);
+            ushort s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
+            ushort s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
 
             if(s_fsize is <= 0 or >= 0xFFFFFFFF ||
                s_nfree is <= 0 or >= 0xFFFF     ||
@@ -376,8 +376,8 @@ public sealed class SysVfs : IFilesystem
 
         if(xenix || xenix3)
         {
-            var xenix_strings = new byte[6];
-            var xnx_sb        = new XenixSuperBlock();
+            byte[] xenix_strings = new byte[6];
+            var    xnx_sb        = new XenixSuperBlock();
             errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
 
             if(errno != ErrorNumber.NoError)
@@ -549,7 +549,7 @@ public sealed class SysVfs : IFilesystem
             if(errno != ErrorNumber.NoError)
                 return;
 
-            var sysv_strings = new byte[6];
+            byte[] sysv_strings = new byte[6];
 
             var sysv_sb = new SystemVRelease4SuperBlock
             {
@@ -719,8 +719,8 @@ public sealed class SysVfs : IFilesystem
             if(errno != ErrorNumber.NoError)
                 return;
 
-            var coh_sb      = new CoherentSuperBlock();
-            var coh_strings = new byte[6];
+            var    coh_sb      = new CoherentSuperBlock();
+            byte[] coh_strings = new byte[6];
 
             coh_sb.s_isize  = BitConverter.ToUInt16(sb_sector, 0x000);
             coh_sb.s_fsize  = Swapping.PDPFromLittleEndian(BitConverter.ToUInt32(sb_sector, 0x002));
@@ -793,8 +793,8 @@ public sealed class SysVfs : IFilesystem
             if(errno != ErrorNumber.NoError)
                 return;
 
-            var v7_sb        = new UNIX7thEditionSuperBlock();
-            var sys7_strings = new byte[6];
+            var    v7_sb        = new UNIX7thEditionSuperBlock();
+            byte[] sys7_strings = new byte[6];
 
             v7_sb.s_isize  = BitConverter.ToUInt16(sb_sector, 0x000);
             v7_sb.s_fsize  = BitConverter.ToUInt32(sb_sector, 0x002);

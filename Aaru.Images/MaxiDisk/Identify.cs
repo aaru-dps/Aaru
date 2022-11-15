@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class MaxiDisk
 {
@@ -47,7 +47,7 @@ public sealed partial class MaxiDisk
         if(stream.Length < 8)
             return false;
 
-        var buffer = new byte[8];
+        byte[] buffer = new byte[8];
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, buffer.Length);
 
@@ -81,8 +81,8 @@ public sealed partial class MaxiDisk
         if(tmpHeader.bytesPerSector > 7)
             return false;
 
-        int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
-                               (128 << tmpHeader.bytesPerSector) + 8;
+        int expectedFileSize = (tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
+                                (128 << tmpHeader.bytesPerSector)) + 8;
 
         return expectedFileSize == stream.Length;
     }

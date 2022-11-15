@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Apridisk
 {
@@ -48,7 +48,7 @@ public sealed partial class Apridisk
         if(stream.Length < _signature.Length)
             return false;
 
-        var sigB = new byte[_signature.Length];
+        byte[] sigB = new byte[_signature.Length];
         stream.EnsureRead(sigB, 0, _signature.Length);
 
         return sigB.SequenceEqual(_signature);

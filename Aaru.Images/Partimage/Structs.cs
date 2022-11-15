@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-#pragma warning disable CS0649
-namespace Aaru.DiscImages;
-
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+
+#pragma warning disable CS0649
+namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Partimage

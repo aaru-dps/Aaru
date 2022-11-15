@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Issues;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +8,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Issues;
 
 /// <summary>This class will test an issue that happens when reading an image completely, from start to end, crashes.</summary>
 public abstract class OpticalImageReadIssueTest

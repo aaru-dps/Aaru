@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Nhdr0
 {
@@ -119,7 +119,7 @@ public sealed partial class Nhdr0
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -153,7 +153,7 @@ public sealed partial class Nhdr0
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -207,9 +207,8 @@ public sealed partial class Nhdr0
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders       == 0 &&
-                   _imageInfo.Heads           == 0 &&
-                   _imageInfo.SectorsPerTrack == 0)
+                if(_imageInfo.Cylinders == 0 &&
+                   _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
                     break;
             }
         }
@@ -235,8 +234,8 @@ public sealed partial class Nhdr0
                        commentBytes.Length >= 0x100 ? 0x100 : commentBytes.Length);
         }
 
-        var    hdr    = new byte[Marshal.SizeOf<Header>()];
-        IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class OperaFS
@@ -52,10 +52,7 @@ public sealed partial class OperaFS
 
     enum FileFlags : uint
     {
-        File             = 2,
-        Special          = 6,
-        Directory        = 7,
-        LastEntryInBlock = 0x40000000,
-        LastEntry        = 0x80000000
+        File             = 2, Special            = 6, Directory = 7,
+        LastEntryInBlock = 0x40000000, LastEntry = 0x80000000
     }
 }

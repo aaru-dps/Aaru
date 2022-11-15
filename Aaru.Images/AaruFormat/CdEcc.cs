@@ -31,10 +31,10 @@
 // ECC algorithm from ECM(c) 2002-2011 Neill Corlett
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using Aaru.CommonTypes.Enums;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
@@ -55,7 +55,7 @@ public sealed partial class AaruFormat
         for(uint i = 0; i < 256; i++)
         {
             uint edc = i;
-            var  j   = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
+            uint j   = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
             _eccFTable[i]     = (byte)j;
             _eccBTable[i ^ j] = (byte)i;
 
@@ -93,10 +93,10 @@ public sealed partial class AaruFormat
         if(!correctEccQ)
             return false;
 
-        var  storedEdc = BitConverter.ToUInt32(sector, 0x810);
+        uint storedEdc = BitConverter.ToUInt32(sector, 0x810);
         uint edc       = 0;
-        var  size      = 0x810;
-        var  pos       = 0;
+        int  size      = 0x810;
+        int  pos       = 0;
 
         for(; size > 0; size--)
             edc = (edc >> 8) ^ _edcTable[(edc ^ sector[pos++]) & 0xFF];
@@ -111,7 +111,7 @@ public sealed partial class AaruFormat
         if(!_initedEdc)
             EccInit();
 
-        var zeroAddress = new byte[4];
+        byte[] zeroAddress = new byte[4];
 
         bool correctEccP = CheckEcc(zeroAddress, sector, 86, 24, 2, 86, sector, 0, 0x10, 0x81C);
 
@@ -123,10 +123,10 @@ public sealed partial class AaruFormat
         if(!correctEccQ)
             return false;
 
-        var  storedEdc = BitConverter.ToUInt32(sector, 0x818);
+        uint storedEdc = BitConverter.ToUInt32(sector, 0x818);
         uint edc       = 0;
-        var  size      = 0x808;
-        var  pos       = 0x10;
+        int  size      = 0x808;
+        int  pos       = 0x10;
 
         for(; size > 0; size--)
             edc = (edc >> 8) ^ _edcTable[(edc ^ sector[pos++]) & 0xFF];
@@ -144,7 +144,7 @@ public sealed partial class AaruFormat
 
         for(major = 0; major < majorCount; major++)
         {
-            uint idx  = (major >> 1) * majorMult + (major & 1);
+            uint idx  = ((major >> 1) * majorMult) + (major & 1);
             byte eccA = 0;
             byte eccB = 0;
             uint minor;
@@ -180,7 +180,7 @@ public sealed partial class AaruFormat
 
         for(major = 0; major < majorCount; major++)
         {
-            uint idx  = (major >> 1) * majorMult + (major & 1);
+            uint idx  = ((major >> 1) * majorMult) + (major & 1);
             byte eccA = 0;
             byte eccB = 0;
             uint minor;
@@ -234,9 +234,9 @@ public sealed partial class AaruFormat
 
         (byte minute, byte second, byte frame) msf = LbaToMsf(lba);
 
-        sector[0x00C] = (byte)(((msf.minute / 10) << 4) + msf.minute % 10);
-        sector[0x00D] = (byte)(((msf.second / 10) << 4) + msf.second % 10);
-        sector[0x00E] = (byte)(((msf.frame  / 10) << 4) + msf.frame  % 10);
+        sector[0x00C] = (byte)(((msf.minute / 10) << 4) + (msf.minute % 10));
+        sector[0x00D] = (byte)(((msf.second / 10) << 4) + (msf.second % 10));
+        sector[0x00E] = (byte)(((msf.frame  / 10) << 4) + (msf.frame  % 10));
 
         switch(type)
         {
@@ -308,7 +308,7 @@ public sealed partial class AaruFormat
             default: return;
         }
 
-        var zeroAddress = new byte[4];
+        byte[] zeroAddress = new byte[4];
 
         switch(type)
         {

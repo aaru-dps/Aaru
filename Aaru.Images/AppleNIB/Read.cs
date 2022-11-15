@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Decoders.Floppy;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class AppleNib
 {
@@ -53,7 +53,7 @@ public sealed partial class AppleNib
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        var buffer = new byte[stream.Length];
+        byte[] buffer = new byte[stream.Length];
         stream.EnsureRead(buffer, 0, buffer.Length);
 
         AaruConsole.DebugWriteLine("Apple NIB Plugin", "Decoding whole image");
@@ -62,10 +62,10 @@ public sealed partial class AppleNib
 
         Dictionary<ulong, Apple2.RawSector> rawSectors = new();
 
-        var spt            = 0;
-        var allTracksEqual = true;
+        int  spt            = 0;
+        bool allTracksEqual = true;
 
-        for(var i = 1; i < tracks.Count; i++)
+        for(int i = 1; i < tracks.Count; i++)
             allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
 
         if(allTracksEqual)
@@ -92,12 +92,12 @@ public sealed partial class AppleNib
                                            skewing.SequenceEqual(_dosSkewing) ? "" : "Pro");
             }
 
-        for(var i = 0; i < tracks.Count; i++)
+        for(int i = 0; i < tracks.Count; i++)
             foreach(Apple2.RawSector sector in tracks[i].sectors)
                 if(skewed && spt != 0)
                 {
-                    var sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
-                                            (sector.addressField.sector[1] & 0x55)) & 0xFF);
+                    ulong sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
+                                              (sector.addressField.sector[1] & 0x55)) & 0xFF);
 
                     AaruConsole.DebugWriteLine("Apple NIB Plugin",
                                                "Hardware sector {0} of track {1} goes to logical sector {2}", sectorNo,
@@ -136,11 +136,11 @@ public sealed partial class AppleNib
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
 
         _imageInfo.MediaType = _imageInfo.Sectors switch
-                               {
-                                   455 => MediaType.Apple32SS,
-                                   560 => MediaType.Apple33SS,
-                                   _   => MediaType.Unknown
-                               };
+        {
+            455 => MediaType.Apple32SS,
+            560 => MediaType.Apple33SS,
+            _   => MediaType.Unknown
+        };
 
         _imageInfo.SectorSize   = 256;
         _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;

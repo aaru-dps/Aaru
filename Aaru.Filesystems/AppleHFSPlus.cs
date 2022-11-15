@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 // Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
 /// <inheritdoc />
@@ -79,7 +79,7 @@ public sealed class AppleHFSPlus : IFilesystem
         if(vhSector.Length < 0x800)
             return false;
 
-        var drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
+        ushort drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
         if(drSigWord == AppleCommon.HFS_MAGIC) // "BD"
         {
@@ -88,13 +88,13 @@ public sealed class AppleHFSPlus : IFilesystem
             if(drSigWord == AppleCommon.HFSP_MAGIC) // "H+"
             {
                 // ReSharper disable once InconsistentNaming
-                var xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
+                ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
-                var drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
+                uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
 
-                var drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
+                ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
-                hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.Info.SectorSize);
+                hfspOffset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.Info.SectorSize);
             }
             else
                 hfspOffset = 0;
@@ -134,7 +134,7 @@ public sealed class AppleHFSPlus : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        var drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
+        ushort drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
         if(drSigWord == AppleCommon.HFS_MAGIC) // "BD"
         {
@@ -143,13 +143,13 @@ public sealed class AppleHFSPlus : IFilesystem
             if(drSigWord == AppleCommon.HFSP_MAGIC) // "H+"
             {
                 // ReSharper disable once InconsistentNaming
-                var xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
+                ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
-                var drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
+                uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
 
-                var drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
+                ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
-                hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.Info.SectorSize);
+                hfspOffset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.Info.SectorSize);
                 wrapped    = true;
             }
             else
@@ -193,7 +193,7 @@ public sealed class AppleHFSPlus : IFilesystem
         if(wrapped)
             sb.AppendLine("Volume is wrapped inside an HFS volume.");
 
-        var tmp = new byte[0x400];
+        byte[] tmp = new byte[0x400];
         Array.Copy(vhSector, 0x400, tmp, 0, 0x400);
         vhSector = tmp;
 
@@ -303,11 +303,11 @@ public sealed class AppleHFSPlus : IFilesystem
             }
 
             XmlFsType.Type = vh.signature switch
-                             {
-                                 0x482B => "HFS+",
-                                 0x4858 => "HFSX",
-                                 _      => XmlFsType.Type
-                             };
+            {
+                0x482B => "HFS+",
+                0x4858 => "HFSX",
+                _      => XmlFsType.Type
+            };
 
             if(vh.drFndrInfo6 != 0 &&
                vh.drFndrInfo7 != 0)

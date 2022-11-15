@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Database.Models;
-
 using System.ComponentModel.DataAnnotations;
+
+namespace Aaru.Database.Models;
 
 /// <summary>Base database model</summary>
 public abstract class BaseModel

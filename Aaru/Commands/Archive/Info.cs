@@ -31,15 +31,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Archive;
-
-using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Spectre.Console;
+
+namespace Aaru.Commands.Archive;
 
 sealed class ArchiveInfoCommand : Command
 {
@@ -63,7 +62,7 @@ sealed class ArchiveInfoCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>

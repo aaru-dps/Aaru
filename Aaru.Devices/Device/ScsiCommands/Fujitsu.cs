@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -52,12 +52,12 @@ public partial class Device
                                string secondHalf, uint timeout, out double duration)
     {
         byte[] tmp;
-        var    firstHalfBytes  = new byte[8];
-        var    secondHalfBytes = new byte[8];
-        var    buffer          = new byte[17];
-        var    displayLen      = false;
-        var    halfMsg         = false;
-        var    cdb             = new byte[10];
+        byte[] firstHalfBytes  = new byte[8];
+        byte[] secondHalfBytes = new byte[8];
+        byte[] buffer          = new byte[17];
+        bool   displayLen      = false;
+        bool   halfMsg         = false;
+        byte[] cdb             = new byte[10];
 
         if(!string.IsNullOrWhiteSpace(firstHalf))
         {

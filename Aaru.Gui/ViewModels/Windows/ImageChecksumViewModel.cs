@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -47,6 +45,8 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
 using Schemas;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageChecksumViewModel : ViewModelBase
 {
@@ -371,8 +371,8 @@ public sealed class ImageChecksumViewModel : ViewModelBase
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
-        var opticalMediaImage = _inputFormat as IOpticalMediaImage;
-        var formatHasTracks   = false;
+        var  opticalMediaImage = _inputFormat as IOpticalMediaImage;
+        bool formatHasTracks   = false;
 
         if(opticalMediaImage != null)
             try
@@ -533,8 +533,8 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                             {
                                 Progress2Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
 
-                                Progress2Text =
-                                    $"Hashing sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + SECTORS_TO_READ} of track {currentTrack.Sequence}";
+                                Progress2Text = $"Hashing sectors {doneSectorsToInvoke} to {
+                                    doneSectorsToInvoke + SECTORS_TO_READ} of track {currentTrack.Sequence}";
                             });
 
                             doneSectors += SECTORS_TO_READ;
@@ -558,8 +558,9 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                             {
                                 Progress2Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
 
-                                Progress2Text =
-                                    $"Hashing sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + (sectors - doneSectorsToInvoke)} of track {currentTrack.Sequence}";
+                                Progress2Text = $"Hashing sectors {doneSectorsToInvoke} to {
+                                    doneSectorsToInvoke + (sectors - doneSectorsToInvoke)} of track {
+                                        currentTrack.Sequence}";
                             });
 
                             doneSectors += sectors - doneSectors;
@@ -679,8 +680,8 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                     {
                         Progress2Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
 
-                        Progress2Text =
-                            $"Hashing sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + SECTORS_TO_READ}";
+                        Progress2Text = $"Hashing sectors {doneSectorsToInvoke} to {
+                            doneSectorsToInvoke + SECTORS_TO_READ}";
                     });
 
                     doneSectors += SECTORS_TO_READ;
@@ -704,8 +705,8 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                     {
                         Progress2Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
 
-                        Progress2Text =
-                            $"Hashing sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + (_inputFormat.Info.Sectors - doneSectorsToInvoke)}";
+                        Progress2Text = $"Hashing sectors {doneSectorsToInvoke} to {
+                            doneSectorsToInvoke + (_inputFormat.Info.Sectors - doneSectorsToInvoke)}";
                     });
 
                     doneSectors += _inputFormat.Info.Sectors - doneSectors;

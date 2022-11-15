@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -63,10 +63,11 @@ partial class Dump
         if(runOutSectors.Count == 0)
             return;
 
-        _dumpLog.WriteLine($"{runOutSectors.Count} sectors at the end of the disc are unreadable. This is normal in CD-R(W) discs as these sectors are created by burning software as part of the recording process. Empty ones will be generated and stored in the image.");
+        _dumpLog.WriteLine($"{runOutSectors.Count
+        } sectors at the end of the disc are unreadable. This is normal in CD-R(W) discs as these sectors are created by burning software as part of the recording process. Empty ones will be generated and stored in the image.");
 
-        UpdateStatus?.
-            Invoke($"{runOutSectors.Count} sectors at the end of the disc are unreadable. This is normal in CD-R(W) discs as these sectors are created by burning software as part of the recording process. Empty ones will be generated and stored in the image.");
+        UpdateStatus?.Invoke($"{runOutSectors.Count
+        } sectors at the end of the disc are unreadable. This is normal in CD-R(W) discs as these sectors are created by burning software as part of the recording process. Empty ones will be generated and stored in the image.");
 
         foreach(ulong s in runOutSectors)
         {
@@ -75,7 +76,7 @@ partial class Dump
             if(track is null)
                 continue;
 
-            var sector = new byte[2352];
+            byte[] sector = new byte[2352];
 
             switch(track.Type)
             {

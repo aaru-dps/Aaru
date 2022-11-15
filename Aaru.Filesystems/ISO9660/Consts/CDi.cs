@@ -31,14 +31,12 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Local
-
-namespace Aaru.Filesystems;
 
 using System;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -62,13 +60,8 @@ public sealed partial class ISO9660
     [Flags]
     enum CdiAttributes : ushort
     {
-        OwnerRead    = 1 << 0,
-        OwnerExecute = 1 << 2,
-        GroupRead    = 1 << 4,
-        GroupExecute = 1 << 6,
-        OtherRead    = 1 << 8,
-        OtherExecute = 1 << 10,
-        DigitalAudio = 1 << 14,
-        Directory    = 1 << 15
+        OwnerRead    = 1 << 0, OwnerExecute = 1 << 2, GroupRead    = 1 << 4,
+        GroupExecute = 1 << 6, OtherRead    = 1 << 8, OtherExecute = 1 << 10,
+        DigitalAudio = 1 << 14, Directory   = 1 << 15
     }
 }

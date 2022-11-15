@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 // Information from test floppy images created with OS/2 HPOFS 2.0
 // Need to get IBM document GA32-0224 -> IBM 3995 Optical Library Dataserver Products: Optical Disk Format

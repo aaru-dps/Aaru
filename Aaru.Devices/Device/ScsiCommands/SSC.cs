@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -70,7 +70,7 @@ public partial class Device
                            uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var    cdb    = new byte[6];
+        byte[] cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.LoadUnload;
@@ -150,7 +150,7 @@ public partial class Device
                        uint objectId, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var    cdb    = new byte[10];
+        byte[] cdb    = new byte[10];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.Locate;
@@ -232,7 +232,7 @@ public partial class Device
                          bool bam, byte partition, ulong identifier, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var    cdb     = new byte[16];
+        byte[] cdb     = new byte[16];
         byte[] buffer  = Array.Empty<byte>();
         byte[] idBytes = BitConverter.GetBytes(identifier);
 
@@ -314,7 +314,7 @@ public partial class Device
                       uint blockSize, uint timeout, out double duration)
     {
         buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.Read6;
@@ -412,7 +412,7 @@ public partial class Device
                        ulong objectId, uint transferLen, uint objectSize, uint timeout, out double duration)
     {
         buffer = fixedLen ? new byte[objectSize * transferLen] : new byte[transferLen];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
         byte[] idBytes = BitConverter.GetBytes(objectId);
 
@@ -455,7 +455,7 @@ public partial class Device
     public bool ReadBlockLimits(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         buffer = new byte[6];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ReadBlockLimits;
@@ -543,7 +543,7 @@ public partial class Device
                 break;
         }
 
-        var cdb = new byte[10];
+        byte[] cdb = new byte[10];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ReadPosition;
@@ -608,7 +608,7 @@ public partial class Device
                              uint transferLen, uint blockSize, uint timeout, out double duration)
     {
         buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ReadReverse;
@@ -715,7 +715,7 @@ public partial class Device
                               out double duration)
     {
         buffer = fixedLen ? new byte[objectSize * transferLen] : new byte[transferLen];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
         byte[] idBytes = BitConverter.GetBytes(objectId);
 
@@ -795,7 +795,7 @@ public partial class Device
                                     uint transferLen, uint blockSize, uint timeout, out double duration)
     {
         buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.RecoverBufferedData;
@@ -849,7 +849,7 @@ public partial class Device
                                      uint timeout, out double duration)
     {
         buffer = new byte[256];
-        var cdb = new byte[10];
+        byte[] cdb = new byte[10];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ReportDensitySupport;
@@ -871,7 +871,7 @@ public partial class Device
         if(sense)
             return true;
 
-        var availableLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
+        ushort availableLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
         buffer      = new byte[availableLength];
         cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[8]      = (byte)(buffer.Length & 0xFF);
@@ -902,7 +902,7 @@ public partial class Device
     public bool Rewind(out byte[] senseBuffer, bool immediate, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var    cdb    = new byte[6];
+        byte[] cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.Rewind;
@@ -929,7 +929,7 @@ public partial class Device
     public bool TrackSelect(out byte[] senseBuffer, byte track, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var    cdb    = new byte[6];
+        byte[] cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.TrackSelect;
@@ -955,7 +955,7 @@ public partial class Device
     public bool Space(out byte[] senseBuffer, SscSpaceCodes code, int count, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var    cdb    = new byte[6];
+        byte[] cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
         byte[] countB = BitConverter.GetBytes(count);
 

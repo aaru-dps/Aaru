@@ -26,19 +26,19 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class Partclone : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "partclone");
-    public override IMediaImage Plugin    => new PartClone();
+    public override IMediaImage Plugin     => new PartClone();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

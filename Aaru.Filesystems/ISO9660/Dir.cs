@@ -31,8 +31,6 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -41,6 +39,8 @@ using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -91,7 +91,7 @@ public sealed partial class ISO9660
 
         currentDirectory = _rootDirectoryCache;
 
-        for(var p = 0; p < pieces.Length; p++)
+        for(int p = 0; p < pieces.Length; p++)
         {
             entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
 
@@ -162,7 +162,7 @@ public sealed partial class ISO9660
     Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(ulong start, uint size)
     {
         Dictionary<string, DecodedDirectoryEntry> entries  = new();
-        var                                       entryOff = 0;
+        int                                       entryOff = 0;
 
         ErrorNumber errno = ReadSingleExtent(size, (uint)start, out byte[] data);
 
@@ -177,9 +177,9 @@ public sealed partial class ISO9660
             if(record.length == 0)
             {
                 // Skip to next sector
-                if(data.Length - (entryOff / 2048 + 1) * 2048 > 0)
+                if(data.Length - (((entryOff / 2048) + 1) * 2048) > 0)
                 {
-                    entryOff = (entryOff / 2048 + 1) * 2048;
+                    entryOff = ((entryOff / 2048) + 1) * 2048;
 
                     continue;
                 }
@@ -241,7 +241,7 @@ public sealed partial class ISO9660
     Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(ulong start, uint size)
     {
         Dictionary<string, DecodedDirectoryEntry> entries  = new();
-        var                                       entryOff = 0;
+        int                                       entryOff = 0;
 
         ErrorNumber errno = ReadSingleExtent(size, (uint)start, out byte[] data);
 
@@ -257,9 +257,9 @@ public sealed partial class ISO9660
             if(record.length == 0)
             {
                 // Skip to next sector
-                if(data.Length - (entryOff / 2048 + 1) * 2048 > 0)
+                if(data.Length - (((entryOff / 2048) + 1) * 2048) > 0)
                 {
-                    entryOff = (entryOff / 2048 + 1) * 2048;
+                    entryOff = ((entryOff / 2048) + 1) * 2048;
 
                     continue;
                 }
@@ -314,7 +314,7 @@ public sealed partial class ISO9660
     Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(ulong start, uint size)
     {
         Dictionary<string, DecodedDirectoryEntry> entries  = new();
-        var                                       entryOff = 0;
+        int                                       entryOff = 0;
 
         ErrorNumber errno = ReadSingleExtent(size, (uint)start, out byte[] data);
 
@@ -329,9 +329,9 @@ public sealed partial class ISO9660
             if(record.length == 0)
             {
                 // Skip to next sector
-                if(data.Length - (entryOff / 2048 + 1) * 2048 > 0)
+                if(data.Length - (((entryOff / 2048) + 1) * 2048) > 0)
                 {
-                    entryOff = (entryOff / 2048 + 1) * 2048;
+                    entryOff = ((entryOff / 2048) + 1) * 2048;
 
                     continue;
                 }
@@ -537,12 +537,12 @@ public sealed partial class ISO9660
     {
         int systemAreaOff = start;
         hasResourceFork = false;
-        var continueSymlink          = false;
-        var continueSymlinkComponent = false;
+        bool continueSymlink          = false;
+        bool continueSymlinkComponent = false;
 
         while(systemAreaOff + 2 <= end)
         {
-            var systemAreaSignature = BigEndianBitConverter.ToUInt16(data, systemAreaOff);
+            ushort systemAreaSignature = BigEndianBitConverter.ToUInt16(data, systemAreaOff);
 
             if(BigEndianBitConverter.ToUInt16(data, systemAreaOff + 6) == XA_MAGIC)
                 systemAreaSignature = XA_MAGIC;
@@ -690,7 +690,7 @@ public sealed partial class ISO9660
                         Marshal.ByteArrayToStructureBigEndian<AmigaEntry>(data, systemAreaOff,
                                                                           Marshal.SizeOf<AmigaEntry>());
 
-                    var protectionLength = 0;
+                    int protectionLength = 0;
 
                     if(amiga.flags.HasFlag(AmigaFlags.Protection))
                     {
@@ -705,10 +705,10 @@ public sealed partial class ISO9660
                     {
                         entry.AmigaComment ??= Array.Empty<byte>();
 
-                        var newComment = new byte[entry.AmigaComment.Length +
-                                                  data
-                                                      [systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength] -
-                                                  1];
+                        byte[] newComment = new byte[entry.AmigaComment.Length +
+                                                     data
+                                                         [systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength] -
+                                                     1];
 
                         Array.Copy(entry.AmigaComment, 0, newComment, 0, entry.AmigaComment.Length);
 
@@ -835,7 +835,7 @@ public sealed partial class ISO9660
 
                     entry.RockRidgeAlternateName ??= Array.Empty<byte>();
 
-                    var newNm = new byte[entry.RockRidgeAlternateName.Length + nm.Length];
+                    byte[] newNm = new byte[entry.RockRidgeAlternateName.Length + nm.Length];
                     Array.Copy(entry.RockRidgeAlternateName, 0, newNm, 0, entry.RockRidgeAlternateName.Length);
                     Array.Copy(nm, 0, newNm, entry.RockRidgeAlternateName.Length, nm.Length);
 
@@ -1055,8 +1055,8 @@ public sealed partial class ISO9660
                 '/'
             }, StringSplitOptions.RemoveEmptyEntries);
 
-            var currentParent = 1;
-            var currentPiece  = 0;
+            int currentParent = 1;
+            int currentPiece  = 0;
 
             while(currentPiece < pieces.Length)
             {

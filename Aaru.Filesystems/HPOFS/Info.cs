@@ -31,8 +31,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class HPOFS
 {
@@ -201,10 +201,9 @@ public sealed partial class HPOFS
         sb.AppendFormat("Volume created on {0}", DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime)).
            AppendLine();
 
-        sb.AppendFormat("Volume uses {0} codepage {1}", mib.codepageType is > 0 and < 3
-                                                            ? mib.codepageType == 2
-                                                                  ? "EBCDIC"
-                                                                  : "ASCII" : "Unknown", mib.codepage).AppendLine();
+        sb.AppendFormat("Volume uses {0} codepage {1}",
+                        mib.codepageType is > 0 and < 3 ? mib.codepageType == 2 ? "EBCDIC" : "ASCII" : "Unknown",
+                        mib.codepage).AppendLine();
 
         sb.AppendFormat("RPS level: {0}", mib.rps).AppendLine();
         sb.AppendFormat("Filesystem version: {0}.{1}", mib.major, mib.minor).AppendLine();

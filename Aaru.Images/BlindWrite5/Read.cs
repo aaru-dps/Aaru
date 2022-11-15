@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -53,6 +51,8 @@ using Aaru.Helpers;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Session = Aaru.CommonTypes.Structs.Session;
 
+namespace Aaru.DiscImages;
+
 public sealed partial class BlindWrite5
 {
     /// <inheritdoc />
@@ -64,27 +64,27 @@ public sealed partial class BlindWrite5
         if(stream.Length < 276)
             return ErrorNumber.InvalidArgument;
 
-        var hdr = new byte[260];
+        byte[] hdr = new byte[260];
         stream.EnsureRead(hdr, 0, 260);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.signature = {0}",
                                    StringHandlers.CToString(_header.signature));
 
-        for(var i = 0; i < _header.unknown1.Length; i++)
+        for(int i = 0; i < _header.unknown1.Length; i++)
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown1[{1}] = 0x{0:X8}", _header.unknown1[i], i);
 
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.profile = {0}", _header.profile);
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessions = {0}", _header.sessions);
 
-        for(var i = 0; i < _header.unknown2.Length; i++)
+        for(int i = 0; i < _header.unknown2.Length; i++)
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown2[{1}] = 0x{0:X8}", _header.unknown2[i], i);
 
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcnIsValid = {0}", _header.mcnIsValid);
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcn = {0}", StringHandlers.CToString(_header.mcn));
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown3 = 0x{0:X4}", _header.unknown3);
 
-        for(var i = 0; i < _header.unknown4.Length; i++)
+        for(int i = 0; i < _header.unknown4.Length; i++)
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i], i);
 
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.pmaLen = {0}", _header.pmaLen);
@@ -93,13 +93,13 @@ public sealed partial class BlindWrite5
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdInfoLen = {0}", _header.cdInfoLen);
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.bcaLen = {0}", _header.bcaLen);
 
-        for(var i = 0; i < _header.unknown5.Length; i++)
+        for(int i = 0; i < _header.unknown5.Length; i++)
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown5[{1}] = 0x{0:X8}", _header.unknown5[i], i);
 
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdStrLen = {0}", _header.dvdStrLen);
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdInfoLen = {0}", _header.dvdInfoLen);
 
-        for(var i = 0; i < _header.unknown6.Length; i++)
+        for(int i = 0; i < _header.unknown6.Length; i++)
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown6[{1}] = 0x{0:X2}", _header.unknown6[i], i);
 
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.manufacturer = {0}",
@@ -143,7 +143,7 @@ public sealed partial class BlindWrite5
         if(_unkBlock.Length > 0)
             stream.EnsureRead(_unkBlock, 0, _unkBlock.Length);
 
-        var temp = new byte[_header.pmaLen];
+        byte[] temp = new byte[_header.pmaLen];
 
         if(temp.Length > 0)
         {
@@ -242,20 +242,20 @@ public sealed partial class BlindWrite5
             _discInformation = null;
 
         // How many data blocks
-        var tmpArray = new byte[4];
+        byte[] tmpArray = new byte[4];
         stream.EnsureRead(tmpArray, 0, tmpArray.Length);
-        var dataBlockCount = BitConverter.ToUInt32(tmpArray, 0);
+        uint dataBlockCount = BitConverter.ToUInt32(tmpArray, 0);
 
         stream.EnsureRead(tmpArray, 0, tmpArray.Length);
-        var dataPathLen   = BitConverter.ToUInt32(tmpArray, 0);
-        var dataPathBytes = new byte[dataPathLen];
+        uint   dataPathLen   = BitConverter.ToUInt32(tmpArray, 0);
+        byte[] dataPathBytes = new byte[dataPathLen];
         stream.EnsureRead(dataPathBytes, 0, dataPathBytes.Length);
         _dataPath = Encoding.Unicode.GetString(dataPathBytes);
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Data path: {0}", _dataPath);
 
         _dataFiles = new List<DataFile>();
 
-        for(var cD = 0; cD < dataBlockCount; cD++)
+        for(int cD = 0; cD < dataBlockCount; cD++)
         {
             tmpArray = new byte[52];
 
@@ -294,13 +294,13 @@ public sealed partial class BlindWrite5
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.type = 0x{0:X8}", dataFile.Type);
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.length = {0}", dataFile.Length);
 
-            for(var i = 0; i < dataFile.Unknown1.Length; i++)
+            for(int i = 0; i < dataFile.Unknown1.Length; i++)
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown1[{1}] = {0}", dataFile.Unknown1[i],
                                            i);
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.offset = {0}", dataFile.Offset);
 
-            for(var i = 0; i < dataFile.Unknown2.Length; i++)
+            for(int i = 0; i < dataFile.Unknown2.Length; i++)
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown2[{1}] = {0}", dataFile.Unknown2[i],
                                            i);
 
@@ -313,7 +313,7 @@ public sealed partial class BlindWrite5
 
         _bwSessions = new List<SessionDescriptor>();
 
-        for(var ses = 0; ses < _header.sessions; ses++)
+        for(int ses = 0; ses < _header.sessions; ses++)
         {
             var session = new SessionDescriptor();
             tmpArray = new byte[16];
@@ -337,9 +337,9 @@ public sealed partial class BlindWrite5
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].lastTrack = {1}", ses, session.LastTrack);
 
-            for(var tSeq = 0; tSeq < session.Entries; tSeq++)
+            for(int tSeq = 0; tSeq < session.Entries; tSeq++)
             {
-                var trk = new byte[72];
+                byte[] trk = new byte[72];
                 stream.EnsureRead(trk, 0, 72);
                 session.Tracks[tSeq] = Marshal.ByteArrayToStructureLittleEndian<TrackDescriptor>(trk);
 
@@ -353,7 +353,7 @@ public sealed partial class BlindWrite5
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].type = {2}", ses, tSeq,
                                            session.Tracks[tSeq].type);
 
-                for(var i = 0; i < session.Tracks[tSeq].unknown1.Length; i++)
+                for(int i = 0; i < session.Tracks[tSeq].unknown1.Length; i++)
                     AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown1[{2}] = 0x{3:X2}",
                                                ses, tSeq, i, session.Tracks[tSeq].unknown1[i]);
 
@@ -405,7 +405,7 @@ public sealed partial class BlindWrite5
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].pregap = {2}", ses, tSeq,
                                            session.Tracks[tSeq].pregap);
 
-                for(var i = 0; i < session.Tracks[tSeq].unknown6.Length; i++)
+                for(int i = 0; i < session.Tracks[tSeq].unknown6.Length; i++)
                     AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown6[{2}] = 0x{3:X8}",
                                                ses, tSeq, i, session.Tracks[tSeq].unknown6[i]);
 
@@ -415,7 +415,7 @@ public sealed partial class BlindWrite5
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].sectors = {2}", ses, tSeq,
                                            session.Tracks[tSeq].sectors);
 
-                for(var i = 0; i < session.Tracks[tSeq].unknown7.Length; i++)
+                for(int i = 0; i < session.Tracks[tSeq].unknown7.Length; i++)
                     AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown7[{2}] = 0x{3:X8}",
                                                ses, tSeq, i, session.Tracks[tSeq].unknown7[i]);
 
@@ -429,7 +429,7 @@ public sealed partial class BlindWrite5
                     continue;
 
                 {
-                    for(var i = 0; i < session.Tracks[tSeq].unknown9.Length; i++)
+                    for(int i = 0; i < session.Tracks[tSeq].unknown9.Length; i++)
                         AaruConsole.DebugWriteLine("BlindWrite5 plugin",
                                                    "session[{0}].track[{1}].unknown9[{2}] = 0x{3:X8}", ses, tSeq, i,
                                                    session.Tracks[tSeq].unknown9[i]);
@@ -446,7 +446,7 @@ public sealed partial class BlindWrite5
         tmpArray = new byte[4];
         stream.EnsureRead(tmpArray, 0, tmpArray.Length);
 
-        var footer = new byte[16];
+        byte[] footer = new byte[16];
         stream.EnsureRead(footer, 0, footer.Length);
 
         if(_bw5Footer.SequenceEqual(footer))
@@ -614,7 +614,7 @@ public sealed partial class BlindWrite5
 
         ulong offsetBytes = 0;
         _offsetMap = new Dictionary<uint, ulong>();
-        var  isDvd        = false;
+        bool isDvd        = false;
         byte firstSession = byte.MaxValue;
         byte lastSession  = 0;
         _trackFlags        = new Dictionary<uint, byte>();
@@ -641,7 +641,7 @@ public sealed partial class BlindWrite5
 
             foreach(TrackDescriptor trk in ses.Tracks)
             {
-                var adrCtl = (byte)((trk.adr << 4) + trk.ctl);
+                byte adrCtl = (byte)((trk.adr << 4) + trk.ctl);
                 fullTocStream.WriteByte((byte)trk.session);
                 fullTocStream.WriteByte(adrCtl);
                 fullTocStream.WriteByte(0x00);
@@ -752,10 +752,11 @@ public sealed partial class BlindWrite5
                 track.StartSector = (ulong)(trk.startLba + trk.pregap);
                 track.EndSector   = (ulong)(trk.sectors + trk.startLba) - 1;
 
-                var fileCharsForThisTrack = _filePaths.
-                                            Where(chars => trk.startLba >= chars.StartLba &&
-                                                           trk.startLba   + trk.sectors <=
-                                                           chars.StartLba + chars.Sectors).ToList();
+                List<DataFileCharacteristics> fileCharsForThisTrack = _filePaths.
+                                                                      Where(chars => trk.startLba >= chars.StartLba &&
+                                                                                trk.startLba   + trk.sectors <=
+                                                                                chars.StartLba + chars.Sectors).
+                                                                      ToList();
 
                 if(fileCharsForThisTrack.Count == 0 &&
                    _filePaths.Any(f => Path.GetExtension(f.FilePath).ToLowerInvariant() == ".b00"))
@@ -764,8 +765,8 @@ public sealed partial class BlindWrite5
                         _filePaths.FirstOrDefault(f => Path.GetExtension(f.FilePath).ToLowerInvariant() == ".b00");
 
                     string filename           = Path.GetFileNameWithoutExtension(splitStartChars.FilePath);
-                    var    lowerCaseExtension = false;
-                    var    lowerCaseFileName  = false;
+                    bool   lowerCaseExtension = false;
+                    bool   lowerCaseFileName  = false;
                     string basePath;
 
                     bool version5 = string.Compare(Path.GetExtension(imageFilter.Filename), ".B5T",
@@ -959,7 +960,8 @@ public sealed partial class BlindWrite5
                     track.File   = $"{filename}.{extension}";
 
                     if(trk.startLba >= 0)
-                        track.FileOffset = (ulong)(trk.startLba * splitStartChars.SectorSize + splitStartChars.Offset);
+                        track.FileOffset =
+                            (ulong)((trk.startLba * splitStartChars.SectorSize) + splitStartChars.Offset);
                     else
                         track.FileOffset = (ulong)(trk.startLba * -1 * splitStartChars.SectorSize);
 
@@ -1118,25 +1120,22 @@ public sealed partial class BlindWrite5
             if(pfi0.HasValue)
             {
                 _imageInfo.MediaType = pfi0.Value.DiskCategory switch
-                                       {
-                                           DiskCategory.DVDPR    => MediaType.DVDPR,
-                                           DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
-                                           DiskCategory.DVDPRW   => MediaType.DVDPRW,
-                                           DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
-                                           DiskCategory.DVDR => pfi0.Value.PartVersion >= 6 ? MediaType.DVDRDL
-                                                                    : MediaType.DVDR,
-                                           DiskCategory.DVDRAM => MediaType.DVDRAM,
-                                           DiskCategory.DVDRW => pfi0.Value.PartVersion >= 15 ? MediaType.DVDRWDL
-                                                                     : MediaType.DVDRW,
-                                           DiskCategory.HDDVDR   => MediaType.HDDVDR,
-                                           DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
-                                           DiskCategory.HDDVDROM => MediaType.HDDVDROM,
-                                           DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
-                                           DiskCategory.Nintendo => pfi0.Value.DiscSize == DVDSize.Eighty
-                                                                        ? MediaType.GOD : MediaType.WOD,
-                                           DiskCategory.UMD => MediaType.UMD,
-                                           _                => MediaType.DVDROM
-                                       };
+                {
+                    DiskCategory.DVDPR    => MediaType.DVDPR,
+                    DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                    DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                    DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                    DiskCategory.DVDR     => pfi0.Value.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
+                    DiskCategory.DVDRAM   => MediaType.DVDRAM,
+                    DiskCategory.DVDRW    => pfi0.Value.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW,
+                    DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                    DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                    DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                    DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                    DiskCategory.Nintendo => pfi0.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD,
+                    DiskCategory.UMD      => MediaType.UMD,
+                    _                     => MediaType.DVDROM
+                };
 
                 if(DMI.IsXbox(_dmi))
                     _imageInfo.MediaType = MediaType.XGD;
@@ -1146,11 +1145,11 @@ public sealed partial class BlindWrite5
         }
         else if(_imageInfo.MediaType is MediaType.CD or MediaType.CDROM)
         {
-            var data       = false;
-            var mode2      = false;
-            var firstAudio = false;
-            var firstData  = false;
-            var audio      = false;
+            bool data       = false;
+            bool mode2      = false;
+            bool firstAudio = false;
+            bool firstData  = false;
+            bool audio      = false;
 
             foreach(Track bwTrack in Tracks)
             {
@@ -1185,7 +1184,7 @@ public sealed partial class BlindWrite5
                     Sessions.Count > 1 &&
                     mode2)
                 _imageInfo.MediaType = MediaType.CDPLUS;
-            else if(firstData && audio || mode2)
+            else if((firstData && audio) || mode2)
                 _imageInfo.MediaType = MediaType.CDROMXA;
             else if(!audio)
                 _imageInfo.MediaType = MediaType.CDROM;
@@ -1222,7 +1221,7 @@ public sealed partial class BlindWrite5
 
         if(_atip != null)
         {
-            var atipTmp = new byte[_atip.Length + 4];
+            byte[] atipTmp = new byte[_atip.Length + 4];
             Array.Copy(_atip, 0, atipTmp, 4, _atip.Length);
             atipTmp[0] = (byte)((_atip.Length & 0xFF00) >> 8);
             atipTmp[1] = (byte)(_atip.Length & 0xFF);
@@ -1239,7 +1238,7 @@ public sealed partial class BlindWrite5
             }
         }
 
-        var isBd = false;
+        bool isBd = false;
 
         if(_imageInfo.MediaType is MediaType.BDR or MediaType.BDRE or MediaType.BDROM)
         {
@@ -1249,11 +1248,11 @@ public sealed partial class BlindWrite5
 
         if(isBd && _imageInfo.Sectors > 24438784)
             _imageInfo.MediaType = _imageInfo.MediaType switch
-                                   {
-                                       MediaType.BDR  => MediaType.BDRXL,
-                                       MediaType.BDRE => MediaType.BDREXL,
-                                       _              => _imageInfo.MediaType
-                                   };
+            {
+                MediaType.BDR  => MediaType.BDRXL,
+                MediaType.BDRE => MediaType.BDREXL,
+                _              => _imageInfo.MediaType
+            };
 
         AaruConsole.DebugWriteLine("BlindWrite5 plugin", "ImageInfo.mediaType = {0}", _imageInfo.MediaType);
 
@@ -1296,9 +1295,10 @@ public sealed partial class BlindWrite5
         if(_fullToc != null)
             _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
 
-        if(_imageInfo.MediaType == MediaType.XGD2)
-            if(_imageInfo.Sectors is 25063 or 4229664 or 4246304) // Wxripper unlock
-                _imageInfo.MediaType = MediaType.XGD3;
+        if(_imageInfo is { MediaType: MediaType.XGD2, Sectors: 25063 or 4229664 or 4246304 })
+
+            // Wxripper unlock
+            _imageInfo.MediaType = MediaType.XGD3;
 
         AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", _imageInfo.MediaType);
 
@@ -1428,7 +1428,7 @@ public sealed partial class BlindWrite5
         uint sectorOffset;
         uint sectorSize;
         uint sectorSkip;
-        var  mode2 = false;
+        bool mode2 = false;
 
         switch(aaruTrack.Type)
         {
@@ -1502,9 +1502,9 @@ public sealed partial class BlindWrite5
 
             buffer = br.ReadBytes((int)((sectorSize + sectorSkip) * length));
 
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
-                var sector = new byte[sectorSize];
+                byte[] sector = new byte[sectorSize];
                 Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
                 sector = Sector.GetUserDataFromMode2(sector);
                 mode2Ms.Write(sector, 0, sector.Length);
@@ -1516,7 +1516,7 @@ public sealed partial class BlindWrite5
                 sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -1994,7 +1994,7 @@ public sealed partial class BlindWrite5
            sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -2006,11 +2006,11 @@ public sealed partial class BlindWrite5
             return ErrorNumber.NoError;
 
         buffer = chars.Subchannel switch
-                 {
-                     TrackSubchannelType.Q16Interleaved    => Subchannel.ConvertQToRaw(buffer),
-                     TrackSubchannelType.PackedInterleaved => Subchannel.Interleave(buffer),
-                     _                                     => buffer
-                 };
+        {
+            TrackSubchannelType.Q16Interleaved    => Subchannel.ConvertQToRaw(buffer),
+            TrackSubchannelType.PackedInterleaved => Subchannel.Interleave(buffer),
+            _                                     => buffer
+        };
 
         return ErrorNumber.NoError;
     }
@@ -2118,7 +2118,7 @@ public sealed partial class BlindWrite5
         if(sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(var i = 0; i < length; i++)
+            for(int i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);

@@ -1,13 +1,10 @@
-
-
 // ReSharper disable InconsistentNaming
 
-namespace Aaru.Tests.Devices.SecureDigital;
-
-using Aaru.Decoders.SecureDigital;
 using Aaru.Helpers;
 using FluentAssertions.Execution;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Devices.SecureDigital;
 
 [TestFixture]
 public class CSD
@@ -161,13 +158,13 @@ public class CSD
     [Test]
     public void Test()
     {
-        for(var i = 0; i < cards.Length; i++)
+        for(int i = 0; i < cards.Length; i++)
             using(new AssertionScope())
                 Assert.Multiple(() =>
                 {
                     int count = Marshal.ConvertFromHexAscii(csds[i], out byte[] response);
                     Assert.AreEqual(16, count, $"Size - {cards[i]}");
-                    Aaru.Decoders.SecureDigital.CSD csd = Decoders.DecodeCSD(response);
+                    Decoders.SecureDigital.CSD csd = Decoders.SecureDigital.Decoders.DecodeCSD(response);
                     Assert.IsNotNull(csd, $"Decoded - {cards[i]}");
                     Assert.AreEqual(structure_versions[i], csd.Structure, $"Version - {cards[i]}");
                     Assert.AreEqual(taacs[i], csd.TAAC, $"TAAC - {cards[i]}");

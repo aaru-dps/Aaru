@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the filesystem described in ECMA-67</summary>
@@ -81,7 +81,7 @@ public sealed class ECMA67 : IFilesystem
 
         VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
 
-        return _magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
+        return _magic.SequenceEqual(vol.labelIdentifier) && vol is { labelNumber: 1, recordLength: 0x31 };
     }
 
     /// <inheritdoc />

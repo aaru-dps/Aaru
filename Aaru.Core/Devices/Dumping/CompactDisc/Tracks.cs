@@ -34,8 +34,6 @@
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +43,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -65,11 +65,11 @@ partial class Dump
                                       ErrorMessageHandler stoppingErrorMessage, out FullTOC.CDFullTOC? toc,
                                       Dictionary<byte, byte> trackFlags, UpdateStatusHandler updateStatus)
     {
-        byte[]     cmdBuf;                        // Data buffer
-        const uint sectorSize = 2352;             // Full sector size
-        bool       sense;                         // Sense indicator
-        var        trackList = new List<Track>(); // Tracks in disc
-        byte[]     tmpBuf;                        // Temporary buffer
+        byte[]      cmdBuf;            // Data buffer
+        const uint  sectorSize = 2352; // Full sector size
+        bool        sense;             // Sense indicator
+        List<Track> trackList = new(); // Tracks in disc
+        byte[]      tmpBuf;            // Temporary buffer
         toc        = null;
         lastSector = 0;
         TrackType leadoutTrackType = TrackType.Audio;
@@ -112,7 +112,8 @@ partial class Dump
                                    (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
                                        : TrackType.Audio,
                             StartSector =
-                                (ulong)(trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME - 150),
+                                (ulong)((trk.PHOUR * 3600 * 75) + (trk.PMIN * 60 * 75) + (trk.PSEC * 75) + trk.PFRAME -
+                                        150),
                             BytesPerSector    = (int)sectorSize,
                             RawBytesPerSector = (int)sectorSize
                         });
@@ -158,7 +159,7 @@ partial class Dump
                             phour  = trk.PHOUR;
                         }
 
-                        lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
+                        lastSector = (phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe - 150;
                         leadOutStarts?.Add(trk.SessionNumber, lastSector + 1);
 
                         break;
@@ -249,7 +250,7 @@ partial class Dump
 
         if(!sense)
         {
-            var temp = new byte[8];
+            byte[] temp = new byte[8];
 
             Array.Copy(cmdBuf, 0, temp, 0, 8);
             Array.Reverse(temp);

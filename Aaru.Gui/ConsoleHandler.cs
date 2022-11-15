@@ -31,12 +31,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui;
-
 using System;
 using System.Collections.ObjectModel;
 using Aaru.Console;
 using JetBrains.Annotations;
+
+namespace Aaru.Gui;
 
 static class ConsoleHandler
 {

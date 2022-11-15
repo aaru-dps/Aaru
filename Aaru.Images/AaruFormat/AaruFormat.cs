@@ -69,9 +69,6 @@
  P.S.2: Support for floppy image contaning bitslices and/or fluxes will be added soon.
 */
 
-namespace Aaru.DiscImages;
-
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
@@ -79,6 +76,8 @@ using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.DiscImages;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IWritableOpticalImage" />
 /// <summary>Implements reading and writing AaruFormat media images</summary>
@@ -149,7 +148,7 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
     /// <summary>Cache for bytes to write/rad on-disk.</summary>
     byte[] _structureBytes;
     /// <summary>Cache for pointer for marshaling structures.</summary>
-    IntPtr _structurePointer;
+    nint _structurePointer;
     Dictionary<ulong, ulong> _tapeDdt;
     /// <summary>Cache of CompactDisc track's flags</summary>
     Dictionary<byte, byte> _trackFlags;

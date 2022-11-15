@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Tabs;
-
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes;
 using Aaru.Decoders.DVD;
 using Avalonia.Controls;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class DvdWritableInfoViewModel
 {

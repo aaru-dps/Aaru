@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Linq;
 using Aaru.CommonTypes;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Dumping;
 
 public partial class Dump
 {
@@ -108,7 +108,7 @@ public partial class Dump
             return;
         }
 
-        var tmp = new byte[8];
+        byte[] tmp = new byte[8];
 
         Array.Copy(buffer, 0x36, tmp, 0, 8);
 
@@ -120,9 +120,9 @@ public partial class Dump
             return;
         }
 
-        var fatStart      = (ushort)((buffer[0x0F] << 8) + buffer[0x0E]);
-        var sectorsPerFat = (ushort)((buffer[0x17] << 8) + buffer[0x16]);
-        var rootStart     = (ushort)(sectorsPerFat * 2   + fatStart);
+        ushort fatStart      = (ushort)((buffer[0x0F] << 8) + buffer[0x0E]);
+        ushort sectorsPerFat = (ushort)((buffer[0x17] << 8) + buffer[0x16]);
+        ushort rootStart     = (ushort)((sectorsPerFat * 2) + fatStart);
 
         UpdateStatus?.Invoke($"Reading root directory in sector {rootStart}...");
         _dumpLog.WriteLine("Reading root directory in sector {0}...", rootStart);
@@ -154,7 +154,7 @@ public partial class Dump
         UpdateStatus?.Invoke("Reading FAT...");
         _dumpLog.WriteLine("Reading FAT...");
 
-        var fat = new byte[sectorsPerFat * 512];
+        byte[] fat = new byte[sectorsPerFat * 512];
 
         uint position = 0;
 
@@ -184,11 +184,11 @@ public partial class Dump
         UpdateStatus?.Invoke("Traversing FAT...");
         _dumpLog.WriteLine("Traversing FAT...");
 
-        var previousCluster = BitConverter.ToUInt16(fat, 4);
+        ushort previousCluster = BitConverter.ToUInt16(fat, 4);
 
-        for(var i = 3; i < fat.Length / 2; i++)
+        for(int i = 3; i < fat.Length / 2; i++)
         {
-            var nextCluster = BitConverter.ToUInt16(fat, i * 2);
+            ushort nextCluster = BitConverter.ToUInt16(fat, i * 2);
 
             if(nextCluster == previousCluster + 1)
             {

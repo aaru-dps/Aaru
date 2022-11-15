@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using System.Collections.Generic;
 using System.IO;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Core;
 
 /// <summary>Sidecar operations</summary>
 public sealed partial class Sidecar
@@ -85,14 +85,14 @@ public sealed partial class Sidecar
         if(_aborted)
             return _sidecar;
 
-        ulong currentBlock = 0;
-        ulong totalSize    = 0;
-        var   tapeWorker   = new Checksum();
-        var   tapeFiles    = new List<TapeFileType>();
+        ulong              currentBlock = 0;
+        ulong              totalSize    = 0;
+        var                tapeWorker   = new Checksum();
+        List<TapeFileType> tapeFiles    = new();
 
         UpdateStatus("Hashing files...");
 
-        for(var i = 0; i < files.Count; i++)
+        for(int i = 0; i < files.Count; i++)
         {
             if(_aborted)
                 return _sidecar;

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Image;
-
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -44,6 +42,8 @@ using Aaru.Console;
 using Aaru.Core;
 using JetBrains.Annotations;
 using Spectre.Console;
+
+namespace Aaru.Commands.Image;
 
 sealed class ListOptionsCommand : Command
 {
@@ -58,7 +58,7 @@ sealed class ListOptionsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -89,7 +89,8 @@ sealed class ListOptionsCommand : Command
 
         foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
         {
-            var options = kvp.Value.SupportedOptions.ToList();
+            List<(string name, Type type, string description, object @default)> options =
+                kvp.Value.SupportedOptions.ToList();
 
             if(options.Count == 0)
                 continue;

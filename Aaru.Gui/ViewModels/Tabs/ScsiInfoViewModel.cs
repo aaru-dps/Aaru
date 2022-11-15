@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Tabs;
-
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -47,6 +45,8 @@ using Aaru.Helpers;
 using Avalonia.Controls;
 using ReactiveUI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
+
+namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class ScsiInfoViewModel : ViewModelBase
 {
@@ -426,7 +426,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         if(scsiEvpdPages != null)
             foreach(KeyValuePair<byte, byte[]> page in scsiEvpdPages.OrderBy(t => t.Key))
             {
-                var    evpdPageTitle = "";
+                string evpdPageTitle = "";
                 string evpdDecodedPage;
 
                 switch(page.Key)
@@ -536,14 +536,14 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                             Trim() == "certance":
                         evpdPageTitle = page.Key switch
-                                        {
-                                            0xC2 => "Head Assembly Serial Number",
-                                            0xC3 => "Reel Motor 1 Serial Number",
-                                            0xC4 => "Reel Motor 2 Serial Number",
-                                            0xC5 => "Board Serial Number",
-                                            0xC6 => "Base Mechanical Serial Number",
-                                            _    => evpdPageTitle
-                                        };
+                        {
+                            0xC2 => "Head Assembly Serial Number",
+                            0xC3 => "Reel Motor 1 Serial Number",
+                            0xC4 => "Reel Motor 2 Serial Number",
+                            0xC5 => "Board Serial Number",
+                            0xC6 => "Base Mechanical Serial Number",
+                            _    => evpdPageTitle
+                        };
 
                         evpdDecodedPage = EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(page.Value);
 
@@ -552,15 +552,15 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                             Trim() == "hp":
                         evpdPageTitle = page.Key switch
-                                        {
-                                            0xC0 => "HP Drive Firmware Revision Levels page:",
-                                            0xC1 => "HP Drive Hardware Revision Levels page:",
-                                            0xC2 => "HP Drive PCA Revision Levels page:",
-                                            0xC3 => "HP Drive Mechanism Revision Levels page:",
-                                            0xC4 => "HP Drive Head Assembly Revision Levels page:",
-                                            0xC5 => "HP Drive ACI Revision Levels page:",
-                                            _    => evpdPageTitle
-                                        };
+                        {
+                            0xC0 => "HP Drive Firmware Revision Levels page:",
+                            0xC1 => "HP Drive Hardware Revision Levels page:",
+                            0xC2 => "HP Drive PCA Revision Levels page:",
+                            0xC3 => "HP Drive Mechanism Revision Levels page:",
+                            0xC4 => "HP Drive Head Assembly Revision Levels page:",
+                            0xC5 => "HP Drive ACI Revision Levels page:",
+                            _    => evpdPageTitle
+                        };
 
                         evpdDecodedPage = EVPD.PrettifyPage_C0_to_C5_HP(page.Value);
 
@@ -611,67 +611,67 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                 AaruConsole.DebugWriteLine("Device-Info command", "Feature {0:X4}h", desc.Code);
 
                 string featureDescription = desc.Code switch
-                                            {
-                                                0x0000 => Features.Prettify_0000(desc.Data),
-                                                0x0001 => Features.Prettify_0001(desc.Data),
-                                                0x0002 => Features.Prettify_0002(desc.Data),
-                                                0x0003 => Features.Prettify_0003(desc.Data),
-                                                0x0004 => Features.Prettify_0004(desc.Data),
-                                                0x0010 => Features.Prettify_0010(desc.Data),
-                                                0x001D => Features.Prettify_001D(desc.Data),
-                                                0x001E => Features.Prettify_001E(desc.Data),
-                                                0x001F => Features.Prettify_001F(desc.Data),
-                                                0x0020 => Features.Prettify_0020(desc.Data),
-                                                0x0021 => Features.Prettify_0021(desc.Data),
-                                                0x0022 => Features.Prettify_0022(desc.Data),
-                                                0x0023 => Features.Prettify_0023(desc.Data),
-                                                0x0024 => Features.Prettify_0024(desc.Data),
-                                                0x0025 => Features.Prettify_0025(desc.Data),
-                                                0x0026 => Features.Prettify_0026(desc.Data),
-                                                0x0027 => Features.Prettify_0027(desc.Data),
-                                                0x0028 => Features.Prettify_0028(desc.Data),
-                                                0x0029 => Features.Prettify_0029(desc.Data),
-                                                0x002A => Features.Prettify_002A(desc.Data),
-                                                0x002B => Features.Prettify_002B(desc.Data),
-                                                0x002C => Features.Prettify_002C(desc.Data),
-                                                0x002D => Features.Prettify_002D(desc.Data),
-                                                0x002E => Features.Prettify_002E(desc.Data),
-                                                0x002F => Features.Prettify_002F(desc.Data),
-                                                0x0030 => Features.Prettify_0030(desc.Data),
-                                                0x0031 => Features.Prettify_0031(desc.Data),
-                                                0x0032 => Features.Prettify_0032(desc.Data),
-                                                0x0033 => Features.Prettify_0033(desc.Data),
-                                                0x0035 => Features.Prettify_0035(desc.Data),
-                                                0x0037 => Features.Prettify_0037(desc.Data),
-                                                0x0038 => Features.Prettify_0038(desc.Data),
-                                                0x003A => Features.Prettify_003A(desc.Data),
-                                                0x003B => Features.Prettify_003B(desc.Data),
-                                                0x0040 => Features.Prettify_0040(desc.Data),
-                                                0x0041 => Features.Prettify_0041(desc.Data),
-                                                0x0042 => Features.Prettify_0042(desc.Data),
-                                                0x0050 => Features.Prettify_0050(desc.Data),
-                                                0x0051 => Features.Prettify_0051(desc.Data),
-                                                0x0080 => Features.Prettify_0080(desc.Data),
-                                                0x0100 => Features.Prettify_0100(desc.Data),
-                                                0x0101 => Features.Prettify_0101(desc.Data),
-                                                0x0102 => Features.Prettify_0102(desc.Data),
-                                                0x0103 => Features.Prettify_0103(desc.Data),
-                                                0x0104 => Features.Prettify_0104(desc.Data),
-                                                0x0105 => Features.Prettify_0105(desc.Data),
-                                                0x0106 => Features.Prettify_0106(desc.Data),
-                                                0x0107 => Features.Prettify_0107(desc.Data),
-                                                0x0108 => Features.Prettify_0108(desc.Data),
-                                                0x0109 => Features.Prettify_0109(desc.Data),
-                                                0x010A => Features.Prettify_010A(desc.Data),
-                                                0x010B => Features.Prettify_010B(desc.Data),
-                                                0x010C => Features.Prettify_010C(desc.Data),
-                                                0x010D => Features.Prettify_010D(desc.Data),
-                                                0x010E => Features.Prettify_010E(desc.Data),
-                                                0x0110 => Features.Prettify_0110(desc.Data),
-                                                0x0113 => Features.Prettify_0113(desc.Data),
-                                                0x0142 => Features.Prettify_0142(desc.Data),
-                                                _      => "Unknown feature"
-                                            };
+                {
+                    0x0000 => Features.Prettify_0000(desc.Data),
+                    0x0001 => Features.Prettify_0001(desc.Data),
+                    0x0002 => Features.Prettify_0002(desc.Data),
+                    0x0003 => Features.Prettify_0003(desc.Data),
+                    0x0004 => Features.Prettify_0004(desc.Data),
+                    0x0010 => Features.Prettify_0010(desc.Data),
+                    0x001D => Features.Prettify_001D(desc.Data),
+                    0x001E => Features.Prettify_001E(desc.Data),
+                    0x001F => Features.Prettify_001F(desc.Data),
+                    0x0020 => Features.Prettify_0020(desc.Data),
+                    0x0021 => Features.Prettify_0021(desc.Data),
+                    0x0022 => Features.Prettify_0022(desc.Data),
+                    0x0023 => Features.Prettify_0023(desc.Data),
+                    0x0024 => Features.Prettify_0024(desc.Data),
+                    0x0025 => Features.Prettify_0025(desc.Data),
+                    0x0026 => Features.Prettify_0026(desc.Data),
+                    0x0027 => Features.Prettify_0027(desc.Data),
+                    0x0028 => Features.Prettify_0028(desc.Data),
+                    0x0029 => Features.Prettify_0029(desc.Data),
+                    0x002A => Features.Prettify_002A(desc.Data),
+                    0x002B => Features.Prettify_002B(desc.Data),
+                    0x002C => Features.Prettify_002C(desc.Data),
+                    0x002D => Features.Prettify_002D(desc.Data),
+                    0x002E => Features.Prettify_002E(desc.Data),
+                    0x002F => Features.Prettify_002F(desc.Data),
+                    0x0030 => Features.Prettify_0030(desc.Data),
+                    0x0031 => Features.Prettify_0031(desc.Data),
+                    0x0032 => Features.Prettify_0032(desc.Data),
+                    0x0033 => Features.Prettify_0033(desc.Data),
+                    0x0035 => Features.Prettify_0035(desc.Data),
+                    0x0037 => Features.Prettify_0037(desc.Data),
+                    0x0038 => Features.Prettify_0038(desc.Data),
+                    0x003A => Features.Prettify_003A(desc.Data),
+                    0x003B => Features.Prettify_003B(desc.Data),
+                    0x0040 => Features.Prettify_0040(desc.Data),
+                    0x0041 => Features.Prettify_0041(desc.Data),
+                    0x0042 => Features.Prettify_0042(desc.Data),
+                    0x0050 => Features.Prettify_0050(desc.Data),
+                    0x0051 => Features.Prettify_0051(desc.Data),
+                    0x0080 => Features.Prettify_0080(desc.Data),
+                    0x0100 => Features.Prettify_0100(desc.Data),
+                    0x0101 => Features.Prettify_0101(desc.Data),
+                    0x0102 => Features.Prettify_0102(desc.Data),
+                    0x0103 => Features.Prettify_0103(desc.Data),
+                    0x0104 => Features.Prettify_0104(desc.Data),
+                    0x0105 => Features.Prettify_0105(desc.Data),
+                    0x0106 => Features.Prettify_0106(desc.Data),
+                    0x0107 => Features.Prettify_0107(desc.Data),
+                    0x0108 => Features.Prettify_0108(desc.Data),
+                    0x0109 => Features.Prettify_0109(desc.Data),
+                    0x010A => Features.Prettify_010A(desc.Data),
+                    0x010B => Features.Prettify_010B(desc.Data),
+                    0x010C => Features.Prettify_010C(desc.Data),
+                    0x010D => Features.Prettify_010D(desc.Data),
+                    0x010E => Features.Prettify_010E(desc.Data),
+                    0x0110 => Features.Prettify_0110(desc.Data),
+                    0x0113 => Features.Prettify_0113(desc.Data),
+                    0x0142 => Features.Prettify_0142(desc.Data),
+                    _      => "Unknown feature"
+                };
 
                 MmcFeatures.Add(new ScsiPageModel
                 {

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Dialogs;
-
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reflection;
@@ -41,6 +39,8 @@ using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Dialogs;
 
 public sealed class PluginsViewModel : ViewModelBase
 {
@@ -127,7 +127,7 @@ public sealed class PluginsViewModel : ViewModelBase
         {
             if(baseWritableImage is not IWritableImage writableImage)
                 continue;
-            
+
             WritableImages.Add(new PluginModel
             {
                 Name    = writableImage.Name,

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Tabs;
-
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -42,6 +40,8 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Gui.Models;
 using Avalonia.Controls;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class CompactDiscInfoViewModel : ViewModelBase
 {

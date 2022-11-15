@@ -30,14 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable NotAccessedField.Local
-
-namespace Aaru.Filesystems;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+
+namespace Aaru.Filesystems;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class FAT

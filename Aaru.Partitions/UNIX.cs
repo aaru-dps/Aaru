@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Partitions;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+
+namespace Aaru.Partitions;
 
 // These partitions are hardwired in kernel sources for some UNIX versions predating System V.
 // They depend on exact device, indeed the kernel chooses what to use depending on the disk driver, so that's what we do.
@@ -1468,7 +1468,7 @@ public sealed class UNIX : IPartition
             default: return false;
         }
 
-        for(var i = 0; i < parts.Length; i++)
+        for(int i = 0; i < parts.Length; i++)
             parts[i].Scheme = "";
 
         partitions = parts.ToList();

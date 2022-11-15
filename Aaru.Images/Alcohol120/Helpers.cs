@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Alcohol120
 {
@@ -73,14 +73,14 @@ public sealed partial class Alcohol120
     }
 
     static MediaType MediumTypeToMediaType(MediumType discType) => discType switch
-                                                                   {
-                                                                       MediumType.CD   => MediaType.CD,
-                                                                       MediumType.CDR  => MediaType.CDR,
-                                                                       MediumType.CDRW => MediaType.CDRW,
-                                                                       MediumType.DVD  => MediaType.DVDROM,
-                                                                       MediumType.DVDR => MediaType.DVDR,
-                                                                       _               => MediaType.Unknown
-                                                                   };
+    {
+        MediumType.CD   => MediaType.CD,
+        MediumType.CDR  => MediaType.CDR,
+        MediumType.CDRW => MediaType.CDRW,
+        MediumType.DVD  => MediaType.DVDROM,
+        MediumType.DVDR => MediaType.DVDR,
+        _               => MediaType.Unknown
+    };
 
     static MediumType MediaTypeToMediumType(MediaType type)
     {
@@ -135,14 +135,14 @@ public sealed partial class Alcohol120
     }
 
     static TrackMode TrackTypeToTrackMode(TrackType type) => type switch
-                                                             {
-                                                                 TrackType.Audio           => TrackMode.Audio,
-                                                                 TrackType.CdMode1         => TrackMode.Mode1,
-                                                                 TrackType.CdMode2Formless => TrackMode.Mode2,
-                                                                 TrackType.CdMode2Form1    => TrackMode.Mode2F1,
-                                                                 TrackType.CdMode2Form2    => TrackMode.Mode2F2,
-                                                                 _                         => TrackMode.DVD
-                                                             };
+    {
+        TrackType.Audio           => TrackMode.Audio,
+        TrackType.CdMode1         => TrackMode.Mode1,
+        TrackType.CdMode2Formless => TrackMode.Mode2,
+        TrackType.CdMode2Form1    => TrackMode.Mode2F1,
+        TrackType.CdMode2Form2    => TrackMode.Mode2F2,
+        _                         => TrackMode.DVD
+    };
 
     static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
         ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));

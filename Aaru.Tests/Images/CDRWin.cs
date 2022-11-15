@@ -26,8 +26,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images;
-
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
@@ -35,12 +33,13 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-[TestFixture]
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+namespace Aaru.Tests.Images;
+
+[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CDRWin : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CDRWin");
-    public override IMediaImage Plugin    => new CdrWin();
+    public override IMediaImage Plugin     => new CdrWin();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {

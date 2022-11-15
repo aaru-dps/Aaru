@@ -26,18 +26,18 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class D88 : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "D88");
-    public override IMediaImage Plugin    => new DiscImages.D88();
+    public override IMediaImage Plugin     => new DiscImages.D88();
     public override BlockImageTestExpected[] Tests => new[]
     {
         new BlockImageTestExpected

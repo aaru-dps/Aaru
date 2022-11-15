@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Helpers;
+
+namespace Aaru.Core;
 
 /// <summary>Prints all SCSI MODE pages</summary>
 public static class PrintScsiModePages

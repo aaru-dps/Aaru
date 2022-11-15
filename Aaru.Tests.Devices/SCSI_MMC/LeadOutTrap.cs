@@ -1,6 +1,3 @@
-namespace Aaru.Tests.Devices;
-
-using System;
 using System.Linq;
 using System.Threading;
 using Aaru.Console;
@@ -9,16 +6,18 @@ using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Aaru.Helpers;
 
+namespace Aaru.Tests.Devices;
+
 static partial class ScsiMmc
 {
     static void ReadLeadOutUsingTrapDisc(string devPath, Device dev)
     {
-        var    tocIsNotBcd = false;
+        bool   tocIsNotBcd = false;
         bool   sense;
         byte[] senseBuffer;
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         AaruConsole.WriteLine("Ejecting disc...");
 
@@ -27,11 +26,11 @@ static partial class ScsiMmc
 
         AaruConsole.WriteLine("Please insert a data only disc inside...");
         AaruConsole.WriteLine("Press any key to continue...");
-        Console.ReadLine();
+        System.Console.ReadLine();
 
         AaruConsole.WriteLine("Sending READ FULL TOC to the device...");
 
-        var retries = 0;
+        int retries = 0;
 
         do
         {
@@ -59,7 +58,7 @@ static partial class ScsiMmc
             AaruConsole.WriteLine("READ FULL TOC failed...");
             AaruConsole.WriteLine("{0}", Sense.PrettifySense(senseBuffer));
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
@@ -70,7 +69,7 @@ static partial class ScsiMmc
         {
             AaruConsole.WriteLine("Could not decode TOC...");
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
@@ -83,16 +82,16 @@ static partial class ScsiMmc
         {
             AaruConsole.WriteLine("Cannot find lead-out...");
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
 
-        int min   = (leadOutTrack.PMIN   >> 4) * 10 + (leadOutTrack.PMIN   & 0x0F);
-        int sec   = (leadOutTrack.PSEC   >> 4) * 10 + (leadOutTrack.PSEC   & 0x0F);
-        int frame = (leadOutTrack.PFRAME >> 4) * 10 + (leadOutTrack.PFRAME & 0x0F);
+        int min   = ((leadOutTrack.PMIN   >> 4) * 10) + (leadOutTrack.PMIN   & 0x0F);
+        int sec   = ((leadOutTrack.PSEC   >> 4) * 10) + (leadOutTrack.PSEC   & 0x0F);
+        int frame = ((leadOutTrack.PFRAME >> 4) * 10) + (leadOutTrack.PFRAME & 0x0F);
 
-        int sectors = min * 60 * 75 + sec * 75 + frame - 150;
+        int sectors = (min * 60 * 75) + (sec * 75) + frame - 150;
 
         AaruConsole.WriteLine("Data disc shows {0} sectors...", sectors);
 
@@ -103,7 +102,7 @@ static partial class ScsiMmc
 
         AaruConsole.WriteLine("Please insert the trap disc inside...");
         AaruConsole.WriteLine("Press any key to continue...");
-        Console.ReadLine();
+        System.Console.ReadLine();
 
         AaruConsole.WriteLine("Sending READ FULL TOC to the device...");
 
@@ -135,7 +134,7 @@ static partial class ScsiMmc
             AaruConsole.WriteLine("READ FULL TOC failed...");
             AaruConsole.WriteLine("{0}", Sense.PrettifySense(senseBuffer));
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
@@ -146,7 +145,7 @@ static partial class ScsiMmc
         {
             AaruConsole.WriteLine("Could not decode TOC...");
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
@@ -159,7 +158,7 @@ static partial class ScsiMmc
         {
             AaruConsole.WriteLine("Cannot find lead-out...");
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
@@ -187,12 +186,12 @@ static partial class ScsiMmc
         }
         else
         {
-            min   += (leadOutTrack.PMIN   >> 4) * 10 + (leadOutTrack.PMIN   & 0x0F);
-            sec   =  (leadOutTrack.PSEC   >> 4) * 10 + (leadOutTrack.PSEC   & 0x0F);
-            frame =  (leadOutTrack.PFRAME >> 4) * 10 + (leadOutTrack.PFRAME & 0x0F);
+            min   += ((leadOutTrack.PMIN   >> 4) * 10) + (leadOutTrack.PMIN   & 0x0F);
+            sec   =  ((leadOutTrack.PSEC   >> 4) * 10) + (leadOutTrack.PSEC   & 0x0F);
+            frame =  ((leadOutTrack.PFRAME >> 4) * 10) + (leadOutTrack.PFRAME & 0x0F);
         }
 
-        int trapSectors = min * 60 * 75 + sec * 75 + frame - 150;
+        int trapSectors = (min * 60 * 75) + (sec * 75) + frame - 150;
 
         AaruConsole.WriteLine("Trap disc shows {0} sectors...", trapSectors);
 
@@ -200,7 +199,7 @@ static partial class ScsiMmc
         {
             AaruConsole.WriteLine("Trap disc doesn't have enough sectors...");
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
@@ -211,7 +210,7 @@ static partial class ScsiMmc
 
         AaruConsole.WriteLine("Please MANUALLY get the trap disc out and put the data disc back inside...");
         AaruConsole.WriteLine("Press any key to continue...");
-        Console.ReadLine();
+        System.Console.ReadLine();
 
         AaruConsole.WriteLine("Waiting 5 seconds...");
         Thread.Sleep(5000);
@@ -242,7 +241,7 @@ static partial class ScsiMmc
             AaruConsole.WriteLine("READ FULL TOC failed...");
             AaruConsole.WriteLine("{0}", Sense.PrettifySense(senseBuffer));
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
@@ -253,7 +252,7 @@ static partial class ScsiMmc
         {
             AaruConsole.WriteLine("Could not decode TOC...");
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
@@ -266,7 +265,7 @@ static partial class ScsiMmc
         {
             AaruConsole.WriteLine("Cannot find lead-out...");
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
@@ -281,7 +280,7 @@ static partial class ScsiMmc
         {
             AaruConsole.WriteLine("Lead-out has changed, this drive does not support hot swapping discs...");
             AaruConsole.WriteLine("Press any key to continue...");
-            Console.ReadLine();
+            System.Console.ReadLine();
 
             return;
         }
@@ -328,8 +327,8 @@ static partial class ScsiMmc
 
         AaruConsole.WriteLine(pqResult ? "FAIL!" : "Success!");
 
-    menu:
-        Console.Clear();
+        menu:
+        System.Console.Clear();
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Device {0} read Lead-Out.", dataResult && scrambledResult ? "cannot" : "can");
 
@@ -395,13 +394,13 @@ static partial class ScsiMmc
         AaruConsole.WriteLine("0.- Return to special SCSI MultiMedia Commands menu.");
         AaruConsole.Write("Choose: ");
 
-        string strDev = Console.ReadLine();
+        string strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -413,7 +412,7 @@ static partial class ScsiMmc
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA {0} response:", sectors + 5);
 
@@ -421,11 +420,11 @@ static partial class ScsiMmc
                     PrintHex.PrintHexArray(dataBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 2:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA {0} sense:", sectors + 5);
 
@@ -433,20 +432,20 @@ static partial class ScsiMmc
                     PrintHex.PrintHexArray(dataSense, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 3:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA {0} decoded sense:", sectors + 5);
                 AaruConsole.Write("{0}", Sense.PrettifySense(dataSense));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 4:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA {0} (scrambled) response:", sectors + 5);
 
@@ -454,11 +453,11 @@ static partial class ScsiMmc
                     PrintHex.PrintHexArray(scrambledBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 5:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA {0} (scrambled) sense:", sectors + 5);
 
@@ -466,20 +465,20 @@ static partial class ScsiMmc
                     PrintHex.PrintHexArray(scrambledSense, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 6:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA {0} (scrambled) decoded sense:", sectors + 5);
                 AaruConsole.Write("{0}", Sense.PrettifySense(scrambledSense));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 7:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA's PQ {0} response:", sectors + 5);
 
@@ -487,11 +486,11 @@ static partial class ScsiMmc
                     PrintHex.PrintHexArray(pqBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 8:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA's PQ {0} sense:", sectors + 5);
 
@@ -499,20 +498,20 @@ static partial class ScsiMmc
                     PrintHex.PrintHexArray(pqSense, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 9:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA's PQ {0} decoded sense:", sectors + 5);
                 AaruConsole.Write("{0}", Sense.PrettifySense(pqSense));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 10:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA's RW {0} response:", sectors + 5);
 
@@ -520,11 +519,11 @@ static partial class ScsiMmc
                     PrintHex.PrintHexArray(rwBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 11:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA's RW {0} sense:", sectors + 5);
 
@@ -532,23 +531,23 @@ static partial class ScsiMmc
                     PrintHex.PrintHexArray(rwSense, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 12:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("LBA's RW {0} decoded sense:", sectors + 5);
                 AaruConsole.Write("{0}", Sense.PrettifySense(rwSense));
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 goto menu;
             case 13: goto start;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }

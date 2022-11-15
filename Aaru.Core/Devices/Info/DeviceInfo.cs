@@ -31,10 +31,6 @@
 // Copyright © 2021-2022 Rebecca Wallander
 // ****************************************************************************/
 
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
-
-namespace Aaru.Core.Devices.Info;
-
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
@@ -46,7 +42,10 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decryption;
 using Aaru.Devices;
 using Aaru.Helpers;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
+
+namespace Aaru.Core.Devices.Info;
 
 /// <summary>Obtains and contains information about a device</summary>
 public partial class DeviceInfo
@@ -117,8 +116,7 @@ public partial class DeviceInfo
 
                 dev.EnableMediaCardPassThrough(out errorRegisters, dev.Timeout, out _);
 
-                if(errorRegisters.Sector      == 0xAA &&
-                   errorRegisters.SectorCount == 0x55)
+                if(errorRegisters is { Sector: 0xAA, SectorCount: 0x55 })
                     AtaMcptError = errorRegisters;
 
                 break;
@@ -319,8 +317,8 @@ public partial class DeviceInfo
                         #region Plextor
                         if(dev.Manufacturer == "PLEXTOR")
                         {
-                            var    plxtSense = true;
-                            var    plxtDvd   = false;
+                            bool   plxtSense = true;
+                            bool   plxtDvd   = false;
                             byte[] plxtBuf   = null;
 
                             switch(dev.Model)

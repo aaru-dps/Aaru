@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -83,7 +83,7 @@ public partial class Device
                                           uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[10];
+        byte[] cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.PlasmonReadSectorLocation;
         cdb[2] = (byte)((address & 0xFF000000) >> 24);

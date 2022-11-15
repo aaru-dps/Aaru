@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Partimage
 {
@@ -53,7 +53,7 @@ public sealed partial class Partimage
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        var hdrB = new byte[Marshal.SizeOf<Header>()];
+        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, Marshal.SizeOf<Header>());
         _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
@@ -406,7 +406,7 @@ public sealed partial class Partimage
                         (long)(blockOff * _imageInfo.SectorSize) +
 
                         // How many bytes of CRC blocks to skip
-                        (long)(blockOff / (CHECK_FREQUENCY / _imageInfo.SectorSize)) * Marshal.SizeOf<CCheck>();
+                        ((long)(blockOff / (CHECK_FREQUENCY / _imageInfo.SectorSize)) * Marshal.SizeOf<CCheck>());
 
         buffer = new byte[_imageInfo.SectorSize];
         _imageStream.Seek(imageOff, SeekOrigin.Begin);
@@ -433,7 +433,7 @@ public sealed partial class Partimage
 
         var ms = new MemoryStream();
 
-        var allEmpty = true;
+        bool allEmpty = true;
 
         for(uint i = 0; i < length; i++)
             if((_bitmap[sectorAddress / 8] & (1 << (int)(sectorAddress % 8))) != 0)

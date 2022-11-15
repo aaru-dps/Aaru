@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +6,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Filesystems;
 
 public abstract class FilesystemTest
 {
@@ -61,11 +61,11 @@ public abstract class FilesystemTest
 
                     Assert.Greater(partitionsList.Count, 0, $"No partitions found for {testFile}");
 
-                    var found = false;
+                    bool found = false;
 
                     foreach(Partition p in partitionsList)
                     {
-                        Filesystems.Identify(image, out idPlugins, p, true);
+                        Core.Filesystems.Identify(image, out idPlugins, p, true);
 
                         if(idPlugins.Count == 0)
                             continue;
@@ -89,7 +89,7 @@ public abstract class FilesystemTest
                         Size   = image.Info.Sectors * image.Info.SectorSize
                     };
 
-                    Filesystems.Identify(image, out idPlugins, wholePart, true);
+                    Core.Filesystems.Identify(image, out idPlugins, wholePart, true);
 
                     Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {testFile}");
 
@@ -146,7 +146,7 @@ public abstract class FilesystemTest
             foreach(FileSystemTest test in Tests)
             {
                 string testFile  = test.TestFile;
-                var    found     = false;
+                bool   found     = false;
                 var    partition = new Partition();
 
                 bool exists = File.Exists(testFile);
@@ -179,7 +179,7 @@ public abstract class FilesystemTest
                     // In reverse to skip boot partitions we're not interested in
                     for(int index = partitionsList.Count - 1; index >= 0; index--)
                     {
-                        Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
+                        Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
 
                         if(idPlugins.Count == 0)
                             continue;
@@ -202,7 +202,7 @@ public abstract class FilesystemTest
                         Size   = image.Info.Sectors * image.Info.SectorSize
                     };
 
-                    Filesystems.Identify(image, out idPlugins, partition, true);
+                    Core.Filesystems.Identify(image, out idPlugins, partition, true);
 
                     Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {testFile}");
 

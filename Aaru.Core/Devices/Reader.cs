@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices;
-
 using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Core.Logging;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices;
 
 /// <summary>Reduces common code used for scanning and dumping</summary>
 sealed partial class Reader

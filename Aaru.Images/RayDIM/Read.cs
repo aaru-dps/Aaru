@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class RayDim
 {
@@ -49,7 +49,7 @@ public sealed partial class RayDim
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        var buffer = new byte[Marshal.SizeOf<Header>()];
+        byte[] buffer = new byte[Marshal.SizeOf<Header>()];
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, buffer.Length);
 
@@ -71,10 +71,10 @@ public sealed partial class RayDim
         _imageInfo.Sectors         = _imageInfo.Cylinders * _imageInfo.Heads * _imageInfo.SectorsPerTrack;
         _imageInfo.SectorSize      = 512;
 
-        var sectors = new byte[_imageInfo.SectorsPerTrack * _imageInfo.SectorSize];
+        byte[] sectors = new byte[_imageInfo.SectorsPerTrack * _imageInfo.SectorSize];
         _disk = new MemoryStream();
 
-        for(var i = 0; i < _imageInfo.SectorsPerTrack * _imageInfo.SectorSize; i++)
+        for(int i = 0; i < _imageInfo.SectorsPerTrack * _imageInfo.SectorSize; i++)
         {
             stream.EnsureRead(sectors, 0, sectors.Length);
             stream.Seek(_imageInfo.SectorsPerTrack, SeekOrigin.Current);

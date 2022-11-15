@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
+
+namespace Aaru.Core;
 
 /// <summary>Implements methods for handling partitions</summary>
 public static class Partitions
@@ -47,10 +47,10 @@ public static class Partitions
     /// <returns>List of found partitions</returns>
     public static List<Partition> GetAll(IMediaImage image)
     {
-        PluginBase plugins          = GetPluginBase.Instance;
-        var        foundPartitions  = new List<Partition>();
-        var        childPartitions  = new List<Partition>();
-        var        checkedLocations = new List<ulong>();
+        PluginBase      plugins          = GetPluginBase.Instance;
+        List<Partition> foundPartitions  = new();
+        List<Partition> childPartitions  = new();
+        List<ulong>     checkedLocations = new();
 
         var tapeImage          = image as ITapeImage;
         var partitionableImage = image as IPartitionableMediaImage;
@@ -110,7 +110,7 @@ public static class Partitions
                 continue;
             }
 
-            var children = new List<Partition>();
+            List<Partition> children = new();
 
             foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
             {
@@ -153,7 +153,7 @@ public static class Partitions
         // Be sure that device partitions are not excluded if not mapped by any scheme...
         if(tapeImage is not null)
         {
-            var startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
+            List<ulong> startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
 
             if(tapeImage.Files != null)
                 childPartitions.AddRange(tapeImage.Files.Where(f => !startLocations.Contains(f.FirstBlock)).
@@ -167,7 +167,7 @@ public static class Partitions
 
         if(partitionableImage is not null)
         {
-            var startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
+            List<ulong> startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
 
             if(partitionableImage.Partitions != null)
                 childPartitions.AddRange(partitionableImage.Partitions.Where(imagePartition =>
@@ -192,7 +192,7 @@ public static class Partitions
            partitions.Count == 0)
             return;
 
-        var schemes = new List<string>();
+        List<string> schemes = new();
 
         foreach(Partition part in partitions.Where(part => !schemes.Contains(part.Scheme)))
             schemes.Add(part.Scheme);

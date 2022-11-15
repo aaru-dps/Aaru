@@ -30,9 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Image;
-
-using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes;
@@ -44,6 +41,8 @@ using Aaru.Decoders.ATA;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Spectre.Console;
+
+namespace Aaru.Commands.Image;
 
 sealed class DecodeCommand : Command
 {
@@ -88,7 +87,7 @@ sealed class DecodeCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -122,7 +121,7 @@ sealed class DecodeCommand : Command
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying file filter...").IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
@@ -138,7 +137,7 @@ sealed class DecodeCommand : Command
         IMediaImage inputFormat = null;
         IBaseImage  baseImage   = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Identifying image format...").IsIndeterminate();
             baseImage   = ImageFormat.Detect(inputFilter);
@@ -161,7 +160,7 @@ sealed class DecodeCommand : Command
 
         ErrorNumber opened = ErrorNumber.NoData;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening image file...").IsIndeterminate();
             opened = inputFormat.Open(inputFilter);

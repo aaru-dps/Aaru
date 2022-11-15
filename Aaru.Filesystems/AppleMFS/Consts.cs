@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
 [SuppressMessage("ReSharper", "UnusedMember.Local")]

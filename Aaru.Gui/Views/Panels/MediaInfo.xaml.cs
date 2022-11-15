@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Views.Panels;
-
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+
+namespace Aaru.Gui.Views.Panels;
 
 public sealed class MediaInfo : UserControl
 {

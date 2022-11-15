@@ -31,9 +31,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Archive;
-
 using System.CommandLine;
+
+namespace Aaru.Commands.Archive;
 
 sealed class ArchiveFamily : Command
 {

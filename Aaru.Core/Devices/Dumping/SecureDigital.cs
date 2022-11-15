@@ -32,8 +32,6 @@
 
 // ReSharper disable JoinDeclarationAndInitializer
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,16 +42,16 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
-using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
 using Aaru.Decoders.SecureDigital;
 using Schemas;
 using CSD = Aaru.Decoders.MMC.CSD;
-using Decoders = Aaru.Decoders.MMC.Decoders;
 using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping a MultiMediaCard or SecureDigital flash card</summary>
 public partial class Dump
@@ -87,9 +85,9 @@ public partial class Dump
         byte[]       ecsd              = null;
         byte[]       scr               = null;
         uint         physicalBlockSize = 0;
-        var          byteAddressed     = true;
+        bool         byteAddressed     = true;
         uint[]       response;
-        var          supportsCmd23 = false;
+        bool         supportsCmd23 = false;
         var          outputFormat  = _outputPlugin as IWritableImage;
 
         Dictionary<MediaTagType, byte[]> mediaTags = new();
@@ -104,7 +102,7 @@ public partial class Dump
 
                 if(!sense)
                 {
-                    CSD csdDecoded = Decoders.DecodeCSD(csd);
+                    CSD csdDecoded = Decoders.MMC.Decoders.DecodeCSD(csd);
                     blocks    = (ulong)((csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2));
                     blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
 
@@ -121,16 +119,16 @@ public partial class Dump
 
                         if(!sense)
                         {
-                            ExtendedCSD ecsdDecoded = Decoders.DecodeExtendedCSD(ecsd);
+                            ExtendedCSD ecsdDecoded = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd);
                             blocks    = ecsdDecoded.SectorCount;
                             blockSize = (uint)(ecsdDecoded.SectorSize == 1 ? 4096 : 512);
 
                             physicalBlockSize = ecsdDecoded.NativeSectorSize switch
-                                                {
-                                                    0 => 512,
-                                                    1 => 4096,
-                                                    _ => physicalBlockSize
-                                                };
+                            {
+                                0 => 512,
+                                1 => 4096,
+                                _ => physicalBlockSize
+                            };
 
                             blocksToRead = (ushort)(ecsdDecoded.OptimalReadSize * 4096 / blockSize);
 
@@ -177,7 +175,7 @@ public partial class Dump
 
                 if(!sense)
                 {
-                    Aaru.Decoders.SecureDigital.CSD csdDecoded = Aaru.Decoders.SecureDigital.Decoders.DecodeCSD(csd);
+                    Decoders.SecureDigital.CSD csdDecoded = Decoders.SecureDigital.Decoders.DecodeCSD(csd);
 
                     blocks = (ulong)(csdDecoded.Structure == 0
                                          ? (csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2)
@@ -227,8 +225,8 @@ public partial class Dump
                 }
                 else
                 {
-                    supportsCmd23 = Aaru.Decoders.SecureDigital.Decoders.DecodeSCR(scr)?.CommandSupport.
-                                         HasFlag(CommandSupport.SetBlockCount) ?? false;
+                    supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(scr)?.CommandSupport.
+                                             HasFlag(CommandSupport.SetBlockCount) ?? false;
 
                     mediaTags.Add(MediaTagType.SD_SCR, null);
                 }
@@ -423,7 +421,7 @@ public partial class Dump
             return;
         }
 
-        var ret = true;
+        bool ret = true;
 
         foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !outputFormat.SupportedMediaTags.Contains(tag)))
         {
@@ -592,7 +590,7 @@ public partial class Dump
 
         start = DateTime.UtcNow;
         double   imageWriteDuration = 0;
-        var      newTrim            = false;
+        bool     newTrim            = false;
         DateTime timeSpeedStart     = DateTime.UtcNow;
         ulong    sectorSpeedStart   = 0;
 
@@ -758,11 +756,11 @@ public partial class Dump
            !_aborted                   &&
            _retryPasses > 0)
         {
-            var        pass              = 1;
-            var        forward           = true;
+            int  pass    = 1;
+            bool forward = true;
 
             InitProgress?.Invoke();
-        repeatRetryLba:
+            repeatRetryLba:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             foreach(ulong badSector in tmpArray)
@@ -820,7 +818,7 @@ public partial class Dump
         outputFormat.SetDumpHardware(_resume.Tries);
 
         // TODO: Drive info
-        var metadata = new ImageInfo
+        var metadata = new CommonTypes.Structs.ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()

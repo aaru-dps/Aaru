@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Windows;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.SecureDigital;
 using Microsoft.Win32.SafeHandles;
+
+namespace Aaru.Devices.Windows;
 
 /// <inheritdoc />
 [SupportedOSPlatform("windows")]
@@ -255,7 +255,7 @@ partial class Device : Devices.Device
             if(dev._cachedScr != null)
             {
                 dev.Type = DeviceType.SecureDigital;
-                CID decoded = Decoders.DecodeCID(dev._cachedCid);
+                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(dev._cachedCid);
                 dev.Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -267,8 +267,8 @@ partial class Device : Devices.Device
             else
             {
                 dev.Type = DeviceType.MMC;
-                Aaru.Decoders.MMC.CID decoded = Aaru.Decoders.MMC.Decoders.DecodeCID(dev._cachedCid);
-                dev.Manufacturer = Aaru.Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
+                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(dev._cachedCid);
+                dev.Manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
                 dev.FirmwareRevision =

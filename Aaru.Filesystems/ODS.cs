@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -42,6 +40,8 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 // Information from VMS File System Internals by Kirby McCoy
 // ISBN: 1-55558-056-4
@@ -76,7 +76,7 @@ public sealed class ODS : IFilesystem
         if(imagePlugin.Info.SectorSize < 512)
             return false;
 
-        var         magicB = new byte[12];
+        byte[]      magicB = new byte[12];
         ErrorNumber errno  = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
 
         if(errno != ErrorNumber.NoError)
@@ -189,8 +189,7 @@ public sealed class ODS : IFilesystem
         sb.AppendFormat("{0} maximum files on the volume", homeblock.maxfiles).AppendLine();
         sb.AppendFormat("{0} reserved files", homeblock.resfiles).AppendLine();
 
-        if(homeblock.rvn                                 > 0 &&
-           homeblock.setcount                            > 0 &&
+        if(homeblock is { rvn: > 0, setcount: > 0 } &&
            StringHandlers.CToString(homeblock.strucname) != "            ")
             sb.AppendFormat("Volume is {0} of {1} in set \"{2}\".", homeblock.rvn, homeblock.setcount,
                             StringHandlers.SpacePaddedToString(homeblock.strucname, Encoding)).AppendLine();

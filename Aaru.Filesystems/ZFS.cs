@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 /*
  * The ZFS on-disk structure is quite undocumented, so this has been checked using several test images and reading the comments and headers (but not the code)
@@ -201,7 +201,7 @@ public sealed class ZFS : IFilesystem
 
     static bool DecodeNvList(byte[] nvlist, out Dictionary<string, NVS_Item> decodedNvList)
     {
-        var tmp = new byte[nvlist.Length - 4];
+        byte[] tmp = new byte[nvlist.Length - 4];
         Array.Copy(nvlist, 4, tmp, 0, nvlist.Length - 4);
         bool xdr          = nvlist[0] == 1;
         bool littleEndian = nvlist[1] == 1;
@@ -221,7 +221,7 @@ public sealed class ZFS : IFilesystem
         if(!xdr)
             return false;
 
-        var offset = 8;
+        int offset = 8;
 
         while(offset < nvlist.Length)
         {
@@ -237,13 +237,13 @@ public sealed class ZFS : IFilesystem
             offset           += 4;
             item.decodedSize =  BigEndianBitConverter.ToUInt32(nvlist, offset);
             offset           += 4;
-            var nameLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
+            uint nameLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
             offset += 4;
 
             if(nameLength % 4 > 0)
-                nameLength += 4 - nameLength % 4;
+                nameLength += 4 - (nameLength % 4);
 
-            var nameBytes = new byte[nameLength];
+            byte[] nameBytes = new byte[nameLength];
             Array.Copy(nvlist, offset, nameBytes, 0, nameLength);
             item.name     =  StringHandlers.CToString(nameBytes);
             offset        += (int)nameLength;
@@ -266,11 +266,11 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_BOOLEAN_VALUE:
                     if(item.elements > 1)
                     {
-                        var boolArray = new bool[item.elements];
+                        bool[] boolArray = new bool[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
-                            var temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
+                            uint temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
                             boolArray[i] =  temp > 0;
                             offset       += 4;
                         }
@@ -279,7 +279,7 @@ public sealed class ZFS : IFilesystem
                     }
                     else
                     {
-                        var temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
+                        uint temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
                         item.value =  temp > 0;
                         offset     += 4;
                     }
@@ -291,7 +291,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_UINT8_ARRAY:
                     if(item.elements > 1)
                     {
-                        var byteArray = new byte[item.elements];
+                        byte[] byteArray = new byte[item.elements];
                         Array.Copy(nvlist, offset, byteArray, 0, item.elements);
                         offset += (int)item.elements;
 
@@ -310,11 +310,11 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_DOUBLE:
                     if(item.elements > 1)
                     {
-                        var doubleArray = new double[item.elements];
+                        double[] doubleArray = new double[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
-                            var temp = BigEndianBitConverter.ToDouble(nvlist, offset);
+                            double temp = BigEndianBitConverter.ToDouble(nvlist, offset);
                             doubleArray[i] =  temp;
                             offset         += 8;
                         }
@@ -331,9 +331,9 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_HRTIME:
                     if(item.elements > 1)
                     {
-                        var hrtimeArray = new DateTime[item.elements];
+                        DateTime[] hrtimeArray = new DateTime[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
                             DateTime temp =
                                 DateHandlers.UnixHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
@@ -356,11 +356,11 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_INT16_ARRAY:
                     if(item.elements > 1)
                     {
-                        var shortArray = new short[item.elements];
+                        short[] shortArray = new short[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
-                            var temp = BigEndianBitConverter.ToInt16(nvlist, offset);
+                            short temp = BigEndianBitConverter.ToInt16(nvlist, offset);
                             shortArray[i] =  temp;
                             offset        += 4;
                         }
@@ -378,11 +378,11 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_INT32_ARRAY:
                     if(item.elements > 1)
                     {
-                        var intArray = new int[item.elements];
+                        int[] intArray = new int[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
-                            var temp = BigEndianBitConverter.ToInt32(nvlist, offset);
+                            int temp = BigEndianBitConverter.ToInt32(nvlist, offset);
                             intArray[i] =  temp;
                             offset      += 4;
                         }
@@ -400,11 +400,11 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_INT64_ARRAY:
                     if(item.elements > 1)
                     {
-                        var longArray = new long[item.elements];
+                        long[] longArray = new long[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
-                            var temp = BigEndianBitConverter.ToInt64(nvlist, offset);
+                            long temp = BigEndianBitConverter.ToInt64(nvlist, offset);
                             longArray[i] =  temp;
                             offset       += 8;
                         }
@@ -422,11 +422,11 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_INT8_ARRAY:
                     if(item.elements > 1)
                     {
-                        var sbyteArray = new sbyte[item.elements];
+                        sbyte[] sbyteArray = new sbyte[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
-                            var temp = (sbyte)nvlist[offset];
+                            sbyte temp = (sbyte)nvlist[offset];
                             sbyteArray[i] = temp;
                             offset++;
                         }
@@ -434,7 +434,7 @@ public sealed class ZFS : IFilesystem
                         item.value = sbyteArray;
 
                         if(sbyteArray.Length % 4 > 0)
-                            offset += 4 - sbyteArray.Length % 4;
+                            offset += 4 - (sbyteArray.Length % 4);
                     }
                     else
                     {
@@ -447,13 +447,13 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_STRING_ARRAY:
                     if(item.elements > 1)
                     {
-                        var stringArray = new string[item.elements];
+                        string[] stringArray = new string[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
-                            var strLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
+                            uint strLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
                             offset += 4;
-                            var strBytes = new byte[strLength];
+                            byte[] strBytes = new byte[strLength];
                             Array.Copy(nvlist, offset, strBytes, 0, strLength);
                             stringArray[i] =  StringHandlers.CToString(strBytes);
                             offset         += (int)strLength;
@@ -466,9 +466,9 @@ public sealed class ZFS : IFilesystem
                     }
                     else
                     {
-                        var strLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
+                        uint strLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
                         offset += 4;
-                        var strBytes = new byte[strLength];
+                        byte[] strBytes = new byte[strLength];
                         Array.Copy(nvlist, offset, strBytes, 0, strLength);
                         item.value =  StringHandlers.CToString(strBytes);
                         offset     += (int)strLength;
@@ -482,11 +482,11 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_UINT16_ARRAY:
                     if(item.elements > 1)
                     {
-                        var ushortArray = new ushort[item.elements];
+                        ushort[] ushortArray = new ushort[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
-                            var temp = BigEndianBitConverter.ToUInt16(nvlist, offset);
+                            ushort temp = BigEndianBitConverter.ToUInt16(nvlist, offset);
                             ushortArray[i] =  temp;
                             offset         += 4;
                         }
@@ -504,11 +504,11 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_UINT32_ARRAY:
                     if(item.elements > 1)
                     {
-                        var uintArray = new uint[item.elements];
+                        uint[] uintArray = new uint[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
-                            var temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
+                            uint temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
                             uintArray[i] =  temp;
                             offset       += 4;
                         }
@@ -526,11 +526,11 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_UINT64_ARRAY:
                     if(item.elements > 1)
                     {
-                        var ulongArray = new ulong[item.elements];
+                        ulong[] ulongArray = new ulong[item.elements];
 
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                         {
-                            var temp = BigEndianBitConverter.ToUInt64(nvlist, offset);
+                            ulong temp = BigEndianBitConverter.ToUInt64(nvlist, offset);
                             ulongArray[i] =  temp;
                             offset        += 8;
                         }
@@ -548,7 +548,7 @@ public sealed class ZFS : IFilesystem
                     if(item.elements > 1)
                         goto default;
 
-                    var subListBytes = new byte[item.encodedSize - (offset - currOff)];
+                    byte[] subListBytes = new byte[item.encodedSize - (offset - currOff)];
                     Array.Copy(nvlist, offset, subListBytes, 0, subListBytes.Length);
 
                     if(DecodeNvList(subListBytes, out Dictionary<string, NVS_Item> subList, true, littleEndian))
@@ -560,7 +560,7 @@ public sealed class ZFS : IFilesystem
 
                     break;
                 default:
-                    var unknown = new byte[item.encodedSize - (offset - currOff)];
+                    byte[] unknown = new byte[item.encodedSize - (offset - currOff)];
                     Array.Copy(nvlist, offset, unknown, 0, unknown.Length);
                     item.value = unknown;
                     offset     = (int)(currOff + item.encodedSize);
@@ -593,7 +593,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_BOOLEAN_ARRAY:
                 case NVS_DataTypes.DATA_TYPE_BOOLEAN_VALUE:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((bool[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (bool)item.value).AppendLine();
@@ -604,7 +604,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_UINT8:
                 case NVS_DataTypes.DATA_TYPE_UINT8_ARRAY:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((byte[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (byte)item.value).AppendLine();
@@ -612,7 +612,7 @@ public sealed class ZFS : IFilesystem
                     break;
                 case NVS_DataTypes.DATA_TYPE_DOUBLE:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((double[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (double)item.value).AppendLine();
@@ -620,7 +620,7 @@ public sealed class ZFS : IFilesystem
                     break;
                 case NVS_DataTypes.DATA_TYPE_HRTIME:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((DateTime[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (DateTime)item.value).AppendLine();
@@ -629,7 +629,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_INT16:
                 case NVS_DataTypes.DATA_TYPE_INT16_ARRAY:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((short[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (short)item.value).AppendLine();
@@ -638,7 +638,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_INT32:
                 case NVS_DataTypes.DATA_TYPE_INT32_ARRAY:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((int[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (int)item.value).AppendLine();
@@ -647,7 +647,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_INT64:
                 case NVS_DataTypes.DATA_TYPE_INT64_ARRAY:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((long[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (long)item.value).AppendLine();
@@ -656,7 +656,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_INT8:
                 case NVS_DataTypes.DATA_TYPE_INT8_ARRAY:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((sbyte[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (sbyte)item.value).AppendLine();
@@ -665,7 +665,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_STRING:
                 case NVS_DataTypes.DATA_TYPE_STRING_ARRAY:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((string[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (string)item.value).AppendLine();
@@ -674,7 +674,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_UINT16:
                 case NVS_DataTypes.DATA_TYPE_UINT16_ARRAY:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((ushort[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (ushort)item.value).AppendLine();
@@ -683,7 +683,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_UINT32:
                 case NVS_DataTypes.DATA_TYPE_UINT32_ARRAY:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((uint[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (uint)item.value).AppendLine();
@@ -692,7 +692,7 @@ public sealed class ZFS : IFilesystem
                 case NVS_DataTypes.DATA_TYPE_UINT64:
                 case NVS_DataTypes.DATA_TYPE_UINT64_ARRAY:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((ulong[])item.value)[i]).AppendLine();
                     else
                         sb.AppendFormat("{0} = {1}", item.name, (ulong)item.value).AppendLine();
@@ -709,7 +709,7 @@ public sealed class ZFS : IFilesystem
                     break;
                 default:
                     if(item.elements > 1)
-                        for(var i = 0; i < item.elements; i++)
+                        for(int i = 0; i < item.elements; i++)
                             sb.AppendFormat("{0}[{1}] = Unknown data type {2}", item.name, i, item.dataType).
                                AppendLine();
                     else
@@ -762,33 +762,15 @@ public sealed class ZFS : IFilesystem
 
     enum NVS_DataTypes : uint
     {
-        DATA_TYPE_UNKNOWN = 0,
-        DATA_TYPE_BOOLEAN,
-        DATA_TYPE_BYTE,
-        DATA_TYPE_INT16,
-        DATA_TYPE_UINT16,
-        DATA_TYPE_INT32,
-        DATA_TYPE_UINT32,
-        DATA_TYPE_INT64,
-        DATA_TYPE_UINT64,
-        DATA_TYPE_STRING,
-        DATA_TYPE_BYTE_ARRAY,
-        DATA_TYPE_INT16_ARRAY,
-        DATA_TYPE_UINT16_ARRAY,
-        DATA_TYPE_INT32_ARRAY,
-        DATA_TYPE_UINT32_ARRAY,
-        DATA_TYPE_INT64_ARRAY,
-        DATA_TYPE_UINT64_ARRAY,
-        DATA_TYPE_STRING_ARRAY,
-        DATA_TYPE_HRTIME,
-        DATA_TYPE_NVLIST,
-        DATA_TYPE_NVLIST_ARRAY,
-        DATA_TYPE_BOOLEAN_VALUE,
-        DATA_TYPE_INT8,
-        DATA_TYPE_UINT8,
-        DATA_TYPE_BOOLEAN_ARRAY,
-        DATA_TYPE_INT8_ARRAY,
-        DATA_TYPE_UINT8_ARRAY,
+        DATA_TYPE_UNKNOWN = 0, DATA_TYPE_BOOLEAN, DATA_TYPE_BYTE,
+        DATA_TYPE_INT16, DATA_TYPE_UINT16, DATA_TYPE_INT32,
+        DATA_TYPE_UINT32, DATA_TYPE_INT64, DATA_TYPE_UINT64,
+        DATA_TYPE_STRING, DATA_TYPE_BYTE_ARRAY, DATA_TYPE_INT16_ARRAY,
+        DATA_TYPE_UINT16_ARRAY, DATA_TYPE_INT32_ARRAY, DATA_TYPE_UINT32_ARRAY,
+        DATA_TYPE_INT64_ARRAY, DATA_TYPE_UINT64_ARRAY, DATA_TYPE_STRING_ARRAY,
+        DATA_TYPE_HRTIME, DATA_TYPE_NVLIST, DATA_TYPE_NVLIST_ARRAY,
+        DATA_TYPE_BOOLEAN_VALUE, DATA_TYPE_INT8, DATA_TYPE_UINT8,
+        DATA_TYPE_BOOLEAN_ARRAY, DATA_TYPE_INT8_ARRAY, DATA_TYPE_UINT8_ARRAY,
         DATA_TYPE_DOUBLE
     }
 

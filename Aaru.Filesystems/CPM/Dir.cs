@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class CPM
 {
@@ -71,20 +71,20 @@ public sealed partial class CPM
             if(directory == null)
                 return false;
 
-            var fileCount = 0;
+            int fileCount = 0;
 
-            for(var off = 0; off < directory.Length; off += 32)
+            for(int off = 0; off < directory.Length; off += 32)
             {
                 DirectoryEntry entry = Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, off, 32);
 
                 if((entry.statusUser & 0x7F) < 0x20)
                 {
-                    for(var f = 0; f < 8; f++)
+                    for(int f = 0; f < 8; f++)
                         if(entry.filename[f] < 0x20 &&
                            entry.filename[f] != 0x00)
                             return false;
 
-                    for(var e = 0; e < 3; e++)
+                    for(int e = 0; e < 3; e++)
                         if(entry.extension[e] < 0x20 &&
                            entry.extension[e] != 0x00)
                             return false;
@@ -97,12 +97,12 @@ public sealed partial class CPM
                     {
                         case 0x20:
                         {
-                            for(var f = 0; f < 8; f++)
+                            for(int f = 0; f < 8; f++)
                                 if(entry.filename[f] < 0x20 &&
                                    entry.filename[f] != 0x00)
                                     return false;
 
-                            for(var e = 0; e < 3; e++)
+                            for(int e = 0; e < 3; e++)
                                 if(entry.extension[e] < 0x20 &&
                                    entry.extension[e] != 0x00)
                                     return false;

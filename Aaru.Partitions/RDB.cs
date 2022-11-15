@@ -30,11 +30,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable NotAccessedField.Local
-
-namespace Aaru.Partitions;
 
 using System;
 using System.Collections.Generic;
@@ -47,6 +43,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of the Amiga Rigid Disk Block</summary>
@@ -191,7 +189,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
     {
         partitions = new List<Partition>();
         ulong       rdbBlock = 0;
-        var         foundRdb = false;
+        bool        foundRdb = false;
         ErrorNumber errno;
 
         while(rdbBlock < 16)
@@ -211,7 +209,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
                 continue;
             }
 
-            var magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
+            uint magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
 
             AaruConsole.DebugWriteLine("Amiga RDB plugin", "Possible magic at block {0} is 0x{1:X8}", rdbBlock, magic);
 
@@ -280,7 +278,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
         rdb.HighCylinder    = BigEndianBitConverter.ToUInt32(sector, 0x98);
         rdb.Reserved15      = BigEndianBitConverter.ToUInt32(sector, 0x9C);
 
-        var tmpString = new byte[8];
+        byte[] tmpString = new byte[8];
         Array.Copy(sector, 0xA0, tmpString, 0, 8);
         rdb.DiskVendor = StringHandlers.SpacePaddedToString(tmpString);
         tmpString      = new byte[16];
@@ -381,7 +379,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             if(errno != ErrorNumber.NoError)
                 break;
 
-            var magic = BigEndianBitConverter.ToUInt32(sector, 0);
+            uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
             if(magic != BAD_BLOCK_LIST_MAGIC)
                 break;
@@ -413,9 +411,9 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
             for(ulong i = 0; i < entries; i++)
             {
-                chainEntry.BlockPairs[i].BadBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 0));
+                chainEntry.BlockPairs[i].BadBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + (i * 8) + 0));
 
-                chainEntry.BlockPairs[i].GoodBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 4));
+                chainEntry.BlockPairs[i].GoodBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + (i * 8) + 4));
 
                 AaruConsole.DebugWriteLine("Amiga RDB plugin", "Bad block at {0} replaced with good block at {1}",
                                            chainEntry.BlockPairs[i].BadBlock, chainEntry.BlockPairs[i].GoodBlock);
@@ -439,7 +437,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             if(errno != ErrorNumber.NoError)
                 break;
 
-            var magic = BigEndianBitConverter.ToUInt32(sector, 0);
+            uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
             if(magic != PARTITION_BLOCK_MAGIC)
                 break;
@@ -498,7 +496,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
                 }
             };
 
-            var driveName = new byte[32];
+            byte[] driveName = new byte[32];
             Array.Copy(sector, 0x24, driveName, 0, 32);
             partEntry.DriveName = StringHandlers.PascalToString(driveName, Encoding.GetEncoding("iso-8859-1"));
 
@@ -608,7 +606,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             if(errno != ErrorNumber.NoError)
                 break;
 
-            var magic = BigEndianBitConverter.ToUInt32(sector, 0);
+            uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
             if(magic != FILESYSTEM_HEADER_MAGIC)
                 break;
@@ -673,8 +671,8 @@ public sealed class AmigaRigidDiskBlock : IPartition
             AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.global_vec = 0x{0:X8}", fshd.Dnode.GlobalVec);
 
             nextBlock = fshd.Dnode.SeglistPtr;
-            var thereAreLoadSegments = false;
-            var sha1Ctx              = new Sha1Context();
+            bool thereAreLoadSegments = false;
+            var  sha1Ctx              = new Sha1Context();
 
             while(nextBlock != 0xFFFFFFFF)
             {
@@ -686,7 +684,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
                 if(errno != ErrorNumber.NoError)
                     break;
 
-                var magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
+                uint magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magicSeg != LOAD_SEG_MAGIC)
                     break;
@@ -741,11 +739,11 @@ public sealed class AmigaRigidDiskBlock : IPartition
                     Sequence = sequence,
                     Length = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
                              rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt,
-                    Start = rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                    Start = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt) +
                             sectorOffset,
                     Type = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
                     Scheme = Name,
-                    Offset = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                    Offset = ((rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt) +
                               sectorOffset) * rdb.BlockSize,
                     Size = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
                            rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt * rdb.BlockSize
@@ -850,7 +848,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
     static string AmigaDosTypeToString(uint amigaDosType, bool quoted = true)
     {
-        var textPart = new byte[3];
+        byte[] textPart = new byte[3];
 
         textPart[0] = (byte)((amigaDosType & 0xFF000000) >> 24);
         textPart[1] = (byte)((amigaDosType & 0x00FF0000) >> 16);

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -43,6 +41,8 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of Acorn's Advanced Data Filing System (ADFS)</summary>
@@ -125,7 +125,7 @@ public sealed class AcornADFS : IFilesystem
                 if(errno != ErrorNumber.NoError)
                     return false;
 
-                var tmp = new byte[256];
+                byte[] tmp = new byte[256];
                 Array.Copy(sector, 256, tmp, 0, 256);
                 oldChk1 = AcornMapChecksum(tmp, 255);
                 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
@@ -152,7 +152,7 @@ public sealed class AcornADFS : IFilesystem
 
                 if(sector.Length > OLD_DIRECTORY_SIZE)
                 {
-                    var tmp = new byte[OLD_DIRECTORY_SIZE];
+                    byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
                     Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
                     Array.Copy(sector, sector.Length                 - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
                     sector = tmp;
@@ -170,8 +170,8 @@ public sealed class AcornADFS : IFilesystem
 
                 AaruConsole.DebugWriteLine("ADFS Plugin", "dirChk at 0x200 = {0}", dirChk);
 
-                if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC ||
-                   oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC)
+                if((oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC) ||
+                   (oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC))
                     return true;
 
                 // RISC OS says the old directory can't be in the new location, hard disks created by RISC OS 3.10 do that...
@@ -188,7 +188,7 @@ public sealed class AcornADFS : IFilesystem
 
                 if(sector.Length > OLD_DIRECTORY_SIZE)
                 {
-                    var tmp = new byte[OLD_DIRECTORY_SIZE];
+                    byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
                     Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
                     Array.Copy(sector, sector.Length                 - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
                     sector = tmp;
@@ -206,8 +206,8 @@ public sealed class AcornADFS : IFilesystem
 
                 AaruConsole.DebugWriteLine("ADFS Plugin", "dirChk at 0x400 = {0}", dirChk);
 
-                if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC ||
-                   oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC)
+                if((oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC) ||
+                   (oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC))
                     return true;
             }
         }
@@ -238,12 +238,12 @@ public sealed class AcornADFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var bootChk = 0;
+        int bootChk = 0;
 
         if(bootSector.Length < 512)
             return false;
 
-        for(var i = 0; i < 0x1FF; i++)
+        for(int i = 0; i < 0x1FF; i++)
             bootChk = (bootChk & 0xFF) + (bootChk >> 8) + bootSector[i];
 
         AaruConsole.DebugWriteLine("ADFS Plugin", "bootChk = {0}", bootChk);
@@ -337,7 +337,7 @@ public sealed class AcornADFS : IFilesystem
                 if(errno != ErrorNumber.NoError)
                     return;
 
-                var tmp = new byte[256];
+                byte[] tmp = new byte[256];
                 Array.Copy(sector, 256, tmp, 0, 256);
                 oldChk1 = AcornMapChecksum(tmp, 255);
                 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
@@ -349,12 +349,12 @@ public sealed class AcornADFS : IFilesystem
                oldMap1.checksum != 0)
             {
                 bytes = (ulong)((oldMap0.size[2] << 16) + (oldMap0.size[1] << 8) + oldMap0.size[0]) * 256;
-                var namebytes = new byte[10];
+                byte[] namebytes = new byte[10];
 
-                for(var i = 0; i < 5; i++)
+                for(int i = 0; i < 5; i++)
                 {
-                    namebytes[i * 2]     = oldMap0.name[i];
-                    namebytes[i * 2 + 1] = oldMap1.name[i];
+                    namebytes[i * 2]       = oldMap0.name[i];
+                    namebytes[(i * 2) + 1] = oldMap1.name[i];
                 }
 
                 XmlFsType = new FileSystemType
@@ -380,7 +380,7 @@ public sealed class AcornADFS : IFilesystem
 
                     if(sector.Length > OLD_DIRECTORY_SIZE)
                     {
-                        var tmp = new byte[OLD_DIRECTORY_SIZE];
+                        byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
                         Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
                         Array.Copy(sector, sector.Length                 - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
                         sector = tmp;
@@ -407,7 +407,7 @@ public sealed class AcornADFS : IFilesystem
 
                         if(sector.Length > OLD_DIRECTORY_SIZE)
                         {
-                            var tmp = new byte[OLD_DIRECTORY_SIZE];
+                            byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
                             Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
 
                             Array.Copy(sector, sector.Length - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
@@ -429,7 +429,7 @@ public sealed class AcornADFS : IFilesystem
 
                             if(sector.Length > NEW_DIRECTORY_SIZE)
                             {
-                                var tmp = new byte[NEW_DIRECTORY_SIZE];
+                                byte[] tmp = new byte[NEW_DIRECTORY_SIZE];
                                 Array.Copy(sector, 0, tmp, 0, NEW_DIRECTORY_SIZE - 41);
 
                                 Array.Copy(sector, sector.Length - 42, tmp, NEW_DIRECTORY_SIZE - 42, 41);
@@ -492,9 +492,9 @@ public sealed class AcornADFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return;
 
-        var bootChk = 0;
+        int bootChk = 0;
 
-        for(var i = 0; i < 0x1FF; i++)
+        for(int i = 0; i < 0x1FF; i++)
             bootChk = (bootChk & 0xFF) + (bootChk >> 8) + bootSector[i];
 
         AaruConsole.DebugWriteLine("ADFS Plugin", "bootChk = {0}", bootChk);
@@ -605,8 +605,8 @@ public sealed class AcornADFS : IFilesystem
 
     static byte AcornMapChecksum(byte[] data, int length)
     {
-        var sum   = 0;
-        var carry = 0;
+        int sum   = 0;
+        int carry = 0;
 
         if(length > data.Length)
             length = data.Length;
@@ -670,7 +670,7 @@ public sealed class AcornADFS : IFilesystem
             length = data.Count;
 
         // EOR r0, r1, r0, ROR #13
-        for(var i = 0; i < length; i++)
+        for(int i = 0; i < length; i++)
         {
             uint carry = sum & 0x1FFF;
             sum >>= 13;

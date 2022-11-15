@@ -34,8 +34,6 @@
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +44,8 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
 using Schemas;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -62,7 +62,7 @@ partial class Dump
             0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
         };
 
-        var testMark = new byte[12];
+        byte[] testMark = new byte[12];
         Array.Copy(sector, 0, testMark, 0, 12);
 
         return syncMark.SequenceEqual(testMark) && (sector[0xF] == 0 || sector[0xF] == 1 || sector[0xF] == 2);
@@ -85,14 +85,14 @@ partial class Dump
             0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
         };
 
-        var testMark = new byte[12];
+        byte[] testMark = new byte[12];
 
-        for(var i = 0; i <= 2336; i++)
+        for(int i = 0; i <= 2336; i++)
         {
             Array.Copy(sector, i, testMark, 0, 12);
 
             if(!syncMark.SequenceEqual(testMark) ||
-               sector[i + 0xF] != 0x60 && sector[i + 0xF] != 0x61 && sector[i + 0xF] != 0x62)
+               (sector[i + 0xF] != 0x60 && sector[i + 0xF] != 0x61 && sector[i + 0xF] != 0x62))
                 continue;
 
             // De-scramble M and S
@@ -101,17 +101,17 @@ partial class Dump
             int frame  = sector[i + 14];
 
             // Convert to binary
-            minute = minute / 16 * 10 + (minute & 0x0F);
-            second = second / 16 * 10 + (second & 0x0F);
-            frame  = frame  / 16 * 10 + (frame  & 0x0F);
+            minute = (minute / 16 * 10) + (minute & 0x0F);
+            second = (second / 16 * 10) + (second & 0x0F);
+            frame  = (frame  / 16 * 10) + (frame  & 0x0F);
 
             // Calculate the first found LBA
-            int lba = minute * 60 * 75 + second * 75 + frame - 150;
+            int lba = (minute * 60 * 75) + (second * 75) + frame - 150;
 
             // Calculate the difference between the found LBA and the requested one
             int diff = wantedLba - lba;
 
-            offset = i + 2352 * diff;
+            offset = i + (2352 * diff);
 
             return true;
         }
@@ -189,7 +189,7 @@ partial class Dump
                 break;
             }
 
-            var firstSectorToRead = (uint)i;
+            uint firstSectorToRead = (uint)i;
 
             blocksToRead = _maximumReadable;
 
@@ -251,8 +251,8 @@ partial class Dump
 
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
-                            var data = new byte[sectorSize];
-                            var sub  = new byte[subSize];
+                            byte[] data = new byte[sectorSize];
+                            byte[] sub  = new byte[subSize];
 
                             Array.Copy(cmdBuf, 0, data, 0, sectorSize);
 
@@ -289,8 +289,8 @@ partial class Dump
 
                         leadOutExtents.Add(i + r, firstTrack.EndSector);
 
-                        UpdateStatus?.
-                            Invoke($"Adding CD-i Ready hole from LBA {i + r} to {firstTrack.EndSector} inclusive.");
+                        UpdateStatus?.Invoke($"Adding CD-i Ready hole from LBA {i + r} to {firstTrack.EndSector
+                        } inclusive.");
 
                         _dumpLog.WriteLine("Adding CD-i Ready hole from LBA {0} to {1} inclusive.", i + r,
                                            firstTrack.EndSector);
@@ -326,31 +326,31 @@ partial class Dump
 
                 if(supportedSubchannel != MmcSubchannel.None)
                 {
-                    var data    = new byte[sectorSize * blocksToRead];
-                    var sub     = new byte[subSize    * blocksToRead];
-                    var tmpData = new byte[sectorSize];
+                    byte[] data    = new byte[sectorSize * blocksToRead];
+                    byte[] sub     = new byte[subSize    * blocksToRead];
+                    byte[] tmpData = new byte[sectorSize];
 
-                    for(var b = 0; b < blocksToRead; b++)
+                    for(int b = 0; b < blocksToRead; b++)
                     {
                         if(cdiReadyReadAsAudio)
                         {
-                            Array.Copy(cmdBuf, (int)(0 + b * blockSize), tmpData, 0, sectorSize);
+                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), tmpData, 0, sectorSize);
                             tmpData = Sector.Scramble(tmpData);
                             Array.Copy(tmpData, 0, data, sectorSize * b, sectorSize);
                         }
                         else
-                            Array.Copy(cmdBuf, (int)(0 + b * blockSize), data, sectorSize * b, sectorSize);
+                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
 
-                        Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize * b, subSize);
+                        Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                     }
 
                     outputOptical.WriteSectorsLong(data, i, blocksToRead);
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                                                             desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, 1, ref mcn, tracks,
-                                                                             subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                                                                             _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
-                                                                             out List<ulong> newPregapSectors);
+                        desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, 1, ref mcn, tracks,
+                        subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
+                        _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
+                        out List<ulong> newPregapSectors);
 
                     // Set tracks and go back
                     if(indexesChanged)
@@ -375,10 +375,10 @@ partial class Dump
                 {
                     if(cdiReadyReadAsAudio)
                     {
-                        var tmpData = new byte[sectorSize];
-                        var data    = new byte[sectorSize * blocksToRead];
+                        byte[] tmpData = new byte[sectorSize];
+                        byte[] data    = new byte[sectorSize * blocksToRead];
 
-                        for(var b = 0; b < blocksToRead; b++)
+                        for(int b = 0; b < blocksToRead; b++)
                         {
                             Array.Copy(cmdBuf, (int)(b * sectorSize), tmpData, 0, sectorSize);
                             tmpData = Sector.Scramble(tmpData);

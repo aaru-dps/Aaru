@@ -26,15 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Compression;
-
 using System.IO;
 using System.Runtime.InteropServices;
 using Ionic.BZip2;
 
-/// <summary>
-/// Implements the BZIP2 compression algorithm
-/// </summary>
+namespace Aaru.Compression;
+
+/// <summary>Implements the BZIP2 compression algorithm</summary>
 public class BZip2
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
@@ -53,7 +51,7 @@ public class BZip2
     /// <returns>The number of decoded bytes</returns>
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
-        var destinationSize = (uint)destination.Length;
+        uint destinationSize = (uint)destination.Length;
 
         if(Native.IsSupported)
         {
@@ -75,7 +73,7 @@ public class BZip2
     /// <returns></returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int blockSize100K)
     {
-        var destinationSize = (uint)destination.Length;
+        uint destinationSize = (uint)destination.Length;
 
         if(Native.IsSupported)
         {

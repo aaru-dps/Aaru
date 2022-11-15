@@ -32,8 +32,6 @@
 
 // ReSharper disable JoinDeclarationAndInitializer
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -54,6 +52,8 @@ using Aaru.Helpers;
 using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -116,7 +116,7 @@ partial class Dump
 
             // And yet, did not rewind!
             if(decSense.HasValue &&
-               (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00 ||
+               ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00) ||
                 decSense.Value.ASC != 0x00))
             {
                 StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
@@ -141,8 +141,9 @@ partial class Dump
             decSense = Sense.Decode(senseBuf);
 
             if(decSense.HasValue &&
-               (decSense.Value.ASC == 0x20 && decSense.Value.ASCQ != 0x00 || decSense.Value.ASC != 0x20 &&
-                decSense.Value.SenseKey != SenseKeys.IllegalRequest))
+               ((decSense.Value.ASC == 0x20 && decSense.Value.ASCQ != 0x00) || (decSense.Value.ASC != 0x20 &&
+                                                                                       decSense.Value.SenseKey !=
+                                                                                       SenseKeys.IllegalRequest)))
             {
                 StoppingErrorMessage?.Invoke("Could not get position. Sense follows..." + Environment.NewLine +
                                              decSense.Value.Description);
@@ -191,7 +192,7 @@ partial class Dump
 
                 // And yet, did not rewind!
                 if(decSense.HasValue &&
-                   (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00 ||
+                   ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00) ||
                     decSense.Value.ASC != 0x00))
                 {
                     StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
@@ -317,15 +318,15 @@ partial class Dump
         _dumpLog.WriteLine("SCSI density type: {0}.", scsiDensityCodeTape);
         _dumpLog.WriteLine("Media identified as {0}.", dskType);
 
-        var   endOfMedia       = false;
+        bool  endOfMedia       = false;
         ulong currentBlock     = 0;
         uint  currentFile      = 0;
         byte  currentPartition = 0;
         byte  totalPartitions  = 1; // TODO: Handle partitions.
-        var   fixedLen         = false;
+        bool  fixedLen         = false;
         uint  transferLen      = blockSize;
 
-    firstRead:
+        firstRead:
 
         sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, _dev.Timeout,
                            out duration);
@@ -506,8 +507,8 @@ partial class Dump
             return;
         }
 
-        var canLocateLong = false;
-        var canLocate     = false;
+        bool canLocateLong = false;
+        bool canLocate     = false;
 
         UpdateStatus?.Invoke("Positioning tape to block 1.");
         _dumpLog.WriteLine("Positioning tape to block 1");
@@ -735,7 +736,7 @@ partial class Dump
 
             // And yet, did not rewind!
             if(decSense.HasValue &&
-               (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x00 && decSense.Value.ASCQ != 0x04 ||
+               ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x00 && decSense.Value.ASCQ != 0x04) ||
                 decSense.Value.ASC != 0x00))
             {
                 StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
@@ -1098,8 +1099,8 @@ partial class Dump
            _retryPasses > 0            &&
            (canLocate || canLocateLong))
         {
-            var        pass              = 1;
-            var        forward           = false;
+            int        pass              = 1;
+            bool       forward           = false;
             const bool runningPersistent = false;
 
             Modes.ModePage? currentModePage = null;
@@ -1110,7 +1111,7 @@ partial class Dump
             }
 
             InitProgress?.Invoke();
-        repeatRetry:
+            repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             foreach(ulong badBlock in tmpArray)
@@ -1251,7 +1252,7 @@ partial class Dump
         outputTape.SetDumpHardware(_resume.Tries);
 
         // TODO: Media Serial Number
-        var metadata = new ImageInfo
+        var metadata = new CommonTypes.Structs.ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()

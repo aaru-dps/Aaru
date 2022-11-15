@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems.UCSDPascal;
-
 using System;
 using System.Text;
 using Aaru.CommonTypes;
@@ -42,6 +40,8 @@ using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
+
+namespace Aaru.Filesystems.UCSDPascal;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
@@ -56,7 +56,7 @@ public sealed partial class PascalPlugin
 
         // Blocks 0 and 1 are boot code
         ErrorNumber errno =
-            imagePlugin.ReadSectors(_multiplier * 2 + partition.Start, _multiplier, out byte[] volBlock);
+            imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier, out byte[] volBlock);
 
         if(errno != ErrorNumber.NoError)
             return false;
@@ -98,7 +98,7 @@ public sealed partial class PascalPlugin
 
         // Last volume record block must be after first block, and before end of device
         if(volEntry.LastBlock        <= volEntry.FirstBlock ||
-           (ulong)volEntry.LastBlock > imagePlugin.Info.Sectors / _multiplier - 2)
+           (ulong)volEntry.LastBlock > (imagePlugin.Info.Sectors / _multiplier) - 2)
             return false;
 
         // Volume record entry type must be volume or secure
@@ -132,7 +132,7 @@ public sealed partial class PascalPlugin
 
         // Blocks 0 and 1 are boot code
         ErrorNumber errno =
-            imagePlugin.ReadSectors(_multiplier * 2 + partition.Start, _multiplier, out byte[] volBlock);
+            imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier, out byte[] volBlock);
 
         if(errno != ErrorNumber.NoError)
             return;
@@ -163,7 +163,7 @@ public sealed partial class PascalPlugin
 
         // Last volume record block must be after first block, and before end of device
         if(volEntry.LastBlock        <= volEntry.FirstBlock ||
-           (ulong)volEntry.LastBlock > imagePlugin.Info.Sectors / _multiplier - 2)
+           (ulong)volEntry.LastBlock > (imagePlugin.Info.Sectors / _multiplier) - 2)
             return;
 
         // Volume record entry type must be volume or secure

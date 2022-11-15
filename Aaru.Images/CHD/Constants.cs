@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Chd
@@ -84,6 +84,7 @@ public sealed partial class Chd
     const string TRACK_TYPE_MODE2_RAW    = "MODE2_RAW";
     const string TRACK_TYPE_MODE2_RAW_2K = "MODE2/2352";
     const string TRACK_TYPE_AUDIO        = "AUDIO";
+
     // ReSharper restore InconsistentNaming
 
     const string SUB_TYPE_COOKED = "RW";

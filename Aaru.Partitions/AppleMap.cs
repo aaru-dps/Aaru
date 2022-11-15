@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Partitions;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Partitions;
 
 // Information about structures learnt from Inside Macintosh
 // Constants from image testing
@@ -88,7 +88,7 @@ public sealed class AppleMap : IPartition
         {
             case 256:
             {
-                var tmp = new byte[512];
+                byte[] tmp = new byte[512];
                 Array.Copy(ddmSector, 0, tmp, 0, 256);
                 ddmSector  = tmp;
                 maxDrivers = 29;
@@ -115,10 +115,10 @@ public sealed class AppleMap : IPartition
             {
                 ddm.sbMap = new AppleDriverEntry[ddm.sbDrvrCount];
 
-                for(var i = 0; i < ddm.sbDrvrCount; i++)
+                for(int i = 0; i < ddm.sbDrvrCount; i++)
                 {
-                    var tmp = new byte[8];
-                    Array.Copy(ddmSector, 18 + i * 8, tmp, 0, 8);
+                    byte[] tmp = new byte[8];
+                    Array.Copy(ddmSector, 18 + (i * 8), tmp, 0, 8);
                     ddm.sbMap[i] = Marshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
 
                     AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}", ddm.sbMap[i].ddBlock,
@@ -163,9 +163,9 @@ public sealed class AppleMap : IPartition
         // This is the easy one, no sector size mixing
         if(oldMap.pdSig == APM_MAGIC_OLD)
         {
-            for(var i = 2; i < partSector.Length; i += 12)
+            for(int i = 2; i < partSector.Length; i += 12)
             {
-                var tmp = new byte[12];
+                byte[] tmp = new byte[12];
                 Array.Copy(partSector, i, tmp, 0, 12);
 
                 AppleMapOldPartitionEntry oldEntry =
@@ -180,8 +180,7 @@ public sealed class AppleMap : IPartition
                 AaruConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdFSID = 0x{0:X8}", oldEntry.pdFSID,
                                            (i - 2) / 12);
 
-                if(oldEntry.pdSize == 0 &&
-                   oldEntry.pdFSID == 0)
+                if(oldEntry is { pdSize: 0, pdFSID: 0 })
                 {
                     if(oldEntry.pdStart == 0)
                         break;
@@ -217,7 +216,7 @@ public sealed class AppleMap : IPartition
         // If sector is bigger than 512
         if(ddmSector.Length > 512)
         {
-            var tmp = new byte[512];
+            byte[] tmp = new byte[512];
             Array.Copy(ddmSector, 512, tmp, 0, 512);
             entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
 
@@ -228,7 +227,7 @@ public sealed class AppleMap : IPartition
                 entrySize     = 512;
                 entryCount    = entry.entries;
                 skipDdm       = 512;
-                sectorsToRead = (entryCount + 1) * 512 / sectorSize + 1;
+                sectorsToRead = ((entryCount + 1) * 512 / sectorSize) + 1;
             }
             else
             {
@@ -272,13 +271,13 @@ public sealed class AppleMap : IPartition
         AaruConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}", skipDdm);
         AaruConsole.DebugWriteLine("AppleMap Plugin", "sectors_to_read = {0}", sectorsToRead);
 
-        var copy = new byte[entries.Length - skipDdm];
+        byte[] copy = new byte[entries.Length - skipDdm];
         Array.Copy(entries, skipDdm, copy, 0, copy.Length);
         entries = copy;
 
-        for(var i = 0; i < entryCount; i++)
+        for(int i = 0; i < entryCount; i++)
         {
-            var tmp = new byte[entrySize];
+            byte[] tmp = new byte[entrySize];
             Array.Copy(entries, i * entrySize, tmp, 0, entrySize);
             entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
 
@@ -338,8 +337,8 @@ public sealed class AppleMap : IPartition
                 Name     = StringHandlers.CToString(entry.name),
                 Offset   = entry.start   * entrySize,
                 Size     = entry.sectors * entrySize,
-                Start    = entry.start * entrySize / sectorSize + sectorOffset,
-                Length   = entry.sectors           * entrySize / sectorSize,
+                Start    = (entry.start * entrySize / sectorSize) + sectorOffset,
+                Length   = entry.sectors * entrySize / sectorSize,
                 Scheme   = Name
             };
 

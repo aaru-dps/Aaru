@@ -38,6 +38,6 @@ public sealed partial class MediaScan
     {
         StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
 
-        return default(ScanResults);
+        return default;
     }
 }

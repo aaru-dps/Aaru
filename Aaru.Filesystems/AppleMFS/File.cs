@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
@@ -77,7 +77,7 @@ public sealed partial class AppleMFS
         {
             if(relBlock == fileBlock)
             {
-                deviceBlock = (nextBlock - 2) * _sectorsPerBlock + _volMdb.drAlBlSt + (long)_partitionStart;
+                deviceBlock = ((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + (long)_partitionStart;
 
                 return ErrorNumber.NoError;
             }
@@ -247,25 +247,26 @@ public sealed partial class AppleMFS
 
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                 {
-                    stat.Blocks = _directoryBlocks.Length / stat.BlockSize + _directoryBlocks.Length % stat.BlockSize;
+                    stat.Blocks = (_directoryBlocks.Length / stat.BlockSize) +
+                                  (_directoryBlocks.Length % stat.BlockSize);
 
                     stat.Length = _directoryBlocks.Length;
                 }
                 else if(string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
                 {
-                    stat.Blocks = _blockMapBytes.Length / stat.BlockSize + _blockMapBytes.Length % stat.BlockSize;
+                    stat.Blocks = (_blockMapBytes.Length / stat.BlockSize) + (_blockMapBytes.Length % stat.BlockSize);
 
                     stat.Length = _blockMapBytes.Length;
                 }
                 else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
                         _bootBlocks                                                      != null)
                 {
-                    stat.Blocks = _bootBlocks.Length / stat.BlockSize + _bootBlocks.Length % stat.BlockSize;
+                    stat.Blocks = (_bootBlocks.Length / stat.BlockSize) + (_bootBlocks.Length % stat.BlockSize);
                     stat.Length = _bootBlocks.Length;
                 }
                 else if(string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
                 {
-                    stat.Blocks = _mdbBlocks.Length / stat.BlockSize + _mdbBlocks.Length % stat.BlockSize;
+                    stat.Blocks = (_mdbBlocks.Length / stat.BlockSize) + (_mdbBlocks.Length % stat.BlockSize);
                     stat.Length = _mdbBlocks.Length;
                 }
                 else
@@ -360,7 +361,7 @@ public sealed partial class AppleMFS
 
         do
         {
-            byte[]      sectors;
+            byte[] sectors;
 
             ErrorNumber errno =
                 tags

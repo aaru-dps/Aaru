@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Core;
 
 /// <summary>Abstracts a datafile with a block based interface</summary>
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global"), SuppressMessage("ReSharper", "UnusedMember.Global")]

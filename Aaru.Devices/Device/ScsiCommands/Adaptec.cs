@@ -31,10 +31,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -59,7 +59,7 @@ public partial class Device
                                  out double duration)
     {
         buffer = new byte[8];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
@@ -99,9 +99,9 @@ public partial class Device
     public bool AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, bool drive1, uint timeout,
                                          out double duration)
     {
-        var buffer = new byte[1];
+        byte[] buffer = new byte[1];
         buffer[0] = threshold;
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.AdaptecSetErrorThreshold;
@@ -139,7 +139,7 @@ public partial class Device
                                         out double duration)
     {
         buffer = new byte[9];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
@@ -166,10 +166,10 @@ public partial class Device
     /// <param name="duration">Duration.</param>
     public bool AdaptecWriteBuffer(byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
-        var oneKBuffer = new byte[1024];
+        byte[] oneKBuffer = new byte[1024];
         Array.Copy(buffer, 0, oneKBuffer, 0, buffer.Length < 1024 ? buffer.Length : 1024);
 
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.AdaptecWriteBuffer;
@@ -192,7 +192,7 @@ public partial class Device
     public bool AdaptecReadBuffer(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         buffer = new byte[1024];
-        var cdb = new byte[6];
+        byte[] cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.AdaptecReadBuffer;

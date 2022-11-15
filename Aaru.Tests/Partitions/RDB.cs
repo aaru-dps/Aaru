@@ -26,17 +26,16 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Partitions;
-
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 [TestFixture]
 public class Rdb : PartitionSchemeTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Rigid Disk Block");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Rigid Disk Block");
 
     public override PartitionTest[] Tests => new[]
     {

@@ -31,21 +31,19 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
     static DateTime? DecodeIsoDateTime(byte[] timestamp) => timestamp?.Length switch
-                                                            {
-                                                                7 => DecodeIsoDateTime(Marshal.
-                                                                    ByteArrayToStructureLittleEndian<
-                                                                        IsoTimestamp>(timestamp)),
-                                                                17 => DateHandlers.Iso9660ToDateTime(timestamp),
-                                                                _  => null
-                                                            };
+    {
+        7  => DecodeIsoDateTime(Marshal.ByteArrayToStructureLittleEndian<IsoTimestamp>(timestamp)),
+        17 => DateHandlers.Iso9660ToDateTime(timestamp),
+        _  => null
+    };
 
     static DateTime? DecodeIsoDateTime(IsoTimestamp timestamp)
     {

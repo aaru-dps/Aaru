@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
+
+namespace Aaru.Core;
 
 /// <summary>Enabled checksums</summary>
 [Flags]
@@ -382,7 +382,7 @@ public sealed class Checksum
     /// <returns>Returns the checksum results</returns>
     public List<ChecksumType> End()
     {
-        var chks = new List<ChecksumType>();
+        List<ChecksumType> chks = new();
 
         ChecksumType chk;
 
@@ -718,8 +718,8 @@ public sealed class Checksum
               f16ThreadData.IsAlive     ||
               f32ThreadData.IsAlive) {}
 
-        var          dataChecksums = new List<ChecksumType>();
-        ChecksumType chk;
+        List<ChecksumType> dataChecksums = new();
+        ChecksumType       chk;
 
         if(enabled.HasFlag(EnableChecksum.Adler32))
         {

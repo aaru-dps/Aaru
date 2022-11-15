@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Report;
-
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Report;
 
 public sealed partial class DeviceReport
 {

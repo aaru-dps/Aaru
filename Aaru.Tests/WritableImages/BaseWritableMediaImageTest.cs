@@ -1,6 +1,6 @@
-namespace Aaru.Tests.WritableImages;
-
 using Aaru.CommonTypes.Interfaces;
+
+namespace Aaru.Tests.WritableImages;
 
 public abstract class BaseWritableMediaImageTest
 {

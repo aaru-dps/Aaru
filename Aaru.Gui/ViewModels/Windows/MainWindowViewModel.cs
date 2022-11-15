@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -55,7 +53,6 @@ using Aaru.Gui.ViewModels.Panels;
 using Aaru.Gui.Views.Dialogs;
 using Aaru.Gui.Views.Panels;
 using Aaru.Gui.Views.Windows;
-using Aaru.Settings;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -65,11 +62,12 @@ using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
-using Console = Aaru.Gui.Views.Dialogs.Console;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using ImageInfo = Aaru.Gui.Views.Panels.ImageInfo;
 using Partition = Aaru.Gui.Views.Panels.Partition;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MainWindowViewModel : ViewModelBase
 {
@@ -85,7 +83,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     readonly Bitmap           _sdIcon;
     readonly Bitmap           _usbIcon;
     readonly MainWindow       _view;
-    Console                   _console;
+    Views.Dialogs.Console     _console;
     object                    _contentPanel;
     bool                      _devicesSupported;
     object                    _treeViewSelectedItem;
@@ -454,7 +452,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteStatisticsCommand()
     {
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         if(!ctx.Commands.Any()     &&
            !ctx.Filesystems.Any()  &&
@@ -488,7 +486,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     {
         if(_console is null)
         {
-            _console             = new Console();
+            _console             = new Views.Dialogs.Console();
             _console.DataContext = new ConsoleViewModel(_console);
         }
 
@@ -565,10 +563,10 @@ public sealed class MainWindowViewModel : ViewModelBase
                     Filter    = inputFilter
                 };
 
-                List<CommonTypes.Partition> partitions = Partitions.GetAll(imageFormat);
-                Partitions.AddSchemesToStats(partitions);
+                List<CommonTypes.Partition> partitions = Core.Partitions.GetAll(imageFormat);
+                Core.Partitions.AddSchemesToStats(partitions);
 
-                var          checkRaw = false;
+                bool         checkRaw = false;
                 List<string> idPlugins;
                 IFilesystem  plugin;
                 PluginBase   plugins = GetPluginBase.Instance;
@@ -604,7 +602,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                             AaruConsole.WriteLine("Identifying filesystem on partition");
 
-                            Filesystems.Identify(imageFormat, out idPlugins, partition);
+                            Core.Filesystems.Identify(imageFormat, out idPlugins, partition);
 
                             if(idPlugins.Count == 0)
                                 AaruConsole.WriteLine("Filesystem not identified");
@@ -673,7 +671,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                         Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                     };
 
-                    Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                     if(idPlugins.Count == 0)
                         AaruConsole.WriteLine("Filesystem not identified");
@@ -799,9 +797,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 case PeripheralDeviceTypes.DirectAccess:
                                 case PeripheralDeviceTypes.SCSIZonedBlockDevice:
                                 case PeripheralDeviceTypes.SimplifiedDevice:
-                                    deviceModel.Icon = dev.IsRemovable ? dev.IsUsb
-                                                                             ? _usbIcon
-                                                                             : _removableIcon : _genericHddIcon;
+                                    deviceModel.Icon = dev.IsRemovable ? dev.IsUsb ? _usbIcon : _removableIcon
+                                                           : _genericHddIcon;
 
                                     break;
                                 case PeripheralDeviceTypes.SequentialAccess:

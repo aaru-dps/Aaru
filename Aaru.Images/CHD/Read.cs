@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -49,6 +47,8 @@ using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Session = Aaru.CommonTypes.Structs.Session;
 
+namespace Aaru.DiscImages;
+
 public sealed partial class Chd
 {
     /// <inheritdoc />
@@ -57,19 +57,19 @@ public sealed partial class Chd
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
-        var magic = new byte[8];
+        byte[] magic = new byte[8];
         stream.EnsureRead(magic, 0, 8);
 
         if(!_chdTag.SequenceEqual(magic))
             return ErrorNumber.InvalidArgument;
 
         // Read length
-        var buffer = new byte[4];
+        byte[] buffer = new byte[4];
         stream.EnsureRead(buffer, 0, 4);
-        var length = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
+        uint length = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
         buffer = new byte[4];
         stream.EnsureRead(buffer, 0, 4);
-        var version = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
+        uint version = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
 
         buffer = new byte[length];
         stream.Seek(0, SeekOrigin.Begin);
@@ -107,11 +107,11 @@ public sealed partial class Chd
 
                 _hunkTable = new ulong[hdrV1.totalhunks];
 
-                var hunkSectorCount = (uint)Math.Ceiling((double)hdrV1.totalhunks * 8 / 512);
+                uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV1.totalhunks * 8 / 512);
 
-                var hunkSectorBytes = new byte[512];
+                byte[] hunkSectorBytes = new byte[512];
 
-                for(var i = 0; i < hunkSectorCount; i++)
+                for(int i = 0; i < hunkSectorCount; i++)
                 {
                     stream.EnsureRead(hunkSectorBytes, 0, 512);
 
@@ -122,10 +122,10 @@ public sealed partial class Chd
                     // This restores the order of elements
                     Array.Reverse(hunkSector.hunkEntry);
 
-                    if(_hunkTable.Length >= i * 512 / 8 + 512 / 8)
+                    if(_hunkTable.Length >= (i                                  * 512 / 8) + (512 / 8))
                         Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, 512 / 8);
                     else
-                        Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - i * 512 / 8);
+                        Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - (i * 512 / 8));
                 }
 
                 DateTime end = DateTime.UtcNow;
@@ -182,11 +182,11 @@ public sealed partial class Chd
                 _hunkTable = new ulong[hdrV2.totalhunks];
 
                 // How many sectors uses the BAT
-                var hunkSectorCount = (uint)Math.Ceiling((double)hdrV2.totalhunks * 8 / 512);
+                uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV2.totalhunks * 8 / 512);
 
-                var hunkSectorBytes = new byte[512];
+                byte[] hunkSectorBytes = new byte[512];
 
-                for(var i = 0; i < hunkSectorCount; i++)
+                for(int i = 0; i < hunkSectorCount; i++)
                 {
                     stream.EnsureRead(hunkSectorBytes, 0, 512);
 
@@ -197,10 +197,10 @@ public sealed partial class Chd
                     // This restores the order of elements
                     Array.Reverse(hunkSector.hunkEntry);
 
-                    if(_hunkTable.Length >= i * 512 / 8 + 512 / 8)
+                    if(_hunkTable.Length >= (i                                  * 512 / 8) + (512 / 8))
                         Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, 512 / 8);
                     else
-                        Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - i * 512 / 8);
+                        Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - (i * 512 / 8));
                 }
 
                 DateTime end = DateTime.UtcNow;
@@ -374,13 +374,13 @@ public sealed partial class Chd
 
                     _hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
 
-                    var hunkSectorCount = (uint)Math.Ceiling((double)_hunkTableSmall.Length * 4 / 512);
+                    uint hunkSectorCount = (uint)Math.Ceiling((double)_hunkTableSmall.Length * 4 / 512);
 
-                    var hunkSectorBytes = new byte[512];
+                    byte[] hunkSectorBytes = new byte[512];
 
                     stream.Seek((long)hdrV5.mapoffset, SeekOrigin.Begin);
 
-                    for(var i = 0; i < hunkSectorCount; i++)
+                    for(int i = 0; i < hunkSectorCount; i++)
                     {
                         stream.EnsureRead(hunkSectorBytes, 0, 512);
 
@@ -393,11 +393,11 @@ public sealed partial class Chd
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
 
-                        if(_hunkTableSmall.Length >= i * 512 / 4 + 512 / 4)
+                        if(_hunkTableSmall.Length >= (i                                  * 512 / 4) + (512 / 4))
                             Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, i * 512 / 4, 512 / 4);
                         else
                             Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, i * 512 / 4,
-                                       _hunkTableSmall.Length - i * 512            / 4);
+                                       _hunkTableSmall.Length - (i * 512 / 4));
                     }
 
                     DateTime end = DateTime.UtcNow;
@@ -447,11 +447,11 @@ public sealed partial class Chd
 
             while(nextMetaOff > 0)
             {
-                var hdrBytes = new byte[16];
+                byte[] hdrBytes = new byte[16];
                 stream.Seek((long)nextMetaOff, SeekOrigin.Begin);
                 stream.EnsureRead(hdrBytes, 0, hdrBytes.Length);
                 MetadataHeader header = Marshal.ByteArrayToStructureBigEndian<MetadataHeader>(hdrBytes);
-                var            meta   = new byte[header.flagsAndLength & 0xFFFFFF];
+                byte[]         meta   = new byte[header.flagsAndLength & 0xFFFFFF];
                 stream.EnsureRead(meta, 0, meta.Length);
 
                 AaruConsole.DebugWriteLine("CHD plugin", "Found metadata \"{0}\"",
@@ -502,7 +502,7 @@ public sealed partial class Chd
                             return ErrorNumber.NotSupported;
                         }
 
-                        var chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
+                        uint chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
                         // Byteswapped
                         if(chdTracksNumber > 99)
@@ -514,12 +514,12 @@ public sealed partial class Chd
                         {
                             var chdTrack = new TrackOld
                             {
-                                type        = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 0)),
-                                subType     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 4)),
-                                dataSize    = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 8)),
-                                subSize     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 12)),
-                                frames      = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 16)),
-                                extraFrames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 20))
+                                type        = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 0)),
+                                subType     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 4)),
+                                dataSize    = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 8)),
+                                subSize     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 12)),
+                                frames      = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 16)),
+                                extraFrames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 20))
                             };
 
                             var aaruTrack = new Track();
@@ -650,8 +650,8 @@ public sealed partial class Chd
                         {
                             _isCdrom = true;
 
-                            var    trackNo   = uint.Parse(chtrMatch.Groups["track"].Value);
-                            var    frames    = uint.Parse(chtrMatch.Groups["frames"].Value);
+                            uint   trackNo   = uint.Parse(chtrMatch.Groups["track"].Value);
+                            uint   frames    = uint.Parse(chtrMatch.Groups["frames"].Value);
                             string subtype   = chtrMatch.Groups["sub_type"].Value;
                             string tracktype = chtrMatch.Groups["track_type"].Value;
 
@@ -795,12 +795,12 @@ public sealed partial class Chd
                         {
                             _isCdrom = true;
 
-                            var    trackNo   = uint.Parse(cht2Match.Groups["track"].Value);
-                            var    frames    = uint.Parse(cht2Match.Groups["frames"].Value);
+                            uint   trackNo   = uint.Parse(cht2Match.Groups["track"].Value);
+                            uint   frames    = uint.Parse(cht2Match.Groups["frames"].Value);
                             string subtype   = cht2Match.Groups["sub_type"].Value;
                             string trackType = cht2Match.Groups["track_type"].Value;
 
-                            var pregap = uint.Parse(cht2Match.Groups["pregap"].Value);
+                            uint pregap = uint.Parse(cht2Match.Groups["pregap"].Value);
 
                             // What is this, really? Same as track type?
                             string pregapType = cht2Match.Groups["pgtype"].Value;
@@ -812,7 +812,7 @@ public sealed partial class Chd
                             // or of any data track followed by an audio track, according to Yellow Book.
                             // It is indistinguishable from normal data.
                             // TODO: Does CHD store it, or like CDRWin, ignores it?
-                            var postgap = uint.Parse(cht2Match.Groups["postgap"].Value);
+                            uint postgap = uint.Parse(cht2Match.Groups["postgap"].Value);
 
                             if(trackNo != currentTrack)
                             {
@@ -979,17 +979,17 @@ public sealed partial class Chd
                         {
                             _isGdrom = true;
 
-                            var    trackNo   = uint.Parse(chgdMatch.Groups["track"].Value);
-                            var    frames    = uint.Parse(chgdMatch.Groups["frames"].Value);
+                            uint   trackNo   = uint.Parse(chgdMatch.Groups["track"].Value);
+                            uint   frames    = uint.Parse(chgdMatch.Groups["frames"].Value);
                             string subtype   = chgdMatch.Groups["sub_type"].Value;
                             string trackType = chgdMatch.Groups["track_type"].Value;
 
                             // TODO: Check pregap, postgap and pad behaviour
-                            var    pregap        = uint.Parse(chgdMatch.Groups["pregap"].Value);
+                            uint   pregap        = uint.Parse(chgdMatch.Groups["pregap"].Value);
                             string pregapType    = chgdMatch.Groups["pgtype"].Value;
                             string pregapSubType = chgdMatch.Groups["pgsub"].Value;
-                            var    postgap       = uint.Parse(chgdMatch.Groups["postgap"].Value);
-                            var    pad           = uint.Parse(chgdMatch.Groups["pad"].Value);
+                            uint   postgap       = uint.Parse(chgdMatch.Groups["postgap"].Value);
+                            uint   pad           = uint.Parse(chgdMatch.Groups["pad"].Value);
 
                             if(trackNo != currentTrack)
                             {
@@ -1365,7 +1365,7 @@ public sealed partial class Chd
         }
 
         uint sectorOffset;
-        var  mode2 = false;
+        bool mode2 = false;
 
         switch(track.Type)
         {
@@ -1443,7 +1443,7 @@ public sealed partial class Chd
         if(mode2)
             buffer = Sector.GetUserDataFromMode2(sector);
         else if(track.Type == TrackType.Audio && _swapAudio)
-            for(var i = 0; i < 2352; i += 2)
+            for(int i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
@@ -1687,7 +1687,7 @@ public sealed partial class Chd
         buffer = new byte[sectorSize];
 
         if(track.Type == TrackType.Audio && _swapAudio)
-            for(var i = 0; i < 2352; i += 2)
+            for(int i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
@@ -1696,7 +1696,7 @@ public sealed partial class Chd
             Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
         if(track.Type == TrackType.Audio && _swapAudio)
-            for(var i = 0; i < 2352; i += 2)
+            for(int i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
@@ -1779,7 +1779,7 @@ public sealed partial class Chd
         if(!_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
         {
             track = GetTrack(sectorAddress);
-            var sectorSize = (uint)track.RawBytesPerSector;
+            uint sectorSize = (uint)track.RawBytesPerSector;
 
             ulong hunkNo = sectorAddress              / _sectorsPerHunk;
             ulong secOff = sectorAddress * sectorSize % (_sectorsPerHunk * sectorSize);
@@ -1801,7 +1801,7 @@ public sealed partial class Chd
         buffer = new byte[track.RawBytesPerSector];
 
         if(track.Type == TrackType.Audio && _swapAudio)
-            for(var i = 0; i < 2352; i += 2)
+            for(int i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
@@ -1813,7 +1813,7 @@ public sealed partial class Chd
         {
             case TrackType.CdMode1 when track.RawBytesPerSector == 2048:
             {
-                var fullSector = new byte[2352];
+                byte[] fullSector = new byte[2352];
 
                 Array.Copy(buffer, 0, fullSector, 16, 2048);
                 _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)sectorAddress);
@@ -1825,7 +1825,7 @@ public sealed partial class Chd
             }
             case TrackType.CdMode2Form1 when track.RawBytesPerSector == 2048:
             {
-                var fullSector = new byte[2352];
+                byte[] fullSector = new byte[2352];
 
                 Array.Copy(buffer, 0, fullSector, 24, 2048);
                 _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1, (long)sectorAddress);
@@ -1837,7 +1837,7 @@ public sealed partial class Chd
             }
             case TrackType.CdMode2Form1 when track.RawBytesPerSector == 2324:
             {
-                var fullSector = new byte[2352];
+                byte[] fullSector = new byte[2352];
 
                 Array.Copy(buffer, 0, fullSector, 24, 2324);
                 _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form2, (long)sectorAddress);
@@ -1849,7 +1849,7 @@ public sealed partial class Chd
             }
             case TrackType.CdMode2Formless when track.RawBytesPerSector == 2336:
             {
-                var fullSector = new byte[2352];
+                byte[] fullSector = new byte[2352];
 
                 _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Formless, (long)sectorAddress);
                 Array.Copy(buffer, 0, fullSector, 16, 2336);

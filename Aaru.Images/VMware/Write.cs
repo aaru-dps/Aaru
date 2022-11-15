@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class VMware
 {
@@ -288,9 +288,8 @@ public sealed partial class VMware
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders       == 0 &&
-                   _imageInfo.Heads           == 0 &&
-                   _imageInfo.SectorsPerTrack == 0)
+                if(_imageInfo.Cylinders == 0 &&
+                   _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
                     break;
             }
         }

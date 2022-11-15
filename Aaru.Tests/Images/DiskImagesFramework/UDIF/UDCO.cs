@@ -26,8 +26,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Images.DiskImagesFramework.UDIF;
-
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
@@ -35,8 +33,9 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
 using NUnit.Framework;
 
-[TestFixture]
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+namespace Aaru.Tests.Images.DiskImagesFramework.UDIF;
+
+[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
 public class UDCO : BlockMediaImageTest
 {
     public override string DataFolder =>

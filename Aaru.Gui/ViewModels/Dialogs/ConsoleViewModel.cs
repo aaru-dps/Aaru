@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Dialogs;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -46,16 +44,17 @@ using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
-using Console = Aaru.Gui.Views.Dialogs.Console;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
 
+namespace Aaru.Gui.ViewModels.Dialogs;
+
 public sealed class ConsoleViewModel : ViewModelBase
 {
-    readonly Console _view;
-    bool             _debugChecked;
+    readonly Views.Dialogs.Console _view;
+    bool                           _debugChecked;
 
-    public ConsoleViewModel(Console view)
+    public ConsoleViewModel(Views.Dialogs.Console view)
     {
         _view        = view;
         SaveCommand  = ReactiveCommand.Create(ExecuteSaveCommand);
@@ -150,7 +149,8 @@ public sealed class ConsoleViewModel : ViewModelBase
         {
             await MessageBoxManager.
                   GetMessageBoxStandardWindow("Error",
-                                              $"Exception {exception.Message} trying to save logfile, details has been sent to console.",
+                                              $"Exception {exception.Message
+                                              } trying to save logfile, details has been sent to console.",
                                               ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
 
             AaruConsole.ErrorWriteLine("Console", exception.Message);

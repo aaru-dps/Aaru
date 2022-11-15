@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 // Not a filesystem, more like an executable header
 /// <inheritdoc />
@@ -96,9 +96,9 @@ public sealed class PCFX : IFilesystem
         try
         {
             date = Encoding.GetString(header.date);
-            var year  = int.Parse(date[..4]);
-            var month = int.Parse(date.Substring(4, 2));
-            var day   = int.Parse(date.Substring(6, 2));
+            int year  = int.Parse(date[..4]);
+            int month = int.Parse(date.Substring(4, 2));
+            int day   = int.Parse(date.Substring(6, 2));
             dateTime = new DateTime(year, month, day);
         }
         catch

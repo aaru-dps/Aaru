@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
 using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -60,8 +60,8 @@ partial class Dump
                              int? discOffset)
     {
         _dumpLog.WriteLine("Creating sidecar.");
-        var     filters     = new FiltersList();
-        IFilter filter      = filters.GetFilter(_outputPath);
+        var     filters = new FiltersList();
+        IFilter filter  = filters.GetFilter(_outputPath);
         totalChkDuration = 0;
 
         if(ImageFormat.Detect(filter) is not IMediaImage inputPlugin)

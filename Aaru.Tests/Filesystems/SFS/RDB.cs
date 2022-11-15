@@ -26,13 +26,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Filesystems.SFS;
-
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Filesystems.SFS;
 
 [TestFixture]
 public class RDB : FilesystemTest
@@ -41,7 +40,7 @@ public class RDB : FilesystemTest
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (RDB)");
 
-    public override IFilesystem Plugin     => new SFS();
+    public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();
     public override bool        Partitions => true;
 
     public override FileSystemTest[] Tests => new[]

@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filters;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+
+namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>No filter for reading files not recognized by any filter</summary>

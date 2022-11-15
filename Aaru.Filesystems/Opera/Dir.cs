@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
@@ -86,7 +86,7 @@ public sealed partial class OperaFS
 
         currentDirectory = _rootDirectoryCache;
 
-        for(var p = 0; p < pieces.Length; p++)
+        for(int p = 0; p < pieces.Length; p++)
         {
             entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
 
@@ -133,7 +133,7 @@ public sealed partial class OperaFS
             header    = Marshal.ByteArrayToStructureBigEndian<DirectoryHeader>(data);
             nextBlock = header.next_block + firstBlock;
 
-            var off = (int)header.first_used;
+            int off = (int)header.first_used;
 
             var entry = new DirectoryEntry();
 
@@ -148,9 +148,9 @@ public sealed partial class OperaFS
                     Pointers = new uint[entry.last_copy + 1]
                 };
 
-                for(var i = 0; i <= entry.last_copy; i++)
+                for(int i = 0; i <= entry.last_copy; i++)
                     entryWithPointers.Pointers[i] =
-                        BigEndianBitConverter.ToUInt32(data, off + _directoryEntrySize + i * 4);
+                        BigEndianBitConverter.ToUInt32(data, off + _directoryEntrySize + (i * 4));
 
                 entries.Add(name, entryWithPointers);
 
@@ -158,7 +158,7 @@ public sealed partial class OperaFS
                    (entry.flags & (uint)FileFlags.LastEntryInBlock) != 0)
                     break;
 
-                off += (int)(_directoryEntrySize + (entry.last_copy + 1) * 4);
+                off += (int)(_directoryEntrySize + ((entry.last_copy + 1) * 4));
             }
 
             if((entry.flags & (uint)FileFlags.LastEntry) != 0)

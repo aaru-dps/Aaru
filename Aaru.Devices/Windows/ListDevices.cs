@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Windows;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -42,6 +40,8 @@ using System.Text;
 using Aaru.Helpers;
 using Microsoft.Win32.SafeHandles;
 using Marshal = System.Runtime.InteropServices.Marshal;
+
+namespace Aaru.Devices.Windows;
 
 [SupportedOSPlatform("windows")]
 static class ListDevices

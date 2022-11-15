@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
@@ -53,7 +53,7 @@ public sealed partial class SuperCardPro
         if(_scpStream.Length < Marshal.SizeOf<ScpHeader>())
             return ErrorNumber.InvalidArgument;
 
-        var hdr = new byte[Marshal.SizeOf<ScpHeader>()];
+        byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
         _scpStream.EnsureRead(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
         Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
@@ -115,7 +115,7 @@ public sealed partial class SuperCardPro
 
             for(byte r = 0; r < Header.revolutions; r++)
             {
-                var rev = new byte[Marshal.SizeOf<TrackEntry>()];
+                byte[] rev = new byte[Marshal.SizeOf<TrackEntry>()];
                 _scpStream.EnsureRead(rev, 0, Marshal.SizeOf<TrackEntry>());
 
                 trk.Entries[r] = Marshal.ByteArrayToStructureLittleEndian<TrackEntry>(rev);
@@ -134,9 +134,9 @@ public sealed partial class SuperCardPro
 
             while(_scpStream.Position >= position)
             {
-                var footerSig = new byte[4];
+                byte[] footerSig = new byte[4];
                 _scpStream.EnsureRead(footerSig, 0, 4);
-                var footerMagic = BitConverter.ToUInt32(footerSig, 0);
+                uint footerMagic = BitConverter.ToUInt32(footerSig, 0);
 
                 if(footerMagic == FOOTER_SIGNATURE)
                 {
@@ -144,7 +144,7 @@ public sealed partial class SuperCardPro
 
                     AaruConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", _scpStream.Position);
 
-                    var ftr = new byte[Marshal.SizeOf<Footer>()];
+                    byte[] ftr = new byte[Marshal.SizeOf<Footer>()];
                     _scpStream.EnsureRead(ftr, 0, Marshal.SizeOf<Footer>());
 
                     Footer footer = Marshal.ByteArrayToStructureLittleEndian<Footer>(ftr);

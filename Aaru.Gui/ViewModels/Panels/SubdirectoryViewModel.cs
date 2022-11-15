@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Panels;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -51,6 +49,8 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+
+namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class SubdirectoryViewModel
 {
@@ -181,7 +181,7 @@ public sealed class SubdirectoryViewModel
                     else
                         chars = new char[filename.Length];
 
-                    for(var ci = 0; ci < chars.Length; ci++)
+                    for(int ci = 0; ci < chars.Length; ci++)
                         switch(filename[ci])
                         {
                             case '<':

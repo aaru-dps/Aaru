@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.DiscImages;
+
 public sealed partial class SaveDskF
 {
     /// <inheritdoc />
@@ -49,7 +49,7 @@ public sealed partial class SaveDskF
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        var hdr = new byte[40];
+        byte[] hdr = new byte[40];
 
         stream.EnsureRead(hdr, 0, 40);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
@@ -74,11 +74,10 @@ public sealed partial class SaveDskF
         AaruConsole.DebugWriteLine("SaveDskF plugin", "header.commentOffset = {0}", _header.commentOffset);
         AaruConsole.DebugWriteLine("SaveDskF plugin", "header.dataOffset = {0}", _header.dataOffset);
 
-        if(_header.dataOffset == 0 &&
-           _header.magic      == SDF_MAGIC_OLD)
+        if(_header is { dataOffset: 0, magic: SDF_MAGIC_OLD })
             _header.dataOffset = 512;
 
-        var cmt = new byte[_header.dataOffset - _header.commentOffset];
+        byte[] cmt = new byte[_header.dataOffset - _header.commentOffset];
         stream.Seek(_header.commentOffset, SeekOrigin.Begin);
         stream.EnsureRead(cmt, 0, cmt.Length);
 

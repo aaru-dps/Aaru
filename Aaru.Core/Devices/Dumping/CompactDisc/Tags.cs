@@ -34,8 +34,6 @@
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -93,11 +93,11 @@ partial class Dump
             if(discInfo.HasValue &&
                mediaType == MediaType.CD)
                 mediaType = discInfo.Value.DiscType switch
-                            {
-                                0x10 => MediaType.CDI,
-                                0x20 => MediaType.CDROMXA,
-                                _    => mediaType
-                            };
+                {
+                    0x10 => MediaType.CDI,
+                    0x20 => MediaType.CDROMXA,
+                    _    => mediaType
+                };
         }
 
         _dumpLog.WriteLine("Reading PMA");

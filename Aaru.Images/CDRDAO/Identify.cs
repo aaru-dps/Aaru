@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Cdrdao
 {
@@ -47,14 +47,14 @@ public sealed partial class Cdrdao
         try
         {
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
-            var testArray = new byte[512];
+            byte[] testArray = new byte[512];
             imageFilter.GetDataForkStream().EnsureRead(testArray, 0, 512);
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
 
             // Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
-            var twoConsecutiveNulls = false;
+            bool twoConsecutiveNulls = false;
 
-            for(var i = 0; i < 512; i++)
+            for(int i = 0; i < 512; i++)
             {
                 if(i >= imageFilter.GetDataForkStream().Length)
                     break;

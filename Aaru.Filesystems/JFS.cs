@@ -30,11 +30,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Local
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -46,6 +42,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of IBM's Journaled File System</summary>
@@ -211,39 +209,21 @@ public sealed class JFS : IFilesystem
     [Flags, SuppressMessage("ReSharper", "InconsistentNaming")]
     enum Flags : uint
     {
-        Unicode      = 0x00000001,
-        RemountRO    = 0x00000002,
-        Continue     = 0x00000004,
-        Panic        = 0x00000008,
-        UserQuota    = 0x00000010,
-        GroupQuota   = 0x00000020,
-        NoJournal    = 0x00000040,
-        Discard      = 0x00000080,
-        GroupCommit  = 0x00000100,
-        LazyCommit   = 0x00000200,
-        Temporary    = 0x00000400,
-        InlineLog    = 0x00000800,
-        InlineMoving = 0x00001000,
-        BadSAIT      = 0x00010000,
-        Sparse       = 0x00020000,
-        DASDEnabled  = 0x00040000,
-        DASDPrime    = 0x00080000,
-        SwapBytes    = 0x00100000,
-        DirIndex     = 0x00200000,
-        Linux        = 0x10000000,
-        DFS          = 0x20000000,
-        OS2          = 0x40000000,
-        AIX          = 0x80000000
+        Unicode      = 0x00000001, RemountRO = 0x00000002, Continue    = 0x00000004,
+        Panic        = 0x00000008, UserQuota = 0x00000010, GroupQuota  = 0x00000020,
+        NoJournal    = 0x00000040, Discard   = 0x00000080, GroupCommit = 0x00000100,
+        LazyCommit   = 0x00000200, Temporary = 0x00000400, InlineLog   = 0x00000800,
+        InlineMoving = 0x00001000, BadSAIT   = 0x00010000, Sparse      = 0x00020000,
+        DASDEnabled  = 0x00040000, DASDPrime = 0x00080000, SwapBytes   = 0x00100000,
+        DirIndex     = 0x00200000, Linux     = 0x10000000, DFS         = 0x20000000,
+        OS2          = 0x40000000, AIX       = 0x80000000
     }
 
     [Flags]
     enum State : uint
     {
-        Clean    = 0,
-        Mounted  = 1,
-        Dirty    = 2,
-        Logredo  = 4,
-        Extendfs = 8
+        Clean   = 0, Mounted  = 1, Dirty = 2,
+        Logredo = 4, Extendfs = 8
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

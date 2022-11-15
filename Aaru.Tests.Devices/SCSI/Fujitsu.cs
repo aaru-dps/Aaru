@@ -26,13 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices.SCSI;
-
 using System;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Aaru.Helpers;
+
+namespace Aaru.Tests.Devices.SCSI;
 
 static class Fujitsu
 {
@@ -40,19 +40,19 @@ static class Fujitsu
     {
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Send a Fujitsu vendor command to the device:");
             AaruConsole.WriteLine("1.- Send DISPLAY command.");
             AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
             AaruConsole.Write("Choose: ");
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -69,7 +69,7 @@ static class Fujitsu
                     continue;
                 default:
                     AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    System.Console.ReadKey();
 
                     continue;
             }
@@ -78,18 +78,18 @@ static class Fujitsu
 
     static void Display(string devPath, Device dev)
     {
-        var                 flash      = false;
+        bool                flash      = false;
         FujitsuDisplayModes mode       = FujitsuDisplayModes.Ready;
-        var                 firstHalf  = "DIC TEST";
-        var                 secondHalf = "TEST DIC";
+        string              firstHalf  = "DIC TEST";
+        string              secondHalf = "TEST DIC";
         string              strDev;
         int                 item;
 
-    parameters:
+        parameters:
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
             AaruConsole.WriteLine("Device: {0}", devPath);
             AaruConsole.WriteLine("Parameters for DISPLAY command:");
             AaruConsole.WriteLine("Descriptor: {0}", flash);
@@ -99,12 +99,12 @@ static class Fujitsu
             AaruConsole.WriteLine("2.- Send command with these parameters.");
             AaruConsole.WriteLine("0.- Return to Fujitsu vendor commands menu.");
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -117,13 +117,13 @@ static class Fujitsu
                     return;
                 case 1:
                     AaruConsole.Write("Flash?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out flash))
                     {
                         AaruConsole.WriteLine("Not a number. Press any key to continue...");
                         flash = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
@@ -135,34 +135,34 @@ static class Fujitsu
                                           FujitsuDisplayModes.Ready);
 
                     AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out mode))
                     {
                         AaruConsole.WriteLine("Not a correct display mode. Press any key to continue...");
                         mode = FujitsuDisplayModes.Ready;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     AaruConsole.Write("First display half (will be cut to 7-bit ASCII, 8 chars?: ");
-                    firstHalf = Console.ReadLine();
+                    firstHalf = System.Console.ReadLine();
                     AaruConsole.Write("Second display half (will be cut to 7-bit ASCII, 8 chars?: ");
-                    secondHalf = Console.ReadLine();
+                    secondHalf = System.Console.ReadLine();
 
                     break;
                 case 2: goto start;
             }
         }
 
-    start:
-        Console.Clear();
+        start:
+        System.Console.Clear();
 
         bool sense = dev.FujitsuDisplay(out byte[] senseBuffer, flash, mode, firstHalf, secondHalf, dev.Timeout,
                                         out double duration);
 
-    menu:
+        menu:
         AaruConsole.WriteLine("Device: {0}", devPath);
         AaruConsole.WriteLine("Sending DISPLAY to the device:");
         AaruConsole.WriteLine("Command took {0} ms.", duration);
@@ -179,13 +179,13 @@ static class Fujitsu
         AaruConsole.WriteLine("0.- Return to Fujitsu vendor commands menu.");
         AaruConsole.Write("Choose: ");
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
             AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -197,7 +197,7 @@ static class Fujitsu
 
                 return;
             case 1:
-                Console.Clear();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
                 AaruConsole.WriteLine("DISPLAY sense:");
 
@@ -205,8 +205,8 @@ static class Fujitsu
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
                 AaruConsole.WriteLine("Device: {0}", devPath);
 
                 goto menu;
@@ -214,8 +214,8 @@ static class Fujitsu
             case 3: goto parameters;
             default:
                 AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }

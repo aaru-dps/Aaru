@@ -32,8 +32,6 @@
 
 // ReSharper disable UnusedType.Local
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the Professional File System</summary>
@@ -81,7 +81,7 @@ public sealed class PFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
+        uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
         return magic is AFS_DISK or PFS2_DISK or PFS_DISK or MUAF_DISK or MUPFS_DISK;
     }

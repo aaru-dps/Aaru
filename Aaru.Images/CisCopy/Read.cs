@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class CisCopy
 {
@@ -72,7 +72,7 @@ public sealed partial class CisCopy
                 return ErrorNumber.InvalidArgument;
         }
 
-        var trackBytes = new byte[tracks];
+        byte[] trackBytes = new byte[tracks];
         stream.EnsureRead(trackBytes, 0, tracks);
 
         var cmpr = (Compression)stream.ReadByte();
@@ -84,7 +84,7 @@ public sealed partial class CisCopy
             return ErrorNumber.NotImplemented;
         }
 
-        var trackSize = 0;
+        int trackSize = 0;
 
         switch(type)
         {
@@ -109,16 +109,16 @@ public sealed partial class CisCopy
                 break;
         }
 
-        var headStep = 1;
+        int headStep = 1;
 
         if(type is DiskType.MD1DD or DiskType.MD1DD8)
             headStep = 2;
 
         var decodedImage = new MemoryStream();
 
-        for(var i = 0; i < tracks; i += headStep)
+        for(int i = 0; i < tracks; i += headStep)
         {
-            var track = new byte[trackSize];
+            byte[] track = new byte[trackSize];
 
             if((TrackType)trackBytes[i] == TrackType.Copied)
                 stream.EnsureRead(track, 0, trackSize);

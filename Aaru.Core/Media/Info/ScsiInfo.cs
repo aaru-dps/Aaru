@@ -30,10 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
-
-namespace Aaru.Core.Media.Info;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +48,10 @@ using Aaru.Decoders.Xbox;
 using Aaru.Devices;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using DMI = Aaru.Decoders.Xbox.DMI;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
+
+namespace Aaru.Core.Media.Info;
 
 /// <summary>Retrieves information from a SCSI device</summary>
 public sealed class ScsiInfo
@@ -67,17 +66,17 @@ public sealed class ScsiInfo
 
         MediaType     = MediaType.Unknown;
         MediaInserted = false;
-        var    resets = 0;
+        int    resets = 0;
         bool   sense;
         byte[] cmdBuf;
         byte[] senseBuf;
-        var    containsFloppyPage    = false;
-        var    sessions              = 1;
-        var    firstTrackLastSession = 1;
+        bool   containsFloppyPage    = false;
+        int    sessions              = 1;
+        int    firstTrackLastSession = 1;
 
         if(dev.IsRemovable)
         {
-        deviceGotReset:
+            deviceGotReset:
             sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
 
             if(sense)
@@ -99,7 +98,7 @@ public sealed class ScsiInfo
                     {
                         case 0x3A:
                         {
-                            var leftRetries = 5;
+                            int leftRetries = 5;
 
                             while(leftRetries > 0)
                             {
@@ -124,7 +123,7 @@ public sealed class ScsiInfo
                         }
                         case 0x04 when decSense?.ASCQ == 0x01:
                         {
-                            var leftRetries = 10;
+                            int leftRetries = 10;
 
                             while(leftRetries > 0)
                             {
@@ -222,7 +221,7 @@ public sealed class ScsiInfo
 
                     if(ReadCapacity16 != null)
                     {
-                        var temp = new byte[8];
+                        byte[] temp = new byte[8];
 
                         Array.Copy(cmdBuf, 0, temp, 0, 8);
                         Array.Reverse(temp);
@@ -324,17 +323,17 @@ public sealed class ScsiInfo
                         break;
                     case 0x0002:
                         MediaType = scsiMediumType switch
-                                    {
-                                        0x01 => MediaType.PD650,
-                                        0x41 => Blocks switch
-                                                {
-                                                    58620544 => MediaType.REV120,
-                                                    17090880 => MediaType.REV35,
-                                                    34185728 => MediaType.REV70,
-                                                    _        => MediaType
-                                                },
-                                        _ => MediaType.Unknown
-                                    };
+                        {
+                            0x01 => MediaType.PD650,
+                            0x41 => Blocks switch
+                            {
+                                58620544 => MediaType.REV120,
+                                17090880 => MediaType.REV35,
+                                34185728 => MediaType.REV70,
+                                _        => MediaType
+                            },
+                            _ => MediaType.Unknown
+                        };
 
                         break;
                     case 0x0005:
@@ -484,10 +483,9 @@ public sealed class ScsiInfo
 
             #region All DVD and HD DVD types
             if(MediaType is MediaType.DVDDownload or MediaType.DVDPR or MediaType.DVDPRDL or MediaType.DVDPRW
-                         or MediaType.DVDPRWDL or MediaType.DVDR or MediaType.DVDRAM or MediaType.DVDRDL
-                         or MediaType.DVDROM or MediaType.DVDRW or MediaType.DVDRWDL or MediaType.HDDVDR
-                         or MediaType.HDDVDRAM or MediaType.HDDVDRDL or MediaType.HDDVDROM or MediaType.HDDVDRW
-                         or MediaType.HDDVDRWDL)
+               or MediaType.DVDPRWDL or MediaType.DVDR or MediaType.DVDRAM or MediaType.DVDRDL or MediaType.DVDROM
+               or MediaType.DVDRW or MediaType.DVDRWDL or MediaType.HDDVDR or MediaType.HDDVDRAM or MediaType.HDDVDRDL
+               or MediaType.HDDVDROM or MediaType.HDDVDRW or MediaType.HDDVDRWDL)
             {
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out _);
@@ -503,25 +501,25 @@ public sealed class ScsiInfo
                     if(DecodedPfi.HasValue)
                         if(MediaType == MediaType.DVDROM)
                             MediaType = DecodedPfi.Value.DiskCategory switch
-                                        {
-                                            DiskCategory.DVDPR    => MediaType.DVDPR,
-                                            DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
-                                            DiskCategory.DVDPRW   => MediaType.DVDPRW,
-                                            DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
-                                            DiskCategory.DVDR => DecodedPfi.Value.PartVersion >= 6 ? MediaType.DVDRDL
-                                                                     : MediaType.DVDR,
-                                            DiskCategory.DVDRAM => MediaType.DVDRAM,
-                                            DiskCategory.DVDRW => DecodedPfi.Value.PartVersion >= 15 ? MediaType.DVDRWDL
-                                                                      : MediaType.DVDRW,
-                                            DiskCategory.HDDVDR   => MediaType.HDDVDR,
-                                            DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
-                                            DiskCategory.HDDVDROM => MediaType.HDDVDROM,
-                                            DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
-                                            DiskCategory.Nintendo => DecodedPfi.Value.DiscSize == DVDSize.Eighty
-                                                                         ? MediaType.GOD : MediaType.WOD,
-                                            DiskCategory.UMD => MediaType.UMD,
-                                            _                => MediaType.DVDROM
-                                        };
+                            {
+                                DiskCategory.DVDPR    => MediaType.DVDPR,
+                                DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                                DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                                DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                DiskCategory.DVDR => DecodedPfi.Value.PartVersion >= 6 ? MediaType.DVDRDL
+                                                         : MediaType.DVDR,
+                                DiskCategory.DVDRAM => MediaType.DVDRAM,
+                                DiskCategory.DVDRW => DecodedPfi.Value.PartVersion >= 15 ? MediaType.DVDRWDL
+                                                          : MediaType.DVDRW,
+                                DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                                DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                                DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                                DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                                DiskCategory.Nintendo => DecodedPfi.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD
+                                                             : MediaType.WOD,
+                                DiskCategory.UMD => MediaType.UMD,
+                                _                => MediaType.DVDROM
+                            };
                 }
 
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -1150,11 +1148,11 @@ public sealed class ScsiInfo
                         if(nintendoPfi.Value.DiskCategory == DiskCategory.Nintendo &&
                            nintendoPfi.Value.PartVersion  == 15)
                             MediaType = nintendoPfi.Value.DiscSize switch
-                                        {
-                                            DVDSize.Eighty    => MediaType.GOD,
-                                            DVDSize.OneTwenty => MediaType.WOD,
-                                            _                 => MediaType
-                                        };
+                            {
+                                DVDSize.Eighty    => MediaType.GOD,
+                                DVDSize.OneTwenty => MediaType.WOD,
+                                _                 => MediaType
+                            };
                     }
                 }
 
@@ -1314,8 +1312,8 @@ public sealed class ScsiInfo
                             totalSize - (PFI.Decode(cmdBuf, MediaType).Value.Layer0EndPSN -
                                          PFI.Decode(cmdBuf, MediaType).Value.DataAreaStartPSN + 1) - gameSize + 1;
 
-                        totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
-                        ulong layerBreak = l0Video + middleZone + gameSize / 2;
+                        totalSize = l0Video + l1Video + (middleZone * 2) + gameSize;
+                        ulong layerBreak = l0Video + middleZone + (gameSize / 2);
 
                         XgdInfo = new XgdInfo
                         {
@@ -1350,7 +1348,7 @@ public sealed class ScsiInfo
             MediaType = MediaType.GENERIC_HDD;
 
         if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice ||
-           dev.IsUsb && scsiMediumType is 0x40 or 0x41 or 0x42)
+           (dev.IsUsb && scsiMediumType is 0x40 or 0x41 or 0x42))
             return;
 
         sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,
@@ -1367,11 +1365,11 @@ public sealed class ScsiInfo
             if(DecodedDiscInformation.HasValue)
                 if(MediaType == MediaType.CD)
                     MediaType = DecodedDiscInformation.Value.DiscType switch
-                                {
-                                    0x10 => MediaType.CDI,
-                                    0x20 => MediaType.CDROMXA,
-                                    _    => MediaType
-                                };
+                    {
+                        0x10 => MediaType.CDI,
+                        0x20 => MediaType.CDROMXA,
+                        _    => MediaType
+                    };
         }
 
         MediaType tmpType = MediaType;

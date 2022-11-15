@@ -31,12 +31,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class WCDiskImage
 {
@@ -49,7 +49,7 @@ public sealed partial class WCDiskImage
         if(stream.Length < 32)
             return false;
 
-        var header = new byte[32];
+        byte[] header = new byte[32];
         stream.EnsureRead(header, 0, 32);
 
         FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);

@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Vhd
 {
@@ -53,12 +53,12 @@ public sealed partial class Vhd
 
     /// <inheritdoc />
     public string Format => _thisFooter.DiskType switch
-                            {
-                                TYPE_FIXED        => "Virtual PC fixed size disk image",
-                                TYPE_DYNAMIC      => "Virtual PC dynamic size disk image",
-                                TYPE_DIFFERENCING => "Virtual PC differencing disk image",
-                                _                 => "Virtual PC disk image"
-                            };
+    {
+        TYPE_FIXED        => "Virtual PC fixed size disk image",
+        TYPE_DYNAMIC      => "Virtual PC dynamic size disk image",
+        TYPE_DIFFERENCING => "Virtual PC differencing disk image",
+        _                 => "Virtual PC disk image"
+    };
 
     /// <inheritdoc />
     public List<DumpHardwareType> DumpHardware => null;

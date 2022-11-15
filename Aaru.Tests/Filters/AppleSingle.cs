@@ -26,14 +26,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Filters;
-
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Filters;
 
 [TestFixture]
 public class AppleSingle
@@ -51,7 +51,7 @@ public class AppleSingle
         IFilter filter = new Aaru.Filters.AppleSingle();
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
-        var    data = new byte[737280];
+        byte[] data = new byte[737280];
         str.EnsureRead(data, 0, 737280);
         str.Close();
         str.Dispose();
@@ -80,7 +80,7 @@ public class AppleSingle
         IFilter filter = new Aaru.Filters.AppleSingle();
         filter.Open(_location);
         Stream str  = filter.GetResourceForkStream();
-        var    data = new byte[286];
+        byte[] data = new byte[286];
         str.EnsureRead(data, 0, 286);
         str.Close();
         str.Dispose();

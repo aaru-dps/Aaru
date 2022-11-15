@@ -31,41 +31,40 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.DiscImages;
+
 public sealed partial class HdCopy
 {
     static bool TryReadHeader(Stream stream, ref FileHeader fhdr, ref long dataStartOffset)
     {
-        var numTracks = 82;
+        int numTracks = 82;
 
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 16 + 2 * 82)
+        if(stream.Length < 16 + (2 * 82))
             return false;
 
-        FileHeader fheader;
+        FileHeader fheader = new();
 
         /* assume it's a regular HD-Copy file without the disk name */
-        dataStartOffset         = 2 + 2 * numTracks;
+        dataStartOffset         = 2 + (2 * numTracks);
         fheader.lastCylinder    = (byte)stream.ReadByte();
         fheader.sectorsPerTrack = (byte)stream.ReadByte();
 
-        if(fheader.lastCylinder    == 0xff &&
-           fheader.sectorsPerTrack == 0x18)
+        if(fheader is { lastCylinder: 0xff, sectorsPerTrack: 0x18 })
         {
             /* This is an "extended" HD-Copy file with filename information and 84 tracks */
             stream.Seek(0x0e, SeekOrigin.Begin);
             fheader.lastCylinder    = (byte)stream.ReadByte();
             fheader.sectorsPerTrack = (byte)stream.ReadByte();
             numTracks               = 84;
-            dataStartOffset         = 16 + 2 * numTracks;
+            dataStartOffset         = 16 + (2 * numTracks);
         }
 
         fheader.trackMap = new byte[2 * numTracks];
@@ -87,7 +86,7 @@ public sealed partial class HdCopy
             return false;
 
         // all other tracks must be either present (=1) or absent (=0)
-        for(var i = 0; i < 2 * numTracks; i++)
+        for(int i = 0; i < 2 * numTracks; i++)
             if(fheader.trackMap[i] > 1)
                 return false;
 
@@ -99,8 +98,8 @@ public sealed partial class HdCopy
 
     ErrorNumber ReadTrackIntoCache(Stream stream, int trackNum)
     {
-        var trackData = new byte[_imageInfo.SectorSize * _imageInfo.SectorsPerTrack];
-        var blkHeader = new byte[3];
+        byte[] trackData = new byte[_imageInfo.SectorSize * _imageInfo.SectorsPerTrack];
+        byte[] blkHeader = new byte[3];
 
         // check that track is present
         if(_trackOffset[trackNum] == -1)
@@ -114,15 +113,15 @@ public sealed partial class HdCopy
 
         // read the compressed track data
         stream.EnsureRead(blkHeader, 0, 3);
-        var  compressedLength = (short)(BitConverter.ToInt16(blkHeader, 0) - 1);
-        byte escapeByte       = blkHeader[2];
+        short compressedLength = (short)(BitConverter.ToInt16(blkHeader, 0) - 1);
+        byte  escapeByte       = blkHeader[2];
 
-        var cBuffer = new byte[compressedLength];
+        byte[] cBuffer = new byte[compressedLength];
         stream.EnsureRead(cBuffer, 0, compressedLength);
 
         // decompress the data
-        var sIndex = 0; // source buffer position
-        var dIndex = 0; // destination buffer position
+        int sIndex = 0; // source buffer position
+        int dIndex = 0; // destination buffer position
 
         while(sIndex < compressedLength)
             if(cBuffer[sIndex] == escapeByte)
@@ -132,7 +131,7 @@ public sealed partial class HdCopy
                 byte fillCount = cBuffer[sIndex++];
 
                 // fill destination buffer
-                for(var i = 0; i < fillCount; i++)
+                for(int i = 0; i < fillCount; i++)
                     trackData[dIndex++] = fillByte;
             }
             else

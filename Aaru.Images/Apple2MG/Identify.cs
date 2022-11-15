@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Apple2Mg
 {
@@ -47,7 +47,7 @@ public sealed partial class Apple2Mg
         if(stream.Length < 65)
             return false;
 
-        var header = new byte[64];
+        byte[] header = new byte[64];
         stream.EnsureRead(header, 0, 64);
 
         Header hdr = Marshal.SpanToStructureLittleEndian<Header>(header);

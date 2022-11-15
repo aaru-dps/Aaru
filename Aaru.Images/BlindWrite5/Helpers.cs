@@ -30,22 +30,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using Aaru.CommonTypes;
 using Aaru.Decoders.SCSI.MMC;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class BlindWrite5
 {
     static CommonTypes.Enums.TrackType BlindWriteTrackTypeToTrackType(TrackType trackType) => trackType switch
-                                                                            {
-                                                                                TrackType.Mode1   => CommonTypes.Enums.TrackType.CdMode1,
-                                                                                TrackType.Mode2F1 => CommonTypes.Enums.TrackType.CdMode2Form1,
-                                                                                TrackType.Mode2F2 => CommonTypes.Enums.TrackType.CdMode2Form2,
-                                                                                TrackType.Mode2   => CommonTypes.Enums.TrackType.CdMode2Formless,
-                                                                                TrackType.Audio   => CommonTypes.Enums.TrackType.Audio,
-                                                                                _                 => CommonTypes.Enums.TrackType.Data
-                                                                            };
+    {
+        TrackType.Mode1   => CommonTypes.Enums.TrackType.CdMode1,
+        TrackType.Mode2F1 => CommonTypes.Enums.TrackType.CdMode2Form1,
+        TrackType.Mode2F2 => CommonTypes.Enums.TrackType.CdMode2Form2,
+        TrackType.Mode2   => CommonTypes.Enums.TrackType.CdMode2Formless,
+        TrackType.Audio   => CommonTypes.Enums.TrackType.Audio,
+        _                 => CommonTypes.Enums.TrackType.Data
+    };
 
     static MediaType BlindWriteProfileToMediaType(ProfileNumber profile)
     {

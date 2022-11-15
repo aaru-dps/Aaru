@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public partial class Device
@@ -61,7 +61,7 @@ public partial class Device
     public bool CertanceParkUnpark(out byte[] senseBuffer, bool park, uint timeout, out double duration)
     {
         byte[] buffer = Array.Empty<byte>();
-        var    cdb    = new byte[6];
+        byte[] cdb    = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;

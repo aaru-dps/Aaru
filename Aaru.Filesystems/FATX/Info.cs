@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
@@ -66,7 +66,7 @@ public sealed partial class XboxFatPlugin
         if(imagePlugin.Info.SectorSize < 512)
             return;
 
-        var bigEndian = true;
+        bool bigEndian = true;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 

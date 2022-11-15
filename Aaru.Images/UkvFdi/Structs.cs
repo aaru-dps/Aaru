@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Runtime.InteropServices;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class UkvFdi
 {

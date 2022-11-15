@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Media;
-
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
@@ -52,16 +50,16 @@ using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Decoders.Xbox;
-using Aaru.Settings;
 using Spectre.Console;
 using BCA = Aaru.Decoders.Bluray.BCA;
 using Cartridge = Aaru.Decoders.DVD.Cartridge;
 using Command = System.CommandLine.Command;
 using DDS = Aaru.Decoders.DVD.DDS;
-using Device = Aaru.Devices.Device;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Session = Aaru.Decoders.CD.Session;
 using Spare = Aaru.Decoders.DVD.Spare;
+
+namespace Aaru.Commands.Media;
 
 sealed class MediaInfoCommand : Command
 {
@@ -90,7 +88,7 @@ sealed class MediaInfoCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -124,13 +122,13 @@ sealed class MediaInfoCommand : Command
            char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-        Device      dev      = null;
-        ErrorNumber devErrno = ErrorNumber.NoError;
+        Devices.Device dev      = null;
+        ErrorNumber    devErrno = ErrorNumber.NoError;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Opening device...").IsIndeterminate();
-            dev = Device.Create(devicePath, out devErrno);
+            dev = Devices.Device.Create(devicePath, out devErrno);
         });
 
         switch(dev)
@@ -184,16 +182,16 @@ sealed class MediaInfoCommand : Command
 
     static void DoAtaMediaInfo() => AaruConsole.ErrorWriteLine("Please use device-info command for ATA devices.");
 
-    static void DoNvmeMediaInfo(string outputPrefix, Device dev) =>
+    static void DoNvmeMediaInfo(string outputPrefix, Devices.Device dev) =>
         throw new NotImplementedException("NVMe devices not yet supported.");
 
     static void DoSdMediaInfo() => AaruConsole.ErrorWriteLine("Please use device-info command for MMC/SD devices.");
 
-    static void DoScsiMediaInfo(bool debug, string outputPrefix, Device dev)
+    static void DoScsiMediaInfo(bool debug, string outputPrefix, Devices.Device dev)
     {
         ScsiInfo scsiInfo = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask("Retrieving SCSI information...").IsIndeterminate();
             scsiInfo = new ScsiInfo(dev);
@@ -496,8 +494,8 @@ sealed class MediaInfoCommand : Command
                                  "SCSI READ DISC STRUCTURE", scsiInfo.BluraySpareAreaInformation);
 
                 AaruConsole.WriteLine("[bold]Blu-ray Spare Area Information:[/]\n{0}",
-                                      Markup.Escape(Decoders.Bluray.Spare.Prettify(scsiInfo.
-                                                        BluraySpareAreaInformation)));
+                                      Markup.Escape(Decoders.Bluray.Spare.
+                                                             Prettify(scsiInfo.BluraySpareAreaInformation)));
             }
 
             if(scsiInfo.BlurayRawDfl != null)
@@ -621,7 +619,7 @@ sealed class MediaInfoCommand : Command
 
             AaruConsole.Write("[bold]Media Serial Number:[/] ");
 
-            for(var i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
+            for(int i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
                 AaruConsole.Write("{0:X2}", scsiInfo.MediaSerialNumber[i]);
 
             AaruConsole.WriteLine();
@@ -633,18 +631,18 @@ sealed class MediaInfoCommand : Command
         if(scsiInfo.Toc    != null ||
            scsiInfo.RawToc != null)
         {
-            Track[] tracks = Dump.GetCdTracks(dev, null, false, out long lastSector, null, null, null, out _, null,
-                                              null);
+            Track[] tracks =
+                Dump.GetCdTracks(dev, null, false, out long lastSector, null, null, null, out _, null, null);
 
             if(tracks != null)
             {
-                var firstLba = (uint)tracks.Min(t => t.StartSector);
+                uint firstLba = (uint)tracks.Min(t => t.StartSector);
 
                 bool supportsPqSubchannel = Dump.SupportsPqSubchannel(dev, null, null, firstLba);
                 bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null, firstLba);
 
                 // Open main database
-                var ctx = AaruContext.Create(Settings.MainDbPath);
+                var ctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
                 // Search for device in main database
                 Aaru.Database.Models.Device dbDev =
@@ -654,7 +652,7 @@ sealed class MediaInfoCommand : Command
                 Dump.SolveTrackPregaps(dev, null, null, tracks, supportsPqSubchannel, supportsRwSubchannel, dbDev,
                                        out bool inexactPositioning, false);
 
-                for(var t = 1; t < tracks.Length; t++)
+                for(int t = 1; t < tracks.Length; t++)
                     tracks[t - 1].EndSector = tracks[t].StartSector - 1;
 
                 tracks[^1].EndSector = (ulong)lastSector;

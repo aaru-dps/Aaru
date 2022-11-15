@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {
@@ -78,7 +78,7 @@ public sealed partial class CdrWin
 
             ulong       previousStartSector = 0;
             const ulong gdRomSession2Offset = 45000;
-            var         previousTrackFile   = "";
+            string      previousTrackFile   = "";
 
             foreach(CdrWinTrack cdrTrack in _discImage.Tracks)
             {

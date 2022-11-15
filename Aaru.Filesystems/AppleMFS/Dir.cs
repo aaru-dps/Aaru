@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
@@ -77,7 +77,7 @@ public sealed partial class AppleMFS
         _idToEntry    = new Dictionary<uint, FileEntry>();
         _filenameToId = new Dictionary<string, uint>();
 
-        var offset = 0;
+        int offset = 0;
 
         while(offset + 51 < _directoryBlocks.Length)
         {

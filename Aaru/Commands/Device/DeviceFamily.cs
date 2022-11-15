@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands.Device;
-
 using System.CommandLine;
+
+namespace Aaru.Commands.Device;
 
 sealed class DeviceFamily : Command
 {

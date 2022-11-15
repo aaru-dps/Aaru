@@ -1,5 +1,3 @@
-namespace Aaru.DiscImages.ByteAddressable;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,6 +11,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.DiscImages.ByteAddressable;
 
 public class AtariLynx : IByteAddressableImage
 {
@@ -48,9 +48,9 @@ public class AtariLynx : IByteAddressableImage
             return false;
 
         stream.Position = 0;
-        var magicBytes = new byte[4];
+        byte[] magicBytes = new byte[4];
         stream.EnsureRead(magicBytes, 0, 4);
-        var magic = BitConverter.ToUInt32(magicBytes, 0);
+        uint magic = BitConverter.ToUInt32(magicBytes, 0);
 
         // "LYNX"
         return magic == 0x584E594C;
@@ -69,14 +69,14 @@ public class AtariLynx : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 0x0;
-        var magicBytes = new byte[4];
+        byte[] magicBytes = new byte[4];
         stream.EnsureRead(magicBytes, 0, 4);
-        var magic = BitConverter.ToUInt32(magicBytes, 0);
+        uint magic = BitConverter.ToUInt32(magicBytes, 0);
 
         if(magic != 0x584E594C)
             return ErrorNumber.InvalidArgument;
 
-        var headerBytes = new byte[64];
+        byte[] headerBytes = new byte[64];
         stream.Position = 0;
         stream.EnsureRead(headerBytes, 0, 64);
 
@@ -168,8 +168,8 @@ public class AtariLynx : IByteAddressableImage
 
         HandyHeader header = new()
         {
-            Bank0Length  = (short)(_data.Length > 4 * 131072 ? 4 * 131072                  / 256 : _data.Length / 256),
-            Bank1Length  = (short)(_data.Length > 4 * 131072 ? (_data.Length - 4 * 131072) / 256 : 0),
+            Bank0Length  = (short)(_data.Length > 4 * 131072 ? 4 * 131072 / 256 : _data.Length / 256),
+            Bank1Length  = (short)(_data.Length > 4 * 131072 ? (_data.Length - (4 * 131072)) / 256 : 0),
             Magic        = 0x584E594C,
             Manufacturer = new byte[16],
             Name         = new byte[32],
@@ -396,7 +396,7 @@ public class AtariLynx : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        var foundRom = false;
+        bool foundRom = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)

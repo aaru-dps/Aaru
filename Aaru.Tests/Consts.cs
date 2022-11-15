@@ -26,9 +26,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests;
-
 using System;
+
+namespace Aaru.Tests;
 
 static class Consts
 {

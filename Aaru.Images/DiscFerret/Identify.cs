@@ -30,22 +30,22 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class DiscFerret
 {
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        var    magicB = new byte[4];
+        byte[] magicB = new byte[4];
         Stream stream = imageFilter.GetDataForkStream();
         stream.EnsureRead(magicB, 0, 4);
-        var magic = BitConverter.ToUInt32(magicB, 0);
+        uint magic = BitConverter.ToUInt32(magicB, 0);
 
         return magic is DFI_MAGIC or DFI_MAGIC2;
     }

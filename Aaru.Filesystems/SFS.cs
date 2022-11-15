@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the Smart File System</summary>
@@ -73,7 +73,7 @@ public sealed class SFS : IFilesystem
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
+        uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
         return magic is SFS_MAGIC or SFS2_MAGIC;
     }
@@ -141,8 +141,7 @@ public sealed class SFS : IFilesystem
     [Flags]
     enum Flags : byte
     {
-        RecycledFolder = 64,
-        CaseSensitive  = 128
+        RecycledFolder = 64, CaseSensitive = 128
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

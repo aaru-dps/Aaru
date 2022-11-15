@@ -25,14 +25,6 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
-
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
@@ -45,6 +37,13 @@ using Aaru.Decryption;
 using Aaru.Decryption.DVD;
 using Aaru.Devices;
 using Schemas;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -57,9 +56,9 @@ partial class Dump
     void RetrySbcData(Reader scsiReader, DumpHardwareType currentTry, ExtentsULong extents, ref double totalDuration,
                       ExtentsULong blankExtents)
     {
-        var             pass              = 1;
-        var             forward           = true;
-        var             runningPersistent = false;
+        int             pass              = 1;
+        bool            forward           = true;
+        bool            runningPersistent = false;
         bool            sense;
         byte[]          buffer;
         bool            recoveredError;
@@ -67,7 +66,7 @@ partial class Dump
         byte[]          md6;
         byte[]          md10;
         bool            blankCheck;
-        var             newBlank     = false;
+        bool            newBlank     = false;
         var             outputFormat = _outputPlugin as IWritableImage;
 
         if(_persistent)
@@ -89,7 +88,7 @@ partial class Dump
 
                     if(dcMode10?.Pages != null)
                         foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                                                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                                    modePage is { Page: 0x01, Subpage: 0x00 }))
                             currentModePage = modePage;
                 }
             }
@@ -98,8 +97,8 @@ partial class Dump
                 Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(buffer, _dev.ScsiType);
 
                 if(dcMode6?.Pages != null)
-                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage => modePage.Page == 0x01 &&
-                                                                               modePage.Subpage                                                           == 0x00))
+                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
+                                modePage is { Page: 0x01, Subpage: 0x00 }))
                         currentModePage = modePage;
             }
 
@@ -227,7 +226,7 @@ partial class Dump
         }
 
         InitProgress?.Invoke();
-    repeatRetry:
+        repeatRetry:
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
         foreach(ulong badSector in tmpArray)
@@ -262,7 +261,7 @@ partial class Dump
                 continue;
             }
 
-            if(!sense && !_dev.Error || recoveredError)
+            if((!sense && !_dev.Error) || recoveredError)
             {
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
@@ -318,8 +317,8 @@ partial class Dump
 
     void RetryTitleKeys(DVDDecryption dvdDecrypt, byte[] discKey, ref double totalDuration)
     {
-        var    pass    = 1;
-        var    forward = true;
+        int    pass    = 1;
+        bool   forward = true;
         bool   sense;
         byte[] buffer;
 
@@ -328,7 +327,7 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-    repeatRetry:
+        repeatRetry:
         ulong[] tmpArray = _resume.MissingTitleKeys.ToArray();
 
         foreach(ulong missingKey in tmpArray)

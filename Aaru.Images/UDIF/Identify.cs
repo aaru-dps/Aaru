@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.DiscImages;
 
 public sealed partial class Udif
 {
@@ -47,7 +47,7 @@ public sealed partial class Udif
             return false;
 
         stream.Seek(-Marshal.SizeOf<Footer>(), SeekOrigin.End);
-        var footerB = new byte[Marshal.SizeOf<Footer>()];
+        byte[] footerB = new byte[Marshal.SizeOf<Footer>()];
 
         stream.EnsureRead(footerB, 0, Marshal.SizeOf<Footer>());
         _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(footerB);
@@ -57,7 +57,7 @@ public sealed partial class Udif
 
         // Old UDIF as created by DiskCopy 6.5 using "OBSOLETE" format. (DiskCopy 5 rumored format?)
         stream.Seek(0, SeekOrigin.Begin);
-        var headerB = new byte[Marshal.SizeOf<Footer>()];
+        byte[] headerB = new byte[Marshal.SizeOf<Footer>()];
 
         stream.EnsureRead(headerB, 0, Marshal.SizeOf<Footer>());
         _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(headerB);

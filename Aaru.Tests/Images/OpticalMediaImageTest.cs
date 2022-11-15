@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Images;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,6 +16,8 @@ using FluentAssertions.Execution;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images;
 
 public abstract class OpticalMediaImageTest : BaseMediaImageTest
 {
@@ -83,10 +83,10 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                         image.Tracks.Select(t => t.Pregap).Should().
                               BeEquivalentTo(test.Tracks.Select(s => s.Pregap), $"Track pregap: {testFile}");
 
-                        var trackNo = 0;
+                        int trackNo = 0;
 
-                        var   flags           = new byte?[image.Tracks.Count];
-                        ulong latestEndSector = 0;
+                        byte?[] flags           = new byte?[image.Tracks.Count];
+                        ulong   latestEndSector = 0;
 
                         foreach(Track currentTrack in image.Tracks)
                         {
@@ -111,7 +111,8 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                         flags.Should().BeEquivalentTo(test.Tracks.Select(s => s.Flags), $"Track flags: {testFile}");
 
                         Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
-                                        $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors} for image");
+                                        $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors
+                                        } for image");
                     });
             }
         });
@@ -169,12 +170,13 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 Start  = trackStart
                             };
 
-                            Filesystems.Identify(image, out List<string> idPlugins, partition);
+                            Core.Filesystems.Identify(image, out List<string> idPlugins, partition);
 
                             Assert.AreEqual(track.FileSystems.Length, idPlugins.Count,
-                                            $"Expected {track.FileSystems.Length} filesystems in {testFile} but found {idPlugins.Count}");
+                                            $"Expected {track.FileSystems.Length} filesystems in {testFile} but found {
+                                                idPlugins.Count}");
 
-                            for(var i = 0; i < track.FileSystems.Length; i++)
+                            for(int i = 0; i < track.FileSystems.Length; i++)
                             {
                                 PluginBase plugins = GetPluginBase.Instance;
                                 bool found = plugins.PluginsList.TryGetValue(idPlugins[i], out IFilesystem plugin);
@@ -222,7 +224,8 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                        track.FileSystems[i].ContentsJson != null ||
                                        File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
                                         Assert.NotNull(null,
-                                                       $"Could not instantiate filesystem for {testFile}, track {track.Number}, filesystem {i}");
+                                                       $"Could not instantiate filesystem for {testFile}, track {
+                                                           track.Number}, filesystem {i}");
 
                                     continue;
                                 }
@@ -252,8 +255,8 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                                                                   ContentsJson)));
                                 else if(File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
                                 {
-                                    var sr =
-                                        new StreamReader($"{testFile}.track{track.Number}.filesystem{i}.contents.json");
+                                    var sr = new StreamReader($"{testFile}.track{track.Number}.filesystem{i
+                                    }.contents.json");
 
                                     track.FileSystems[i].Contents =
                                         serializer.Deserialize<Dictionary<string, FileData>>(new JsonTextReader(sr));

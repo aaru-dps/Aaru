@@ -26,11 +26,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Logging;
-
 using System;
 using System.IO;
 using Aaru.Decoders.CD;
+
+namespace Aaru.Core.Logging;
 
 /// <summary>Logs subchannel data</summary>
 public class SubchannelLog
@@ -81,16 +81,16 @@ public class SubchannelLog
             return;
         }
 
-        var p = new int[subchannel.Length / 8];
-        var q = new int[subchannel.Length / 8];
-        var r = new int[subchannel.Length / 8];
-        var s = new int[subchannel.Length / 8];
-        var t = new int[subchannel.Length / 8];
-        var u = new int[subchannel.Length / 8];
-        var v = new int[subchannel.Length / 8];
-        var w = new int[subchannel.Length / 8];
+        int[] p = new int[subchannel.Length / 8];
+        int[] q = new int[subchannel.Length / 8];
+        int[] r = new int[subchannel.Length / 8];
+        int[] s = new int[subchannel.Length / 8];
+        int[] t = new int[subchannel.Length / 8];
+        int[] u = new int[subchannel.Length / 8];
+        int[] v = new int[subchannel.Length / 8];
+        int[] w = new int[subchannel.Length / 8];
 
-        for(var i = 0; i < subchannel.Length; i += 8)
+        for(int i = 0; i < subchannel.Length; i += 8)
         {
             p[i / 8] =  subchannel[i] & 0x80;
             p[i / 8] += (subchannel[i + 1] & 0x80) >> 1;
@@ -167,13 +167,13 @@ public class SubchannelLog
 
         for(uint block = 0; block < blocks; block++)
         {
-            var rwEmpty = true;
+            bool rwEmpty = true;
 
             if(raw)
-                for(uint i = 12 * block; i < 12 * block + 12; i++)
+                for(uint i = 12 * block; i < (12 * block) + 12; i++)
                 {
-                    if(r[i] == 0    && s[i] == 0    && t[i] == 0    && u[i] == 0    && v[i] == 0    && w[i] == 0 ||
-                       r[i] == 0xFF && s[i] == 0xFF && t[i] == 0xFF && u[i] == 0xFF && v[i] == 0xFF && w[i] == 0xFF)
+                    if((r[i] == 0    && s[i] == 0    && t[i] == 0    && u[i] == 0    && v[i] == 0    && w[i] == 0) ||
+                       (r[i] == 0xFF && s[i] == 0xFF && t[i] == 0xFF && u[i] == 0xFF && v[i] == 0xFF && w[i] == 0xFF))
                         continue;
 
                     rwEmpty = false;
@@ -181,10 +181,10 @@ public class SubchannelLog
                     break;
                 }
 
-            var corruptedPause = false;
-            var pause          = false;
+            bool corruptedPause = false;
+            bool pause          = false;
 
-            for(var i = 0; i < 12; i++)
+            for(int i = 0; i < 12; i++)
             {
                 if(p[i] == 0 ||
                    p[i] == 0xFF)
@@ -198,19 +198,19 @@ public class SubchannelLog
             if(!corruptedPause)
                 pause = p[0] == 1;
 
-            var subBuf = new byte[12];
-            subBuf[0]  = (byte)q[0  + block * 12];
-            subBuf[1]  = (byte)q[1  + block * 12];
-            subBuf[2]  = (byte)q[2  + block * 12];
-            subBuf[3]  = (byte)q[3  + block * 12];
-            subBuf[4]  = (byte)q[4  + block * 12];
-            subBuf[5]  = (byte)q[5  + block * 12];
-            subBuf[6]  = (byte)q[6  + block * 12];
-            subBuf[7]  = (byte)q[7  + block * 12];
-            subBuf[8]  = (byte)q[8  + block * 12];
-            subBuf[9]  = (byte)q[9  + block * 12];
-            subBuf[10] = (byte)q[10 + block * 12];
-            subBuf[11] = (byte)q[11 + block * 12];
+            byte[] subBuf = new byte[12];
+            subBuf[0]  = (byte)q[0  + (block * 12)];
+            subBuf[1]  = (byte)q[1  + (block * 12)];
+            subBuf[2]  = (byte)q[2  + (block * 12)];
+            subBuf[3]  = (byte)q[3  + (block * 12)];
+            subBuf[4]  = (byte)q[4  + (block * 12)];
+            subBuf[5]  = (byte)q[5  + (block * 12)];
+            subBuf[6]  = (byte)q[6  + (block * 12)];
+            subBuf[7]  = (byte)q[7  + (block * 12)];
+            subBuf[8]  = (byte)q[8  + (block * 12)];
+            subBuf[9]  = (byte)q[9  + (block * 12)];
+            subBuf[10] = (byte)q[10 + (block * 12)];
+            subBuf[11] = (byte)q[11 + (block * 12)];
 
             string prettyQ = Subchannel.PrettifyQ(subBuf, generated || _bcd, startingLba + block, corruptedPause, pause,
                                                   rwEmpty);

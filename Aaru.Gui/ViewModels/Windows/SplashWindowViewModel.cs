@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -48,6 +46,8 @@ using Aaru.Settings;
 using Avalonia.Threading;
 using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class SplashWindowViewModel : ViewModelBase
 {
@@ -108,7 +108,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
         Task.Run(() =>
         {
             // TODO: Detect there are no settings yet
-            Settings.LoadSettings();
+            Settings.Settings.LoadSettings();
 
             Dispatcher.UIThread.Post(MigrateLocalDatabase);
         });
@@ -126,7 +126,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
             try
             {
-                ctx = AaruContext.Create(Settings.LocalDbPath, false);
+                ctx = AaruContext.Create(Settings.Settings.LocalDbPath, false);
                 ctx.Database.Migrate();
             }
             catch(NotSupportedException)
@@ -141,8 +141,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
                     // Should not ever arrive here, but if it does, keep trying to replace it anyway
                 }
 
-                File.Delete(Settings.LocalDbPath);
-                ctx = AaruContext.Create(Settings.LocalDbPath);
+                File.Delete(Settings.Settings.LocalDbPath);
+                ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
                 ctx.Database.EnsureCreated();
 
                 ctx.Database.
@@ -150,7 +150,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
                 foreach(string migration in ctx.Database.GetPendingMigrations())
                     ctx.Database.
-                        ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
+                        ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
+                            migration}', '0.0.0')");
 
                 ctx.SaveChanges();
             }
@@ -169,7 +170,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
             // Remove nulls
             ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null && d.Model == null &&
-                                                        d.Revision     == null));
+                                                       d.Revision     == null));
 
             ctx.SaveChanges();
 
@@ -185,11 +186,11 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
         Task.Run(() =>
         {
-            bool mainDbUpdate = !File.Exists(Settings.MainDbPath);
+            bool mainDbUpdate = !File.Exists(Settings.Settings.MainDbPath);
 
             // TODO: Update database
 
-            var mainContext = AaruContext.Create(Settings.MainDbPath, false);
+            var mainContext = AaruContext.Create(Settings.Settings.MainDbPath, false);
 
             if(mainContext.Database.GetPendingMigrations().Any())
             {
@@ -197,13 +198,13 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
                 try
                 {
-                    File.Delete(Settings.MainDbPath);
+                    File.Delete(Settings.Settings.MainDbPath);
                 }
                 catch(Exception)
                 {
                     AaruConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
 
-                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.MainDbPath);
+                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MainDbPath);
 
                     return;
                 }
@@ -222,7 +223,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
         Message = "Checking GDPR compliance...";
         AaruConsole.WriteLine("Checking GDPR compliance...");
 
-        if(Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
+        if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
         {
             var settingsDialog          = new SettingsDialog();
             var settingsDialogViewModel = new SettingsViewModel(settingsDialog, true);

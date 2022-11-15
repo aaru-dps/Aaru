@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -51,7 +51,7 @@ public partial class Device
                                 uint transferLength, PlextorSubchannel subchannel, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReadCdDa;
         cdb[2]  = (byte)((lba & 0xFF000000) >> 24);
@@ -90,7 +90,7 @@ public partial class Device
                                   uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[10];
+        byte[] cdb = new byte[10];
         buffer = new byte[2064 * transferLength];
 
         cdb[0] = (byte)ScsiCommands.ReadBuffer;
@@ -122,7 +122,7 @@ public partial class Device
     {
         buffer      = new byte[256];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
         cdb[8] = 1;
@@ -147,7 +147,7 @@ public partial class Device
     {
         buffer      = new byte[512];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
         cdb[8] = 2;
@@ -175,7 +175,7 @@ public partial class Device
     {
         buffer      = new byte[blockSize];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
         cdb[1] = 1;
@@ -204,9 +204,9 @@ public partial class Device
     public bool PlextorGetSpeeds(out byte[] senseBuffer, out ushort selected, out ushort max, out ushort last,
                                  uint timeout, out double duration)
     {
-        var buf = new byte[10];
+        byte[] buf = new byte[10];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         selected = 0;
         max      = 0;
@@ -242,9 +242,9 @@ public partial class Device
     public bool PlextorGetPoweRec(out byte[] senseBuffer, out bool enabled, out ushort speed, uint timeout,
                                   out double duration)
     {
-        var buf = new byte[8];
+        byte[] buf = new byte[8];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         enabled = false;
         speed   = 0;
@@ -279,7 +279,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[1]  = (byte)PlextorSubCommands.GetMode;
@@ -307,7 +307,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[1]  = (byte)PlextorSubCommands.GetMode;
@@ -336,7 +336,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[1]  = (byte)PlextorSubCommands.GetMode;
@@ -368,7 +368,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[2]  = (byte)PlextorSubCommands.SecuRec;
@@ -394,7 +394,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[1]  = (byte)PlextorSubCommands.GetMode;
@@ -421,7 +421,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.PlextorExtend;
         cdb[1] = (byte)PlextorSubCommands.GetMode;
@@ -450,7 +450,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.PlextorExtend;
         cdb[1] = (byte)PlextorSubCommands.GetMode;
@@ -482,7 +482,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[1]  = (byte)PlextorSubCommands.GetMode;

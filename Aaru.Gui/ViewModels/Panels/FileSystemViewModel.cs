@@ -30,10 +30,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Panels;
-
 using JetBrains.Annotations;
 using Schemas;
+
+namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class FileSystemViewModel
 {
@@ -53,11 +53,11 @@ public sealed class FileSystemViewModel
         ExpirationDateText         = $"Volume expired on {xmlFsType.ExpirationDate:F}";
         BackupDateText             = $"Volume last backed up on {xmlFsType.BackupDate:F}";
 
-        ClustersText =
-            $"Volume has {xmlFsType.Clusters} clusters of {xmlFsType.ClusterSize} bytes each (total of {xmlFsType.Clusters * xmlFsType.ClusterSize} bytes)";
+        ClustersText = $"Volume has {xmlFsType.Clusters} clusters of {xmlFsType.ClusterSize} bytes each (total of {
+            xmlFsType.Clusters * xmlFsType.ClusterSize} bytes)";
 
-        FreeClustersText =
-            $"Volume has {xmlFsType.FreeClusters} clusters free ({xmlFsType.FreeClusters / xmlFsType.Clusters:P})";
+        FreeClustersText = $"Volume has {xmlFsType.FreeClusters} clusters free ({
+            xmlFsType.FreeClusters / xmlFsType.Clusters:P})";
 
         FilesText       = $"Volume contains {xmlFsType.Files} files";
         BootableChecked = xmlFsType.Bootable;

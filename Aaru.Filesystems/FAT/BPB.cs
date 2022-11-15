@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.IO;
 using System.Text;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class FAT
 {
@@ -109,18 +109,18 @@ public sealed partial class FAT
         var ebpb       = new BiosParameterBlockEbpb();
         var apricotBpb = new ApricotLabel();
 
-        var useAtariBpb          = false;
-        var useMsxBpb            = false;
-        var useDos2Bpb           = false;
-        var useDos3Bpb           = false;
-        var useDos32Bpb          = false;
-        var useDos33Bpb          = false;
-        var userShortExtendedBpb = false;
-        var useExtendedBpb       = false;
-        var useShortFat32        = false;
-        var useLongFat32         = false;
-        var useApricotBpb        = false;
-        var useDecRainbowBpb     = false;
+        bool useAtariBpb          = false;
+        bool useMsxBpb            = false;
+        bool useDos2Bpb           = false;
+        bool useDos3Bpb           = false;
+        bool useDos32Bpb          = false;
+        bool useDos33Bpb          = false;
+        bool userShortExtendedBpb = false;
+        bool useExtendedBpb       = false;
+        bool useShortFat32        = false;
+        bool useLongFat32         = false;
+        bool useApricotBpb        = false;
+        bool useDecRainbowBpb     = false;
 
         if(imagePlugin.Info.SectorSize >= 256)
         {
@@ -184,11 +184,10 @@ public sealed partial class FAT
                               dos33Bpb.oem_name[4] >= 0x20 && dos33Bpb.oem_name[5] >= 0x20 &&
                               dos33Bpb.oem_name[6] >= 0x20 && dos33Bpb.oem_name[7] >= 0x20;
 
-            if(bitsInBpsFat32 == 1                                &&
-               correctSpcFat32                                    &&
-               fat32Bpb.fats_no                           <= 2    &&
-               fat32Bpb.spfat                             == 0    &&
-               fat32Bpb.signature                         == 0x29 &&
+            if(bitsInBpsFat32 == 1                       &&
+               correctSpcFat32                           &&
+               fat32Bpb.fats_no <= 2                     &&
+               fat32Bpb is { spfat: 0, signature: 0x29 } &&
                Encoding.ASCII.GetString(fat32Bpb.fs_type) == "FAT32   ")
             {
                 AaruConsole.DebugWriteLine("FAT plugin", "Using FAT32 BPB");
@@ -197,12 +196,9 @@ public sealed partial class FAT
                 return BpbKind.LongFat32;
             }
 
-            if(bitsInBpsFat32Short == 1     &&
-               correctSpcFat32Short         &&
-               shortFat32Bpb.fats_no   <= 2 &&
-               shortFat32Bpb.sectors   == 0 &&
-               shortFat32Bpb.spfat     == 0 &&
-               shortFat32Bpb.signature == 0x28)
+            if(bitsInBpsFat32Short == 1 &&
+               correctSpcFat32Short     &&
+               shortFat32Bpb is { fats_no: <= 2, sectors: 0 } and { spfat: 0, signature: 0x28 })
             {
                 AaruConsole.DebugWriteLine("FAT plugin", "Using short FAT32 BPB");
 
@@ -213,8 +209,7 @@ public sealed partial class FAT
 
             if(bitsInBpsMsx == 1                                                              &&
                correctSpcMsx                                                                  &&
-               msxBpb.fats_no                          <= 2                                   &&
-               msxBpb.root_ent                         > 0                                    &&
+               msxBpb is { fats_no: <= 2, root_ent: > 0 }                                     &&
                msxBpb.sectors                          <= partition.End - partition.Start + 1 &&
                msxBpb.spfat                            > 0                                    &&
                Encoding.ASCII.GetString(msxBpb.vol_id) == "VOL_ID")
@@ -222,22 +217,20 @@ public sealed partial class FAT
                 AaruConsole.DebugWriteLine("FAT plugin", "Using MSX BPB");
                 useMsxBpb = true;
             }
-            else if(bitsInBpsApricot == 1                                              &&
-                    correctSpcApricot                                                  &&
-                    apricotBpb.mainBPB.fats_no  <= 2                                   &&
-                    apricotBpb.mainBPB.root_ent > 0                                    &&
-                    apricotBpb.mainBPB.sectors  <= partition.End - partition.Start + 1 &&
-                    apricotBpb.mainBPB.spfat    > 0                                    &&
-                    apricotBpb.partitionCount   == 0)
+            else if(bitsInBpsApricot == 1                                             &&
+                    correctSpcApricot                                                 &&
+                    apricotBpb.mainBPB is { fats_no: <= 2, root_ent: > 0 }            &&
+                    apricotBpb.mainBPB.sectors <= partition.End - partition.Start + 1 &&
+                    apricotBpb.mainBPB.spfat   > 0                                    &&
+                    apricotBpb.partitionCount  == 0)
             {
                 AaruConsole.DebugWriteLine("FAT plugin", "Using Apricot BPB");
                 useApricotBpb = true;
             }
-            else if(bitsInBpsDos40 == 1 &&
-                    correctSpcDos40     &&
-                    ebpb.fats_no  <= 2  &&
-                    ebpb.root_ent > 0   &&
-                    ebpb.spfat    > 0   &&
+            else if(bitsInBpsDos40 == 1                   &&
+                    correctSpcDos40                       &&
+                    ebpb.fats_no <= 2                     &&
+                    ebpb is { root_ent: > 0, spfat: > 0 } &&
                     (ebpb.signature is 0x28 or 0x29 || andosOemCorrect))
             {
                 if(ebpb.sectors == 0)
@@ -274,8 +267,7 @@ public sealed partial class FAT
                     correctSpcDos33                                     &&
                     dos33Bpb.rsectors < partition.End - partition.Start &&
                     dos33Bpb.fats_no  <= 2                              &&
-                    dos33Bpb.root_ent > 0                               &&
-                    dos33Bpb.spfat    > 0)
+                    dos33Bpb is { root_ent: > 0, spfat: > 0 })
                 if(dos33Bpb.sectors     == 0               &&
                    dos33Bpb.hsectors    <= partition.Start &&
                    dos33Bpb.big_sectors > 0                &&
@@ -290,8 +282,8 @@ public sealed partial class FAT
                         dos33Bpb.sectors     > 0                &&
                         dos33Bpb.sectors     <= partition.End - partition.Start + 1)
                     if(atariBpb.jump[0] == 0x60 ||
-                       atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
-                       Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    " ||
+                       (atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                        Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ") ||
                        partition.Type is "GEM" or "BGM")
                     {
                         AaruConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
@@ -315,8 +307,8 @@ public sealed partial class FAT
                     else if(dos30Bpb.sptrk is > 0 and < 64 &&
                             dos30Bpb.heads is > 0 and < 256)
                         if(atariBpb.jump[0] == 0x60 ||
-                           atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
-                           Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ")
+                           (atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                            Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    "))
                         {
                             AaruConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
                             useAtariBpb = true;
@@ -330,8 +322,8 @@ public sealed partial class FAT
                     else
                     {
                         if(atariBpb.jump[0] == 0x60 ||
-                           atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
-                           Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ")
+                           (atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                            Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    "))
                         {
                             AaruConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
                             useAtariBpb = true;
@@ -347,18 +339,17 @@ public sealed partial class FAT
         }
 
         // DEC Rainbow, lacks a BPB but has a very concrete structure...
-        if(imagePlugin.Info.Sectors    == 800 &&
-           imagePlugin.Info.SectorSize == 512 &&
-           !useAtariBpb                       &&
-           !useMsxBpb                         &&
-           !useDos2Bpb                        &&
-           !useDos3Bpb                        &&
-           !useDos32Bpb                       &&
-           !useDos33Bpb                       &&
-           !userShortExtendedBpb              &&
-           !useExtendedBpb                    &&
-           !useShortFat32                     &&
-           !useLongFat32                      &&
+        if(imagePlugin.Info is { Sectors: 800, SectorSize: 512 } &&
+           !useAtariBpb                                          &&
+           !useMsxBpb                                            &&
+           !useDos2Bpb                                           &&
+           !useDos3Bpb                                           &&
+           !useDos32Bpb                                          &&
+           !useDos33Bpb                                          &&
+           !userShortExtendedBpb                                 &&
+           !useExtendedBpb                                       &&
+           !useShortFat32                                        &&
+           !useLongFat32                                         &&
            !useApricotBpb)
         {
             // DEC Rainbow boots up with a Z80, first byte should be DI (disable interrupts)
@@ -384,14 +375,14 @@ public sealed partial class FAT
             }
 
             byte[] rootDir      = rootMs.ToArray();
-            var    validRootDir = true;
+            bool   validRootDir = true;
 
             // Iterate all root directory
-            for(var e = 0; e < 96 * 32; e += 32)
+            for(int e = 0; e < 96 * 32; e += 32)
             {
-                for(var c = 0; c < 11; c++)
-                    if(rootDir[c + e] < 0x20 && rootDir[c + e] != 0x00 && rootDir[c + e] != 0x05 ||
-                       rootDir[c + e] == 0xFF                                                    ||
+                for(int c = 0; c < 11; c++)
+                    if((rootDir[c + e] < 0x20 && rootDir[c + e] != 0x00 && rootDir[c + e] != 0x05) ||
+                       rootDir[c + e] == 0xFF                                                      ||
                        rootDir[c + e] == 0x2E)
                     {
                         validRootDir = false;
@@ -447,8 +438,7 @@ public sealed partial class FAT
             switch(fatSector[0])
             {
                 case 0xE5:
-                    if(imagePlugin.Info.Sectors    == 2002 &&
-                       imagePlugin.Info.SectorSize == 128)
+                    if(imagePlugin.Info is { Sectors: 2002, SectorSize: 128 })
                     {
                         AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                         fakeBpb.bps      = 128;
@@ -597,8 +587,7 @@ public sealed partial class FAT
 
                     break;
                 case 0xFF:
-                    if(imagePlugin.Info.Sectors    == 640 &&
-                       imagePlugin.Info.SectorSize == 512)
+                    if(imagePlugin.Info is { Sectors: 640, SectorSize: 512 })
                     {
                         AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" DSDD.");
                         fakeBpb.bps      = 512;
@@ -618,8 +607,8 @@ public sealed partial class FAT
             }
 
             // This assumes a bootable sector will jump somewhere or disable interrupts in x86 code
-            bootable |= bpbSector[0] == 0xFA || bpbSector[0] == 0xEB && bpbSector[1]                        <= 0x7F ||
-                        bpbSector[0]                         == 0xE9 && BitConverter.ToUInt16(bpbSector, 1) <= 0x1FC;
+            bootable |= bpbSector[0] == 0xFA || (bpbSector[0] == 0xEB && bpbSector[1]                        <= 0x7F) ||
+                        (bpbSector[0]                         == 0xE9 && BitConverter.ToUInt16(bpbSector, 1) <= 0x1FC);
 
             fakeBpb.boot_code = bpbSector;
 
@@ -806,6 +795,5 @@ public sealed partial class FAT
                                     out fakeBpb.boot_code);
 
         return BpbKind.Apricot;
-
     }
 }

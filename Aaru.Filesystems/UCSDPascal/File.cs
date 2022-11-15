@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems.UCSDPascal;
-
 using System;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems.UCSDPascal;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
@@ -107,7 +107,7 @@ public sealed partial class PascalPlugin
             if(error != ErrorNumber.NoError)
                 return error;
 
-            file = new byte[(entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier +
+            file = new byte[((entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier) +
                             entry.LastBytes];
 
             Array.Copy(tmp, 0, file, 0, file.Length);
@@ -152,13 +152,13 @@ public sealed partial class PascalPlugin
 
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                 {
-                    stat.Blocks = _catalogBlocks.Length / stat.BlockSize + _catalogBlocks.Length % stat.BlockSize;
+                    stat.Blocks = (_catalogBlocks.Length / stat.BlockSize) + (_catalogBlocks.Length % stat.BlockSize);
 
                     stat.Length = _catalogBlocks.Length;
                 }
                 else
                 {
-                    stat.Blocks = _bootBlocks.Length / stat.BlockSize + _catalogBlocks.Length % stat.BlockSize;
+                    stat.Blocks = (_bootBlocks.Length / stat.BlockSize) + (_catalogBlocks.Length % stat.BlockSize);
                     stat.Length = _bootBlocks.Length;
                 }
 
@@ -176,7 +176,7 @@ public sealed partial class PascalPlugin
             Blocks = entry.LastBlock - entry.FirstBlock,
             BlockSize = _device.Info.SectorSize * _multiplier,
             LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.ModificationTime),
-            Length = (entry.LastBlock - entry.FirstBlock) * _device.Info.SectorSize * _multiplier + entry.LastBytes,
+            Length = ((entry.LastBlock - entry.FirstBlock) * _device.Info.SectorSize * _multiplier) + entry.LastBytes,
             Links = 1
         };
 

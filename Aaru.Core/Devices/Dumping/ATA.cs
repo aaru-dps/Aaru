@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,7 +39,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Core.Devices.Report;
 using Aaru.Core.Logging;
 using Aaru.Decoders.ATA;
@@ -50,6 +47,8 @@ using Schemas;
 using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Core.Devices.Dumping;
 
 /// <summary>Implements dumping ATA devices</summary>
 public partial class Dump
@@ -148,8 +147,8 @@ public partial class Dump
 
                 UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
 
-                UpdateStatus?.
-                    Invoke($"Device reports {cylinders} cylinders {heads} heads {sectors} sectors per track.");
+                UpdateStatus?.Invoke($"Device reports {cylinders} cylinders {heads} heads {sectors
+                } sectors per track.");
 
                 UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
                 UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
@@ -185,7 +184,7 @@ public partial class Dump
                 IbgLog  ibgLog;
                 double  duration;
 
-                var ret = true;
+                bool ret = true;
 
                 if(_dev.IsUsb                  &&
                    _dev.UsbDescriptors != null &&
@@ -266,7 +265,7 @@ public partial class Dump
                         _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
                     }
 
-                    var newTrim = false;
+                    bool newTrim = false;
 
                     start = DateTime.UtcNow;
                     DateTime timeSpeedStart   = DateTime.UtcNow;
@@ -352,11 +351,11 @@ public partial class Dump
 
                     UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
-                    UpdateStatus?.
-                        Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                    UpdateStatus?.Invoke($"Average dump speed {
+                        blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
-                    UpdateStatus?.
-                        Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+                    UpdateStatus?.Invoke($"Average write speed {
+                        blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
 
                     _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
@@ -417,11 +416,11 @@ public partial class Dump
                        !_aborted                   &&
                        _retryPasses > 0)
                     {
-                        var pass    = 1;
-                        var forward = true;
+                        int  pass    = 1;
+                        bool forward = true;
 
                         InitProgress?.Invoke();
-                    repeatRetryLba:
+                        repeatRetryLba:
                         ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
                         foreach(ulong badSector in tmpArray)
@@ -513,8 +512,8 @@ public partial class Dump
                                    currentSpeed > 0)
                                     minSpeed = currentSpeed;
 
-                                PulseProgress?.
-                                    Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
+                                PulseProgress?.Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed
+                                    :F3} MiB/sec.)");
 
                                 bool error =
                                     ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out recoveredError);
@@ -527,7 +526,8 @@ public partial class Dump
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                                     DateTime writeStart = DateTime.Now;
 
-                                    outputFormat.WriteSector(cmdBuf, (ulong)((cy * heads + hd) * sectors + (sc - 1)));
+                                    outputFormat.WriteSector(cmdBuf,
+                                                             (ulong)((((cy * heads) + hd) * sectors) + (sc - 1)));
 
                                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                     extents.Add(currentBlock);
@@ -543,7 +543,7 @@ public partial class Dump
                                     DateTime writeStart = DateTime.Now;
 
                                     outputFormat.WriteSector(new byte[blockSize],
-                                                             (ulong)((cy * heads + hd) * sectors + (sc - 1)));
+                                                             (ulong)((((cy * heads) + hd) * sectors) + (sc - 1)));
 
                                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                 }
@@ -574,11 +574,11 @@ public partial class Dump
 
                     UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
-                    UpdateStatus?.
-                        Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                    UpdateStatus?.Invoke($"Average dump speed {
+                        blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
-                    UpdateStatus?.
-                        Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / (imageWriteDuration / 1000):F3} KiB/sec.");
+                    UpdateStatus?.Invoke($"Average write speed {
+                        blockSize * (double)(blocks + 1) / 1024 / (imageWriteDuration / 1000):F3} KiB/sec.");
 
                     _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
@@ -595,7 +595,7 @@ public partial class Dump
                 outputFormat.SetDumpHardware(_resume.Tries);
 
                 // TODO: Non-removable
-                var metadata = new ImageInfo
+                var metadata = new CommonTypes.Structs.ImageInfo
                 {
                     Application        = "Aaru",
                     ApplicationVersion = Version.GetVersion()
@@ -768,8 +768,8 @@ public partial class Dump
                         totalChkDuration = (chkEnd - chkStart).TotalMilliseconds;
                         UpdateStatus?.Invoke($"Sidecar created in {(chkEnd - chkStart).TotalSeconds} seconds.");
 
-                        UpdateStatus?.
-                            Invoke($"Average checksum speed {blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+                        UpdateStatus?.Invoke($"Average checksum speed {
+                            blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
 
                         _dumpLog.WriteLine("Sidecar created in {0} seconds.", (chkEnd - chkStart).TotalSeconds);
 
@@ -791,8 +791,8 @@ public partial class Dump
                                         o.type
                                     }).Distinct())
                             {
-                                UpdateStatus?.
-                                    Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
+                                UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start
+                                }");
 
                                 _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type,
                                                    filesystem.start);
@@ -838,11 +838,12 @@ public partial class Dump
 
                 UpdateStatus?.Invoke("");
 
-                UpdateStatus?.
-                    Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+                UpdateStatus?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000
+                    :F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration
+                    :F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
 
-                UpdateStatus?.
-                    Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+                UpdateStatus?.Invoke($"Average speed: {
+                    blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
                 if(maxSpeed > 0)
                     UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

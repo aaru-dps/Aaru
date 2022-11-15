@@ -1,9 +1,9 @@
-namespace Aaru.Tests.Issues;
-
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
+
+namespace Aaru.Tests.Issues;
 
 /* https://github.com/aaru-dps/Aaru/issues/379
  *

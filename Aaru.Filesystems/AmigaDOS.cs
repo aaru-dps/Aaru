@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -44,6 +42,8 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of Amiga Fast File System (AFFS)</summary>
@@ -123,10 +123,10 @@ public sealed class AmigaDOSPlugin : IFilesystem
 
         ulong[] rootPtrs =
         {
-            bRootPtr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
-            (partition.End                             - partition.Start + 1) / 2 + partition.Start - 1,
-            (partition.End - partition.Start + 1) / 2 + partition.Start,
-            (partition.End - partition.Start + 1) / 2 + partition.Start + 4
+            bRootPtr + partition.Start, ((partition.End - partition.Start + 1) / 2) + partition.Start - 2,
+            ((partition.End                             - partition.Start + 1) / 2) + partition.Start - 1,
+            ((partition.End - partition.Start + 1) / 2) + partition.Start,
+            ((partition.End - partition.Start + 1) / 2) + partition.Start + 4
         };
 
         var rblk = new RootBlock();
@@ -152,7 +152,7 @@ public sealed class AmigaDOSPlugin : IFilesystem
             AaruConsole.DebugWriteLine("AmigaDOS plugin", "rblk.hashTableSize = {0}", rblk.hashTableSize);
 
             uint blockSize       = (rblk.hashTableSize + 56) * 4;
-            var  sectorsPerBlock = (uint)(blockSize / sector.Length);
+            uint sectorsPerBlock = (uint)(blockSize / sector.Length);
 
             AaruConsole.DebugWriteLine("AmigaDOS plugin", "blockSize = {0}", blockSize);
             AaruConsole.DebugWriteLine("AmigaDOS plugin", "sectorsPerBlock = {0}", sectorsPerBlock);
@@ -216,16 +216,16 @@ public sealed class AmigaDOSPlugin : IFilesystem
 
         ulong[] rootPtrs =
         {
-            bRootPtr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
-            (partition.End                             - partition.Start + 1) / 2 + partition.Start - 1,
-            (partition.End - partition.Start + 1) / 2 + partition.Start,
-            (partition.End - partition.Start + 1) / 2 + partition.Start + 4
+            bRootPtr + partition.Start, ((partition.End - partition.Start + 1) / 2) + partition.Start - 2,
+            ((partition.End                             - partition.Start + 1) / 2) + partition.Start - 1,
+            ((partition.End - partition.Start + 1) / 2) + partition.Start,
+            ((partition.End - partition.Start + 1) / 2) + partition.Start + 4
         };
 
         var    rootBlk         = new RootBlock();
         byte[] rootBlockSector = null;
 
-        var  rootFound = false;
+        bool rootFound = false;
         uint blockSize = 0;
 
         // So to handle even number of sectors
@@ -249,7 +249,7 @@ public sealed class AmigaDOSPlugin : IFilesystem
             AaruConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.hashTableSize = {0}", rootBlk.hashTableSize);
 
             blockSize = (rootBlk.hashTableSize + 56) * 4;
-            var sectorsPerBlock = (uint)(blockSize / rootBlockSector.Length);
+            uint sectorsPerBlock = (uint)(blockSize / rootBlockSector.Length);
 
             AaruConsole.DebugWriteLine("AmigaDOS plugin", "blockSize = {0}", blockSize);
             AaruConsole.DebugWriteLine("AmigaDOS plugin", "sectorsPerBlock = {0}", sectorsPerBlock);
@@ -406,14 +406,14 @@ public sealed class AmigaDOSPlugin : IFilesystem
 
     static RootBlock MarshalRootBlock(byte[] block)
     {
-        var tmp = new byte[228];
+        byte[] tmp = new byte[228];
         Array.Copy(block, 0, tmp, 0, 24);
         Array.Copy(block, block.Length - 200, tmp, 28, 200);
         RootBlock root = Marshal.ByteArrayToStructureBigEndian<RootBlock>(tmp);
         root.hashTable = new uint[(block.Length - 224) / 4];
 
-        for(var i = 0; i < root.hashTable.Length; i++)
-            root.hashTable[i] = BigEndianBitConverter.ToUInt32(block, 24 + i * 4);
+        for(int i = 0; i < root.hashTable.Length; i++)
+            root.hashTable[i] = BigEndianBitConverter.ToUInt32(block, 24 + (i * 4));
 
         return root;
     }
@@ -422,7 +422,7 @@ public sealed class AmigaDOSPlugin : IFilesystem
     {
         uint sum = 0;
 
-        for(var i = 0; i < data.Length; i += 4)
+        for(int i = 0; i < data.Length; i += 4)
             sum += (uint)((data[i] << 24) + (data[i + 1] << 16) + (data[i + 2] << 8) + data[i + 3]);
 
         return (uint)-sum;
@@ -432,7 +432,7 @@ public sealed class AmigaDOSPlugin : IFilesystem
     {
         uint sum = 0;
 
-        for(var i = 0; i < data.Length; i += 4)
+        for(int i = 0; i < data.Length; i += 4)
         {
             uint psum = sum;
 

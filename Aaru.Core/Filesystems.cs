@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+
+namespace Aaru.Core;
 
 /// <summary>Core filesystem operations</summary>
 public static class Filesystems

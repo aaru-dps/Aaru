@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -42,6 +40,8 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the Locus filesystem</summary>
@@ -76,9 +76,9 @@ public sealed class RBF : IFilesystem
                     0, 4, 15
                 })
         {
-            var location = (ulong)i;
+            ulong location = (ulong)i;
 
-            var sbSize = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<IdSector>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -126,8 +126,8 @@ public sealed class RBF : IFilesystem
                     0, 4, 15
                 })
         {
-            var location = (ulong)i;
-            var sbSize   = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
+            ulong location = (ulong)i;
+            uint  sbSize   = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<IdSector>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;

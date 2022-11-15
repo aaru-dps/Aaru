@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -61,6 +59,8 @@ using ReactiveUI;
 using Schemas;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 [SuppressMessage("ReSharper", "AsyncVoidLambda")]
 public sealed class ImageConvertViewModel : ViewModelBase
@@ -576,7 +576,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork(object plugin)
     {
-        var warning = false;
+        bool warning = false;
 
         if(plugin is not IWritableImage outputFormat)
         {
@@ -686,7 +686,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                             GetMessageBoxStandardWindow("Error",
-                                                                                $"Converting image will lose media tag {mediaTag}, not continuing...",
+                                                                                $"Converting image will lose media tag {
+                                                                                    mediaTag}, not continuing...",
                                                                                 icon: Icon.Error).
                                                                             ShowDialog(_view));
 
@@ -710,7 +711,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                             GetMessageBoxStandardWindow("Error",
-                                                                                $"Converting image will lose sector tag {sectorTag}, not continuing...",
+                                                                                $"Converting image will lose sector tag {
+                                                                                    sectorTag}, not continuing...",
                                                                                 icon: Icon.Error).
                                                                             ShowDialog(_view));
 
@@ -763,7 +765,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                             GetMessageBoxStandardWindow("Error",
-                                                                                $"Error {outputFormat.ErrorMessage} creating output image.",
+                                                                                $"Error {outputFormat.ErrorMessage
+                                                                                } creating output image.",
                                                                                 icon: Icon.Error).
                                                                             ShowDialog(_view));
 
@@ -809,7 +812,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 {
                     await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                                   GetMessageBoxStandardWindow("Error",
-                                                                                      $"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
+                                                                                      $"Error {outputFormat.
+                                                                                          ErrorMessage
+                                                                                      } setting metadata, not continuing...",
                                                                                       icon: Icon.Error).
                                                                                   ShowDialog(_view));
 
@@ -838,7 +843,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
             {
                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                               GetMessageBoxStandardWindow("Error",
-                                                                                  $"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
+                                                                                  $"Error {outputFormat.
+                                                                                      ErrorMessage
+                                                                                  } sending tracks list to output image.",
                                                                                   icon: Icon.Error).
                                                                               ShowDialog(_view));
 
@@ -885,7 +892,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
                     await Dispatcher.UIThread.InvokeAsync(action: async () =>
                                                               await MessageBoxManager.
                                                                     GetMessageBoxStandardWindow("Error",
-                                                                        $"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
+                                                                        $"Error {outputFormat.ErrorMessage
+                                                                        } writing media tag, not continuing...",
                                                                         icon: Icon.Error).ShowDialog(_view));
 
                     AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
@@ -896,7 +904,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
                     await Dispatcher.UIThread.InvokeAsync(action: async () =>
                                                               await MessageBoxManager.
                                                                     GetMessageBoxStandardWindow("Error",
-                                                                        $"Error {errno} reading media tag, not continuing...",
+                                                                        $"Error {errno
+                                                                        } reading media tag, not continuing...",
                                                                         icon: Icon.Error).ShowDialog(_view));
 
                     AaruConsole.ErrorWriteLine("Error {0} reading media tag, not continuing...", errno);
@@ -913,8 +922,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ProgressText =
-                    $"Setting geometry to {_inputFormat.Info.Cylinders} cylinders, {_inputFormat.Info.Heads} heads and {_inputFormat.Info.SectorsPerTrack} sectors per track";
+                ProgressText = $"Setting geometry to {_inputFormat.Info.Cylinders} cylinders, {_inputFormat.Info.Heads
+                } heads and {_inputFormat.Info.SectorsPerTrack} sectors per track";
 
                 ProgressValue++;
                 Progress2Text          = "";
@@ -957,8 +966,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Progress2Text =
-                        $"Converting sectors {sectors} to {sectors + sectorsToDo} ({sectors / (double)_inputFormat.Info.Sectors:P2} done)";
+                    Progress2Text = $"Converting sectors {sectors} to {sectors + sectorsToDo} ({
+                        sectors / (double)_inputFormat.Info.Sectors:P2} done)";
 
                     Progress2Value = (int)(sectors / SectorsValue);
                 });
@@ -988,7 +997,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         {
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
-                                                                          $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                          $"Error {errno} reading sector {
+                                                                              doneSectors}, not continuing...",
                                                                           icon: Icon.Error).ShowDialog(_view));
 
                             AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
@@ -1021,7 +1031,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         {
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
-                                                                          $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                          $"Error {errno} reading sector {
+                                                                              doneSectors}, not continuing...",
                                                                           icon: Icon.Error).ShowDialog(_view));
 
                             AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
@@ -1044,8 +1055,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
                     {
                         await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                   GetMessageBoxStandardWindow("Error",
-                                                                      $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
-                                                                      icon: Icon.Error).ShowDialog(_view));
+                                                                      $"Error {outputFormat.ErrorMessage
+                                                                      } writing sector {doneSectors
+                                                                      }, not continuing...", icon: Icon.Error).
+                                                                  ShowDialog(_view));
 
                         AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                    outputFormat.ErrorMessage, doneSectors);
@@ -1058,8 +1071,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Progress2Text =
-                    $"Converting sectors {_inputFormat.Info.Sectors} to {_inputFormat.Info.Sectors} ({1.0:P2} done)";
+                Progress2Text = $"Converting sectors {_inputFormat.Info.Sectors} to {_inputFormat.Info.Sectors} ({1.0
+                    :P2} done)";
 
                 Progress2Value = Progress2MaxValue;
             });
@@ -1154,8 +1167,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        Progress2Text =
-                            $"Converting tag {sectors / (double)_inputFormat.Info.Sectors} for sectors {sectors} to {sectors + sectorsToDo} ({sectors / (double)_inputFormat.Info.Sectors:P2} done)";
+                        Progress2Text = $"Converting tag {sectors / (double)_inputFormat.Info.Sectors} for sectors {
+                            sectors} to {sectors + sectorsToDo} ({sectors / (double)_inputFormat.Info.Sectors
+                                :P2} done)";
 
                         Progress2Value = (int)(sectors / SectorsValue);
                     });
@@ -1202,7 +1216,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                              $"Error {errno} reading sector {
+                                                                                  doneSectors
+                                                                              }, not continuing...",
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
@@ -1254,7 +1270,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                              $"Error {errno} reading sector {
+                                                                                  doneSectors
+                                                                              }, not continuing...",
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
@@ -1278,7 +1296,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         {
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
-                                                                          $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                                                          $"Error {outputFormat.ErrorMessage
+                                                                          } writing sector {doneSectors
+                                                                          }, not continuing...",
                                                                           icon: Icon.Error).ShowDialog(_view));
 
                             AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
@@ -1292,8 +1312,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Progress2Text =
-                        $"Converting tag {tag} for sectors {_inputFormat.Info.Sectors} to {_inputFormat.Info.Sectors} ({1.0:P2} done)";
+                    Progress2Text = $"Converting tag {tag} for sectors {_inputFormat.Info.Sectors} to {
+                        _inputFormat.Info.Sectors} ({1.0:P2} done)";
 
                     Progress2Value = Progress2MaxValue;
                 });
@@ -1348,8 +1368,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        Progress2Text =
-                            $"Converting sectors {sectors + track.StartSector} to {sectors + sectorsToDo + track.StartSector} in track {track.Sequence} ({(sectors + track.StartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
+                        Progress2Text = $"Converting sectors {sectors + track.StartSector} to {
+                            sectors + sectorsToDo + track.StartSector} in track {track.Sequence} ({
+                                (sectors + track.StartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
 
                         Progress2Value = (int)(sectors / SectorsValue);
                     });
@@ -1383,7 +1404,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                              $"Error {errno} reading sector {
+                                                                                  doneSectors
+                                                                              }, not continuing...",
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
@@ -1417,7 +1440,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {errno} reading sector {doneSectors}, not continuing...",
+                                                                              $"Error {errno} reading sector {
+                                                                                  doneSectors
+                                                                              }, not continuing...",
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
@@ -1438,7 +1463,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         {
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                       GetMessageBoxStandardWindow("Error",
-                                                                          $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                                                          $"Error {outputFormat.ErrorMessage
+                                                                          } writing sector {doneSectors
+                                                                          }, not continuing...",
                                                                           icon: Icon.Error).ShowDialog(_view));
 
                             return;
@@ -1450,8 +1477,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Progress2Text =
-                    $"Converting sectors {_inputFormat.Info.Sectors} to {_inputFormat.Info.Sectors} in track {tracks.Count} ({1.0:P2} done)";
+                Progress2Text = $"Converting sectors {_inputFormat.Info.Sectors} to {_inputFormat.Info.Sectors
+                } in track {tracks.Count} ({1.0:P2} done)";
 
                 Progress2Value = Progress2MaxValue;
             });
@@ -1514,7 +1541,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                     await Dispatcher.UIThread.InvokeAsync(action: async () =>
                                                                               await MessageBoxManager.
                                                                                   GetMessageBoxStandardWindow("Error",
-                                                                                      $"Error {errno} reading tag, not continuing...",
+                                                                                      $"Error {errno
+                                                                                      } reading tag, not continuing...",
                                                                                       icon: Icon.Error).
                                                                                   ShowDialog(_view));
 
@@ -1537,7 +1565,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                     await Dispatcher.UIThread.InvokeAsync(action: async () =>
                                                                               await MessageBoxManager.
                                                                                   GetMessageBoxStandardWindow("Error",
-                                                                                      $"Error {outputFormat.ErrorMessage} writing tag, not continuing...",
+                                                                                      $"Error {outputFormat.
+                                                                                          ErrorMessage
+                                                                                      } writing tag, not continuing...",
                                                                                       icon: Icon.Error).
                                                                                   ShowDialog(_view));
 
@@ -1563,8 +1593,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            Progress2Text =
-                                $"Converting tag {tag} for sectors {sectors + track.StartSector} to {sectors + sectorsToDo + track.StartSector} in track {track.Sequence} ({(sectors + track.StartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
+                            Progress2Text = $"Converting tag {tag} for sectors {sectors + track.StartSector} to {
+                                sectors + sectorsToDo + track.StartSector} in track {track.Sequence} ({
+                                    (sectors + track.StartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
 
                             Progress2Value = (int)(sectors / SectorsValue);
                         });
@@ -1594,7 +1625,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {errno} reading tag for sector {doneSectors}, not continuing...",
+                                                                              $"Error {errno
+                                                                              } reading tag for sector {
+                                                                                  doneSectors
+                                                                              }, not continuing...",
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
@@ -1614,7 +1648,11 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                           GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors}, not continuing...",
+                                                                              $"Error {outputFormat.
+                                                                                  ErrorMessage
+                                                                              } writing tag for sector {
+                                                                                  doneSectors
+                                                                              }, not continuing...",
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
@@ -1695,7 +1733,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
                                                                             GetMessageBoxStandardWindow("Error",
-                                                                                $"Error {outputFormat.ErrorMessage} closing output image... Contents are not correct.",
+                                                                                $"Error {outputFormat.ErrorMessage
+                                                                                } closing output image... Contents are not correct.",
                                                                                 icon: Icon.Error).
                                                                             ShowDialog(_view));
 
