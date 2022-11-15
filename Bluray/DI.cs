@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.Bluray;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.Bluray;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -114,8 +114,8 @@ public static class DI
             Reserved2  = DIResponse[3]
         };
 
-        var offset = 4;
-        var units  = new List<DiscInformationUnits>();
+        int                        offset = 4;
+        List<DiscInformationUnits> units  = new();
 
         while(true)
         {
@@ -209,7 +209,7 @@ public static class DI
 
         decoded.Units = new DiscInformationUnits[units.Count];
 
-        for(var i = 0; i < units.Count; i++)
+        for(int i = 0; i < units.Count; i++)
             decoded.Units[i] = units[i];
 
         return decoded;
@@ -401,7 +401,7 @@ public static class DI
 
     public static string ManufacturerFromDI(string manufacturerId)
     {
-        var manufacturer = "";
+        string manufacturer = "";
 
         // ReSharper disable StringLiteralTypo
         switch(manufacturerId)

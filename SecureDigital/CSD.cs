@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SecureDigital;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+
+namespace Aaru.Decoders.SecureDigital;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -79,7 +79,7 @@ public static partial class Decoders
         if(response?.Length != 4)
             return null;
 
-        var data = new byte[16];
+        byte[] data = new byte[16];
 
         byte[] tmp = BitConverter.GetBytes(response[0]);
         Array.Copy(tmp, 0, data, 0, 4);
@@ -148,7 +148,7 @@ public static partial class Decoders
 
         double unitFactor = 0;
         double multiplier = 0;
-        var    unit       = "";
+        string unit       = "";
 
         var sb = new StringBuilder();
         sb.AppendLine("SecureDigital Device Specific Data Register:");
@@ -210,25 +210,25 @@ public static partial class Decoders
         }
 
         multiplier = ((csd.TAAC & 0x78) >> 3) switch
-                     {
-                         0  => 0,
-                         1  => 1,
-                         2  => 1.2,
-                         3  => 1.3,
-                         4  => 1.5,
-                         5  => 2,
-                         6  => 2.5,
-                         7  => 3,
-                         8  => 3.5,
-                         9  => 4,
-                         10 => 4.5,
-                         11 => 5,
-                         12 => 5.5,
-                         13 => 6,
-                         14 => 7,
-                         15 => 8,
-                         _  => multiplier
-                     };
+        {
+            0  => 0,
+            1  => 1,
+            2  => 1.2,
+            3  => 1.3,
+            4  => 1.5,
+            5  => 2,
+            6  => 2.5,
+            7  => 3,
+            8  => 3.5,
+            9  => 4,
+            10 => 4.5,
+            11 => 5,
+            12 => 5.5,
+            13 => 6,
+            14 => 7,
+            15 => 8,
+            _  => multiplier
+        };
 
         double result = unitFactor * multiplier;
         sb.AppendFormat("\tAsynchronous data access time is {0}{1}", result, unit).AppendLine();
@@ -263,25 +263,25 @@ public static partial class Decoders
         }
 
         multiplier = ((csd.Speed & 0x78) >> 3) switch
-                     {
-                         0  => 0,
-                         1  => 1,
-                         2  => 1.2,
-                         3  => 1.3,
-                         4  => 1.5,
-                         5  => 2,
-                         6  => 2.6,
-                         7  => 3,
-                         8  => 3.5,
-                         9  => 4,
-                         10 => 4.5,
-                         11 => 5.2,
-                         12 => 5.5,
-                         13 => 6,
-                         14 => 7,
-                         15 => 8,
-                         _  => multiplier
-                     };
+        {
+            0  => 0,
+            1  => 1,
+            2  => 1.2,
+            3  => 1.3,
+            4  => 1.5,
+            5  => 2,
+            6  => 2.6,
+            7  => 3,
+            8  => 3.5,
+            9  => 4,
+            10 => 4.5,
+            11 => 5.2,
+            12 => 5.5,
+            13 => 6,
+            14 => 7,
+            15 => 8,
+            _  => multiplier
+        };
 
         result = unitFactor * multiplier;
         sb.AppendFormat("\tDevice's transfer speed: {0}{1}", result, unit).AppendLine();

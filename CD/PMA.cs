@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.CD;
-
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.CD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -80,21 +80,21 @@ public static class PMA
             return null;
         }
 
-        for(var i = 0; i < (decoded.DataLength - 2) / 11; i++)
+        for(int i = 0; i < (decoded.DataLength - 2) / 11; i++)
         {
-            decoded.PMADescriptors[i].Reserved = CDPMAResponse[0 + i * 11 + 4];
-            decoded.PMADescriptors[i].ADR      = (byte)((CDPMAResponse[1 + i * 11 + 4] & 0xF0) >> 4);
-            decoded.PMADescriptors[i].CONTROL  = (byte)(CDPMAResponse[1 + i * 11 + 4] & 0x0F);
-            decoded.PMADescriptors[i].TNO      = CDPMAResponse[2 + i * 11 + 4];
-            decoded.PMADescriptors[i].POINT    = CDPMAResponse[3 + i * 11 + 4];
-            decoded.PMADescriptors[i].Min      = CDPMAResponse[4 + i * 11 + 4];
-            decoded.PMADescriptors[i].Sec      = CDPMAResponse[5 + i * 11 + 4];
-            decoded.PMADescriptors[i].Frame    = CDPMAResponse[6 + i * 11 + 4];
-            decoded.PMADescriptors[i].HOUR     = (byte)((CDPMAResponse[7 + i * 11 + 4] & 0xF0) >> 4);
-            decoded.PMADescriptors[i].PHOUR    = (byte)(CDPMAResponse[7 + i * 11 + 4] & 0x0F);
-            decoded.PMADescriptors[i].PMIN     = CDPMAResponse[8  + i * 11 + 4];
-            decoded.PMADescriptors[i].PSEC     = CDPMAResponse[9  + i * 11 + 4];
-            decoded.PMADescriptors[i].PFRAME   = CDPMAResponse[10 + i * 11 + 4];
+            decoded.PMADescriptors[i].Reserved = CDPMAResponse[0 + (i * 11) + 4];
+            decoded.PMADescriptors[i].ADR      = (byte)((CDPMAResponse[1 + (i * 11) + 4] & 0xF0) >> 4);
+            decoded.PMADescriptors[i].CONTROL  = (byte)(CDPMAResponse[1 + (i * 11) + 4] & 0x0F);
+            decoded.PMADescriptors[i].TNO      = CDPMAResponse[2 + (i * 11) + 4];
+            decoded.PMADescriptors[i].POINT    = CDPMAResponse[3 + (i * 11) + 4];
+            decoded.PMADescriptors[i].Min      = CDPMAResponse[4 + (i * 11) + 4];
+            decoded.PMADescriptors[i].Sec      = CDPMAResponse[5 + (i * 11) + 4];
+            decoded.PMADescriptors[i].Frame    = CDPMAResponse[6 + (i * 11) + 4];
+            decoded.PMADescriptors[i].HOUR     = (byte)((CDPMAResponse[7 + (i * 11) + 4] & 0xF0) >> 4);
+            decoded.PMADescriptors[i].PHOUR    = (byte)(CDPMAResponse[7 + (i * 11) + 4] & 0x0F);
+            decoded.PMADescriptors[i].PMIN     = CDPMAResponse[8  + (i * 11) + 4];
+            decoded.PMADescriptors[i].PSEC     = CDPMAResponse[9  + (i * 11) + 4];
+            decoded.PMADescriptors[i].PFRAME   = CDPMAResponse[10 + (i * 11) + 4];
         }
 
         return decoded;
@@ -180,7 +180,7 @@ public static class PMA
 
                     break;
                 case 2:
-                    var id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
+                    uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
                     sb.AppendFormat("Disc ID: {0:X6}", id & 0x00FFFFFF).AppendLine();
 
                     break;

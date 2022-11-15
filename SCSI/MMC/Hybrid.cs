@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI.MMC;
-
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.SCSI.MMC;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -74,8 +74,8 @@ public static class Hybrid
             FormatLayers       = new ushort[(FormatLayersResponse.Length - 6) / 2]
         };
 
-        for(var i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
-            decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, i * 2 + 6);
+        for(int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
+            decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, (i * 2) + 6);
 
         return decoded;
     }
@@ -91,7 +91,7 @@ public static class Hybrid
 
         sb.AppendFormat("{0} format layers recognized", response.NumberOfLayers);
 
-        for(var i = 0; i < response.FormatLayers.Length; i++)
+        for(int i = 0; i < response.FormatLayers.Length; i++)
             switch(response.FormatLayers[i])
             {
                 case (ushort)FormatLayerTypeCodes.BDLayer:

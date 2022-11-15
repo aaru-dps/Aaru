@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders;
 
 /// <summary>Represents a Lisa Office 7/7 sector tag</summary>
 [SuppressMessage("ReSharper", "MemberCanBeInternal"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
@@ -78,7 +78,7 @@ public static class LisaTag
 
         var phTag = new ProfileTag();
 
-        var tmp = new byte[4];
+        byte[] tmp = new byte[4];
 
         phTag.Version   =  BigEndianBitConverter.ToUInt16(tag, 0);
         phTag.Kind      =  (byte)((tag[2] & 0xC0) >> 6);
@@ -125,7 +125,7 @@ public static class LisaTag
 
         var pmTag = new PriamTag();
 
-        var tmp = new byte[4];
+        byte[] tmp = new byte[4];
 
         pmTag.Version   =  BigEndianBitConverter.ToUInt16(tag, 0);
         pmTag.Kind      =  (byte)((tag[2] & 0xC0) >> 6);
@@ -301,7 +301,7 @@ public static class LisaTag
         /// <summary>Gets a byte array representation of this tag</summary>
         public byte[] GetBytes()
         {
-            var tagBytes = new byte[20];
+            byte[] tagBytes = new byte[20];
 
             byte[] tmp = BigEndianBitConverter.GetBytes(Version);
             Array.Copy(tmp, 0, tagBytes, 0, 2);
@@ -399,7 +399,7 @@ public static class LisaTag
         /// <summary>Gets a byte array representation of this tag</summary>
         public byte[] GetBytes()
         {
-            var tagBytes = new byte[24];
+            byte[] tagBytes = new byte[24];
 
             byte[] tmp = BigEndianBitConverter.GetBytes(Version);
             Array.Copy(tmp, 0, tagBytes, 0, 2);
@@ -485,7 +485,7 @@ public static class LisaTag
         /// <summary>Gets a byte array representation of this tag</summary>
         public byte[] GetBytes()
         {
-            var tagBytes = new byte[12];
+            byte[] tagBytes = new byte[12];
 
             byte[] tmp = BigEndianBitConverter.GetBytes(Version);
             Array.Copy(tmp, 0, tagBytes, 0, 2);

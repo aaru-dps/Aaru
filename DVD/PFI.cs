@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.DVD;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.DVD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -78,7 +78,7 @@ public static class PFI
 
         if(response.Length == 2048)
         {
-            var tmp2 = new byte[2052];
+            byte[] tmp2 = new byte[2052];
             Array.Copy(response, 0, tmp2, 4, 2048);
             response = tmp2;
         }
@@ -345,7 +345,7 @@ public static class PFI
 
         // DVD+R, DVD+RW, DVD+R DL and DVD+RW DL
         if(pfi.DiskCategory is DiskCategory.DVDPR or DiskCategory.DVDPRW or DiskCategory.DVDPRDL
-                            or DiskCategory.DVDPRWDL)
+           or DiskCategory.DVDPRWDL)
         {
             pfi.VCPS                |= (response[20] & 0x40) == 0x40;
             pfi.ApplicationCode     =  response[21];
@@ -478,11 +478,11 @@ public static class PFI
         var                       sb      = new StringBuilder();
 
         string sizeString = decoded.DiscSize switch
-                            {
-                                DVDSize.Eighty    => "80mm",
-                                DVDSize.OneTwenty => "120mm",
-                                _                 => $"unknown size identifier {decoded.DiscSize}"
-                            };
+        {
+            DVDSize.Eighty    => "80mm",
+            DVDSize.OneTwenty => "120mm",
+            _                 => $"unknown size identifier {decoded.DiscSize}"
+        };
 
         const string categorySentence = "Disc is a {0} {1} version {2}";
 
@@ -855,8 +855,7 @@ public static class PFI
                 sb.AppendFormat("Data area starts at PSN {0:X}h", decoded.DataAreaStartPSN).AppendLine();
                 sb.AppendFormat("Data area ends at PSN {0:X}h", decoded.DataAreaEndPSN).AppendLine();
 
-                if(decoded.Layers == 1 &&
-                   !decoded.TrackPath)
+                if(decoded is { Layers: 1, TrackPath: false })
                     sb.AppendFormat("Layer 0 ends at PSN {0:X}h", decoded.Layer0EndPSN).AppendLine();
             }
             else
@@ -950,15 +949,14 @@ public static class PFI
     public static string Prettify(byte[] response, MediaType mediaType) => Prettify(Decode(response, mediaType));
 
     public static string ManufacturerFromDVDRAM(string manufacturerId) => manufacturerId switch
-                                                                          {
-                                                                              _ =>
-                                                                                  ManufacturerFromDVDPlusID(manufacturerId)
-                                                                          };
+    {
+        _ => ManufacturerFromDVDPlusID(manufacturerId)
+    };
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string ManufacturerFromDVDPlusID(string manufacturerId)
     {
-        var manufacturer = "";
+        string manufacturer = "";
 
         switch(manufacturerId)
         {

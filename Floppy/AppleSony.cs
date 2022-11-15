@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.Floppy;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+
+namespace Aaru.Decoders.Floppy;
 
 // Information from:
 // Inside Macintosh, Volume II, ISBN 0-201-17732-3
@@ -54,16 +54,16 @@ public static class AppleSony
            sector.addressField.prologue[2] != 0x96)
             return null;
 
-        var    bf1      = new byte[175];
-        var    bf2      = new byte[175];
-        var    bf3      = new byte[175];
+        byte[] bf1      = new byte[175];
+        byte[] bf2      = new byte[175];
+        byte[] bf3      = new byte[175];
         byte[] nib_data = sector.dataField.data;
         var    ms       = new MemoryStream();
 
-        var  j  = 0;
+        int  j  = 0;
         byte w3 = 0;
 
-        for(var i = 0; i <= 174; i++)
+        for(int i = 0; i <= 174; i++)
         {
             byte w4 = nib_data[j++];
             byte w1 = nib_data[j++];
@@ -89,7 +89,7 @@ public static class AppleSony
             if((ck1 & 0x0100) > 0)
                 ck1++;
 
-            var carry = (byte)((bf1[j] ^ ck1) & 0xFF);
+            byte carry = (byte)((bf1[j] ^ ck1) & 0xFF);
             ck3 += carry;
 
             if((ck1 & 0x0100) > 0)
@@ -180,9 +180,9 @@ public static class AppleSony
                     };
 
                     position += 10;
-                    var syncCount = 0;
-                    var onSync    = false;
-                    var gaps      = new MemoryStream();
+                    int  syncCount = 0;
+                    bool onSync    = false;
+                    var  gaps      = new MemoryStream();
 
                     while(data[position] == 0xFF)
                     {
@@ -324,14 +324,14 @@ public static class AppleSony
 
     public static RawTrack MarshalTrack(byte[] data, out int endOffset, int offset = 0)
     {
-        int  position    = offset;
-        var  firstSector = true;
-        var  onSync      = false;
-        var  gaps        = new MemoryStream();
-        var  count       = 0;
-        var  sectors     = new List<RawSector>();
-        byte trackNumber = 0;
-        byte sideNumber  = 0;
+        int             position    = offset;
+        bool            firstSector = true;
+        bool            onSync      = false;
+        var             gaps        = new MemoryStream();
+        int             count       = 0;
+        List<RawSector> sectors     = new();
+        byte            trackNumber = 0;
+        byte            sideNumber  = 0;
         endOffset = offset;
 
         while(position       < data.Length &&
@@ -408,8 +408,8 @@ public static class AppleSony
     public static List<RawTrack> MarshalDisk(byte[] data, out int endOffset, int offset = 0)
     {
         endOffset = offset;
-        var tracks   = new List<RawTrack>();
-        int position = offset;
+        List<RawTrack> tracks   = new();
+        int            position = offset;
 
         RawTrack track = MarshalTrack(data, out position, position);
 

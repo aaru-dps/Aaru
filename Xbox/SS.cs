@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.Xbox;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Decoders.DVD;
+
+namespace Aaru.Decoders.Xbox;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
@@ -87,16 +87,16 @@ public static class SS
         Array.Copy(response, 720, ss.Unknown4, 0, 4);
         Array.Copy(response, 724, ss.Unknown5, 0, 43);
 
-        for(var i = 0; i < 23; i++)
+        for(int i = 0; i < 23; i++)
             ss.ChallengeEntries[i] = new ChallengeEntry
             {
-                Level       = response[770 + i * 11 + 0],
-                ChallengeId = response[770 + i * 11 + 1],
-                ChallengeValue = (uint)((response[770 + i * 11 + 2] << 24) + (response[770 + i * 11 + 3] << 16) +
-                                        (response[770 + i * 11 + 4] << 8)  + response[770 + i * 11 + 5]),
-                ResponseModifier = response[770 + i * 11 + 6],
-                ResponseValue = (uint)((response[770 + i * 11 + 7] << 24) + (response[770 + i * 11 + 8] << 16) +
-                                       (response[770 + i * 11 + 9] << 8)  + response[770 + i * 11 + 10])
+                Level       = response[770 + (i * 11) + 0],
+                ChallengeId = response[770 + (i * 11) + 1],
+                ChallengeValue = (uint)((response[770 + (i * 11) + 2] << 24) + (response[770 + (i * 11) + 3] << 16) +
+                                        (response[770 + (i * 11) + 4] << 8)  + response[770 + (i * 11) + 5]),
+                ResponseModifier = response[770 + (i * 11) + 6],
+                ResponseValue = (uint)((response[770 + (i * 11) + 7] << 24) + (response[770 + (i * 11) + 8] << 16) +
+                                       (response[770 + (i * 11) + 9] << 8)  + response[770 + (i * 11) + 10])
             };
 
         Array.Copy(response, 1052, ss.Unknown7, 0, 48);
@@ -105,26 +105,26 @@ public static class SS
         Array.Copy(response, 1208, ss.Unknown10, 0, 303);
         Array.Copy(response, 1528, ss.Unknown11, 0, 104);
 
-        for(var i = 0; i < 23; i++)
+        for(int i = 0; i < 23; i++)
             ss.Extents[i] = new SecuritySectorExtent
             {
-                Unknown = (uint)((response[1633 + i * 9 + 0] << 16) + (response[1633 + i * 9 + 1] << 8) +
-                                 response[1633 + i * 9 + 2]),
-                StartPSN = (uint)((response[1633 + i * 9 + 3] << 16) + (response[1633 + i * 9 + 4] << 8) +
-                                  response[1633 + i * 9 + 5]),
-                EndPSN = (uint)((response[1633 + i * 9 + 6] << 16) + (response[1633 + i * 9 + 7] << 8) +
-                                response[1633 + i * 9 + 8])
+                Unknown = (uint)((response[1633 + (i * 9) + 0] << 16) + (response[1633 + (i * 9) + 1] << 8) +
+                                 response[1633 + (i * 9) + 2]),
+                StartPSN = (uint)((response[1633 + (i * 9) + 3] << 16) + (response[1633 + (i * 9) + 4] << 8) +
+                                  response[1633 + (i * 9) + 5]),
+                EndPSN = (uint)((response[1633 + (i * 9) + 6] << 16) + (response[1633 + (i * 9) + 7] << 8) +
+                                response[1633 + (i * 9) + 8])
             };
 
-        for(var i = 0; i < 23; i++)
+        for(int i = 0; i < 23; i++)
             ss.ExtentsCopy[i] = new SecuritySectorExtent
             {
-                Unknown = (uint)((response[1840 + i * 9 + 0] << 16) + (response[1840 + i * 9 + 1] << 8) +
-                                 response[1840 + i * 9 + 2]),
-                StartPSN = (uint)((response[1840 + i * 9 + 3] << 16) + (response[1840 + i * 9 + 4] << 8) +
-                                  response[1840 + i * 9 + 5]),
-                EndPSN = (uint)((response[1840 + i * 9 + 6] << 16) + (response[1840 + i * 9 + 7] << 8) +
-                                response[1840 + i * 9 + 8])
+                Unknown = (uint)((response[1840 + (i * 9) + 0] << 16) + (response[1840 + (i * 9) + 1] << 8) +
+                                 response[1840 + (i * 9) + 2]),
+                StartPSN = (uint)((response[1840 + (i * 9) + 3] << 16) + (response[1840 + (i * 9) + 4] << 8) +
+                                  response[1840 + (i * 9) + 5]),
+                EndPSN = (uint)((response[1840 + (i * 9) + 6] << 16) + (response[1840 + (i * 9) + 7] << 8) +
+                                response[1840 + (i * 9) + 8])
             };
 
         return ss;
@@ -139,11 +139,11 @@ public static class SS
         var            sb      = new StringBuilder();
 
         string sizeString = decoded.DiscSize switch
-                            {
-                                DVDSize.Eighty    => "80mm",
-                                DVDSize.OneTwenty => "120mm",
-                                _                 => $"unknown size identifier {decoded.DiscSize}"
-                            };
+        {
+            DVDSize.Eighty    => "80mm",
+            DVDSize.OneTwenty => "120mm",
+            _                 => $"unknown size identifier {decoded.DiscSize}"
+        };
 
         const string categorySentence = "Disc is a {0} {1} version {2}";
 
@@ -280,8 +280,7 @@ public static class SS
                 sb.AppendFormat("Data area starts at PSN {0:X}h", decoded.DataAreaStartPSN).AppendLine();
                 sb.AppendFormat("Data area ends at PSN {0:X}h", decoded.DataAreaEndPSN).AppendLine();
 
-                if(decoded.Layers == 1 &&
-                   !decoded.TrackPath)
+                if(decoded is { Layers: 1, TrackPath: false })
                     sb.AppendFormat("Layer 0 ends at PSN {0:X}h", decoded.Layer0EndPSN).AppendLine();
             }
             else
@@ -300,7 +299,7 @@ public static class SS
             sb.AppendFormat("\tResponse value: 0x{0:X8}", entry.ResponseValue).AppendLine();
         }
 
-        for(var i = 0; i < 16; i++)
+        for(int i = 0; i < 16; i++)
             sb.AppendFormat("Extent starts at PSN {0:X6}h and ends at PSN {1:X6}h", decoded.Extents[i].StartPSN,
                             decoded.Extents[i].EndPSN).AppendLine();
 

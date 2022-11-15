@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.CD;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Aaru.Checksums;
+
+namespace Aaru.Decoders.CD;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -189,21 +189,21 @@ public static class Sector
            sector.Length < 2352)
             return sector;
 
-        var sync = new byte[12];
+        byte[] sync = new byte[12];
         Array.Copy(sector, 0, sync, 0, 12);
 
         if(!SyncMark.SequenceEqual(sync))
             return sector;
 
-        var scrambled = new byte[sector.Length];
+        byte[] scrambled = new byte[sector.Length];
 
-        for(var i = 0; i < 2352; i++)
+        for(int i = 0; i < 2352; i++)
             scrambled[i] = (byte)(sector[i] ^ ScrambleTable[i]);
 
         if(sector.Length <= 2352)
             return scrambled;
 
-        for(var i = 2352; i < sector.Length; i++)
+        for(int i = 2352; i < sector.Length; i++)
             scrambled[i] = sector[i];
 
         return scrambled;
@@ -222,7 +222,7 @@ public static class Sector
                 {
                     case 0: return new byte[2048];
                     case 1:
-                        var sector = new byte[2048];
+                        byte[] sector = new byte[2048];
                         Array.Copy(data, 16, sector, 0, 2048);
 
                         return sector;
@@ -241,7 +241,7 @@ public static class Sector
            data.Length != 2336)
             return data;
 
-        var pos = 0;
+        int pos = 0;
 
         if(data.Length == 2352)
         {
@@ -270,7 +270,7 @@ public static class Sector
         int len = (data[pos + 2] & 0x20) == 0x20 ? 2324 : 2048;
         pos += 8;
 
-        var sector = new byte[len];
+        byte[] sector = new byte[len];
         Array.Copy(data, pos, sector, 0, len);
 
         return sector;
@@ -303,8 +303,8 @@ public static class Sector
         byte min        = buffer[12];
         byte sec        = buffer[13];
         byte frame      = buffer[14];
-        var  lba        = 0;
-        var  moreThan90 = false;
+        int  lba        = 0;
+        bool moreThan90 = false;
 
         if(min > 0x90)
         {
@@ -313,9 +313,9 @@ public static class Sector
             moreThan90 =  true;
         }
 
-        lba += ((min >> 4) * 10 + (min & 0x0F)) * 75 * 60;
-        lba += ((sec >> 4) * 10 + (sec & 0x0F)) * 75;
-        lba += (frame >> 4) * 10 + (frame & 0x0F);
+        lba += (((min >> 4) * 10) + (min & 0x0F)) * 75 * 60;
+        lba += (((sec >> 4) * 10) + (sec & 0x0F)) * 75;
+        lba += ((frame >> 4) * 10) + (frame & 0x0F);
         lba -= 150;
 
         if(moreThan90)
@@ -381,13 +381,13 @@ public static class Sector
 
         CdChecksums.CheckCdSector(buffer, out bool? correctEccP, out bool? correctEccQ, out bool? correctEdc);
 
-        var empty = true;
+        bool empty = true;
 
         switch(buffer[15] & 0x03)
         {
             case 0:
 
-                for(var i = 16; i < 2352; i++)
+                for(int i = 16; i < 2352; i++)
                     if(buffer[i] != 0x00)
                     {
                         empty = false;
@@ -403,7 +403,7 @@ public static class Sector
                 sb.AppendLine(correctEccP == true ? "Correct ECC P." : "Incorrect ECC P.");
                 sb.AppendLine(correctEccQ == true ? "Correct ECC Q." : "Incorrect ECC Q.");
 
-                for(var i = 2068; i < 2076; i++)
+                for(int i = 2068; i < 2076; i++)
                     if(buffer[i] != 0x00)
                     {
                         empty = false;

@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.PCMCIA;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Decoders.PCMCIA;
 
 /// <summary>Basic classure of a PCMCIA tuple</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),

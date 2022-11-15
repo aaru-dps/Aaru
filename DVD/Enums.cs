@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.DVD;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Decoders.DVD;
 
 #region Public enumerations
 [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -86,10 +86,8 @@ public enum MaximumRateField : byte
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum LayerTypeFieldMask : byte
 {
-    Embossed   = 0x01,
-    Recordable = 0x02,
-    Rewritable = 0x04,
-    Reserved   = 0x08
+    Embossed = 0x01, Recordable = 0x02, Rewritable = 0x04,
+    Reserved = 0x08
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -145,8 +143,7 @@ public enum WPDiscTypes : byte
     /// <summary>Should not write without a cartridge</summary>
     DoNotWrite = 0x00,
     /// <summary>Can write without a cartridge</summary>
-    CanWrite = 0x01, Reserved1 = 0x02,
-    Reserved2                  = 0x03
+    CanWrite = 0x01, Reserved1 = 0x02, Reserved2 = 0x03
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -170,21 +167,15 @@ public enum DVDRAMDiscType
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum DVDLayerStructure
 {
-    Unspecified   = 0,
-    InvertedStack = 1,
-    TwoP          = 2,
-    Reserved      = 3
+    Unspecified = 0, InvertedStack = 1, TwoP = 2,
+    Reserved    = 3
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum DVDRecordingSpeed
 {
-    None   = 0,
-    Two    = 0,
-    Four   = 0x10,
-    Six    = 0x20,
-    Eight  = 0x30,
-    Ten    = 0x40,
+    None   = 0, Two      = 0, Four   = 0x10,
+    Six    = 0x20, Eight = 0x30, Ten = 0x40,
     Twelve = 0x50
 }
 #endregion

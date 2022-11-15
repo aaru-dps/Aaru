@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+
+namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -123,7 +123,7 @@ public static partial class Modes
         decoded.MediumFormatRecognition     =  (MediumFormatRecognitionValues)pageResponse[5];
         decoded.PartitionSizes              =  new ushort[(pageResponse.Length - 8) / 2];
 
-        for(var i = 8; i < pageResponse.Length; i += 2)
+        for(int i = 8; i < pageResponse.Length; i += 2)
         {
             decoded.PartitionSizes[(i - 8) / 2] =  (ushort)(pageResponse[i] << 8);
             decoded.PartitionSizes[(i - 8) / 2] += pageResponse[i + 1];
@@ -243,7 +243,7 @@ public static partial class Modes
 
         sb.AppendFormat("\tMedium has defined {0} partitions", page.PartitionSizes.Length).AppendLine();
 
-        for(var i = 0; i < page.PartitionSizes.Length; i++)
+        for(int i = 0; i < page.PartitionSizes.Length; i++)
             if(page.PartitionSizes[i] == 0)
                 if(page.PartitionSizes.Length == 1)
                     sb.AppendLine("\tDevice recognizes one single partition spanning whole medium");

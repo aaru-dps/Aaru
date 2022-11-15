@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.PCMCIA;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.PCMCIA;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -46,8 +46,8 @@ public static class CIS
     // TODO: Handle links? Or are they removed in lower layers of the operating system drivers?
     public static Tuple[] GetTuples(byte[] data)
     {
-        var tuples   = new List<Tuple>();
-        var position = 0;
+        List<Tuple> tuples   = new();
+        int         position = 0;
 
         while(position < data.Length)
         {
@@ -94,10 +94,10 @@ public static class CIS
         if((data?.Length - 2) % 6 != 0)
             return null;
 
-        var tuple      = new DeviceGeometryTuple();
-        var geometries = new List<DeviceGeometry>();
+        var                  tuple      = new DeviceGeometryTuple();
+        List<DeviceGeometry> geometries = new();
 
-        for(var position = 2; position < data.Length; position += 6)
+        for(int position = 2; position < data.Length; position += 6)
         {
             var geometry = new DeviceGeometry
             {
@@ -219,9 +219,9 @@ public static class CIS
         if(data.Length < 4)
             return null;
 
-        var          buffer       = new List<byte>();
+        List<byte>   buffer       = new();
         List<string> strings      = null;
-        var          firstString  = false;
+        bool         firstString  = false;
         const bool   secondString = false;
 
         var tuple = new Level1VersionTuple
@@ -232,7 +232,7 @@ public static class CIS
             MinorVersion = data[3]
         };
 
-        for(var position = 4; position < data.Length; position++)
+        for(int position = 4; position < data.Length; position++)
         {
             if(data[position] == 0xFF)
                 break;

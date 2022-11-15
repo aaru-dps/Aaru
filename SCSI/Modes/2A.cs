@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI;
-
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
+
+namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
@@ -50,7 +50,7 @@ public static partial class Modes
         if(modePage is null)
             return null;
 
-        var         sb   = new StringBuilder();
+        var sb = new StringBuilder();
 
         sb.AppendLine("SCSI CD-ROM capabilities page:");
 
@@ -214,8 +214,7 @@ public static partial class Modes
 
         if(modePage.WriteSpeedPerformanceDescriptors != null)
             foreach(ModePage_2A_WriteDescriptor descriptor in
-                    modePage.WriteSpeedPerformanceDescriptors.Where(descriptor =>
-                                                                        descriptor.WriteSpeed > 0))
+                    modePage.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0))
                 switch(descriptor.RotationControl)
                 {
                     case 0:

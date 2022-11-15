@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.Sega;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -39,6 +37,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Decoders.Sega;
 
 /// <summary>Represents the IP.BIN from a SEGA CD / MEGA CD</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),

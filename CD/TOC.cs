@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.CD;
-
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.CD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -79,16 +79,16 @@ public static class TOC
             return null;
         }
 
-        for(var i = 0; i < (decoded.DataLength - 2) / 8; i++)
+        for(int i = 0; i < (decoded.DataLength - 2) / 8; i++)
         {
-            decoded.TrackDescriptors[i].Reserved1   = CDTOCResponse[0 + i * 8 + 4];
-            decoded.TrackDescriptors[i].ADR         = (byte)((CDTOCResponse[1 + i * 8 + 4] & 0xF0) >> 4);
-            decoded.TrackDescriptors[i].CONTROL     = (byte)(CDTOCResponse[1 + i * 8 + 4] & 0x0F);
-            decoded.TrackDescriptors[i].TrackNumber = CDTOCResponse[2 + i * 8 + 4];
-            decoded.TrackDescriptors[i].Reserved2   = CDTOCResponse[3 + i * 8 + 4];
+            decoded.TrackDescriptors[i].Reserved1   = CDTOCResponse[0 + (i * 8) + 4];
+            decoded.TrackDescriptors[i].ADR         = (byte)((CDTOCResponse[1 + (i * 8) + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].CONTROL     = (byte)(CDTOCResponse[1 + (i * 8) + 4] & 0x0F);
+            decoded.TrackDescriptors[i].TrackNumber = CDTOCResponse[2 + (i * 8) + 4];
+            decoded.TrackDescriptors[i].Reserved2   = CDTOCResponse[3 + (i * 8) + 4];
 
             decoded.TrackDescriptors[i].TrackStartAddress =
-                BigEndianBitConverter.ToUInt32(CDTOCResponse, 4 + i * 8 + 4);
+                BigEndianBitConverter.ToUInt32(CDTOCResponse, 4 + (i * 8) + 4);
         }
 
         return decoded;

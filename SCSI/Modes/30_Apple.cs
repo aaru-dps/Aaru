@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+
+namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -61,7 +61,7 @@ public static partial class Modes
         if(pageResponse.Length != 30)
             return false;
 
-        var str = new byte[20];
+        byte[] str = new byte[20];
         Array.Copy(pageResponse, 10, str, 0, 20);
 
         return AppleOEMString.SequenceEqual(str);

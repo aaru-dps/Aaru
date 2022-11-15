@@ -32,16 +32,15 @@
 
 // ReSharper disable InconsistentNaming
 
-namespace Aaru.Decoders.MMC;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 
-[SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnassignedField.Global"),
- StructLayout(LayoutKind.Sequential, Pack = 1)]
+namespace Aaru.Decoders.MMC;
+
+[SuppressMessage("ReSharper", "MemberCanBeInternal"), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"),
+ SuppressMessage("ReSharper", "UnassignedField.Global"), StructLayout(LayoutKind.Sequential, Pack = 1)]
 public class ExtendedCSD
 {
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
@@ -221,8 +220,7 @@ public enum DeviceSupportedCommandSets : byte
 [Flags]
 public enum HPIFeatures : byte
 {
-    Supported = 1 << 0,
-    CMD12     = 1 << 1
+    Supported = 1 << 0, CMD12 = 1 << 1
 }
 
 [Flags]
@@ -240,15 +238,13 @@ public enum DataTagSupport : byte
 [Flags]
 public enum ExtendedPartitionsSupport : byte
 {
-    SystemCode    = 1 << 0,
-    NonPersistent = 1 << 1
+    SystemCode = 1 << 0, NonPersistent = 1 << 1
 }
 
 [Flags]
 public enum SupportedModes : byte
 {
-    FFU            = 1 << 0,
-    VendorSpecific = 1 << 1
+    FFU = 1 << 0, VendorSpecific = 1 << 1
 }
 
 [Flags]
@@ -272,55 +268,41 @@ public enum CacheFlushingPolicy : byte
 [Flags]
 public enum SecureFeatureSupport : byte
 {
-    Purge     = 1 << 0,
-    Defective = 1 << 2,
-    Trim      = 1 << 4,
-    Sanitize  = 1 << 6
+    Purge    = 1 << 0, Defective = 1 << 2, Trim = 1 << 4,
+    Sanitize = 1 << 6
 }
 
 [Flags]
 public enum BootInformation : byte
 {
-    Alternative = 1 << 0,
-    DDR         = 1 << 1,
-    HighSpeed   = 1 << 2
+    Alternative = 1 << 0, DDR = 1 << 1, HighSpeed = 1 << 2
 }
 
 [Flags]
 public enum SecureWriteProtectInformation : byte
 {
-    Supported = 1 << 0,
-    Enabled   = 1 << 1
+    Supported = 1 << 0, Enabled = 1 << 1
 }
 
 [Flags]
 public enum DriverStrength : byte
 {
-    Type0 = 1 << 0,
-    Type1 = 1 << 1,
-    Type2 = 1 << 2,
-    Type3 = 1 << 3,
-    Type4 = 1 << 4
+    Type0 = 1 << 0, Type1 = 1 << 1, Type2 = 1 << 2,
+    Type3 = 1 << 3, Type4 = 1 << 4
 }
 
 [Flags]
 public enum DeviceType : byte
 {
-    HS_26        = 1 << 0,
-    HS_52        = 1 << 1,
-    HS_DDR_52    = 1 << 2,
-    HS_DDR_52_LV = 1 << 3,
-    HS200_18     = 1 << 4,
-    HS200_12     = 1 << 5,
-    HS400_18     = 1 << 6,
-    HS400_12     = 1 << 7
+    HS_26        = 1 << 0, HS_52    = 1 << 1, HS_DDR_52 = 1 << 2,
+    HS_DDR_52_LV = 1 << 3, HS200_18 = 1 << 4, HS200_12  = 1 << 5,
+    HS400_18     = 1 << 6, HS400_12 = 1 << 7
 }
 
 [Flags]
 public enum BootConfigProtection : byte
 {
-    PowerCycle = 1 << 0,
-    Permanent  = 1 << 4
+    PowerCycle = 1 << 0, Permanent = 1 << 4
 }
 
 [Flags]
@@ -332,32 +314,22 @@ public enum HighCapacityEraseGroupDefinition : byte
 [Flags]
 public enum BootAreaWriteProtectionRegister : byte
 {
-    PowerOn          = 1 << 0,
-    PowerOnArea2     = 1 << 1,
-    Permanent        = 1 << 2,
-    PermanentArea2   = 1 << 3,
-    PermanentDisable = 1 << 4,
-    PowerOnDisable   = 1 << 6,
-    Selected         = 1 << 7
+    PowerOn        = 1 << 0, PowerOnArea2     = 1 << 1, Permanent      = 1 << 2,
+    PermanentArea2 = 1 << 3, PermanentDisable = 1 << 4, PowerOnDisable = 1 << 6,
+    Selected       = 1 << 7
 }
 
 [Flags]
 public enum UserAreaWriteProtectionRegister : byte
 {
-    ApplyPowerOn        = 1 << 0,
-    ApplyPermanent      = 1 << 2,
-    DisablePowerOn      = 1 << 3,
-    DisablePermanent    = 1 << 4,
-    DisableWriteProtect = 1 << 6,
-    DisablePassword     = 1 << 7
+    ApplyPowerOn     = 1 << 0, ApplyPermanent      = 1 << 2, DisablePowerOn  = 1 << 3,
+    DisablePermanent = 1 << 4, DisableWriteProtect = 1 << 6, DisablePassword = 1 << 7
 }
 
 [Flags]
 public enum PartitioningSupport : byte
 {
-    Supported = 1 << 0,
-    Enhanced  = 1 << 1,
-    Extended  = 1 << 2
+    Supported = 1 << 0, Enhanced = 1 << 1, Extended = 1 << 2
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),

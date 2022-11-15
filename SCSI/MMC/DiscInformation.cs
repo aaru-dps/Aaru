@@ -30,11 +30,11 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI.MMC;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+
+namespace Aaru.Decoders.SCSI.MMC;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -95,7 +95,7 @@ public static class DiscInformation
         decoded.LastPossibleLeadOutStartLBA =
             (uint)((response[20] << 24) + (response[21] << 16) + (response[22] << 8) + response[23]);
 
-        var temp = new byte[8];
+        byte[] temp = new byte[8];
         Array.Copy(response, 24, temp, 0, 8);
         Array.Reverse(temp);
         decoded.DiscBarcode = BitConverter.ToUInt64(temp, 0);
@@ -107,17 +107,17 @@ public static class DiscInformation
         decoded.OPCTablesNumber     = response[33];
 
         if(decoded.OPCTablesNumber <= 0 ||
-           response.Length         != decoded.OPCTablesNumber * 8 + 34)
+           response.Length         != (decoded.OPCTablesNumber * 8) + 34)
             return decoded;
 
         decoded.OPCTables = new OPCTable[decoded.OPCTablesNumber];
 
-        for(var i = 0; i < decoded.OPCTablesNumber; i++)
+        for(int i = 0; i < decoded.OPCTablesNumber; i++)
         {
-            decoded.OPCTables[i].Speed = (ushort)((response[34 + i * 8 + 0] << 16) + response[34 + i * 8 + 1]);
+            decoded.OPCTables[i].Speed = (ushort)((response[34 + (i * 8) + 0] << 16) + response[34 + (i * 8) + 1]);
 
             decoded.OPCTables[i].OPCValues = new byte[6];
-            Array.Copy(response, 34 + i * 8 + 2, decoded.OPCTables[i].OPCValues, 0, 6);
+            Array.Copy(response, 34 + (i * 8) + 2, decoded.OPCTables[i].OPCValues, 0, 6);
         }
 
         return decoded;
@@ -355,12 +355,12 @@ public static class DiscInformation
             return null;
 
         return (response[2] & 0xE0) switch
-               {
-                   0x00 => Prettify000b(Decode000b(response)),
-                   0x20 => Prettify001b(Decode001b(response)),
-                   0x40 => Prettify010b(Decode010b(response)),
-                   _    => null
-               };
+        {
+            0x00 => Prettify000b(Decode000b(response)),
+            0x20 => Prettify001b(Decode001b(response)),
+            0x40 => Prettify010b(Decode010b(response)),
+            _    => null
+        };
     }
 
     public struct StandardDiscInformation

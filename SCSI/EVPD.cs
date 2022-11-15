@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -41,6 +39,8 @@ using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
@@ -58,7 +58,7 @@ public static class EVPD
         if(page.Length != page[3] + 4)
             return null;
 
-        var decoded = new byte[page.Length - 4];
+        byte[] decoded = new byte[page.Length - 4];
 
         Array.Copy(page, 4, decoded, 0, page.Length - 4);
 
@@ -80,7 +80,7 @@ public static class EVPD
         if(page.Length != page[3] + 4)
             return null;
 
-        var ascii = new byte[page[4]];
+        byte[] ascii = new byte[page[4]];
 
         Array.Copy(page, 5, ascii, 0, page[4]);
 
@@ -98,11 +98,11 @@ public static class EVPD
         if(page.Length != page[3] + 4)
             return null;
 
-        var ascii = new byte[page.Length - 4];
+        byte[] ascii = new byte[page.Length - 4];
 
         Array.Copy(page, 4, ascii, 0, page.Length - 4);
 
-        for(var i = 0; i < ascii.Length - 1; i++)
+        for(int i = 0; i < ascii.Length - 1; i++)
             if(ascii[i] < 0x20)
                 return null;
 
@@ -120,7 +120,7 @@ public static class EVPD
         if(page.Length != page[3] + 4)
             return null;
 
-        var ascii = new byte[page.Length - 4];
+        byte[] ascii = new byte[page.Length - 4];
 
         Array.Copy(page, 4, ascii, 0, page.Length - 4);
 
@@ -136,7 +136,7 @@ public static class EVPD
         if(page.Length != page[3] + 4)
             return null;
 
-        var ascii = new byte[page.Length - 4];
+        byte[] ascii = new byte[page.Length - 4];
 
         Array.Copy(page, 4, ascii, 0, page.Length - 4);
 
@@ -153,7 +153,7 @@ public static class EVPD
         if(page.Length != 12)
             return 0;
 
-        var bitmap = new byte[8];
+        byte[] bitmap = new byte[8];
 
         Array.Copy(page, 4, bitmap, 0, 8);
 
@@ -170,7 +170,7 @@ public static class EVPD
         if(page.Length != page[3] + 4)
             return null;
 
-        var ascii = new byte[page.Length - 4];
+        byte[] ascii = new byte[page.Length - 4];
 
         Array.Copy(page, 4, ascii, 0, page.Length - 4);
 
@@ -187,8 +187,8 @@ public static class EVPD
         if(page.Length != page[3] + 4)
             return null;
 
-        var element = new byte[page.Length - 4];
-        var sb      = new StringBuilder();
+        byte[] element = new byte[page.Length - 4];
+        var    sb      = new StringBuilder();
 
         foreach(byte b in element)
             sb.AppendFormat("{0:X2}", b);
@@ -237,8 +237,8 @@ public static class EVPD
             Default              = (ScsiDefinitions)(pageResponse[5] & 0x7F)
         };
 
-        var position    = 6;
-        var definitions = new List<ScsiDefinitions>();
+        int                   position    = 6;
+        List<ScsiDefinitions> definitions = new();
 
         while(position < pageResponse.Length)
         {
@@ -255,15 +255,14 @@ public static class EVPD
     public static string PrettifyPage_81(byte[] pageResponse) => PrettifyPage_81(DecodePage_81(pageResponse));
 
     public static string DefinitionToString(ScsiDefinitions definition) => definition switch
-                                                                           {
-                                                                               ScsiDefinitions.Current => "",
-                                                                               ScsiDefinitions.CCS     => "CCS",
-                                                                               ScsiDefinitions.SCSI1   => "SCSI-1",
-                                                                               ScsiDefinitions.SCSI2   => "SCSI-2",
-                                                                               ScsiDefinitions.SCSI3   => "SCSI-3",
-                                                                               _ => $"Unknown definition code {
-                                                                                   (byte)definition}"
-                                                                           };
+    {
+        ScsiDefinitions.Current => "",
+        ScsiDefinitions.CCS     => "CCS",
+        ScsiDefinitions.SCSI1   => "SCSI-1",
+        ScsiDefinitions.SCSI2   => "SCSI-2",
+        ScsiDefinitions.SCSI3   => "SCSI-3",
+        _                       => $"Unknown definition code {(byte)definition}"
+    };
 
     public static string PrettifyPage_81(Page_81? modePage)
     {
@@ -392,8 +391,8 @@ public static class EVPD
             PageLength           = (byte)(pageResponse[3] + 4)
         };
 
-        var position    = 4;
-        var descriptors = new List<IdentificatonDescriptor>();
+        int                           position    = 4;
+        List<IdentificatonDescriptor> descriptors = new();
 
         while(position < pageResponse.Length)
         {
@@ -415,11 +414,11 @@ public static class EVPD
             Array.Copy(pageResponse, position + 4, descriptor.Binary, 0, descriptor.Length);
 
             descriptor.ASCII = descriptor.CodeSet switch
-                               {
-                                   IdentificationCodeSet.ASCII => StringHandlers.CToString(descriptor.Binary),
-                                   IdentificationCodeSet.UTF8  => Encoding.UTF8.GetString(descriptor.Binary),
-                                   _                           => ""
-                               };
+            {
+                IdentificationCodeSet.ASCII => StringHandlers.CToString(descriptor.Binary),
+                IdentificationCodeSet.UTF8  => Encoding.UTF8.GetString(descriptor.Binary),
+                _                           => ""
+            };
 
             position += 4 + descriptor.Length;
             descriptors.Add(descriptor);
@@ -466,8 +465,8 @@ public static class EVPD
 
                     break;
                 default:
-                    sb.AppendFormat("\tIdentifier has unknown association with code {0}",
-                                    (byte)descriptor.Association).AppendLine();
+                    sb.AppendFormat("\tIdentifier has unknown association with code {0}", (byte)descriptor.Association).
+                       AppendLine();
 
                     break;
             }
@@ -475,22 +474,22 @@ public static class EVPD
             if(descriptor.PIV)
             {
                 string protocol = descriptor.ProtocolIdentifier switch
-                                  {
-                                      ProtocolIdentifiers.ADT => "Automation/Drive Interface Transport",
-                                      ProtocolIdentifiers.ATA => "AT Attachment Interface (ATA/ATAPI)",
-                                      ProtocolIdentifiers.FibreChannel => "Fibre Channel",
-                                      ProtocolIdentifiers.Firewire => "IEEE 1394",
-                                      ProtocolIdentifiers.iSCSI => "Internet SCSI",
-                                      ProtocolIdentifiers.NoProtocol => "no specific",
-                                      ProtocolIdentifiers.PCIe => "PCI Express",
-                                      ProtocolIdentifiers.RDMAP => "SCSI Remote Direct Memory Access",
-                                      ProtocolIdentifiers.SAS => "Serial Attachment SCSI",
-                                      ProtocolIdentifiers.SCSI => "Parallel SCSI",
-                                      ProtocolIdentifiers.SCSIe => "SCSI over PCI Express",
-                                      ProtocolIdentifiers.SSA => "SSA",
-                                      ProtocolIdentifiers.UAS => "USB Attached SCSI",
-                                      _ => $"unknown code {(byte)descriptor.ProtocolIdentifier}"
-                                  };
+                {
+                    ProtocolIdentifiers.ADT          => "Automation/Drive Interface Transport",
+                    ProtocolIdentifiers.ATA          => "AT Attachment Interface (ATA/ATAPI)",
+                    ProtocolIdentifiers.FibreChannel => "Fibre Channel",
+                    ProtocolIdentifiers.Firewire     => "IEEE 1394",
+                    ProtocolIdentifiers.iSCSI        => "Internet SCSI",
+                    ProtocolIdentifiers.NoProtocol   => "no specific",
+                    ProtocolIdentifiers.PCIe         => "PCI Express",
+                    ProtocolIdentifiers.RDMAP        => "SCSI Remote Direct Memory Access",
+                    ProtocolIdentifiers.SAS          => "Serial Attachment SCSI",
+                    ProtocolIdentifiers.SCSI         => "Parallel SCSI",
+                    ProtocolIdentifiers.SCSIe        => "SCSI over PCI Express",
+                    ProtocolIdentifiers.SSA          => "SSA",
+                    ProtocolIdentifiers.UAS          => "USB Attached SCSI",
+                    _                                => $"unknown code {(byte)descriptor.ProtocolIdentifier}"
+                };
 
                 sb.AppendFormat("\tDescriptor refers to {0} protocol", protocol).AppendLine();
             }
@@ -548,7 +547,7 @@ public static class EVPD
                     {
                         sb.AppendFormat("\tIEEE EUI-64: {0:X2}", descriptor.Binary[0]);
 
-                        for(var i = 1; i < descriptor.Binary.Length; i++)
+                        for(int i = 1; i < descriptor.Binary.Length; i++)
                             sb.AppendFormat(":{0:X2}", descriptor.Binary[i]);
 
                         sb.AppendLine();
@@ -562,7 +561,7 @@ public static class EVPD
                     {
                         sb.AppendFormat("\tNAA: {0:X2}", descriptor.Binary[0]);
 
-                        for(var i = 1; i < descriptor.Binary.Length; i++)
+                        for(int i = 1; i < descriptor.Binary.Length; i++)
                             sb.AppendFormat(":{0:X2}", descriptor.Binary[i]);
 
                         sb.AppendLine();
@@ -600,7 +599,7 @@ public static class EVPD
                     {
                         sb.AppendFormat("\tMD5 logical unit identifier: {0:x2}", descriptor.Binary[0]);
 
-                        for(var i = 1; i < descriptor.Binary.Length; i++)
+                        for(int i = 1; i < descriptor.Binary.Length; i++)
                             sb.AppendFormat("{0:x2}", descriptor.Binary[i]);
 
                         sb.AppendLine();
@@ -788,8 +787,8 @@ public static class EVPD
             PageLength           = (byte)(pageResponse[3] + 4)
         };
 
-        var position    = 4;
-        var identifiers = new List<SoftwareIdentifier>();
+        int                      position    = 4;
+        List<SoftwareIdentifier> identifiers = new();
 
         while(position < pageResponse.Length)
         {
@@ -831,7 +830,7 @@ public static class EVPD
         {
             sb.AppendFormat("\t{0:X2}", identifier.Identifier[0]);
 
-            for(var i = 1; i < identifier.Identifier.Length; i++)
+            for(int i = 1; i < identifier.Identifier.Length; i++)
                 sb.AppendFormat(":{0:X2}", identifier.Identifier[i]);
 
             sb.AppendLine();
@@ -844,14 +843,9 @@ public static class EVPD
     #region EVPD Page 0x85: Management Network Addresses page
     public enum NetworkServiceTypes : byte
     {
-        Unspecified    = 0,
-        StorageConf    = 1,
-        Diagnostics    = 2,
-        Status         = 3,
-        Logging        = 4,
-        CodeDownload   = 5,
-        CopyService    = 6,
-        Administrative = 7
+        Unspecified = 0, StorageConf    = 1, Diagnostics  = 2,
+        Status      = 3, Logging        = 4, CodeDownload = 5,
+        CopyService = 6, Administrative = 7
     }
 
     public struct NetworkDescriptor
@@ -899,8 +893,8 @@ public static class EVPD
             PageLength           = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4)
         };
 
-        var position    = 4;
-        var descriptors = new List<NetworkDescriptor>();
+        int                     position    = 4;
+        List<NetworkDescriptor> descriptors = new();
 
         while(position < pageResponse.Length)
         {
@@ -1717,7 +1711,7 @@ public static class EVPD
             CartridgeSerialNumber = new byte[32]
         };
 
-        var buf = new byte[8];
+        byte[] buf = new byte[8];
         Array.Copy(pageResponse, 24, buf, 0, 8);
         decoded.InitiatorID = BitConverter.ToUInt64(buf.Reverse().ToArray(), 0);
         Array.Copy(pageResponse, 32, decoded.CartridgeSerialNumber, 0, 32);
@@ -2133,7 +2127,7 @@ public static class EVPD
         if(pageResponse[4] != pageResponse[3] - 1)
             return null;
 
-        var array = new List<byte>();
+        List<byte> array = new();
 
         const string fwRegExStr = @"Firmware Rev\s+=\s+(?<fw>\d+\.\d+)\s+Build date\s+=\s+(?<date>(\w|\d|\s*.)*)\s*$";
 
@@ -2143,7 +2137,7 @@ public static class EVPD
         var          fwcRegEx      = new Regex(fwcRegExStr);
         var          servoRegEx    = new Regex(servoRegExStr);
 
-        for(var pos = 5; pos < pageResponse.Length; pos++)
+        for(int pos = 5; pos < pageResponse.Length; pos++)
             if(pageResponse[pos] == 0x00)
             {
                 string str        = StringHandlers.CToString(array.ToArray());

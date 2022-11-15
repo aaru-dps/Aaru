@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.ATA;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+
+namespace Aaru.Decoders.ATA;
 
 // Information from following standards:
 // T10-791D rev. 4c (ATA)
@@ -71,8 +71,8 @@ public static class Identify
 
         var sb = new StringBuilder();
 
-        var atapi = false;
-        var cfa   = false;
+        bool atapi = false;
+        bool cfa   = false;
 
         CommonTypes.Structs.Devices.ATA.Identify.IdentifyDevice ATAID = IdentifyDeviceResponse.Value;
 
@@ -168,8 +168,8 @@ public static class Identify
             acs4 |= ATAID.MajorVersion.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.MajorVersionBit.ACS4);
         }
 
-        var maxatalevel = 0;
-        var minatalevel = 255;
+        int maxatalevel = 0;
+        int minatalevel = 255;
         sb.Append("Supported ATA versions: ");
 
         if(ata1)
@@ -777,9 +777,8 @@ public static class Identify
                                 ATAID.LogicalAlignment & 0x3FFF).AppendLine();
 
             if(minatalevel <= 5)
-                if(ATAID.CurrentCylinders       > 0 &&
-                   ATAID.CurrentHeads           > 0 &&
-                   ATAID.CurrentSectorsPerTrack > 0)
+                if(ATAID.CurrentCylinders > 0 &&
+                   ATAID is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
                 {
                     sb.AppendFormat("Cylinders: {0} max., {1} current", ATAID.Cylinders, ATAID.CurrentCylinders).
                        AppendLine();
@@ -817,7 +816,7 @@ public static class Identify
                                     (ulong)ATAID.CurrentSectors * 512               / 1024 / 1024).AppendLine();
                 else
                 {
-                    var currentSectors = (ulong)(ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack);
+                    ulong currentSectors = (ulong)(ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack);
 
                     sb.AppendFormat("Device size in CHS mode: {0} bytes, {1} Mb, {2} MiB",
                                     currentSectors                     * logicalSectorSize,
@@ -2192,17 +2191,17 @@ public static class Identify
            ATAID.ReservedWord116 != 0xFFFF)
             sb.AppendFormat("Word 116: 0x{0:X4}", ATAID.ReservedWord116).AppendLine();
 
-        for(var i = 0; i < ATAID.ReservedWords121.Length; i++)
+        for(int i = 0; i < ATAID.ReservedWords121.Length; i++)
             if(ATAID.ReservedWords121[i] != 0x0000 &&
                ATAID.ReservedWords121[i] != 0xFFFF)
                 sb.AppendFormat("Word {1}: 0x{0:X4}", ATAID.ReservedWords121[i], 121 + i).AppendLine();
 
-        for(var i = 0; i < ATAID.ReservedWords129.Length; i++)
+        for(int i = 0; i < ATAID.ReservedWords129.Length; i++)
             if(ATAID.ReservedWords129[i] != 0x0000 &&
                ATAID.ReservedWords129[i] != 0xFFFF)
                 sb.AppendFormat("Word {1}: 0x{0:X4}", ATAID.ReservedWords129[i], 129 + i).AppendLine();
 
-        for(var i = 0; i < ATAID.ReservedCFA.Length; i++)
+        for(int i = 0; i < ATAID.ReservedCFA.Length; i++)
             if(ATAID.ReservedCFA[i] != 0x0000 &&
                ATAID.ReservedCFA[i] != 0xFFFF)
                 sb.AppendFormat("Word {1} (CFA): 0x{0:X4}", ATAID.ReservedCFA[i], 161 + i).AppendLine();
@@ -2235,12 +2234,12 @@ public static class Identify
            ATAID.ReservedWord221 != 0xFFFF)
             sb.AppendFormat("Word 221: 0x{0:X4}", ATAID.ReservedWord221).AppendLine();
 
-        for(var i = 0; i < ATAID.ReservedCEATA224.Length; i++)
+        for(int i = 0; i < ATAID.ReservedCEATA224.Length; i++)
             if(ATAID.ReservedCEATA224[i] != 0x0000 &&
                ATAID.ReservedCEATA224[i] != 0xFFFF)
                 sb.AppendFormat("Word {1} (CE-ATA): 0x{0:X4}", ATAID.ReservedCEATA224[i], 224 + i).AppendLine();
 
-        for(var i = 0; i < ATAID.ReservedWords.Length; i++)
+        for(int i = 0; i < ATAID.ReservedWords.Length; i++)
             if(ATAID.ReservedWords[i] != 0x0000 &&
                ATAID.ReservedWords[i] != 0xFFFF)
                 sb.AppendFormat("Word {1}: 0x{0:X4}", ATAID.ReservedWords[i], 236 + i).AppendLine();

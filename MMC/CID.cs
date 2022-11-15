@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.MMC;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.MMC;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnassignedField.Global")]
@@ -60,7 +60,7 @@ public static partial class Decoders
         if(response?.Length != 4)
             return null;
 
-        var data = new byte[16];
+        byte[] data = new byte[16];
 
         byte[] tmp = BitConverter.GetBytes(response[0]);
         Array.Copy(tmp, 0, data, 0, 4);
@@ -89,7 +89,7 @@ public static partial class Decoders
             CRC                 = (byte)((response[15] & 0xFE) >> 1)
         };
 
-        var tmp = new byte[6];
+        byte[] tmp = new byte[6];
         Array.Copy(response, 3, tmp, 0, 6);
         cid.ProductName = StringHandlers.CToString(tmp);
 
@@ -131,25 +131,25 @@ public static partial class Decoders
         sb.AppendFormat("\tProduct serial number: {0}", cid.ProductSerialNumber).AppendLine();
 
         string year = (cid.ManufacturingDate & 0x0F) switch
-                      {
-                          0  => "1997 or 2013",
-                          1  => "1998 or 2014",
-                          2  => "1999 or 2015",
-                          3  => "2000 or 2016",
-                          4  => "2001 or 2017",
-                          5  => "2002 or 2018",
-                          6  => "2003 or 2019",
-                          7  => "2004 or 2020",
-                          8  => "2005 or 2021",
-                          9  => "2006 or 2022",
-                          10 => "2007 or 2023",
-                          11 => "2008 or 2024",
-                          12 => "2009 or 2025",
-                          13 => "2010",
-                          14 => "2011",
-                          15 => "2012",
-                          _  => ""
-                      };
+        {
+            0  => "1997 or 2013",
+            1  => "1998 or 2014",
+            2  => "1999 or 2015",
+            3  => "2000 or 2016",
+            4  => "2001 or 2017",
+            5  => "2002 or 2018",
+            6  => "2003 or 2019",
+            7  => "2004 or 2020",
+            8  => "2005 or 2021",
+            9  => "2006 or 2022",
+            10 => "2007 or 2023",
+            11 => "2008 or 2024",
+            12 => "2009 or 2025",
+            13 => "2010",
+            14 => "2011",
+            15 => "2012",
+            _  => ""
+        };
 
         sb.AppendFormat("\tDevice manufactured month {0} of {1}", (cid.ManufacturingDate & 0xF0) >> 4, year).
            AppendLine();

@@ -31,10 +31,10 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-namespace Aaru.Decoders.DVD;
-
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+
+namespace Aaru.Decoders.DVD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -360,9 +360,7 @@ public static class CSS_CPRM
 
     enum TypeCode
     {
-        None       = 0,
-        Set        = 1,
-        LastChance = 2,
-        Perm       = 3
+        None = 0, Set = 1, LastChance = 2,
+        Perm = 3
     }
 }

@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.DVD;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.DVD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -108,7 +108,7 @@ public static class PRI
         Array.Copy(response, 37, pri.ManufacturerId3, 0, 6);
         Array.Copy(response, 44, pri.Reserved8, 0, pri.Reserved8.Length);
 
-        var tmp = new byte[18];
+        byte[] tmp = new byte[18];
 
         Array.Copy(response, 21, tmp, 0, 6);
         Array.Copy(response, 29, tmp, 6, 6);
@@ -185,24 +185,24 @@ public static class PRI
             if((decoded.OPCSuggestedCode & 0xF) > 0)
             {
                 double recordingPower = (decoded.OPCSuggestedCode & 0xF) switch
-                                        {
-                                            1  => 7.0,
-                                            2  => 7.5,
-                                            3  => 8.0,
-                                            4  => 8.5,
-                                            5  => 9.0,
-                                            6  => 9.5,
-                                            7  => 10.0,
-                                            8  => 10.5,
-                                            9  => 11.0,
-                                            10 => 11.5,
-                                            11 => 12.0,
-                                            12 => 12.5,
-                                            13 => 13.0,
-                                            14 => 13.5,
-                                            15 => 14.0,
-                                            _  => 0
-                                        };
+                {
+                    1  => 7.0,
+                    2  => 7.5,
+                    3  => 8.0,
+                    4  => 8.5,
+                    5  => 9.0,
+                    6  => 9.5,
+                    7  => 10.0,
+                    8  => 10.5,
+                    9  => 11.0,
+                    10 => 11.5,
+                    11 => 12.0,
+                    12 => 12.5,
+                    13 => 13.0,
+                    14 => 13.5,
+                    15 => 14.0,
+                    _  => 0
+                };
 
                 sb.AppendFormat("Recommended recording power is {0} mW", recordingPower).AppendLine();
             }
@@ -212,24 +212,24 @@ public static class PRI
             if((decoded.WaveLengthCode & 0xF) > 0)
             {
                 double erasingPower = (decoded.WaveLengthCode & 0xF) switch
-                                      {
-                                          1  => 0.38,
-                                          2  => 0.40,
-                                          3  => 0.42,
-                                          4  => 0.44,
-                                          5  => 0.46,
-                                          6  => 0.48,
-                                          7  => 0.50,
-                                          8  => 0.52,
-                                          9  => 0.54,
-                                          10 => 0.56,
-                                          11 => 0.58,
-                                          12 => 0.60,
-                                          13 => 0.62,
-                                          14 => 0.64,
-                                          15 => 0.66,
-                                          _  => 0
-                                      };
+                {
+                    1  => 0.38,
+                    2  => 0.40,
+                    3  => 0.42,
+                    4  => 0.44,
+                    5  => 0.46,
+                    6  => 0.48,
+                    7  => 0.50,
+                    8  => 0.52,
+                    9  => 0.54,
+                    10 => 0.56,
+                    11 => 0.58,
+                    12 => 0.60,
+                    13 => 0.62,
+                    14 => 0.64,
+                    15 => 0.66,
+                    _  => 0
+                };
 
                 sb.AppendFormat("Recommended erasing power ratio is {0} ε", erasingPower).AppendLine();
             }
@@ -241,22 +241,22 @@ public static class PRI
             if((decoded.OPCSuggestedCode & 0xF) > 0)
             {
                 double recordingPower = (decoded.OPCSuggestedCode & 0xF) switch
-                                        {
-                                            1  => 6.0,
-                                            2  => 6.5,
-                                            3  => 7.0,
-                                            4  => 7.5,
-                                            5  => 8.0,
-                                            6  => 8.5,
-                                            7  => 9.0,
-                                            8  => 9.5,
-                                            9  => 10.0,
-                                            10 => 10.5,
-                                            11 => 11.0,
-                                            12 => 11.5,
-                                            13 => 12.0,
-                                            _  => 0
-                                        };
+                {
+                    1  => 6.0,
+                    2  => 6.5,
+                    3  => 7.0,
+                    4  => 7.5,
+                    5  => 8.0,
+                    6  => 8.5,
+                    7  => 9.0,
+                    8  => 9.5,
+                    9  => 10.0,
+                    10 => 10.5,
+                    11 => 11.0,
+                    12 => 11.5,
+                    13 => 12.0,
+                    _  => 0
+                };
 
                 sb.AppendFormat("Recommended recording power is {0} mW", recordingPower).AppendLine();
             }
@@ -264,25 +264,25 @@ public static class PRI
             if(decoded.WaveLengthCode > 0)
             {
                 int wavelength = decoded.WaveLengthCode switch
-                                 {
-                                     1  => 645,
-                                     2  => 646,
-                                     3  => 647,
-                                     4  => 648,
-                                     5  => 649,
-                                     6  => 650,
-                                     7  => 651,
-                                     8  => 652,
-                                     9  => 653,
-                                     10 => 654,
-                                     11 => 655,
-                                     12 => 656,
-                                     13 => 657,
-                                     14 => 658,
-                                     15 => 659,
-                                     16 => 660,
-                                     _  => 0
-                                 };
+                {
+                    1  => 645,
+                    2  => 646,
+                    3  => 647,
+                    4  => 648,
+                    5  => 649,
+                    6  => 650,
+                    7  => 651,
+                    8  => 652,
+                    9  => 653,
+                    10 => 654,
+                    11 => 655,
+                    12 => 656,
+                    13 => 657,
+                    14 => 658,
+                    15 => 659,
+                    16 => 660,
+                    _  => 0
+                };
 
                 sb.AppendFormat("Recommended recording power is {0} mW", wavelength).AppendLine();
             }
@@ -298,7 +298,7 @@ public static class PRI
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string ManufacturerFromPrePit(string manufacturerId)
     {
-        var manufacturer = "";
+        string manufacturer = "";
 
         // Bad thing is that it also includes a media code...
         if(manufacturerId.StartsWith("RITEK", StringComparison.Ordinal))

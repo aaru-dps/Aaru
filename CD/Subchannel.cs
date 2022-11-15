@@ -26,10 +26,10 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.CD;
-
 using System;
 using Aaru.Checksums;
+
+namespace Aaru.Decoders.CD;
 
 public static class Subchannel
 {
@@ -53,17 +53,17 @@ public static class Subchannel
         if((q[0] & 0xF) == 1 ||
            (q[0] & 0xF) == 5)
         {
-            q[1] = (byte)(((q[1] / 10) << 4) + q[1] % 10);
-            q[2] = (byte)(((q[2] / 10) << 4) + q[2] % 10);
-            q[3] = (byte)(((q[3] / 10) << 4) + q[3] % 10);
-            q[4] = (byte)(((q[4] / 10) << 4) + q[4] % 10);
-            q[5] = (byte)(((q[5] / 10) << 4) + q[5] % 10);
-            q[6] = (byte)(((q[6] / 10) << 4) + q[6] % 10);
-            q[7] = (byte)(((q[7] / 10) << 4) + q[7] % 10);
-            q[8] = (byte)(((q[8] / 10) << 4) + q[8] % 10);
+            q[1] = (byte)(((q[1] / 10) << 4) + (q[1] % 10));
+            q[2] = (byte)(((q[2] / 10) << 4) + (q[2] % 10));
+            q[3] = (byte)(((q[3] / 10) << 4) + (q[3] % 10));
+            q[4] = (byte)(((q[4] / 10) << 4) + (q[4] % 10));
+            q[5] = (byte)(((q[5] / 10) << 4) + (q[5] % 10));
+            q[6] = (byte)(((q[6] / 10) << 4) + (q[6] % 10));
+            q[7] = (byte)(((q[7] / 10) << 4) + (q[7] % 10));
+            q[8] = (byte)(((q[8] / 10) << 4) + (q[8] % 10));
         }
 
-        q[9] = (byte)(((q[9] / 10) << 4) + q[9] % 10);
+        q[9] = (byte)(((q[9] / 10) << 4) + (q[9] % 10));
     }
 
     public static void BcdToBinaryQ(byte[] q)
@@ -71,25 +71,25 @@ public static class Subchannel
         if((q[0] & 0xF) == 1 ||
            (q[0] & 0xF) == 5)
         {
-            q[1] = (byte)(q[1] / 16 * 10 + (q[1] & 0x0F));
-            q[2] = (byte)(q[2] / 16 * 10 + (q[2] & 0x0F));
-            q[3] = (byte)(q[3] / 16 * 10 + (q[3] & 0x0F));
-            q[4] = (byte)(q[4] / 16 * 10 + (q[4] & 0x0F));
-            q[5] = (byte)(q[5] / 16 * 10 + (q[5] & 0x0F));
-            q[6] = (byte)(q[6] / 16 * 10 + (q[6] & 0x0F));
-            q[7] = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
-            q[8] = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
+            q[1] = (byte)((q[1] / 16 * 10) + (q[1] & 0x0F));
+            q[2] = (byte)((q[2] / 16 * 10) + (q[2] & 0x0F));
+            q[3] = (byte)((q[3] / 16 * 10) + (q[3] & 0x0F));
+            q[4] = (byte)((q[4] / 16 * 10) + (q[4] & 0x0F));
+            q[5] = (byte)((q[5] / 16 * 10) + (q[5] & 0x0F));
+            q[6] = (byte)((q[6] / 16 * 10) + (q[6] & 0x0F));
+            q[7] = (byte)((q[7] / 16 * 10) + (q[7] & 0x0F));
+            q[8] = (byte)((q[8] / 16 * 10) + (q[8] & 0x0F));
         }
 
-        q[9] = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
+        q[9] = (byte)((q[9] / 16 * 10) + (q[9] & 0x0F));
     }
 
     public static byte[] ConvertQToRaw(byte[] subchannel)
     {
-        var pos    = 0;
-        var subBuf = new byte[subchannel.Length * 6];
+        int    pos    = 0;
+        byte[] subBuf = new byte[subchannel.Length * 6];
 
-        for(var i = 0; i < subchannel.Length; i += 16)
+        for(int i = 0; i < subchannel.Length; i += 16)
         {
             // P
             if((subchannel[i + 15] & 0x80) <= 0)
@@ -133,13 +133,13 @@ public static class Subchannel
 
     public static byte[] Interleave(byte[] subchannel)
     {
-        var subBuf = new byte[subchannel.Length];
+        byte[] subBuf = new byte[subchannel.Length];
 
-        var outPos = 0;
+        int outPos = 0;
 
-        for(var inPos = 0; inPos < subchannel.Length; inPos += 96)
+        for(int inPos = 0; inPos < subchannel.Length; inPos += 96)
         {
-            for(var i = 0; i < 12; i++)
+            for(int i = 0; i < 12; i++)
             {
                 // P
                 subBuf[outPos + 0] += (byte)(subchannel[inPos + i + 0] & 0x80);
@@ -229,12 +229,12 @@ public static class Subchannel
 
     public static byte[] Deinterleave(byte[] subchannel)
     {
-        var subBuf = new byte[subchannel.Length];
-        var inPos  = 0;
+        byte[] subBuf = new byte[subchannel.Length];
+        int    inPos  = 0;
 
-        for(var outPos = 0; outPos < subchannel.Length; outPos += 96)
+        for(int outPos = 0; outPos < subchannel.Length; outPos += 96)
         {
-            for(var i = 0; i < 12; i++)
+            for(int i = 0; i < 12; i++)
             {
                 // P
                 subBuf[outPos + i + 0] += (byte)((subchannel[inPos + 0] & 0x80) >> 0);
@@ -336,26 +336,26 @@ public static class Subchannel
         int    adr     = subBuf[0] & 0x0F;
 
         string controlInfo = ((control & 0xC) / 4) switch
-                             {
-                                 0 => $"stereo audio {((control & 0x01) == 1 ? "with" : "without")} pre-emphasis",
-                                 1 => $"{((control & 0x01) == 1 ? "incremental" : "uninterrupted")} data",
-                                 2 => $"quadraphonic audio {((control & 0x01) == 1 ? "with" : "without")} pre-emphasis",
-                                 _ => $"reserved control value {control & 0x01}"
-                             };
+        {
+            0 => $"stereo audio {((control       & 0x01) == 1 ? "with" : "without")} pre-emphasis",
+            1 => $"{((control                    & 0x01) == 1 ? "incremental" : "uninterrupted")} data",
+            2 => $"quadraphonic audio {((control & 0x01) == 1 ? "with" : "without")} pre-emphasis",
+            _ => $"reserved control value {control & 0x01}"
+        };
 
         string copy = (control & 0x02) > 0 ? "copy permitted" : "copy prohibited";
 
         if(bcd)
             BcdToBinaryQ(subBuf);
 
-        int  qPos = subBuf[3] * 60 * 75 + subBuf[4] * 75 + subBuf[5] - 150;
+        int  qPos = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] - 150;
         byte pmin = subBuf[7];
         byte psec = subBuf[8];
 
-        int  qStart  = subBuf[7] * 60 * 75 + subBuf[8] * 75 + subBuf[9] - 150;
-        int  nextPos = subBuf[3] * 60 * 75 + subBuf[4] * 75 + subBuf[5] - 150;
+        int  qStart  = (subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9] - 150;
+        int  nextPos = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] - 150;
         byte zero    = subBuf[6];
-        int  maxOut  = subBuf[7] * 60 * 75 + subBuf[8] * 75 + subBuf[9] - 150;
+        int  maxOut  = (subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9] - 150;
         bool final   = subBuf[3] == 0xFF && subBuf[4] == 0xFF && subBuf[5] == 0xFF;
 
         BinaryToBcdQ(subBuf);
@@ -379,12 +379,12 @@ public static class Subchannel
                 case 1 when subBuf[2] == 0xA0:
                 {
                     string format = subBuf[8] switch
-                                    {
-                                        0x00 => "CD-DA / CD-ROM",
-                                        0x10 => "CD-i",
-                                        0x20 => "CD-ROM XA",
-                                        _    => $"unknown {subBuf[0]:X2}"
-                                    };
+                    {
+                        0x00 => "CD-DA / CD-ROM",
+                        0x10 => "CD-i",
+                        0x20 => "CD-ROM XA",
+                        _    => $"unknown {subBuf[0]:X2}"
+                    };
 
                     return $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
                                     ? "corrupted pause"
@@ -546,90 +546,87 @@ public static class Subchannel
         area = subBuf[1] == 0xAA ? "Lead-out" : "Program";
 
         return adr switch
-               {
-                   1 => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
-                                   ? "corrupted pause"
-                                   : pause
-                                       ? "pause"
-                                       : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: track {
-                                       subBuf[1]:X} index {subBuf[2]:X} relative position {subBuf[3]:X2}:{subBuf[4]
-                                           :X2}:{subBuf[5]:X2} (LBA {qPos + 150}), absolute position {subBuf[7]
-                                           :X2}:{subBuf[8]:X2}:{subBuf[9]:X2} (LBA {qStart}), Q CRC 0x{subBuf[10]
-                                           :X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
-                                           (rwEmpty ? "empty" : "not empty")}",
-                   2 => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
-                                   ? "corrupted pause"
-                                   : pause
-                                       ? "pause"
-                                       : "not pause")}, {controlInfo}, {copy}, Q mode {adr} MCN: {DecodeMcn(subBuf)
-                                   } frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({
-                                       (crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}",
-                   3 => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
-                                   ? "corrupted pause"
-                                   : pause
-                                       ? "pause"
-                                       : "not pause")}, {controlInfo}, {copy}, Q mode {adr} ISRC: {
-                                       DecodeIsrc(subBuf)} frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]
-                                           :X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")
-                                       }",
-                   _ => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
-                                   ? "corrupted pause"
-                                   : pause
-                                       ? "pause"
-                                       : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]:X2} {subBuf[1]:X2} {
-                                       subBuf[2]:X2} {subBuf[3]:X2} {subBuf[4]:X2} {subBuf[5]:X2} {subBuf[6]:X2} {
-                                           subBuf[7]:X2} {subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{
-                                               subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {
-                                                   (rwEmpty ? "empty" : "not empty")}"
-               };
+        {
+            1 => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                            ? "corrupted pause"
+                            : pause
+                                ? "pause"
+                                : "not pause")}, {controlInfo}, {copy}, Q mode {adr} position: track {subBuf[1]
+                                :X} index {subBuf[2]:X} relative position {subBuf[3]:X2}:{subBuf[4]:X2}:{subBuf[5]
+                                :X2} (LBA {qPos + 150}), absolute position {subBuf[7]:X2}:{subBuf[8]:X2}:{subBuf[9]
+                                :X2} (LBA {qStart}), Q CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")
+                            }), R-W {(rwEmpty ? "empty" : "not empty")}",
+            2 => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                            ? "corrupted pause"
+                            : pause
+                                ? "pause"
+                                : "not pause")}, {controlInfo}, {copy}, Q mode {adr} MCN: {DecodeMcn(subBuf)
+                            } frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")
+                            }), R-W {(rwEmpty ? "empty" : "not empty")}",
+            3 => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                            ? "corrupted pause"
+                            : pause
+                                ? "pause"
+                                : "not pause")}, {controlInfo}, {copy}, Q mode {adr} ISRC: {DecodeIsrc(subBuf)
+                            } frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")
+                            }), R-W {(rwEmpty ? "empty" : "not empty")}",
+            _ => $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause
+                            ? "corrupted pause"
+                            : pause
+                                ? "pause"
+                                : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]:X2} {subBuf[1]:X2} {subBuf[2]
+                                :X2} {subBuf[3]:X2} {subBuf[4]:X2} {subBuf[5]:X2} {subBuf[6]:X2} {subBuf[7]:X2} {
+                                subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({
+                                    (crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}"
+        };
     }
 
-    public static string DecodeIsrc(byte[] q) => $"{_isrcTable[q[1] / 4]}{_isrcTable[(q[1] & 3) * 16 + q[2] / 16]}{
-        _isrcTable[(q[2] & 0xF) * 4 + q[3] / 64]}{_isrcTable[q[3] & 0x3F]}{_isrcTable[q[4] / 4]}{q[5]:X2}{q[6]:X2}{q[7]
-            :X2}{q[8] / 16:X1}";
+    public static string DecodeIsrc(byte[] q) => $"{_isrcTable[q[1] / 4]}{_isrcTable[((q[1] & 3) * 16) + (q[2] / 16)]}{
+        _isrcTable[((q[2] & 0xF) * 4) + (q[3] / 64)]}{_isrcTable[q[3] & 0x3F]}{_isrcTable[q[4] / 4]}{q[5]:X2}{q[6]:X2}{
+            q[7]:X2}{q[8] / 16:X1}";
 
     public static string DecodeMcn(byte[] q) => $"{q[1]:X2}{q[2]:X2}{q[3]:X2}{q[4]:X2}{q[5]:X2}{q[6]:X2}{q[7] >> 4:X}";
 
     public static byte GetIsrcCode(char c) => c switch
-                                              {
-                                                  '0' => 0x00,
-                                                  '1' => 0x01,
-                                                  '2' => 0x02,
-                                                  '3' => 0x03,
-                                                  '4' => 0x04,
-                                                  '5' => 0x05,
-                                                  '6' => 0x06,
-                                                  '7' => 0x07,
-                                                  '8' => 0x08,
-                                                  '9' => 0x09,
-                                                  'A' => 0x11,
-                                                  'B' => 0x12,
-                                                  'C' => 0x13,
-                                                  'D' => 0x14,
-                                                  'E' => 0x15,
-                                                  'F' => 0x16,
-                                                  'G' => 0x17,
-                                                  'H' => 0x18,
-                                                  'I' => 0x19,
-                                                  'J' => 0x1A,
-                                                  'K' => 0x1B,
-                                                  'L' => 0x1C,
-                                                  'M' => 0x1D,
-                                                  'N' => 0x1E,
-                                                  'O' => 0x1F,
-                                                  'P' => 0x20,
-                                                  'Q' => 0x21,
-                                                  'R' => 0x22,
-                                                  'S' => 0x23,
-                                                  'T' => 0x24,
-                                                  'U' => 0x25,
-                                                  'V' => 0x26,
-                                                  'W' => 0x27,
-                                                  'X' => 0x28,
-                                                  'Y' => 0x29,
-                                                  'Z' => 0x2A,
-                                                  _   => 0x00
-                                              };
+    {
+        '0' => 0x00,
+        '1' => 0x01,
+        '2' => 0x02,
+        '3' => 0x03,
+        '4' => 0x04,
+        '5' => 0x05,
+        '6' => 0x06,
+        '7' => 0x07,
+        '8' => 0x08,
+        '9' => 0x09,
+        'A' => 0x11,
+        'B' => 0x12,
+        'C' => 0x13,
+        'D' => 0x14,
+        'E' => 0x15,
+        'F' => 0x16,
+        'G' => 0x17,
+        'H' => 0x18,
+        'I' => 0x19,
+        'J' => 0x1A,
+        'K' => 0x1B,
+        'L' => 0x1C,
+        'M' => 0x1D,
+        'N' => 0x1E,
+        'O' => 0x1F,
+        'P' => 0x20,
+        'Q' => 0x21,
+        'R' => 0x22,
+        'S' => 0x23,
+        'T' => 0x24,
+        'U' => 0x25,
+        'V' => 0x26,
+        'W' => 0x27,
+        'X' => 0x28,
+        'Y' => 0x29,
+        'Z' => 0x2A,
+        _   => 0x00
+    };
 
     public static byte[] Generate(int sector, uint trackSequence, int pregap, int trackStart, byte flags, byte index)
     {
@@ -638,7 +635,7 @@ public static class Subchannel
         if(index == 0)
             index = (byte)(isPregap ? 0 : 1);
 
-        var sub = new byte[96];
+        byte[] sub = new byte[96];
 
         // P
         if(isPregap)
@@ -658,7 +655,7 @@ public static class Subchannel
         }
 
         // Q
-        var q = new byte[12];
+        byte[] q = new byte[12];
 
         q[0] = (byte)((flags << 4) + 1);
         q[1] = (byte)trackSequence;
@@ -674,12 +671,12 @@ public static class Subchannel
         sector += 150;
 
         int min   = relative / 60 / 75;
-        int sec   = relative / 75 - min * 60;
-        int frame = relative      - min * 60 * 75 - sec * 75;
+        int sec   = (relative / 75) - (min * 60);
+        int frame = relative        - (min * 60 * 75) - (sec * 75);
 
         int amin   = sector / 60 / 75;
-        int asec   = sector / 75 - amin * 60;
-        int aframe = sector      - amin * 60 * 75 - asec * 75;
+        int asec   = (sector / 75) - (amin * 60);
+        int aframe = sector        - (amin * 60 * 75) - (asec * 75);
 
         q[3] = (byte)min;
         q[4] = (byte)sec;
@@ -689,16 +686,16 @@ public static class Subchannel
         q[8] = (byte)asec;
         q[9] = (byte)aframe;
 
-        q[1] = (byte)(((q[1] / 10) << 4) + q[1] % 10);
-        q[2] = (byte)(((q[2] / 10) << 4) + q[2] % 10);
-        q[3] = (byte)(((q[3] / 10) << 4) + q[3] % 10);
-        q[4] = (byte)(((q[4] / 10) << 4) + q[4] % 10);
-        q[5] = (byte)(((q[5] / 10) << 4) + q[5] % 10);
-        q[6] = (byte)(((q[6] / 10) << 4) + q[6] % 10);
-        q[7] = (byte)(((q[7] / 10) << 4) + q[7] % 10);
-        q[8] = (byte)(((q[8] / 10) << 4) + q[8] % 10);
+        q[1] = (byte)(((q[1] / 10) << 4) + (q[1] % 10));
+        q[2] = (byte)(((q[2] / 10) << 4) + (q[2] % 10));
+        q[3] = (byte)(((q[3] / 10) << 4) + (q[3] % 10));
+        q[4] = (byte)(((q[4] / 10) << 4) + (q[4] % 10));
+        q[5] = (byte)(((q[5] / 10) << 4) + (q[5] % 10));
+        q[6] = (byte)(((q[6] / 10) << 4) + (q[6] % 10));
+        q[7] = (byte)(((q[7] / 10) << 4) + (q[7] % 10));
+        q[8] = (byte)(((q[8] / 10) << 4) + (q[8] % 10));
 
-        q[9] = (byte)(((q[9] / 10) << 4) + q[9] % 10);
+        q[9] = (byte)(((q[9] / 10) << 4) + (q[9] % 10));
 
         CRC16CCITTContext.Data(q, 10, out byte[] qCrc);
         q[10] = qCrc[0];

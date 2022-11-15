@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.CD;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Decoders.CD;
 
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public enum TocAdr : byte

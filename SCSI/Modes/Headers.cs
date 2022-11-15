@@ -30,73 +30,64 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI;
-
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+
+namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
     public static string GetMediumTypeDescription(MediumTypes type) => type switch
-                                                                       {
-                                                                           MediumTypes.ECMA54 =>
-                                                                               "ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side",
-                                                                           MediumTypes.ECMA59 =>
-                                                                               "ECMA-59 & ANSI X3.121-1984: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on Both Sides",
-                                                                           MediumTypes.ECMA69 =>
-                                                                               "ECMA-69: 200 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides",
-                                                                           MediumTypes.ECMA66 =>
-                                                                               "ECMA-66: 130 mm Flexible Disk Cartridge using Two-Frequency Recording at 7958 ftprad on One Side",
-                                                                           MediumTypes.ECMA70 =>
-                                                                               "ECMA-70 & ANSI X3.125-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 1,9 Tracks per mm",
-                                                                           MediumTypes.ECMA78 =>
-                                                                               "ECMA-78 & ANSI X3.126-1986: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 3,8 Tracks per mm",
-                                                                           MediumTypes.ECMA99 =>
-                                                                               "ECMA-99 & ISO 8630-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides; 3,8 Tracks per mm",
-                                                                           MediumTypes.ECMA100 =>
-                                                                               "ECMA-100 & ANSI X3.137: 90 mm Flexible Disk Cartridge using MFM Recording at 7859 ftprad on Both Sides; 5,3 Tracks per mm",
+    {
+        MediumTypes.ECMA54 =>
+            "ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side",
+        MediumTypes.ECMA59 =>
+            "ECMA-59 & ANSI X3.121-1984: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on Both Sides",
+        MediumTypes.ECMA69 =>
+            "ECMA-69: 200 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides",
+        MediumTypes.ECMA66 =>
+            "ECMA-66: 130 mm Flexible Disk Cartridge using Two-Frequency Recording at 7958 ftprad on One Side",
+        MediumTypes.ECMA70 =>
+            "ECMA-70 & ANSI X3.125-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 1,9 Tracks per mm",
+        MediumTypes.ECMA78 =>
+            "ECMA-78 & ANSI X3.126-1986: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 3,8 Tracks per mm",
+        MediumTypes.ECMA99 =>
+            "ECMA-99 & ISO 8630-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides; 3,8 Tracks per mm",
+        MediumTypes.ECMA100 =>
+            "ECMA-100 & ANSI X3.137: 90 mm Flexible Disk Cartridge using MFM Recording at 7859 ftprad on Both Sides; 5,3 Tracks per mm",
 
-                                                                           // Most probably they will never appear, but magneto-opticals use these codes
-                                                                           /*
-            case MediumTypes.Unspecified_SS:
-                return "Unspecified single sided flexible disk";
-            case MediumTypes.Unspecified_DS:
-                return "Unspecified double sided flexible disk";
-            */
-                                                                           MediumTypes.X3_73 =>
-                                                                               "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side",
-                                                                           MediumTypes.X3_73_DS =>
-                                                                               "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides",
-                                                                           MediumTypes.X3_82 =>
-                                                                               "ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side",
-                                                                           MediumTypes.Type3Floppy =>
-                                                                               "3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)",
-                                                                           MediumTypes.HDFloppy =>
-                                                                               "3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)",
-                                                                           MediumTypes.ReadOnly =>
-                                                                               "a Read-only optical",
-                                                                           MediumTypes.WORM =>
-                                                                               "a Write-once Read-many optical",
-                                                                           MediumTypes.Erasable => "a Erasable optical",
-                                                                           MediumTypes.RO_WORM =>
-                                                                               "a combination of read-only and write-once optical",
+        // Most probably they will never appear, but magneto-opticals use these codes
+        /*
+case MediumTypes.Unspecified_SS:
+return "Unspecified single sided flexible disk";
+case MediumTypes.Unspecified_DS:
+return "Unspecified double sided flexible disk";
+*/
+        MediumTypes.X3_73       => "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side",
+        MediumTypes.X3_73_DS    => "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides",
+        MediumTypes.X3_82       => "ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side",
+        MediumTypes.Type3Floppy => "3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)",
+        MediumTypes.HDFloppy    => "3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)",
+        MediumTypes.ReadOnly    => "a Read-only optical",
+        MediumTypes.WORM        => "a Write-once Read-many optical",
+        MediumTypes.Erasable    => "a Erasable optical",
+        MediumTypes.RO_WORM     => "a combination of read-only and write-once optical",
 
-                                                                           // These magneto-opticals were never manufactured
-                                                                           /*
-            case MediumTypes.RO_RW:
-                return "a combination of read-only and erasable optical";
-                break;
-            case MediumTypes.WORM_RW:
-                return "a combination of write-once and erasable optical";
-            */
-                                                                           MediumTypes.DOW =>
-                                                                               "a direct-overwrite optical",
-                                                                           MediumTypes.HiMD => "a Sony Hi-MD disc",
-                                                                           _ => $"Unknown medium type 0x{(byte)type:X2}"
-                                                                       };
+        // These magneto-opticals were never manufactured
+        /*
+case MediumTypes.RO_RW:
+return "a combination of read-only and erasable optical";
+break;
+case MediumTypes.WORM_RW:
+return "a combination of write-once and erasable optical";
+*/
+        MediumTypes.DOW  => "a direct-overwrite optical",
+        MediumTypes.HiMD => "a Sony Hi-MD disc",
+        _                => $"Unknown medium type 0x{(byte)type:X2}"
+    };
 
     public static string PrettifyModeHeader(ModeHeader? header, PeripheralDeviceTypes deviceType)
     {
@@ -124,7 +115,7 @@ public static partial class Modes
                 if(header.Value.BlockDescriptors != null)
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        var density = "";
+                        string density = "";
 
                         switch(descriptor.Density)
                         {
@@ -199,74 +190,74 @@ public static partial class Modes
                     sb.AppendLine("\tMedium is write protected");
 
                 string medium = header.Value.MediumType switch
-                                {
-                                    MediumTypes.Default => "undefined",
-                                    MediumTypes.Tape12 => "6,3 mm tape with 12 tracks at 394 ftpmm or DC-9250",
-                                    MediumTypes.Tape24 => "6,3 mm tape with 24 tracks at 394 ftpmm or MLR1-26GBSL",
-                                    MediumTypes.LTOWORM => "LTO Ultrium WORM or cleaning cartridge",
-                                    MediumTypes.LTO => "LTO Ultrium",
-                                    MediumTypes.LTO2 => "LTO Ultrium-2",
-                                    MediumTypes.DC2900SL => "DC-2900SL",
-                                    MediumTypes.MLR1 => "MLR1-26GB or DDS-3",
-                                    MediumTypes.DC9200 => "DC-9200 or DDS-4",
-                                    MediumTypes.DAT72 => "DAT-72",
-                                    MediumTypes.LTO3 => "LTO Ultrium-3",
-                                    MediumTypes.LTO3WORM => "LTO Ultrium-3 WORM",
-                                    MediumTypes.DDSCleaning => "DDS cleaning cartridge",
-                                    MediumTypes.SLR32 => "SLR-32",
-                                    MediumTypes.SLRtape50 => "SLRtape-50",
-                                    MediumTypes.LTO4 => "LTO Ultrium-4",
-                                    MediumTypes.LTO4WORM => "LTO Ultrium-4 WORM",
-                                    MediumTypes.SLRtape50SL => "SLRtape-50 SL",
-                                    MediumTypes.SLR32SL => "SLR-32SL",
-                                    MediumTypes.SLR5 => "SLR-5",
-                                    MediumTypes.SLR5SL => "SLR-5SL",
-                                    MediumTypes.LTO5 => "LTO Ultrium-5",
-                                    MediumTypes.LTO5WORM => "LTO Ultrium-5 WORM",
-                                    MediumTypes.SLRtape7 => "SLRtape-7",
-                                    MediumTypes.SLRtape7SL => "SLRtape-7 SL",
-                                    MediumTypes.SLRtape24 => "SLRtape-24",
-                                    MediumTypes.SLRtape24SL => "SLRtape-24 SL",
-                                    MediumTypes.LTO6 => "LTO Ultrium-6",
-                                    MediumTypes.LTO6WORM => "LTO Ultrium-6 WORM",
-                                    MediumTypes.SLRtape140 => "SLRtape-140",
-                                    MediumTypes.SLRtape40 => "SLRtape-40",
-                                    MediumTypes.SLRtape60 => "SLRtape-60 or SLRtape-75",
-                                    MediumTypes.SLRtape100 => "SLRtape-100",
-                                    MediumTypes.SLR40_60_100 => "SLR-40, SLR-60 or SLR-100",
-                                    MediumTypes.LTO7 => "LTO Ultrium-7",
-                                    MediumTypes.LTO7WORM => "LTO Ultrium-7 WORM",
-                                    MediumTypes.LTOCD => "LTO Ultrium",
-                                    MediumTypes.Exatape15m => "Exatape 15m, IBM MagStar or VXA",
-                                    MediumTypes.CT1 => "CompactTape I, Exatape 28m, CompactTape II, VXA-2 or VXA-3",
-                                    MediumTypes.Exatape54m => "Exatape 54m or DLTtape III",
-                                    MediumTypes.Exatape80m => "Exatape 80m or DLTtape IIIxt",
-                                    MediumTypes.Exatape106m => "Exatape 106m, DLTtape IV or Travan 5",
-                                    MediumTypes.Exatape106mXL => "Exatape 160m XL or Super DLTtape I",
-                                    MediumTypes.SDLT2 => "Super DLTtape II",
-                                    MediumTypes.VStapeI => "VStape I",
-                                    MediumTypes.DLTtapeS4 => "DLTtape S4",
-                                    MediumTypes.Travan7 => "Travan 7",
-                                    MediumTypes.Exatape22m => "Exatape 22m",
-                                    MediumTypes.Exatape40m => "Exatape 40m",
-                                    MediumTypes.Exatape76m => "Exatape 76m",
-                                    MediumTypes.Exatape112m => "Exatape 112m",
-                                    MediumTypes.Exatape22mAME => "Exatape 22m AME",
-                                    MediumTypes.Exatape170m => "Exatape 170m",
-                                    MediumTypes.Exatape125m => "Exatape 125m",
-                                    MediumTypes.Exatape45m => "Exatape 45m",
-                                    MediumTypes.Exatape225m => "Exatape 225m",
-                                    MediumTypes.Exatape150m => "Exatape 150m",
-                                    MediumTypes.Exatape75m => "Exatape 75m",
-                                    _ => $"unknown medium type 0x{(byte)header.Value.MediumType:X2}"
-                                };
+                {
+                    MediumTypes.Default       => "undefined",
+                    MediumTypes.Tape12        => "6,3 mm tape with 12 tracks at 394 ftpmm or DC-9250",
+                    MediumTypes.Tape24        => "6,3 mm tape with 24 tracks at 394 ftpmm or MLR1-26GBSL",
+                    MediumTypes.LTOWORM       => "LTO Ultrium WORM or cleaning cartridge",
+                    MediumTypes.LTO           => "LTO Ultrium",
+                    MediumTypes.LTO2          => "LTO Ultrium-2",
+                    MediumTypes.DC2900SL      => "DC-2900SL",
+                    MediumTypes.MLR1          => "MLR1-26GB or DDS-3",
+                    MediumTypes.DC9200        => "DC-9200 or DDS-4",
+                    MediumTypes.DAT72         => "DAT-72",
+                    MediumTypes.LTO3          => "LTO Ultrium-3",
+                    MediumTypes.LTO3WORM      => "LTO Ultrium-3 WORM",
+                    MediumTypes.DDSCleaning   => "DDS cleaning cartridge",
+                    MediumTypes.SLR32         => "SLR-32",
+                    MediumTypes.SLRtape50     => "SLRtape-50",
+                    MediumTypes.LTO4          => "LTO Ultrium-4",
+                    MediumTypes.LTO4WORM      => "LTO Ultrium-4 WORM",
+                    MediumTypes.SLRtape50SL   => "SLRtape-50 SL",
+                    MediumTypes.SLR32SL       => "SLR-32SL",
+                    MediumTypes.SLR5          => "SLR-5",
+                    MediumTypes.SLR5SL        => "SLR-5SL",
+                    MediumTypes.LTO5          => "LTO Ultrium-5",
+                    MediumTypes.LTO5WORM      => "LTO Ultrium-5 WORM",
+                    MediumTypes.SLRtape7      => "SLRtape-7",
+                    MediumTypes.SLRtape7SL    => "SLRtape-7 SL",
+                    MediumTypes.SLRtape24     => "SLRtape-24",
+                    MediumTypes.SLRtape24SL   => "SLRtape-24 SL",
+                    MediumTypes.LTO6          => "LTO Ultrium-6",
+                    MediumTypes.LTO6WORM      => "LTO Ultrium-6 WORM",
+                    MediumTypes.SLRtape140    => "SLRtape-140",
+                    MediumTypes.SLRtape40     => "SLRtape-40",
+                    MediumTypes.SLRtape60     => "SLRtape-60 or SLRtape-75",
+                    MediumTypes.SLRtape100    => "SLRtape-100",
+                    MediumTypes.SLR40_60_100  => "SLR-40, SLR-60 or SLR-100",
+                    MediumTypes.LTO7          => "LTO Ultrium-7",
+                    MediumTypes.LTO7WORM      => "LTO Ultrium-7 WORM",
+                    MediumTypes.LTOCD         => "LTO Ultrium",
+                    MediumTypes.Exatape15m    => "Exatape 15m, IBM MagStar or VXA",
+                    MediumTypes.CT1           => "CompactTape I, Exatape 28m, CompactTape II, VXA-2 or VXA-3",
+                    MediumTypes.Exatape54m    => "Exatape 54m or DLTtape III",
+                    MediumTypes.Exatape80m    => "Exatape 80m or DLTtape IIIxt",
+                    MediumTypes.Exatape106m   => "Exatape 106m, DLTtape IV or Travan 5",
+                    MediumTypes.Exatape106mXL => "Exatape 160m XL or Super DLTtape I",
+                    MediumTypes.SDLT2         => "Super DLTtape II",
+                    MediumTypes.VStapeI       => "VStape I",
+                    MediumTypes.DLTtapeS4     => "DLTtape S4",
+                    MediumTypes.Travan7       => "Travan 7",
+                    MediumTypes.Exatape22m    => "Exatape 22m",
+                    MediumTypes.Exatape40m    => "Exatape 40m",
+                    MediumTypes.Exatape76m    => "Exatape 76m",
+                    MediumTypes.Exatape112m   => "Exatape 112m",
+                    MediumTypes.Exatape22mAME => "Exatape 22m AME",
+                    MediumTypes.Exatape170m   => "Exatape 170m",
+                    MediumTypes.Exatape125m   => "Exatape 125m",
+                    MediumTypes.Exatape45m    => "Exatape 45m",
+                    MediumTypes.Exatape225m   => "Exatape 225m",
+                    MediumTypes.Exatape150m   => "Exatape 150m",
+                    MediumTypes.Exatape75m    => "Exatape 75m",
+                    _                         => $"unknown medium type 0x{(byte)header.Value.MediumType:X2}"
+                };
 
                 sb.AppendFormat("\tMedium is {0}", medium).AppendLine();
 
                 if(header.Value.BlockDescriptors != null)
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        var density = "";
+                        string density = "";
 
                         switch(header.Value.MediumType)
                         {
@@ -466,65 +457,65 @@ public static partial class Modes
                             case MediumTypes.LTOWORM:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "LTO Ultrium cleaning cartridge",
-                                              DensityType.LTO3 => "LTO Ultrium-3 WORM",
-                                              DensityType.LTO4 => "LTO Ultrium-4 WORM",
-                                              DensityType.LTO5 => "LTO Ultrium-5 WORM",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "LTO Ultrium cleaning cartridge",
+                                    DensityType.LTO3    => "LTO Ultrium-3 WORM",
+                                    DensityType.LTO4    => "LTO Ultrium-4 WORM",
+                                    DensityType.LTO5    => "LTO Ultrium-5 WORM",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.LTO:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.LTO1 => "LTO Ultrium",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.LTO1 => "LTO Ultrium",
+                                    _                => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.LTO2:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.LTO2 => "LTO Ultrium-2",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.LTO2 => "LTO Ultrium-2",
+                                    _                => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.DDS3:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "MLR1-26GB",
-                                              DensityType.DDS3 => "DDS-3",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "MLR1-26GB",
+                                    DensityType.DDS3    => "DDS-3",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.DDS4:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "DC-9200",
-                                              DensityType.DDS4 => "DDS-4",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "DC-9200",
+                                    DensityType.DDS4    => "DDS-4",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.DAT72:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.DAT72 => "DAT-72",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.DAT72 => "DAT-72",
+                                    _                 => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
@@ -532,20 +523,20 @@ public static partial class Modes
                             case MediumTypes.LTO3WORM:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.LTO3 => "LTO Ultrium-3",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.LTO3 => "LTO Ultrium-3",
+                                    _                => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.DDSCleaning:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "DDS cleaning cartridge",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "DDS cleaning cartridge",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
@@ -553,10 +544,10 @@ public static partial class Modes
                             case MediumTypes.LTO4WORM:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.LTO4 => "LTO Ultrium-4",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.LTO4 => "LTO Ultrium-4",
+                                    _                => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
@@ -564,10 +555,10 @@ public static partial class Modes
                             case MediumTypes.LTO5WORM:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.LTO5 => "LTO Ultrium-5",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.LTO5 => "LTO Ultrium-5",
+                                    _                => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
@@ -575,10 +566,10 @@ public static partial class Modes
                             case MediumTypes.LTO6WORM:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.LTO6 => "LTO Ultrium-6",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.LTO6 => "LTO Ultrium-6",
+                                    _                => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
@@ -586,60 +577,60 @@ public static partial class Modes
                             case MediumTypes.LTO7WORM:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.LTO7 => "LTO Ultrium-7",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.LTO7 => "LTO Ultrium-7",
+                                    _                => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.LTOCD:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.LTO2 => "LTO Ultrium-2 in CD emulation mode",
-                                              DensityType.LTO3 => "LTO Ultrium-3 in CD emulation mode",
-                                              DensityType.LTO4 => "LTO Ultrium-4 in CD emulation mode",
-                                              DensityType.LTO5 => "LTO Ultrium-5 in CD emulation mode",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.LTO2 => "LTO Ultrium-2 in CD emulation mode",
+                                    DensityType.LTO3 => "LTO Ultrium-3 in CD emulation mode",
+                                    DensityType.LTO4 => "LTO Ultrium-4 in CD emulation mode",
+                                    DensityType.LTO5 => "LTO Ultrium-5 in CD emulation mode",
+                                    _                => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.Exatape15m:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Ex8200 => "EXB-8200",
-                                              DensityType.Ex8200c => "EXB-8200 compressed",
-                                              DensityType.Ex8500 => "EXB-8500",
-                                              DensityType.Ex8500c => "EXB-8500 compressed",
-                                              DensityType.Mammoth => "Mammoth",
-                                              DensityType.IBM3590 => "IBM 3590",
-                                              DensityType.IBM3590E => "IBM 3590E",
-                                              DensityType.VXA1 => "VXA-1",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Ex8200   => "EXB-8200",
+                                    DensityType.Ex8200c  => "EXB-8200 compressed",
+                                    DensityType.Ex8500   => "EXB-8500",
+                                    DensityType.Ex8500c  => "EXB-8500 compressed",
+                                    DensityType.Mammoth  => "Mammoth",
+                                    DensityType.IBM3590  => "IBM 3590",
+                                    DensityType.IBM3590E => "IBM 3590E",
+                                    DensityType.VXA1     => "VXA-1",
+                                    _                    => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.Exatape28m:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Ex8200 => "EXB-8200",
-                                              DensityType.Ex8200c => "EXB-8200 compressed",
-                                              DensityType.Ex8500 => "EXB-8500",
-                                              DensityType.Ex8500c => "EXB-8500 compressed",
-                                              DensityType.Mammoth => "Mammoth",
-                                              DensityType.CT1 => "CompactTape I",
-                                              DensityType.CT2 => "CompactTape II",
-                                              DensityType.IBM3590 => "IBM 3590 extended",
-                                              DensityType.IBM3590E => "IBM 3590E extended",
-                                              DensityType.VXA2 => "VXA-2",
-                                              DensityType.VXA3 => "VXA-3",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Ex8200   => "EXB-8200",
+                                    DensityType.Ex8200c  => "EXB-8200 compressed",
+                                    DensityType.Ex8500   => "EXB-8500",
+                                    DensityType.Ex8500c  => "EXB-8500 compressed",
+                                    DensityType.Mammoth  => "Mammoth",
+                                    DensityType.CT1      => "CompactTape I",
+                                    DensityType.CT2      => "CompactTape II",
+                                    DensityType.IBM3590  => "IBM 3590 extended",
+                                    DensityType.IBM3590E => "IBM 3590E extended",
+                                    DensityType.VXA2     => "VXA-2",
+                                    DensityType.VXA3     => "VXA-3",
+                                    _                    => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
@@ -855,10 +846,10 @@ public static partial class Modes
                             case MediumTypes.SDLT2:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.SDLT2 => "Super DLTtape II",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.SDLT2 => "Super DLTtape II",
+                                    _                 => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
@@ -886,65 +877,65 @@ public static partial class Modes
                             case MediumTypes.DLTtapeS4:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.DLTS4 => "DLTtape S4",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.DLTS4 => "DLTtape S4",
+                                    _                 => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.Exatape22m:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Ex8200 => "EXB-8200",
-                                              DensityType.Ex8200c => "EXB-8200 compressed",
-                                              DensityType.Ex8500 => "EXB-8500",
-                                              DensityType.Ex8500c => "EXB-8500 compressed",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Ex8200  => "EXB-8200",
+                                    DensityType.Ex8200c => "EXB-8200 compressed",
+                                    DensityType.Ex8500  => "EXB-8500",
+                                    DensityType.Ex8500c => "EXB-8500 compressed",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.Exatape40m:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Ex8200 => "EXB-8200",
-                                              DensityType.Ex8200c => "EXB-8200 compressed",
-                                              DensityType.Ex8500 => "EXB-8500",
-                                              DensityType.Ex8500c => "EXB-8500 compressed",
-                                              DensityType.Mammoth => "Mammoth",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Ex8200  => "EXB-8200",
+                                    DensityType.Ex8200c => "EXB-8200 compressed",
+                                    DensityType.Ex8500  => "EXB-8500",
+                                    DensityType.Ex8500c => "EXB-8500 compressed",
+                                    DensityType.Mammoth => "Mammoth",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.Exatape76m:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Ex8200 => "EXB-8200",
-                                              DensityType.Ex8200c => "EXB-8200 compressed",
-                                              DensityType.Ex8500 => "EXB-8500",
-                                              DensityType.Ex8500c => "EXB-8500 compressed",
-                                              DensityType.Mammoth => "Mammoth",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Ex8200  => "EXB-8200",
+                                    DensityType.Ex8200c => "EXB-8200 compressed",
+                                    DensityType.Ex8500  => "EXB-8500",
+                                    DensityType.Ex8500c => "EXB-8500 compressed",
+                                    DensityType.Mammoth => "Mammoth",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.Exatape112m:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Ex8200 => "EXB-8200",
-                                              DensityType.Ex8200c => "EXB-8200 compressed",
-                                              DensityType.Ex8500 => "EXB-8500",
-                                              DensityType.Ex8500c => "EXB-8500 compressed",
-                                              DensityType.Mammoth => "Mammoth",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Ex8200  => "EXB-8200",
+                                    DensityType.Ex8200c => "EXB-8200 compressed",
+                                    DensityType.Ex8500  => "EXB-8500",
+                                    DensityType.Ex8500c => "EXB-8500 compressed",
+                                    DensityType.Mammoth => "Mammoth",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
@@ -957,191 +948,191 @@ public static partial class Modes
                             case MediumTypes.Exatape75m:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Mammoth => "Mammoth",
-                                              DensityType.Mammoth2 => "Mammoth-2",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Mammoth  => "Mammoth",
+                                    DensityType.Mammoth2 => "Mammoth-2",
+                                    _                    => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.DC2900SL:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "DC-2900SL",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "DC-2900SL",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.DC9250:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "DC-9250",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "DC-9250",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLR32:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLR-32",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLR-32",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.MLR1SL:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "MRL1-26GBSL",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "MRL1-26GBSL",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLRtape50:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLRtape-50",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLRtape-50",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLRtape50SL:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLRtape-50 SL",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLRtape-50 SL",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLR32SL:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLR-32 SL",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLR-32 SL",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLR5:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLR-5",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLR-5",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLR5SL:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLR-5 SL",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLR-5 SL",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLRtape7:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLRtape-7",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLRtape-7",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLRtape7SL:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLRtape-7 SL",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLRtape-7 SL",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLRtape24:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLRtape-24",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLRtape-24",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLRtape24SL:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLRtape-24 SL",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLRtape-24 SL",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLRtape140:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLRtape-140",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLRtape-140",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLRtape40:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLRtape-40",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLRtape-40",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLRtape60:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLRtape-60 or SLRtape-75",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLRtape-60 or SLRtape-75",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLRtape100:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLRtape-100",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLRtape-100",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
                             case MediumTypes.SLR40_60_100:
                             {
                                 density = descriptor.Density switch
-                                          {
-                                              DensityType.Default => "SLR40, SLR60 or SLR100",
-                                              _ => $"unknown density code 0x{(byte)descriptor.Density:X2}"
-                                          };
+                                {
+                                    DensityType.Default => "SLR40, SLR60 or SLR100",
+                                    _                   => $"unknown density code 0x{(byte)descriptor.Density:X2}"
+                                };
                             }
 
                                 break;
@@ -1263,7 +1254,7 @@ public static partial class Modes
                 if(header.Value.BlockDescriptors != null)
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        var density = "";
+                        string density = "";
 
                         switch(descriptor.Density)
                         {
@@ -1507,7 +1498,7 @@ public static partial class Modes
                 if(header.Value.BlockDescriptors != null)
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        var density = "";
+                        string density = "";
 
                         switch(descriptor.Density)
                         {

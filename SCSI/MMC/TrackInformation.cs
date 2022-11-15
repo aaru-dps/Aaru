@@ -26,9 +26,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI.MMC;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Decoders.SCSI.MMC;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class TrackInformation

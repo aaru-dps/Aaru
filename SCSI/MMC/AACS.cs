@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI.MMC;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.SCSI.MMC;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -305,12 +305,12 @@ public static class AACS
 
         decoded.Extents = new AACSLBAExtent[(AACSLBAExtsResponse.Length - 4) / 16];
 
-        for(var i = 0; i < (AACSLBAExtsResponse.Length - 4) / 16; i++)
+        for(int i = 0; i < (AACSLBAExtsResponse.Length - 4) / 16; i++)
         {
             decoded.Extents[i].Reserved = new byte[8];
-            Array.Copy(AACSLBAExtsResponse, 0 + i * 16 + 4, decoded.Extents[i].Reserved, 0, 8);
-            decoded.Extents[i].StartLBA = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 8  + i * 16 + 4);
-            decoded.Extents[i].LBACount = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 12 + i * 16 + 4);
+            Array.Copy(AACSLBAExtsResponse, 0 + (i * 16) + 4, decoded.Extents[i].Reserved, 0, 8);
+            decoded.Extents[i].StartLBA = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 8  + (i * 16) + 4);
+            decoded.Extents[i].LBACount = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 12 + (i * 16) + 4);
         }
 
         return decoded;
@@ -331,7 +331,7 @@ public static class AACS
         else
             sb.AppendFormat("Drive can store {0} LBA Extents", response.MaxLBAExtents).AppendLine();
 
-        for(var i = 0; i < response.Extents.Length; i++)
+        for(int i = 0; i < response.Extents.Length; i++)
             sb.AppendFormat("LBA Extent {0} starts at LBA {1} and goes for {2} sectors", i,
                             response.Extents[i].StartLBA, response.Extents[i].LBACount);
 

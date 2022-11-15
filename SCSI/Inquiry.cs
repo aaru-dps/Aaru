@@ -30,14 +30,14 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.SCSI;
 
 // Information from the following standards:
 // T9/375-D revision 10l
@@ -2429,11 +2429,10 @@ public static class Inquiry
             sb.AppendLine("============================================================");
         }
 
-        if(response.VendorSpecific != null &&
-           response.IsHiMD)
+        if(response is { VendorSpecific: {}, IsHiMD: true })
             if(response.KreonPresent)
             {
-                var vendor = new byte[7];
+                byte[] vendor = new byte[7];
                 Array.Copy(response.VendorSpecific, 11, vendor, 0, 7);
                 sb.AppendLine("Vendor-specific bytes 47 to 55");
                 sb.AppendLine("============================================================");

@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.CD;
-
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.CD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -90,22 +90,22 @@ public static class FullTOC
             return null;
         }
 
-        for(var i = 0; i < (decoded.DataLength - 2) / 11; i++)
+        for(int i = 0; i < (decoded.DataLength - 2) / 11; i++)
         {
-            decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + i * 11 + 4];
-            decoded.TrackDescriptors[i].ADR           = (byte)((CDFullTOCResponse[1 + i * 11 + 4] & 0xF0) >> 4);
-            decoded.TrackDescriptors[i].CONTROL       = (byte)(CDFullTOCResponse[1 + i * 11 + 4] & 0x0F);
-            decoded.TrackDescriptors[i].TNO           = CDFullTOCResponse[2 + i * 11 + 4];
-            decoded.TrackDescriptors[i].POINT         = CDFullTOCResponse[3 + i * 11 + 4];
-            decoded.TrackDescriptors[i].Min           = CDFullTOCResponse[4 + i * 11 + 4];
-            decoded.TrackDescriptors[i].Sec           = CDFullTOCResponse[5 + i * 11 + 4];
-            decoded.TrackDescriptors[i].Frame         = CDFullTOCResponse[6 + i * 11 + 4];
-            decoded.TrackDescriptors[i].Zero          = CDFullTOCResponse[7 + i * 11 + 4];
-            decoded.TrackDescriptors[i].HOUR          = (byte)((CDFullTOCResponse[7 + i * 11 + 4] & 0xF0) >> 4);
-            decoded.TrackDescriptors[i].PHOUR         = (byte)(CDFullTOCResponse[7 + i * 11 + 4] & 0x0F);
-            decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8  + i * 11 + 4];
-            decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9  + i * 11 + 4];
-            decoded.TrackDescriptors[i].PFRAME        = CDFullTOCResponse[10 + i * 11 + 4];
+            decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + (i * 11) + 4];
+            decoded.TrackDescriptors[i].ADR           = (byte)((CDFullTOCResponse[1 + (i * 11) + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].CONTROL       = (byte)(CDFullTOCResponse[1 + (i * 11) + 4] & 0x0F);
+            decoded.TrackDescriptors[i].TNO           = CDFullTOCResponse[2 + (i * 11) + 4];
+            decoded.TrackDescriptors[i].POINT         = CDFullTOCResponse[3 + (i * 11) + 4];
+            decoded.TrackDescriptors[i].Min           = CDFullTOCResponse[4 + (i * 11) + 4];
+            decoded.TrackDescriptors[i].Sec           = CDFullTOCResponse[5 + (i * 11) + 4];
+            decoded.TrackDescriptors[i].Frame         = CDFullTOCResponse[6 + (i * 11) + 4];
+            decoded.TrackDescriptors[i].Zero          = CDFullTOCResponse[7 + (i * 11) + 4];
+            decoded.TrackDescriptors[i].HOUR          = (byte)((CDFullTOCResponse[7 + (i * 11) + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].PHOUR         = (byte)(CDFullTOCResponse[7 + (i * 11) + 4] & 0x0F);
+            decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8  + (i * 11) + 4];
+            decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9  + (i * 11) + 4];
+            decoded.TrackDescriptors[i].PFRAME        = CDFullTOCResponse[10 + (i * 11) + 4];
         }
 
         return decoded;
@@ -120,14 +120,14 @@ public static class FullTOC
 
         var sb = new StringBuilder();
 
-        var lastSession = 0;
+        int lastSession = 0;
 
         sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
         sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
 
         foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
-            if((descriptor.CONTROL & 0x08) == 0x08                                                      ||
-               descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6 ||
+            if((descriptor.CONTROL & 0x08) == 0x08                                                        ||
+               (descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6) ||
                descriptor.TNO != 0)
             {
                 sb.AppendLine("Unknown TOC entry format, printing values as-is");
@@ -340,7 +340,7 @@ public static class FullTOC
                                                         descriptor.POINT).AppendLine();
                                     else
                                     {
-                                        var type = "Audio";
+                                        string type = "Audio";
 
                                         if((TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrack ||
                                            (TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
@@ -558,7 +558,7 @@ public static class FullTOC
 
                     case 6:
                     {
-                        var id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
+                        uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
                         sb.AppendFormat("Disc ID: {0:X6}", id & 0x00FFFFFF).AppendLine();
 
                         break;

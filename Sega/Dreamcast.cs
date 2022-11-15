@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.Sega;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -39,6 +37,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Decoders.Sega;
 
 /// <summary>Represents the IP.BIN from a SEGA Dreamcast</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
@@ -184,7 +184,7 @@ public static class Dreamcast
                     break;
             }
 
-        var iPeripherals = int.Parse(Encoding.ASCII.GetString(ipbin.peripherals), NumberStyles.HexNumber);
+        int iPeripherals = int.Parse(Encoding.ASCII.GetString(ipbin.peripherals), NumberStyles.HexNumber);
 
         if((iPeripherals & 0x00000001) == 0x00000001)
             IPBinInformation.AppendLine("Game uses Windows CE.");

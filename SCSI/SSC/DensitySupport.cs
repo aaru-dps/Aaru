@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI.SSC;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.SCSI.SSC;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
@@ -47,13 +47,13 @@ public static class DensitySupport
         if(response is not { Length: > 56 })
             return null;
 
-        var responseLen = (ushort)((response[0] << 8) + response[1] + 2);
+        ushort responseLen = (ushort)((response[0] << 8) + response[1] + 2);
 
         if(response.Length != responseLen)
             return null;
 
-        var descriptors = new List<DensitySupportDescriptor>();
-        var offset      = 4;
+        List<DensitySupportDescriptor> descriptors = new();
+        int                            offset      = 4;
 
         while(offset < response.Length)
         {
@@ -74,7 +74,7 @@ public static class DensitySupport
                                   (response[offset + 14] << 8)  + response[offset + 15])
             };
 
-            var tmp = new byte[8];
+            byte[] tmp = new byte[8];
             Array.Copy(response, offset + 16, tmp, 0, 8);
             descriptor.organization = StringHandlers.CToString(tmp).Trim();
             tmp                     = new byte[8];
@@ -147,13 +147,13 @@ public static class DensitySupport
         if(response is not { Length: > 60 })
             return null;
 
-        var responseLen = (ushort)((response[0] << 8) + response[1] + 2);
+        ushort responseLen = (ushort)((response[0] << 8) + response[1] + 2);
 
         if(response.Length != responseLen)
             return null;
 
-        var descriptors = new List<MediaTypeSupportDescriptor>();
-        var offset      = 4;
+        List<MediaTypeSupportDescriptor> descriptors = new();
+        int                              offset      = 4;
 
         while(offset < response.Length)
         {
@@ -174,7 +174,7 @@ public static class DensitySupport
             descriptor.length    = (ushort)((response[offset + 16] << 8) + response[offset + 17]);
             descriptor.reserved1 = response[offset + 18];
             descriptor.reserved1 = response[offset + 19];
-            var tmp = new byte[8];
+            byte[] tmp = new byte[8];
             Array.Copy(response, offset + 20, tmp, 0, 8);
             descriptor.organization = StringHandlers.CToString(tmp).Trim();
             tmp                     = new byte[8];
@@ -218,7 +218,7 @@ public static class DensitySupport
             {
                 sb.AppendFormat("\tMedium supports following density codes:");
 
-                for(var i = 0; i < descriptor.numberOfCodes; i++)
+                for(int i = 0; i < descriptor.numberOfCodes; i++)
                     sb.AppendFormat(" {0:X2}h", descriptor.densityCodes[i]);
 
                 sb.AppendLine();

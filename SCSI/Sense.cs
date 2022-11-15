@@ -30,37 +30,33 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SCSI;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Decoders.ATA;
 
+namespace Aaru.Decoders.SCSI;
+
 public enum SenseType
 {
-    StandardSense,
-    ExtendedSenseFixedCurrent,
-    ExtendedSenseFixedPast,
-    ExtendedSenseDescriptorCurrent,
-    ExtendedSenseDescriptorPast,
-    Invalid,
+    StandardSense, ExtendedSenseFixedCurrent, ExtendedSenseFixedPast,
+    ExtendedSenseDescriptorCurrent, ExtendedSenseDescriptorPast, Invalid,
     Unknown
 }
 
 public struct DecodedSense
 {
-    public          FixedSense?      Fixed;
-    public          DescriptorSense? Descriptor;
+    public FixedSense?      Fixed;
+    public DescriptorSense? Descriptor;
 
     // ReSharper disable once InconsistentNaming
-    public readonly byte             ASC         => Descriptor?.ASC      ?? (Fixed?.ASC      ?? 0);
+    public readonly byte ASC => Descriptor?.ASC ?? (Fixed?.ASC ?? 0);
 
     // ReSharper disable once InconsistentNaming
-    public readonly byte             ASCQ        => Descriptor?.ASCQ     ?? (Fixed?.ASCQ     ?? 0);
-    public readonly SenseKeys        SenseKey    => Descriptor?.SenseKey ?? (Fixed?.SenseKey ?? SenseKeys.NoSense);
-    public readonly string           Description => Sense.GetSenseDescription(ASC, ASCQ);
+    public readonly byte      ASCQ        => Descriptor?.ASCQ     ?? (Fixed?.ASCQ     ?? 0);
+    public readonly SenseKeys SenseKey    => Descriptor?.SenseKey ?? (Fixed?.SenseKey ?? SenseKeys.NoSense);
+    public readonly string    Description => Sense.GetSenseDescription(ASC, ASCQ);
 }
 
 [SuppressMessage("ReSharper", "MemberCanBeInternal"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
@@ -192,13 +188,13 @@ public static class Sense
             return sense.Length != 4 ? SenseType.Invalid : SenseType.StandardSense;
 
         return (sense[0] & 0x0F) switch
-               {
-                   0 => SenseType.ExtendedSenseFixedCurrent,
-                   1 => SenseType.ExtendedSenseFixedPast,
-                   2 => SenseType.ExtendedSenseDescriptorCurrent,
-                   3 => SenseType.ExtendedSenseDescriptorPast,
-                   _ => SenseType.Unknown
-               };
+        {
+            0 => SenseType.ExtendedSenseFixedCurrent,
+            1 => SenseType.ExtendedSenseFixedPast,
+            2 => SenseType.ExtendedSenseDescriptorCurrent,
+            3 => SenseType.ExtendedSenseDescriptorPast,
+            _ => SenseType.Unknown
+        };
     }
 
     public static StandardSense? DecodeStandard(byte[] sense)
@@ -319,7 +315,7 @@ public static class Sense
 
         senseDescription = GetSenseDescription(decoded.ASC, decoded.ASCQ);
 
-        var offset = 8;
+        int offset = 8;
 
         while(offset < sense.Length)
             if(offset + 2 < sense.Length)
@@ -327,7 +323,7 @@ public static class Sense
                 byte descType = sense[offset];
                 int  descLen  = sense[offset + 1] + 2;
 
-                var desc = new byte[descLen];
+                byte[] desc = new byte[descLen];
 
                 if(offset + descLen >= sense.Length)
                     descLen = sense.Length - offset;
@@ -366,8 +362,8 @@ public static class Sense
             return null;
 
         return sense.Value.AddressValid
-                   ? $"Error class {sense.Value.ErrorClass} type {sense.Value.ErrorType} happened on block {sense.Value.LBA}\n"
-                   : $"Error class {sense.Value.ErrorClass} type {sense.Value.ErrorType}\n";
+                   ? $"Error class {sense.Value.ErrorClass} type {sense.Value.ErrorType} happened on block {
+                       sense.Value.LBA}\n" : $"Error class {sense.Value.ErrorClass} type {sense.Value.ErrorType}\n";
     }
 
     public static string PrettifySense(FixedSense? sense)
@@ -477,7 +473,7 @@ public static class Sense
            descriptor[0]     != 0x00)
             return 0;
 
-        var temp = new byte[8];
+        byte[] temp = new byte[8];
 
         temp[0] = descriptor[11];
         temp[1] = descriptor[10];
@@ -500,7 +496,7 @@ public static class Sense
            descriptor[0]     != 0x01)
             return 0;
 
-        var temp = new byte[8];
+        byte[] temp = new byte[8];
 
         temp[0] = descriptor[11];
         temp[1] = descriptor[10];
@@ -523,7 +519,7 @@ public static class Sense
            descriptor[0]     != 0x02)
             return null;
 
-        var temp = new byte[3];
+        byte[] temp = new byte[3];
         Array.Copy(descriptor, 4, temp, 0, 3);
 
         return temp;
@@ -598,24 +594,24 @@ public static class Sense
         PrettifyDescriptor00(DecodeDescriptor00(descriptor));
 
     public static string GetSenseKey(SenseKeys key) => key switch
-                                                       {
-                                                           SenseKeys.AbortedCommand => "ABORTED COMMAND",
-                                                           SenseKeys.BlankCheck     => "BLANK CHECK",
-                                                           SenseKeys.CopyAborted    => "COPY ABORTED",
-                                                           SenseKeys.DataProtect    => "DATA PROTECT",
-                                                           SenseKeys.Equal          => "EQUAL",
-                                                           SenseKeys.HardwareError  => "HARDWARE ERROR",
-                                                           SenseKeys.IllegalRequest => "ILLEGAL REQUEST",
-                                                           SenseKeys.MediumError    => "MEDIUM ERROR",
-                                                           SenseKeys.Miscompare     => "MISCOMPARE",
-                                                           SenseKeys.NoSense        => "NO SENSE",
-                                                           SenseKeys.PrivateUse     => "PRIVATE USE",
-                                                           SenseKeys.RecoveredError => "RECOVERED ERROR",
-                                                           SenseKeys.Completed      => "COMPLETED",
-                                                           SenseKeys.UnitAttention  => "UNIT ATTENTION",
-                                                           SenseKeys.VolumeOverflow => "VOLUME OVERFLOW",
-                                                           _                        => "UNKNOWN"
-                                                       };
+    {
+        SenseKeys.AbortedCommand => "ABORTED COMMAND",
+        SenseKeys.BlankCheck     => "BLANK CHECK",
+        SenseKeys.CopyAborted    => "COPY ABORTED",
+        SenseKeys.DataProtect    => "DATA PROTECT",
+        SenseKeys.Equal          => "EQUAL",
+        SenseKeys.HardwareError  => "HARDWARE ERROR",
+        SenseKeys.IllegalRequest => "ILLEGAL REQUEST",
+        SenseKeys.MediumError    => "MEDIUM ERROR",
+        SenseKeys.Miscompare     => "MISCOMPARE",
+        SenseKeys.NoSense        => "NO SENSE",
+        SenseKeys.PrivateUse     => "PRIVATE USE",
+        SenseKeys.RecoveredError => "RECOVERED ERROR",
+        SenseKeys.Completed      => "COMPLETED",
+        SenseKeys.UnitAttention  => "UNIT ATTENTION",
+        SenseKeys.VolumeOverflow => "VOLUME OVERFLOW",
+        _                        => "UNKNOWN"
+    };
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static string GetSenseDescription(byte ASC, byte ASCQ)
@@ -1433,10 +1429,10 @@ public static class Sense
                 break;
             case 0x40:
                 return ASCQ switch
-                       {
-                           0x00 => "RAM FAILURE",
-                           _    => $"DIAGNOSTIC FAILURE ON COMPONENT {ASCQ:X2}h"
-                       };
+                {
+                    0x00 => "RAM FAILURE",
+                    _    => $"DIAGNOSTIC FAILURE ON COMPONENT {ASCQ:X2}h"
+                };
             case 0x41:
                 switch(ASCQ)
                 {
@@ -1995,8 +1991,7 @@ public static class Sense
         }
 
         return ASC >= 0x80
-                   ? ASCQ >= 0x80
-                         ? $"VENDOR-SPECIFIC ASC {ASC:X2}h WITH VENDOR-SPECIFIC ASCQ {ASCQ:X2}h"
+                   ? ASCQ >= 0x80 ? $"VENDOR-SPECIFIC ASC {ASC:X2}h WITH VENDOR-SPECIFIC ASCQ {ASCQ:X2}h"
                          : $"VENDOR-SPECIFIC ASC {ASC:X2}h WITH ASCQ {ASCQ:X2}h"
                    : ASCQ >= 0x80
                        ? $"ASC {ASC:X2}h WITH VENDOR-SPECIFIC ASCQ {ASCQ:X2}h"

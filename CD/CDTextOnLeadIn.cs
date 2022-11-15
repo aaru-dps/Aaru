@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.CD;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.CD;
 
 // Information from the following standards:
 // ANSI X3.304-1997
@@ -117,17 +117,17 @@ public static class CDTextOnLeadIn
             return null;
         }
 
-        for(var i = 0; i < (decoded.DataLength - 2) / 18; i++)
+        for(int i = 0; i < (decoded.DataLength - 2) / 18; i++)
         {
-            decoded.DataPacks[i].HeaderID1         = CDTextResponse[0 + i * 18 + 4];
-            decoded.DataPacks[i].HeaderID2         = CDTextResponse[1 + i * 18 + 4];
-            decoded.DataPacks[i].HeaderID3         = CDTextResponse[2 + i * 18 + 4];
-            decoded.DataPacks[i].DBCC              = Convert.ToBoolean(CDTextResponse[3 + i * 18 + 4] & 0x80);
-            decoded.DataPacks[i].BlockNumber       = (byte)((CDTextResponse[3 + i * 18 + 4] & 0x70) >> 4);
-            decoded.DataPacks[i].CharacterPosition = (byte)(CDTextResponse[3 + i * 18 + 4] & 0x0F);
+            decoded.DataPacks[i].HeaderID1         = CDTextResponse[0 + (i * 18) + 4];
+            decoded.DataPacks[i].HeaderID2         = CDTextResponse[1 + (i * 18) + 4];
+            decoded.DataPacks[i].HeaderID3         = CDTextResponse[2 + (i * 18) + 4];
+            decoded.DataPacks[i].DBCC              = Convert.ToBoolean(CDTextResponse[3 + (i * 18) + 4] & 0x80);
+            decoded.DataPacks[i].BlockNumber       = (byte)((CDTextResponse[3 + (i * 18) + 4] & 0x70) >> 4);
+            decoded.DataPacks[i].CharacterPosition = (byte)(CDTextResponse[3 + (i * 18) + 4] & 0x0F);
             decoded.DataPacks[i].TextDataField     = new byte[12];
-            Array.Copy(CDTextResponse, 4 + i * 18 + 4, decoded.DataPacks[i].TextDataField, 0, 12);
-            decoded.DataPacks[i].CRC = BigEndianBitConverter.ToUInt16(CDTextResponse, 16 + i * 18 + 4);
+            Array.Copy(CDTextResponse, 4 + (i * 18) + 4, decoded.DataPacks[i].TextDataField, 0, 12);
+            decoded.DataPacks[i].CRC = BigEndianBitConverter.ToUInt16(CDTextResponse, 16 + (i * 18) + 4);
         }
 
         return decoded;

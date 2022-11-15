@@ -30,12 +30,12 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Decoders.SecureDigital;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Helpers;
+
+namespace Aaru.Decoders.SecureDigital;
 
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
@@ -59,7 +59,7 @@ public static partial class Decoders
         if(response?.Length != 4)
             return null;
 
-        var data = new byte[16];
+        byte[] data = new byte[16];
 
         byte[] tmp = BitConverter.GetBytes(response[0]);
         Array.Copy(tmp, 0, data, 0, 4);
@@ -87,7 +87,7 @@ public static partial class Decoders
             CRC                 = (byte)((response[15] & 0xFE) >> 1)
         };
 
-        var tmp = new byte[2];
+        byte[] tmp = new byte[2];
         Array.Copy(response, 1, tmp, 0, 2);
         cid.ApplicationID = StringHandlers.CToString(tmp);
         tmp               = new byte[5];
