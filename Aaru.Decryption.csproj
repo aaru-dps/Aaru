@@ -1,51 +1,51 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <SchemaVersion>2.0</SchemaVersion>
-        <OutputType>Library</OutputType>
-        <RootNamespace>Aaru.Decryption</RootNamespace>
-        <AssemblyName>Aaru.Decryption</AssemblyName>
-        <ReleaseVersion>$(Version)</ReleaseVersion>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>6.0.0-alpha8</Version>
-        <Company>Claunia.com</Company>
-        <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
-        <Product>Aaru Data Preservation Suite</Product>
-        <Title>Aaru.Decryption</Title>
-        <ApplicationVersion>$(Version)</ApplicationVersion>
-        <TargetFramework>net7.0</TargetFramework>
-        <LangVersion>11</LangVersion>
-        <Description>Decryption algorithms used by the Aaru Data Preservation Suite.</Description>
-        <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/aaru-dps/Aaru.Decryption</RepositoryUrl>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <NeutralLanguage>en-US</NeutralLanguage>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <Authors>Rebecca Wallander &lt;sakcheen@gmail.com&gt;</Authors>
-        <Nullable>enable</Nullable>
-        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <NoWarn>CS1591;CS1574</NoWarn>
-    </PropertyGroup>
-    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <InternalsVisibleTo Include="Aaru.Tests"/>
-        <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
-    </ItemGroup>
-    <PropertyGroup>
-        <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
-        <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-        <NrtShowRevision>true</NrtShowRevision>
-    </PropertyGroup>
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Aaru.Decryption</RootNamespace>
+    <AssemblyName>Aaru.Decryption</AssemblyName>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>6.0.0-alpha8</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
+    <Product>Aaru Data Preservation Suite</Product>
+    <Title>Aaru.Decryption</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <TargetFramework>net7.0</TargetFramework>
+    <LangVersion>11</LangVersion>
+    <Description>Decryption algorithms used by the Aaru Data Preservation Suite.</Description>
+    <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/aaru-dps/Aaru.Decryption</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>Rebecca Wallander &lt;sakcheen@gmail.com&gt;</Authors>
+    <Nullable>enable</Nullable>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
-        <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"/>
-        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
+    <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"/>
+    <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
+  </ItemGroup>
 
 </Project>

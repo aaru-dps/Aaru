@@ -34,13 +34,13 @@
 // Copyright © 2020-2022 Rebecca Wallander
 // ****************************************************************************/
 
-namespace Aaru.Decryption.DVD;
-
 using System;
 using System.Linq;
 using Aaru.Console;
 using Aaru.Decoders.DVD;
 using Aaru.Devices;
+
+namespace Aaru.Decryption.DVD;
 
 public sealed class Dump
 {
@@ -69,7 +69,7 @@ public sealed class Dump
                         out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[8];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -97,7 +97,7 @@ public sealed class Dump
                         out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[8];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -125,7 +125,7 @@ public sealed class Dump
                                out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = Array.Empty<byte>();
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -154,7 +154,7 @@ public sealed class Dump
                                   out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[8];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -183,7 +183,7 @@ public sealed class Dump
                            out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -211,7 +211,7 @@ public sealed class Dump
                                 out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[16];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -241,7 +241,7 @@ public sealed class Dump
                               uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[16];
 
         cdb[0]     = (byte)ScsiCommands.SendKey;
@@ -284,7 +284,7 @@ public sealed class Dump
                          out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[12];
 
         cdb[0]    = (byte)ScsiCommands.SendKey;
@@ -319,7 +319,7 @@ public sealed class Dump
     public bool ReadDiscKey(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[2052];
 
         cdb[0]  = (byte)ScsiCommands.ReadDiscStructure;
@@ -349,10 +349,10 @@ public sealed class Dump
         buffer      = Array.Empty<byte>();
         senseBuffer = new byte[64];
 
-        var  sense     = false;
-        var  challenge = new byte[CHALLENGE_SIZE];
-        var  key1      = new byte[KEY_SIZE];
-        byte variant   = 0;
+        bool   sense     = false;
+        byte[] challenge = new byte[CHALLENGE_SIZE];
+        byte[] key1      = new byte[KEY_SIZE];
+        byte   variant   = 0;
 
         for(byte i = 0; i < 4; i++)
         {
@@ -460,7 +460,7 @@ public sealed class Dump
         BusKey = buffer;
 
         senseBuffer = new byte[64];
-        var cdb = new byte[12];
+        byte[] cdb = new byte[12];
         buffer = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
