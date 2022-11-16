@@ -42,25 +42,26 @@
     </Design.DataContext>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_File">
-                <MenuItem Header="_Open" Command="{Binding OpenCommand}" /> <Separator />
-                <MenuItem Header="_Settings" IsVisible="{Binding !NativeMenuSupported}"
+            <MenuItem Header="{Binding FileLabel}">
+                <MenuItem Header="{Binding OpenLabel}" Command="{Binding OpenCommand}" /> <Separator />
+                <MenuItem Header="{Binding SettingsLabel}" IsVisible="{Binding !NativeMenuSupported}"
                           Command="{Binding SettingsCommand}" />
                 <Separator />
-                <MenuItem Header="E_xit" IsVisible="{Binding !NativeMenuSupported}" Command="{Binding ExitCommand}" />
+                <MenuItem Header="{Binding ExitLabel}" IsVisible="{Binding !NativeMenuSupported}"
+                          Command="{Binding ExitCommand}" />
             </MenuItem>
-            <MenuItem Header="_Devices" IsVisible="{Binding DevicesSupported}">
-                <MenuItem Header="_Refresh" Command="{Binding RefreshDevicesCommand}" />
+            <MenuItem Header="{Binding DevicesLabel}" IsVisible="{Binding DevicesSupported}">
+                <MenuItem Header="{Binding RefreshDevicesLabel}" Command="{Binding RefreshDevicesCommand}" />
             </MenuItem>
-            <MenuItem Header="_Window">
-                <MenuItem Header="_Console" Command="{Binding ConsoleCommand}" />
+            <MenuItem Header="{Binding WindowLabel}">
+                <MenuItem Header="{Binding ConsoleLabel}" Command="{Binding ConsoleCommand}" />
             </MenuItem>
-            <MenuItem Header="_Help">
-                <MenuItem Header="_Encodings" Command="{Binding EncodingsCommand}" />
-                <MenuItem Header="_Plugins" Command="{Binding PluginsCommand}" />
-                <MenuItem Header="_Statistics" Command="{Binding StatisticsCommand}" />
+            <MenuItem Header="{Binding HelpLabel}">
+                <MenuItem Header="{Binding EncodingsLabel}" Command="{Binding EncodingsCommand}" />
+                <MenuItem Header="{Binding PluginsLabel}" Command="{Binding PluginsCommand}" />
+                <MenuItem Header="{Binding StatisticsLabel}" Command="{Binding StatisticsCommand}" />
                 <Separator IsVisible="{Binding !NativeMenuSupported}" />
-                <MenuItem Header="_About" Name="AboutMenuItem" IsVisible="{Binding !NativeMenuSupported}"
+                <MenuItem Header="{Binding AboutLabel}" Name="AboutMenuItem" IsVisible="{Binding !NativeMenuSupported}"
                           Command="{Binding AboutCommand}" />
             </MenuItem>
         </Menu>
@@ -74,7 +75,8 @@
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="_Refresh devices" Command="{Binding RefreshDevicesCommand}" />
+                                    <MenuItem Header="{Binding RefreshDevicesFullLabel}"
+                                              Command="{Binding RefreshDevicesCommand}" />
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
                             <Image Width="24" Height="24" Source="/Assets/Icons/oxygen/32x32/computer.png" />
@@ -85,7 +87,7 @@
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="_Close all images" Command="{Binding CloseAllImages}" />
+                                    <MenuItem Header="{Binding CloseAllImagesLabel}" Command="{Binding CloseAllImages}" />
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
                             <Image Width="24" Height="24" Source="/Assets/Icons/oxygen/32x32/inode-directory.png" />
@@ -97,15 +99,20 @@
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Command="{Binding CalculateEntropyCommand}" Header="Calculate entropy" />
-                                    <MenuItem Command="{Binding VerifyImageCommand}" Header="Verify" />
-                                    <MenuItem Command="{Binding ChecksumImageCommand}" Header="Checksum" />
-                                    <MenuItem Command="{Binding ConvertImageCommand}" Header="Convert to..." />
+                                    <MenuItem Command="{Binding CalculateEntropyCommand}"
+                                              Header="{Binding CalculateEntropyLabel}" />
+                                    <MenuItem Command="{Binding VerifyImageCommand}"
+                                              Header="{Binding VerifyImageLabel}" />
+                                    <MenuItem Command="{Binding ChecksumImageCommand}"
+                                              Header="{Binding ChecksumImageLabel}" />
+                                    <MenuItem Command="{Binding ConvertImageCommand}"
+                                              Header="{Binding ConvertImageLabel}" />
                                     <MenuItem Command="{Binding CreateSidecarCommand}"
-                                              Header="Create CICM XML sidecar..." />
-                                    <MenuItem Command="{Binding ViewImageSectorsCommand}" Header="View sectors" />
+                                              Header="{Binding CreateSidecarLabel}" />
+                                    <MenuItem Command="{Binding ViewImageSectorsCommand}"
+                                              Header="{Binding ViewImageSectorsLabel}" />
                                     <MenuItem Command="{Binding DecodeImageMediaTagsCommand}"
-                                              Header="Decode media tags" />
+                                              Header="{Binding DecodeImageMediaTagsLabel}" />
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
                             <Image Width="24" Height="24" Source="{Binding Icon}" />

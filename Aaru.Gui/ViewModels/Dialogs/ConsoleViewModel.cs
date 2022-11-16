@@ -73,6 +73,11 @@ public sealed class ConsoleViewModel : ViewModelBase
     [NotNull]
     public string ClearLabel => "Clear";
 
+    public string TimeLabel    => "Time";
+    public string TypeLabel    => "Type";
+    public string ModuleLabel  => "Module";
+    public string MessageLabel => "Message";
+
     public bool DebugChecked
     {
         get => _debugChecked;

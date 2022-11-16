@@ -45,22 +45,22 @@
         <TextBlock IsVisible="{Binding !!DvdCmiText}" Text="Copyright Management Information" />
         <TextBox IsReadOnly="True" IsVisible="{Binding !!DvdCmiText}" Text="{Binding DvdCmiText}" />
         <Button Command="{Binding SaveDvdPfiCommand}" IsVisible="{Binding SaveDvdPfiVisible}">
-            <TextBlock Text="Save Physical Format Information" />
+            <TextBlock Text="{Binding SaveDvdPfiLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdDmiCommand}" IsVisible="{Binding SaveDvdDmiVisible}">
-            <TextBlock Text="Save Disc Manufacturer Information" />
+            <TextBlock Text="{Binding SaveDvdDmiLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdCmiCommand}" IsVisible="{Binding SaveDvdCmiVisible}">
-            <TextBlock Text="Save Copyright Management Information" />
+            <TextBlock Text="{Binding SaveDvdCmiLabel}" />
         </Button>
         <Button Command="{Binding SaveHdDvdCmiCommand}" IsVisible="{Binding SaveHdDvdCmiVisible}">
-            <TextBlock Text="Save Copyright Management Information" />
+            <TextBlock Text="{Binding SaveHdDvdCmiLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdBcaCommand}" IsVisible="{Binding SaveDvdBcaVisible}">
-            <TextBlock Text="Save Burst Cutting Area" />
+            <TextBlock Text="{Binding SaveDvdBcaLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdAacsCommand}" IsVisible="{Binding SaveDvdAacsVisible}">
-            <TextBlock Text="Save AACS Information" />
+            <TextBlock Text="{Binding SaveDvdAacsLabel}" />
         </Button>
     </StackPanel>
 </UserControl>

@@ -73,6 +73,10 @@ public sealed class FileSystemViewModel
         FilesVisible            = xmlFsType.FilesSpecified;
     }
 
+    public string BootableLabel => "Filesystem contains boot code";
+    public string DirtyLabel    => "Filesystem has not been unmounted correctly or contains errors";
+    public string DetailsLabel  => "Details";
+
     public string TypeText                   { get; }
     public string VolumeNameText             { get; }
     public string SerialNumberText           { get; }

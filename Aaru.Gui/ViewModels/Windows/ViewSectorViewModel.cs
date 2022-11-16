@@ -64,6 +64,9 @@ public sealed class ViewSectorViewModel : ViewModelBase
         SectorNumber     = 0;
     }
 
+    public string SectorLabel     => "Sector";
+    public string LongSectorLabel => "Show long sector";
+
     public string Title
     {
         get => _title;

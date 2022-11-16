@@ -47,8 +47,10 @@
             </Grid.RowDefinitions>
             <DataGrid Items="{Binding Encodings}" HorizontalScrollBarVisibility="Visible">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Code" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" Width="Auto" IsReadOnly="True" />
+                    <DataGridTextColumn Header="{Binding CodeLabel}" Binding="{Binding Name}" Width="Auto"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding DisplayName}" Width="Auto"
+                                        IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
             <Border Grid.Row="1" Padding="10">

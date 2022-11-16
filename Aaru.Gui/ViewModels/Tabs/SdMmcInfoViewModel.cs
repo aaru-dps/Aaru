@@ -86,4 +86,10 @@ public sealed class SdMmcInfoViewModel
     public string OcrText         { get; }
     public string ExtendedCsdText { get; }
     public string ScrText         { get; }
+
+    public string CidLabel         => "CID";
+    public string CsdLabel         => "CSD";
+    public string OcrLabel         => "OCR";
+    public string ExtendedCsdLabel => "Extended CSD";
+    public string ScrLabel         => "SCR";
 }

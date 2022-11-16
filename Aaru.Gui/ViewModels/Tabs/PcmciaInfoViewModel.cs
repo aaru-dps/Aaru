@@ -145,6 +145,9 @@ public class PcmciaInfoViewModel : ViewModelBase
             AaruConsole.DebugWriteLine("Device-Info command", "PCMCIA CIS returned no tuples");
     }
 
+    public string CisLabel           => "CIS";
+    public string SavePcmciaCisLabel => "Save PCMCIA CIS to file";
+
     public ObservableCollection<PcmciaCisModel> CisList { get; }
 
     public string PcmciaCisText

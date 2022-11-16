@@ -51,10 +51,14 @@
                 </TabItem.Header>
                 <DataGrid Items="{Binding Filters}" HorizontalScrollBarVisibility="Visible">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                        <DataGridTextColumn Header="UUID" Binding="{Binding Uuid}" Width="Auto" IsReadOnly="True" />
-                        <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto" IsReadOnly="True" />
-                        <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="Auto" IsReadOnly="True" />
+                        <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
+                                            IsReadOnly="True" />
+                        <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                                            IsReadOnly="True" />
+                        <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}" Width="Auto"
+                                            IsReadOnly="True" />
+                        <DataGridTextColumn Header="{Binding AuthorLabel}" Binding="{Binding Author}" Width="Auto"
+                                            IsReadOnly="True" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
@@ -64,10 +68,14 @@
                 </TabItem.Header>
                 <DataGrid Items="{Binding PartitionSchemes}" HorizontalScrollBarVisibility="Visible">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                        <DataGridTextColumn Header="UUID" Binding="{Binding Uuid}" Width="Auto" IsReadOnly="True" />
-                        <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto" IsReadOnly="True" />
-                        <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="Auto" IsReadOnly="True" />
+                        <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
+                                            IsReadOnly="True" />
+                        <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                                            IsReadOnly="True" />
+                        <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}" Width="Auto"
+                                            IsReadOnly="True" />
+                        <DataGridTextColumn Header="{Binding AuthorLabel}" Binding="{Binding Author}" Width="Auto"
+                                            IsReadOnly="True" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
@@ -83,11 +91,13 @@
                     <TextBlock Grid.Row="0" Text="{Binding IdentifyLabel}" FontWeight="Bold" />
                     <DataGrid Grid.Row="1" Items="{Binding Filesystems}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="UUID" Binding="{Binding Uuid}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
+                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding AuthorLabel}" Binding="{Binding Author}" Width="Auto"
                                                 IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -95,11 +105,13 @@
                     <DataGrid Grid.Row="3" Items="{Binding ReadOnlyFilesystems}"
                               HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="UUID" Binding="{Binding Uuid}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
+                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding AuthorLabel}" Binding="{Binding Author}" Width="Auto"
                                                 IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>

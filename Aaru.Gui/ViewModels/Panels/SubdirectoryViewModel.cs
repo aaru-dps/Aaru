@@ -114,6 +114,21 @@ public sealed class SubdirectoryViewModel
     public List<FileModel>                 SelectedEntries     { get; }
     public ReactiveCommand<Unit, Task>     ExtractFilesCommand { get; }
 
+    public string ExtractFilesLabel => "Extract to...";
+    public string NameLabel         => "Name";
+    public string LengthLabel       => "Length";
+    public string CreationLabel     => "Creation";
+    public string LastAccessLabel   => "Last access";
+    public string ChangedLabel      => "Changed";
+    public string LastBackupLabel   => "Last backup";
+    public string LastWriteLabel    => "Last write";
+    public string AttributesLabel   => "Attributes";
+    public string GIDLabel          => "GID";
+    public string UIDLabel          => "UID";
+    public string InodeLabel        => "Inode";
+    public string LinksLabel        => "Links";
+    public string ModeLabel         => "Mode";
+
     async Task ExecuteExtractFilesCommand()
     {
         if(SelectedEntries.Count == 0)

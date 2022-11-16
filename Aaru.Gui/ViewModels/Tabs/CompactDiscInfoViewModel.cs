@@ -129,6 +129,25 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
     public ReactiveCommand<Unit, Task>     SaveCdPmaCommand         { get; }
     public ObservableCollection<IsrcModel> IsrcList                 { get; }
 
+    public string CdInformationLabel     => "Information";
+    public string SaveCdInformationLabel => "Save READ DISC INFORMATION response";
+    public string CdTocLabel             => "TOC";
+    public string SaveCdTocLabel         => "Save READ TOC response";
+    public string CdFullTocLabel         => "TOC (full)";
+    public string SaveCdFullTocLabel     => "Save READ RAW TOC response";
+    public string CdSessionLabel         => "Session";
+    public string SaveCdSessionLabel     => "Save READ SESSION response";
+    public string CdTextLabel            => "CD-TEXT";
+    public string SaveCdTextLabel        => "Save Lead-In CD-TEXT";
+    public string CdAtipLabel            => "ATIP";
+    public string SaveCdAtipLabel        => "Save READ ATIP response";
+    public string MiscellaneousLabel     => "Miscellaneous";
+    public string McnLabel               => "Media catalog number";
+    public string ISRCsLabel             => "ISRCs";
+    public string TrackLabel             => "Track";
+    public string ISRCLabel              => "ISRC";
+    public string SaveCdPmaLabel         => "Save READ PMA response";
+
     async Task ExecuteSaveCdInformationCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();

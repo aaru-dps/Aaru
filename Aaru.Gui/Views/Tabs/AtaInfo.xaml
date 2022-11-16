@@ -43,20 +43,20 @@
         <TextBlock Text="{Binding AtaOrAtapiText}" />
         <TextBox IsReadOnly="True" Text="{Binding AtaIdentifyText}" TextWrapping="Wrap" />
         <CheckBox IsEnabled="False" IsChecked="{Binding AtaMcptChecked}" IsVisible="{Binding AtaMcptVisible}">
-            <TextBlock Text="Device is Media Card Pass Through" />
+            <TextBlock Text="{Binding AtaMcptLabel}" />
         </CheckBox>
         <TextBlock Text="{Binding AtaMcptText}" />
         <CheckBox IsEnabled="False" IsChecked="{Binding AtaMcptWriteProtectionChecked}"
                   IsVisible="{Binding AtaMcptChecked}">
-            <TextBlock Text="Media card is write protected" />
+            <TextBlock Text="{Binding AtaMcptWriteProtectionLabel}" />
         </CheckBox>
         <TextBlock Text="{Binding AtaMcptSpecificDataText}" />
         <StackPanel Orientation="Horizontal">
             <Button Command="{Binding SaveAtaBinaryCommand}">
-                <TextBlock Text="Save binary to file" />
+                <TextBlock Text="{Binding SaveAtaBinaryLabel}" />
             </Button>
             <Button Command="{Binding SaveAtaTextCommand}">
-                <TextBlock Text="Save text to file" />
+                <TextBlock Text="{Binding SaveAtaTextLabel}" />
             </Button>
         </StackPanel>
     </StackPanel>

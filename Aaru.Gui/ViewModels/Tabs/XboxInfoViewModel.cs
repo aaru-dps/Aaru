@@ -91,6 +91,16 @@ public sealed class XboxInfoViewModel
     public string                      XboxDmiText            { get; }
     public string                      XboxSsText             { get; }
 
+    public string XboxL0VideoLabel    => "Video layer 0 size";
+    public string XboxL1VideoLabel    => "Video layer 1 size";
+    public string XboxMiddleZoneLabel => "Middle zone size";
+    public string XboxGameSizeLabel   => "Game data size";
+    public string XboxTotalSizeLabel  => "Total size";
+    public string XboxRealBreakLabel  => "Real layer break";
+    public string XboxDmiLabel        => "Disc Manufacturing Information";
+    public string XboxSsLabel         => "Security Sector";
+    public string SaveXboxSsLabel     => "Save Xbox Security Sector";
+
     async Task SaveElement(byte[] data)
     {
         var dlgSaveBinary = new SaveFileDialog();

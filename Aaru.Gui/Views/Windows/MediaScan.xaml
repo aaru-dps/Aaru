@@ -74,10 +74,10 @@
                     </avalonia:Plot.Series>
                     <avalonia:Plot.Axes>
                         <avalonia:LinearAxis Position="Left" Maximum="{Binding MaxY}" Minimum="{Binding MinY}"
-                                             MajorStep="{Binding StepsY}" Title="Speed" Unit="Kb/s"
-                                             AxislineColor="{Binding AxesColor}" />
+                                             MajorStep="{Binding StepsY}" Title="{Binding SpeedLabel}"
+                                             Unit="{Binding KbsLabel}" AxislineColor="{Binding AxesColor}" />
                         <avalonia:LinearAxis Position="Bottom" Maximum="{Binding MaxX}" Minimum="{Binding MinX}"
-                                             MajorStep="{Binding StepsX}" Title="Block"
+                                             MajorStep="{Binding StepsX}" Title="{Binding BlockLabel}"
                                              AxislineColor="{Binding AxesColor}" />
                     </avalonia:Plot.Axes>
                 </avalonia:Plot>
@@ -92,13 +92,13 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
-                <TextBlock Text="Start" />
+                <TextBlock Text="{Binding StartLabel}" />
             </Button>
             <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
-                <TextBlock Text="Close" />
+                <TextBlock Text="{Binding CloseLabel}" />
             </Button>
             <Button Command="{Binding StopCommand}" IsVisible="{Binding StopVisible}" IsEnabled="{Binding StopEnabled}">
-                <TextBlock Text="Stop" />
+                <TextBlock Text="{Binding StopLabel}" />
             </Button>
         </StackPanel>
     </StackPanel>

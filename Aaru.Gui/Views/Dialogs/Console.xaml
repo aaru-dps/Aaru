@@ -47,10 +47,14 @@
             </Grid.RowDefinitions>
             <DataGrid Items="{Binding Entries}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Time" Binding="{Binding Timestamp}" Width="Auto" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Module" Binding="{Binding Module}" Width="Auto" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="Auto" IsReadOnly="True" />
+                    <DataGridTextColumn Header="{Binding TimeLabel}" Binding="{Binding Timestamp}" Width="Auto"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Header="{Binding TypeLabel}" Binding="{Binding Type}" Width="Auto"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Header="{Binding ModuleLabel}" Binding="{Binding Module}" Width="Auto"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Header="{Binding MessageLabel}" Binding="{Binding Message}" Width="Auto"
+                                        IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
             <CheckBox Grid.Row="1" IsChecked="{Binding DebugChecked}">

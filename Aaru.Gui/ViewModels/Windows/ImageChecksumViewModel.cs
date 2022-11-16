@@ -128,6 +128,29 @@ public sealed class ImageChecksumViewModel : ViewModelBase
         }
     }
 
+    public string ChecksumMediaLabel  => "Checksums the whole disc.";
+    public string ChecksumTracksLabel => "Checksums each track separately.";
+    public string Adler32Label        => "Calculates Adler-32.";
+    public string Crc16Label          => "Calculates CRC16.";
+    public string Crc32Label          => "Calculates CRC32.";
+    public string Crc64Label          => "Calculates CRC64 (ECMA).";
+    public string Fletcher16Label     => "Calculates Fletcher-16.";
+    public string Fletcher32Label     => "Calculates Fletcher-32.";
+    public string Md5Label            => "Calculates MD5.";
+    public string Sha1Label           => "Calculates SHA1.";
+    public string Sha256Label         => "Calculates SHA256.";
+    public string Sha384Label         => "Calculates SHA384";
+    public string Sha512Label         => "Calculates SHA512.";
+    public string SpamSumLabel        => "Calculates SpamSum fuzzy hash.";
+    public string TrackChecksumsLabel => "Track checksums:";
+    public string TrackLabel          => "Track";
+    public string AlgorithmsLabel     => "Algorithms";
+    public string HashLabel           => "Hash";
+    public string MediaChecksumsLabel => "Media checksums:";
+    public string StartLabel          => "Start";
+    public string CloseLabel          => "Close";
+    public string StopLabel           => "Stop";
+
     public string Title
     {
         get => _title;

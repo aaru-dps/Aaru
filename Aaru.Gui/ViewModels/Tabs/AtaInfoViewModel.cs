@@ -107,6 +107,11 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
     public string AtaOrAtapiText { get; }
 
+    public string AtaMcptLabel                => "Device is Media Card Pass Through";
+    public string AtaMcptWriteProtectionLabel => "Media card is write protected";
+    public string SaveAtaBinaryLabel          => "Save binary to file";
+    public string SaveAtaTextLabel            => "Save text to file";
+
     async Task ExecuteSaveAtaBinaryCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();

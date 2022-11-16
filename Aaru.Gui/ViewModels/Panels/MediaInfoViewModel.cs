@@ -344,6 +344,30 @@ public sealed class MediaInfoViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _blurayInfo, value);
     }
 
+    public string MediaInformationLabel           => "Media information";
+    public string GeneralLabel                    => "General";
+    public string MediaTypeLabel                  => "Media type";
+    public string MediaSerialNumberLabel          => "Media serial number";
+    public string SaveReadMediaSerialLabel        => "Save READ MEDIA SERIAL NUMBER response";
+    public string SaveReadCapacityLabel           => "Save READ CAPACITY response";
+    public string SaveReadCapacity16Label         => "Save READ CAPACITY (16) response";
+    public string MMCLabel                        => "MMC";
+    public string SaveGetConfigurationLabel       => "Save GET CONFIGURATION response";
+    public string SaveRecognizedFormatLayersLabel => "Save RECOGNIZED FORMAT LAYERS response";
+    public string SaveWriteProtectionStatusLabel  => "Save WRITE PROTECTION STATUS response";
+    public string SSCLabel                        => "SSC";
+    public string DensitySupportLabel             => "Densities supported by currently inserted media";
+    public string MediumSupportLabel              => "Medium types currently inserted in device";
+    public string SaveDensitySupportLabel         => "Save REPORT DENSITY SUPPORT (MEDIA) response";
+    public string SaveMediumSupportLabel          => "Save REPORT DENSITY SUPPORT (MEDIUM & MEDIA) response";
+    public string CompactDiscLabel                => "CompactDisc";
+    public string DVDLabel                        => "DVD";
+    public string DVD_R_WLabel                    => "DVD±R(W)";
+    public string XboxLabel                       => "Xbox";
+    public string BluRayLabel                     => "Blu-ray";
+    public string DumpLabel                       => "Dump media to image";
+    public string ScanLabel                       => "Scan media surface";
+
     async Task SaveElement(byte[] data)
     {
         var dlgSaveBinary = new SaveFileDialog();

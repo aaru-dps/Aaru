@@ -233,6 +233,26 @@ public sealed class DvdWritableInfoViewModel
     public ReactiveCommand<Unit, Task> SaveDvdPlusAdipCommand                   { get; }
     public ReactiveCommand<Unit, Task> SaveDvdPlusDcbCommand                    { get; }
 
+    public string DvdRamDdsLabel                         => "Disc Definition Structure";
+    public string DvdRamCartridgeStatusLabel             => "Cartridge Status";
+    public string DvdRamSpareAreaInformationLabel        => "Spare Area Information";
+    public string SaveDvdRamDdsLabel                     => "Save Disc Definition Structure";
+    public string SaveDvdRamCartridgeStatusLabel         => "Save Cartridge Status";
+    public string SaveDvdRamSpareAreaInformationLabel    => "Save Spare Area Information";
+    public string SaveLastBorderOutRmdLabel              => "Save Last Border-Out RMD";
+    public string SaveDvdPreRecordedInfoLabel            => "Save Pre-Recorded Physical Information";
+    public string SaveDvdrMediaIdentifierLabel           => "Save Media Identifier";
+    public string SaveDvdrPhysicalInformationLabel       => "Save Recordable Physical Information";
+    public string SaveHddvdrMediumStatusLabel            => "Save Medium Status";
+    public string SaveHddvdrLastRmdLabel                 => "Save Last Border-Out RMD";
+    public string SaveDvdrLayerCapacityLabel             => "Save Layer Capacity";
+    public string SaveDvdrDlMiddleZoneStartLabel         => "Save Middle Zone Start";
+    public string SaveDvdrDlJumpIntervalSizeLabel        => "Save Jump Interval Size";
+    public string SaveDvdrDlManualLayerJumpStartLbaLabel => "Save Manual Layer Jump Start LBA";
+    public string SaveDvdrDlRemapAnchorPointLabel        => "Save Remap Anchor Point";
+    public string SaveDvdPlusAdipLabel                   => "Save ADIP";
+    public string SaveDvdPlusDcbLabel                    => "Save Disc Control Blocks";
+
     async Task SaveElement(byte[] data)
     {
         var dlgSaveBinary = new SaveFileDialog();

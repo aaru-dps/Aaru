@@ -720,6 +720,52 @@ public sealed class ImageInfoViewModel : ViewModelBase
                                            MediaSerialNumberText != null || MediaBarcodeText != null ||
                                            MediaPartNumberText   != null;
 
+    public string ImageInformationLabel   => "Image information";
+    public string GeneralLabel            => "General";
+    public string CommentsLabel           => "Comments:";
+    public string MediaInformationLabel   => "Media information";
+    public string DriveInformationLabel   => "Drive information";
+    public string ReadableMediaTagsLabel  => "Readable media tags";
+    public string TagLabel                => "Readable media tags";
+    public string ReadableSectorTagsLabel => "Readable sector tags";
+    public string SessionsLabel           => "Sessions";
+    public string SessionLabel            => "Session";
+    public string FirstTrackLabel         => "First track";
+    public string LastTrackLabel          => "Last track";
+    public string StartLabel              => "Start";
+    public string EndLabel                => "End";
+    public string TracksLabel             => "Tracks";
+    public string TrackLabel              => "Track";
+    public string TypeLabel               => "Type";
+    public string BpsLabel                => "Bps";
+    public string RawBpsLabel             => "Raw bps";
+    public string SubchannelLabel         => "Subchannel";
+    public string PregapLabel             => "Pregap";
+    public string DumpHardwareLabel       => "Dump hardware";
+    public string ManufacturerLabel       => "Manufacturer";
+    public string ModelLabel              => "Model";
+    public string RevisionLabel           => "Revision";
+    public string SerialLabel             => "Serial";
+    public string SoftwareLabel           => "Software";
+    public string VersionLabel            => "Version";
+    public string OperatingSystemLabel    => "Operating system";
+    public string SCSILabel               => "SCSI";
+    public string ATA_ATAPILabel          => "ATA / ATAPI";
+    public string CompactDiscLabel        => "CompactDisc";
+    public string DVD_HD_DVDLabel         => "DVD / HD DVD";
+    public string DVD_R_WLabel            => "DVD-R(W)";
+    public string BluRayLabel             => "Blu-ray";
+    public string PCMCIALabel             => "PCMCIA";
+    public string SD_MMCLabel             => "SD / MMC";
+    public string XboxLabel               => "Xbox";
+    public string EntropyLabel            => "Calculate entropy";
+    public string VerifyLabel             => "Verify";
+    public string ChecksumLabel           => "Checksum";
+    public string ConvertLabel            => "Convert to...";
+    public string CreateSidecarLabel      => "Create CICM XML sidecar...";
+    public string ViewSectorsLabel        => "View sectors";
+    public string DecodeMediaTagLabel     => "Decode media tags";
+
     void ExecuteEntropyCommand()
     {
         if(_imageEntropy != null)

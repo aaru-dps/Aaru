@@ -111,6 +111,13 @@ public sealed class MediaScanViewModel : ViewModelBase
         LineColor    = Colors.Yellow;
     }
 
+    public string SpeedLabel => "Stop";
+    public string KbsLabel   => "Kb/s";
+    public string BlockLabel => "Block";
+    public string StartLabel => "Start";
+    public string CloseLabel => "Close";
+    public string StopLabel  => "Stop";
+
     public Color AxesColor
     {
         get => _axesColor;

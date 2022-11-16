@@ -155,6 +155,23 @@ public sealed class BlurayInfoViewModel
     public bool                        SaveBlurayRawDflVisible               { get; }
     public bool                        SaveBlurayPacVisible                  { get; }
 
+    public string DiscinformationLabel                => "Disc information";
+    public string BurstCuttingAreaLabel               => "Burst Cutting Area";
+    public string DiscDefinitionStructureLabel        => "Disc Definition Structure";
+    public string CartridgeStatusLabel                => "Cartridge Status";
+    public string SpareAreaInformationLabel           => "Spare Area Information";
+    public string PseudoOverWriteResourcesLabel       => "Pseudo-OverWrite Resources";
+    public string TrackResourcesLabel                 => "Track Resources";
+    public string SaveBlurayDiscInformationLabel      => "Save Disc Information";
+    public string SaveBlurayBurstCuttingAreaLabel     => "Save Burst Cutting Area";
+    public string SaveBlurayDdsLabel                  => "Save Disc Definition Structure";
+    public string SaveBlurayCartridgeStatusLabel      => "Save Spare Area Information";
+    public string SaveBluraySpareAreaInformationLabel => "Save Spare Area Information";
+    public string SaveBlurayPowResourcesLabel         => "Save Pseudo-OverWrite Resources";
+    public string SaveBlurayTrackResourcesLabel       => "Save Track Resources";
+    public string SaveBlurayRawDflLabel               => "Save raw DFL";
+    public string SaveBlurayPacLabel                  => "Save PAC";
+
     async Task SaveElement(byte[] data)
     {
         var dlgSaveBinary = new SaveFileDialog();

@@ -118,6 +118,13 @@ public sealed class DvdInfoViewModel
     public bool                        SaveDvdBcaVisible   { get; }
     public bool                        SaveDvdAacsVisible  { get; }
 
+    public string SaveDvdPfiLabel   => "Save Physical Format Information";
+    public string SaveDvdDmiLabel   => "Save Disc Manufacturer Information";
+    public string SaveDvdCmiLabel   => "Save Copyright Management Information";
+    public string SaveHdDvdCmiLabel => "Save Copyright Management Information";
+    public string SaveDvdBcaLabel   => "Save Burst Cutting Area";
+    public string SaveDvdAacsLabel  => "Save AACS Information";
+
     async Task SaveElement(byte[] data)
     {
         var dlgSaveBinary = new SaveFileDialog();

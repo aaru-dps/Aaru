@@ -43,26 +43,26 @@
     <StackPanel Orientation="Vertical">
         <StackPanel IsVisible="{Binding OptionsVisible}" Orientation="Vertical">
             <CheckBox IsEnabled="{Binding DuplicatedSectorsEnabled}" IsChecked="{Binding DuplicatedSectorsChecked}">
-                <TextBlock Text="Calculates how many sectors are duplicated (have same exact data in user area)." />
+                <TextBlock Text="{Binding DuplicatedSectorsLabel}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding SeparatedTracksEnabled}" IsChecked="{Binding SeparatedTracksChecked}"
                       IsVisible="{Binding SeparatedTracksVisible}">
-                <TextBlock Text="Calculates entropy for each track separately." />
+                <TextBlock Text="{Binding SeparatedTracksLabel}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding WholeDiscEnabled}" IsChecked="{Binding WholeDiscChecked}"
                       IsVisible="{Binding WholeDiscVisible}">
-                <TextBlock Text="Calculates entropy for the whole disc." />
+                <TextBlock Text="{Binding WholeDiscLabel}" />
             </CheckBox>
         </StackPanel>
         <StackPanel Orientation="Vertical" IsVisible="{Binding ResultsVisible}">
             <TextBlock Text="{Binding MediaEntropyText}" IsVisible="{Binding MediaEntropyVisible}" />
             <TextBlock Text="{Binding MediaUniqueSectorsText}" IsVisible="{Binding MediaUniqueSectorsVisible}" />
-            <TextBlock Text="Track entropy" IsVisible="{Binding SeparatedTracksEnabled}" />
+            <TextBlock Text="{Binding TrackEntropyLabel}" IsVisible="{Binding SeparatedTracksEnabled}" />
             <DataGrid IsVisible="{Binding SeparatedTracksEnabled}" Items="{Binding TrackEntropy}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Track" Binding="{Binding Track}" />
-                    <DataGridTextColumn Header="Entropy" Binding="{Binding Entropy}" />
-                    <DataGridTextColumn Header="Unique sectors" Binding="{Binding UniqueSectors}" />
+                    <DataGridTextColumn Header="{Binding TrackLabel}" Binding="{Binding Track}" />
+                    <DataGridTextColumn Header="{Binding EntropyLabel}" Binding="{Binding Entropy}" />
+                    <DataGridTextColumn Header="{Binding UniqueSectorsLabel}" Binding="{Binding UniqueSectors}" />
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
@@ -79,13 +79,13 @@
             </StackPanel>
         </StackPanel>
         <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
-            <TextBlock Text="Start" />
+            <TextBlock Text="{Binding StartLabel}" />
         </Button>
         <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
-            <TextBlock Text="Close" />
+            <TextBlock Text="{Binding CloseLabel}" />
         </Button>
         <Button Command="{Binding StopCommand}" IsVisible="{Binding StopVisible}">
-            <TextBlock Text="Stop" />
+            <TextBlock Text="{Binding StopLabel}" />
         </Button>
     </StackPanel>
 </Window>

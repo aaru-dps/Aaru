@@ -109,6 +109,18 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         }
     }
 
+    public string DuplicatedSectorsLabel =>
+        "Calculates how many sectors are duplicated (have same exact data in user area).";
+    public string SeparatedTracksLabel => "Calculates entropy for each track separately.";
+    public string WholeDiscLabel       => "Calculates entropy for the whole disc.";
+    public string TrackEntropyLabel    => "Track entropy";
+    public string TrackLabel           => "Track";
+    public string EntropyLabel         => "Entropy";
+    public string UniqueSectorsLabel   => "Unique sectors";
+    public string StartLabel           => "Start";
+    public string CloseLabel           => "Close";
+    public string StopLabel            => "Stop";
+
     public bool SeparatedTracksVisible
     {
         get => _separatedTracksVisible;

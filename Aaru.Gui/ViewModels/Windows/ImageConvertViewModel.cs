@@ -128,6 +128,33 @@ public sealed class ImageConvertViewModel : ViewModelBase
     bool                   _stopVisible;
     string                 _title;
 
+    public string SourceImageLabel => "Source image";
+    public string OutputFormatLabel => "Output format";
+    public string ChooseLabel => "Choose...";
+    public string SectorsLabel => "How many sectors to convert at once.";
+    public string ForceLabel => "Continue conversion even if sector or media tags will be lost in the process.";
+    public string CreatorLabel => "Who (person) created the image?";
+    public string GetFromSourceImageLabel => "Get from source image";
+    public string MetadataLabel => "Metadata";
+    public string MediaLabel => "Media";
+    public string TitleLabel => "Title";
+    public string ManufacturerLabel => "Manufacturer";
+    public string ModelLabel => "Model";
+    public string SerialNumberLabel => "Serial number";
+    public string BarcodeLabel => "Barcode";
+    public string PartNumberLabel => "Part number";
+    public string NumberInSequenceLabel => "Number in sequence";
+    public string LastMediaOfTheSequenceLabel => "Last media of the sequence";
+    public string DriveLabel => "Drive";
+    public string FirmwareRevisionLabel => "Firmware revision";
+    public string CommentsLabel => "Comments";
+    public string CicmXmlLabel => "Existing CICM XML sidecar";
+    public string FromImageLabel => "From image...";
+    public string ResumeFileLabel => "Existing resume file";
+    public string StartLabel => "Start";
+    public string CloseLabel => "Close";
+    public string StopLabel => "Stop";
+
     public ImageConvertViewModel([JetBrains.Annotations.NotNull] IMediaImage inputFormat, string imageSource,
                                  Window view)
     {

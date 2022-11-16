@@ -44,66 +44,66 @@
         <StackPanel Orientation="Vertical">
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsVisible="{Binding ChecksumTracksVisible}"
                       IsChecked="{Binding ChecksumMediaChecked}">
-                <TextBlock Text="Checksums the whole disc." />
+                <TextBlock Text="{Binding ChecksumMediaLabel}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsVisible="{Binding ChecksumTracksVisible}"
                       IsChecked="{Binding ChecksumTracksChecked}">
-                <TextBlock Text="Checksums each track separately." />
+                <TextBlock Text="{Binding ChecksumTracksLabel}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Adler32Checked}">
-                <TextBlock Text="Calculates Adler-32." />
+                <TextBlock Text="{Binding Adler32Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Crc16Checked}">
-                <TextBlock Text="Calculates CRC16." />
+                <TextBlock Text="{Binding Crc16Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Crc32Checked}">
-                <TextBlock Text="Calculates CRC32." />
+                <TextBlock Text="{Binding Crc32Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Crc64Checked}">
-                <TextBlock Text="Calculates CRC64 (ECMA)." />
+                <TextBlock Text="{Binding Crc64Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Fletcher16Checked}">
-                <TextBlock Text="Calculates Fletcher-16." />
+                <TextBlock Text="{Binding Fletcher16Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Fletcher32Checked}">
-                <TextBlock Text="Calculates Fletcher-32." />
+                <TextBlock Text="{Binding Fletcher32Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Md5Checked}">
-                <TextBlock Text="Calculates MD5." />
+                <TextBlock Text="{Binding Md5Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Sha1Checked}">
-                <TextBlock Text="Calculates SHA1." />
+                <TextBlock Text="{Binding Sha1Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Sha256Checked}">
-                <TextBlock Text="Calculates SHA256." />
+                <TextBlock Text="{Binding Sha256Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Sha384Checked}">
-                <TextBlock Text="Calculates SHA384." />
+                <TextBlock Text="{Binding Sha384Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Sha512Checked}">
-                <TextBlock Text="Calculates SHA512." />
+                <TextBlock Text="{Binding Sha512Label}" />
             </CheckBox>
             <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding SpamsumChecked}">
-                <TextBlock Text="Calculates SpamSum fuzzy hash." />
+                <TextBlock Text="{Binding SpamSumLabel}" />
             </CheckBox>
         </StackPanel>
         <StackPanel Orientation="Vertical" IsVisible="{Binding ResultsVisible}">
             <StackPanel Orientation="Vertical" IsVisible="{Binding TrackChecksumsVisible}">
-                <TextBlock Text="Track checksums:" />
+                <TextBlock Text="{Binding TrackChecksumsLabel}" />
                 <DataGrid Items="{Binding TrackChecksums}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Track" Binding="{Binding Track}" />
-                        <DataGridTextColumn Header="Algorithms" Binding="{Binding Algorithm}" />
-                        <DataGridTextColumn Header="Hash" Binding="{Binding Value}" />
+                        <DataGridTextColumn Header="{Binding TrackLabel}" Binding="{Binding Track}" />
+                        <DataGridTextColumn Header="{Binding AlgorithmsLabel}" Binding="{Binding Algorithm}" />
+                        <DataGridTextColumn Header="{Binding HashLabel}" Binding="{Binding Value}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
             <StackPanel Orientation="Vertical" IsVisible="{Binding MediaChecksumsVisible}">
-                <TextBlock Text="Media checksums:" />
+                <TextBlock Text="{Binding MediaChecksumsLabel}" />
                 <DataGrid Items="{Binding MediaChecksums}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Algorithms" Binding="{Binding Algorithm}" />
-                        <DataGridTextColumn Header="Hash" Binding="{Binding Value}" />
+                        <DataGridTextColumn Header="{Binding AlgorithmsLabel}" Binding="{Binding Algorithm}" />
+                        <DataGridTextColumn Header="{Binding HashLabel}" Binding="{Binding Value}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
@@ -121,15 +121,15 @@
         <StackPanel Orientation="Horizontal">
             <Button Command="{Binding StartCommand}" IsEnabled="{Binding StartCommandEnabled}"
                     IsVisible="{Binding StartCommandVisible}">
-                <TextBlock Text="Start" />
+                <TextBlock Text="{Binding StartLabel}" />
             </Button>
             <Button Command="{Binding CloseCommand}" IsEnabled="{Binding CloseCommandEnabled}"
                     IsVisible="{Binding CloseCommandVisible}">
-                <TextBlock Text="Close" />
+                <TextBlock Text="{Binding CloseLabel}" />
             </Button>
             <Button Command="{Binding StopCommand}" IsEnabled="{Binding StopCommandEnabled}"
                     IsVisible="{Binding StopCommandVisible}">
-                <TextBlock Text="Stop" />
+                <TextBlock Text="{Binding StopLabel}" />
             </Button>
         </StackPanel>
     </StackPanel>

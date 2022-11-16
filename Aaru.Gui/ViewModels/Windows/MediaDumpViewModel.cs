@@ -240,6 +240,25 @@ public sealed class MediaDumpViewModel : ViewModelBase
         _devicePath = devicePath;
     }
 
+    public string OutputFormatLabel     => "Output format";
+    public string ChooseLabel           => "Choose...";
+    public string StopOnErrorLabel      => "Stop media dump on first error";
+    public string ForceLabel            => "Continue dumping whatever happens";
+    public string RetriesLabel          => "Retry passes";
+    public string PersistentLabel       => "Try to recover partial or incorrect data";
+    public string ResumeLabel           => "Create/use resume mapfile";
+    public string Track1PregapLabel     => "Try to read track 1 pregap";
+    public string SkippedLabel          => "Skipped sectors on error";
+    public string SidecarLabel          => "Create CICM XML metadata sidecar";
+    public string TrimLabel             => "Trim errors from skipped sectors";
+    public string ExistingMetadataLabel => "Take metadata from existing CICM XML sidecar";
+    public string EncodingLabel         => "Encoding to use on metadata sidecar creation";
+    public string DestinationLabel      => "Writing image to:";
+    public string LogLabel              => "Log";
+    public string StartLabel            => "Start";
+    public string CloseLabel            => "Close";
+    public string StopLabel             => "Stop";
+
     public ReactiveCommand<Unit, Unit> StartCommand       { get; }
     public ReactiveCommand<Unit, Unit> CloseCommand       { get; }
     public ReactiveCommand<Unit, Unit> StopCommand        { get; }

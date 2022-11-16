@@ -248,4 +248,8 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
         get => _decodedText;
         set => this.RaiseAndSetIfChanged(ref _decodedText, value);
     }
+
+    public string TagLabel     => "Tag:";
+    public string HexViewLabel => "HexView";
+    public string DecodedLabel => "Decoded";
 }

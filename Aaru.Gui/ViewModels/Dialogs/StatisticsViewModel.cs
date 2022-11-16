@@ -71,21 +71,20 @@ public sealed class StatisticsViewModel : ViewModelBase
     bool                      _formatsCommandVisible;
     string                    _formatsText;
     bool                      _formatsVisible;
-
-    string _fsinfoText;
-    bool   _fsinfoVisible;
-    string _imageInfoText;
-    bool   _imageInfoVisible;
-    string _mediaInfoText;
-    bool   _mediaInfoVisible;
-    string _mediaScanText;
-    bool   _mediaScanVisible;
-    bool   _mediasVisible;
-    bool   _partitionsVisible;
-    string _printHexText;
-    bool   _printHexVisible;
-    string _verifyText;
-    bool   _verifyVisible;
+    string                    _fsinfoText;
+    bool                      _fsinfoVisible;
+    string                    _imageInfoText;
+    bool                      _imageInfoVisible;
+    string                    _mediaInfoText;
+    bool                      _mediaInfoVisible;
+    string                    _mediaScanText;
+    bool                      _mediaScanVisible;
+    bool                      _mediasVisible;
+    bool                      _partitionsVisible;
+    string                    _printHexText;
+    bool                      _printHexVisible;
+    string                    _verifyText;
+    bool                      _verifyVisible;
 
     public StatisticsViewModel(StatisticsDialog view)
     {
@@ -712,6 +711,7 @@ public sealed class StatisticsViewModel : ViewModelBase
     public string Title => "Encodings";
     [NotNull]
     public string CloseLabel => "Close";
+
     public ReactiveCommand<Unit, Unit>            CloseCommand { get; }
     public ObservableCollection<NameCountModel>   Filters      { get; }
     public ObservableCollection<NameCountModel>   Formats      { get; }

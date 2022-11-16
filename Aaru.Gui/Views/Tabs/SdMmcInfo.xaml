@@ -42,31 +42,31 @@
     <TabControl>
         <TabItem IsVisible="{Binding !!CidText}">
             <TabItem.Header>
-                <TextBlock Text="CID" />
+                <TextBlock Text="{Binding CidLabel}" />
             </TabItem.Header>
             <TextBox IsReadOnly="True" Text="{Binding CidText}" />
         </TabItem>
         <TabItem IsVisible="{Binding !!CsdText}">
             <TabItem.Header>
-                <TextBlock Text="CSD" />
+                <TextBlock Text="{Binding CsdLabel}" />
             </TabItem.Header>
             <TextBox IsReadOnly="True" Text="{Binding CsdText}" />
         </TabItem>
         <TabItem IsVisible="{Binding !!OcrText}">
             <TabItem.Header>
-                <TextBlock Text="OCR" />
+                <TextBlock Text="{Binding OcrLabel}" />
             </TabItem.Header>
             <TextBox IsReadOnly="True" Text="{Binding OcrText}" />
         </TabItem>
         <TabItem IsVisible="{Binding !!ExtendedCsdText}">
             <TabItem.Header>
-                <TextBlock Text="Extended CSD" />
+                <TextBlock Text="{Binding ExtendedCsdLabel}" />
             </TabItem.Header>
             <TextBox IsReadOnly="True" Text="{Binding ExtendedCsdText}" />
         </TabItem>
         <TabItem IsVisible="{Binding !!ScrText}">
             <TabItem.Header>
-                <TextBlock Text="SCR" />
+                <TextBlock Text="{Binding ScrLabel}" />
             </TabItem.Header>
             <TextBox IsReadOnly="True" Text="{Binding ScrText}" />
         </TabItem>

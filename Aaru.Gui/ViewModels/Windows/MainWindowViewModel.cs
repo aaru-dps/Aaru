@@ -162,6 +162,28 @@ public sealed class MainWindowViewModel : ViewModelBase
         _ejectIcon = new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
     }
 
+    public string FileLabel                 => "_File";
+    public string OpenLabel                 => "_Open";
+    public string SettingsLabel             => "_Settings";
+    public string ExitLabel                 => "E_xit";
+    public string DevicesLabel              => "_Devices";
+    public string RefreshDevicesLabel       => "_Refresh";
+    public string WindowLabel               => "_Window";
+    public string ConsoleLabel              => "_Console";
+    public string HelpLabel                 => "_Help";
+    public string EncodingsLabel            => "_Encodings";
+    public string PluginsLabel              => "_Plugins";
+    public string StatisticsLabel           => "_Statistics";
+    public string AboutLabel                => "_About";
+    public string RefreshDevicesFullLabel   => "_Refresh devices";
+    public string CloseAllImagesLabel       => "_Close all images";
+    public string CalculateEntropyLabel     => "Calculate entropy";
+    public string VerifyImageLabel          => "Verify";
+    public string ChecksumImageLabel        => "Checksum";
+    public string CreateSidecarLabel        => "Create CICM XML sidecar...";
+    public string ViewImageSectorsLabel     => "View sectors";
+    public string DecodeImageMediaTagsLabel => "Decode media tags";
+
     public bool DevicesSupported
     {
         get => _devicesSupported;

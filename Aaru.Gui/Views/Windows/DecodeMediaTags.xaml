@@ -42,7 +42,7 @@
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Tag:" />
+            <TextBlock Text="{Binding TagLabel}" />
             <ComboBox Items="{Binding TagsList}" SelectedItem="{Binding SelectedTag}">
                 <ComboBox.DataTemplates>
                     <DataTemplate>
@@ -54,13 +54,13 @@
         <TabControl>
             <TabItem>
                 <TabItem.Header>
-                    <TextBlock Text="HexView" />
+                    <TextBlock Text="{Binding HexViewLabel}" />
                 </TabItem.Header>
                 <TextBox IsReadOnly="True" Text="{Binding HexViewText}" />
             </TabItem>
             <TabItem IsVisible="{Binding DecodedVisible}">
                 <TabItem.Header>
-                    <TextBlock Text="Decoded" />
+                    <TextBlock Text="{Binding DecodedLabel}" />
                 </TabItem.Header>
                 <TextBox IsReadOnly="True" Text="{Binding DecodedText}" />
             </TabItem>

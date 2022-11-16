@@ -106,6 +106,13 @@ public sealed class ImageVerifyViewModel : ViewModelBase
         OptionsVisible       = true;
     }
 
+    public string VerifyImageLabel   => "Verify disc image if supported.";
+    public string VerifySectorsLabel => "Verify all sectors if supported.";
+    public string LBALabel           => "LBA";
+    public string StartLabel         => "Start";
+    public string CloseLabel         => "Close";
+    public string StopLabel          => "Stop";
+
     public ObservableCollection<LbaModel> ErrorList    { get; }
     public ObservableCollection<LbaModel> UnknownList  { get; }
     public ReactiveCommand<Unit, Unit>    StartCommand { get; }

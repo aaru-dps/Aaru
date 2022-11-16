@@ -43,11 +43,11 @@
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Vertical" IsVisible="{Binding OptionsVisible}">
             <CheckBox IsChecked="{Binding VerifyImageChecked}" IsEnabled="{Binding VerifyImageEnabled}">
-                <TextBlock Text="Verify disc image if supported." />
+                <TextBlock Text="{Binding VerifyImageLabel}" />
             </CheckBox>
             <CheckBox IsChecked="{Binding VerifySectorsChecked}" IsEnabled="{Binding VerifySectorsEnabled}"
                       IsVisible="{Binding VerifySectorsVisible}">
-                <TextBlock Text="Verify all sectors if supported." />
+                <TextBlock Text="{Binding VerifySectorsLabel}" />
             </CheckBox>
         </StackPanel>
         <StackPanel Orientation="Vertical" IsVisible="{Binding ResultsVisible}">
@@ -56,7 +56,7 @@
                     <TextBlock Text="{Binding SectorErrorsText}" />
                     <DataGrid Items="{Binding ErrorList}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="LBA" Binding="{Binding Lba}" />
+                            <DataGridTextColumn Header="{Binding LBALabel}" Binding="{Binding Lba}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
@@ -64,7 +64,7 @@
                     <TextBlock Text="{Binding SectorsUnknownsText}" />
                     <DataGrid Items="{Binding UnknownList}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="LBA" Binding="{Binding Lba}" />
+                            <DataGridTextColumn Header="{Binding LBALabel}" Binding="{Binding Lba}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
@@ -92,13 +92,13 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
-                <TextBlock Text="Start" />
+                <TextBlock Text="{Binding StartLabel}" />
             </Button>
             <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
-                <TextBlock Text="Close" />
+                <TextBlock Text="{Binding CloseLabel}" />
             </Button>
             <Button Command="{Binding StopCommand}" IsVisible="{Binding StopVisible}" IsEnabled="{Binding StopEnabled}">
-                <TextBlock Text="Stop" />
+                <TextBlock Text="{Binding StopLabel}" />
             </Button>
         </StackPanel>
     </StackPanel>

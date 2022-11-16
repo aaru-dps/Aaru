@@ -158,6 +158,11 @@ public sealed class PluginsViewModel : ViewModelBase
     public string WritableLabel => "Writable:";
     [NotNull]
     public string CloseLabel => "Close";
+    public string NameLabel    => "Name";
+    public string UUIDLabel    => "UUID";
+    public string VersionLabel => "Version";
+    public string AuthorLabel  => "Author";
+
     public ReactiveCommand<Unit, Unit>       CloseCommand         { get; }
     public ObservableCollection<PluginModel> Filters              { get; }
     public ObservableCollection<PluginModel> PartitionSchemes     { get; }

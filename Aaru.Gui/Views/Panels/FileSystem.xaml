@@ -57,12 +57,12 @@
         <TextBlock Text="{Binding FreeClustersText}" IsVisible="{Binding FreeClustersVisible}" />
         <TextBlock Text="{Binding FilesText}" IsVisible="{Binding FilesVisible}" />
         <CheckBox IsEnabled="{Binding BootableChecked}">
-            <TextBlock Text="Filesystem contains boot code" />
+            <TextBlock Text="{Binding BootableLabel}" />
         </CheckBox>
         <CheckBox IsEnabled="{Binding DirtyChecked}">
-            <TextBlock Text="Filesystem has not been unmounted correctly or contains errors" />
+            <TextBlock Text="{Binding DirtyLabel}" />
         </CheckBox>
-        <TextBlock Text="Details" IsVisible="{Binding !!InformationText}" />
+        <TextBlock Text="{Binding DetailsLabel}" IsVisible="{Binding !!InformationText}" />
         <TextBox Text="{Binding InformationText}" IsReadOnly="True" />
     </StackPanel>
 </UserControl>

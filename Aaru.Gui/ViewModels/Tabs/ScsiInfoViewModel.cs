@@ -758,6 +758,20 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _mmcFeatureText, value);
     }
 
+    public string InquiryLabel           => "INQUIRY";
+    public string ScsiInquiryLabel       => "SCSI INQUIRY";
+    public string SaveInquiryBinaryLabel => "Save binary to file";
+    public string SaveInquiryTextLabel   => "Save text to file";
+    public string ModeSenseLabel         => "MODE SENSE";
+    public string PageLabel              => "Page";
+    public string SaveModeSense6Label    => "Save MODE SENSE (6) response to file";
+    public string SaveModeSense10Label   => "Save MODE SENSE (10) response to file";
+    public string EvpdLabel              => "EVPD";
+    public string SaveEvpdPageLabel      => "Save EVPD page to file";
+    public string MmcFeaturesLabel       => "MMC FEATURES";
+    public string FeatureLabel           => "Feature";
+    public string SaveMmcFeaturesLabel   => "Save MMC GET CONFIGURATION response to file";
+
     async Task ExecuteSaveInquiryBinaryCommand()
     {
         var dlgSaveBinary = new SaveFileDialog();

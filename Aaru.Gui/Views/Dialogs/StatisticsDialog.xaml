@@ -76,9 +76,10 @@
                     <DataGrid Items="{Binding Filters}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="Filter" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Times found" Binding="{Binding Count}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding FilterLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TimesFoundLabel}" Binding="{Binding Count}"
+                                                Width="Auto" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -89,9 +90,10 @@
                     <DataGrid Items="{Binding Formats}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="Format" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Times found" Binding="{Binding Count}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding FormatLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TimesFoundLabel}" Binding="{Binding Count}"
+                                                Width="Auto" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -102,10 +104,10 @@
                     <DataGrid Items="{Binding Partitions}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="Partition" Binding="{Binding Name}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding PartitionLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="Times found" Binding="{Binding Count}" Width="Auto"
-                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TimesFoundLabel}" Binding="{Binding Count}"
+                                                Width="Auto" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -116,10 +118,10 @@
                     <DataGrid Items="{Binding Filesystems}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="Filesystem" Binding="{Binding Name}" Width="Auto"
-                                                IsReadOnly="True" />
-                            <DataGridTextColumn Header="Times found" Binding="{Binding Count}" Width="Auto"
-                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding FilesystemLabel}" Binding="{Binding Name}"
+                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TimesFoundLabel}" Binding="{Binding Count}"
+                                                Width="Auto" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -130,13 +132,14 @@
                     <DataGrid Items="{Binding Devices}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="Device" Binding="{Binding Model}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding DeviceLabel}" Binding="{Binding Model}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding ManufacturerLabel}" Binding="{Binding Manufacturer}"
+                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding RevisionLabel}" Binding="{Binding Revision}"
+                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding BusLabel}" Binding="{Binding Bus}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="Revision" Binding="{Binding Revision}" Width="Auto"
-                                                IsReadOnly="True" />
-                            <DataGridTextColumn Header="Bus" Binding="{Binding Bus}" Width="Auto" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -147,10 +150,12 @@
                     <DataGrid Items="{Binding Medias}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="Media" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Times found" Binding="{Binding Count}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding MediaLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TimesFoundLabel}" Binding="{Binding Count}"
+                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TypeLabel}" Binding="{Binding Type}" Width="Auto"
+                                                IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>

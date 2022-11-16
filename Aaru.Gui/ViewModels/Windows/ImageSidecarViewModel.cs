@@ -98,6 +98,12 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         StopCommand        = ReactiveCommand.Create(ExecuteStopCommand);
     }
 
+    public string DestinationFileLabel => "Destination file";
+    public string ChooseLabel          => "Choose...";
+    public string StartLabel           => "Start";
+    public string CloseLabel           => "Close";
+    public string StopLabel            => "Stop";
+
     public string                      Title              { get; }
     public ReactiveCommand<Unit, Task> DestinationCommand { get; }
     public ReactiveCommand<Unit, Unit> StartCommand       { get; }

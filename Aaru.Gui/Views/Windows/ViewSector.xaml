@@ -42,11 +42,11 @@
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Sector" /> <NumericUpDown Value="{Binding SectorNumber}" />
+            <TextBlock Text="{Binding SectorLabel}" /> <NumericUpDown Value="{Binding SectorNumber}" />
             <TextBlock Text="{Binding TotalSectorsText}" />
         </StackPanel>
         <CheckBox IsChecked="{Binding LongSectorChecked}" IsVisible="{Binding LongSectorVisible}">
-            <TextBlock Text="Show long sector" />
+            <TextBlock Text="{Binding LongSectorLabel}" />
         </CheckBox>
         <TextBox IsReadOnly="True" Text="{Binding PrintHexText}" />
     </StackPanel>

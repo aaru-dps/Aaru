@@ -42,38 +42,40 @@
     <StackPanel>
         <StackPanel IsVisible="{Binding XboxInformationVisible}">
             <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxL0VideoText}">
-                <TextBlock Text="Video layer 0 size" /> <TextBox IsReadOnly="True" Text="{Binding XboxL0VideoText}" />
+                <TextBlock Text="{Binding XboxL0VideoLabel}" />
+                <TextBox IsReadOnly="True" Text="{Binding XboxL0VideoText}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxL1VideoText}">
-                <TextBlock Text="Video layer 0 size" /> <TextBox IsReadOnly="True" Text="{Binding XboxL1VideoText}" />
+                <TextBlock Text="{Binding XboxL1VideoLabel}" />
+                <TextBox IsReadOnly="True" Text="{Binding XboxL1VideoText}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxMiddleZoneText}">
-                <TextBlock Text="Video layer 0 size" />
+                <TextBlock Text="{Binding XboxMiddleZoneLabel}" />
                 <TextBox IsReadOnly="True" Text="{Binding XboxMiddleZoneText}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxGameSizeText}">
-                <TextBlock Text="Video layer 0 size" /> <TextBox IsReadOnly="True" Text="{Binding XboxGameSizeText}" />
+                <TextBlock Text="{Binding XboxGameSizeLabel}" />
+                <TextBox IsReadOnly="True" Text="{Binding XboxGameSizeText}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxTotalSizeText}">
-                <TextBlock Text="Video layer 0 size" />
+                <TextBlock Text="{Binding XboxTotalSizeLabel}" />
                 <TextBox IsReadOnly="True" Text="{Binding XboxTotalSizeText}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxRealBreakText}">
-                <TextBlock Text="Video layer 0 size" />
+                <TextBlock Text="{Binding XboxRealBreakLabel}" />
                 <TextBox IsReadOnly="True" Text="{Binding XboxRealBreakText}" />
             </StackPanel>
         </StackPanel>
         <StackPanel>
             <StackPanel IsVisible="{Binding !!XboxDmiText}">
-                <TextBlock Text="Disc Manufacturing Information" />
-                <TextBox IsReadOnly="True" Text="{Binding XboxDmiText}" />
+                <TextBlock Text="{Binding XboxDmiLabel}" /> <TextBox IsReadOnly="True" Text="{Binding XboxDmiText}" />
             </StackPanel>
             <StackPanel IsVisible="{Binding !!XboxSsText}">
-                <TextBlock Text="Security Sector" /> <TextBox IsReadOnly="True" Text="{Binding XboxSsText}" />
+                <TextBlock Text="{Binding XboxSsLabel}" /> <TextBox IsReadOnly="True" Text="{Binding XboxSsText}" />
             </StackPanel>
             <Button HorizontalAlignment="Right" IsVisible="{Binding SaveXboxSsVisible}"
                     Command="{Binding SaveXboxSsCommand}">
-                <TextBlock Text="Save Xbox Security Sector" />
+                <TextBlock Text="{Binding SaveXboxSsLabel}" />
             </Button>
         </StackPanel>
     </StackPanel>

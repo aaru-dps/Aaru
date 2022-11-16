@@ -41,11 +41,11 @@
         <windows:ImageSidecarViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="Destination file" />
+        <TextBlock Text="{Binding DestinationFileLabel}" />
         <StackPanel Orientation="Horizontal">
             <TextBox Text="{Binding DestinationText}" IsReadOnly="True" />
             <Button Command="{Binding DestinationCommand}" IsEnabled="{Binding DestinationEnabled}">
-                <TextBlock Text="Choose..." />
+                <TextBlock Text="{Binding ChooseLabel}" />
             </Button>
         </StackPanel>
         <StackPanel Orientation="Vertical" IsVisible="{Binding ProgressVisible}">
@@ -63,13 +63,13 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
-                <TextBlock Text="Start" />
+                <TextBlock Text="{Binding StartLabel}" />
             </Button>
             <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
-                <TextBlock Text="Close" />
+                <TextBlock Text="{Binding CloseLabel}" />
             </Button>
             <Button Command="{Binding StopCommand}" IsEnabled="{Binding StopEnabled}" IsVisible="{Binding StopVisible}">
-                <TextBlock Text="Stop" />
+                <TextBlock Text="{Binding StopLabel}" />
             </Button>
         </StackPanel>
     </StackPanel>

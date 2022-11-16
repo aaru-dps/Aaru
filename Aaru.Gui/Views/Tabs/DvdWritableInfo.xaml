@@ -41,73 +41,74 @@
     </Design.DataContext>
     <StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock IsVisible="{Binding !!DvdRamDdsText}" Text="Disc Definition Structure" />
+            <TextBlock IsVisible="{Binding !!DvdRamDdsText}" Text="{Binding DvdRamDdsLabel}" />
             <TextBox IsReadOnly="True" IsVisible="{Binding !!DvdRamDdsText}" Text="{Binding DvdRamDdsText}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock IsVisible="{Binding !!DvdRamCartridgeStatusText}" Text="Cartridge Status" />
+            <TextBlock IsVisible="{Binding !!DvdRamCartridgeStatusText}" Text="{Binding DvdRamCartridgeStatusLabel}" />
             <TextBox IsReadOnly="True" IsVisible="{Binding !!DvdRamCartridgeStatusText}"
                      Text="{Binding DvdRamCartridgeStatusText}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock IsVisible="{Binding !!DvdRamSpareAreaInformationText}" Text="Spare Area Information" />
+            <TextBlock IsVisible="{Binding !!DvdRamSpareAreaInformationText}"
+                       Text="{Binding DvdRamSpareAreaInformationLabel}" />
             <TextBox IsReadOnly="True" IsVisible="{Binding !!DvdRamSpareAreaInformationText}"
                      Text="{Binding DvdRamSpareAreaInformationText}" />
         </StackPanel>
         <Button Command="{Binding SaveDvdRamDdsCommand}" IsVisible="{Binding SaveDvdRamDdsVisible}">
-            <TextBlock Text="Save Disc Definition Structure" />
+            <TextBlock Text="{Binding SaveDvdRamDdsLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdRamCartridgeStatusCommand}"
                 IsVisible="{Binding SaveDvdRamCartridgeStatusVisible}">
-            <TextBlock Text="Save Cartridge Status" />
+            <TextBlock Text="{Binding SaveDvdRamCartridgeStatusLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdRamSpareAreaInformationCommand}"
                 IsVisible="{Binding SaveDvdRamSpareAreaInformationVisible}">
-            <TextBlock Text="Save Spare Area Information" />
+            <TextBlock Text="{Binding SaveDvdRamSpareAreaInformationLabel}" />
         </Button>
         <Button Command="{Binding SaveLastBorderOutRmdCommand}" IsVisible="{Binding SaveLastBorderOutRmdVisible}">
-            <TextBlock Text="Save Last Border-Out RMD" />
+            <TextBlock Text="{Binding SaveLastBorderOutRmdLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdPreRecordedInfoCommand}" IsVisible="{Binding SaveDvdPreRecordedInfoVisible}">
-            <TextBlock Text="Save Pre-Recorded Physical Information" />
+            <TextBlock Text="{Binding SaveDvdPreRecordedInfoLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdrMediaIdentifierCommand}" IsVisible="{Binding SaveDvdrMediaIdentifierVisible}">
-            <TextBlock Text="Save Media Identifier" />
+            <TextBlock Text="{Binding SaveDvdrMediaIdentifierLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdrPhysicalInformationCommand}"
                 IsVisible="{Binding SaveDvdrPhysicalInformationVisible}">
-            <TextBlock Text="Save Recordable Physical Information" />
+            <TextBlock Text="{Binding SaveDvdrPhysicalInformationLabel}" />
         </Button>
         <Button Command="{Binding SaveHddvdrMediumStatusCommand}" IsVisible="{Binding SaveHddvdrMediumStatusVisible}">
-            <TextBlock Text="Save Medium Status" />
+            <TextBlock Text="{Binding SaveHddvdrMediumStatusLabel}" />
         </Button>
         <Button Command="{Binding SaveHddvdrLastRmdCommand}" IsVisible="{Binding SaveHddvdrLastRmdVisible}">
-            <TextBlock Text="Save Last Border-Out RMD" />
+            <TextBlock Text="{Binding SaveHddvdrLastRmdLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdrLayerCapacityCommand}" IsVisible="{Binding SaveDvdrLayerCapacityVisible}">
-            <TextBlock Text="Save Layer Capacity" />
+            <TextBlock Text="{Binding SaveDvdrLayerCapacityLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdrDlMiddleZoneStartCommand}"
                 IsVisible="{Binding SaveDvdrDlMiddleZoneStartVisible}">
-            <TextBlock Text="Save Middle Zone Start" />
+            <TextBlock Text="{Binding SaveDvdrDlMiddleZoneStartLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdrDlJumpIntervalSizeCommand}"
                 IsVisible="{Binding SaveDvdrDlJumpIntervalSizeVisible}">
-            <TextBlock Text="Save Jump Interval Size" />
+            <TextBlock Text="{Binding SaveDvdrDlJumpIntervalSizeLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdrDlManualLayerJumpStartLbaCommand}"
                 IsVisible="{Binding SaveDvdrDlManualLayerJumpStartLbaVisible}">
-            <TextBlock Text="Save Manual Layer Jump Start LBA" />
+            <TextBlock Text="{Binding SaveDvdrDlManualLayerJumpStartLbaLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdrDlRemapAnchorPointCommand}"
                 IsVisible="{Binding SaveDvdrDlRemapAnchorPointVisible}">
-            <TextBlock Text="Save Remap Anchor Point" />
+            <TextBlock Text="{Binding SaveDvdrDlRemapAnchorPointLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdPlusAdipCommand}" IsVisible="{Binding SaveDvdPlusAdipVisible}">
-            <TextBlock Text="Save ADIP" />
+            <TextBlock Text="{Binding SaveDvdPlusAdipLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdPlusDcbCommand}" IsVisible="{Binding SaveDvdPlusDcbVisible}">
-            <TextBlock Text="Save Disc Control Blocks" />
+            <TextBlock Text="{Binding SaveDvdPlusDcbLabel}" />
         </Button>
     </StackPanel>
 </UserControl>

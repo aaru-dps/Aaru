@@ -43,13 +43,13 @@
         <StackPanel Orientation="Horizontal">
             <DataGrid Items="{Binding CisList}" SelectedItem="{Binding SelectedCis}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="CIS" Binding="{Binding Code}" />
+                    <DataGridTextColumn Header="{Binding CisLabel}" Binding="{Binding Code}" />
                 </DataGrid.Columns>
             </DataGrid>
             <TextBox IsReadOnly="True" Text="{Binding PcmciaCisText}" />
         </StackPanel>
         <Button Command="{Binding SavePcmciaCisCommand}">
-            <TextBlock Text="Save PCMCIA CIS to file" />
+            <TextBlock Text="{Binding SavePcmciaCisLabel}" />
         </Button>
     </StackPanel>
 </UserControl>

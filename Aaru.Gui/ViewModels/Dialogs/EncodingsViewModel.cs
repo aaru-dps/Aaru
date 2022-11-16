@@ -76,6 +76,10 @@ public sealed class EncodingsViewModel : ViewModelBase
     public string Title => "Encodings";
     [NotNull]
     public string CloseLabel => "Close";
+
+    public string CodeLabel => "Code";
+    public string NameLabel => "Name";
+
     public ReactiveCommand<Unit, Unit>         CloseCommand { get; }
     public ObservableCollection<EncodingModel> Encodings    { get; }
 
