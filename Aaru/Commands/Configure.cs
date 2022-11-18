@@ -117,11 +117,7 @@ sealed class ConfigureCommand : Command
             AaruConsole.
                 Write("[italic]Do you want to enable decryption of copy protected media?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-            pressedKey = System.Console.ReadKey();
-            AaruConsole.WriteLine();
-        }
-
-        Settings.Settings.Current.EnableDecryption = pressedKey.Key == ConsoleKey.Y;
+        Settings.Settings.Current.EnableDecryption = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to enable decryption of copy protected media?"));
 
         #region Device reports
         AaruConsole.WriteLine();
@@ -142,9 +138,7 @@ sealed class ConfigureCommand : Command
             AaruConsole.
                 Write("[italic]Do you want to save device reports in shared folder of your computer? [bold]([green]Y[/]/[red]N[/]):[/] ");
 
-            pressedKey = System.Console.ReadKey();
-            AaruConsole.WriteLine();
-        }
+        Settings.Settings.Current.SaveReportsGlobally = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to save device reports in shared folder of your computer?"));
 
         Settings.Settings.Current.SaveReportsGlobally = pressedKey.Key == ConsoleKey.Y;
 
@@ -158,17 +152,7 @@ sealed class ConfigureCommand : Command
                       "These report will be used to improve [italic]Aaru[/] support, and in some cases, to provide emulation of the\n" +
                       "devices to other open-source projects. In any case, no information linking the report to you will be stored.");
 
-        while(pressedKey.Key != ConsoleKey.Y &&
-              pressedKey.Key != ConsoleKey.N)
-        {
-            AaruConsole.
-                Write("[italic]Do you want to share your device reports with us?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-            pressedKey = System.Console.ReadKey();
-            AaruConsole.WriteLine();
-        }
-
-        Settings.Settings.Current.ShareReports = pressedKey.Key == ConsoleKey.Y;
+        Settings.Settings.Current.ShareReports = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to share your device reports with us?"));
         #endregion Device reports
 
         #region Statistics
@@ -180,161 +164,29 @@ sealed class ConfigureCommand : Command
                       "In no case, any information besides pure statistical usage numbers is stored, and they're just joint to the\n" +
                       "pool with no way of using them to identify you.");
 
-        pressedKey = new ConsoleKeyInfo();
-
-        while(pressedKey.Key != ConsoleKey.Y &&
-              pressedKey.Key != ConsoleKey.N)
-        {
-            AaruConsole.
-                Write("[italic]Do you want to save stats about your Aaru usage?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-            pressedKey = System.Console.ReadKey();
-            AaruConsole.WriteLine();
-        }
-
-        if(pressedKey.Key == ConsoleKey.Y)
+        if(AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to save stats about your Aaru usage?")))
         {
             Settings.Settings.Current.Stats = new StatsSettings();
 
-            pressedKey = new ConsoleKeyInfo();
+            Settings.Settings.Current.Stats.ShareStats = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to share your stats (anonymously)?"));
 
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to share your stats (anonymously)?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+            Settings.Settings.Current.Stats.CommandStats = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to gather statistics about command usage?"));
 
-                pressedKey = System.Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
+            Settings.Settings.Current.Stats.DeviceStats = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to gather statistics about found devices?"));
 
-            Settings.Settings.Current.Stats.ShareStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Settings.Current.Stats.FilesystemStats = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to gather statistics about found filesystems?"));
 
-            pressedKey = new ConsoleKeyInfo();
+            Settings.Settings.Current.Stats.FilterStats = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to gather statistics about found file filters?"));
 
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about command usage?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+            Settings.Settings.Current.Stats.MediaImageStats = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to gather statistics about found media image formats?"));
 
-                pressedKey = System.Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
+            Settings.Settings.Current.Stats.MediaScanStats = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to gather statistics about scanned media?"));
 
-            Settings.Settings.Current.Stats.CommandStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Settings.Current.Stats.PartitionStats = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to gather statistics about found partitioning schemes?"));
 
-            pressedKey = new ConsoleKeyInfo();
+            Settings.Settings.Current.Stats.MediaStats = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to gather statistics about media types?"));
 
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about found devices?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = System.Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Settings.Current.Stats.DeviceStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about found filesystems?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = System.Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Settings.Current.Stats.FilesystemStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about found file filters?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = System.Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Settings.Current.Stats.FilterStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about found media image formats?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = System.Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Settings.Current.Stats.MediaImageStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about scanned media?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = System.Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Settings.Current.Stats.MediaScanStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about found partitioning schemes?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = System.Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Settings.Current.Stats.PartitionStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about media types?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = System.Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Settings.Current.Stats.MediaStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about media image verifications?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = System.Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Settings.Current.Stats.VerifyStats = pressedKey.Key == ConsoleKey.Y;
+            Settings.Settings.Current.Stats.VerifyStats = AnsiConsole.Confirm(string.Format("[italic]{0}[/]", "Do you want to gather statistics about media image verifications?"));
         }
         else
             Settings.Settings.Current.Stats = null;
