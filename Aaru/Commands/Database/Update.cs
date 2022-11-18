@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
+using Aaru.Localization;
 using Microsoft.EntityFrameworkCore;
 using Spectre.Console;
 
@@ -48,12 +49,12 @@ sealed class UpdateCommand : Command
 {
     readonly bool _mainDbUpdate;
 
-    public UpdateCommand(bool mainDbUpdate) : base("update", "Updates the database.")
+    public UpdateCommand(bool mainDbUpdate) : base("update", UI.Database_Update_Command_Description)
     {
         _mainDbUpdate = mainDbUpdate;
 
-        Add(new Option<bool>("--clear", () => false, "Clear existing main database."));
-        Add(new Option<bool>("--clear-all", () => false, "Clear existing main and local database."));
+        Add(new Option<bool>("--clear", () => false, UI.Clear_existing_main_database));
+        Add(new Option<bool>("--clear-all", () => false, UI.Clear_existing_main_and_local_database));
 
         Handler = CommandHandler.Create((Func<bool, bool, bool, bool, int>)Invoke);
     }
@@ -107,7 +108,7 @@ sealed class UpdateCommand : Command
                 if(Debugger.IsAttached)
                     throw;
 
-                AaruConsole.ErrorWriteLine("Could not remove local database.");
+                AaruConsole.ErrorWriteLine(UI.Could_not_remove_local_database);
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }
@@ -122,7 +123,7 @@ sealed class UpdateCommand : Command
                 if(Debugger.IsAttached)
                     throw;
 
-                AaruConsole.ErrorWriteLine("Could not remove main database.");
+                AaruConsole.ErrorWriteLine(UI.Could_not_remove_main_database);
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }

@@ -37,6 +37,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Devices;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using Spectre.Console;
 
@@ -44,12 +45,12 @@ namespace Aaru.Commands.Device;
 
 sealed class ListDevicesCommand : Command
 {
-    public ListDevicesCommand() : base("list", "Lists all connected devices.")
+    public ListDevicesCommand() : base("list", UI.Device_List_Command_Description)
     {
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ZeroOrOne,
-            Description = "aaruremote host",
+            Description = UI.aaruremote_host,
             Name        = "aaru-remote-host"
         });
 
@@ -101,16 +102,16 @@ sealed class ListDevicesCommand : Command
 
         if(devices        == null ||
            devices.Length == 0)
-            AaruConsole.WriteLine("No known devices attached.");
+            AaruConsole.WriteLine(UI.No_known_devices_attached);
         else
         {
             Table table = new();
-            table.AddColumn("Path");
-            table.AddColumn("Vendor");
-            table.AddColumn("Model");
-            table.AddColumn("Serial");
-            table.AddColumn("Bus");
-            table.AddColumn("Supported?");
+            table.AddColumn(UI.Path);
+            table.AddColumn(UI.Title_Vendor);
+            table.AddColumn(UI.Title_Model);
+            table.AddColumn(UI.Serial);
+            table.AddColumn(UI.Title_Bus);
+            table.AddColumn(UI.Supported_Question);
 
             foreach(DeviceInfo dev in devices.OrderBy(d => d.Path))
                 table.AddRow(Markup.Escape(dev.Path  ?? ""), Markup.Escape(dev.Vendor ?? ""),

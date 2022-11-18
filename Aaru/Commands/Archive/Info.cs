@@ -36,13 +36,14 @@ using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
 
 namespace Aaru.Commands.Archive;
 
 sealed class ArchiveInfoCommand : Command
 {
-    public ArchiveInfoCommand() : base("info", "Identifies an archive file and shows information about it.")
+    public ArchiveInfoCommand() : base("info", UI.Archive_Info_Command_Description)
     {
         AddArgument(new Argument<string>
         {

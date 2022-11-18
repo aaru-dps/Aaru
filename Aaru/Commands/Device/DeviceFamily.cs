@@ -31,12 +31,13 @@
 // ****************************************************************************/
 
 using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Device;
 
 sealed class DeviceFamily : Command
 {
-    public DeviceFamily() : base("device", "Commands that talks to devices")
+    public DeviceFamily() : base("device", UI.Device_Command_Family_Description)
     {
         AddAlias("dev");
 

@@ -31,12 +31,13 @@
 // ****************************************************************************/
 
 using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Media;
 
 sealed class MediaFamily : Command
 {
-    public MediaFamily() : base("media", "Commands to manage media inserted in devices")
+    public MediaFamily() : base("media", UI.Media_Command_Family_Description)
     {
         AddAlias("m");
 

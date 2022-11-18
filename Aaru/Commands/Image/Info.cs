@@ -38,19 +38,19 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
 
 namespace Aaru.Commands.Image;
 
 sealed class ImageInfoCommand : Command
 {
-    public ImageInfoCommand() : base("info",
-                                     "Identifies a media image and shows information about the media it represents and metadata.")
+    public ImageInfoCommand() : base("info", UI.Image_Info_Command_Description)
     {
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Media image path",
+            Description = UI.Media_image_path,
             Name        = "image-path"
         });
 
@@ -97,13 +97,13 @@ sealed class ImageInfoCommand : Command
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Identifying file filter...").IsIndeterminate();
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
         });
 
         if(inputFilter == null)
         {
-            AaruConsole.ErrorWriteLine("Cannot open specified file.");
+            AaruConsole.ErrorWriteLine(UI.Cannot_open_specified_file);
 
             return (int)ErrorNumber.CannotOpenFile;
         }
@@ -114,18 +114,18 @@ sealed class ImageInfoCommand : Command
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Identifying image format...").IsIndeterminate();
+                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
                 imageFormat = ImageFormat.Detect(inputFilter);
             });
 
             if(imageFormat == null)
             {
-                AaruConsole.WriteLine("Image format not identified.");
+                AaruConsole.WriteLine(UI.Image_format_not_identified);
 
                 return (int)ErrorNumber.UnrecognizedFormat;
             }
 
-            AaruConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
+            AaruConsole.WriteLine(UI.Image_format_identified_by_0_1, imageFormat.Name, imageFormat.Id);
             AaruConsole.WriteLine();
 
             try
@@ -134,13 +134,14 @@ sealed class ImageInfoCommand : Command
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Opening image file...").IsIndeterminate();
+                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
                     opened = imageFormat.Open(inputFilter);
                 });
 
                 if(opened != ErrorNumber.NoError)
                 {
-                    AaruConsole.WriteLine("Error {opened} opening image format");
+                    AaruConsole.WriteLine(UI.Unable_to_open_image_format);
+                    AaruConsole.WriteLine(UI.Error_0, opened);
 
                     return (int)opened;
                 }
@@ -153,16 +154,16 @@ sealed class ImageInfoCommand : Command
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Unable to open image format");
-                AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                AaruConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
+                AaruConsole.ErrorWriteLine(UI.Error_0, ex.Message);
+                AaruConsole.DebugWriteLine("Image-info command", Localization.Core.Stack_trace_0, ex.StackTrace);
 
                 return (int)ErrorNumber.CannotOpenFormat;
             }
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
+            AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
             AaruConsole.DebugWriteLine("Image-info command", ex.StackTrace);
 
             return (int)ErrorNumber.UnexpectedException;

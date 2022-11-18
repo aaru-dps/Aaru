@@ -104,6 +104,7 @@
     <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
     <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
     <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Localization\Aaru.Localization.csproj"/>
     <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"/>
     <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"/>
     <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>

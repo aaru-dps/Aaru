@@ -39,14 +39,14 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
 
 namespace Aaru.Commands;
 
 sealed class ListNamespacesCommand : Command
 {
-    public ListNamespacesCommand() :
-        base("list-namespaces", "Lists all namespaces supported by read-only filesystems.") =>
+    public ListNamespacesCommand() : base("list-namespaces", UI.List_Namespaces_Command_Description) =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
     public static int Invoke(bool debug, bool verbose)
@@ -89,11 +89,11 @@ sealed class ListNamespacesCommand : Command
         {
             Table table = new()
             {
-                Title = new TableTitle($"Namespaces for {kvp.Value.Name}:")
+                Title = new TableTitle(string.Format(UI.Namespaces_for_0, kvp.Value.Name))
             };
 
-            table.AddColumn("Namespace");
-            table.AddColumn("Description");
+            table.AddColumn(UI.Title_Namespace);
+            table.AddColumn(UI.Title_Description);
 
             foreach(KeyValuePair<string, string> @namespace in kvp.Value.Namespaces.OrderBy(t => t.Key))
                 table.AddRow(@namespace.Key, @namespace.Value);

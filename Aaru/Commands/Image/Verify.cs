@@ -40,28 +40,29 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
 
 namespace Aaru.Commands.Image;
 
 sealed class VerifyCommand : Command
 {
-    public VerifyCommand() : base("verify", "Verifies a disc image integrity, and if supported, sector integrity.")
+    public VerifyCommand() : base("verify", UI.Image_Verify_Command_Description)
     {
         Add(new Option<bool>(new[]
         {
             "--verify-disc", "-w"
-        }, () => true, "Verify disc image if supported."));
+        }, () => true, UI.Verify_disc_image_if_supported));
 
         Add(new Option<bool>(new[]
         {
             "--verify-sectors", "-s"
-        }, () => true, "Verify all sectors if supported."));
+        }, () => true, UI.Verify_all_sectors_if_supported));
 
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Disc image path",
+            Description = UI.Disc_image_path,
             Name        = "image-path"
         });
 
@@ -111,13 +112,13 @@ sealed class VerifyCommand : Command
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Identifying file filter...").IsIndeterminate();
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
             inputFilter = filtersList.GetFilter(imagePath);
         });
 
         if(inputFilter == null)
         {
-            AaruConsole.ErrorWriteLine("Cannot open specified file.");
+            AaruConsole.ErrorWriteLine(UI.Cannot_open_specified_file);
 
             return (int)ErrorNumber.CannotOpenFile;
         }
@@ -126,13 +127,13 @@ sealed class VerifyCommand : Command
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Identifying image format...").IsIndeterminate();
+            ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
             inputFormat = ImageFormat.Detect(inputFilter);
         });
 
         if(inputFormat == null)
         {
-            AaruConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
+            AaruConsole.ErrorWriteLine(UI.Unable_to_recognize_image_format_not_verifying);
 
             return (int)ErrorNumber.FormatNotFound;
         }
@@ -141,14 +142,14 @@ sealed class VerifyCommand : Command
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Opening image file...").IsIndeterminate();
+            ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
             opened = inputFormat.Open(inputFilter);
         });
 
         if(opened != ErrorNumber.NoError)
         {
-            AaruConsole.WriteLine("Unable to open image format");
-            AaruConsole.WriteLine("Error {0}", opened);
+            AaruConsole.WriteLine(UI.Unable_to_open_image_format);
+            AaruConsole.WriteLine(UI.Error_0, opened);
 
             return (int)opened;
         }
@@ -158,9 +159,7 @@ sealed class VerifyCommand : Command
         Statistics.AddFilter(inputFilter.Name);
 
         bool? correctImage   = null;
-        long  errorSectors   = 0;
         bool? correctSectors = null;
-        long  unknownSectors = 0;
 
         var verifiableImage        = inputFormat as IVerifiableImage;
         var verifiableSectorsImage = inputFormat as IVerifiableSectorsImage;
@@ -168,7 +167,7 @@ sealed class VerifyCommand : Command
         if(verifiableImage is null &&
            verifiableSectorsImage is null)
         {
-            AaruConsole.ErrorWriteLine("The specified image does not support any kind of verification");
+            AaruConsole.ErrorWriteLine(UI.The_specified_image_does_not_support_any_kind_of_verification);
 
             return (int)ErrorNumber.NotVerifiable;
         }
@@ -182,7 +181,7 @@ sealed class VerifyCommand : Command
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Verifying image checksums...").IsIndeterminate();
+                ctx.AddTask(UI.Verifying_image_checksums).IsIndeterminate();
 
                 DateTime startCheck = DateTime.UtcNow;
                 discCheckStatus = verifiableImage.VerifyMediaImage();
@@ -193,21 +192,21 @@ sealed class VerifyCommand : Command
             switch(discCheckStatus)
             {
                 case true:
-                    AaruConsole.WriteLine("Disc image checksums are correct");
+                    AaruConsole.WriteLine(UI.Disc_image_checksums_are_correct);
 
                     break;
                 case false:
-                    AaruConsole.WriteLine("Disc image checksums are incorrect");
+                    AaruConsole.WriteLine(UI.Disc_image_checksums_are_incorrect);
 
                     break;
                 case null:
-                    AaruConsole.WriteLine("Disc image does not contain checksums");
+                    AaruConsole.WriteLine(UI.Disc_image_does_not_contain_checksums);
 
                     break;
             }
 
             correctImage = discCheckStatus;
-            AaruConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);
+            AaruConsole.VerboseWriteLine(UI.Checking_disc_image_checksums_took_0_seconds, checkTime.TotalSeconds);
         }
 
         if(!verifySectors)
@@ -234,24 +233,26 @@ sealed class VerifyCommand : Command
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
                         {
-                            ProgressTask discTask = ctx.AddTask("Checking tracks...");
+                            ProgressTask discTask = ctx.AddTask(UI.Checking_tracks);
                             discTask.MaxValue = inputTracks.Count;
 
                             foreach(Track currentTrack in inputTracks)
                             {
-                                discTask.Description = $"Checking track {discTask.Value + 1} of {inputTracks.Count}";
+                                discTask.Description =
+                                    string.Format(UI.Checking_track_0_of_1, discTask.Value + 1, inputTracks.Count);
 
                                 ulong remainingSectors = currentTrack.EndSector - currentTrack.StartSector + 1;
 
                                 ulong currentSector = 0;
 
-                                ProgressTask trackTask = ctx.AddTask("Checking sector");
+                                ProgressTask trackTask = ctx.AddTask(UI.Checking_sector);
                                 trackTask.MaxValue = remainingSectors;
 
                                 while(remainingSectors > 0)
                                 {
-                                    trackTask.Description = $"Checking sector {currentSectorAll} of {
-                                        inputFormat.Info.Sectors}, on track {currentTrack.Sequence}";
+                                    trackTask.Description =
+                                        string.Format(UI.Checking_sector_0_of_1_on_track_2, currentSectorAll,
+                                                      inputFormat.Info.Sectors, currentTrack.Sequence);
 
                                     List<ulong> tempFailingLbas;
                                     List<ulong> tempUnknownLbas;
@@ -300,14 +301,15 @@ sealed class VerifyCommand : Command
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
                         {
-                            ProgressTask diskTask = ctx.AddTask("Checking sectors...");
+                            ProgressTask diskTask = ctx.AddTask(UI.Checking_sectors);
                             diskTask.MaxValue = inputFormat.Info.Sectors;
 
                             startCheck = DateTime.UtcNow;
 
                             while(remainingSectors > 0)
                             {
-                                diskTask.Description = $"Checking sector {currentSector} of {inputFormat.Info.Sectors}";
+                                diskTask.Description =
+                                    string.Format(UI.Checking_sector_0_of_1, currentSector, inputFormat.Info.Sectors);
 
                                 List<ulong> tempFailingLbas;
                                 List<ulong> tempUnknownLbas;
@@ -344,40 +346,41 @@ sealed class VerifyCommand : Command
         checkTime = endCheck - startCheck;
 
         if(unknownLbas.Count > 0)
-            AaruConsole.WriteLine("There is at least one sector that does not contain a checksum");
+            AaruConsole.WriteLine(UI.There_is_at_least_one_sector_that_does_not_contain_a_checksum);
 
         if(failingLbas.Count > 0)
-            AaruConsole.WriteLine("There is at least one sector with incorrect checksum or errors");
+            AaruConsole.WriteLine(UI.There_is_at_least_one_sector_with_incorrect_checksum_or_errors);
 
         if(unknownLbas.Count == 0 &&
            failingLbas.Count == 0)
-            AaruConsole.WriteLine("All sector checksums are correct");
+            AaruConsole.WriteLine(UI.All_sector_checksums_are_correct);
 
-        AaruConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
+        AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0_seconds, checkTime.TotalSeconds);
 
         if(verbose)
         {
-            AaruConsole.VerboseWriteLine("[red]LBAs with error:[/]");
+            AaruConsole.VerboseWriteLine($"[red]{UI.LBAs_with_error}[/]");
 
             if(failingLbas.Count == (int)inputFormat.Info.Sectors)
-                AaruConsole.VerboseWriteLine("\t[red]all sectors.[/]");
+                AaruConsole.VerboseWriteLine($"\t[red]{UI.all_sectors}[/]");
             else
                 foreach(ulong t in failingLbas)
                     AaruConsole.VerboseWriteLine("\t{0}", t);
 
-            AaruConsole.WriteLine("[yellow3_1]LBAs without checksum:[/]");
+            AaruConsole.WriteLine($"[yellow3_1]{UI.LBAs_without_checksum}[/]");
 
             if(unknownLbas.Count == (int)inputFormat.Info.Sectors)
-                AaruConsole.VerboseWriteLine("\t[yellow3_1]all sectors.[/]");
+                AaruConsole.VerboseWriteLine($"\t[yellow3_1]{UI.all_sectors}[/]");
             else
                 foreach(ulong t in unknownLbas)
                     AaruConsole.VerboseWriteLine("\t{0}", t);
         }
 
-        AaruConsole.WriteLine("[italic]Total sectors...........[/] {0}", inputFormat.Info.Sectors);
-        AaruConsole.WriteLine("[italic]Total errors............[/] {0}", failingLbas.Count);
-        AaruConsole.WriteLine("[italic]Total unknowns..........[/] {0}", unknownLbas.Count);
-        AaruConsole.WriteLine("[italic]Total errors+unknowns...[/] {0}", failingLbas.Count + unknownLbas.Count);
+        // TODO: Convert to table
+        AaruConsole.WriteLine($"[italic]{UI.Total_sectors}[/] {inputFormat.Info.Sectors}");
+        AaruConsole.WriteLine($"[italic]{UI.Total_errors}[/] {failingLbas.Count}");
+        AaruConsole.WriteLine($"[italic]{UI.Total_unknowns}[/] {unknownLbas.Count}");
+        AaruConsole.WriteLine($"[italic]{UI.Total_errors_plus_unknowns}[/] {failingLbas.Count + unknownLbas.Count}");
 
         if(failingLbas.Count > 0)
             correctSectors = false;

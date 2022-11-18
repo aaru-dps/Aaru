@@ -31,13 +31,13 @@
 // ****************************************************************************/
 
 using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Database;
 
 sealed class DatabaseFamily : Command
 {
-    internal DatabaseFamily(bool mainDbUpdate) : base("database",
-                                                      "Commands to manage the device and statistics database")
+    internal DatabaseFamily(bool mainDbUpdate) : base("database", UI.Database_Command_Family_Description)
     {
         AddAlias("db");
 

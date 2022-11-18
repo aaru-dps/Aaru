@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -50,6 +51,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Devices.Dumping;
 using Aaru.Core.Logging;
+using Aaru.Localization;
 using Schemas;
 using Spectre.Console;
 
@@ -61,149 +63,145 @@ sealed class DumpMediaCommand : Command
     static ProgressTask _progressTask1;
     static ProgressTask _progressTask2;
 
-    public DumpMediaCommand() : base("dump", "Dumps the media inserted on a device to a media image.")
+    public DumpMediaCommand() : base("dump", UI.Media_Dump_Command_Description)
     {
         Add(new Option<string>(new[]
         {
             "--cicm-xml", "-x"
-        }, () => null, "Take metadata from existing CICM XML sidecar."));
+        }, () => null, UI.Take_metadata_from_existing_CICM_XML_sidecar));
 
         Add(new Option<string>(new[]
         {
             "--encoding", "-e"
-        }, () => null, "Name of character encoding to use."));
+        }, () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>("--first-pregap", () => false,
-                             "Try to read first track pregap. Only applicable to CD/DDCD/GD."));
+        Add(new Option<bool>("--first-pregap", () => false, UI.Try_to_read_first_track_pregap));
 
-        Add(new Option<bool>("--fix-offset", () => true, "Fix audio tracks offset. Only applicable to CD/GD."));
+        Add(new Option<bool>("--fix-offset", () => true, UI.Fix_audio_tracks_offset));
 
         Add(new Option<bool>(new[]
         {
             "--force", "-f"
-        }, () => false, "Continue dump whatever happens."));
+        }, () => false, UI.Continue_dump_whatever_happens));
 
         Add(new Option<string>(new[]
-                               {
-                                   "--format", "-t"
-                               }, () => null,
-                               "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension."));
+        {
+            "--format", "-t"
+        }, () => null, UI.Format_of_the_output_image_as_plugin_name_or_plugin_id));
 
-        Add(new Option<bool>("--metadata", () => true, "Enables creating CICM XML sidecar."));
+        Add(new Option<bool>("--metadata", () => true, UI.Enables_creating_CICM_XML_sidecar));
 
-        Add(new Option<bool>("--trim", () => true, "Enables trimming errored from skipped sectors."));
+        Add(new Option<bool>("--trim", () => true, UI.Enables_trimming_errored_from_skipped_sectors));
 
         Add(new Option<string>(new[]
         {
             "--options", "-O"
-        }, () => null, "Comma separated name=value pairs of options to pass to output image plugin."));
+        }, () => null, UI.Comma_separated_name_value_pairs_of_image_options));
 
-        Add(new Option<bool>("--persistent", () => false, "Try to recover partial or incorrect data."));
+        Add(new Option<bool>("--persistent", () => false, UI.Try_to_recover_partial_or_incorrect_data));
 
         Add(new Option<bool>(new[]
         {
             "--resume", "-r"
-        }, () => true, "Create/use resume mapfile."));
+        }, () => true, UI.Create_or_use_resume_mapfile));
 
         Add(new Option<ushort>(new[]
         {
             "--retry-passes", "-p"
-        }, () => 5, "How many retry passes to do."));
+        }, () => 5, UI.How_many_retry_passes_to_do));
 
         Add(new Option<uint>(new[]
         {
             "--skip", "-k"
-        }, () => 512, "When an unreadable sector is found skip this many sectors."));
+        }, () => 512, UI.When_an_unreadable_sector_is_found_skip_this_many_sectors));
 
         Add(new Option<bool>(new[]
         {
             "--stop-on-error", "-s"
-        }, () => false, "Stop media dump on first error."));
+        }, () => false, UI.Stop_media_dump_on_first_error));
 
-        Add(new Option<string>("--subchannel", () => "any",
-                               "Subchannel to dump. Only applicable to CD/GD. Values: any, rw, rw-or-pq, pq, none."));
+        Add(new Option<string>("--subchannel", () => UI.Subchannel_name_any, UI.Subchannel_to_dump_help));
 
-        Add(new Option<byte>("--speed", () => 0, "Speed to dump. Only applicable to optical drives, 0 for maximum."));
+        Add(new Option<byte>("--speed", () => 0, UI.Speed_to_dump));
 
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Device path",
+            Description = UI.Device_path,
             Name        = "device-path"
         });
 
         AddArgument(new Argument<string>
         {
-            Arity = ArgumentArity.ExactlyOne,
-            Description =
-                "Output image path. If filename starts with # and exists, it will be read as a list of output images, its extension will be used to detect the image output format, each media will be ejected and confirmation for the next one will be asked.",
-            Name = "output-path"
+            Arity       = ArgumentArity.ExactlyOne,
+            Description = UI.Output_image_path_Dump_help,
+            Name        = "output-path"
         });
 
         Add(new Option<bool>(new[]
         {
             "--private"
-        }, () => false, "Do not store paths and serial numbers in log or metadata."));
+        }, () => false, UI.Do_not_store_paths_and_serial_numbers_in_log_or_metadata));
 
         Add(new Option<bool>(new[]
         {
             "--fix-subchannel-position"
-        }, () => true, "Store subchannel according to the sector they describe."));
+        }, () => true, UI.Fix_subchannel_position_help));
 
         Add(new Option<bool>(new[]
         {
             "--retry-subchannel"
-        }, () => true, "Retry subchannel. Implies fixing subchannel position."));
+        }, () => true, UI.Retry_subchannel_help));
 
         Add(new Option<bool>(new[]
         {
             "--fix-subchannel"
-        }, () => false, "Try to fix subchannel. Implies fixing subchannel position."));
+        }, () => false, UI.Fix_subchannel_help));
 
         Add(new Option<bool>(new[]
         {
             "--fix-subchannel-crc"
-        }, () => false, "If subchannel looks OK but CRC fails, rewrite it. Implies fixing subchannel."));
+        }, () => false, UI.Fix_subchannel_crc_help));
 
         Add(new Option<bool>(new[]
         {
             "--generate-subchannels"
-        }, () => false, "Generates missing subchannels (they don't count as dumped in resume file)."));
+        }, () => false, UI.Generate_subchannels_dump_help));
 
         Add(new Option<bool>(new[]
         {
             "--skip-cdiready-hole"
-        }, () => true, "Skip the hole between data and audio in a CD-i Ready disc."));
+        }, () => true, UI.Skip_CDi_Ready_hole_help));
 
         Add(new Option<bool>(new[]
         {
             "--eject"
-        }, () => false, "Eject media after dump finishes."));
+        }, () => false, UI.Eject_media_after_dump_finishes));
 
         Add(new Option<uint>(new[]
         {
             "--max-blocks"
-        }, () => 64, "Maximum number of blocks to read at once."));
+        }, () => 64, UI.Maximum_number_of_blocks_to_read_at_once));
 
         Add(new Option<bool>(new[]
         {
             "--use-buffered-reads"
-        }, () => true, "For MMC/SD, use OS buffered reads if CMD23 is not supported."));
+        }, () => true, UI.OS_buffered_reads_help));
 
         Add(new Option<bool>(new[]
         {
             "--store-encrypted"
-        }, () => true, "Store encrypted data as is."));
+        }, () => true, UI.Store_encrypted_data_as_is));
 
         Add(new Option<bool>(new[]
         {
             "--title-keys"
-        }, () => true, "Try to read the title keys from CSS encrypted DVDs (very slow)."));
+        }, () => true, UI.Try_to_read_the_title_keys_from_CSS_DVDs));
 
         Add(new Option<uint>(new[]
         {
             "--ignore-cdr-runouts"
-        }, () => 10, "How many CD-R(W) run-out sectors to ignore and regenerate (0 for none)."));
+        }, () => 10, UI.How_many_CDRW_run_out_sectors_to_ignore_and_regenerate));
 
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
@@ -289,7 +287,7 @@ sealed class DumpMediaCommand : Command
         //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
-        AaruConsole.DebugWriteLine("Dump-Media command", "Parsed options:");
+        AaruConsole.DebugWriteLine("Dump-Media command", UI.Parsed_options);
 
         foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
             AaruConsole.DebugWriteLine("Dump-Media command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
@@ -302,45 +300,30 @@ sealed class DumpMediaCommand : Command
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
 
                 if(verbose)
-                    AaruConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
+                    AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
-                AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
+                AaruConsole.ErrorWriteLine(UI.Specified_encoding_is_not_supported);
 
                 return (int)ErrorNumber.EncodingUnknown;
             }
 
         DumpSubchannel wantedSubchannel = DumpSubchannel.Any;
 
-        switch(subchannel?.ToLowerInvariant())
-        {
-            case "any":
-            case null:
-                wantedSubchannel = DumpSubchannel.Any;
-
-                break;
-            case "rw":
-                wantedSubchannel = DumpSubchannel.Rw;
-
-                break;
-            case "rw-or-pq":
-                wantedSubchannel = DumpSubchannel.RwOrPq;
-
-                break;
-            case "pq":
-                wantedSubchannel = DumpSubchannel.Pq;
-
-                break;
-            case "none":
-                wantedSubchannel = DumpSubchannel.None;
-
-                break;
-            default:
-                AaruConsole.WriteLine("Incorrect subchannel type \"{0}\" requested.", subchannel);
-
-                break;
-        }
+        if(subchannel?.ToLower(CultureInfo.CurrentUICulture) == UI.Subchannel_name_any ||
+           subchannel is null)
+            wantedSubchannel = DumpSubchannel.Any;
+        else if(subchannel?.ToLowerInvariant() == UI.Subchannel_name_rw)
+            wantedSubchannel = DumpSubchannel.Rw;
+        else if(subchannel?.ToLowerInvariant() == UI.Subchannel_name_rw_or_pq)
+            wantedSubchannel = DumpSubchannel.RwOrPq;
+        else if(subchannel?.ToLowerInvariant() == UI.Subchannel_name_pq)
+            wantedSubchannel = DumpSubchannel.Pq;
+        else if(subchannel?.ToLowerInvariant() == UI.Subchannel_name_none)
+            wantedSubchannel = DumpSubchannel.None;
+        else
+            AaruConsole.WriteLine(UI.Incorrect_subchannel_type_0_requested, subchannel);
 
         string filename = Path.GetFileNameWithoutExtension(outputPath);
 
@@ -380,11 +363,11 @@ sealed class DumpMediaCommand : Command
         switch(candidates.Count)
         {
             case 0:
-                AaruConsole.WriteLine("No plugin supports requested extension.");
+                AaruConsole.WriteLine(UI.No_plugin_supports_requested_extension);
 
                 return (int)ErrorNumber.FormatNotFound;
             case > 1:
-                AaruConsole.WriteLine("More than one plugin supports requested extension.");
+                AaruConsole.WriteLine(UI.More_than_one_plugin_supports_requested_extension);
 
                 return (int)ErrorNumber.TooManyFormats;
         }
@@ -398,15 +381,14 @@ sealed class DumpMediaCommand : Command
 
             if(responseLine.Any(c => c < 0x20))
             {
-                AaruConsole.ErrorWriteLine("Invalid characters found in list of files, exiting...");
+                AaruConsole.ErrorWriteLine(UI.Invalid_characters_found_in_list_of_files);
 
                 return (int)ErrorNumber.InvalidArgument;
             }
 
             if(isResponse)
             {
-                AaruConsole.WriteLine("Please insert media with title {0} and press any key to continue...",
-                                      responseLine);
+                AaruConsole.WriteLine(UI.Please_insert_media_with_title_0_and_press_any_key_to_continue_, responseLine);
 
                 System.Console.ReadKey();
                 Thread.Sleep(1000);
@@ -431,7 +413,7 @@ sealed class DumpMediaCommand : Command
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Opening device...").IsIndeterminate();
+                ctx.AddTask(UI.Opening_device).IsIndeterminate();
                 dev = Devices.Device.Create(devicePath, out devErrno);
             });
 
@@ -439,7 +421,7 @@ sealed class DumpMediaCommand : Command
             {
                 case null:
                 {
-                    AaruConsole.ErrorWriteLine($"Could not open device, error {devErrno}.");
+                    AaruConsole.ErrorWriteLine(string.Format(UI.Could_not_open_device_error_0, devErrno));
 
                     if(isResponse)
                         continue;
@@ -480,7 +462,7 @@ sealed class DumpMediaCommand : Command
                 }
                 catch
                 {
-                    AaruConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
+                    AaruConsole.ErrorWriteLine(UI.Incorrect_resume_file_not_continuing);
 
                     if(isResponse)
                         continue;
@@ -495,7 +477,7 @@ sealed class DumpMediaCommand : Command
                (resumeClass.BadSubchannels is null   || resumeClass.BadSubchannels.Count   == 0) &&
                (resumeClass.MissingTitleKeys is null || resumeClass.MissingTitleKeys.Count == 0))
             {
-                AaruConsole.WriteLine("Media already dumped correctly, not continuing...");
+                AaruConsole.WriteLine(UI.Media_already_dumped_correctly_not_continuing);
 
                 if(isResponse)
                     continue;
@@ -516,7 +498,7 @@ sealed class DumpMediaCommand : Command
                     }
                     catch
                     {
-                        AaruConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
+                        AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file);
 
                         if(isResponse)
                             continue;
@@ -525,7 +507,7 @@ sealed class DumpMediaCommand : Command
                     }
                 else
                 {
-                    AaruConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
+                    AaruConsole.ErrorWriteLine(UI.Could_not_find_metadata_sidecar);
 
                     if(isResponse)
                         continue;
@@ -558,13 +540,13 @@ sealed class DumpMediaCommand : Command
 
             if(verbose)
             {
-                dumpLog.WriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
-                AaruConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
+                dumpLog.WriteLine(UI.Output_image_format_0_1, outputFormat.Name, outputFormat.Id);
+                AaruConsole.VerboseWriteLine(UI.Output_image_format_0_1, outputFormat.Name, outputFormat.Id);
             }
             else
             {
-                dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
-                AaruConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
+                dumpLog.WriteLine(UI.Output_image_format_0, outputFormat.Name);
+                AaruConsole.WriteLine(UI.Output_image_format_0, outputFormat.Name);
             }
 
             var errorLog = new ErrorLog(outputPrefix + ".error.log");
@@ -657,7 +639,7 @@ sealed class DumpMediaCommand : Command
             if(eject && dev.IsRemovable)
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Ejecting media...").IsIndeterminate();
+                    ctx.AddTask(UI.Ejecting_media).IsIndeterminate();
 
                     switch(dev.Type)
                     {

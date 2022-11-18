@@ -51,6 +51,7 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Aaru.Helpers;
+using Aaru.Localization;
 using Spectre.Console;
 using Command = System.CommandLine.Command;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
@@ -61,17 +62,17 @@ namespace Aaru.Commands.Device;
 
 sealed class DeviceInfoCommand : Command
 {
-    public DeviceInfoCommand() : base("info", "Gets information about a device.")
+    public DeviceInfoCommand() : base("info", UI.Device_Info_Command_Description)
     {
         Add(new Option<string>(new[]
         {
             "--output-prefix", "-w"
-        }, () => null, "Prefix for saving binary information from device."));
+        }, () => null, UI.Prefix_for_saving_binary_information));
 
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Device path",
+            Description = UI.Device_path,
             Name        = "device-path"
         });
 
@@ -125,7 +126,7 @@ sealed class DeviceInfoCommand : Command
         switch(dev)
         {
             case null:
-                AaruConsole.ErrorWriteLine($"Could not open device, error {devErrno}.");
+                AaruConsole.ErrorWriteLine(string.Format(UI.Could_not_open_device_error_0, devErrno));
 
                 return (int)devErrno;
             case Devices.Remote.Device remoteDev:
@@ -151,7 +152,7 @@ sealed class DeviceInfoCommand : Command
         {
             table = new Table
             {
-                Title = new TableTitle("[bold]USB device[/]")
+                Title = new TableTitle($"[bold]{UI.Title_USB_device}[/]")
             };
 
             table.HideHeaders();
@@ -160,13 +161,13 @@ sealed class DeviceInfoCommand : Command
             table.Columns[0].RightAligned();
 
             if(dev.UsbDescriptors != null)
-                table.AddRow("Descriptor size", $"{dev.UsbDescriptors.Length}");
+                table.AddRow(UI.Title_Descriptor_size, $"{dev.UsbDescriptors.Length}");
 
-            table.AddRow("Vendor ID", $"{dev.UsbVendorId:X4}");
-            table.AddRow("Product ID", $"{dev.UsbProductId:X4}");
-            table.AddRow("Manufacturer", $"{Markup.Escape(dev.UsbManufacturerString ?? "")}");
-            table.AddRow("Product", $"{Markup.Escape(dev.UsbProductString           ?? "")}");
-            table.AddRow("Serial number", $"{Markup.Escape(dev.UsbSerialString      ?? "")}");
+            table.AddRow(UI.Title_Vendor_ID, $"{dev.UsbVendorId:X4}");
+            table.AddRow(UI.Title_Product_ID, $"{dev.UsbProductId:X4}");
+            table.AddRow(UI.Title_Manufacturer, Markup.Escape(dev.UsbManufacturerString ?? ""));
+            table.AddRow(UI.Title_Product, Markup.Escape(dev.UsbProductString           ?? ""));
+            table.AddRow(UI.Title_Serial_number, Markup.Escape(dev.UsbSerialString      ?? ""));
 
             AnsiConsole.Write(table);
             AaruConsole.WriteLine();
@@ -176,7 +177,7 @@ sealed class DeviceInfoCommand : Command
         {
             table = new Table
             {
-                Title = new TableTitle("[bold]FireWire device[/]")
+                Title = new TableTitle($"[bold]{UI.Title_FireWire_device}[/]")
             };
 
             table.HideHeaders();
@@ -184,11 +185,11 @@ sealed class DeviceInfoCommand : Command
             table.AddColumn("");
             table.Columns[0].RightAligned();
 
-            table.AddRow("Vendor ID", $"{dev.FireWireVendor:X6}");
-            table.AddRow("Model ID", $"{dev.FireWireModel:X6}");
-            table.AddRow("Vendor", $"{Markup.Escape(dev.FireWireVendorName ?? "")}");
-            table.AddRow("Model", $"{Markup.Escape(dev.FireWireModelName   ?? "")}");
-            table.AddRow("GUID", $"{dev.FireWireGuid:X16}");
+            table.AddRow(UI.Title_Vendor_ID, $"{dev.FireWireVendor:X6}");
+            table.AddRow(UI.Title_Model_ID, $"{dev.FireWireModel:X6}");
+            table.AddRow(UI.Title_Vendor, $"{Markup.Escape(dev.FireWireVendorName ?? "")}");
+            table.AddRow(UI.Title_Model, $"{Markup.Escape(dev.FireWireModelName   ?? "")}");
+            table.AddRow(UI.Title_GUID, $"{dev.FireWireGuid:X16}");
 
             AnsiConsole.Write(table);
             AaruConsole.WriteLine();
@@ -196,8 +197,8 @@ sealed class DeviceInfoCommand : Command
 
         if(dev.IsPcmcia)
         {
-            AaruConsole.WriteLine("[bold]PCMCIA device[/]");
-            AaruConsole.WriteLine("PCMCIA CIS is {0} bytes", dev.Cis.Length);
+            AaruConsole.WriteLine($"[bold]{UI.Title_PCMCIA_device}[/]");
+            AaruConsole.WriteLine(UI.PCMCIA_CIS_is_0_bytes, dev.Cis.Length);
             Tuple[] tuples = CIS.GetTuples(dev.Cis);
 
             if(tuples != null)
@@ -253,18 +254,18 @@ sealed class DeviceInfoCommand : Command
                         case TupleCodes.CISTPL_SPCL:
                         case TupleCodes.CISTPL_SWIL:
                         case TupleCodes.CISTPL_VERS_2:
-                            AaruConsole.DebugWriteLine("Device-Info command", "Found undecoded tuple ID {0}",
+                            AaruConsole.DebugWriteLine("Device-Info command", UI.Invoke_Found_undecoded_tuple_ID_0,
                                                        tuple.Code);
 
                             break;
                         default:
-                            AaruConsole.DebugWriteLine("Device-Info command", "Found unknown tuple ID 0x{0:X2}",
+                            AaruConsole.DebugWriteLine("Device-Info command", UI.Found_unknown_tuple_ID_0,
                                                        (byte)tuple.Code);
 
                             break;
                     }
             else
-                AaruConsole.DebugWriteLine("Device-Info command", "Could not get tuples");
+                AaruConsole.DebugWriteLine("Device-Info command", UI.Could_not_get_tuples);
         }
 
         var devInfo = new DeviceInfo(dev);
@@ -279,45 +280,45 @@ sealed class DeviceInfoCommand : Command
 
             if(devInfo.AtaMcptError.HasValue)
             {
-                AaruConsole.WriteLine("Device supports the Media Card Pass Through Command Set");
+                AaruConsole.WriteLine(Localization.Core.Device_supports_MCPT_Command_Set);
 
                 switch(devInfo.AtaMcptError.Value.DeviceHead & 0x7)
                 {
                     case 0:
-                        AaruConsole.WriteLine("Device reports incorrect media card type");
+                        AaruConsole.WriteLine(Localization.Core.Device_reports_incorrect_media_card_type);
 
                         break;
                     case 1:
-                        AaruConsole.WriteLine("Device contains a Secure Digital card");
+                        AaruConsole.WriteLine(Localization.Core.Device_contains_SD_card);
 
                         break;
                     case 2:
-                        AaruConsole.WriteLine("Device contains a MultiMediaCard ");
+                        AaruConsole.WriteLine(Localization.Core.Device_contains_MMC);
 
                         break;
                     case 3:
-                        AaruConsole.WriteLine("Device contains a Secure Digital I/O card");
+                        AaruConsole.WriteLine(Localization.Core.Device_contains_SDIO_card);
 
                         break;
                     case 4:
-                        AaruConsole.WriteLine("Device contains a Smart Media card");
+                        AaruConsole.WriteLine(Localization.Core.Device_contains_SM_card);
 
                         break;
                     default:
-                        AaruConsole.WriteLine("Device contains unknown media card type {0}",
+                        AaruConsole.WriteLine(Localization.Core.Device_contains_unknown_media_card_type_0,
                                               devInfo.AtaMcptError.Value.DeviceHead & 0x07);
 
                         break;
                 }
 
                 if((devInfo.AtaMcptError.Value.DeviceHead & 0x08) == 0x08)
-                    AaruConsole.WriteLine("Media card is write protected");
+                    AaruConsole.WriteLine(Localization.Core.Media_card_is_write_protected);
 
                 ushort specificData = (ushort)((devInfo.AtaMcptError.Value.CylinderHigh * 0x100) +
                                                devInfo.AtaMcptError.Value.CylinderLow);
 
                 if(specificData != 0)
-                    AaruConsole.WriteLine("Card specific data: 0x{0:X4}", specificData);
+                    AaruConsole.WriteLine(Localization.Core.Card_specific_data_0, specificData);
             }
 
             if(decodedIdentify.HasValue)
@@ -343,7 +344,9 @@ sealed class DeviceInfoCommand : Command
                 MediaType mediaType = MediaTypeFromDevice.GetFromAta(dev.Manufacturer, dev.Model, removable,
                                                                      dev.IsCompactFlash, dev.IsPcmcia, blocks);
 
-                AaruConsole.WriteLine(removable ? "Media identified as {0}" : "Device identified as {0}", mediaType);
+                AaruConsole.
+                    WriteLine(removable ? Localization.Core.Media_identified_as_0 : Localization.Core.Device_identified_as_0,
+                              mediaType);
 
                 Statistics.AddMedia(mediaType, true);
             }
@@ -360,7 +363,7 @@ sealed class DeviceInfoCommand : Command
         if(devInfo.ScsiInquiry != null)
         {
             if(dev.Type != DeviceType.ATAPI)
-                AaruConsole.WriteLine("[bold]SCSI device[/]");
+                AaruConsole.WriteLine($"[bold]{UI.Title_SCSI_device}[/]");
 
             DataFile.WriteTo("Device-Info command", outputPrefix, "_scsi_inquiry.bin", "SCSI INQUIRY",
                              devInfo.ScsiInquiryData);
@@ -372,14 +375,15 @@ sealed class DeviceInfoCommand : Command
                     switch(page.Key)
                     {
                         case >= 0x01 and <= 0x7F:
-                            AaruConsole.WriteLine("ASCII Page {0:X2}h: {1}", page.Key,
+                            AaruConsole.WriteLine(Localization.Core.ASCII_Page_0_1, page.Key,
                                                   EVPD.DecodeASCIIPage(page.Value));
 
                             DataFile.WriteTo("Device-Info command", outputPrefix, page.Value);
 
                             break;
                         case 0x80:
-                            AaruConsole.WriteLine("Unit Serial Number: {0}", EVPD.DecodePage80(page.Value));
+                            AaruConsole.WriteLine(Localization.Core.Unit_Serial_Number_0,
+                                                  EVPD.DecodePage80(page.Value));
 
                             DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
                                              $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
@@ -393,7 +397,7 @@ sealed class DeviceInfoCommand : Command
 
                             break;
                         case 0x82:
-                            AaruConsole.WriteLine("ASCII implemented operating definitions: {0}",
+                            AaruConsole.WriteLine(Localization.Core.ASCII_implemented_operating_definitions_0,
                                                   EVPD.DecodePage82(page.Value));
 
                             DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
@@ -443,7 +447,7 @@ sealed class DeviceInfoCommand : Command
 
                             break;
                         case 0xB1:
-                            AaruConsole.WriteLine("Manufacturer-assigned Serial Number: {0}",
+                            AaruConsole.WriteLine(Localization.Core.Manufacturer_assigned_Serial_Number_0,
                                                   EVPD.DecodePageB1(page.Value));
 
                             DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
@@ -451,7 +455,7 @@ sealed class DeviceInfoCommand : Command
 
                             break;
                         case 0xB2:
-                            AaruConsole.WriteLine("TapeAlert Supported Flags Bitmap: 0x{0:X16}",
+                            AaruConsole.WriteLine(Localization.Core.TapeAlert_Supported_Flags_Bitmap_0,
                                                   EVPD.DecodePageB2(page.Value));
 
                             DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
@@ -459,7 +463,7 @@ sealed class DeviceInfoCommand : Command
 
                             break;
                         case 0xB3:
-                            AaruConsole.WriteLine("Automation Device Serial Number: {0}",
+                            AaruConsole.WriteLine(Localization.Core.Automation_Device_Serial_Number_0,
                                                   EVPD.DecodePageB3(page.Value));
 
                             DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
@@ -467,7 +471,7 @@ sealed class DeviceInfoCommand : Command
 
                             break;
                         case 0xB4:
-                            AaruConsole.WriteLine("Data Transfer Device Element Address: 0x{0}",
+                            AaruConsole.WriteLine(Localization.Core.Data_Transfer_Device_Element_Address_0,
                                                   EVPD.DecodePageB4(page.Value));
 
                             DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
@@ -546,8 +550,8 @@ sealed class DeviceInfoCommand : Command
                             if(page.Key == 0x00)
                                 continue;
 
-                            AaruConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}",
-                                                       page.Key);
+                            AaruConsole.DebugWriteLine("Device-Info command",
+                                                       Localization.Core.Found_undecoded_SCSI_VPD_page_0, page.Key);
 
                             DataFile.WriteTo("Device-Info command", outputPrefix, $"_scsi_evpd_{page.Key:X2}h.bin",
                                              $"SCSI INQUIRY EVPD {page.Key:X2}h", page.Value);
@@ -576,19 +580,20 @@ sealed class DeviceInfoCommand : Command
 
                 Features.SeparatedFeatures ftr = Features.Separate(devInfo.MmcConfiguration);
 
-                AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes",
+                AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.GET_CONFIGURATION_length_is_0,
                                            ftr.DataLength);
 
-                AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION current profile is {0:X4}h",
+                AaruConsole.DebugWriteLine("Device-Info command",
+                                           Localization.Core.GET_CONFIGURATION_current_profile_is_0,
                                            ftr.CurrentProfile);
 
                 if(ftr.Descriptors != null)
                 {
-                    AaruConsole.WriteLine("[bold]SCSI MMC GET CONFIGURATION Features:[/]");
+                    AaruConsole.WriteLine($"[bold]{UI.Title_SCSI_MMC_GET_CONFIGURATION_Features}[/]");
 
                     foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
                     {
-                        AaruConsole.DebugWriteLine("Device-Info command", "Feature {0:X4}h", desc.Code);
+                        AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.Feature_0, desc.Code);
 
                         switch(desc.Code)
                         {
@@ -825,7 +830,7 @@ sealed class DeviceInfoCommand : Command
 
                                 break;
                             default:
-                                AaruConsole.WriteLine("Found unknown feature code {0:X4}h", desc.Code);
+                                AaruConsole.WriteLine(Localization.Core.Found_unknown_feature_code_0, desc.Code);
 
                                 break;
                         }
@@ -833,7 +838,7 @@ sealed class DeviceInfoCommand : Command
                 }
                 else
                     AaruConsole.DebugWriteLine("Device-Info command",
-                                               "GET CONFIGURATION returned no feature descriptors");
+                                               Localization.Core.GET_CONFIGURATION_returned_no_feature_descriptors);
             }
 
             if(devInfo.RPC != null)
@@ -844,173 +849,165 @@ sealed class DeviceInfoCommand : Command
                 DataFile.WriteTo("Device-Info command", outputPrefix, "_plextor_eeprom.bin", "PLEXTOR READ EEPROM",
                                  devInfo.PlextorFeatures.Eeprom);
 
-                AaruConsole.WriteLine("Drive has loaded a total of {0} discs", devInfo.PlextorFeatures.Discs);
+                AaruConsole.WriteLine(Localization.Core.Drive_has_loaded_a_total_of_0_discs,
+                                      devInfo.PlextorFeatures.Discs);
 
-                AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs",
+                AaruConsole.WriteLine(Localization.Core.Drive_has_spent_0_hours_1_minutes_and_2_seconds_reading_CDs,
                                       devInfo.PlextorFeatures.CdReadTime      / 3600,
                                       devInfo.PlextorFeatures.CdReadTime / 60 % 60,
                                       devInfo.PlextorFeatures.CdReadTime      % 60);
 
-                AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs",
+                AaruConsole.WriteLine(Localization.Core.Drive_has_spent_0_hours_1_minutes_and_2_seconds_writing_CDs,
                                       devInfo.PlextorFeatures.CdWriteTime      / 3600,
                                       devInfo.PlextorFeatures.CdWriteTime / 60 % 60,
                                       devInfo.PlextorFeatures.CdWriteTime      % 60);
 
                 if(devInfo.PlextorFeatures.IsDvd)
                 {
-                    AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs",
-                                          devInfo.PlextorFeatures.DvdReadTime      / 3600,
-                                          devInfo.PlextorFeatures.DvdReadTime / 60 % 60,
-                                          devInfo.PlextorFeatures.DvdReadTime      % 60);
+                    AaruConsole.
+                        WriteLine(Localization.Core.Drive_has_spent_0_hours_1_minutes_and_2_seconds_reading_DVDs,
+                                  devInfo.PlextorFeatures.DvdReadTime      / 3600,
+                                  devInfo.PlextorFeatures.DvdReadTime / 60 % 60,
+                                  devInfo.PlextorFeatures.DvdReadTime      % 60);
 
-                    AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs",
-                                          devInfo.PlextorFeatures.DvdWriteTime      / 3600,
-                                          devInfo.PlextorFeatures.DvdWriteTime / 60 % 60,
-                                          devInfo.PlextorFeatures.DvdWriteTime      % 60);
+                    AaruConsole.
+                        WriteLine(Localization.Core.Drive_has_spent_0_hours_1_minutes_and_2_seconds_writing_DVDs,
+                                  devInfo.PlextorFeatures.DvdWriteTime      / 3600,
+                                  devInfo.PlextorFeatures.DvdWriteTime / 60 % 60,
+                                  devInfo.PlextorFeatures.DvdWriteTime      % 60);
                 }
             }
 
             if(devInfo.PlextorFeatures?.PoweRec == true)
             {
-                AaruConsole.Write("Drive supports PoweRec");
-
                 if(devInfo.PlextorFeatures.PoweRecEnabled)
                 {
-                    AaruConsole.Write(", has it enabled");
-
                     if(devInfo.PlextorFeatures.PoweRecRecommendedSpeed > 0)
-                        AaruConsole.WriteLine(" and recommends {0} Kb/sec.",
+                        AaruConsole.WriteLine(Localization.Core.Drive_supports_PoweRec_is_enabled_and_recommends_0,
                                               devInfo.PlextorFeatures.PoweRecRecommendedSpeed);
                     else
-                        AaruConsole.WriteLine(".");
+                        AaruConsole.WriteLine(Localization.Core.Drive_supports_PoweRec_and_has_it_enabled);
 
                     if(devInfo.PlextorFeatures.PoweRecSelected > 0)
                         AaruConsole.
-                            WriteLine("Selected PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
+                            WriteLine(Localization.Core.Selected_PoweRec_speed_for_currently_inserted_media_is_0_1,
                                       devInfo.PlextorFeatures.PoweRecSelected,
                                       devInfo.PlextorFeatures.PoweRecSelected / 177);
 
                     if(devInfo.PlextorFeatures.PoweRecMax > 0)
-                        AaruConsole.WriteLine("Maximum PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
-                                              devInfo.PlextorFeatures.PoweRecMax,
-                                              devInfo.PlextorFeatures.PoweRecMax / 177);
+                        AaruConsole.
+                            WriteLine(Localization.Core.Maximum_PoweRec_speed_for_currently_inserted_media_is_0_1,
+                                      devInfo.PlextorFeatures.PoweRecMax, devInfo.PlextorFeatures.PoweRecMax / 177);
 
                     if(devInfo.PlextorFeatures.PoweRecLast > 0)
-                        AaruConsole.WriteLine("Last used PoweRec was {0} Kb/sec ({1}x)",
+                        AaruConsole.WriteLine(Localization.Core.Last_used_PoweRec_was_0_1,
                                               devInfo.PlextorFeatures.PoweRecLast,
                                               devInfo.PlextorFeatures.PoweRecLast / 177);
                 }
                 else
-                {
-                    AaruConsole.WriteLine(".");
-                    AaruConsole.WriteLine("PoweRec is disabled");
-                }
+                    AaruConsole.WriteLine(Localization.Core.Drive_supports_PoweRec_and_has_it_disabled);
             }
 
             if(devInfo.PlextorFeatures?.SilentMode == true)
             {
-                AaruConsole.WriteLine("Drive supports Plextor SilentMode");
+                AaruConsole.WriteLine(Localization.Core.Drive_supports_Plextor_SilentMode);
 
                 if(devInfo.PlextorFeatures.SilentModeEnabled)
                 {
-                    AaruConsole.WriteLine("Plextor SilentMode is enabled:");
+                    AaruConsole.WriteLine(Localization.Core.Plextor_SilentMode_is_enabled);
 
-                    AaruConsole.WriteLine(devInfo.PlextorFeatures.AccessTimeLimit == 2 ? "\tAccess time is slow"
-                                              : "\tAccess time is fast");
+                    AaruConsole.WriteLine("\t" + (devInfo.PlextorFeatures.AccessTimeLimit == 2
+                                                      ? Localization.Core.Access_time_is_slow
+                                                      : Localization.Core.Access_time_is_fast));
 
                     if(devInfo.PlextorFeatures.CdReadSpeedLimit > 0)
-                        AaruConsole.WriteLine("\tCD read speed limited to {0}x",
+                        AaruConsole.WriteLine("\t" + Localization.Core.CD_read_speed_limited_to_0,
                                               devInfo.PlextorFeatures.CdReadSpeedLimit);
 
                     if(devInfo.PlextorFeatures.DvdReadSpeedLimit > 0 &&
                        devInfo.PlextorFeatures.IsDvd)
-                        AaruConsole.WriteLine("\tDVD read speed limited to {0}x",
+                        AaruConsole.WriteLine("\t" + Localization.Core.DVD_read_speed_limited_to_0,
                                               devInfo.PlextorFeatures.DvdReadSpeedLimit);
 
                     if(devInfo.PlextorFeatures.CdWriteSpeedLimit > 0)
-                        AaruConsole.WriteLine("\tCD write speed limited to {0}x",
+                        AaruConsole.WriteLine("\t" + Localization.Core.CD_write_speed_limited_to_0,
                                               devInfo.PlextorFeatures.CdWriteSpeedLimit);
                 }
             }
 
             if(devInfo.PlextorFeatures?.GigaRec == true)
-                AaruConsole.WriteLine("Drive supports Plextor GigaRec");
+                AaruConsole.WriteLine(Localization.Core.Drive_supports_Plextor_GigaRec);
 
             if(devInfo.PlextorFeatures?.SecuRec == true)
-                AaruConsole.WriteLine("Drive supports Plextor SecuRec");
+                AaruConsole.WriteLine(Localization.Core.Drive_supports_Plextor_SecuRec);
 
             if(devInfo.PlextorFeatures?.SpeedRead == true)
-            {
-                AaruConsole.Write("Drive supports Plextor SpeedRead");
-
-                if(devInfo.PlextorFeatures.SpeedReadEnabled)
-                    AaruConsole.WriteLine("and has it enabled");
-                else
-                    AaruConsole.WriteLine();
-            }
+                AaruConsole.WriteLine(devInfo.PlextorFeatures.SpeedReadEnabled
+                                          ? Localization.Core.Drive_supports_Plextor_SpeedRead_and_has_it_enabled
+                                          : Localization.Core.Drive_supports_Plextor_SpeedRead);
 
             if(devInfo.PlextorFeatures?.Hiding == true)
             {
-                AaruConsole.WriteLine("Drive supports hiding CD-Rs and forcing single session");
+                AaruConsole.WriteLine(Localization.Core.Drive_supports_hiding_CDRs_and_forcing_single_session);
 
                 if(devInfo.PlextorFeatures.HidesRecordables)
-                    AaruConsole.WriteLine("Drive currently hides CD-Rs");
+                    AaruConsole.WriteLine(Localization.Core.Drive_currently_hides_CDRs);
 
                 if(devInfo.PlextorFeatures.HidesSessions)
-                    AaruConsole.WriteLine("Drive currently forces single session");
+                    AaruConsole.WriteLine(Localization.Core.Drive_currently_forces_single_session);
             }
 
             if(devInfo.PlextorFeatures?.VariRec == true)
-                AaruConsole.WriteLine("Drive supports Plextor VariRec");
+                AaruConsole.WriteLine(Localization.Core.Drive_supports_Plextor_VariRec);
 
             if(devInfo.PlextorFeatures?.IsDvd == true)
             {
                 if(devInfo.PlextorFeatures.VariRecDvd)
-                    AaruConsole.WriteLine("Drive supports Plextor VariRec for DVDs");
+                    AaruConsole.WriteLine(Localization.Core.Drive_supports_Plextor_VariRec_for_DVDs);
 
                 if(devInfo.PlextorFeatures.BitSetting)
-                    AaruConsole.WriteLine("Drive supports bitsetting DVD+R book type");
+                    AaruConsole.WriteLine(Localization.Core.Drive_supports_bitsetting_DVD_R_book_type);
 
                 if(devInfo.PlextorFeatures.BitSettingDl)
-                    AaruConsole.WriteLine("Drive supports bitsetting DVD+R DL book type");
+                    AaruConsole.WriteLine(Localization.Core.Drive_supports_bitsetting_DVD_R_DL_book_type);
 
                 if(devInfo.PlextorFeatures.DvdPlusWriteTest)
-                    AaruConsole.WriteLine("Drive supports test writing DVD+");
+                    AaruConsole.WriteLine(Localization.Core.Drive_supports_test_writing_DVD_Plus);
             }
 
             if(devInfo.ScsiInquiry.Value.KreonPresent)
             {
-                AaruConsole.WriteLine("[bold]Drive has kreon firmware:[/]");
+                AaruConsole.WriteLine($"[bold]{UI.Title_Drive_has_kreon_firmware}[/]");
 
                 if(devInfo.KreonFeatures.HasFlag(KreonFeatures.ChallengeResponse))
-                    AaruConsole.WriteLine("\tCan do challenge/response with Xbox discs");
+                    AaruConsole.WriteLine("\t" + Localization.Core.Can_do_challenge_response_with_Xbox_discs);
 
                 if(devInfo.KreonFeatures.HasFlag(KreonFeatures.DecryptSs))
-                    AaruConsole.WriteLine("\tCan read and decrypt SS from Xbox discs");
+                    AaruConsole.WriteLine("\t" + Localization.Core.Can_read_and_decrypt_SS_from_Xbox_discs);
 
                 if(devInfo.KreonFeatures.HasFlag(KreonFeatures.XtremeUnlock))
-                    AaruConsole.WriteLine("\tCan set xtreme unlock state with Xbox discs");
+                    AaruConsole.WriteLine("\t" + Localization.Core.Can_set_xtreme_unlock_state_with_Xbox_discs);
 
                 if(devInfo.KreonFeatures.HasFlag(KreonFeatures.WxripperUnlock))
-                    AaruConsole.WriteLine("\tCan set wxripper unlock state with Xbox discs");
+                    AaruConsole.WriteLine("\t" + Localization.Core.Can_set_wxripper_unlock_state_with_Xbox_discs);
 
                 if(devInfo.KreonFeatures.HasFlag(KreonFeatures.ChallengeResponse360))
-                    AaruConsole.WriteLine("\tCan do challenge/response with Xbox 360 discs");
+                    AaruConsole.WriteLine("\t" + Localization.Core.Can_do_challenge_response_with_Xbox_360_discs);
 
                 if(devInfo.KreonFeatures.HasFlag(KreonFeatures.DecryptSs360))
-                    AaruConsole.WriteLine("\tCan read and decrypt SS from Xbox 360 discs");
+                    AaruConsole.WriteLine("\t" + Localization.Core.Can_read_and_decrypt_SS_from_Xbox_360_discs);
 
                 if(devInfo.KreonFeatures.HasFlag(KreonFeatures.XtremeUnlock360))
-                    AaruConsole.WriteLine("\tCan set xtreme unlock state with Xbox 360 discs");
+                    AaruConsole.WriteLine("\t" + Localization.Core.Can_set_xtreme_unlock_state_with_Xbox_360_discs);
 
                 if(devInfo.KreonFeatures.HasFlag(KreonFeatures.WxripperUnlock360))
-                    AaruConsole.WriteLine("\tCan set wxripper unlock state with Xbox 360 discs");
+                    AaruConsole.WriteLine("\t" + Localization.Core.Can_set_wxripper_unlock_state_with_Xbox_360_discs);
 
                 if(devInfo.KreonFeatures.HasFlag(KreonFeatures.Lock))
-                    AaruConsole.WriteLine("\tCan set locked state");
+                    AaruConsole.WriteLine("\t" + Localization.Core.Can_set_Kreon_locked_state);
 
                 if(devInfo.KreonFeatures.HasFlag(KreonFeatures.ErrorSkipping))
-                    AaruConsole.WriteLine("\tCan skip read errors");
+                    AaruConsole.WriteLine("\t" + Localization.Core.Kreon_Can_skip_read_errors);
             }
 
             if(devInfo.BlockLimits != null)
@@ -1018,7 +1015,7 @@ sealed class DeviceInfoCommand : Command
                 DataFile.WriteTo("Device-Info command", outputPrefix, "_ssc_readblocklimits.bin",
                                  "SSC READ BLOCK LIMITS", devInfo.BlockLimits);
 
-                AaruConsole.WriteLine("Block limits for device:");
+                AaruConsole.WriteLine(Localization.Core.Block_limits_for_device);
                 AaruConsole.WriteLine(BlockLimits.Prettify(devInfo.BlockLimits));
             }
 

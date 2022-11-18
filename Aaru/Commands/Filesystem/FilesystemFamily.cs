@@ -31,12 +31,13 @@
 // ****************************************************************************/
 
 using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Filesystem;
 
 sealed class FilesystemFamily : Command
 {
-    public FilesystemFamily() : base("filesystem", "Commands to manage filesystems")
+    public FilesystemFamily() : base("filesystem", UI.Filesystem_Command_Family_Description)
     {
         AddAlias("fi");
         AddAlias("fs");

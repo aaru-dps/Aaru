@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using Spectre.Console;
 
@@ -47,7 +48,7 @@ namespace Aaru.Commands.Image;
 
 sealed class ListOptionsCommand : Command
 {
-    public ListOptionsCommand() : base("options", "Lists all options supported by writable media images.") =>
+    public ListOptionsCommand() : base("options", UI.Image_Options_Command_Description) =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
     public static int Invoke(bool debug, bool verbose)
@@ -85,7 +86,7 @@ sealed class ListOptionsCommand : Command
 
         PluginBase plugins = GetPluginBase.Instance;
 
-        AaruConsole.WriteLine("Read/Write media images options:");
+        AaruConsole.WriteLine(UI.Read_Write_media_images_options);
 
         foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
         {
@@ -97,13 +98,13 @@ sealed class ListOptionsCommand : Command
 
             var table = new Table
             {
-                Title = new TableTitle($"Options for {kvp.Value.Name}:")
+                Title = new TableTitle(string.Format(UI.Options_for_0, kvp.Value.Name))
             };
 
-            table.AddColumn("Name");
-            table.AddColumn("Type");
-            table.AddColumn("Default");
-            table.AddColumn("Description");
+            table.AddColumn(UI.Title_Name);
+            table.AddColumn(UI.Title_Type);
+            table.AddColumn(UI.Default);
+            table.AddColumn(UI.Title_Description);
 
             foreach((string name, Type type, string description, object @default) option in
                     options.OrderBy(t => t.name))
@@ -121,27 +122,27 @@ sealed class ListOptionsCommand : Command
     static string TypeToString([NotNull] Type type)
     {
         if(type == typeof(bool))
-            return "boolean";
+            return UI.TypeToString_boolean;
 
         if(type == typeof(sbyte) ||
            type == typeof(short) ||
            type == typeof(int)   ||
            type == typeof(long))
-            return "signed number";
+            return UI.TypeToString_signed_number;
 
         if(type == typeof(byte)   ||
            type == typeof(ushort) ||
            type == typeof(uint)   ||
            type == typeof(ulong))
-            return "number";
+            return UI.TypeToString_number;
 
         if(type == typeof(float) ||
            type == typeof(double))
-            return "float number";
+            return UI.TypeToString_float_number;
 
         if(type == typeof(Guid))
-            return "uuid";
+            return UI.TypeToString_uuid;
 
-        return type == typeof(string) ? "string" : type.ToString();
+        return type == typeof(string) ? UI.TypeToString_string : type.ToString();
     }
 }

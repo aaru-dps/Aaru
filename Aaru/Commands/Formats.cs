@@ -39,13 +39,14 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
 
 namespace Aaru.Commands;
 
 sealed class FormatsCommand : Command
 {
-    public FormatsCommand() : base("formats", "Lists all supported disc images, partition schemes and file systems.") =>
+    public FormatsCommand() : base("formats", UI.List_Formats_Command_Description) =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
     public static int Invoke(bool verbose, bool debug)
@@ -87,13 +88,13 @@ sealed class FormatsCommand : Command
 
         Table table = new()
         {
-            Title = new TableTitle($"Supported filters ({filtersList.Filters.Count}):")
+            Title = new TableTitle(string.Format(UI.Supported_filters_0, filtersList.Filters.Count))
         };
 
         if(verbose)
-            table.AddColumn("GUID");
+            table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Filter");
+        table.AddColumn(UI.Title_Filter);
 
         foreach(KeyValuePair<string, IFilter> kvp in filtersList.Filters)
             if(verbose)
@@ -107,15 +108,16 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle($"Read-only media image formats ({
-                plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces().Contains(typeof(IWritableImage)))
-            }):")
+            Title = new TableTitle(string.Format(UI.Read_only_media_image_formats_0,
+                                                 plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces().
+                                                                                    Contains(typeof(
+                                                                                        IWritableImage)))))
         };
 
         if(verbose)
-            table.AddColumn("GUID");
+            table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Media image format");
+        table.AddColumn(UI.Title_Media_image_format);
 
         foreach(KeyValuePair<string, IMediaImage> kvp in plugins.ImagePluginsList.Where(t => !t.Value.GetType().
                     GetInterfaces().Contains(typeof(IWritableImage))))
@@ -130,13 +132,13 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle($"Read/write media image formats ({plugins.WritableImages.Count}):")
+            Title = new TableTitle(string.Format(UI.Read_write_media_image_formats_0, plugins.WritableImages.Count))
         };
 
         if(verbose)
-            table.AddColumn("GUID");
+            table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Media image format");
+        table.AddColumn(UI.Title_Media_image_format);
 
         foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
             if(verbose)
@@ -150,15 +152,16 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle($"Supported filesystems for identification and information only ({
-                plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().Contains(typeof(IReadOnlyFilesystem)))
-            }):")
+            Title = new TableTitle(string.Format(UI.Supported_filesystems_for_identification_and_information_only_0,
+                                                 plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().
+                                                                               Contains(typeof(
+                                                                                   IReadOnlyFilesystem)))))
         };
 
         if(verbose)
-            table.AddColumn("GUID");
+            table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Filesystem");
+        table.AddColumn(UI.Title_Filesystem);
 
         foreach(KeyValuePair<string, IFilesystem> kvp in plugins.PluginsList.Where(t => !t.Value.GetType().
                     GetInterfaces().Contains(typeof(IReadOnlyFilesystem))))
@@ -173,14 +176,14 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle($"Supported filesystems that can read their contents ({
-                plugins.ReadOnlyFilesystems.Count}):")
+            Title = new TableTitle(string.Format(UI.Supported_filesystems_that_can_read_their_contents_0,
+                                                 plugins.ReadOnlyFilesystems.Count))
         };
 
         if(verbose)
-            table.AddColumn("GUID");
+            table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Filesystem");
+        table.AddColumn(UI.Title_Filesystem);
 
         foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
             if(verbose)
@@ -194,13 +197,13 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle($"Supported partitioning schemes ({plugins.PartPluginsList.Count}):")
+            Title = new TableTitle(string.Format(UI.Supported_partitioning_schemes_0, plugins.PartPluginsList.Count))
         };
 
         if(verbose)
-            table.AddColumn("GUID");
+            table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Scheme");
+        table.AddColumn(UI.Title_Scheme);
 
         foreach(KeyValuePair<string, IPartition> kvp in plugins.PartPluginsList)
             if(verbose)
@@ -214,11 +217,11 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle($"Supported archive formats ({plugins.Archives.Count}):")
+            Title = new TableTitle(string.Format(UI.Supported_archive_formats_0, plugins.Archives.Count))
         };
 
         if(verbose)
-            table.AddColumn("GUID");
+            table.AddColumn(UI.Title_GUID);
 
         table.AddColumn("Archive format");
 

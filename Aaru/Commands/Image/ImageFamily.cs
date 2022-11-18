@@ -31,12 +31,13 @@
 // ****************************************************************************/
 
 using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Image;
 
 sealed class ImageFamily : Command
 {
-    public ImageFamily() : base("image", "Commands to manage images")
+    public ImageFamily() : base("image", UI.Image_Command_Family_Description)
     {
         AddAlias("i");
 

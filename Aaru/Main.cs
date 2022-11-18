@@ -48,6 +48,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
+using Aaru.Localization;
 using Aaru.Settings;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
@@ -171,7 +172,7 @@ class MainClass
 
         if(mainContext.Database.GetPendingMigrations().Any())
         {
-            AaruConsole.WriteLine("New database version, updating...");
+            AaruConsole.WriteLine(UI.New_database_version_updating);
 
             try
             {
@@ -179,8 +180,8 @@ class MainClass
             }
             catch(Exception)
             {
-                AaruConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
-                AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MainDbPath);
+                AaruConsole.ErrorWriteLine(UI.Exception_trying_to_remove_old_database_version);
+                AaruConsole.ErrorWriteLine(UI.Please_manually_remove_file_at_0, Settings.Settings.MainDbPath);
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }
@@ -205,17 +206,17 @@ class MainClass
         rootCommand.AddGlobalOption(new Option<bool>(new[]
         {
             "--verbose", "-v"
-        }, () => false, "Shows verbose output."));
+        }, () => false, UI.Shows_verbose_output));
 
         rootCommand.AddGlobalOption(new Option<bool>(new[]
         {
             "--debug", "-d"
-        }, () => false, "Shows debug output from plugins."));
+        }, () => false, UI.Shows_debug_output_from_plugins));
 
         Option<bool> pauseOption = new(new[]
         {
             "--pause"
-        }, () => false, "Pauses before exiting.");
+        }, () => false, UI.Pauses_before_exiting);
 
         rootCommand.AddGlobalOption(pauseOption);
 
@@ -241,7 +242,7 @@ class MainClass
         if(!rootCommand.Parse(args).RootCommandResult.GetValueForOption(pauseOption))
             return ret;
 
-        AaruConsole.WriteLine("Press any key to exit.");
+        AaruConsole.WriteLine(UI.Press_any_key_to_exit);
         System.Console.ReadKey();
 
         return ret;

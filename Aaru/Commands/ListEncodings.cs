@@ -38,13 +38,14 @@ using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
 
 namespace Aaru.Commands;
 
 sealed class ListEncodingsCommand : Command
 {
-    public ListEncodingsCommand() : base("list-encodings", "Lists all supported text encodings and code pages.") =>
+    public ListEncodingsCommand() : base("list-encodings", UI.List_Encodings_Command_Description) =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
     public static int Invoke(bool debug, bool verbose)
@@ -94,8 +95,8 @@ sealed class ListEncodingsCommand : Command
         }));
 
         Table table = new();
-        table.AddColumn("Name");
-        table.AddColumn("Description");
+        table.AddColumn(UI.Title_Name);
+        table.AddColumn(UI.Title_Description);
 
         foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
             table.AddRow(info.Name, info.DisplayName);

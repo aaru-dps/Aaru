@@ -36,6 +36,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Database;
 using Aaru.Database.Models;
+using Aaru.Localization;
 using Spectre.Console;
 using Command = System.CommandLine.Command;
 
@@ -43,7 +44,7 @@ namespace Aaru.Commands.Database;
 
 sealed class StatisticsCommand : Command
 {
-    public StatisticsCommand() : base("stats", "Shows statistics.") =>
+    public StatisticsCommand() : base("stats", UI.Database_Stats_Command_Description) =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
     public static int Invoke(bool debug, bool verbose)
@@ -85,7 +86,7 @@ sealed class StatisticsCommand : Command
            !ctx.Partitions.Any()   &&
            !ctx.SeenDevices.Any())
         {
-            AaruConsole.WriteLine("There are no statistics.");
+            AaruConsole.WriteLine(UI.There_are_no_statistics);
 
             return (int)ErrorNumber.NothingFound;
         }
@@ -97,11 +98,11 @@ sealed class StatisticsCommand : Command
         {
             table = new Table
             {
-                Title = new TableTitle("Commands statistics")
+                Title = new TableTitle(UI.Commands_statistics)
             };
 
-            table.AddColumn("Command");
-            table.AddColumn("Times used");
+            table.AddColumn(UI.Title_Command);
+            table.AddColumn(UI.Title_Times_used);
             table.Columns[1].RightAligned();
 
             if(ctx.Commands.Any(c => c.Name == "analyze"))
@@ -154,11 +155,11 @@ sealed class StatisticsCommand : Command
         {
             table = new Table
             {
-                Title = new TableTitle("Filters statistics")
+                Title = new TableTitle(UI.Filters_statistics)
             };
 
-            table.AddColumn("Filter");
-            table.AddColumn("Times found");
+            table.AddColumn(UI.Title_Filter);
+            table.AddColumn(UI.Title_Times_used);
             table.Columns[1].RightAligned();
 
             foreach(string filter in ctx.Filters.Select(c => c.Name).Distinct().OrderBy(c => c))
@@ -183,11 +184,11 @@ sealed class StatisticsCommand : Command
         {
             table = new Table
             {
-                Title = new TableTitle("Media image format statistics")
+                Title = new TableTitle(UI.Media_image_format_statistics)
             };
 
-            table.AddColumn("Format");
-            table.AddColumn("Times found");
+            table.AddColumn(UI.Title_Format);
+            table.AddColumn(UI.Title_Times_used);
             table.Columns[1].RightAligned();
 
             foreach(string format in ctx.MediaFormats.Select(c => c.Name).Distinct().OrderBy(c => c))
@@ -212,11 +213,11 @@ sealed class StatisticsCommand : Command
         {
             table = new Table
             {
-                Title = new TableTitle("Partitioning scheme statistics")
+                Title = new TableTitle(UI.Partitioning_scheme_statistics)
             };
 
-            table.AddColumn("Scheme");
-            table.AddColumn("Times found");
+            table.AddColumn(UI.Title_Scheme);
+            table.AddColumn(UI.Title_Times_used);
             table.Columns[1].RightAligned();
 
             foreach(string partition in ctx.Partitions.Select(c => c.Name).Distinct().OrderBy(c => c))
@@ -241,11 +242,11 @@ sealed class StatisticsCommand : Command
         {
             table = new Table
             {
-                Title = new TableTitle("Filesystem statistics")
+                Title = new TableTitle(UI.Filesystem_statistics)
             };
 
-            table.AddColumn("Filesystem");
-            table.AddColumn("Times found");
+            table.AddColumn(UI.Title_Filesystem);
+            table.AddColumn(UI.Title_Times_used);
             table.Columns[1].RightAligned();
 
             foreach(string filesystem in ctx.Filesystems.Select(c => c.Name).Distinct().OrderBy(c => c))
@@ -270,13 +271,13 @@ sealed class StatisticsCommand : Command
         {
             table = new Table
             {
-                Title = new TableTitle("Device statistics")
+                Title = new TableTitle(UI.Device_statistics)
             };
 
-            table.AddColumn("Manufacturer");
-            table.AddColumn("Model");
-            table.AddColumn("Revision");
-            table.AddColumn("Bus");
+            table.AddColumn(UI.Title_Manufacturer);
+            table.AddColumn(UI.Title_Model);
+            table.AddColumn(UI.Title_Revision);
+            table.AddColumn(UI.Title_Bus);
 
             foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(ds => ds.Manufacturer).ThenBy(ds => ds.Model).
                                          ThenBy(ds => ds.Revision).ThenBy(ds => ds.Bus))
@@ -292,11 +293,11 @@ sealed class StatisticsCommand : Command
         {
             table = new Table
             {
-                Title = new TableTitle("Media found in real device statistics")
+                Title = new TableTitle(UI.Media_found_in_real_device_statistics)
             };
 
-            table.AddColumn("Type");
-            table.AddColumn("Times found");
+            table.AddColumn(UI.Title_Type_for_media);
+            table.AddColumn(UI.Title_Times_used);
             table.Columns[1].RightAligned();
 
             foreach(string media in ctx.Medias.Where(ms => ms.Real).Select(ms => ms.Type).Distinct().OrderBy(ms => ms))
@@ -322,11 +323,11 @@ sealed class StatisticsCommand : Command
         {
             table = new Table
             {
-                Title = new TableTitle("Media found in images statistics")
+                Title = new TableTitle(UI.Media_found_in_images_statistics)
             };
 
-            table.AddColumn("Type");
-            table.AddColumn("Times found");
+            table.AddColumn(UI.Title_Type_for_media);
+            table.AddColumn(UI.Title_Times_used);
             table.Columns[1].RightAligned();
 
             foreach(string media in ctx.Medias.Where(ms => !ms.Real).Select(ms => ms.Type).Distinct().OrderBy(ms => ms))
@@ -349,7 +350,7 @@ sealed class StatisticsCommand : Command
         }
 
         if(!thereAreStats)
-            AaruConsole.WriteLine("There are no statistics.");
+            AaruConsole.WriteLine(UI.There_are_no_statistics);
 
         return (int)ErrorNumber.NoError;
     }

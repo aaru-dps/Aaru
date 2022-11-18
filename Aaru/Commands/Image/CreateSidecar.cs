@@ -43,6 +43,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using Schemas;
 using Spectre.Console;
@@ -54,29 +55,27 @@ sealed class CreateSidecarCommand : Command
     static ProgressTask _progressTask1;
     static ProgressTask _progressTask2;
 
-    public CreateSidecarCommand() : base("create-sidecar", "Creates CICM Metadata XML sidecar.")
+    public CreateSidecarCommand() : base("create-sidecar", UI.Image_Create_Sidecar_Command_Description)
     {
         Add(new Option<int>(new[]
-                            {
-                                "--block-size", "-b"
-                            }, () => 512,
-                            "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored."));
+        {
+            "--block-size", "-b"
+        }, () => 512, UI.Tape_block_size_argument_help));
 
         Add(new Option<string>(new[]
         {
             "--encoding", "-e"
-        }, () => null, "Name of character encoding to use."));
+        }, () => null, UI.Name_of_character_encoding_to_use));
 
         Add(new Option<bool>(new[]
-                             {
-                                 "--tape", "-t"
-                             }, () => false,
-                             "When used indicates that input is a folder containing alphabetically sorted files extracted from a linear block-based tape with fixed block size (e.g. a SCSI tape device)."));
+        {
+            "--tape", "-t"
+        }, () => false, UI.Tape_argument_input_help));
 
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Media image path",
+            Description = UI.Media_image_path,
             Name        = "image-path"
         });
 
@@ -130,11 +129,11 @@ sealed class CreateSidecarCommand : Command
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encodingName);
 
                 if(verbose)
-                    AaruConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
+                    AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
-                AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
+                AaruConsole.ErrorWriteLine(UI.Specified_encoding_is_not_supported);
 
                 return (int)ErrorNumber.EncodingUnknown;
             }
@@ -143,7 +142,7 @@ sealed class CreateSidecarCommand : Command
         {
             if(tape)
             {
-                AaruConsole.ErrorWriteLine("You cannot use --tape option when input is a file.");
+                AaruConsole.ErrorWriteLine(UI.You_cannot_use_tape_option_when_input_is_a_file);
 
                 return (int)ErrorNumber.NotDirectory;
             }
@@ -153,13 +152,13 @@ sealed class CreateSidecarCommand : Command
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Identifying file filter...").IsIndeterminate();
+                ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
                 inputFilter = filtersList.GetFilter(imagePath);
             });
 
             if(inputFilter == null)
             {
-                AaruConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.ErrorWriteLine(UI.Cannot_open_specified_file);
 
                 return (int)ErrorNumber.CannotOpenFile;
             }
@@ -170,22 +169,21 @@ sealed class CreateSidecarCommand : Command
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Identifying image format...").IsIndeterminate();
+                    ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
                     imageFormat = ImageFormat.Detect(inputFilter);
                 });
 
                 if(imageFormat == null)
                 {
-                    AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
+                    AaruConsole.WriteLine(UI.Image_format_not_identified_not_proceeding_with_sidecar_creation);
 
                     return (int)ErrorNumber.UnrecognizedFormat;
                 }
 
                 if(verbose)
-                    AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
-                                                 imageFormat.Id);
+                    AaruConsole.VerboseWriteLine(UI.Image_format_identified_by_0_1, imageFormat.Name, imageFormat.Id);
                 else
-                    AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
+                    AaruConsole.WriteLine(UI.Image_format_identified_by_0, imageFormat.Name);
 
                 try
                 {
@@ -193,23 +191,24 @@ sealed class CreateSidecarCommand : Command
 
                     Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
-                        ctx.AddTask("Opening image file...").IsIndeterminate();
+                        ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
                         opened = imageFormat.Open(inputFilter);
                     });
 
                     if(opened != ErrorNumber.NoError)
                     {
-                        AaruConsole.WriteLine("Error {opened} opening image format");
+                        AaruConsole.WriteLine(UI.Unable_to_open_image_format);
+                        AaruConsole.WriteLine(UI.Error_0, opened);
 
                         return (int)opened;
                     }
 
-                    AaruConsole.DebugWriteLine("Create sidecar command", "Correctly opened image file.");
+                    AaruConsole.DebugWriteLine("Create sidecar command", UI.Correctly_opened_image_file);
                 }
                 catch(Exception ex)
                 {
-                    AaruConsole.ErrorWriteLine("Unable to open image format");
-                    AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                    AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
+                    AaruConsole.ErrorWriteLine(UI.Error_0, ex.Message);
 
                     return (int)ErrorNumber.CannotOpenFormat;
                 }
@@ -278,7 +277,7 @@ sealed class CreateSidecarCommand : Command
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Writing metadata sidecar").IsIndeterminate();
+                    ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
 
                     var xmlFs =
                         new
@@ -292,7 +291,7 @@ sealed class CreateSidecarCommand : Command
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
+                AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
                 AaruConsole.DebugWriteLine("Create sidecar command", ex.StackTrace);
 
                 return (int)ErrorNumber.UnexpectedException;
@@ -302,7 +301,7 @@ sealed class CreateSidecarCommand : Command
         {
             if(!tape)
             {
-                AaruConsole.ErrorWriteLine("Cannot create a sidecar from a directory.");
+                AaruConsole.ErrorWriteLine(Localization.Core.Cannot_create_a_sidecar_from_a_directory);
 
                 return (int)ErrorNumber.IsDirectory;
             }
@@ -373,7 +372,7 @@ sealed class CreateSidecarCommand : Command
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Writing metadata sidecar").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
 
                 var xmlFs =
                     new
@@ -386,7 +385,7 @@ sealed class CreateSidecarCommand : Command
             });
         }
         else
-            AaruConsole.ErrorWriteLine("The specified input file cannot be found.");
+            AaruConsole.ErrorWriteLine(UI.The_specified_input_file_cannot_be_found);
 
         return (int)ErrorNumber.NoError;
     }

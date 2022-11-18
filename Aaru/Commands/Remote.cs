@@ -38,6 +38,7 @@ using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
 using Remote = Aaru.Devices.Remote.Remote;
 
@@ -45,7 +46,7 @@ namespace Aaru.Commands;
 
 sealed class RemoteCommand : Command
 {
-    public RemoteCommand() : base("remote", "Tests connection to a Aaru Remote Server.")
+    public RemoteCommand() : base("remote", UI.Remote_Command_Description)
     {
         AddArgument(new Argument<string>
         {

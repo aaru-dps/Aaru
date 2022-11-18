@@ -36,6 +36,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
+using Aaru.Localization;
 using Spectre.Console;
 
 namespace Aaru.Commands.Media;
@@ -44,27 +45,27 @@ sealed class MediaScanCommand : Command
 {
     static ProgressTask _progressTask1;
 
-    public MediaScanCommand() : base("scan", "Scans the media inserted on a device.")
+    public MediaScanCommand() : base("scan", UI.Media_Scan_Command_Description)
     {
         Add(new Option<string>(new[]
         {
             "--mhdd-log", "-m"
-        }, () => null, "Write a log of the scan in the format used by MHDD."));
+        }, () => null, UI.Write_a_log_of_the_scan_in_the_format_used_by_MHDD));
 
         Add(new Option<string>(new[]
         {
             "--ibg-log", "-b"
-        }, () => null, "Write a log of the scan in the format used by ImgBurn."));
+        }, () => null, UI.Write_a_log_of_the_scan_in_the_format_used_by_ImgBurn));
 
         Add(new Option<bool>(new[]
         {
             "--use-buffered-reads"
-        }, () => true, "For MMC/SD, use OS buffered reads if CMD23 is not supported."));
+        }, () => true, UI.OS_buffered_reads_help));
 
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Device path",
+            Description = UI.Device_path,
             Name        = "device-path"
         });
 
@@ -121,14 +122,14 @@ sealed class MediaScanCommand : Command
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Opening device...").IsIndeterminate();
+            ctx.AddTask(UI.Opening_device).IsIndeterminate();
             dev = Devices.Device.Create(devicePath, out devErrno);
         });
 
         switch(dev)
         {
             case null:
-                AaruConsole.ErrorWriteLine($"Could not open device, error {devErrno}.");
+                AaruConsole.ErrorWriteLine(string.Format(UI.Could_not_open_device_error_0, devErrno));
 
                 return (int)devErrno;
             case Devices.Remote.Device remoteDev:
@@ -203,25 +204,37 @@ sealed class MediaScanCommand : Command
                         results = scanner.Scan();
                     });
 
-        AaruConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
+        AaruConsole.WriteLine(Localization.Core.Took_a_total_of_0_seconds_1_processing_commands, results.TotalTime,
                               results.ProcessingTime);
 
-        AaruConsole.WriteLine("Average speed: {0:F3} MiB/sec.", results.AvgSpeed);
-        AaruConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.MaxSpeed);
-        AaruConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", results.MinSpeed);
+        AaruConsole.WriteLine(Localization.Core.Average_speed_0_MiB_sec, results.AvgSpeed);
+        AaruConsole.WriteLine(Localization.Core.Fastest_speed_burst_0_MiB_sec, results.MaxSpeed);
+        AaruConsole.WriteLine(Localization.Core.Slowest_speed_burst_0_MiB_sec, results.MinSpeed);
         AaruConsole.WriteLine();
-        AaruConsole.WriteLine("[bold]Summary:[/]");
-        AaruConsole.WriteLine("[lime]{0} sectors took less than 3 ms.[/]", results.A);
-        AaruConsole.WriteLine("[green]{0} sectors took less than 10 ms but more than 3 ms.[/]", results.B);
-        AaruConsole.WriteLine("[darkorange]{0} sectors took less than 50 ms but more than 10 ms.[/]", results.C);
-        AaruConsole.WriteLine("[olive]{0} sectors took less than 150 ms but more than 50 ms.[/]", results.D);
-        AaruConsole.WriteLine("[orange3]{0} sectors took less than 500 ms but more than 150 ms.[/]", results.E);
-        AaruConsole.WriteLine("[red]{0} sectors took more than 500 ms.[/]", results.F);
-        AaruConsole.WriteLine("[maroon]{0} sectors could not be read.[/]", results.UnreadableSectors.Count);
+        AaruConsole.WriteLine($"[bold]{Localization.Core.Summary}:[/]");
+        AaruConsole.WriteLine($"[lime]{string.Format(Localization.Core._0_sectors_took_less_than_3_ms, results.A)}[/]");
+
+        AaruConsole.WriteLine($"[green]{
+            string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms, results.B)}[/]");
+
+        AaruConsole.WriteLine($"[darkorange]{
+            string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms, results.C)}[/]");
+
+        AaruConsole.WriteLine($"[olive]{
+            string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms, results.D)}[/]");
+
+        AaruConsole.WriteLine($"[orange3]{
+            string.Format(Localization.Core._0_sectors_took_less_than_500_ms_but_more_than_150_ms, results.E)}[/]");
+
+        AaruConsole.WriteLine($"[red]{string.Format(Localization.Core._0_sectors_took_more_than_500_ms, results.F)
+        }[/]");
+
+        AaruConsole.WriteLine($"[maroon]{string.Format(Localization.Core._0_sectors_could_not_be_read,
+                                                       results.UnreadableSectors.Count)}[/]");
 
         if(results.UnreadableSectors.Count > 0)
             foreach(ulong bad in results.UnreadableSectors)
-                AaruConsole.WriteLine("Sector {0} could not be read", bad);
+                AaruConsole.WriteLine(Localization.Core.Sector_0_could_not_be_read, bad);
 
         AaruConsole.WriteLine();
 
@@ -230,7 +243,7 @@ sealed class MediaScanCommand : Command
            results.SeekMax   > double.MinValue)
 
             AaruConsole.
-                WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
+                WriteLine(Localization.Core.Testing_0_seeks_longest_seek_took_1_ms_fastest_one_took_2_ms_3_ms_average,
                           results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
 
         dev.Close();

@@ -32,12 +32,13 @@
 // ****************************************************************************/
 
 using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Archive;
 
 sealed class ArchiveFamily : Command
 {
-    internal ArchiveFamily() : base("archive", "Commands to manage archive files")
+    internal ArchiveFamily() : base("archive", UI.Archive_Command_Family_Description)
     {
         AddAlias("arc");
 
