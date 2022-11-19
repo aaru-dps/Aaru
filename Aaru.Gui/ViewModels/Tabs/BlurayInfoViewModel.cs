@@ -36,6 +36,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Aaru.Decoders.Bluray;
 using Aaru.Decoders.SCSI.MMC;
+using Aaru.Localization;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -155,22 +156,22 @@ public sealed class BlurayInfoViewModel
     public bool                        SaveBlurayRawDflVisible               { get; }
     public bool                        SaveBlurayPacVisible                  { get; }
 
-    public string DiscinformationLabel                => "Disc information";
-    public string BurstCuttingAreaLabel               => "Burst Cutting Area";
-    public string DiscDefinitionStructureLabel        => "Disc Definition Structure";
-    public string CartridgeStatusLabel                => "Cartridge Status";
-    public string SpareAreaInformationLabel           => "Spare Area Information";
-    public string PseudoOverWriteResourcesLabel       => "Pseudo-OverWrite Resources";
-    public string TrackResourcesLabel                 => "Track Resources";
-    public string SaveBlurayDiscInformationLabel      => "Save Disc Information";
-    public string SaveBlurayBurstCuttingAreaLabel     => "Save Burst Cutting Area";
-    public string SaveBlurayDdsLabel                  => "Save Disc Definition Structure";
-    public string SaveBlurayCartridgeStatusLabel      => "Save Spare Area Information";
-    public string SaveBluraySpareAreaInformationLabel => "Save Spare Area Information";
-    public string SaveBlurayPowResourcesLabel         => "Save Pseudo-OverWrite Resources";
-    public string SaveBlurayTrackResourcesLabel       => "Save Track Resources";
-    public string SaveBlurayRawDflLabel               => "Save raw DFL";
-    public string SaveBlurayPacLabel                  => "Save PAC";
+    public string DiscinformationLabel                => UI.Disc_information;
+    public string BurstCuttingAreaLabel               => UI.Burst_Cutting_Area;
+    public string DiscDefinitionStructureLabel        => UI.Disc_Definition_Structure;
+    public string CartridgeStatusLabel                => UI.Cartridge_Status;
+    public string SpareAreaInformationLabel           => UI.Spare_Area_Information;
+    public string PseudoOverWriteResourcesLabel       => UI.Pseudo_OverWrite_Resources;
+    public string TrackResourcesLabel                 => UI.Track_Resources;
+    public string SaveBlurayDiscInformationLabel      => UI.ButtonLabel_Save_Disc_Information;
+    public string SaveBlurayBurstCuttingAreaLabel     => UI.ButtonLabel_Save_Burst_Cutting_Area;
+    public string SaveBlurayDdsLabel                  => UI.ButtonLabel_Save_Disc_Definition_Structure;
+    public string SaveBlurayCartridgeStatusLabel      => UI.ButtonLabel_Save_Cartridge_Status;
+    public string SaveBluraySpareAreaInformationLabel => UI.ButtonLabel_Save_Spare_Area_Information;
+    public string SaveBlurayPowResourcesLabel         => UI.ButtonLabel_Save_Pseudo_OverWrite_Resources;
+    public string SaveBlurayTrackResourcesLabel       => UI.ButtonLabel_Save_Track_Resources;
+    public string SaveBlurayRawDflLabel               => UI.ButtonLabel_Save_raw_DFL;
+    public string SaveBlurayPacLabel                  => UI.ButtonLabel_Save_PAC;
 
     async Task SaveElement(byte[] data)
     {
@@ -182,7 +183,7 @@ public sealed class BlurayInfoViewModel
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

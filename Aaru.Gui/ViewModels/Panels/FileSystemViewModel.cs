@@ -30,6 +30,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using Aaru.Localization;
 using JetBrains.Annotations;
 using Schemas;
 
@@ -39,27 +40,38 @@ public sealed class FileSystemViewModel
 {
     public FileSystemViewModel([NotNull] FileSystemType xmlFsType, string information)
     {
-        TypeText                   = $"Filesystem type: {xmlFsType.Type}";
-        VolumeNameText             = $"Volume name: {xmlFsType.VolumeName}";
-        SerialNumberText           = $"Serial number: {xmlFsType.VolumeSerial}";
-        ApplicationIdentifierText  = $"Application identifier: {xmlFsType.ApplicationIdentifier}";
-        SystemIdentifierText       = $"System identifier: {xmlFsType.SystemIdentifier}";
-        VolumeSetIdentifierText    = $"Volume set identifier: {xmlFsType.VolumeSetIdentifier}";
-        DataPreparerIdentifierText = $"Data preparer identifier: {xmlFsType.DataPreparerIdentifier}";
-        PublisherIdentifierText    = $"Publisher identifier: {xmlFsType.PublisherIdentifier}";
-        CreationDateText           = $"Volume created on {xmlFsType.CreationDate:F}";
-        EffectiveDateText          = $"Volume effective from {xmlFsType.EffectiveDate:F}";
-        ModificationDateText       = $"Volume last modified on {xmlFsType.ModificationDate:F}";
-        ExpirationDateText         = $"Volume expired on {xmlFsType.ExpirationDate:F}";
-        BackupDateText             = $"Volume last backed up on {xmlFsType.BackupDate:F}";
+        TypeText         = string.Format(Localization.Core.Filesystem_type_0, xmlFsType.Type);
+        VolumeNameText   = string.Format(Localization.Core.Volume_name_0, xmlFsType.VolumeName);
+        SerialNumberText = string.Format(Localization.Core.Volume_serial_0, xmlFsType.VolumeSerial);
 
-        ClustersText = $"Volume has {xmlFsType.Clusters} clusters of {xmlFsType.ClusterSize} bytes each (total of {
-            xmlFsType.Clusters * xmlFsType.ClusterSize} bytes)";
+        ApplicationIdentifierText =
+            string.Format(Localization.Core.Application_identifier_0, xmlFsType.ApplicationIdentifier);
 
-        FreeClustersText = $"Volume has {xmlFsType.FreeClusters} clusters free ({
-            xmlFsType.FreeClusters / xmlFsType.Clusters:P})";
+        SystemIdentifierText = string.Format(Localization.Core.System_identifier_0, xmlFsType.SystemIdentifier);
 
-        FilesText       = $"Volume contains {xmlFsType.Files} files";
+        VolumeSetIdentifierText =
+            string.Format(Localization.Core.Volume_set_identifier_0, xmlFsType.VolumeSetIdentifier);
+
+        DataPreparerIdentifierText =
+            string.Format(Localization.Core.Data_preparer_identifier_0, xmlFsType.DataPreparerIdentifier);
+
+        PublisherIdentifierText =
+            string.Format(Localization.Core.Publisher_identifier_0, xmlFsType.PublisherIdentifier);
+
+        CreationDateText     = string.Format(Localization.Core.Volume_created_on_0, xmlFsType.CreationDate);
+        EffectiveDateText    = string.Format(Localization.Core.Volume_effective_from_0, xmlFsType.EffectiveDate);
+        ModificationDateText = string.Format(Localization.Core.Volume_last_modified_on_0, xmlFsType.ModificationDate);
+        ExpirationDateText   = string.Format(Localization.Core.Volume_expired_on_0, xmlFsType.ExpirationDate);
+        BackupDateText       = string.Format(Localization.Core.Volume_last_backed_up_on_0, xmlFsType.BackupDate);
+
+        ClustersText = string.Format(Localization.Core.Volume_has_0_clusters_of_1_bytes_each_total_of_2_bytes,
+                                     xmlFsType.Clusters, xmlFsType.ClusterSize,
+                                     xmlFsType.Clusters * xmlFsType.ClusterSize);
+
+        FreeClustersText = string.Format(Localization.Core.Volume_has_0_clusters_free_1, xmlFsType.FreeClusters,
+                                         xmlFsType.FreeClusters / xmlFsType.Clusters);
+
+        FilesText       = string.Format(Localization.Core.Volume_contains_0_files, xmlFsType.Files);
         BootableChecked = xmlFsType.Bootable;
         DirtyChecked    = xmlFsType.Dirty;
         InformationText = information;
@@ -73,9 +85,9 @@ public sealed class FileSystemViewModel
         FilesVisible            = xmlFsType.FilesSpecified;
     }
 
-    public string BootableLabel => "Filesystem contains boot code";
-    public string DirtyLabel    => "Filesystem has not been unmounted correctly or contains errors";
-    public string DetailsLabel  => "Details";
+    public string BootableLabel => Localization.Core.Filesystem_contains_boot_code;
+    public string DirtyLabel    => Localization.Core.Filesystem_has_not_been_unmounted_correctly_or_contains_errors;
+    public string DetailsLabel  => UI.Title_Details;
 
     public string TypeText                   { get; }
     public string VolumeNameText             { get; }

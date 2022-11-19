@@ -302,7 +302,7 @@ sealed class ConvertImageCommand : Command
                 }
                 catch(Exception ex)
                 {
-                    AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file);
+                    AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file_not_continuing);
                     AaruConsole.DebugWriteLine("Image conversion", $"{ex}");
 
                     return (int)ErrorNumber.InvalidSidecar;
@@ -326,7 +326,7 @@ sealed class ConvertImageCommand : Command
                 }
                 catch(Exception ex)
                 {
-                    AaruConsole.ErrorWriteLine(UI.Incorrect_resume_file);
+                    AaruConsole.ErrorWriteLine(UI.Incorrect_resume_file_not_continuing);
                     AaruConsole.DebugWriteLine("Image conversion", $"{ex}");
 
                     return (int)ErrorNumber.InvalidResume;

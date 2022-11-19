@@ -51,6 +51,7 @@ using Aaru.Core;
 using Aaru.Core.Media;
 using Aaru.Devices;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using MessageBox.Avalonia;
@@ -128,32 +129,32 @@ public sealed class ImageConvertViewModel : ViewModelBase
     bool                   _stopVisible;
     string                 _title;
 
-    public string SourceImageLabel => "Source image";
-    public string OutputFormatLabel => "Output format";
-    public string ChooseLabel => "Choose...";
-    public string SectorsLabel => "How many sectors to convert at once.";
-    public string ForceLabel => "Continue conversion even if sector or media tags will be lost in the process.";
-    public string CreatorLabel => "Who (person) created the image?";
-    public string GetFromSourceImageLabel => "Get from source image";
-    public string MetadataLabel => "Metadata";
-    public string MediaLabel => "Media";
-    public string TitleLabel => "Title";
-    public string ManufacturerLabel => "Manufacturer";
-    public string ModelLabel => "Model";
-    public string SerialNumberLabel => "Serial number";
-    public string BarcodeLabel => "Barcode";
-    public string PartNumberLabel => "Part number";
-    public string NumberInSequenceLabel => "Number in sequence";
-    public string LastMediaOfTheSequenceLabel => "Last media of the sequence";
-    public string DriveLabel => "Drive";
-    public string FirmwareRevisionLabel => "Firmware revision";
-    public string CommentsLabel => "Comments";
-    public string CicmXmlLabel => "Existing CICM XML sidecar";
-    public string FromImageLabel => "From image...";
-    public string ResumeFileLabel => "Existing resume file";
-    public string StartLabel => "Start";
-    public string CloseLabel => "Close";
-    public string StopLabel => "Stop";
+    public string SourceImageLabel            => UI.Source_image;
+    public string OutputFormatLabel           => UI.Output_format;
+    public string ChooseLabel                 => UI.ButtonLabel_Choose;
+    public string SectorsLabel                => UI.How_many_sectors_to_convert_at_once;
+    public string ForceLabel                  => UI.Continue_conversion_even_if_data_lost;
+    public string CreatorLabel                => UI.Who_person_created_the_image;
+    public string GetFromSourceImageLabel     => UI.ButtonLabel_Get_from_source_image;
+    public string MetadataLabel               => UI.Title_Metadata;
+    public string MediaLabel                  => UI.Title_Media;
+    public string TitleLabel                  => UI.Title_Title;
+    public string ManufacturerLabel           => UI.Title_Manufacturer;
+    public string ModelLabel                  => UI.Title_Model;
+    public string SerialNumberLabel           => UI.Title_Serial_number;
+    public string BarcodeLabel                => UI.Title_Barcode;
+    public string PartNumberLabel             => UI.Title_Part_number;
+    public string NumberInSequenceLabel       => UI.Title_Number_in_sequence;
+    public string LastMediaOfTheSequenceLabel => UI.Title_Last_media_of_the_sequence;
+    public string DriveLabel                  => UI.Title_Drive;
+    public string FirmwareRevisionLabel       => UI.Title_Firmware_revision;
+    public string CommentsLabel               => UI.Title_Comments;
+    public string CicmXmlLabel                => UI.Title_Existing_CICM_XML_sidecar;
+    public string FromImageLabel              => UI.Title_From_image;
+    public string ResumeFileLabel             => UI.Title_Existing_resume_file;
+    public string StartLabel                  => UI.ButtonLabel_Start;
+    public string CloseLabel                  => UI.ButtonLabel_Close;
+    public string StopLabel                   => UI.ButtonLabel_Stop;
 
     public ImageConvertViewModel([JetBrains.Annotations.NotNull] IMediaImage inputFormat, string imageSource,
                                  Window view)
@@ -216,8 +217,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         _dumpHardware = inputFormat.DumpHardware?.Any() == true ? inputFormat.DumpHardware : null;
 
-        CicmXmlText    = _cicmMetadata == null ? "" : "<From image>";
-        ResumeFileText = _dumpHardware == null ? "" : "<From image>";
+        CicmXmlText    = _cicmMetadata == null ? "" : UI._From_image_;
+        ResumeFileText = _dumpHardware == null ? "" : UI._From_image_;
     }
 
     public string Title
@@ -591,7 +592,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
     {
         if(SelectedPlugin is null)
         {
-            await MessageBoxManager.GetMessageBoxStandardWindow("Error", "Error trying to find selected plugin",
+            await MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, UI.Error_trying_to_find_selected_plugin,
                                                                 icon: Icon.Error).ShowDialog(_view);
 
             return;
@@ -607,7 +608,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         if(plugin is not IWritableImage outputFormat)
         {
-            await MessageBoxManager.GetMessageBoxStandardWindow("Error", "Error trying to find selected plugin",
+            await MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, UI.Error_trying_to_find_selected_plugin,
                                                                 icon: Icon.Error).ShowDialog(_view);
 
             return;
@@ -712,9 +713,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
                     !outputFormat.SupportedMediaTags.Contains(mediaTag) && !ForceChecked))
         {
             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                            GetMessageBoxStandardWindow("Error",
-                                                                                $"Converting image will lose media tag {
-                                                                                    mediaTag}, not continuing...",
+                                                                            GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                                string.
+                                                                                    Format(UI.Converting_image_will_lose_media_tag_0,
+                                                                                        mediaTag),
                                                                                 icon: Icon.Error).
                                                                             ShowDialog(_view));
 
@@ -737,9 +739,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
             }
 
             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                            GetMessageBoxStandardWindow("Error",
-                                                                                $"Converting image will lose sector tag {
-                                                                                    sectorTag}, not continuing...",
+                                                                            GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                                string.
+                                                                                    Format(UI.Converting_image_will_lose_sector_tag_0,
+                                                                                        sectorTag),
                                                                                 icon: Icon.Error).
                                                                             ShowDialog(_view));
 
@@ -782,7 +785,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            ProgressText           = "Creating output image";
+            ProgressText           = UI.Creating_output_image;
             Progress2Text          = "";
             Progress2Indeterminate = true;
         });
@@ -791,20 +794,22 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 _inputFormat.Info.SectorSize))
         {
             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                            GetMessageBoxStandardWindow("Error",
-                                                                                $"Error {outputFormat.ErrorMessage
-                                                                                } creating output image.",
+                                                                            GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                                string.
+                                                                                    Format(UI.Error_0_creating_output_image,
+                                                                                        outputFormat.
+                                                                                            ErrorMessage),
                                                                                 icon: Icon.Error).
                                                                             ShowDialog(_view));
 
-            AaruConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
+            AaruConsole.ErrorWriteLine(UI.Error_0_creating_output_image, outputFormat.ErrorMessage);
 
             return;
         }
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            ProgressText = "Setting image metadata";
+            ProgressText = UI.Setting_image_metadata;
             ProgressValue++;
             Progress2Text          = "";
             Progress2Indeterminate = true;
@@ -833,25 +838,24 @@ public sealed class ImageConvertViewModel : ViewModelBase
         if(!_cancel)
             if(!outputFormat.SetMetadata(metadata))
             {
-                AaruConsole.ErrorWrite("Error {0} setting metadata, ", outputFormat.ErrorMessage);
-
                 if(ForceChecked != true)
                 {
                     await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                  GetMessageBoxStandardWindow("Error",
-                                                                                      $"Error {outputFormat.
-                                                                                          ErrorMessage
-                                                                                      } setting metadata, not continuing...",
+                                                                                  GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                                      string.
+                                                                                          Format(UI.Error_0_setting_metadata_not_continuing,
+                                                                                              outputFormat.
+                                                                                                  ErrorMessage),
                                                                                       icon: Icon.Error).
                                                                                   ShowDialog(_view));
 
-                    AaruConsole.ErrorWriteLine("not continuing...");
+                    AaruConsole.ErrorWriteLine(UI.Error_0_setting_metadata_not_continuing, outputFormat.ErrorMessage);
 
                     return;
                 }
 
                 warning = true;
-                AaruConsole.ErrorWriteLine("continuing...");
+                AaruConsole.ErrorWriteLine(UI.Error_0_setting_metadata, outputFormat.ErrorMessage);
             }
 
         if(tracks != null &&
@@ -860,7 +864,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ProgressText = "Setting tracks list";
+                ProgressText = UI.Setting_tracks_list;
                 ProgressValue++;
                 Progress2Text          = "";
                 Progress2Indeterminate = true;
@@ -869,14 +873,15 @@ public sealed class ImageConvertViewModel : ViewModelBase
             if(!outputOptical.SetTracks(tracks))
             {
                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                              GetMessageBoxStandardWindow("Error",
-                                                                                  $"Error {outputFormat.
-                                                                                      ErrorMessage
-                                                                                  } sending tracks list to output image.",
+                                                                              GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                                  string.
+                                                                                      Format(UI.Error_0_sending_tracks_list_to_output_image,
+                                                                                          outputFormat.
+                                                                                              ErrorMessage),
                                                                                   icon: Icon.Error).
                                                                               ShowDialog(_view));
 
-                AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.", outputFormat.ErrorMessage);
+                AaruConsole.ErrorWriteLine(UI.Error_0_sending_tracks_list_to_output_image, outputFormat.ErrorMessage);
 
                 return;
             }
@@ -888,7 +893,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ProgressText = $"Converting media tag {mediaTag}";
+                ProgressText = string.Format(UI.Converting_media_tag_0, mediaTag);
                 ProgressValue++;
                 Progress2Text          = "";
                 Progress2Indeterminate = true;
@@ -908,9 +913,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 warning = true;
 
                 if(errno == ErrorNumber.NoError)
-                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
+                    AaruConsole.ErrorWriteLine(UI.Error_0_writing_media_tag, outputFormat.ErrorMessage);
                 else
-                    AaruConsole.ErrorWriteLine("Error {0} reading media tag, continuing...", errno);
+                    AaruConsole.ErrorWriteLine(UI.Error_0_reading_media_tag, errno);
             }
             else
             {
@@ -918,24 +923,25 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 {
                     await Dispatcher.UIThread.InvokeAsync(action: async () =>
                                                               await MessageBoxManager.
-                                                                    GetMessageBoxStandardWindow("Error",
-                                                                        $"Error {outputFormat.ErrorMessage
-                                                                        } writing media tag, not continuing...",
+                                                                    GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                        string.
+                                                                            Format(UI.Error_0_writing_media_tag_not_continuing,
+                                                                                outputFormat.ErrorMessage),
                                                                         icon: Icon.Error).ShowDialog(_view));
 
-                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
-                                               outputFormat.ErrorMessage);
+                    AaruConsole.ErrorWriteLine(UI.Error_0_writing_media_tag_not_continuing, outputFormat.ErrorMessage);
                 }
                 else
                 {
                     await Dispatcher.UIThread.InvokeAsync(action: async () =>
                                                               await MessageBoxManager.
-                                                                    GetMessageBoxStandardWindow("Error",
-                                                                        $"Error {errno
-                                                                        } reading media tag, not continuing...",
-                                                                        icon: Icon.Error).ShowDialog(_view));
+                                                                    GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                        string.
+                                                                            Format(UI.Error_0_reading_media_tag_not_continuing,
+                                                                                errno), icon: Icon.Error).
+                                                                    ShowDialog(_view));
 
-                    AaruConsole.ErrorWriteLine("Error {0} reading media tag, not continuing...", errno);
+                    AaruConsole.ErrorWriteLine(UI.Error_0_reading_media_tag_not_continuing, errno);
                 }
 
                 return;
@@ -949,8 +955,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ProgressText = $"Setting geometry to {_inputFormat.Info.Cylinders} cylinders, {_inputFormat.Info.Heads
-                } heads and {_inputFormat.Info.SectorsPerTrack} sectors per track";
+                ProgressText = string.Format(UI.Setting_geometry_to_0_cylinders_1_heads_and_2_sectors_per_track,
+                                             _inputFormat.Info.Cylinders, _inputFormat.Info.Heads,
+                                             _inputFormat.Info.SectorsPerTrack);
 
                 ProgressValue++;
                 Progress2Text          = "";
@@ -962,13 +969,13 @@ public sealed class ImageConvertViewModel : ViewModelBase
             {
                 warning = true;
 
-                AaruConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
+                AaruConsole.ErrorWriteLine(UI.Error_0_setting_geometry_image_may_be_incorrect_continuing,
                                            outputFormat.ErrorMessage);
             }
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ProgressText = "Converting sectors";
+                ProgressText = UI.Converting_sectors;
                 ProgressValue++;
                 Progress2Text          = "";
                 Progress2Indeterminate = false;
@@ -993,8 +1000,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Progress2Text = $"Converting sectors {sectors} to {sectors + sectorsToDo} ({
-                        sectors / (double)_inputFormat.Info.Sectors:P2} done)";
+                    Progress2Text = string.Format(UI.Converting_sectors_0_to_1_2_done, sectors, sectors + sectorsToDo,
+                                                  sectors / (double)_inputFormat.Info.Sectors);
 
                     Progress2Value = (int)(sectors / SectorsValue);
                 });
@@ -1017,19 +1024,18 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         {
                             warning = true;
 
-                            AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
-                                                       doneSectors);
+                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing, errno, doneSectors);
                         }
                         else
                         {
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                      GetMessageBoxStandardWindow("Error",
-                                                                          $"Error {errno} reading sector {
-                                                                              doneSectors}, not continuing...",
+                                                                      GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                          string.
+                                                                              Format(UI.Error_0_reading_sector_1_not_continuing,
+                                                                                  errno, doneSectors),
                                                                           icon: Icon.Error).ShowDialog(_view));
 
-                            AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
-                                                       doneSectors);
+                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_not_continuing, errno, doneSectors);
 
                             return;
                         }
@@ -1051,19 +1057,18 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         {
                             warning = true;
 
-                            AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
-                                                       doneSectors);
+                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing, errno, doneSectors);
                         }
                         else
                         {
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                      GetMessageBoxStandardWindow("Error",
-                                                                          $"Error {errno} reading sector {
-                                                                              doneSectors}, not continuing...",
+                                                                      GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                          string.
+                                                                              Format(UI.Error_0_reading_sector_1_not_continuing,
+                                                                                  errno, doneSectors),
                                                                           icon: Icon.Error).ShowDialog(_view));
 
-                            AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
-                                                       doneSectors);
+                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_not_continuing, errno, doneSectors);
 
                             return;
                         }
@@ -1075,19 +1080,20 @@ public sealed class ImageConvertViewModel : ViewModelBase
                     {
                         warning = true;
 
-                        AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                   outputFormat.ErrorMessage, doneSectors);
+                        AaruConsole.ErrorWriteLine(UI.Error_0_writing_sector_1_continuing, outputFormat.ErrorMessage,
+                                                   doneSectors);
                     }
                     else
                     {
                         await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                  GetMessageBoxStandardWindow("Error",
-                                                                      $"Error {outputFormat.ErrorMessage
-                                                                      } writing sector {doneSectors
-                                                                      }, not continuing...", icon: Icon.Error).
-                                                                  ShowDialog(_view));
+                                                                  GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                      string.
+                                                                          Format(UI.Error_0_writing_sector_1_not_continuing,
+                                                                              outputFormat.ErrorMessage,
+                                                                              doneSectors),
+                                                                      icon: Icon.Error).ShowDialog(_view));
 
-                        AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                        AaruConsole.ErrorWriteLine(UI.Error_0_writing_sector_1_not_continuing,
                                                    outputFormat.ErrorMessage, doneSectors);
 
                         return;
@@ -1098,8 +1104,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Progress2Text = $"Converting sectors {_inputFormat.Info.Sectors} to {_inputFormat.Info.Sectors} ({1.0
-                    :P2} done)";
+                Progress2Text = string.Format(UI.Converting_sectors_0_to_1_2_done, _inputFormat.Info.Sectors,
+                                              _inputFormat.Info.Sectors, 1.0);
 
                 Progress2Value = Progress2MaxValue;
             });
@@ -1167,7 +1173,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    ProgressText = $"Converting tag {tag}";
+                    ProgressText = string.Format(UI.Converting_tag_0, tag);
                     ProgressValue++;
                     Progress2Text          = "";
                     Progress2Indeterminate = false;
@@ -1194,9 +1200,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        Progress2Text = $"Converting tag {sectors / (double)_inputFormat.Info.Sectors} for sectors {
-                            sectors} to {sectors + sectorsToDo} ({sectors / (double)_inputFormat.Info.Sectors
-                                :P2} done)";
+                        Progress2Text = string.Format(UI.Converting_tag_0_for_sectors_1_to_2_3_done,
+                                                      sectors / (double)_inputFormat.Info.Sectors, sectors,
+                                                      sectors + sectorsToDo,
+                                                      sectors / (double)_inputFormat.Info.Sectors);
 
                         Progress2Value = (int)(sectors / SectorsValue);
                     });
@@ -1236,20 +1243,19 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 warning = true;
 
-                                AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
-                                                           doneSectors);
+                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing, errno, doneSectors);
                             }
                             else
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                          GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {errno} reading sector {
-                                                                                  doneSectors
-                                                                              }, not continuing...",
+                                                                          GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                              string.
+                                                                                  Format(UI.Error_0_reading_sector_1_not_continuing,
+                                                                                      errno, doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
-                                AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
+                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_not_continuing, errno,
                                                            doneSectors);
 
                                 return;
@@ -1290,20 +1296,19 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 warning = true;
 
-                                AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
-                                                           doneSectors);
+                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing, errno, doneSectors);
                             }
                             else
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                          GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {errno} reading sector {
-                                                                                  doneSectors
-                                                                              }, not continuing...",
+                                                                          GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                              string.
+                                                                                  Format(UI.Error_0_reading_sector_1_not_continuing,
+                                                                                      errno, doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
-                                AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, not continuing...", errno,
+                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_not_continuing, errno,
                                                            doneSectors);
 
                                 return;
@@ -1316,19 +1321,21 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         {
                             warning = true;
 
-                            AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                            AaruConsole.ErrorWriteLine(UI.Error_0_writing_sector_1_continuing,
                                                        outputFormat.ErrorMessage, doneSectors);
                         }
                         else
                         {
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                      GetMessageBoxStandardWindow("Error",
-                                                                          $"Error {outputFormat.ErrorMessage
-                                                                          } writing sector {doneSectors
-                                                                          }, not continuing...",
+                                                                      GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                          string.
+                                                                              Format(UI.Error_0_writing_sector_1_not_continuing,
+                                                                                  outputFormat.
+                                                                                      ErrorMessage,
+                                                                                  doneSectors),
                                                                           icon: Icon.Error).ShowDialog(_view));
 
-                            AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                            AaruConsole.ErrorWriteLine(UI.Error_0_writing_sector_1_not_continuing,
                                                        outputFormat.ErrorMessage, doneSectors);
 
                             return;
@@ -1339,8 +1346,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Progress2Text = $"Converting tag {tag} for sectors {_inputFormat.Info.Sectors} to {
-                        _inputFormat.Info.Sectors} ({1.0:P2} done)";
+                    Progress2Text = string.Format(UI.Converting_tag_0_for_sectors_1_to_2_3_done, tag,
+                                                  _inputFormat.Info.Sectors, _inputFormat.Info.Sectors, 1.0);
 
                     Progress2Value = Progress2MaxValue;
                 });
@@ -1370,7 +1377,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    ProgressText = $"Converting sectors in track {track.Sequence}";
+                    ProgressText = string.Format(UI.Converting_sectors_in_track_0, track.Sequence);
                     ProgressValue++;
                     Progress2Text          = "";
                     Progress2Indeterminate = false;
@@ -1395,9 +1402,11 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        Progress2Text = $"Converting sectors {sectors + track.StartSector} to {
-                            sectors + sectorsToDo + track.StartSector} in track {track.Sequence} ({
-                                (sectors + track.StartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
+                        Progress2Text = string.Format(UI.Converting_sectors_0_to_1_in_track_2_3_done,
+                                                      sectors + track.StartSector,
+                                                      sectors + sectorsToDo + track.StartSector, track.Sequence,
+                                                      (sectors + track.StartSector) /
+                                                      (double)_inputFormat.Info.Sectors);
 
                         Progress2Value = (int)(sectors / SectorsValue);
                     });
@@ -1424,16 +1433,15 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 warning = true;
 
-                                AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
-                                                           doneSectors);
+                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing, errno, doneSectors);
                             }
                             else
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                          GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {errno} reading sector {
-                                                                                  doneSectors
-                                                                              }, not continuing...",
+                                                                          GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                              string.
+                                                                                  Format(UI.Error_0_reading_sector_1_not_continuing,
+                                                                                      errno, doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
@@ -1460,16 +1468,15 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 warning = true;
 
-                                AaruConsole.ErrorWriteLine("Error {0} reading sector {1}, continuing...", errno,
-                                                           doneSectors);
+                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing, errno, doneSectors);
                             }
                             else
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                          GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {errno} reading sector {
-                                                                                  doneSectors
-                                                                              }, not continuing...",
+                                                                          GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                              string.
+                                                                                  Format(UI.Error_0_reading_sector_1_not_continuing,
+                                                                                      errno, doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
@@ -1483,16 +1490,18 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         {
                             warning = true;
 
-                            AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                            AaruConsole.ErrorWriteLine(UI.Error_0_writing_sector_1_continuing,
                                                        outputFormat.ErrorMessage, doneSectors);
                         }
                         else
                         {
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                      GetMessageBoxStandardWindow("Error",
-                                                                          $"Error {outputFormat.ErrorMessage
-                                                                          } writing sector {doneSectors
-                                                                          }, not continuing...",
+                                                                      GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                          string.
+                                                                              Format(UI.Error_0_writing_sector_1_not_continuing,
+                                                                                  outputFormat.
+                                                                                      ErrorMessage,
+                                                                                  doneSectors),
                                                                           icon: Icon.Error).ShowDialog(_view));
 
                             return;
@@ -1504,8 +1513,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Progress2Text = $"Converting sectors {_inputFormat.Info.Sectors} to {_inputFormat.Info.Sectors
-                } in track {tracks.Count} ({1.0:P2} done)";
+                Progress2Text = string.Format(UI.Converting_sectors_0_to_1_in_track_2_3_done, _inputFormat.Info.Sectors,
+                                              _inputFormat.Info.Sectors, tracks.Count, 1.0);
 
                 Progress2Value = Progress2MaxValue;
             });
@@ -1561,15 +1570,16 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 {
                                     warning = true;
 
-                                    AaruConsole.ErrorWriteLine("Error {0} reading tag, continuing...", errno);
+                                    AaruConsole.ErrorWriteLine(UI.Error_0_reading_media_tag, errno);
                                 }
                                 else
                                 {
                                     await Dispatcher.UIThread.InvokeAsync(action: async () =>
                                                                               await MessageBoxManager.
-                                                                                  GetMessageBoxStandardWindow("Error",
-                                                                                      $"Error {errno
-                                                                                      } reading tag, not continuing...",
+                                                                                  GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                                      string.
+                                                                                          Format(UI.Error_0_reading_media_tag_not_continuing,
+                                                                                              errno),
                                                                                       icon: Icon.Error).
                                                                                   ShowDialog(_view));
 
@@ -1584,17 +1594,18 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 {
                                     warning = true;
 
-                                    AaruConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
+                                    AaruConsole.ErrorWriteLine(UI.Error_0_writing_tag_continuing,
                                                                outputFormat.ErrorMessage);
                                 }
                                 else
                                 {
                                     await Dispatcher.UIThread.InvokeAsync(action: async () =>
                                                                               await MessageBoxManager.
-                                                                                  GetMessageBoxStandardWindow("Error",
-                                                                                      $"Error {outputFormat.
-                                                                                          ErrorMessage
-                                                                                      } writing tag, not continuing...",
+                                                                                  GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                                      string.
+                                                                                          Format(UI.Error_0_writing_tag_not_continuing,
+                                                                                              outputFormat.
+                                                                                                  ErrorMessage),
                                                                                       icon: Icon.Error).
                                                                                   ShowDialog(_view));
 
@@ -1620,9 +1631,11 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            Progress2Text = $"Converting tag {tag} for sectors {sectors + track.StartSector} to {
-                                sectors + sectorsToDo + track.StartSector} in track {track.Sequence} ({
-                                    (sectors + track.StartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
+                            Progress2Text = string.Format(UI.Converting_tag_0_for_sectors_1_to_2_in_track_3_4_done, tag,
+                                                          sectors + track.StartSector,
+                                                          sectors + sectorsToDo + track.StartSector, track.Sequence,
+                                                          (sectors + track.StartSector) /
+                                                          (double)_inputFormat.Info.Sectors);
 
                             Progress2Value = (int)(sectors / SectorsValue);
                         });
@@ -1645,17 +1658,16 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 warning = true;
 
-                                AaruConsole.ErrorWriteLine("Error {0} reading tag for sector {1}, continuing...", errno,
+                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_tag_for_sector_1_continuing, errno,
                                                            doneSectors);
                             }
                             else
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                          GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {errno
-                                                                              } reading tag for sector {
-                                                                                  doneSectors
-                                                                              }, not continuing...",
+                                                                          GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                              string.
+                                                                                  Format(UI.Error_0_reading_tag_for_sector_1_not_continuing,
+                                                                                      errno, doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
@@ -1668,18 +1680,18 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             {
                                 warning = true;
 
-                                AaruConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
+                                AaruConsole.ErrorWriteLine(UI.Error_0_writing_tag_for_sector_1_continuing,
                                                            outputFormat.ErrorMessage, doneSectors);
                             }
                             else
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                          GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {outputFormat.
-                                                                                  ErrorMessage
-                                                                              } writing tag for sector {
-                                                                                  doneSectors
-                                                                              }, not continuing...",
+                                                                          GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                              string.
+                                                                                  Format(UI.Error_0_writing_tag_for_sector_1_not_continuing,
+                                                                                      outputFormat.
+                                                                                          ErrorMessage,
+                                                                                      doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowDialog(_view));
 
@@ -1705,15 +1717,14 @@ public sealed class ImageConvertViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ProgressText = "Writing dump hardware list to output image.";
+                ProgressText = UI.Writing_dump_hardware_list;
                 ProgressValue++;
             });
 
             ret = outputFormat.SetDumpHardware(_dumpHardware);
 
             if(!ret)
-                AaruConsole.WriteLine("Error {0} writing dump hardware list to output image.",
-                                      outputFormat.ErrorMessage);
+                AaruConsole.WriteLine(UI.Error_0_writing_dump_hardware_list_to_output_image, outputFormat.ErrorMessage);
         }
 
         ret = false;
@@ -1723,20 +1734,19 @@ public sealed class ImageConvertViewModel : ViewModelBase
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ProgressText = "Writing CICM XML metadata to output image.";
+                ProgressText = UI.Writing_CICM_XML_metadata_to_output_image;
                 ProgressValue++;
             });
 
             outputFormat.SetCicmMetadata(_cicmMetadata);
 
             if(!ret)
-                AaruConsole.WriteLine("Error {0} writing CICM XML metadata to output image.",
-                                      outputFormat.ErrorMessage);
+                AaruConsole.WriteLine(UI.Error_0_writing_CICM_XML_metadata_to_output_image, outputFormat.ErrorMessage);
         }
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            ProgressText          = "Closing output image.";
+            ProgressText          = UI.Closing_output_image;
             ProgressIndeterminate = true;
         });
 
@@ -1745,7 +1755,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             await Dispatcher.UIThread.InvokeAsync(action: async () =>
             {
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", "Operation canceled, the output file is not correct.",
+                      GetMessageBoxStandardWindow(UI.Title_Error, UI.Operation_canceled_the_output_file_is_not_correct,
                                                   icon: Icon.Error).ShowDialog(_view);
 
                 CloseVisible    = true;
@@ -1759,9 +1769,11 @@ public sealed class ImageConvertViewModel : ViewModelBase
         if(!outputFormat.Close())
         {
             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                            GetMessageBoxStandardWindow("Error",
-                                                                                $"Error {outputFormat.ErrorMessage
-                                                                                } closing output image... Contents are not correct.",
+                                                                            GetMessageBoxStandardWindow(UI.Title_Error,
+                                                                                string.
+                                                                                    Format(UI.Error_0_closing_output_image_Contents_are_not_correct,
+                                                                                        outputFormat.
+                                                                                            ErrorMessage),
                                                                                 icon: Icon.Error).
                                                                             ShowDialog(_view));
 
@@ -1770,12 +1782,11 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         await Dispatcher.UIThread.InvokeAsync(action: async () =>
         {
-            await MessageBoxManager.GetMessageBoxStandardWindow(warning ? "Warning" : "Conversion success",
-                                                                warning
-                                                                    ? "Some warnings happened. Check console for more information. Image should be correct."
-                                                                    : "Image converted successfully.",
-                                                                icon: warning ? Icon.Warning : Icon.Info).
-                                    ShowDialog(_view);
+            await MessageBoxManager.
+                  GetMessageBoxStandardWindow(warning ? UI.Title_Warning : UI.Title_Conversion_success,
+                                              warning ? UI.Some_warnings_happened_Check_console
+                                                  : UI.Image_converted_successfully,
+                                              icon: warning ? Icon.Warning : Icon.Info).ShowDialog(_view);
 
             CloseVisible    = true;
             StopVisible     = false;
@@ -1934,7 +1945,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         var dlgDestination = new SaveFileDialog
         {
-            Title = "Choose destination file"
+            Title = UI.Dialog_Choose_destination_file
         };
 
         dlgDestination.Filters?.Add(new FileDialogFilter
@@ -1989,7 +2000,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
     void ExecuteCicmXmlFromImageCommand()
     {
-        CicmXmlText   = "<From image>";
+        CicmXmlText   = UI._From_image_;
         _cicmMetadata = _inputFormat.CicmMetadata;
     }
 
@@ -2000,12 +2011,12 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         var dlgMetadata = new OpenFileDialog
         {
-            Title = "Choose existing metadata sidecar"
+            Title = UI.Dialog_Choose_existing_metadata_sidecar
         };
 
         dlgMetadata.Filters?.Add(new FileDialogFilter
         {
-            Name = "CICM XML metadata",
+            Name = UI.Dialog_CICM_XML_metadata,
             Extensions = new List<string>(new[]
             {
                 ".xml"
@@ -2029,14 +2040,14 @@ public sealed class ImageConvertViewModel : ViewModelBase
         }
         catch
         {
-            await MessageBoxManager.GetMessageBoxStandardWindow("Error", "Incorrect metadata sidecar file...",
+            await MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, UI.Incorrect_metadata_sidecar_file,
                                                                 icon: Icon.Error).ShowDialog(_view);
         }
     }
 
     void ExecuteResumeFileFromImageCommand()
     {
-        ResumeFileText = "<From image>";
+        ResumeFileText = UI._From_image_;
         _dumpHardware  = _inputFormat.DumpHardware;
     }
 
@@ -2047,12 +2058,12 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         var dlgMetadata = new OpenFileDialog
         {
-            Title = "Choose existing resume file"
+            Title = UI.Dialog_Choose_existing_resume_file
         };
 
         dlgMetadata.Filters?.Add(new FileDialogFilter
         {
-            Name = "CICM XML metadata",
+            Name = UI.Dialog_CICM_XML_metadata,
             Extensions = new List<string>(new[]
             {
                 ".xml"
@@ -2079,15 +2090,17 @@ public sealed class ImageConvertViewModel : ViewModelBase
             }
             else
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", "Resume file does not contain dump hardware information...",
+                      GetMessageBoxStandardWindow(UI.Title_Error,
+                                                  UI.Resume_file_does_not_contain_dump_hardware_information,
                                                   icon: Icon.Error).ShowDialog(_view);
 
             sr.Close();
         }
         catch
         {
-            await MessageBoxManager.GetMessageBoxStandardWindow("Error", "Incorrect resume file...", icon: Icon.Error).
-                                    ShowDialog(_view);
+            await MessageBoxManager.
+                  GetMessageBoxStandardWindow(UI.Title_Error, UI.Incorrect_resume_file, icon: Icon.Error).
+                  ShowDialog(_view);
         }
     }
 }

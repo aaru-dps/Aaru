@@ -364,7 +364,7 @@ sealed class MediaInfoCommand : Command
                 DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvdram_dds.bin",
                                  "SCSI READ DISC STRUCTURE", scsiInfo.DvdRamDds);
 
-                AaruConsole.WriteLine($"[bold]{Localization.Core.Disc_Definition_Structure}:[/]",
+                AaruConsole.WriteLine($"[bold]{UI.Disc_Definition_Structure}:[/]",
                                       $"\n{Markup.Escape(DDS.Prettify(scsiInfo.DvdRamDds))}");
             }
 
@@ -382,7 +382,7 @@ sealed class MediaInfoCommand : Command
                 DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvdram_spare.bin",
                                  "SCSI READ DISC STRUCTURE", scsiInfo.DvdRamSpareArea);
 
-                AaruConsole.WriteLine($"[bold]{Localization.Core.Spare_Area_Information}:[/]",
+                AaruConsole.WriteLine($"[bold]{UI.Spare_Area_Information}:[/]",
                                       $"\n{Markup.Escape(Spare.Prettify(scsiInfo.DvdRamSpareArea))}");
             }
 
@@ -533,7 +533,7 @@ sealed class MediaInfoCommand : Command
                                  scsiInfo.Toc);
 
                 if(scsiInfo.DecodedToc.HasValue)
-                    AaruConsole.WriteLine($"[bold]{Localization.Core.TOC}:[/]",
+                    AaruConsole.WriteLine($"[bold]{UI.Title_TOC}:[/]",
                                           $"\n{Markup.Escape(TOC.Prettify(scsiInfo.DecodedToc))}");
             }
 
@@ -543,7 +543,7 @@ sealed class MediaInfoCommand : Command
                                  scsiInfo.Atip);
 
                 if(scsiInfo.DecodedAtip != null)
-                    AaruConsole.WriteLine($"[bold]{Localization.Core.ATIP}:[/]",
+                    AaruConsole.WriteLine($"[bold]{UI.Title_ATIP}:[/]",
                                           $"\n{Markup.Escape(ATIP.Prettify(scsiInfo.DecodedAtip))}");
             }
 

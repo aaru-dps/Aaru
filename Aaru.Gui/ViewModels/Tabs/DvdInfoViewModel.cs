@@ -36,6 +36,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Aaru.CommonTypes;
 using Aaru.Decoders.DVD;
+using Aaru.Localization;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -118,12 +119,12 @@ public sealed class DvdInfoViewModel
     public bool                        SaveDvdBcaVisible   { get; }
     public bool                        SaveDvdAacsVisible  { get; }
 
-    public string SaveDvdPfiLabel   => "Save Physical Format Information";
-    public string SaveDvdDmiLabel   => "Save Disc Manufacturer Information";
-    public string SaveDvdCmiLabel   => "Save Copyright Management Information";
-    public string SaveHdDvdCmiLabel => "Save Copyright Management Information";
-    public string SaveDvdBcaLabel   => "Save Burst Cutting Area";
-    public string SaveDvdAacsLabel  => "Save AACS Information";
+    public string SaveDvdPfiLabel   => UI.ButtonLabel_Save_Physical_Format_Information;
+    public string SaveDvdDmiLabel   => UI.ButtonLabel_Save_Disc_Manufacturer_Information;
+    public string SaveDvdCmiLabel   => UI.ButtonLabel_Save_Copyright_Management_Information;
+    public string SaveHdDvdCmiLabel => UI.ButtonLabel_Save_Copyright_Management_Information;
+    public string SaveDvdBcaLabel   => UI.ButtonLabel_Save_Burst_Cutting_Area;
+    public string SaveDvdAacsLabel  => UI.ButtonLabel_Save_AACS_Information;
 
     async Task SaveElement(byte[] data)
     {
@@ -135,7 +136,7 @@ public sealed class DvdInfoViewModel
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

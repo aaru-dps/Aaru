@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
@@ -109,17 +110,16 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         }
     }
 
-    public string DuplicatedSectorsLabel =>
-        "Calculates how many sectors are duplicated (have same exact data in user area).";
-    public string SeparatedTracksLabel => "Calculates entropy for each track separately.";
-    public string WholeDiscLabel       => "Calculates entropy for the whole disc.";
-    public string TrackEntropyLabel    => "Track entropy";
-    public string TrackLabel           => "Track";
-    public string EntropyLabel         => "Entropy";
-    public string UniqueSectorsLabel   => "Unique sectors";
-    public string StartLabel           => "Start";
-    public string CloseLabel           => "Close";
-    public string StopLabel            => "Stop";
+    public string DuplicatedSectorsLabel => UI.Calculates_how_many_sectors_are_duplicated;
+    public string SeparatedTracksLabel   => UI.Calculates_entropy_for_each_track_separately;
+    public string WholeDiscLabel         => UI.Calculates_entropy_for_the_whole_disc;
+    public string TrackEntropyLabel      => UI.Title_Track_entropy;
+    public string TrackLabel             => Localization.Core.Title_Track;
+    public string EntropyLabel           => UI.Title_Entropy;
+    public string UniqueSectorsLabel     => UI.Title_Unique_sectors;
+    public string StartLabel             => UI.ButtonLabel_Start;
+    public string CloseLabel             => UI.ButtonLabel_Close;
+    public string StopLabel              => UI.ButtonLabel_Stop;
 
     public bool SeparatedTracksVisible
     {
@@ -290,7 +290,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
     }
 
     [JetBrains.Annotations.NotNull]
-    public string Title => "Calculating entropy";
+    public string Title => UI.Title_Calculating_entropy;
     public ObservableCollection<TrackEntropyModel> TrackEntropy { get; }
     public ReactiveCommand<Unit, Unit>             StartCommand { get; }
     public ReactiveCommand<Unit, Unit>             CloseCommand { get; }
@@ -315,7 +315,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
 
         if(WholeDiscChecked && _inputFormat is IOpticalMediaImage { Sessions.Count: > 1 })
         {
-            AaruConsole.ErrorWriteLine("Calculating disc entropy of multisession images is not yet implemented.");
+            AaruConsole.ErrorWriteLine(UI.Calculating_disc_entropy_of_multisession_images_is_not_yet_implemented);
             WholeDiscChecked = false;
         }
 
@@ -328,10 +328,10 @@ public sealed class ImageEntropyViewModel : ViewModelBase
 
                 foreach(EntropyResults trackEntropy in _tracksEntropy)
                 {
-                    AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track, trackEntropy.Entropy);
+                    AaruConsole.WriteLine(UI.Entropy_for_track_0_is_1, trackEntropy.Track, trackEntropy.Entropy);
 
                     if(trackEntropy.UniqueSectors != null)
-                        AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
+                        AaruConsole.WriteLine(UI.Track_0_has_1_unique_sectors_2, trackEntropy.Track,
                                               trackEntropy.UniqueSectors,
                                               (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
                 }
@@ -370,14 +370,14 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         if(WholeDiscChecked != true)
             return;
 
-        MediaEntropyText    = $"Entropy for disk is {_entropy.Entropy:F4}.";
+        MediaEntropyText    = string.Format(UI.Entropy_for_disk_is_0, _entropy.Entropy);
         MediaEntropyVisible = true;
 
         if(_entropy.UniqueSectors == null)
             return;
 
-        MediaUniqueSectorsText = $"Disk has {_entropy.UniqueSectors} unique sectors ({
-            (double)_entropy.UniqueSectors / _entropy.Sectors:P3})";
+        MediaUniqueSectorsText = string.Format(UI.Disk_has_0_unique_sectors_1, _entropy.UniqueSectors,
+                                               (double)_entropy.UniqueSectors / _entropy.Sectors);
 
         MediaUniqueSectorsVisible = true;
     }

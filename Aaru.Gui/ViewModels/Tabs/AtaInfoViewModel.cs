@@ -35,6 +35,7 @@ using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
 using Aaru.Decoders.ATA;
+using Aaru.Localization;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -71,12 +72,13 @@ public sealed class AtaInfoViewModel : ViewModelBase
             {
                 AtaMcptText = (ataMcptError.Value.DeviceHead & 0x7) switch
                 {
-                    0 => "Device reports incorrect media card type",
-                    1 => "Device contains a Secure Digital card",
-                    2 => "Device contains a MultiMediaCard ",
-                    3 => "Device contains a Secure Digital I/O card",
-                    4 => "Device contains a Smart Media card",
-                    _ => $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}"
+                    0 => Localization.Core.Device_reports_incorrect_media_card_type,
+                    1 => Localization.Core.Device_contains_SD_card,
+                    2 => Localization.Core.Device_contains_MMC,
+                    3 => Localization.Core.Device_contains_SDIO_card,
+                    4 => Localization.Core.Device_contains_SM_card,
+                    _ => string.Format(Localization.Core.Device_contains_unknown_media_card_type_0,
+                                       ataMcptError.Value.DeviceHead & 0x07)
                 };
 
                 AtaMcptWriteProtectionChecked = (ataMcptError.Value.DeviceHead & 0x08) == 0x08;
@@ -84,7 +86,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
                 ushort specificData =
                     (ushort)((ataMcptError.Value.CylinderHigh * 0x100) + ataMcptError.Value.CylinderLow);
 
-                AtaMcptSpecificDataText = $"Card specific data: 0x{specificData:X4}";
+                AtaMcptSpecificDataText = string.Format(Localization.Core.Card_specific_data_0, specificData);
             }
 
             AtaIdentifyText = Identify.Prettify(_ata);
@@ -107,10 +109,10 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
     public string AtaOrAtapiText { get; }
 
-    public string AtaMcptLabel                => "Device is Media Card Pass Through";
-    public string AtaMcptWriteProtectionLabel => "Media card is write protected";
-    public string SaveAtaBinaryLabel          => "Save binary to file";
-    public string SaveAtaTextLabel            => "Save text to file";
+    public string AtaMcptLabel                => Localization.Core.Device_supports_MCPT_Command_Set;
+    public string AtaMcptWriteProtectionLabel => Localization.Core.Media_card_is_write_protected;
+    public string SaveAtaBinaryLabel          => UI.ButtonLabel_Save_binary_to_file;
+    public string SaveAtaTextLabel            => UI.ButtonLabel_Save_text_to_file;
 
     async Task ExecuteSaveAtaBinaryCommand()
     {
@@ -122,7 +124,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -150,7 +152,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
             {
                 "*.txt"
             }),
-            Name = "Text"
+            Name = UI.Dialog_Text_files
         });
 
         string result = await dlgSaveText.ShowAsync(_view);

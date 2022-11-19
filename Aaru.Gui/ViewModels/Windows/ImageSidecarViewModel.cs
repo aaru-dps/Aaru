@@ -42,6 +42,7 @@ using System.Xml.Serialization;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
@@ -98,11 +99,11 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         StopCommand        = ReactiveCommand.Create(ExecuteStopCommand);
     }
 
-    public string DestinationFileLabel => "Destination file";
-    public string ChooseLabel          => "Choose...";
-    public string StartLabel           => "Start";
-    public string CloseLabel           => "Close";
-    public string StopLabel            => "Stop";
+    public string DestinationFileLabel => UI.Title_Destination_file;
+    public string ChooseLabel          => UI.ButtonLabel_Choose;
+    public string StartLabel           => UI.ButtonLabel_Start;
+    public string CloseLabel           => UI.ButtonLabel_Close;
+    public string StopLabel            => UI.ButtonLabel_Stop;
 
     public string                      Title              { get; }
     public ReactiveCommand<Unit, Task> DestinationCommand { get; }
@@ -251,7 +252,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         _sidecarClass.EndProgressEvent2    += EndProgress2;
         CICMMetadataType sidecar = _sidecarClass.Create();
 
-        AaruConsole.WriteLine("Writing metadata sidecar");
+        AaruConsole.WriteLine(Localization.Core.Writing_metadata_sidecar);
 
         var xmlFs = new FileStream(DestinationText, FileMode.Create);
 
@@ -324,7 +325,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
 
     void ExecuteStopCommand()
     {
-        ProgressText = "Aborting...";
+        ProgressText = Localization.Core.Aborting;
         StopEnabled  = false;
         _sidecarClass.Abort();
     }
@@ -333,12 +334,12 @@ public sealed class ImageSidecarViewModel : ViewModelBase
     {
         var dlgDestination = new SaveFileDialog
         {
-            Title = "Choose destination file"
+            Title = UI.Dialog_Choose_destination_file
         };
 
         dlgDestination.Filters?.Add(new FileDialogFilter
         {
-            Name = "CICM XML metadata",
+            Name = UI.Dialog_CICM_XML_metadata,
             Extensions = new List<string>(new[]
             {
                 "*.xml"

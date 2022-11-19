@@ -36,6 +36,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Aaru.Core.Media.Info;
 using Aaru.Decoders.Xbox;
+using Aaru.Localization;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -57,11 +58,11 @@ public sealed class XboxInfoViewModel
         if(xgdInfo != null)
         {
             XboxInformationVisible = true;
-            XboxL0VideoText        = $"{xgdInfo.L0Video} sectors";
-            XboxL1VideoText        = $"{xgdInfo.L1Video} sectors";
-            XboxMiddleZoneText     = $"{xgdInfo.MiddleZone} sectors";
-            XboxGameSizeText       = $"{xgdInfo.GameSize} sectors";
-            XboxTotalSizeText      = $"{xgdInfo.TotalSize} sectors";
+            XboxL0VideoText        = string.Format(Localization.Core._0_sectors, xgdInfo.L0Video);
+            XboxL1VideoText        = string.Format(Localization.Core._0_sectors, xgdInfo.L1Video);
+            XboxMiddleZoneText     = string.Format(Localization.Core._0_sectors, xgdInfo.MiddleZone);
+            XboxGameSizeText       = string.Format(Localization.Core._0_sectors, xgdInfo.GameSize);
+            XboxTotalSizeText      = string.Format(Localization.Core._0_sectors, xgdInfo.TotalSize);
             XboxRealBreakText      = xgdInfo.LayerBreak.ToString();
         }
 
@@ -91,15 +92,15 @@ public sealed class XboxInfoViewModel
     public string                      XboxDmiText            { get; }
     public string                      XboxSsText             { get; }
 
-    public string XboxL0VideoLabel    => "Video layer 0 size";
-    public string XboxL1VideoLabel    => "Video layer 1 size";
-    public string XboxMiddleZoneLabel => "Middle zone size";
-    public string XboxGameSizeLabel   => "Game data size";
-    public string XboxTotalSizeLabel  => "Total size";
-    public string XboxRealBreakLabel  => "Real layer break";
-    public string XboxDmiLabel        => "Disc Manufacturing Information";
-    public string XboxSsLabel         => "Security Sector";
-    public string SaveXboxSsLabel     => "Save Xbox Security Sector";
+    public string XboxL0VideoLabel    => Localization.Core.Video_layer_zero_size;
+    public string XboxL1VideoLabel    => Localization.Core.Video_layer_one_size;
+    public string XboxMiddleZoneLabel => Localization.Core.Middle_zone_size;
+    public string XboxGameSizeLabel   => Localization.Core.Game_data_size;
+    public string XboxTotalSizeLabel  => Localization.Core.Total_size;
+    public string XboxRealBreakLabel  => Localization.Core.Real_layer_break;
+    public string XboxDmiLabel        => UI.Title_Disc_Manufacturing_Information;
+    public string XboxSsLabel         => UI.Title_Security_Sector;
+    public string SaveXboxSsLabel     => UI.ButtonLabel_Save_Xbox_Security_Sector;
 
     async Task SaveElement(byte[] data)
     {
@@ -111,7 +112,7 @@ public sealed class XboxInfoViewModel
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

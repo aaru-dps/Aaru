@@ -48,6 +48,7 @@
     <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj"/>
     <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"/>
     <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+    <ProjectReference Include="..\Aaru.Localization\Aaru.Localization.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\Logos\Media\AIT1.png"/>

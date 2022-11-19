@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
 using Aaru.Devices;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -111,12 +112,12 @@ public sealed class MediaScanViewModel : ViewModelBase
         LineColor    = Colors.Yellow;
     }
 
-    public string SpeedLabel => "Stop";
-    public string KbsLabel   => "Kb/s";
-    public string BlockLabel => "Block";
-    public string StartLabel => "Start";
-    public string CloseLabel => "Close";
-    public string StopLabel  => "Stop";
+    public string SpeedLabel => UI.ButtonLabel_Stop;
+    public string KbsLabel   => UI.Kb_s;
+    public string BlockLabel => UI.Title_Block;
+    public string StartLabel => UI.ButtonLabel_Start;
+    public string CloseLabel => UI.ButtonLabel_Close;
+    public string StopLabel  => UI.ButtonLabel_Stop;
 
     public Color AxesColor
     {
@@ -344,8 +345,8 @@ public sealed class MediaScanViewModel : ViewModelBase
         {
             case null:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", $"Error {devErrno} opening device.", ButtonEnum.Ok,
-                                                  Icon.Error).ShowDialog(_view);
+                      GetMessageBoxStandardWindow(UI.Title_Error, string.Format(UI.Error_0_opening_device, devErrno),
+                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
 
                 StopVisible     = false;
                 StartVisible    = true;
@@ -364,8 +365,8 @@ public sealed class MediaScanViewModel : ViewModelBase
         if(dev.Error)
         {
             await MessageBoxManager.
-                  GetMessageBoxStandardWindow("Error", $"Error {dev.LastError} opening device.", ButtonEnum.Ok,
-                                              Icon.Error).ShowDialog(_view);
+                  GetMessageBoxStandardWindow(UI.Title_Error, string.Format(UI.Error_0_opening_device, dev.LastError),
+                                              ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
 
             StopVisible     = false;
             StartVisible    = true;
@@ -394,18 +395,21 @@ public sealed class MediaScanViewModel : ViewModelBase
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            TotalTime = $"Took a total of {results.TotalTime} seconds ({results.ProcessingTime} processing commands).";
+            TotalTime = string.Format(Localization.Core.Took_a_total_of_0_seconds_1_processing_commands,
+                                      results.TotalTime, results.ProcessingTime);
 
-            AvgSpeed          = $"Average speed: {results.AvgSpeed:F3} MiB/sec.";
-            MaxSpeed          = $"Fastest speed burst: {results.MaxSpeed:F3} MiB/sec.";
-            MinSpeed          = $"Slowest speed burst: {results.MinSpeed:F3} MiB/sec.";
-            A                 = $"{results.A} sectors took less than 3 ms.";
-            B                 = $"{results.B} sectors took less than 10 ms but more than 3 ms.";
-            C                 = $"{results.C} sectors took less than 50 ms but more than 10 ms.";
-            D                 = $"{results.D} sectors took less than 150 ms but more than 50 ms.";
-            E                 = $"{results.E} sectors took less than 500 ms but more than 150 ms.";
-            F                 = $"{results.F} sectors took more than 500 ms.";
-            UnreadableSectors = $"{results.UnreadableSectors.Count} sectors could not be read.";
+            AvgSpeed = string.Format(Localization.Core.Average_speed_0_MiB_sec, results.AvgSpeed);
+            MaxSpeed = string.Format(Localization.Core.Fastest_speed_burst_0_MiB_sec, results.MaxSpeed);
+            MinSpeed = string.Format(Localization.Core.Slowest_speed_burst_0_MiB_sec, results.MinSpeed);
+            A = string.Format(Localization.Core._0_sectors_took_less_than_3_ms, results.A);
+            B = string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms, results.B);
+            C = string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms, results.C);
+            D = string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms, results.D);
+            E = string.Format(Localization.Core._0_sectors_took_less_than_500_ms_but_more_than_150_ms, results.E);
+            F = string.Format(Localization.Core._0_sectors_took_more_than_500_ms, results.F);
+
+            UnreadableSectors = string.Format(Localization.Core._0_sectors_could_not_be_read,
+                                              results.UnreadableSectors.Count);
         });
 
         // TODO: Show list of unreadable sectors
@@ -589,7 +593,7 @@ public sealed class MediaScanViewModel : ViewModelBase
     {
         ProgressText = text;
 
-        await MessageBoxManager.GetMessageBoxStandardWindow("Error", $"{text}", ButtonEnum.Ok, Icon.Error).
+        await MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, $"{text}", ButtonEnum.Ok, Icon.Error).
                                 ShowDialog(_view);
 
         await WorkFinished();
@@ -605,7 +609,7 @@ public sealed class MediaScanViewModel : ViewModelBase
     async void OnScanUnreadable(ulong sector) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         _localResults.Errored += _blocksToRead;
-        UnreadableSectors     =  $"{_localResults.Errored} sectors could not be read.";
+        UnreadableSectors     =  string.Format(Localization.Core._0_sectors_could_not_be_read, _localResults.Errored);
         BlockMapList.Add((sector / _blocksToRead, double.NaN));
     });
 
@@ -642,11 +646,11 @@ public sealed class MediaScanViewModel : ViewModelBase
                 break;
         }
 
-        A = $"{_localResults.A} sectors took less than 3 ms.";
-        B = $"{_localResults.B} sectors took less than 10 ms but more than 3 ms.";
-        C = $"{_localResults.C} sectors took less than 50 ms but more than 10 ms.";
-        D = $"{_localResults.D} sectors took less than 150 ms but more than 50 ms.";
-        E = $"{_localResults.E} sectors took less than 500 ms but more than 150 ms.";
-        F = $"{_localResults.F} sectors took more than 500 ms.";
+        A = string.Format(Localization.Core._0_sectors_took_less_than_3_ms, _localResults.A);
+        B = string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms, _localResults.B);
+        C = string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms, _localResults.C);
+        D = string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms, _localResults.D);
+        E = string.Format(Localization.Core._0_sectors_took_less_than_500_ms_but_more_than_150_ms, _localResults.E);
+        F = string.Format(Localization.Core._0_sectors_took_more_than_500_ms, _localResults.F);
     });
 }

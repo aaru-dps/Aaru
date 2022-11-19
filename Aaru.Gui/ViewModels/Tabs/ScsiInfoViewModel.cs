@@ -42,6 +42,7 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Gui.Models;
 using Aaru.Helpers;
+using Aaru.Localization;
 using Avalonia.Controls;
 using ReactiveUI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
@@ -90,15 +91,15 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         {
             ModeSensePages.Add(new ScsiPageModel
             {
-                Page        = "Header",
+                Page        = UI.Title_Header,
                 Description = Modes.PrettifyModeHeader(scsiMode.Value.Header, scsiType)
             });
 
             if(scsiMode.Value.Pages != null)
                 foreach(Modes.ModePage page in scsiMode.Value.Pages.OrderBy(t => t.Page).ThenBy(t => t.Subpage))
                 {
-                    string pageNumberText = page.Subpage == 0 ? $"MODE {page.Page:X2}h"
-                                                : $"MODE {page.Page:X2} Subpage {page.Subpage:X2}";
+                    string pageNumberText = page.Subpage == 0 ? string.Format(UI.MODE_0, page.Page)
+                                                : string.Format(UI.MODE_0_Subpage_1, page.Page, page.Subpage);
 
                     string decodedText;
 
@@ -110,7 +111,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                                page.Subpage == 0)
                                 decodedText = Modes.PrettifyModePage_00_SFF(page.PageResponse);
                             else
-                                decodedText = "Undecoded";
+                                decodedText = UI.Undecoded;
 
                             break;
                         }
@@ -358,7 +359,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         case 0x30:
                         {
                             if(Modes.IsAppleModePage_30(page.PageResponse))
-                                decodedText = "Drive identifies as Apple OEM drive";
+                                decodedText = Localization.Core.Drive_identifies_as_Apple_OEM_drive;
                             else
                                 goto default;
 
@@ -406,14 +407,14 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         }
                         default:
                         {
-                            decodedText = "Undecoded";
+                            decodedText = UI.Undecoded;
 
                             break;
                         }
                     }
 
                     // TODO: Automatic error reporting
-                    decodedText ??= "Error decoding page, please open an issue.";
+                    decodedText ??= UI.Error_decoding_page_please_open_an_issue;
 
                     ModeSensePages.Add(new ScsiPageModel
                     {
@@ -432,103 +433,103 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                 switch(page.Key)
                 {
                     case >= 0x01 and <= 0x7F:
-                        evpdPageTitle   = $"ASCII Page {page.Key:X2}h";
+                        evpdPageTitle   = string.Format(UI.ASCII_Page_0, page.Key);
                         evpdDecodedPage = EVPD.DecodeASCIIPage(page.Value);
 
                         break;
                     case 0x80:
-                        evpdPageTitle   = "Unit Serial Number";
+                        evpdPageTitle   = UI.Unit_Serial_Number;
                         evpdDecodedPage = EVPD.DecodePage80(page.Value);
 
                         break;
                     case 0x81:
-                        evpdPageTitle   = "SCSI Implemented operating definitions";
+                        evpdPageTitle   = UI.SCSI_Implemented_operating_definitions;
                         evpdDecodedPage = EVPD.PrettifyPage_81(page.Value);
 
                         break;
                     case 0x82:
-                        evpdPageTitle   = "ASCII implemented operating definitions";
+                        evpdPageTitle   = UI.ASCII_implemented_operating_definitions;
                         evpdDecodedPage = EVPD.DecodePage82(page.Value);
 
                         break;
                     case 0x83:
-                        evpdPageTitle   = "SCSI Device identification";
+                        evpdPageTitle   = UI.SCSI_Device_identification;
                         evpdDecodedPage = EVPD.PrettifyPage_83(page.Value);
 
                         break;
                     case 0x84:
-                        evpdPageTitle   = "SCSI Software Interface Identifiers";
+                        evpdPageTitle   = UI.SCSI_Software_Interface_Identifiers;
                         evpdDecodedPage = EVPD.PrettifyPage_84(page.Value);
 
                         break;
                     case 0x85:
-                        evpdPageTitle   = "SCSI Management Network Addresses";
+                        evpdPageTitle   = UI.SCSI_Management_Network_Addresses;
                         evpdDecodedPage = EVPD.PrettifyPage_85(page.Value);
 
                         break;
                     case 0x86:
-                        evpdPageTitle   = "SCSI Extended INQUIRY Data";
+                        evpdPageTitle   = UI.SCSI_Extended_INQUIRY_Data;
                         evpdDecodedPage = EVPD.PrettifyPage_86(page.Value);
 
                         break;
                     case 0x89:
-                        evpdPageTitle   = "SCSI to ATA Translation Layer Data";
+                        evpdPageTitle   = UI.SCSI_to_ATA_Translation_Layer_Data;
                         evpdDecodedPage = EVPD.PrettifyPage_89(page.Value);
 
                         break;
                     case 0xB0:
-                        evpdPageTitle   = "SCSI Sequential-access Device Capabilities";
+                        evpdPageTitle   = UI.SCSI_Sequential_access_Device_Capabilities;
                         evpdDecodedPage = EVPD.PrettifyPage_B0(page.Value);
 
                         break;
                     case 0xB1:
-                        evpdPageTitle   = "Manufacturer-assigned Serial Number";
+                        evpdPageTitle   = UI.Manufacturer_assigned_Serial_Number;
                         evpdDecodedPage = EVPD.DecodePageB1(page.Value);
 
                         break;
                     case 0xB2:
-                        evpdPageTitle   = "TapeAlert Supported Flags Bitmap";
+                        evpdPageTitle   = UI.TapeAlert_Supported_Flags_Bitmap;
                         evpdDecodedPage = $"0x{EVPD.DecodePageB2(page.Value):X16}";
 
                         break;
                     case 0xB3:
-                        evpdPageTitle   = "Automation Device Serial Number";
+                        evpdPageTitle   = UI.Automation_Device_Serial_Number;
                         evpdDecodedPage = EVPD.DecodePageB3(page.Value);
 
                         break;
                     case 0xB4:
-                        evpdPageTitle   = "Data Transfer Device Element Address";
+                        evpdPageTitle   = UI.Data_Transfer_Device_Element_Address;
                         evpdDecodedPage = EVPD.DecodePageB4(page.Value);
 
                         break;
                     case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                                   Trim() == "quantum":
-                        evpdPageTitle   = "Quantum Firmware Build Information page";
+                        evpdPageTitle   = UI.Quantum_Firmware_Build_Information_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_Quantum(page.Value);
 
                         break;
                     case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                                   Trim() == "seagate":
-                        evpdPageTitle   = "Seagate Firmware Numbers page";
+                        evpdPageTitle   = UI.Seagate_Firmware_Numbers_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_Seagate(page.Value);
 
                         break;
                     case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                                   Trim() == "ibm":
-                        evpdPageTitle   = "IBM Drive Component Revision Levels page";
+                        evpdPageTitle   = UI.IBM_Drive_Component_Revision_Levels_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_IBM(page.Value);
 
                         break;
                     case 0xC1 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                                   Trim() == "ibm":
-                        evpdPageTitle   = "IBM Drive Serial Numbers page";
+                        evpdPageTitle   = UI.IBM_Drive_Serial_Numbers_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C1_IBM(page.Value);
 
                         break;
                     case 0xC0 or 0xC1
                         when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                             Trim() == "certance":
-                        evpdPageTitle   = "Certance Drive Component Revision Levels page";
+                        evpdPageTitle   = UI.Certance_Drive_Component_Revision_Levels_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_C1_Certance(page.Value);
 
                         break;
@@ -537,11 +538,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                                             Trim() == "certance":
                         evpdPageTitle = page.Key switch
                         {
-                            0xC2 => "Head Assembly Serial Number",
-                            0xC3 => "Reel Motor 1 Serial Number",
-                            0xC4 => "Reel Motor 2 Serial Number",
-                            0xC5 => "Board Serial Number",
-                            0xC6 => "Base Mechanical Serial Number",
+                            0xC2 => UI.Head_Assembly_Serial_Number,
+                            0xC3 => UI.Reel_Motor_1_Serial_Number,
+                            0xC4 => UI.Reel_Motor_2_Serial_Number,
+                            0xC5 => UI.Board_Serial_Number,
+                            0xC6 => UI.Base_Mechanical_Serial_Number,
                             _    => evpdPageTitle
                         };
 
@@ -553,12 +554,12 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                                             Trim() == "hp":
                         evpdPageTitle = page.Key switch
                         {
-                            0xC0 => "HP Drive Firmware Revision Levels page:",
-                            0xC1 => "HP Drive Hardware Revision Levels page:",
-                            0xC2 => "HP Drive PCA Revision Levels page:",
-                            0xC3 => "HP Drive Mechanism Revision Levels page:",
-                            0xC4 => "HP Drive Head Assembly Revision Levels page:",
-                            0xC5 => "HP Drive ACI Revision Levels page:",
+                            0xC0 => UI.HP_Drive_Firmware_Revision_Levels_page,
+                            0xC1 => UI.HP_Drive_Hardware_Revision_Levels_page,
+                            0xC2 => UI.HP_Drive_PCA_Revision_Levels_page,
+                            0xC3 => UI.HP_Drive_Mechanism_Revision_Levels_page,
+                            0xC4 => UI.HP_Drive_Head_Assembly_Revision_Levels_page,
+                            0xC5 => UI.HP_Drive_ACI_Revision_Levels_page,
                             _    => evpdPageTitle
                         };
 
@@ -567,7 +568,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         break;
                     case 0xDF when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                                   Trim() == "certance":
-                        evpdPageTitle   = "Certance drive status page";
+                        evpdPageTitle   = UI.Certance_drive_status_page;
                         evpdDecodedPage = EVPD.PrettifyPage_DF_Certance(page.Value);
 
                         break;
@@ -576,11 +577,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         if(page.Key == 0x00)
                             continue;
 
-                        evpdPageTitle   = $"Page {page.Key:X2}h";
-                        evpdDecodedPage = "Undecoded";
+                        evpdPageTitle   = string.Format(UI.Page_0_h, page.Key);
+                        evpdDecodedPage = UI.Undecoded;
 
-                        AaruConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}",
-                                                   page.Key);
+                        AaruConsole.DebugWriteLine("Device-Info command",
+                                                   Localization.Core.Found_undecoded_SCSI_VPD_page_0, page.Key);
 
                         break;
                     }
@@ -599,16 +600,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         Features.SeparatedFeatures ftr = Features.Separate(_configuration);
 
-        AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes", ftr.DataLength);
+        AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.GET_CONFIGURATION_length_is_0,
+                                   ftr.DataLength);
 
-        AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION current profile is {0:X4}h",
+        AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.GET_CONFIGURATION_current_profile_is_0,
                                    ftr.CurrentProfile);
 
         if(ftr.Descriptors != null)
             foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
             {
-                string featureNumber = $"Feature {desc.Code:X4}h";
-                AaruConsole.DebugWriteLine("Device-Info command", "Feature {0:X4}h", desc.Code);
+                string featureNumber = string.Format(Localization.Core.Feature_0, desc.Code);
+                AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.Feature_0, desc.Code);
 
                 string featureDescription = desc.Code switch
                 {
@@ -670,7 +672,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     0x0110 => Features.Prettify_0110(desc.Data),
                     0x0113 => Features.Prettify_0113(desc.Data),
                     0x0142 => Features.Prettify_0142(desc.Data),
-                    _      => "Unknown feature"
+                    _      => UI.Unknown_feature
                 };
 
                 MmcFeatures.Add(new ScsiPageModel
@@ -680,7 +682,8 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                 });
             }
         else
-            AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION returned no feature descriptors");
+            AaruConsole.DebugWriteLine("Device-Info command",
+                                       Localization.Core.GET_CONFIGURATION_returned_no_feature_descriptors);
     }
 
     public byte[]                              InquiryData              { get; }
@@ -758,19 +761,19 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _mmcFeatureText, value);
     }
 
-    public string InquiryLabel           => "INQUIRY";
-    public string ScsiInquiryLabel       => "SCSI INQUIRY";
-    public string SaveInquiryBinaryLabel => "Save binary to file";
-    public string SaveInquiryTextLabel   => "Save text to file";
-    public string ModeSenseLabel         => "MODE SENSE";
-    public string PageLabel              => "Page";
-    public string SaveModeSense6Label    => "Save MODE SENSE (6) response to file";
-    public string SaveModeSense10Label   => "Save MODE SENSE (10) response to file";
-    public string EvpdLabel              => "EVPD";
-    public string SaveEvpdPageLabel      => "Save EVPD page to file";
-    public string MmcFeaturesLabel       => "MMC FEATURES";
-    public string FeatureLabel           => "Feature";
-    public string SaveMmcFeaturesLabel   => "Save MMC GET CONFIGURATION response to file";
+    public string InquiryLabel           => UI.Title_INQUIRY;
+    public string ScsiInquiryLabel       => UI.Title_SCSI_INQUIRY;
+    public string SaveInquiryBinaryLabel => UI.ButtonLabel_Save_binary_to_file;
+    public string SaveInquiryTextLabel   => UI.ButtonLabel_Save_text_to_file;
+    public string ModeSenseLabel         => UI.Title_MODE_SENSE;
+    public string PageLabel              => UI.Title_Page;
+    public string SaveModeSense6Label    => UI.ButtonLabel_Save_MODE_SENSE_6_response_to_file;
+    public string SaveModeSense10Label   => UI.ButtonLabel_Save_MODE_SENSE_10_response_to_file;
+    public string EvpdLabel              => UI.Title_EVPD;
+    public string SaveEvpdPageLabel      => UI.ButtonLabel_Save_EVPD_page_to_file;
+    public string MmcFeaturesLabel       => UI.Title_MMC_FEATURES;
+    public string FeatureLabel           => UI.Title_Feature;
+    public string SaveMmcFeaturesLabel   => UI.ButtonLabel_Save_MMC_GET_CONFIGURATION_response_to_file;
 
     async Task ExecuteSaveInquiryBinaryCommand()
     {
@@ -782,7 +785,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -806,7 +809,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
             {
                 "*.txt"
             }),
-            Name = "Text"
+            Name = UI.Dialog_Text_files
         });
 
         string result = await dlgSaveText.ShowAsync(_view);
@@ -830,7 +833,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -854,7 +857,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -881,7 +884,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -905,7 +908,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

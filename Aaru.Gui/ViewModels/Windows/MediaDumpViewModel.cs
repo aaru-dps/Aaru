@@ -51,6 +51,7 @@ using Aaru.Core.Logging;
 using Aaru.Core.Media.Info;
 using Aaru.Devices;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using DynamicData;
@@ -240,24 +241,24 @@ public sealed class MediaDumpViewModel : ViewModelBase
         _devicePath = devicePath;
     }
 
-    public string OutputFormatLabel     => "Output format";
-    public string ChooseLabel           => "Choose...";
-    public string StopOnErrorLabel      => "Stop media dump on first error";
-    public string ForceLabel            => "Continue dumping whatever happens";
-    public string RetriesLabel          => "Retry passes";
-    public string PersistentLabel       => "Try to recover partial or incorrect data";
-    public string ResumeLabel           => "Create/use resume mapfile";
-    public string Track1PregapLabel     => "Try to read track 1 pregap";
-    public string SkippedLabel          => "Skipped sectors on error";
-    public string SidecarLabel          => "Create CICM XML metadata sidecar";
-    public string TrimLabel             => "Trim errors from skipped sectors";
-    public string ExistingMetadataLabel => "Take metadata from existing CICM XML sidecar";
-    public string EncodingLabel         => "Encoding to use on metadata sidecar creation";
-    public string DestinationLabel      => "Writing image to:";
-    public string LogLabel              => "Log";
-    public string StartLabel            => "Start";
-    public string CloseLabel            => "Close";
-    public string StopLabel             => "Stop";
+    public string OutputFormatLabel     => UI.Output_format;
+    public string ChooseLabel           => UI.ButtonLabel_Choose;
+    public string StopOnErrorLabel      => UI.Stop_media_dump_on_first_error;
+    public string ForceLabel            => UI.Continue_dumping_whatever_happens;
+    public string RetriesLabel          => UI.Retry_passes;
+    public string PersistentLabel       => UI.Try_to_recover_partial_or_incorrect_data;
+    public string ResumeLabel           => UI.Create_use_resume_mapfile;
+    public string Track1PregapLabel     => UI.Try_to_read_track_1_pregap;
+    public string SkippedLabel          => UI.Skipped_sectors_on_error;
+    public string SidecarLabel          => UI.Create_CICM_XML_metadata_sidecar;
+    public string TrimLabel             => UI.Trim_errors_from_skipped_sectors;
+    public string ExistingMetadataLabel => UI.Take_metadata_from_existing_CICM_XML_sidecar;
+    public string EncodingLabel         => UI.Encoding_to_use_on_metadata_sidecar_creation;
+    public string DestinationLabel      => UI.Writing_image_to;
+    public string LogLabel              => UI.Title_Log;
+    public string StartLabel            => UI.ButtonLabel_Start;
+    public string CloseLabel            => UI.ButtonLabel_Close;
+    public string StopLabel             => UI.ButtonLabel_Stop;
 
     public ReactiveCommand<Unit, Unit> StartCommand       { get; }
     public ReactiveCommand<Unit, Unit> CloseCommand       { get; }
@@ -501,12 +502,12 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
             var dlgMetadata = new OpenFileDialog
             {
-                Title = "Choose existing metadata sidecar"
+                Title = UI.Dialog_Choose_existing_metadata_sidecar
             };
 
             dlgMetadata.Filters?.Add(new FileDialogFilter
             {
-                Name = "CICM XML metadata",
+                Name = UI.Dialog_CICM_XML_metadata,
                 Extensions = new List<string>(new[]
                 {
                     ".xml"
@@ -536,7 +537,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
                 _ = MessageBoxManager.
 
                     // ReSharper restore AssignmentIsFullyDiscarded
-                    GetMessageBoxStandardWindow("Error", "Incorrect metadata sidecar file...", ButtonEnum.Ok,
+                    GetMessageBoxStandardWindow(UI.Title_Error, UI.Incorrect_metadata_sidecar_file, ButtonEnum.Ok,
                                                 Icon.Error).ShowDialog(_view).Result;
 
                 ExistingMetadata = false;
@@ -659,7 +660,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         var dlgDestination = new SaveFileDialog
         {
-            Title = "Choose destination file"
+            Title = UI.Dialog_Choose_destination_file
         };
 
         dlgDestination.Filters?.Add(new FileDialogFilter
@@ -702,7 +703,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
         catch
         {
             await MessageBoxManager.
-                  GetMessageBoxStandardWindow("Error", "Incorrect resume file, cannot use it...", ButtonEnum.Ok,
+                  GetMessageBoxStandardWindow(UI.Title_Error, UI.Incorrect_resume_file_cannot_use_it, ButtonEnum.Ok,
                                               Icon.Error).ShowDialog(_view);
 
             Resume = false;
@@ -716,8 +717,8 @@ public sealed class MediaDumpViewModel : ViewModelBase
             return;
 
         await MessageBoxManager.
-              GetMessageBoxStandardWindow("Warning",
-                                          "Media already dumped correctly, please choose another destination...",
+              GetMessageBoxStandardWindow(UI.Title_Warning,
+                                          UI.Media_already_dumped_correctly_please_choose_another_destination,
                                           ButtonEnum.Ok, Icon.Warning).ShowDialog(_view);
 
         Resume = false;
@@ -742,14 +743,14 @@ public sealed class MediaDumpViewModel : ViewModelBase
         DestinationEnabled = false;
         OptionsVisible     = false;
 
-        UpdateStatus("Opening device...");
+        UpdateStatus(UI.Opening_device);
 
         _dev = Device.Create(_devicePath, out ErrorNumber devErrno);
 
         switch(_dev)
         {
             case null:
-                StoppingErrorMessage($"Error {devErrno} opening device.");
+                StoppingErrorMessage(string.Format(UI.Error_0_opening_device, devErrno));
 
                 return;
             case Devices.Remote.Device remoteDev:
@@ -762,7 +763,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         if(_dev.Error)
         {
-            StoppingErrorMessage($"Error {_dev.LastError} opening device.");
+            StoppingErrorMessage(string.Format(UI.Error_0_opening_device, _dev.LastError));
 
             return;
         }
@@ -772,7 +773,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         if(SelectedPlugin is null)
         {
-            StoppingErrorMessage("Cannot open output plugin.");
+            StoppingErrorMessage(UI.Cannot_open_output_plugin);
 
             return;
         }
@@ -786,7 +787,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
             }
             catch(ArgumentException)
             {
-                StoppingErrorMessage("Specified encoding is not supported.");
+                StoppingErrorMessage(UI.Specified_encoding_is_not_supported);
 
                 return;
             }
@@ -824,7 +825,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         var dumpLog = new DumpLog(_outputPrefix + ".log", _dev, false);
 
-        dumpLog.WriteLine("Output image format: {0}.", SelectedPlugin.Name);
+        dumpLog.WriteLine(UI.Output_image_format_0, SelectedPlugin.Name);
 
         var errorLog = new ErrorLog(_outputPrefix + ".error.log");
 
@@ -922,7 +923,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
     {
         ErrorMessage(text);
 
-        await MessageBoxManager.GetMessageBoxStandardWindow("Error", $"{text}", ButtonEnum.Ok, Icon.Error).
+        await MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, $"{text}", ButtonEnum.Ok, Icon.Error).
                                 ShowDialog(_view);
 
         await WorkFinished();

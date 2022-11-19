@@ -40,6 +40,7 @@ using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.ViewModels.Windows;
 using Aaru.Gui.Views.Tabs;
 using Aaru.Gui.Views.Windows;
+using Aaru.Localization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -109,16 +110,17 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
             MediaSize = totalSize switch
             {
-                > 1099511627776 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                } bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)",
-                > 1073741824 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize
-                } bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)",
-                > 1048576 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {
-                    totalSize / 1048576d:F3} MiB)",
-                > 1024 => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {
-                    totalSize / 1024d:F3} KiB)",
-                _ => $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize
-                } bytes)"
+                > 1099511627776 =>
+                    string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_TiB,
+                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1099511627776d),
+                > 1073741824 => string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_GiB,
+                                              scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1073741824d),
+                > 1048576 => string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_MiB,
+                                           scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1048576d),
+                > 1024 => string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_KiB,
+                                        scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1024d),
+                _ => string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_bytes,
+                                   scsiInfo.Blocks, scsiInfo.BlockSize, totalSize)
             };
         }
 
@@ -344,29 +346,29 @@ public sealed class MediaInfoViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _blurayInfo, value);
     }
 
-    public string MediaInformationLabel           => "Media information";
-    public string GeneralLabel                    => "General";
-    public string MediaTypeLabel                  => "Media type";
-    public string MediaSerialNumberLabel          => "Media serial number";
-    public string SaveReadMediaSerialLabel        => "Save READ MEDIA SERIAL NUMBER response";
-    public string SaveReadCapacityLabel           => "Save READ CAPACITY response";
-    public string SaveReadCapacity16Label         => "Save READ CAPACITY (16) response";
-    public string MMCLabel                        => "MMC";
-    public string SaveGetConfigurationLabel       => "Save GET CONFIGURATION response";
-    public string SaveRecognizedFormatLayersLabel => "Save RECOGNIZED FORMAT LAYERS response";
-    public string SaveWriteProtectionStatusLabel  => "Save WRITE PROTECTION STATUS response";
-    public string SSCLabel                        => "SSC";
-    public string DensitySupportLabel             => "Densities supported by currently inserted media";
-    public string MediumSupportLabel              => "Medium types currently inserted in device";
-    public string SaveDensitySupportLabel         => "Save REPORT DENSITY SUPPORT (MEDIA) response";
-    public string SaveMediumSupportLabel          => "Save REPORT DENSITY SUPPORT (MEDIUM & MEDIA) response";
-    public string CompactDiscLabel                => "CompactDisc";
-    public string DVDLabel                        => "DVD";
-    public string DVD_R_WLabel                    => "DVD±R(W)";
-    public string XboxLabel                       => "Xbox";
-    public string BluRayLabel                     => "Blu-ray";
-    public string DumpLabel                       => "Dump media to image";
-    public string ScanLabel                       => "Scan media surface";
+    public string MediaInformationLabel           => UI.Title_Media_information;
+    public string GeneralLabel                    => UI.Title_General;
+    public string MediaTypeLabel                  => UI.Title_Media_type;
+    public string MediaSerialNumberLabel          => UI.Title_Media_serial_number;
+    public string SaveReadMediaSerialLabel        => UI.ButtonLabel_Save_READ_MEDIA_SERIAL_NUMBER_response;
+    public string SaveReadCapacityLabel           => UI.ButtonLabel_Save_READ_CAPACITY_response;
+    public string SaveReadCapacity16Label         => UI.ButtonLabel_Save_READ_CAPACITY_16_response;
+    public string MMCLabel                        => Localization.Core.Title_MMC;
+    public string SaveGetConfigurationLabel       => UI.ButtonLabel_Save_GET_CONFIGURATION_response;
+    public string SaveRecognizedFormatLayersLabel => UI.ButtonLabel_Save_RECOGNIZED_FORMAT_LAYERS_response;
+    public string SaveWriteProtectionStatusLabel  => UI.ButtonLabel_Save_WRITE_PROTECTION_STATUS_response;
+    public string SSCLabel                        => Localization.Core.Title_SSC;
+    public string DensitySupportLabel             => UI.Densities_supported_by_currently_inserted_media;
+    public string MediumSupportLabel              => UI.Medium_types_currently_inserted_in_device;
+    public string SaveDensitySupportLabel         => UI.ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIA_response;
+    public string SaveMediumSupportLabel          => UI.ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIUM_MEDIA_response;
+    public string CompactDiscLabel                => Localization.Core.Title_CompactDisc;
+    public string DVDLabel                        => Localization.Core.Title_DVD;
+    public string DVD_R_WLabel                    => Localization.Core.Title_DVD_Plus_Dash_R_W;
+    public string XboxLabel                       => Localization.Core.Title_Xbox;
+    public string BluRayLabel                     => Localization.Core.Title_Blu_ray;
+    public string DumpLabel                       => UI.ButtonLabel_Dump_media_to_image;
+    public string ScanLabel                       => UI.ButtonLabel_Scan_media_surface;
 
     async Task SaveElement(byte[] data)
     {
@@ -378,7 +380,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -414,15 +416,17 @@ public sealed class MediaInfoViewModel : ViewModelBase
         {
             case CommonTypes.MediaType.GDR or CommonTypes.MediaType.GDROM:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", "GD-ROM dump support is not yet implemented.", ButtonEnum.Ok,
-                                                  Icon.Error).ShowDialog(_view);
+                      GetMessageBoxStandardWindow(UI.Title_Error,
+                                                  Localization.Core.GD_ROM_dump_support_is_not_yet_implemented,
+                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
 
                 return;
             case CommonTypes.MediaType.XGD or CommonTypes.MediaType.XGD2 or CommonTypes.MediaType.XGD3
                 when _scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", "Dumping Xbox discs require a Kreon drive.", ButtonEnum.Ok,
-                                                  Icon.Error).ShowDialog(_view);
+                      GetMessageBoxStandardWindow(UI.Title_Error,
+                                                  Localization.Core.Dumping_Xbox_discs_require_a_Kreon_drive,
+                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
 
                 return;
         }
@@ -443,8 +447,9 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.GDR:
             case CommonTypes.MediaType.GDROM:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", "GD-ROM scan support is not yet implemented.", ButtonEnum.Ok,
-                                                  Icon.Error).ShowDialog(_view);
+                      GetMessageBoxStandardWindow(UI.Title_Error,
+                                                  Localization.Core.GD_ROM_scan_support_is_not_yet_implemented,
+                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
 
                 return;
 
@@ -453,8 +458,9 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.XGD2:
             case CommonTypes.MediaType.XGD3:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", "Scanning Xbox discs is not yet supported.", ButtonEnum.Ok,
-                                                  Icon.Error).ShowDialog(_view);
+                      GetMessageBoxStandardWindow(UI.Title_Error,
+                                                  Localization.Core.Scanning_Xbox_discs_is_not_yet_supported,
+                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
 
                 return;
         }

@@ -45,6 +45,7 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.Xbox;
 using Aaru.Gui.Models;
 using Aaru.Helpers;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
 using BCA = Aaru.Decoders.Bluray.BCA;
@@ -249,7 +250,7 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _decodedText, value);
     }
 
-    public string TagLabel     => "Tag:";
-    public string HexViewLabel => "HexView";
-    public string DecodedLabel => "Decoded";
+    public string TagLabel     => UI.Title_Tag;
+    public string HexViewLabel => UI.Title_HexView;
+    public string DecodedLabel => UI.Title_Decoded;
 }

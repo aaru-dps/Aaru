@@ -33,6 +33,7 @@
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
 
@@ -64,8 +65,8 @@ public sealed class ViewSectorViewModel : ViewModelBase
         SectorNumber     = 0;
     }
 
-    public string SectorLabel     => "Sector";
-    public string LongSectorLabel => "Show long sector";
+    public string SectorLabel     => UI.Title_Sector;
+    public string LongSectorLabel => UI.Show_long_sector;
 
     public string Title
     {

@@ -365,7 +365,7 @@ sealed class DeviceInfoCommand : Command
             if(dev.Type != DeviceType.ATAPI)
                 AaruConsole.WriteLine($"[bold]{UI.Title_SCSI_device}[/]");
 
-            DataFile.WriteTo("Device-Info command", outputPrefix, "_scsi_inquiry.bin", "SCSI INQUIRY",
+            DataFile.WriteTo("Device-Info command", outputPrefix, "_scsi_inquiry.bin", UI.Title_SCSI_INQUIRY,
                              devInfo.ScsiInquiryData);
 
             AaruConsole.WriteLine(Inquiry.Prettify(devInfo.ScsiInquiry));
@@ -1026,7 +1026,7 @@ sealed class DeviceInfoCommand : Command
 
                 if(devInfo.DensitySupportHeader.HasValue)
                 {
-                    AaruConsole.WriteLine("Densities supported by device:");
+                    AaruConsole.WriteLine(UI.Densities_supported_by_device);
                     AaruConsole.WriteLine(DensitySupport.PrettifyDensity(devInfo.DensitySupportHeader));
                 }
             }
@@ -1038,7 +1038,7 @@ sealed class DeviceInfoCommand : Command
 
                 if(devInfo.MediaTypeSupportHeader.HasValue)
                 {
-                    AaruConsole.WriteLine("Medium types supported by device:");
+                    AaruConsole.WriteLine(UI.Medium_types_supported_by_device);
                     AaruConsole.WriteLine(DensitySupport.PrettifyMediumType(devInfo.MediaTypeSupportHeader));
                 }
 

@@ -43,6 +43,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using MessageBox.Avalonia;
@@ -69,10 +70,11 @@ public sealed class SubdirectoryViewModel
 
         if(errno != ErrorNumber.NoError)
         {
-            MessageBoxManager.
-                GetMessageBoxStandardWindow("Error",
-                                            $"Error {errno} trying to read \"{model.Path}\" of chosen filesystem",
-                                            ButtonEnum.Ok, Icon.Error).ShowDialog(view);
+            MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error,
+                                                          string.
+                                                              Format(UI.Error_0_trying_to_read_1_of_chosen_filesystem,
+                                                                     errno, model.Path), ButtonEnum.Ok, Icon.Error).
+                              ShowDialog(view);
 
             return;
         }
@@ -83,8 +85,9 @@ public sealed class SubdirectoryViewModel
 
             if(errno != ErrorNumber.NoError)
             {
-                AaruConsole.ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {
-                    dirent}");
+                AaruConsole.
+                    ErrorWriteLine(string.Format(UI.Error_0_trying_to_get_information_about_filesystem_entry_named_1,
+                                                 errno, dirent));
 
                 continue;
             }
@@ -114,20 +117,20 @@ public sealed class SubdirectoryViewModel
     public List<FileModel>                 SelectedEntries     { get; }
     public ReactiveCommand<Unit, Task>     ExtractFilesCommand { get; }
 
-    public string ExtractFilesLabel => "Extract to...";
-    public string NameLabel         => "Name";
-    public string LengthLabel       => "Length";
-    public string CreationLabel     => "Creation";
-    public string LastAccessLabel   => "Last access";
-    public string ChangedLabel      => "Changed";
-    public string LastBackupLabel   => "Last backup";
-    public string LastWriteLabel    => "Last write";
-    public string AttributesLabel   => "Attributes";
-    public string GIDLabel          => "GID";
-    public string UIDLabel          => "UID";
-    public string InodeLabel        => "Inode";
-    public string LinksLabel        => "Links";
-    public string ModeLabel         => "Mode";
+    public string ExtractFilesLabel => UI.ButtonLabel_Extract_to;
+    public string NameLabel         => UI.Title_Name;
+    public string LengthLabel       => UI.Title_Length;
+    public string CreationLabel     => UI.Title_Creation;
+    public string LastAccessLabel   => UI.Title_Last_access;
+    public string ChangedLabel      => UI.Title_Changed;
+    public string LastBackupLabel   => UI.Title_Last_backup;
+    public string LastWriteLabel    => UI.Title_Last_write;
+    public string AttributesLabel   => UI.Title_Attributes;
+    public string GIDLabel          => UI.Title_GID;
+    public string UIDLabel          => UI.Title_UID;
+    public string InodeLabel        => UI.Title_Inode;
+    public string LinksLabel        => UI.Title_Links;
+    public string ModeLabel         => UI.Title_Mode;
 
     async Task ExecuteExtractFilesCommand()
     {
@@ -136,7 +139,7 @@ public sealed class SubdirectoryViewModel
 
         var saveFilesFolderDialog = new OpenFolderDialog
         {
-            Title = "Choose destination folder..."
+            Title = UI.Dialog_Choose_destination_folder
         };
 
         string result = await saveFilesFolderDialog.ShowAsync(_view);
@@ -261,10 +264,13 @@ public sealed class SubdirectoryViewModel
 
                     string corrected = new(chars);
 
-                    mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Unsupported filename",
-                                     $"The file name {filename
-                                     } is not supported on this platform.\nDo you want to rename it to {corrected
-                                     }?", ButtonEnum.YesNoCancel, Icon.Warning).ShowDialog(_view);
+                    mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow(UI.Unsupported_filename,
+                                                             string.
+                                                                 Format(UI.Filename_0_not_supported_want_to_rename_to_1,
+                                                                        filename,
+                                                                        corrected), ButtonEnum.YesNoCancel,
+                                                             Icon.Warning).
+                                                         ShowDialog(_view);
 
                     switch(mboxResult)
                     {
@@ -281,9 +287,8 @@ public sealed class SubdirectoryViewModel
 
             if(File.Exists(outputPath))
             {
-                mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Existing file",
-                                 $"A file named {filename
-                                 } already exists on the destination folder.\nDo you want to overwrite it?",
+                mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow(UI.Existing_file,
+                                 string.Format(UI.File_named_0_exists_overwrite_Q, filename),
                                  ButtonEnum.YesNoCancel, Icon.Warning).ShowDialog(_view);
 
                 switch(mboxResult)
@@ -297,9 +302,9 @@ public sealed class SubdirectoryViewModel
                         }
                         catch(IOException)
                         {
-                            mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Cannot delete",
-                                             "Could not delete existing file.\nDo you want to continue?",
-                                             ButtonEnum.YesNo, Icon.Error).ShowDialog(_view);
+                            mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow(UI.Cannot_delete,
+                                             UI.Could_note_delete_existe_file_continue_Q, ButtonEnum.YesNo,
+                                             Icon.Error).ShowDialog(_view);
 
                             if(mboxResult == ButtonResult.No)
                                 return;
@@ -317,8 +322,8 @@ public sealed class SubdirectoryViewModel
 
                 if(error != ErrorNumber.NoError)
                 {
-                    mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Error reading file",
-                                     $"Error {error} reading file.\nDo you want to continue?", ButtonEnum.YesNo,
+                    mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow(UI.Error_reading_file,
+                                     string.Format(UI.Error_0_reading_file_continue_Q, error), ButtonEnum.YesNo,
                                      Icon.Error).ShowDialog(_view);
 
                     if(mboxResult == ButtonResult.No)
@@ -366,9 +371,10 @@ public sealed class SubdirectoryViewModel
             }
             catch(IOException)
             {
-                mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Cannot create file",
-                                 "Could not create destination file.\nDo you want to continue?", ButtonEnum.YesNo,
-                                 Icon.Error).ShowDialog(_view);
+                mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow(UI.Cannot_create_file,
+                                                         UI.Could_not_create_destination_file_continue_Q,
+                                                         ButtonEnum.YesNo, Icon.Error).
+                                                     ShowDialog(_view);
 
                 if(mboxResult == ButtonResult.No)
                     return;

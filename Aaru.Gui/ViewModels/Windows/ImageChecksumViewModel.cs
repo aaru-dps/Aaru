@@ -41,6 +41,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
@@ -128,28 +129,28 @@ public sealed class ImageChecksumViewModel : ViewModelBase
         }
     }
 
-    public string ChecksumMediaLabel  => "Checksums the whole disc.";
-    public string ChecksumTracksLabel => "Checksums each track separately.";
-    public string Adler32Label        => "Calculates Adler-32.";
-    public string Crc16Label          => "Calculates CRC16.";
-    public string Crc32Label          => "Calculates CRC32.";
-    public string Crc64Label          => "Calculates CRC64 (ECMA).";
-    public string Fletcher16Label     => "Calculates Fletcher-16.";
-    public string Fletcher32Label     => "Calculates Fletcher-32.";
-    public string Md5Label            => "Calculates MD5.";
-    public string Sha1Label           => "Calculates SHA1.";
-    public string Sha256Label         => "Calculates SHA256.";
-    public string Sha384Label         => "Calculates SHA384";
-    public string Sha512Label         => "Calculates SHA512.";
-    public string SpamSumLabel        => "Calculates SpamSum fuzzy hash.";
-    public string TrackChecksumsLabel => "Track checksums:";
-    public string TrackLabel          => "Track";
-    public string AlgorithmsLabel     => "Algorithms";
-    public string HashLabel           => "Hash";
-    public string MediaChecksumsLabel => "Media checksums:";
-    public string StartLabel          => "Start";
-    public string CloseLabel          => "Close";
-    public string StopLabel           => "Stop";
+    public string ChecksumMediaLabel  => UI.Checksums_the_whole_disc;
+    public string ChecksumTracksLabel => UI.Checksums_each_track_separately;
+    public string Adler32Label        => UI.Calculates_Adler_32;
+    public string Crc16Label          => UI.Calculates_CRC16;
+    public string Crc32Label          => UI.Calculates_CRC32;
+    public string Crc64Label          => UI.Calculates_CRC64_ECMA;
+    public string Fletcher16Label     => UI.Calculates_Fletcher_16;
+    public string Fletcher32Label     => UI.Calculates_Fletcher_32;
+    public string Md5Label            => UI.Calculates_MD5;
+    public string Sha1Label           => UI.Calculates_SHA1;
+    public string Sha256Label         => UI.Calculates_SHA256;
+    public string Sha384Label         => UI.Calculates_SHA384;
+    public string Sha512Label         => UI.Calculates_SHA512;
+    public string SpamSumLabel        => UI.Calculates_SpamSum_fuzzy_hash;
+    public string TrackChecksumsLabel => UI.Title_Track_checksums;
+    public string TrackLabel          => Localization.Core.Title_Track;
+    public string AlgorithmsLabel     => UI.Title_Algorithms;
+    public string HashLabel           => UI.Title_Hash;
+    public string MediaChecksumsLabel => UI.Title_Media_checksums;
+    public string StartLabel          => UI.ButtonLabel_Start;
+    public string CloseLabel          => UI.ButtonLabel_Close;
+    public string StopLabel           => UI.ButtonLabel_Stop;
 
     public string Title
     {
@@ -482,7 +483,8 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                 {
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        ProgressText = $"Hashing track {currentTrack.Sequence} of {opticalMediaImage.Tracks.Count}";
+                        ProgressText = string.Format(UI.Hashing_track_0_of_1, currentTrack.Sequence,
+                                                     opticalMediaImage.Tracks.Count);
 
                         ProgressValue++;
                     });
@@ -511,8 +513,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                             mediaChecksum?.Update(hiddenSector);
                         }
 
-                    AaruConsole.DebugWriteLine("Checksum command",
-                                               "Track {0} starts at sector {1} and ends at sector {2}",
+                    AaruConsole.DebugWriteLine("Checksum command", UI.Track_0_starts_at_sector_1_and_ends_at_sector_2,
                                                currentTrack.Sequence, currentTrack.StartSector, currentTrack.EndSector);
 
                     if(ChecksumTracksChecked)
@@ -655,7 +656,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
             }
             catch(Exception ex)
             {
-                AaruConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
+                AaruConsole.DebugWriteLine(UI.Could_not_get_tracks_because_0, ex.Message);
                 AaruConsole.WriteLine("Unable to get separate tracks, not checksumming them");
             }
         else
@@ -703,8 +704,8 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                     {
                         Progress2Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
 
-                        Progress2Text = $"Hashing sectors {doneSectorsToInvoke} to {
-                            doneSectorsToInvoke + SECTORS_TO_READ}";
+                        Progress2Text = string.Format(UI.Hashing_sectors_0_to_1, doneSectorsToInvoke,
+                                                      doneSectorsToInvoke + SECTORS_TO_READ);
                     });
 
                     doneSectors += SECTORS_TO_READ;
@@ -728,8 +729,9 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                     {
                         Progress2Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
 
-                        Progress2Text = $"Hashing sectors {doneSectorsToInvoke} to {
-                            doneSectorsToInvoke + (_inputFormat.Info.Sectors - doneSectorsToInvoke)}";
+                        Progress2Text = string.Format(UI.Hashing_sectors_0_to_1, doneSectorsToInvoke,
+                                                      doneSectorsToInvoke +
+                                                      (_inputFormat.Info.Sectors - doneSectorsToInvoke));
                     });
 
                     doneSectors += _inputFormat.Info.Sectors - doneSectors;

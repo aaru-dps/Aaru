@@ -37,6 +37,7 @@ using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
 using NameCountModel = Aaru.Gui.Models.NameCountModel;
@@ -135,7 +136,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "fs-info" && !c.Synchronized);
 
                 FsInfoVisible = true;
-                FsInfoText    = $"You have called the Filesystem Info command {count} times";
+                FsInfoText    = string.Format(UI.You_have_called_the_Filesystem_Info_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "checksum"))
@@ -146,7 +147,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "checksum" && !c.Synchronized);
 
                 ChecksumVisible = true;
-                ChecksumText    = $"You have called the Checksum command {count} times";
+                ChecksumText    = string.Format(UI.You_have_called_the_Checksum_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "compare"))
@@ -157,7 +158,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "compare" && !c.Synchronized);
 
                 CompareVisible = true;
-                CompareText    = $"You have called the Compare command {count} times";
+                CompareText    = string.Format(UI.You_have_called_the_Compare_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "convert-image"))
@@ -168,7 +169,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "convert-image" && !c.Synchronized);
 
                 ConvertImageVisible = true;
-                ConvertImageText    = $"You have called the Convert-Image command {count} times";
+                ConvertImageText    = string.Format(UI.You_have_called_the_Convert_Image_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "create-sidecar"))
@@ -179,7 +180,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "create-sidecar" && !c.Synchronized);
 
                 CreateSidecarVisible = true;
-                CreateSidecarText    = $"You have called the Create-Sidecar command {count} times";
+                CreateSidecarText    = string.Format(UI.You_have_called_the_Create_Sidecar_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "decode"))
@@ -190,7 +191,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "decode" && !c.Synchronized);
 
                 DecodeVisible = true;
-                DecodeText    = $"You have called the Decode command {count} times";
+                DecodeText    = string.Format(UI.You_have_called_the_Decode_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "device-info"))
@@ -201,7 +202,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "device-info" && !c.Synchronized);
 
                 DeviceInfoVisible = true;
-                DeviceInfoText    = $"You have called the Device-Info command {count} times";
+                DeviceInfoText    = string.Format(UI.You_have_called_the_Device_Info_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "device-report"))
@@ -212,7 +213,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "device-report" && !c.Synchronized);
 
                 DeviceReportVisible = true;
-                DeviceReportText    = $"You have called the Device-Report command {count} times";
+                DeviceReportText    = string.Format(UI.You_have_called_the_Device_Report_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "dump-media"))
@@ -223,7 +224,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "dump-media" && !c.Synchronized);
 
                 DumpMediaVisible = true;
-                DumpMediaText    = $"You have called the Dump-Media command {count} times";
+                DumpMediaText    = string.Format(UI.You_have_called_the_Dump_Media_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "entropy"))
@@ -234,7 +235,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "entropy" && !c.Synchronized);
 
                 EntropyVisible = true;
-                EntropyText    = $"You have called the Entropy command {count} times";
+                EntropyText    = string.Format(UI.You_have_called_the_Entropy_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "formats"))
@@ -245,7 +246,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "formats" && !c.Synchronized);
 
                 FormatsCommandVisible = true;
-                FormatsCommandText    = $"You have called the Formats command {count} times";
+                FormatsCommandText    = string.Format(UI.You_have_called_the_Formats_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "image-info"))
@@ -256,7 +257,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "image-info" && !c.Synchronized);
 
                 ImageInfoVisible = true;
-                ImageInfoText    = $"You have called the Image-Info command {count} times";
+                ImageInfoText    = string.Format(UI.You_have_called_the_Image_Info_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "media-info"))
@@ -267,7 +268,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "media-info" && !c.Synchronized);
 
                 MediaInfoVisible = true;
-                MediaInfoText    = $"You have called the Media-Info command {count} times";
+                MediaInfoText    = string.Format(UI.You_have_called_the_Media_Info_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "media-scan"))
@@ -278,7 +279,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "media-scan" && !c.Synchronized);
 
                 MediaScanVisible = true;
-                MediaScanText    = $"You have called the Media-Scan command {count} times";
+                MediaScanText    = string.Format(UI.You_have_called_the_Media_Scan_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "printhex"))
@@ -289,7 +290,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "printhex" && !c.Synchronized);
 
                 PrintHexVisible = true;
-                PrintHexText    = $"You have called the Print-Hex command {count} times";
+                PrintHexText    = string.Format(UI.You_have_called_the_Print_Hex_command_0_times, count);
             }
 
             if(ctx.Commands.Any(c => c.Name == "verify"))
@@ -300,7 +301,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "verify" && !c.Synchronized);
 
                 VerifyVisible = true;
-                VerifyText    = $"You have called the Verify command {count} times";
+                VerifyText    = string.Format(UI.You_have_called_the_Verify_command_0_times, count);
             }
 
             CommandsVisible = FsInfoVisible        || ChecksumVisible  || CompareVisible || ConvertImageVisible ||
@@ -417,7 +418,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                 {
                     Name  = media,
                     Count = count,
-                    Type  = "real"
+                    Type  = UI.Media_found_type_real
                 });
 
             count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).Select(c => c.Count).
@@ -432,7 +433,7 @@ public sealed class StatisticsViewModel : ViewModelBase
             {
                 Name  = media,
                 Count = count,
-                Type  = "image"
+                Type  = UI.Media_found_type_image
             });
         }
     }
@@ -672,45 +673,45 @@ public sealed class StatisticsViewModel : ViewModelBase
     }
 
     [NotNull]
-    public string CommandsLabel => "Commands";
+    public string CommandsLabel => UI.Title_Commands;
     [NotNull]
-    public string FilterLabel => "Filter";
+    public string FilterLabel => UI.Title_Filter;
     [NotNull]
-    public string PartitionLabel => "Partition";
+    public string PartitionLabel => UI.Title_Partition;
     [NotNull]
-    public string PartitionsLabel => "Partitions";
+    public string PartitionsLabel => UI.Title_Partitions;
     [NotNull]
-    public string FiltersLabel => "Filters";
+    public string FiltersLabel => UI.Title_Filters;
     [NotNull]
-    public string FormatsLabel => "Formats";
+    public string FormatsLabel => UI.Title_Formats;
     [NotNull]
-    public string FormatLabel => "Format";
+    public string FormatLabel => UI.Title_Format;
     [NotNull]
-    public string FilesystemsLabel => "Filesystems";
+    public string FilesystemsLabel => UI.Title_Filesystems;
     [NotNull]
-    public string FilesystemLabel => "Filesystem";
+    public string FilesystemLabel => UI.Title_Filesystem;
     [NotNull]
-    public string TimesFoundLabel => "Times found";
+    public string TimesFoundLabel => UI.Title_Times_used;
     [NotNull]
-    public string DevicesLabel => "Devices";
+    public string DevicesLabel => UI.Title_Devices;
     [NotNull]
-    public string DeviceLabel => "Device";
+    public string DeviceLabel => UI.Title_Device;
     [NotNull]
-    public string ManufacturerLabel => "Manufacturer";
+    public string ManufacturerLabel => UI.Title_Manufacturer;
     [NotNull]
-    public string RevisionLabel => "Revision";
+    public string RevisionLabel => UI.Title_Revision;
     [NotNull]
-    public string BusLabel => "Bus";
+    public string BusLabel => UI.Title_Bus;
     [NotNull]
-    public string MediasLabel => "Medias";
+    public string MediasLabel => UI.Title_Medias;
     [NotNull]
-    public string MediaLabel => "Media";
+    public string MediaLabel => UI.Title_Media;
     [NotNull]
-    public string TypeLabel => "Type";
+    public string TypeLabel => UI.Title_Type_for_media;
     [NotNull]
-    public string Title => "Encodings";
+    public string Title => UI.Encodings;
     [NotNull]
-    public string CloseLabel => "Close";
+    public string CloseLabel => UI.ButtonLabel_Close;
 
     public ReactiveCommand<Unit, Unit>            CloseCommand { get; }
     public ObservableCollection<NameCountModel>   Filters      { get; }

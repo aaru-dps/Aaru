@@ -498,7 +498,7 @@ sealed class DumpMediaCommand : Command
                     }
                     catch
                     {
-                        AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file);
+                        AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file_not_continuing);
 
                         if(isResponse)
                             continue;

@@ -49,6 +49,7 @@ using Aaru.Gui.ViewModels.Windows;
 using Aaru.Gui.Views.Tabs;
 using Aaru.Gui.Views.Windows;
 using Aaru.Helpers;
+using Aaru.Localization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -112,82 +113,89 @@ public sealed class ImageInfoViewModel : ViewModelBase
                                 ? genericOpticalIcon
                                 : genericFolderIcon;
 
-        ImagePathText       = $"Path: {imagePath}";
-        FilterText          = $"Filter: {filter.Name}";
-        ImageIdentifiedText = $"Image format identified by {imageFormat.Name} ({imageFormat.Id}).";
+        ImagePathText       = string.Format(UI.Path_0, imagePath);
+        FilterText          = string.Format(UI.Filter_0, filter.Name);
+        ImageIdentifiedText = string.Format(UI.Image_format_identified_by_0_1, imageFormat.Name, imageFormat.Id);
 
         ImageFormatText = !string.IsNullOrWhiteSpace(imageFormat.Info.Version)
-                              ? $"Format: {imageFormat.Format} version {imageFormat.Info.Version}"
-                              : $"Format: {imageFormat.Format}";
+                              ? string.Format(UI.Format_0_version_1, imageFormat.Format, imageFormat.Info.Version)
+                              : string.Format(UI.Format_0, imageFormat.Format);
 
-        ImageSizeText = $"Image without headers is {imageFormat.Info.ImageSize} bytes long";
+        ImageSizeText = string.Format(Localization.Core.Image_without_headers_is_0_bytes_long,
+                                      imageFormat.Info.ImageSize);
 
-        SectorsText = $"Contains a media of {imageFormat.Info.Sectors} sectors with a maximum sector size of {
-            imageFormat.Info.SectorSize} bytes (if all sectors are of the same size this would be {
-                imageFormat.Info.Sectors * imageFormat.Info.SectorSize} bytes)";
+        SectorsText =
+            string.Format(Localization.Core.Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc,
+                          imageFormat.Info.Sectors, imageFormat.Info.SectorSize,
+                          imageFormat.Info.Sectors * imageFormat.Info.SectorSize);
 
-        MediaTypeText = $"Contains a media of type {imageFormat.Info.MediaType} and XML type {
-            imageFormat.Info.XmlMediaType}";
+        MediaTypeText = string.Format(Localization.Core.Contains_a_media_of_type_0_and_XML_type_1,
+                                      imageFormat.Info.MediaType, imageFormat.Info.XmlMediaType);
 
-        HasPartitionsText = $"{(imageFormat.Info.HasPartitions ? "Has" : "Doesn't have")} partitions";
-        HasSessionsText   = $"{(imageFormat.Info.HasSessions ? "Has" : "Doesn't have")} sessions";
+        HasPartitionsText = imageFormat.Info.HasPartitions ? UI.Has_partitions : UI.Doesnt_have_partitions;
+        HasSessionsText   = imageFormat.Info.HasSessions ? UI.Has_sessions : UI.Doesnt_have_sessions;
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
             ApplicationText = !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion)
-                                  ? $"Was created with {imageFormat.Info.Application} version {
-                                      imageFormat.Info.ApplicationVersion}"
-                                  : $"Was created with {imageFormat.Info.Application}";
+                                  ? string.Format(Localization.Core.Was_created_with_0_version_1,
+                                                  imageFormat.Info.Application, imageFormat.Info.ApplicationVersion)
+                                  : string.Format(Localization.Core.Was_created_with_0, imageFormat.Info.Application);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Creator))
-            CreatorText = $"Created by: {imageFormat.Info.Creator}";
+            CreatorText = string.Format(Localization.Core.Created_by_0, imageFormat.Info.Creator);
 
         if(imageFormat.Info.CreationTime != DateTime.MinValue)
-            CreationTimeText = $"Created on {imageFormat.Info.CreationTime}";
+            CreationTimeText = string.Format(Localization.Core.Created_on_0, imageFormat.Info.CreationTime);
 
         if(imageFormat.Info.LastModificationTime != DateTime.MinValue)
-            LastModificationTimeText = $"Last modified on {imageFormat.Info.LastModificationTime}";
+            LastModificationTimeText =
+                string.Format(Localization.Core.Last_modified_on_0, imageFormat.Info.LastModificationTime);
 
         if(imageFormat.Info.MediaSequence     != 0 &&
            imageFormat.Info.LastMediaSequence != 0)
-            MediaSequenceText = $"Media is number {imageFormat.Info.MediaSequence} on a set of {
-                imageFormat.Info.LastMediaSequence} medias";
+            MediaSequenceText = string.Format(Localization.Core.Media_is_number_0_on_a_set_of_1_medias,
+                                              imageFormat.Info.MediaSequence, imageFormat.Info.LastMediaSequence);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
-            MediaTitleText = $"Media title: {imageFormat.Info.MediaTitle}";
+            MediaTitleText = string.Format(UI.Media_title_0, imageFormat.Info.MediaTitle);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaManufacturer))
-            MediaManufacturerText = $"Media manufacturer: {imageFormat.Info.MediaManufacturer}";
+            MediaManufacturerText =
+                string.Format(Localization.Core.Media_manufacturer_0, imageFormat.Info.MediaManufacturer);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaModel))
-            MediaModelText = $"Media model: {imageFormat.Info.MediaModel}";
+            MediaModelText = string.Format(UI.Media_model_0, imageFormat.Info.MediaModel);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaSerialNumber))
-            MediaSerialNumberText = $"Media serial number: {imageFormat.Info.MediaSerialNumber}";
+            MediaSerialNumberText =
+                string.Format(Localization.Core.Media_serial_number_0, imageFormat.Info.MediaSerialNumber);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaBarcode))
-            MediaBarcodeText = $"Media barcode: {imageFormat.Info.MediaBarcode}";
+            MediaBarcodeText = string.Format(UI.Media_barcode_0, imageFormat.Info.MediaBarcode);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaPartNumber))
-            MediaPartNumberText = $"Media part number: {imageFormat.Info.MediaPartNumber}";
+            MediaPartNumberText = string.Format(UI.Media_part_number_0, imageFormat.Info.MediaPartNumber);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveManufacturer))
-            DriveManufacturerText = $"Drive manufacturer: {imageFormat.Info.DriveManufacturer}";
+            DriveManufacturerText = string.Format(UI.Drive_manufacturer_0, imageFormat.Info.DriveManufacturer);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveModel))
-            DriveModelText = $"Drive model: {imageFormat.Info.DriveModel}";
+            DriveModelText = string.Format(UI.Drive_model_0, imageFormat.Info.DriveModel);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveSerialNumber))
-            DriveSerialNumberText = $"Drive serial number: {imageFormat.Info.DriveSerialNumber}";
+            DriveSerialNumberText =
+                string.Format(Localization.Core.Drive_serial_number_0, imageFormat.Info.DriveSerialNumber);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
-            DriveFirmwareRevisionText = $"Drive firmware info: {imageFormat.Info.DriveFirmwareRevision}";
+            DriveFirmwareRevisionText = string.Format(UI.Drive_firmware_info_0, imageFormat.Info.DriveFirmwareRevision);
 
         if(imageFormat.Info.Cylinders > 0                            &&
            imageFormat.Info is { Heads: > 0, SectorsPerTrack: > 0 }  &&
            imageFormat.Info.XmlMediaType != XmlMediaType.OpticalDisc &&
            imageFormat is not ITapeImage { IsTape: true })
-            MediaGeometryText = $"Media geometry: {imageFormat.Info.Cylinders} cylinders, {imageFormat.Info.Heads
-            } heads, {imageFormat.Info.SectorsPerTrack} sectors per track";
+            MediaGeometryText = string.Format(UI.Media_geometry_0_cylinders_1_heads_2_sectors_per_track,
+                                              imageFormat.Info.Cylinders, imageFormat.Info.Heads,
+                                              imageFormat.Info.SectorsPerTrack);
 
         if(imageFormat.Info.ReadableMediaTags is { Count: > 0 })
             foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
@@ -720,51 +728,51 @@ public sealed class ImageInfoViewModel : ViewModelBase
                                            MediaSerialNumberText != null || MediaBarcodeText != null ||
                                            MediaPartNumberText   != null;
 
-    public string ImageInformationLabel   => "Image information";
-    public string GeneralLabel            => "General";
-    public string CommentsLabel           => "Comments:";
-    public string MediaInformationLabel   => "Media information";
-    public string DriveInformationLabel   => "Drive information";
-    public string ReadableMediaTagsLabel  => "Readable media tags";
-    public string TagLabel                => "Readable media tags";
-    public string ReadableSectorTagsLabel => "Readable sector tags";
-    public string SessionsLabel           => "Sessions";
-    public string SessionLabel            => "Session";
-    public string FirstTrackLabel         => "First track";
-    public string LastTrackLabel          => "Last track";
-    public string StartLabel              => "Start";
-    public string EndLabel                => "End";
-    public string TracksLabel             => "Tracks";
-    public string TrackLabel              => "Track";
-    public string TypeLabel               => "Type";
-    public string BpsLabel                => "Bps";
-    public string RawBpsLabel             => "Raw bps";
-    public string SubchannelLabel         => "Subchannel";
-    public string PregapLabel             => "Pregap";
-    public string DumpHardwareLabel       => "Dump hardware";
-    public string ManufacturerLabel       => "Manufacturer";
-    public string ModelLabel              => "Model";
-    public string RevisionLabel           => "Revision";
-    public string SerialLabel             => "Serial";
-    public string SoftwareLabel           => "Software";
-    public string VersionLabel            => "Version";
-    public string OperatingSystemLabel    => "Operating system";
-    public string SCSILabel               => "SCSI";
-    public string ATA_ATAPILabel          => "ATA / ATAPI";
-    public string CompactDiscLabel        => "CompactDisc";
-    public string DVD_HD_DVDLabel         => "DVD / HD DVD";
-    public string DVD_R_WLabel            => "DVD-R(W)";
-    public string BluRayLabel             => "Blu-ray";
-    public string PCMCIALabel             => "PCMCIA";
-    public string SD_MMCLabel             => "SD / MMC";
-    public string XboxLabel               => "Xbox";
-    public string EntropyLabel            => "Calculate entropy";
-    public string VerifyLabel             => "Verify";
-    public string ChecksumLabel           => "Checksum";
-    public string ConvertLabel            => "Convert to...";
-    public string CreateSidecarLabel      => "Create CICM XML sidecar...";
-    public string ViewSectorsLabel        => "View sectors";
-    public string DecodeMediaTagLabel     => "Decode media tags";
+    public string ImageInformationLabel   => UI.Title_Image_information;
+    public string GeneralLabel            => UI.Title_General;
+    public string CommentsLabel           => UI.Title_Comments;
+    public string MediaInformationLabel   => UI.Title_Media_information;
+    public string DriveInformationLabel   => UI.Title_Drive_information;
+    public string ReadableMediaTagsLabel  => UI.Title_Readable_media_tags;
+    public string TagLabel                => UI.Title_Readable_media_tags;
+    public string ReadableSectorTagsLabel => UI.Title_Readable_sector_tags;
+    public string SessionsLabel           => UI.Title_Sessions;
+    public string SessionLabel            => Localization.Core.Title_Session;
+    public string FirstTrackLabel         => Localization.Core.Title_First_track;
+    public string LastTrackLabel          => Localization.Core.Title_Last_track;
+    public string StartLabel              => Localization.Core.Title_Start;
+    public string EndLabel                => Localization.Core.Title_End;
+    public string TracksLabel             => UI.Title_Tracks;
+    public string TrackLabel              => Localization.Core.Title_Track;
+    public string TypeLabel               => UI.Title_Type;
+    public string BpsLabel                => Localization.Core.Title_Bps;
+    public string RawBpsLabel             => Localization.Core.Title_Raw_bps;
+    public string SubchannelLabel         => Localization.Core.Title_Subchannel;
+    public string PregapLabel             => Localization.Core.Title_Pregap;
+    public string DumpHardwareLabel       => UI.Title_Dump_hardware;
+    public string ManufacturerLabel       => UI.Title_Manufacturer;
+    public string ModelLabel              => UI.Title_Model;
+    public string RevisionLabel           => UI.Title_Revision;
+    public string SerialLabel             => UI.Serial;
+    public string SoftwareLabel           => UI.Title_Software;
+    public string VersionLabel            => UI.Title_Version;
+    public string OperatingSystemLabel    => UI.Title_Operating_system;
+    public string SCSILabel               => UI.Title_SCSI;
+    public string ATA_ATAPILabel          => UI.Title_ATA_ATAPI;
+    public string CompactDiscLabel        => Localization.Core.Title_CompactDisc;
+    public string DVD_HD_DVDLabel         => Localization.Core.Title_DVD_HD_DVD;
+    public string DVD_R_WLabel            => Localization.Core.Title_DVD_Plus_Dash_R_W;
+    public string BluRayLabel             => Localization.Core.Title_Blu_ray;
+    public string PCMCIALabel             => UI.Title_PCMCIA;
+    public string SD_MMCLabel             => UI.Title_SD_MMC;
+    public string XboxLabel               => Localization.Core.Title_Xbox;
+    public string EntropyLabel            => UI.ButtonLabel_Calculate_entropy;
+    public string VerifyLabel             => UI.ButtonLabel_Verify;
+    public string ChecksumLabel           => UI.ButtonLabel_Checksum;
+    public string ConvertLabel            => UI.ButtonLabel_Convert_to;
+    public string CreateSidecarLabel      => UI.ButtonLabel_Create_CICM_XML_sidecar;
+    public string ViewSectorsLabel        => UI.ButtonLabel_View_sectors;
+    public string DecodeMediaTagLabel     => UI.ButtonLabel_Decode_media_tags;
 
     void ExecuteEntropyCommand()
     {

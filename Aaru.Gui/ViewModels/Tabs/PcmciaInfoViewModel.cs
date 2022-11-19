@@ -38,6 +38,7 @@ using System.Threading.Tasks;
 using Aaru.Console;
 using Aaru.Decoders.PCMCIA;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -76,17 +77,17 @@ public class PcmciaInfoViewModel : ViewModelBase
                     case TupleCodes.CISTPL_END: continue;
                     case TupleCodes.CISTPL_DEVICEGEO:
                     case TupleCodes.CISTPL_DEVICEGEO_A:
-                        tupleCode        = "Device Geometry Tuples";
+                        tupleCode        = UI.Device_Geometry_Tuples;
                         tupleDescription = CIS.PrettifyDeviceGeometryTuple(tuple);
 
                         break;
                     case TupleCodes.CISTPL_MANFID:
-                        tupleCode        = "Manufacturer Identification Tuple";
+                        tupleCode        = UI.Manufacturer_Identification_Tuple;
                         tupleDescription = CIS.PrettifyManufacturerIdentificationTuple(tuple);
 
                         break;
                     case TupleCodes.CISTPL_VERS_1:
-                        tupleCode        = "Level 1 Version / Product Information Tuple";
+                        tupleCode        = UI.Level_1_Version_Product_Information_Tuple;
                         tupleDescription = CIS.PrettifyLevel1VersionTuple(tuple);
 
                         break;
@@ -124,13 +125,13 @@ public class PcmciaInfoViewModel : ViewModelBase
                     case TupleCodes.CISTPL_SPCL:
                     case TupleCodes.CISTPL_SWIL:
                     case TupleCodes.CISTPL_VERS_2:
-                        tupleCode        = $"Undecoded tuple ID {tuple.Code}";
-                        tupleDescription = $"Undecoded tuple ID {tuple.Code}";
+                        tupleCode        = string.Format(UI.Undecoded_tuple_ID_0, tuple.Code);
+                        tupleDescription = string.Format(UI.Undecoded_tuple_ID_0, tuple.Code);
 
                         break;
                     default:
                         tupleCode        = $"0x{(byte)tuple.Code:X2}";
-                        tupleDescription = $"Found unknown tuple ID 0x{(byte)tuple.Code:X2}";
+                        tupleDescription = string.Format(UI.Found_unknown_tuple_ID_0, (byte)tuple.Code);
 
                         break;
                 }
@@ -142,11 +143,11 @@ public class PcmciaInfoViewModel : ViewModelBase
                 });
             }
         else
-            AaruConsole.DebugWriteLine("Device-Info command", "PCMCIA CIS returned no tuples");
+            AaruConsole.DebugWriteLine("Device-Info command", UI.PCMCIA_CIS_returned_no_tuples);
     }
 
-    public string CisLabel           => "CIS";
-    public string SavePcmciaCisLabel => "Save PCMCIA CIS to file";
+    public string CisLabel           => UI.Title_CIS;
+    public string SavePcmciaCisLabel => UI.ButtonLabel_Save_PCMCIA_CIS_to_file;
 
     public ObservableCollection<PcmciaCisModel> CisList { get; }
 
@@ -181,7 +182,7 @@ public class PcmciaInfoViewModel : ViewModelBase
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

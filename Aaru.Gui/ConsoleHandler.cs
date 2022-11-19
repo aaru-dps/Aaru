@@ -34,6 +34,7 @@
 using System;
 using System.Collections.ObjectModel;
 using Aaru.Console;
+using Aaru.Localization;
 using JetBrains.Annotations;
 
 namespace Aaru.Gui;
@@ -96,7 +97,7 @@ static class ConsoleHandler
             Message   = string.Format(format, arg),
             Module    = null,
             Timestamp = DateTime.Now,
-            Type      = "Info"
+            Type      = UI.LogEntry_Type_Info
         });
     }
 

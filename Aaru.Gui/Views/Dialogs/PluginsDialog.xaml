@@ -129,22 +129,26 @@
                     <TextBlock Grid.Row="0" Text="{Binding ReadableLabel}" FontWeight="Bold" />
                     <DataGrid Grid.Row="1" Items="{Binding Images}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="UUID" Binding="{Binding Uuid}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
+                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding AuthorLabel}" Binding="{Binding Author}" Width="Auto"
                                                 IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                     <TextBlock Grid.Row="2" Text="{Binding WritableLabel}" FontWeight="Bold" />
                     <DataGrid Grid.Row="3" Items="{Binding WritableImages}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="UUID" Binding="{Binding Uuid}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
+                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding AuthorLabel}" Binding="{Binding Author}" Width="Auto"
                                                 IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -162,11 +166,13 @@
                     <TextBlock Grid.Row="0" Text="{Binding ReadableLabel}" FontWeight="Bold" />
                     <DataGrid Grid.Row="1" Items="{Binding FloppyImages}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="UUID" Binding="{Binding Uuid}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
+                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding AuthorLabel}" Binding="{Binding Author}" Width="Auto"
                                                 IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -174,11 +180,13 @@
                     <DataGrid Grid.Row="3" Items="{Binding WritableFloppyImages}"
                               HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="UUID" Binding="{Binding Uuid}" Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
+                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding AuthorLabel}" Binding="{Binding Author}" Width="Auto"
                                                 IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>

@@ -40,6 +40,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
 
@@ -88,13 +89,13 @@ public sealed class AboutViewModel : ViewModelBase
     }
 
     [NotNull]
-    public string AboutLabel => "About";
+    public string AboutLabel => UI.Label_About;
     [NotNull]
-    public string LibrariesLabel => "Libraries";
+    public string LibrariesLabel => UI.Label_Libraries;
     [NotNull]
-    public string AuthorsLabel => "Authors";
+    public string AuthorsLabel => UI.Label_Authors;
     [NotNull]
-    public string Title => "About Aaru";
+    public string Title => UI.Title_About_Aaru;
     [NotNull]
     public string SoftwareName => "Aaru";
     [NotNull]
@@ -104,27 +105,15 @@ public sealed class AboutViewModel : ViewModelBase
     [NotNull]
     public string Website => "https://aaru.app";
     [NotNull]
-    public string License => "License: GNU General Public License Version 3";
+    public string License => UI.Label_License;
     [NotNull]
-    public string CloseLabel => "Close";
+    public string CloseLabel => UI.ButtonLabel_Close;
     [NotNull]
-    public string AssembliesLibraryText => "Library";
+    public string AssembliesLibraryText => UI.Title_Library;
     [NotNull]
-    public string AssembliesVersionText => "Version";
+    public string AssembliesVersionText => UI.Title_Version;
     [NotNull]
-    public string Authors => @"Developers:
-    Natalia Portillo
-    Michael Drüing
-    Rebecca Wallander
-
-Testers:
-    Silas Laspada
-
-Public relations:
-    Noah Bacon
-
-Logo and art:
-    Juan Carlos Pastor Segura (Denymetanol)";
+    public string Authors => UI.Text_Authors;
     public ReactiveCommand<Unit, Unit>         WebsiteCommand { get; }
     public ReactiveCommand<Unit, Unit>         LicenseCommand { get; }
     public ReactiveCommand<Unit, Unit>         CloseCommand   { get; }

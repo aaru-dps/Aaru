@@ -38,6 +38,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
 
@@ -73,12 +74,12 @@ public sealed class EncodingsViewModel : ViewModelBase
     }
 
     [NotNull]
-    public string Title => "Encodings";
+    public string Title => UI.Encodings;
     [NotNull]
-    public string CloseLabel => "Close";
+    public string CloseLabel => UI.ButtonLabel_Close;
 
-    public string CodeLabel => "Code";
-    public string NameLabel => "Name";
+    public string CodeLabel => UI.Title_Code_for_encoding;
+    public string NameLabel => UI.Title_Name;
 
     public ReactiveCommand<Unit, Unit>         CloseCommand { get; }
     public ObservableCollection<EncodingModel> Encodings    { get; }

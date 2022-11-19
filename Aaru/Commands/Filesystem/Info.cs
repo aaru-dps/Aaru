@@ -267,7 +267,7 @@ sealed class FilesystemInfoCommand : Command
                         table.AddRow(UI.Title_Name, Markup.Escape(partitionsList[i].Name ?? ""));
                         table.AddRow(UI.Title_Type, Markup.Escape(partitionsList[i].Type ?? ""));
 
-                        table.AddRow(UI.Title_Start,
+                        table.AddRow(Localization.Core.Title_Start,
                                      string.Format(UI.sector_0_byte_1, partitionsList[i].Start,
                                                    partitionsList[i].Offset));
 

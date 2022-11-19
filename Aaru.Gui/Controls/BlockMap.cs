@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Aaru.Localization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.LogicalTree;
@@ -247,7 +248,7 @@ public sealed class BlockMap : ItemsControl
             case NotifyCollectionChangedAction.Replace:
             {
                 if(e.NewItems is not {} items)
-                    throw new ArgumentException("Invalid list of items");
+                    throw new ArgumentException(UI.Invalid_list_of_items);
 
                 using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
                 using var                 ctx  = new DrawingContext(ctxi, false);
@@ -255,7 +256,7 @@ public sealed class BlockMap : ItemsControl
                 foreach(object item in items)
                 {
                     if(item is not ValueTuple<ulong, double> block)
-                        throw new ArgumentException("Invalid item in list", nameof(Items));
+                        throw new ArgumentException(UI.Invalid_item_in_list, nameof(Items));
 
                     DrawCluster(block.Item1, block.Item2, false, ctx);
                 }
@@ -269,7 +270,7 @@ public sealed class BlockMap : ItemsControl
             {
                 if(e.NewItems is not {} newItems ||
                    e.OldItems is not {} oldItems)
-                    throw new ArgumentException("Invalid list of items");
+                    throw new ArgumentException(UI.Invalid_list_of_items);
 
                 using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
                 using var                 ctx  = new DrawingContext(ctxi, false);
@@ -277,7 +278,7 @@ public sealed class BlockMap : ItemsControl
                 foreach(object item in oldItems)
                 {
                     if(item is not ValueTuple<ulong, double> block)
-                        throw new ArgumentException("Invalid item in list", nameof(Items));
+                        throw new ArgumentException(UI.Invalid_item_in_list, nameof(Items));
 
                     DrawCluster(block.Item1, block.Item2, false, ctx);
                 }
@@ -285,7 +286,7 @@ public sealed class BlockMap : ItemsControl
                 foreach(object item in newItems)
                 {
                     if(item is not ValueTuple<ulong, double> block)
-                        throw new ArgumentException("Invalid item in list", nameof(Items));
+                        throw new ArgumentException(UI.Invalid_item_in_list, nameof(Items));
 
                     DrawCluster(block.Item1, block.Item2, false, ctx);
                 }
@@ -315,7 +316,7 @@ public sealed class BlockMap : ItemsControl
         foreach(object item in Items)
         {
             if(item is not ValueTuple<ulong, double> block)
-                throw new ArgumentException("Invalid item in list", nameof(Items));
+                throw new ArgumentException(UI.Invalid_item_in_list, nameof(Items));
 
             DrawCluster(block.Item1, block.Item2, false, ctx);
         }
@@ -327,7 +328,7 @@ public sealed class BlockMap : ItemsControl
     {
         if(double.IsNegative(duration) ||
            double.IsInfinity(duration))
-            throw new ArgumentException("Duration cannot be negative or infinite", nameof(duration));
+            throw new ArgumentException(UI.Duration_cannot_be_negative_or_infinite, nameof(duration));
 
         bool  newContext     = ctx is null;
         ulong clustersPerRow = (ulong)Width / BLOCK_SIZE;
@@ -385,8 +386,7 @@ public sealed class BlockMap : ItemsControl
     {
         if(e.NewValue != null &&
            e.NewValue is not IList<(ulong, double)>)
-            throw new
-                ArgumentException("Items must be a IList<(ulong, double)> with ulong being the block and double being the time spent reading it, or NaN for an error.");
+            throw new ArgumentException(UI.Items_must_be_a_IList_ulong_double);
 
         base.ItemsChanged(e);
 

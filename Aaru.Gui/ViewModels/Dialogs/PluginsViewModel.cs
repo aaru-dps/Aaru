@@ -37,6 +37,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
 
@@ -139,29 +140,29 @@ public sealed class PluginsViewModel : ViewModelBase
     }
 
     [NotNull]
-    public string Title => "Plugins";
+    public string Title => UI.Title_Plugins;
     [NotNull]
-    public string FiltersLabel => "Filters";
+    public string FiltersLabel => UI.Title_Filters;
     [NotNull]
-    public string PartitionsLabel => "Partitions";
+    public string PartitionsLabel => UI.Title_Partitions;
     [NotNull]
-    public string FilesystemsLabel => "Filesystems";
+    public string FilesystemsLabel => UI.Title_Filesystems;
     [NotNull]
-    public string IdentifyLabel => "Identify only:";
+    public string IdentifyLabel => UI.Title_Identify_only;
     [NotNull]
-    public string ImagesLabel => "Media images";
+    public string ImagesLabel => UI.Title_Media_images;
     [NotNull]
-    public string FloppyImagesLabel => "Floppy images";
+    public string FloppyImagesLabel => UI.Title_Floppy_images;
     [NotNull]
-    public string ReadableLabel => "Readable:";
+    public string ReadableLabel => UI.Title_Readable;
     [NotNull]
-    public string WritableLabel => "Writable:";
+    public string WritableLabel => UI.Title_Writable;
     [NotNull]
-    public string CloseLabel => "Close";
-    public string NameLabel    => "Name";
-    public string UUIDLabel    => "UUID";
-    public string VersionLabel => "Version";
-    public string AuthorLabel  => "Author";
+    public string CloseLabel => UI.ButtonLabel_Close;
+    public string NameLabel    => UI.Title_Name;
+    public string UUIDLabel    => UI.Title_UUID;
+    public string VersionLabel => UI.Title_Version;
+    public string AuthorLabel  => UI.Title_Author;
 
     public ReactiveCommand<Unit, Unit>       CloseCommand         { get; }
     public ObservableCollection<PluginModel> Filters              { get; }

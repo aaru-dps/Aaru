@@ -36,6 +36,7 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Aaru.CommonTypes;
 using Aaru.Decoders.DVD;
+using Aaru.Localization;
 using Avalonia.Controls;
 using ReactiveUI;
 
@@ -233,25 +234,25 @@ public sealed class DvdWritableInfoViewModel
     public ReactiveCommand<Unit, Task> SaveDvdPlusAdipCommand                   { get; }
     public ReactiveCommand<Unit, Task> SaveDvdPlusDcbCommand                    { get; }
 
-    public string DvdRamDdsLabel                         => "Disc Definition Structure";
-    public string DvdRamCartridgeStatusLabel             => "Cartridge Status";
-    public string DvdRamSpareAreaInformationLabel        => "Spare Area Information";
-    public string SaveDvdRamDdsLabel                     => "Save Disc Definition Structure";
-    public string SaveDvdRamCartridgeStatusLabel         => "Save Cartridge Status";
-    public string SaveDvdRamSpareAreaInformationLabel    => "Save Spare Area Information";
-    public string SaveLastBorderOutRmdLabel              => "Save Last Border-Out RMD";
-    public string SaveDvdPreRecordedInfoLabel            => "Save Pre-Recorded Physical Information";
-    public string SaveDvdrMediaIdentifierLabel           => "Save Media Identifier";
-    public string SaveDvdrPhysicalInformationLabel       => "Save Recordable Physical Information";
-    public string SaveHddvdrMediumStatusLabel            => "Save Medium Status";
-    public string SaveHddvdrLastRmdLabel                 => "Save Last Border-Out RMD";
-    public string SaveDvdrLayerCapacityLabel             => "Save Layer Capacity";
-    public string SaveDvdrDlMiddleZoneStartLabel         => "Save Middle Zone Start";
-    public string SaveDvdrDlJumpIntervalSizeLabel        => "Save Jump Interval Size";
-    public string SaveDvdrDlManualLayerJumpStartLbaLabel => "Save Manual Layer Jump Start LBA";
-    public string SaveDvdrDlRemapAnchorPointLabel        => "Save Remap Anchor Point";
-    public string SaveDvdPlusAdipLabel                   => "Save ADIP";
-    public string SaveDvdPlusDcbLabel                    => "Save Disc Control Blocks";
+    public string DvdRamDdsLabel                         => UI.Disc_Definition_Structure;
+    public string DvdRamCartridgeStatusLabel             => UI.Cartridge_Status;
+    public string DvdRamSpareAreaInformationLabel        => UI.Spare_Area_Information;
+    public string SaveDvdRamDdsLabel                     => UI.ButtonLabel_Save_Disc_Definition_Structure;
+    public string SaveDvdRamCartridgeStatusLabel         => UI.ButtonLabel_Save_Cartridge_Status;
+    public string SaveDvdRamSpareAreaInformationLabel    => UI.ButtonLabel_Save_Spare_Area_Information;
+    public string SaveLastBorderOutRmdLabel              => UI.ButtonLabel_Save_Last_Border_Out_RMD;
+    public string SaveDvdPreRecordedInfoLabel            => UI.ButtonLabel_Save_Pre_Recorded_Physical_Information;
+    public string SaveDvdrMediaIdentifierLabel           => UI.ButtonLabel_Save_Media_Identifier;
+    public string SaveDvdrPhysicalInformationLabel       => UI.ButtonLabel_Save_Recordable_Physical_Information;
+    public string SaveHddvdrMediumStatusLabel            => UI.ButtonLabel_Save_Medium_Status;
+    public string SaveHddvdrLastRmdLabel                 => UI.ButtonLabel_Save_Last_Border_Out_RMD;
+    public string SaveDvdrLayerCapacityLabel             => UI.ButtonLabel_Save_Layer_Capacity;
+    public string SaveDvdrDlMiddleZoneStartLabel         => UI.ButtonLabel_Save_Middle_Zone_Start;
+    public string SaveDvdrDlJumpIntervalSizeLabel        => UI.ButtonLabel_Save_Jump_Interval_Size;
+    public string SaveDvdrDlManualLayerJumpStartLbaLabel => UI.ButtonLabel_Save_Manual_Layer_Jump_Start_LBA;
+    public string SaveDvdrDlRemapAnchorPointLabel        => UI.ButtonLabel_Save_Remap_Anchor_Point;
+    public string SaveDvdPlusAdipLabel                   => UI.ButtonLabel_Save_ADIP;
+    public string SaveDvdPlusDcbLabel                    => UI.ButtonLabel_Save_Disc_Control_Blocks;
 
     async Task SaveElement(byte[] data)
     {
@@ -263,7 +264,7 @@ public sealed class DvdWritableInfoViewModel
             {
                 "*.bin"
             }),
-            Name = "Binary"
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

@@ -42,6 +42,7 @@ using Aaru.Database;
 using Aaru.Gui.ViewModels.Dialogs;
 using Aaru.Gui.Views.Dialogs;
 using Aaru.Gui.Views.Windows;
+using Aaru.Localization;
 using Aaru.Settings;
 using Avalonia.Threading;
 using Microsoft.EntityFrameworkCore;
@@ -78,7 +79,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
     internal void OnOpened()
     {
-        Message         = "Welcome to Aaru!";
+        Message         = UI.Welcome_to_Aaru;
         MaxProgress     = 9;
         CurrentProgress = 0;
 
@@ -88,12 +89,12 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void InitializeConsole()
     {
         CurrentProgress++;
-        Message = "Initializing console...";
+        Message = UI.Initializing_console;
 
         Task.Run(() =>
         {
             ConsoleHandler.Init();
-            AaruConsole.WriteLine("Aaru started!");
+            AaruConsole.WriteLine(UI.Aaru_started);
 
             Dispatcher.UIThread.Post(LoadSettings);
         });
@@ -102,8 +103,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void LoadSettings()
     {
         CurrentProgress++;
-        Message = "Loading settings...";
-        AaruConsole.WriteLine("Loading settings...");
+        Message = UI.Loading_settings;
+        AaruConsole.WriteLine(UI.Loading_settings);
 
         Task.Run(() =>
         {
@@ -117,8 +118,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void MigrateLocalDatabase()
     {
         CurrentProgress++;
-        Message = "Migrating local database...";
-        AaruConsole.WriteLine("Migrating local database...");
+        Message = UI.Migrating_local_database;
+        AaruConsole.WriteLine(UI.Migrating_local_database);
 
         Task.Run(() =>
         {
@@ -181,8 +182,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void UpdateMainDatabase()
     {
         CurrentProgress++;
-        Message = "Updating main database...";
-        AaruConsole.WriteLine("Updating main database...");
+        Message = UI.Updating_main_database;
+        AaruConsole.WriteLine(UI.Updating_main_database);
 
         Task.Run(() =>
         {
@@ -194,7 +195,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
             if(mainContext.Database.GetPendingMigrations().Any())
             {
-                AaruConsole.WriteLine("New database version, updating...");
+                AaruConsole.WriteLine(UI.New_database_version_updating);
 
                 try
                 {
@@ -202,9 +203,9 @@ public sealed class SplashWindowViewModel : ViewModelBase
                 }
                 catch(Exception)
                 {
-                    AaruConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
+                    AaruConsole.ErrorWriteLine(UI.Exception_trying_to_remove_old_database_version);
 
-                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MainDbPath);
+                    AaruConsole.ErrorWriteLine(UI.Please_manually_remove_file_at_0, Settings.Settings.MainDbPath);
 
                     return;
                 }
@@ -220,8 +221,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     async void CheckGdprCompliance()
     {
         CurrentProgress++;
-        Message = "Checking GDPR compliance...";
-        AaruConsole.WriteLine("Checking GDPR compliance...");
+        Message = UI.Checking_GDPR_compliance;
+        AaruConsole.WriteLine(UI.Checking_GDPR_compliance);
 
         if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
         {
@@ -237,8 +238,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void LoadStatistics()
     {
         CurrentProgress++;
-        Message = "Loading statistics...";
-        AaruConsole.WriteLine("Loading statistics...");
+        Message = UI.Loading_statistics;
+        AaruConsole.WriteLine(UI.Loading_statistics);
 
         Task.Run(() =>
         {
@@ -251,8 +252,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void RegisterEncodings()
     {
         CurrentProgress++;
-        Message = "Registering encodings...";
-        AaruConsole.WriteLine("Registering encodings...");
+        Message = UI.Registering_encodings;
+        AaruConsole.WriteLine(UI.Registering_encodings);
 
         Task.Run(() =>
         {
@@ -265,8 +266,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void SaveStatistics()
     {
         CurrentProgress++;
-        Message = "Saving statistics...";
-        AaruConsole.WriteLine("Saving statistics...");
+        Message = UI.Saving_statistics;
+        AaruConsole.WriteLine(UI.Saving_statistics);
 
         Task.Run(() =>
         {
@@ -279,8 +280,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void LoadMainWindow()
     {
         CurrentProgress++;
-        Message = "Loading main window...";
-        AaruConsole.WriteLine("Loading main window...");
+        Message = UI.Loading_main_window;
+        AaruConsole.WriteLine(UI.Loading_main_window);
         WorkFinished?.Invoke(this, EventArgs.Empty);
     }
 
