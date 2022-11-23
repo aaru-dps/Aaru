@@ -30,13 +30,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Checksums;
-
 using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
+
+namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Wraps up .NET MD5 implementation to a Init(), Update(), Final() context.</summary>

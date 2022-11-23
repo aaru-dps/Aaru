@@ -45,10 +45,10 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // ****************************************************************************/
 
-namespace Aaru.Checksums.Adler32;
-
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.Arm;
+
+namespace Aaru.Checksums.Adler32;
 
 static class Neon
 {
@@ -60,7 +60,7 @@ static class Neon
         uint s1 = preSum1;
         uint s2 = preSum2;
 
-        var bufPos = 0;
+        int bufPos = 0;
 
         /*
          * Process the data in blocks.
@@ -81,8 +81,8 @@ static class Neon
              * Process n blocks of data. At most NMAX data bytes can be
              * processed before s2 must be reduced modulo ADLER_MODULE.
              */
-            var               vS2         = Vector128.Create(s1 * n, 0, 0, 0);
-            var               vS1         = Vector128.Create(0u, 0, 0, 0);
+            Vector128<uint>   vS2         = Vector128.Create(s1 * n, 0, 0, 0);
+            Vector128<uint>   vS1         = Vector128.Create(0u, 0, 0, 0);
             Vector128<ushort> vColumnSum1 = AdvSimd.DuplicateToVector128((ushort)0);
             Vector128<ushort> vColumnSum2 = AdvSimd.DuplicateToVector128((ushort)0);
             Vector128<ushort> vColumnSum3 = AdvSimd.DuplicateToVector128((ushort)0);
@@ -93,17 +93,21 @@ static class Neon
                 /*
                  * Load 32 input bytes.
                  */
-                var bytes1 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos + 2], buf[bufPos + 3],
-                                              buf[bufPos + 4], buf[bufPos + 5], buf[bufPos + 6], buf[bufPos + 7],
-                                              buf[bufPos + 8], buf[bufPos + 9], buf[bufPos + 10], buf[bufPos + 11],
-                                              buf[bufPos + 12], buf[bufPos + 13], buf[bufPos + 14], buf[bufPos + 15]);
+                Vector128<byte> bytes1 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos + 2],
+                                                          buf[bufPos + 3], buf[bufPos + 4], buf[bufPos + 5],
+                                                          buf[bufPos + 6], buf[bufPos + 7], buf[bufPos + 8],
+                                                          buf[bufPos + 9], buf[bufPos + 10], buf[bufPos + 11],
+                                                          buf[bufPos + 12], buf[bufPos + 13], buf[bufPos + 14],
+                                                          buf[bufPos + 15]);
 
                 bufPos += 16;
 
-                var bytes2 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos + 2], buf[bufPos + 3],
-                                              buf[bufPos + 4], buf[bufPos + 5], buf[bufPos + 6], buf[bufPos + 7],
-                                              buf[bufPos + 8], buf[bufPos + 9], buf[bufPos + 10], buf[bufPos + 11],
-                                              buf[bufPos + 12], buf[bufPos + 13], buf[bufPos + 14], buf[bufPos + 15]);
+                Vector128<byte> bytes2 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos + 2],
+                                                          buf[bufPos + 3], buf[bufPos + 4], buf[bufPos + 5],
+                                                          buf[bufPos + 6], buf[bufPos + 7], buf[bufPos + 8],
+                                                          buf[bufPos + 9], buf[bufPos + 10], buf[bufPos + 11],
+                                                          buf[bufPos + 12], buf[bufPos + 13], buf[bufPos + 14],
+                                                          buf[bufPos + 15]);
 
                 bufPos += 16;
                 /*

@@ -36,8 +36,6 @@
 // Copyright (C) Jean-loup Gailly
 // ****************************************************************************/
 
-namespace Aaru.Checksums;
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -47,6 +45,8 @@ using Aaru.Checksums.Adler32;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Ssse3 = System.Runtime.Intrinsics.X86.Ssse3;
+
+namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the Adler-32 algorithm</summary>

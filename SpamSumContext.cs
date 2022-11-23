@@ -39,12 +39,12 @@
 //      http://www.samba.org/ftp/unpacked/junkcode/spamsum/
 //      http://ssdeep.sf.net/
 
-namespace Aaru.Checksums;
-
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
+
+namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the SpamSum fuzzy hashing algorithm.</summary>
@@ -56,7 +56,7 @@ public sealed class SpamSumContext : IChecksum
     const uint HASH_INIT        = 0x28021967;
     const uint NUM_BLOCKHASHES  = 31;
     const uint SPAMSUM_LENGTH   = 64;
-    const uint FUZZY_MAX_RESULT = 2 * SPAMSUM_LENGTH + 20;
+    const uint FUZZY_MAX_RESULT = (2 * SPAMSUM_LENGTH) + 20;
 
     //"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     readonly byte[] _b64 =
@@ -77,7 +77,7 @@ public sealed class SpamSumContext : IChecksum
             Bh = new BlockhashContext[NUM_BLOCKHASHES]
         };
 
-        for(var i = 0; i < NUM_BLOCKHASHES; i++)
+        for(int i = 0; i < NUM_BLOCKHASHES; i++)
             _self.Bh[i].Digest = new byte[SPAMSUM_LENGTH];
 
         _self.Bhstart          = 0;
@@ -99,7 +99,7 @@ public sealed class SpamSumContext : IChecksum
     {
         _self.TotalSize += len;
 
-        for(var i = 0; i < len; i++)
+        for(int i = 0; i < len; i++)
             fuzzy_engine_step(data[i]);
     }
 
@@ -274,7 +274,7 @@ public sealed class SpamSumContext : IChecksum
         var  sb     = new StringBuilder();
         uint bi     = _self.Bhstart;
         uint h      = roll_sum();
-        var  remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
+        int  remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
         result = new byte[FUZZY_MAX_RESULT];
 
         /* Verify that our elimination was not overeager. */
@@ -471,7 +471,7 @@ public sealed class SpamSumContext : IChecksum
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static string CToString(byte[] cString)
     {
-        var count = 0;
+        int count = 0;
 
         // ReSharper disable once LoopCanBeConvertedToQuery
         // LINQ is six times slower

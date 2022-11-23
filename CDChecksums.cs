@@ -31,12 +31,12 @@
 // ECC algorithm from ECM(c) 2002-2011 Neill Corlett
 // ****************************************************************************/
 
-namespace Aaru.Checksums;
-
 using System;
 using System.Collections.Generic;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Checksums;
 
 /// <summary>Implements ReedSolomon and CRC32 algorithms as used by CD-ROM</summary>
 public static class CdChecksums
@@ -81,8 +81,8 @@ public static class CdChecksums
         {
             case 2448:
             {
-                var subchannel = new byte[96];
-                var channel    = new byte[2352];
+                byte[] subchannel = new byte[96];
+                byte[] channel    = new byte[2352];
 
                 Array.Copy(buffer, 0, channel, 0, 2352);
                 Array.Copy(buffer, 2352, subchannel, 0, 96);
@@ -97,11 +97,11 @@ public static class CdChecksums
                     status = false;
 
                 status = channelStatus switch
-                         {
-                             null when subchannelStatus == true => true,
-                             true when subchannelStatus == null => true,
-                             _                                  => status
-                         };
+                {
+                    null when subchannelStatus == true => true,
+                    true when subchannelStatus == null => true,
+                    _                                  => status
+                };
 
                 return status;
             }
@@ -120,7 +120,7 @@ public static class CdChecksums
         for(uint i = 0; i < 256; i++)
         {
             uint edc = i;
-            var  j   = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
+            uint j   = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
             _eccFTable[i]     = (byte)j;
             _eccBTable[i ^ j] = (byte)i;
 
@@ -139,7 +139,7 @@ public static class CdChecksums
 
         for(major = 0; major < majorCount; major++)
         {
-            uint index = (major >> 1) * majorMult + (major & 1);
+            uint index = ((major >> 1) * majorMult) + (major & 1);
             byte eccA  = 0;
             byte eccB  = 0;
             uint minor;
@@ -200,7 +200,7 @@ public static class CdChecksums
             {
                 //AaruConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
-                for(var i = 0x010; i < 0x930; i++)
+                for(int i = 0x010; i < 0x930; i++)
                     if(channel[i] != 0x00)
                     {
                         AaruConsole.DebugWriteLine("CD checksums",
@@ -227,11 +227,11 @@ public static class CdChecksums
                 return false;
             case 0x01:
             {
-                var address = new byte[4];
-                var data    = new byte[2060];
-                var data2   = new byte[2232];
-                var eccP    = new byte[172];
-                var eccQ    = new byte[104];
+                byte[] address = new byte[4];
+                byte[] data    = new byte[2060];
+                byte[] data2   = new byte[2232];
+                byte[] eccP    = new byte[172];
+                byte[] eccQ    = new byte[104];
 
                 Array.Copy(channel, 0x0C, address, 0, 4);
                 Array.Copy(channel, 0x10, data, 0, 2060);
@@ -255,7 +255,7 @@ public static class CdChecksums
                                                "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
                                                channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                var  storedEdc     = BitConverter.ToUInt32(channel, 0x810);
+                uint storedEdc     = BitConverter.ToUInt32(channel, 0x810);
                 uint calculatedEdc = ComputeEdc(0, channel, 0x810);
 
                 correctEdc = calculatedEdc == storedEdc;
@@ -275,7 +275,7 @@ public static class CdChecksums
             {
                 //AaruConsole.DebugWriteLine("CD checksums", "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
-                var mode2Sector = new byte[channel.Length - 0x10];
+                byte[] mode2Sector = new byte[channel.Length - 0x10];
                 Array.Copy(channel, 0x10, mode2Sector, 0, mode2Sector.Length);
 
                 if((channel[0x012] & 0x20) == 0x20) // mode 2 form 2
@@ -288,7 +288,7 @@ public static class CdChecksums
                                                    "Subheader copies differ in mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}",
                                                    channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                    var storedEdc = BitConverter.ToUInt32(mode2Sector, 0x91C);
+                    uint storedEdc = BitConverter.ToUInt32(mode2Sector, 0x91C);
 
                     // No CRC stored!
                     if(storedEdc == 0x00000000)
@@ -318,9 +318,9 @@ public static class CdChecksums
                                                    "Subheader copies differ in mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}",
                                                    channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                    var address = new byte[4];
-                    var eccP    = new byte[172];
-                    var eccQ    = new byte[104];
+                    byte[] address = new byte[4];
+                    byte[] eccP    = new byte[172];
+                    byte[] eccQ    = new byte[104];
 
                     Array.Copy(mode2Sector, 0x80C, eccP, 0, 172);
                     Array.Copy(mode2Sector, 0x8B8, eccQ, 0, 104);
@@ -341,7 +341,7 @@ public static class CdChecksums
                                                    "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
                                                    channel[0x00C], channel[0x00D], channel[0x00E]);
 
-                    var  storedEdc     = BitConverter.ToUInt32(mode2Sector, 0x808);
+                    uint storedEdc     = BitConverter.ToUInt32(mode2Sector, 0x808);
                     uint calculatedEdc = ComputeEdc(0, mode2Sector, 0x808);
 
                     correctEdc = calculatedEdc == storedEdc;
@@ -367,7 +367,7 @@ public static class CdChecksums
 
     static uint ComputeEdc(uint edc, IReadOnlyList<byte> src, int size)
     {
-        var pos = 0;
+        int pos = 0;
 
         for(; size > 0; size--)
             edc = (edc >> 8) ^ _edcTable[(edc ^ src[pos++]) & 0xFF];
@@ -377,23 +377,23 @@ public static class CdChecksums
 
     static bool? CheckCdSectorSubChannel(IReadOnlyList<byte> subchannel)
     {
-        bool? status       = true;
-        var   qSubChannel  = new byte[12];
-        var   cdTextPack1  = new byte[18];
-        var   cdTextPack2  = new byte[18];
-        var   cdTextPack3  = new byte[18];
-        var   cdTextPack4  = new byte[18];
-        var   cdSubRwPack1 = new byte[24];
-        var   cdSubRwPack2 = new byte[24];
-        var   cdSubRwPack3 = new byte[24];
-        var   cdSubRwPack4 = new byte[24];
+        bool?  status       = true;
+        byte[] qSubChannel  = new byte[12];
+        byte[] cdTextPack1  = new byte[18];
+        byte[] cdTextPack2  = new byte[18];
+        byte[] cdTextPack3  = new byte[18];
+        byte[] cdTextPack4  = new byte[18];
+        byte[] cdSubRwPack1 = new byte[24];
+        byte[] cdSubRwPack2 = new byte[24];
+        byte[] cdSubRwPack3 = new byte[24];
+        byte[] cdSubRwPack4 = new byte[24];
 
-        var i = 0;
+        int i = 0;
 
-        for(var j = 0; j < 12; j++)
+        for(int j = 0; j < 12; j++)
             qSubChannel[j] = 0;
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack1[j] = 0;
             cdTextPack2[j] = 0;
@@ -401,7 +401,7 @@ public static class CdChecksums
             cdTextPack4[j] = 0;
         }
 
-        for(var j = 0; j < 24; j++)
+        for(int j = 0; j < 24; j++)
         {
             cdSubRwPack1[j] = 0;
             cdSubRwPack2[j] = 0;
@@ -409,7 +409,7 @@ public static class CdChecksums
             cdSubRwPack4[j] = 0;
         }
 
-        for(var j = 0; j < 12; j++)
+        for(int j = 0; j < 12; j++)
         {
             qSubChannel[j] = (byte)(qSubChannel[j] | ((subchannel[i++] & 0x40) << 1));
             qSubChannel[j] = (byte)(qSubChannel[j] | (subchannel[i++] & 0x40));
@@ -423,7 +423,7 @@ public static class CdChecksums
 
         i = 0;
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -440,7 +440,7 @@ public static class CdChecksums
             cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F));
         }
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -457,7 +457,7 @@ public static class CdChecksums
             cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F));
         }
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -474,7 +474,7 @@ public static class CdChecksums
             cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F));
         }
 
-        for(var j = 0; j < 18; j++)
+        for(int j = 0; j < 18; j++)
         {
             cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x3F) << 2));
 
@@ -493,16 +493,16 @@ public static class CdChecksums
 
         i = 0;
 
-        for(var j = 0; j < 24; j++)
+        for(int j = 0; j < 24; j++)
             cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
+        for(int j = 0; j < 24; j++)
             cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
+        for(int j = 0; j < 24; j++)
             cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
+        for(int j = 0; j < 24; j++)
             cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
 
         switch(cdSubRwPack1[0])
@@ -544,8 +544,8 @@ public static class CdChecksums
                 break;
         }
 
-        var qSubChannelCrc    = BigEndianBitConverter.ToUInt16(qSubChannel, 10);
-        var qSubChannelForCrc = new byte[10];
+        ushort qSubChannelCrc    = BigEndianBitConverter.ToUInt16(qSubChannel, 10);
+        byte[] qSubChannelForCrc = new byte[10];
         Array.Copy(qSubChannel, 0, qSubChannelForCrc, 0, 10);
         ushort calculatedQcrc = CRC16CCITTContext.Calculate(qSubChannelForCrc);
 
@@ -559,8 +559,8 @@ public static class CdChecksums
 
         if((cdTextPack1[0] & 0x80) == 0x80)
         {
-            var cdTextPack1Crc    = BigEndianBitConverter.ToUInt16(cdTextPack1, 16);
-            var cdTextPack1ForCrc = new byte[16];
+            ushort cdTextPack1Crc    = BigEndianBitConverter.ToUInt16(cdTextPack1, 16);
+            byte[] cdTextPack1ForCrc = new byte[16];
             Array.Copy(cdTextPack1, 0, cdTextPack1ForCrc, 0, 16);
             ushort calculatedCdtp1Crc = CRC16CCITTContext.Calculate(cdTextPack1ForCrc);
 
@@ -576,8 +576,8 @@ public static class CdChecksums
 
         if((cdTextPack2[0] & 0x80) == 0x80)
         {
-            var cdTextPack2Crc    = BigEndianBitConverter.ToUInt16(cdTextPack2, 16);
-            var cdTextPack2ForCrc = new byte[16];
+            ushort cdTextPack2Crc    = BigEndianBitConverter.ToUInt16(cdTextPack2, 16);
+            byte[] cdTextPack2ForCrc = new byte[16];
             Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
             ushort calculatedCdtp2Crc = CRC16CCITTContext.Calculate(cdTextPack2ForCrc);
 
@@ -596,8 +596,8 @@ public static class CdChecksums
 
         if((cdTextPack3[0] & 0x80) == 0x80)
         {
-            var cdTextPack3Crc    = BigEndianBitConverter.ToUInt16(cdTextPack3, 16);
-            var cdTextPack3ForCrc = new byte[16];
+            ushort cdTextPack3Crc    = BigEndianBitConverter.ToUInt16(cdTextPack3, 16);
+            byte[] cdTextPack3ForCrc = new byte[16];
             Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
             ushort calculatedCdtp3Crc = CRC16CCITTContext.Calculate(cdTextPack3ForCrc);
 
@@ -617,8 +617,8 @@ public static class CdChecksums
         if((cdTextPack4[0] & 0x80) != 0x80)
             return status;
 
-        var cdTextPack4Crc    = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
-        var cdTextPack4ForCrc = new byte[16];
+        ushort cdTextPack4Crc    = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
+        byte[] cdTextPack4ForCrc = new byte[16];
         Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
         ushort calculatedCdtp4Crc = CRC16CCITTContext.Calculate(cdTextPack4ForCrc);
 

@@ -47,12 +47,12 @@
 // Copyright (C) 2013 Intel Corporation. All rights reserved.
 // ****************************************************************************/
 
-namespace Aaru.Checksums.CRC32;
-
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
+
+namespace Aaru.Checksums.CRC32;
 
 static class Clmul
 {
@@ -66,7 +66,7 @@ static class Clmul
     static void Fold4(ref Vector128<uint> xmmCRC0, ref Vector128<uint> xmmCRC1, ref Vector128<uint> xmmCRC2,
                       ref Vector128<uint> xmmCRC3)
     {
-        var xmmFold4 = Vector128.Create(0xc6e41596, 0x00000001, 0x54442bd4, 0x00000001);
+        Vector128<uint> xmmFold4 = Vector128.Create(0xc6e41596, 0x00000001, 0x54442bd4, 0x00000001);
 
         Vector128<uint> xTmp0 = xmmCRC0;
         Vector128<uint> xTmp1 = xmmCRC1;
@@ -110,37 +110,41 @@ static class Clmul
         Vector128<uint> xmmCRC1    = Vector128<uint>.Zero;
         Vector128<uint> xmmCRC2    = Vector128<uint>.Zero;
         Vector128<uint> xmmCRC3    = Vector128<uint>.Zero;
-        var             bufPos     = 0;
+        int             bufPos     = 0;
 
-        var first = true;
+        bool first = true;
 
         /* fold 512 to 32 step variable declarations for ISO-C90 compat. */
-        var xmmMask  = Vector128.Create(0xFFFFFFFF, 0xFFFFFFFF, 0x00000000, 0x00000000);
-        var xmmMask2 = Vector128.Create(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
+        Vector128<uint> xmmMask  = Vector128.Create(0xFFFFFFFF, 0xFFFFFFFF, 0x00000000, 0x00000000);
+        Vector128<uint> xmmMask2 = Vector128.Create(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
 
         while((len -= 64) >= 0)
         {
-            var xmmT0 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
+            Vector128<uint> xmmT0 = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
+                                                     BitConverter.ToUInt32(src, bufPos + 4),
+                                                     BitConverter.ToUInt32(src, bufPos + 8),
+                                                     BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 
-            var xmmT1 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
+            Vector128<uint> xmmT1 = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
+                                                     BitConverter.ToUInt32(src, bufPos + 4),
+                                                     BitConverter.ToUInt32(src, bufPos + 8),
+                                                     BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 
-            var xmmT2 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
+            Vector128<uint> xmmT2 = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
+                                                     BitConverter.ToUInt32(src, bufPos + 4),
+                                                     BitConverter.ToUInt32(src, bufPos + 8),
+                                                     BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 
-            var xmmT3 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
+            Vector128<uint> xmmT3 = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
+                                                     BitConverter.ToUInt32(src, bufPos + 4),
+                                                     BitConverter.ToUInt32(src, bufPos + 8),
+                                                     BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 
@@ -163,7 +167,7 @@ static class Clmul
         /*
          * k1
          */
-        var crcFold = Vector128.Create(_crcK[0], _crcK[1], _crcK[2], _crcK[3]);
+        Vector128<uint> crcFold = Vector128.Create(_crcK[0], _crcK[1], _crcK[2], _crcK[3]);
 
         Vector128<uint> xTmp0 = Pclmulqdq.CarrylessMultiply(xmmCRC0.AsUInt64(), crcFold.AsUInt64(), 0x10).AsUInt32();
 

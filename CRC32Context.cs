@@ -30,8 +30,6 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Checksums;
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -41,6 +39,8 @@ using System.Text;
 using Aaru.Checksums.CRC32;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements a CRC32 algorithm</summary>

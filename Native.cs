@@ -30,9 +30,9 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Checksums;
-
 using System.Runtime.InteropServices;
+
+namespace Aaru.Checksums;
 
 /// <summary>Handles native implementations of compression algorithms</summary>
 public static class Native

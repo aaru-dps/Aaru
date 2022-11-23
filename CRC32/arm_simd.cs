@@ -45,10 +45,10 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // ****************************************************************************/
 
-namespace Aaru.Checksums.CRC32;
-
 using System;
 using System.Runtime.Intrinsics.Arm;
+
+namespace Aaru.Checksums.CRC32;
 
 static class ArmSimd
 {
@@ -56,7 +56,7 @@ static class ArmSimd
     {
         uint c = crc;
 
-        var bufPos = 0;
+        int bufPos = 0;
 
         while(len >= 64)
         {
@@ -96,7 +96,7 @@ static class ArmSimd
     {
         uint c = crc;
 
-        var bufPos = 0;
+        int bufPos = 0;
 
         while(len >= 32)
         {

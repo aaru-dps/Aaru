@@ -1,86 +1,86 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <SchemaVersion>2.0</SchemaVersion>
-        <ProjectGuid>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <RootNamespace>Aaru.Checksums</RootNamespace>
-        <AssemblyName>Aaru.Checksums</AssemblyName>
-        <ReleaseVersion>$(Version)</ReleaseVersion>
-        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>6.0.0-alpha8</Version>
-        <Company>Claunia.com</Company>
-        <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
-        <Product>Aaru Data Preservation Suite</Product>
-        <Title>Aaru.Checksums</Title>
-        <ApplicationVersion>$(Version)</ApplicationVersion>
-        <TargetFramework>net7.0</TargetFramework>
-        <LangVersion>11</LangVersion>
-        <Description>C# implementation of CRC16, CRC32, CRC64, Fletcher, MD5, SHA1, SHA2 and SpamSum.</Description>
-        <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
-        <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/aaru-dps/Aaru.Checksums</RepositoryUrl>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <NeutralLanguage>en-US</NeutralLanguage>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
-        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <NoWarn>CS1591;CS1574</NoWarn>
-    </PropertyGroup>
-    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <InternalsVisibleTo Include="Aaru.Tests"/>
-        <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
-    </ItemGroup>
-    <PropertyGroup>
-        <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
-        <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-        <NrtShowRevision>true</NrtShowRevision>
-    </PropertyGroup>
-    <ItemGroup>
-        <Compile Include="Adler32\neon.cs"/>
-        <Compile Include="Adler32\ssse3.cs"/>
-        <Compile Include="CRC16CCITTContext.cs"/>
-        <Compile Include="CRC16IBMContext.cs"/>
-        <Compile Include="CRC32\arm_simd.cs"/>
-        <Compile Include="CRC32\clmul.cs"/>
-        <Compile Include="CRC64\clmul.cs"/>
-        <Compile Include="Native.cs"/>
-        <Compile Include="Register.cs"/>
-        <Compile Include="SpamSumContext.cs"/>
-        <Compile Include="Adler32Context.cs"/>
-        <Compile Include="CDChecksums.cs"/>
-        <Compile Include="CRC16Context.cs"/>
-        <Compile Include="CRC32Context.cs"/>
-        <Compile Include="CRC64Context.cs"/>
-        <Compile Include="FletcherContext.cs"/>
-        <Compile Include="MD5Context.cs"/>
-        <Compile Include="ReedSolomon.cs"/>
-        <Compile Include="SHA1Context.cs"/>
-        <Compile Include="SHA256Context.cs"/>
-        <Compile Include="SHA384Context.cs"/>
-        <Compile Include="SHA512Context.cs"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="..\LICENSE.LGPL">
-            <Link>LICENSE.LGPL</Link>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\LICENSE">
-            <Link>LICENSE</Link>
-        </EmbeddedResource>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Aaru.Checksums.Native" Version="6.0.0-alpha6"/>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
-    </ItemGroup>
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Aaru.Checksums</RootNamespace>
+    <AssemblyName>Aaru.Checksums</AssemblyName>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>6.0.0-alpha8</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
+    <Product>Aaru Data Preservation Suite</Product>
+    <Title>Aaru.Checksums</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <TargetFramework>net7.0</TargetFramework>
+    <LangVersion>11</LangVersion>
+    <Description>C# implementation of CRC16, CRC32, CRC64, Fletcher, MD5, SHA1, SHA2 and SpamSum.</Description>
+    <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/aaru-dps/Aaru.Checksums</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Adler32\neon.cs"/>
+    <Compile Include="Adler32\ssse3.cs"/>
+    <Compile Include="CRC16CCITTContext.cs"/>
+    <Compile Include="CRC16IBMContext.cs"/>
+    <Compile Include="CRC32\arm_simd.cs"/>
+    <Compile Include="CRC32\clmul.cs"/>
+    <Compile Include="CRC64\clmul.cs"/>
+    <Compile Include="Native.cs"/>
+    <Compile Include="Register.cs"/>
+    <Compile Include="SpamSumContext.cs"/>
+    <Compile Include="Adler32Context.cs"/>
+    <Compile Include="CDChecksums.cs"/>
+    <Compile Include="CRC16Context.cs"/>
+    <Compile Include="CRC32Context.cs"/>
+    <Compile Include="CRC64Context.cs"/>
+    <Compile Include="FletcherContext.cs"/>
+    <Compile Include="MD5Context.cs"/>
+    <Compile Include="ReedSolomon.cs"/>
+    <Compile Include="SHA1Context.cs"/>
+    <Compile Include="SHA256Context.cs"/>
+    <Compile Include="SHA384Context.cs"/>
+    <Compile Include="SHA512Context.cs"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\LICENSE">
+      <Link>LICENSE</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Aaru.Checksums.Native" Version="6.0.0-alpha6"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
+  </ItemGroup>
 </Project>

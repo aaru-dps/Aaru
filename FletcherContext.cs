@@ -32,14 +32,14 @@
 
 // Disabled because the speed is abnormally slow
 
-namespace Aaru.Checksums;
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the Fletcher-32 algorithm</summary>
