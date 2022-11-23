@@ -63,11 +63,11 @@ partial class Dump
         if(runOutSectors.Count == 0)
             return;
 
-        _dumpLog.WriteLine($"{runOutSectors.Count
-        } sectors at the end of the disc are unreadable. This is normal in CD-R(W) discs as these sectors are created by burning software as part of the recording process. Empty ones will be generated and stored in the image.");
+        _dumpLog.WriteLine(string.Format(Localization.Core._0_sectors_at_the_end_of_the_disc_are_unreadable,
+                                         runOutSectors.Count));
 
-        UpdateStatus?.Invoke($"{runOutSectors.Count
-        } sectors at the end of the disc are unreadable. This is normal in CD-R(W) discs as these sectors are created by burning software as part of the recording process. Empty ones will be generated and stored in the image.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_at_the_end_of_the_disc_are_unreadable,
+                                           runOutSectors.Count));
 
         foreach(ulong s in runOutSectors)
         {

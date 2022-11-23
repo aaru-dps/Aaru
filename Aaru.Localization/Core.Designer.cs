@@ -219,12 +219,6 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string Media_identified_as_0 {
-            get {
-                return ResourceManager.GetString("Media_identified_as_0", resourceCulture);
-            }
-        }
-        
         public static string Device_identified_as_0 {
             get {
                 return ResourceManager.GetString("Device_identified_as_0", resourceCulture);
@@ -627,21 +621,9 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string Disc_Definition_Structure {
-            get {
-                return ResourceManager.GetString("Disc_Definition_Structure", resourceCulture);
-            }
-        }
-        
         public static string Medium_Status {
             get {
                 return ResourceManager.GetString("Medium_Status", resourceCulture);
-            }
-        }
-        
-        public static string Spare_Area_Information {
-            get {
-                return ResourceManager.GetString("Spare_Area_Information", resourceCulture);
             }
         }
         
@@ -696,18 +678,6 @@ namespace Aaru.Localization {
         public static string POW_Resources_Information {
             get {
                 return ResourceManager.GetString("POW_Resources_Information", resourceCulture);
-            }
-        }
-        
-        public static string TOC {
-            get {
-                return ResourceManager.GetString("TOC", resourceCulture);
-            }
-        }
-        
-        public static string ATIP {
-            get {
-                return ResourceManager.GetString("ATIP", resourceCulture);
             }
         }
         
@@ -843,21 +813,9 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string Combined_disc_and_drive_offset_are_0_bytes_1_samples {
-            get {
-                return ResourceManager.GetString("Combined_disc_and_drive_offset_are_0_bytes_1_samples", resourceCulture);
-            }
-        }
-        
         public static string Combined_offset_is_0_bytes_1_samples {
             get {
                 return ResourceManager.GetString("Combined_offset_is_0_bytes_1_samples", resourceCulture);
-            }
-        }
-        
-        public static string Disc_offset_is_0_bytes_1_samples {
-            get {
-                return ResourceManager.GetString("Disc_offset_is_0_bytes_1_samples", resourceCulture);
             }
         }
         
@@ -933,12 +891,6 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string Sector_0_could_not_be_read {
-            get {
-                return ResourceManager.GetString("Sector_0_could_not_be_read", resourceCulture);
-            }
-        }
-        
         public static string Testing_0_seeks_longest_seek_took_1_ms_fastest_one_took_2_ms_3_ms_average {
             get {
                 return ResourceManager.GetString("Testing_0_seeks_longest_seek_took_1_ms_fastest_one_took_2_ms_3_ms_average", resourceCulture);
@@ -948,6 +900,5979 @@ namespace Aaru.Localization {
         public static string Whole_device {
             get {
                 return ResourceManager.GetString("Whole_device", resourceCulture);
+            }
+        }
+        
+        public static string Device_block_size_is_fixed_at_0_bytes {
+            get {
+                return ResourceManager.GetString("Device_block_size_is_fixed_at_0_bytes", resourceCulture);
+            }
+        }
+        
+        public static string Device_maximum_block_size_is_0_bytes {
+            get {
+                return ResourceManager.GetString("Device_maximum_block_size_is_0_bytes", resourceCulture);
+            }
+        }
+        
+        public static string Device_does_not_specify_a_maximum_block_size {
+            get {
+                return ResourceManager.GetString("Device_does_not_specify_a_maximum_block_size", resourceCulture);
+            }
+        }
+        
+        public static string Device_minimum_block_size_is_0_bytes {
+            get {
+                return ResourceManager.GetString("Device_minimum_block_size_is_0_bytes", resourceCulture);
+            }
+        }
+        
+        public static string Device_needs_a_block_size_granularity_of_pow_0_1_bytes {
+            get {
+                return ResourceManager.GetString("Device_needs_a_block_size_granularity_of_pow_0_1_bytes", resourceCulture);
+            }
+        }
+        
+        public static string Filesystem_type_0 {
+            get {
+                return ResourceManager.GetString("Filesystem_type_0", resourceCulture);
+            }
+        }
+        
+        public static string Volume_name_0 {
+            get {
+                return ResourceManager.GetString("Volume_name_0", resourceCulture);
+            }
+        }
+        
+        public static string Volume_serial_0 {
+            get {
+                return ResourceManager.GetString("Volume_serial_0", resourceCulture);
+            }
+        }
+        
+        public static string Application_identifier_0 {
+            get {
+                return ResourceManager.GetString("Application_identifier_0", resourceCulture);
+            }
+        }
+        
+        public static string System_identifier_0 {
+            get {
+                return ResourceManager.GetString("System_identifier_0", resourceCulture);
+            }
+        }
+        
+        public static string Volume_set_identifier_0 {
+            get {
+                return ResourceManager.GetString("Volume_set_identifier_0", resourceCulture);
+            }
+        }
+        
+        public static string Data_preparer_identifier_0 {
+            get {
+                return ResourceManager.GetString("Data_preparer_identifier_0", resourceCulture);
+            }
+        }
+        
+        public static string Publisher_identifier_0 {
+            get {
+                return ResourceManager.GetString("Publisher_identifier_0", resourceCulture);
+            }
+        }
+        
+        public static string Volume_created_on_0 {
+            get {
+                return ResourceManager.GetString("Volume_created_on_0", resourceCulture);
+            }
+        }
+        
+        public static string Volume_effective_from_0 {
+            get {
+                return ResourceManager.GetString("Volume_effective_from_0", resourceCulture);
+            }
+        }
+        
+        public static string Volume_last_modified_on_0 {
+            get {
+                return ResourceManager.GetString("Volume_last_modified_on_0", resourceCulture);
+            }
+        }
+        
+        public static string Volume_expired_on_0 {
+            get {
+                return ResourceManager.GetString("Volume_expired_on_0", resourceCulture);
+            }
+        }
+        
+        public static string Volume_last_backed_up_on_0 {
+            get {
+                return ResourceManager.GetString("Volume_last_backed_up_on_0", resourceCulture);
+            }
+        }
+        
+        public static string Volume_has_0_clusters_of_1_bytes_each_total_of_2_bytes {
+            get {
+                return ResourceManager.GetString("Volume_has_0_clusters_of_1_bytes_each_total_of_2_bytes", resourceCulture);
+            }
+        }
+        
+        public static string Volume_has_0_clusters_free_1 {
+            get {
+                return ResourceManager.GetString("Volume_has_0_clusters_free_1", resourceCulture);
+            }
+        }
+        
+        public static string Volume_contains_0_files {
+            get {
+                return ResourceManager.GetString("Volume_contains_0_files", resourceCulture);
+            }
+        }
+        
+        public static string Filesystem_contains_boot_code {
+            get {
+                return ResourceManager.GetString("Filesystem_contains_boot_code", resourceCulture);
+            }
+        }
+        
+        public static string Filesystem_has_not_been_unmounted_correctly_or_contains_errors {
+            get {
+                return ResourceManager.GetString("Filesystem_has_not_been_unmounted_correctly_or_contains_errors", resourceCulture);
+            }
+        }
+        
+        public static string Image_without_headers_is_0_bytes_long {
+            get {
+                return ResourceManager.GetString("Image_without_headers_is_0_bytes_long", resourceCulture);
+            }
+        }
+        
+        public static string Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc {
+            get {
+                return ResourceManager.GetString("Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc", resourceCulture);
+            }
+        }
+        
+        public static string Contains_a_media_of_type_0_and_XML_type_1 {
+            get {
+                return ResourceManager.GetString("Contains_a_media_of_type_0_and_XML_type_1", resourceCulture);
+            }
+        }
+        
+        public static string Was_created_with_0_version_1 {
+            get {
+                return ResourceManager.GetString("Was_created_with_0_version_1", resourceCulture);
+            }
+        }
+        
+        public static string Was_created_with_0 {
+            get {
+                return ResourceManager.GetString("Was_created_with_0", resourceCulture);
+            }
+        }
+        
+        public static string Created_by_0 {
+            get {
+                return ResourceManager.GetString("Created_by_0", resourceCulture);
+            }
+        }
+        
+        public static string Created_on_0 {
+            get {
+                return ResourceManager.GetString("Created_on_0", resourceCulture);
+            }
+        }
+        
+        public static string Last_modified_on_0 {
+            get {
+                return ResourceManager.GetString("Last_modified_on_0", resourceCulture);
+            }
+        }
+        
+        public static string Media_is_number_0_on_a_set_of_1_medias {
+            get {
+                return ResourceManager.GetString("Media_is_number_0_on_a_set_of_1_medias", resourceCulture);
+            }
+        }
+        
+        public static string Media_manufacturer_0 {
+            get {
+                return ResourceManager.GetString("Media_manufacturer_0", resourceCulture);
+            }
+        }
+        
+        public static string Media_serial_number_0 {
+            get {
+                return ResourceManager.GetString("Media_serial_number_0", resourceCulture);
+            }
+        }
+        
+        public static string Drive_serial_number_0 {
+            get {
+                return ResourceManager.GetString("Drive_serial_number_0", resourceCulture);
+            }
+        }
+        
+        public static string Title_Session {
+            get {
+                return ResourceManager.GetString("Title_Session", resourceCulture);
+            }
+        }
+        
+        public static string Title_Start {
+            get {
+                return ResourceManager.GetString("Title_Start", resourceCulture);
+            }
+        }
+        
+        public static string Title_First_track {
+            get {
+                return ResourceManager.GetString("Title_First_track", resourceCulture);
+            }
+        }
+        
+        public static string Title_Last_track {
+            get {
+                return ResourceManager.GetString("Title_Last_track", resourceCulture);
+            }
+        }
+        
+        public static string Title_End {
+            get {
+                return ResourceManager.GetString("Title_End", resourceCulture);
+            }
+        }
+        
+        public static string Title_Track {
+            get {
+                return ResourceManager.GetString("Title_Track", resourceCulture);
+            }
+        }
+        
+        public static string Title_Bps {
+            get {
+                return ResourceManager.GetString("Title_Bps", resourceCulture);
+            }
+        }
+        
+        public static string Title_Raw_bps {
+            get {
+                return ResourceManager.GetString("Title_Raw_bps", resourceCulture);
+            }
+        }
+        
+        public static string Title_Subchannel {
+            get {
+                return ResourceManager.GetString("Title_Subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Title_Pregap {
+            get {
+                return ResourceManager.GetString("Title_Pregap", resourceCulture);
+            }
+        }
+        
+        public static string Title_CompactDisc {
+            get {
+                return ResourceManager.GetString("Title_CompactDisc", resourceCulture);
+            }
+        }
+        
+        public static string Title_DVD_HD_DVD {
+            get {
+                return ResourceManager.GetString("Title_DVD_HD_DVD", resourceCulture);
+            }
+        }
+        
+        public static string Title_DVD_Plus_Dash_R_W {
+            get {
+                return ResourceManager.GetString("Title_DVD_Plus_Dash_R_W", resourceCulture);
+            }
+        }
+        
+        public static string Title_Blu_ray {
+            get {
+                return ResourceManager.GetString("Title_Blu_ray", resourceCulture);
+            }
+        }
+        
+        public static string Title_Xbox {
+            get {
+                return ResourceManager.GetString("Title_Xbox", resourceCulture);
+            }
+        }
+        
+        public static string Title_MMC {
+            get {
+                return ResourceManager.GetString("Title_MMC", resourceCulture);
+            }
+        }
+        
+        public static string Title_SSC {
+            get {
+                return ResourceManager.GetString("Title_SSC", resourceCulture);
+            }
+        }
+        
+        public static string Title_DVD {
+            get {
+                return ResourceManager.GetString("Title_DVD", resourceCulture);
+            }
+        }
+        
+        public static string GD_ROM_dump_support_is_not_yet_implemented {
+            get {
+                return ResourceManager.GetString("GD_ROM_dump_support_is_not_yet_implemented", resourceCulture);
+            }
+        }
+        
+        public static string Dumping_Xbox_discs_require_a_Kreon_drive {
+            get {
+                return ResourceManager.GetString("Dumping_Xbox_discs_require_a_Kreon_drive", resourceCulture);
+            }
+        }
+        
+        public static string GD_ROM_scan_support_is_not_yet_implemented {
+            get {
+                return ResourceManager.GetString("GD_ROM_scan_support_is_not_yet_implemented", resourceCulture);
+            }
+        }
+        
+        public static string Scanning_Xbox_discs_is_not_yet_supported {
+            get {
+                return ResourceManager.GetString("Scanning_Xbox_discs_is_not_yet_supported", resourceCulture);
+            }
+        }
+        
+        public static string Partition_name_0 {
+            get {
+                return ResourceManager.GetString("Partition_name_0", resourceCulture);
+            }
+        }
+        
+        public static string Partition_type_0 {
+            get {
+                return ResourceManager.GetString("Partition_type_0", resourceCulture);
+            }
+        }
+        
+        public static string Partition_start_sector_0_byte_1 {
+            get {
+                return ResourceManager.GetString("Partition_start_sector_0_byte_1", resourceCulture);
+            }
+        }
+        
+        public static string Partition_length_0_sectors_1_bytes {
+            get {
+                return ResourceManager.GetString("Partition_length_0_sectors_1_bytes", resourceCulture);
+            }
+        }
+        
+        public static string Title_Partition_description {
+            get {
+                return ResourceManager.GetString("Title_Partition_description", resourceCulture);
+            }
+        }
+        
+        public static string Drive_identifies_as_Apple_OEM_drive {
+            get {
+                return ResourceManager.GetString("Drive_identifies_as_Apple_OEM_drive", resourceCulture);
+            }
+        }
+        
+        public static string _0_sectors {
+            get {
+                return ResourceManager.GetString("_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Aborting {
+            get {
+                return ResourceManager.GetString("Aborting", resourceCulture);
+            }
+        }
+        
+        public static string Setting_speed_to_8x_for_CD_i_Ready_reading_as_audio {
+            get {
+                return ResourceManager.GetString("Setting_speed_to_8x_for_CD_i_Ready_reading_as_audio", resourceCulture);
+            }
+        }
+        
+        public static string Aborted {
+            get {
+                return ResourceManager.GetString("Aborted", resourceCulture);
+            }
+        }
+        
+        public static string Reading_sector_0_of_1_2_MiB_sec {
+            get {
+                return ResourceManager.GetString("Reading_sector_0_of_1_2_MiB_sec", resourceCulture);
+            }
+        }
+        
+        public static string Adding_CD_i_Ready_hole_from_LBA_0_to_1_inclusive {
+            get {
+                return ResourceManager.GetString("Adding_CD_i_Ready_hole_from_LBA_0_to_1_inclusive", resourceCulture);
+            }
+        }
+        
+        public static string Setting_speed_to_8x_for_audio_reading {
+            get {
+                return ResourceManager.GetString("Setting_speed_to_8x_for_audio_reading", resourceCulture);
+            }
+        }
+        
+        public static string Setting_speed_to_MAX_for_data_reading {
+            get {
+                return ResourceManager.GetString("Setting_speed_to_MAX_for_data_reading", resourceCulture);
+            }
+        }
+        
+        public static string Setting_speed_to_0_x_for_data_reading {
+            get {
+                return ResourceManager.GetString("Setting_speed_to_0_x_for_data_reading", resourceCulture);
+            }
+        }
+        
+        public static string READ_error_0 {
+            get {
+                return ResourceManager.GetString("READ_error_0", resourceCulture);
+            }
+        }
+        
+        public static string Skipping_0_blocks_from_errored_block_1 {
+            get {
+                return ResourceManager.GetString("Skipping_0_blocks_from_errored_block_1", resourceCulture);
+            }
+        }
+        
+        public static string Failed_crossing_into_Lead_Out {
+            get {
+                return ResourceManager.GetString("Failed_crossing_into_Lead_Out", resourceCulture);
+            }
+        }
+        
+        public static string Raw_CD_dumping_not_yet_implemented {
+            get {
+                return ResourceManager.GetString("Raw_CD_dumping_not_yet_implemented", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_get_tracks {
+            get {
+                return ResourceManager.GetString("Could_not_get_tracks", resourceCulture);
+            }
+        }
+        
+        public static string Drive_does_not_support_the_requested_subchannel_format_not_continuing {
+            get {
+                return ResourceManager.GetString("Drive_does_not_support_the_requested_subchannel_format_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_subchannels_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_subchannels_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_subchannels_not_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_subchannels_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Checking_if_drive_supports_reading_without_subchannel {
+            get {
+                return ResourceManager.GetString("Checking_if_drive_supports_reading_without_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Drive_does_not_support_READ_CD_trying_SCSI_READ_commands {
+            get {
+                return ResourceManager.GetString("Drive_does_not_support_READ_CD_trying_SCSI_READ_commands", resourceCulture);
+            }
+        }
+        
+        public static string Checking_if_drive_supports_READ_6 {
+            get {
+                return ResourceManager.GetString("Checking_if_drive_supports_READ_6", resourceCulture);
+            }
+        }
+        
+        public static string Checking_if_drive_supports_READ_10 {
+            get {
+                return ResourceManager.GetString("Checking_if_drive_supports_READ_10", resourceCulture);
+            }
+        }
+        
+        public static string Checking_if_drive_supports_READ_12 {
+            get {
+                return ResourceManager.GetString("Checking_if_drive_supports_READ_12", resourceCulture);
+            }
+        }
+        
+        public static string Checking_if_drive_supports_READ_16 {
+            get {
+                return ResourceManager.GetString("Checking_if_drive_supports_READ_16", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_read_from_disc_not_continuing {
+            get {
+                return ResourceManager.GetString("Cannot_read_from_disc_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Drive_supports_READ_6 {
+            get {
+                return ResourceManager.GetString("Drive_supports_READ_6", resourceCulture);
+            }
+        }
+        
+        public static string Drive_supports_READ_10 {
+            get {
+                return ResourceManager.GetString("Drive_supports_READ_10", resourceCulture);
+            }
+        }
+        
+        public static string Drive_supports_READ_12 {
+            get {
+                return ResourceManager.GetString("Drive_supports_READ_12", resourceCulture);
+            }
+        }
+        
+        public static string Drive_supports_READ_16 {
+            get {
+                return ResourceManager.GetString("Drive_supports_READ_16", resourceCulture);
+            }
+        }
+        
+        public static string Drive_can_read_without_subchannel {
+            get {
+                return ResourceManager.GetString("Drive_can_read_without_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Full_raw_subchannel_reading_supported {
+            get {
+                return ResourceManager.GetString("Full_raw_subchannel_reading_supported", resourceCulture);
+            }
+        }
+        
+        public static string PQ_subchannel_reading_supported {
+            get {
+                return ResourceManager.GetString("PQ_subchannel_reading_supported", resourceCulture);
+            }
+        }
+        
+        public static string WARNING_If_disc_says_CDG_CDEG_CDMIDI_dump_will_be_incorrect {
+            get {
+                return ResourceManager.GetString("WARNING_If_disc_says_CDG_CDEG_CDMIDI_dump_will_be_incorrect", resourceCulture);
+            }
+        }
+        
+        public static string Drive_returns_subchannel_in_BCD {
+            get {
+                return ResourceManager.GetString("Drive_returns_subchannel_in_BCD", resourceCulture);
+            }
+        }
+        
+        public static string Drive_does_not_returns_subchannel_in_BCD {
+            get {
+                return ResourceManager.GetString("Drive_does_not_returns_subchannel_in_BCD", resourceCulture);
+            }
+        }
+        
+        public static string Calculating_pregaps__can_take_some_time {
+            get {
+                return ResourceManager.GetString("Calculating_pregaps__can_take_some_time", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_storing_raw_data_not_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_storing_raw_data_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_storing_raw_data_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_storing_raw_data_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_audio_tracks_cannot_continue {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_audio_tracks_cannot_continue", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_pregaps_not_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_pregaps_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_pregaps_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_pregaps_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_dump_blank_media {
+            get {
+                return ResourceManager.GetString("Cannot_dump_blank_media", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_process_resume_file_not_continuing {
+            get {
+                return ResourceManager.GetString("Could_not_process_resume_file_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_0_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_0_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_0_not_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_0_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Solving_lead_outs {
+            get {
+                return ResourceManager.GetString("Solving_lead_outs", resourceCulture);
+            }
+        }
+        
+        public static string Detecting_disc_type {
+            get {
+                return ResourceManager.GetString("Detecting_disc_type", resourceCulture);
+            }
+        }
+        
+        public static string Disc_contains_a_hidden_track {
+            get {
+                return ResourceManager.GetString("Disc_contains_a_hidden_track", resourceCulture);
+            }
+        }
+        
+        public static string Checking_mode_for_track_0 {
+            get {
+                return ResourceManager.GetString("Checking_mode_for_track_0", resourceCulture);
+            }
+        }
+        
+        public static string Unable_to_guess_mode_for_track_0_continuing {
+            get {
+                return ResourceManager.GetString("Unable_to_guess_mode_for_track_0_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Track_0_is_MODE1 {
+            get {
+                return ResourceManager.GetString("Track_0_is_MODE1", resourceCulture);
+            }
+        }
+        
+        public static string Track_0_is_MODE2 {
+            get {
+                return ResourceManager.GetString("Track_0_is_MODE2", resourceCulture);
+            }
+        }
+        
+        public static string Track_0_is_MODE2_FORM_2 {
+            get {
+                return ResourceManager.GetString("Track_0_is_MODE2_FORM_2", resourceCulture);
+            }
+        }
+        
+        public static string Track_0_is_MODE2_FORM_1 {
+            get {
+                return ResourceManager.GetString("Track_0_is_MODE2_FORM_1", resourceCulture);
+            }
+        }
+        
+        public static string Track_0_is_unknown_mode_1 {
+            get {
+                return ResourceManager.GetString("Track_0_is_unknown_mode_1", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_more_than_1_track_not_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_more_than_1_track_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_audio_tracks_not_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_audio_tracks_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_only_supports_MODE_1_tracks_not_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_only_supports_MODE_1_tracks_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_CD_first_track_pregap_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_CD_first_track_pregap_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_CD_first_track_pregap_not_continuing {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_CD_first_track_pregap_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Device_error_0_trying_to_guess_ideal_transfer_length {
+            get {
+                return ResourceManager.GetString("Device_error_0_trying_to_guess_ideal_transfer_length", resourceCulture);
+            }
+        }
+        
+        public static string Reading_0_sectors_at_a_time {
+            get {
+                return ResourceManager.GetString("Reading_0_sectors_at_a_time", resourceCulture);
+            }
+        }
+        
+        public static string Device_reports_0_blocks_1_bytes {
+            get {
+                return ResourceManager.GetString("Device_reports_0_blocks_1_bytes", resourceCulture);
+            }
+        }
+        
+        public static string Device_can_read_0_blocks_at_a_time {
+            get {
+                return ResourceManager.GetString("Device_can_read_0_blocks_at_a_time", resourceCulture);
+            }
+        }
+        
+        public static string Device_reports_0_bytes_per_logical_block {
+            get {
+                return ResourceManager.GetString("Device_reports_0_bytes_per_logical_block", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_device_type_0 {
+            get {
+                return ResourceManager.GetString("SCSI_device_type_0", resourceCulture);
+            }
+        }
+        
+        public static string Media_identified_as_0 {
+            get {
+                return ResourceManager.GetString("Media_identified_as_0", resourceCulture);
+            }
+        }
+        
+        public static string Error_creating_output_image_not_continuing {
+            get {
+                return ResourceManager.GetString("Error_creating_output_image_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Error_sending_tracks_to_output_image_not_continuing {
+            get {
+                return ResourceManager.GetString("Error_sending_tracks_to_output_image_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_image_does_not_support_subchannels_continuing {
+            get {
+                return ResourceManager.GetString("Output_image_does_not_support_subchannels_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Output_image_does_not_support_subchannels_not_continuing {
+            get {
+                return ResourceManager.GetString("Output_image_does_not_support_subchannels_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Creating_subchannel_log_in_0 {
+            get {
+                return ResourceManager.GetString("Creating_subchannel_log_in_0", resourceCulture);
+            }
+        }
+        
+        public static string Setting_flags_for_track_0 {
+            get {
+                return ResourceManager.GetString("Setting_flags_for_track_0", resourceCulture);
+            }
+        }
+        
+        public static string Found_Media_Catalogue_Number_0 {
+            get {
+                return ResourceManager.GetString("Found_Media_Catalogue_Number_0", resourceCulture);
+            }
+        }
+        
+        public static string Found_ISRC_for_track_0_1 {
+            get {
+                return ResourceManager.GetString("Found_ISRC_for_track_0_1", resourceCulture);
+            }
+        }
+        
+        public static string Resuming_from_block_0 {
+            get {
+                return ResourceManager.GetString("Resuming_from_block_0", resourceCulture);
+            }
+        }
+        
+        public static string Track_0_starts_at_LBA_1_and_ends_at_LBA_2 {
+            get {
+                return ResourceManager.GetString("Track_0_starts_at_LBA_1_and_ends_at_LBA_2", resourceCulture);
+            }
+        }
+        
+        public static string No_audio_tracks_disabling_offset_fix {
+            get {
+                return ResourceManager.GetString("No_audio_tracks_disabling_offset_fix", resourceCulture);
+            }
+        }
+        
+        public static string READ_CD_command_is_not_supported_disabling_offset_fix_Dump_may_not_be_correct {
+            get {
+                return ResourceManager.GetString("READ_CD_command_is_not_supported_disabling_offset_fix_Dump_may_not_be_correct", resourceCulture);
+            }
+        }
+        
+        public static string There_are_audio_tracks_and_offset_fixing_is_disabled_dump_may_not_be_correct {
+            get {
+                return ResourceManager.GetString("There_are_audio_tracks_and_offset_fixing_is_disabled_dump_may_not_be_correct", resourceCulture);
+            }
+        }
+        
+        public static string Dump_may_not_be_correct {
+            get {
+                return ResourceManager.GetString("Dump_may_not_be_correct", resourceCulture);
+            }
+        }
+        
+        public static string Disc_write_offset_is_unknown_dump_may_not_be_correct {
+            get {
+                return ResourceManager.GetString("Disc_write_offset_is_unknown_dump_may_not_be_correct", resourceCulture);
+            }
+        }
+        
+        public static string Combined_disc_and_drive_offset_are_0_bytes_1_samples {
+            get {
+                return ResourceManager.GetString("Combined_disc_and_drive_offset_are_0_bytes_1_samples", resourceCulture);
+            }
+        }
+        
+        public static string Disc_offset_is_0_bytes_1_samples {
+            get {
+                return ResourceManager.GetString("Disc_offset_is_0_bytes_1_samples", resourceCulture);
+            }
+        }
+        
+        public static string Dumping_CD_i_Ready_requires_the_output_image_format_to_support_long_sectors {
+            get {
+                return ResourceManager.GetString("Dumping_CD_i_Ready_requires_the_output_image_format_to_support_long_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Dumping_CD_i_Ready_requires_the_drive_to_support_the_READ_CD_command {
+            get {
+                return ResourceManager.GetString("Dumping_CD_i_Ready_requires_the_drive_to_support_the_READ_CD_command", resourceCulture);
+            }
+        }
+        
+        public static string Enabling_skipping_CD_i_Ready_hole_because_drive_returns_data_as_audio {
+            get {
+                return ResourceManager.GetString("Enabling_skipping_CD_i_Ready_hole_because_drive_returns_data_as_audio", resourceCulture);
+            }
+        }
+        
+        public static string There_will_be_thousand_of_errors_between_track_0_and_track_1_that_is_normal_and_you_can_ignore_them {
+            get {
+                return ResourceManager.GetString("There_will_be_thousand_of_errors_between_track_0_and_track_1_that_is_normal_and_y" +
+                        "ou_can_ignore_them", resourceCulture);
+            }
+        }
+        
+        public static string Dump_finished_in_0_seconds {
+            get {
+                return ResourceManager.GetString("Dump_finished_in_0_seconds", resourceCulture);
+            }
+        }
+        
+        public static string Average_dump_speed_0_KiB_sec {
+            get {
+                return ResourceManager.GetString("Average_dump_speed_0_KiB_sec", resourceCulture);
+            }
+        }
+        
+        public static string Average_write_speed_0_KiB_sec {
+            get {
+                return ResourceManager.GetString("Average_write_speed_0_KiB_sec", resourceCulture);
+            }
+        }
+        
+        public static string Error_Tag_type_0_is_null_skipping {
+            get {
+                return ResourceManager.GetString("Error_Tag_type_0_is_null_skipping", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_tag_0 {
+            get {
+                return ResourceManager.GetString("Cannot_write_tag_0", resourceCulture);
+            }
+        }
+        
+        public static string Sector_0_could_not_be_read {
+            get {
+                return ResourceManager.GetString("Sector_0_could_not_be_read", resourceCulture);
+            }
+        }
+        
+        public static string Setting_ISRC_for_track_0_to_1 {
+            get {
+                return ResourceManager.GetString("Setting_ISRC_for_track_0_to_1", resourceCulture);
+            }
+        }
+        
+        public static string Setting_disc_Media_Catalogue_Number_to_0 {
+            get {
+                return ResourceManager.GetString("Setting_disc_Media_Catalogue_Number_to_0", resourceCulture);
+            }
+        }
+        
+        public static string Closing_output_file {
+            get {
+                return ResourceManager.GetString("Closing_output_file", resourceCulture);
+            }
+        }
+        
+        public static string Closed_in_0_seconds {
+            get {
+                return ResourceManager.GetString("Closed_in_0_seconds", resourceCulture);
+            }
+        }
+        
+        public static string Took_a_total_of_0_seconds_1_processing_commands_2_checksumming_3_writing_4_closing {
+            get {
+                return ResourceManager.GetString("Took_a_total_of_0_seconds_1_processing_commands_2_checksumming_3_writing_4_closin" +
+                        "g", resourceCulture);
+            }
+        }
+        
+        public static string _0_subchannels_could_not_be_read {
+            get {
+                return ResourceManager.GetString("_0_subchannels_could_not_be_read", resourceCulture);
+            }
+        }
+        
+        public static string Sending_MODE_SELECT_to_drive_return_damaged_blocks {
+            get {
+                return ResourceManager.GetString("Sending_MODE_SELECT_to_drive_return_damaged_blocks", resourceCulture);
+            }
+        }
+        
+        public static string Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading {
+            get {
+                return ResourceManager.GetString("Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading", resourceCulture);
+            }
+        }
+        
+        public static string Retrying_sector_0_pass_1_recovering_partial_data_forward {
+            get {
+                return ResourceManager.GetString("Retrying_sector_0_pass_1_recovering_partial_data_forward", resourceCulture);
+            }
+        }
+        
+        public static string Retrying_sector_0_pass_1_forward {
+            get {
+                return ResourceManager.GetString("Retrying_sector_0_pass_1_forward", resourceCulture);
+            }
+        }
+        
+        public static string Retrying_sector_0_pass_1_recovering_partial_data_reverse {
+            get {
+                return ResourceManager.GetString("Retrying_sector_0_pass_1_recovering_partial_data_reverse", resourceCulture);
+            }
+        }
+        
+        public static string Retrying_sector_0_pass_1_reverse {
+            get {
+                return ResourceManager.GetString("Retrying_sector_0_pass_1_reverse", resourceCulture);
+            }
+        }
+        
+        public static string Correctly_retried_sector_0_in_pass_1 {
+            get {
+                return ResourceManager.GetString("Correctly_retried_sector_0_in_pass_1", resourceCulture);
+            }
+        }
+        
+        public static string Sending_MODE_SELECT_to_drive_ignore_error_correction {
+            get {
+                return ResourceManager.GetString("Sending_MODE_SELECT_to_drive_ignore_error_correction", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_get_partial_data_for_sector_0 {
+            get {
+                return ResourceManager.GetString("Trying_to_get_partial_data_for_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string Got_partial_data_for_sector_0_in_pass_1 {
+            get {
+                return ResourceManager.GetString("Got_partial_data_for_sector_0_in_pass_1", resourceCulture);
+            }
+        }
+        
+        public static string Sending_MODE_SELECT_to_drive_return_device_to_previous_status {
+            get {
+                return ResourceManager.GetString("Sending_MODE_SELECT_to_drive_return_device_to_previous_status", resourceCulture);
+            }
+        }
+        
+        public static string Retrying_sector_0_subchannel_pass_1_forward {
+            get {
+                return ResourceManager.GetString("Retrying_sector_0_subchannel_pass_1_forward", resourceCulture);
+            }
+        }
+        
+        public static string Retrying_sector_0_subchannel_pass_1_reverse {
+            get {
+                return ResourceManager.GetString("Retrying_sector_0_subchannel_pass_1_reverse", resourceCulture);
+            }
+        }
+        
+        public static string Correctly_retried_sector_0_subchannel_in_pass_1 {
+            get {
+                return ResourceManager.GetString("Correctly_retried_sector_0_subchannel_in_pass_1", resourceCulture);
+            }
+        }
+        
+        public static string Reading_lead_outs {
+            get {
+                return ResourceManager.GetString("Reading_lead_outs", resourceCulture);
+            }
+        }
+        
+        public static string Reading_sector_0_at_lead_out_1_MiB_sec {
+            get {
+                return ResourceManager.GetString("Reading_sector_0_at_lead_out_1_MiB_sec", resourceCulture);
+            }
+        }
+        
+        public static string Reading_first_track_pregap {
+            get {
+                return ResourceManager.GetString("Reading_first_track_pregap", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_read_first_track_pregap_sector_0_1_MiB_sec {
+            get {
+                return ResourceManager.GetString("Trying_to_read_first_track_pregap_sector_0_1_MiB_sec", resourceCulture);
+            }
+        }
+        
+        public static string Got_0_first_track_pregap_sectors {
+            get {
+                return ResourceManager.GetString("Got_0_first_track_pregap_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Subchannel_is_BCD {
+            get {
+                return ResourceManager.GetString("Subchannel_is_BCD", resourceCulture);
+            }
+        }
+        
+        public static string Subchannel_is_not_BCD {
+            get {
+                return ResourceManager.GetString("Subchannel_is_not_BCD", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_detect_drive_subchannel_BCD {
+            get {
+                return ResourceManager.GetString("Could_not_detect_drive_subchannel_BCD", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_detect_if_drive_subchannel_is_BCD_or_not_pregaps_could_not_be_calculated_dump_may_be_incorrect {
+            get {
+                return ResourceManager.GetString("Could_not_detect_if_drive_subchannel_is_BCD_or_not_pregaps_could_not_be_calculate" +
+                        "d_dump_may_be_incorrect", resourceCulture);
+            }
+        }
+        
+        public static string Skipping_track_0 {
+            get {
+                return ResourceManager.GetString("Skipping_track_0", resourceCulture);
+            }
+        }
+        
+        public static string Skipping_track_0_due_to_Plextor_firmware_bug {
+            get {
+                return ResourceManager.GetString("Skipping_track_0_due_to_Plextor_firmware_bug", resourceCulture);
+            }
+        }
+        
+        public static string Track_0 {
+            get {
+                return ResourceManager.GetString("Track_0", resourceCulture);
+            }
+        }
+        
+        public static string LBA_0_Try_1_Sense_2 {
+            get {
+                return ResourceManager.GetString("LBA_0_Try_1_Sense_2", resourceCulture);
+            }
+        }
+        
+        public static string LBA_0_Try_1_Sense_2_Q_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16 {
+            get {
+                return ResourceManager.GetString("LBA_0_Try_1_Sense_2_Q_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16", resourceCulture);
+            }
+        }
+        
+        public static string LBA_0_Try_1_Sense_2_Q_FIXED_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16 {
+            get {
+                return ResourceManager.GetString("LBA_0_Try_1_Sense_2_Q_FIXED_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16" +
+                        "", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read_subchannel_for_this_track_supposing_hundred_fifty_sectors {
+            get {
+                return ResourceManager.GetString("Could_not_read_subchannel_for_this_track_supposing_hundred_fifty_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read_subchannel_for_this_track_supposing_0_sectors {
+            get {
+                return ResourceManager.GetString("Could_not_read_subchannel_for_this_track_supposing_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read_subchannel_for_sector_0 {
+            get {
+                return ResourceManager.GetString("Could_not_read_subchannel_for_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_get_correct_subchannel_for_sector_0 {
+            get {
+                return ResourceManager.GetString("Could_not_get_correct_subchannel_for_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string All_Q_empty_for_LBA_0 {
+            get {
+                return ResourceManager.GetString("All_Q_empty_for_LBA_0", resourceCulture);
+            }
+        }
+        
+        public static string Invalid_Q_position_for_LBA_0_got_1 {
+            get {
+                return ResourceManager.GetString("Invalid_Q_position_for_LBA_0_got_1", resourceCulture);
+            }
+        }
+        
+        public static string Pregap_for_track_0_1 {
+            get {
+                return ResourceManager.GetString("Pregap_for_track_0_1", resourceCulture);
+            }
+        }
+        
+        public static string Track_0_pregap_is_1_sectors {
+            get {
+                return ResourceManager.GetString("Track_0_pregap_is_1_sectors", resourceCulture);
+            }
+        }
+        
+        public static string _0_sectors_at_the_end_of_the_disc_are_unreadable {
+            get {
+                return ResourceManager.GetString("_0_sectors_at_the_end_of_the_disc_are_unreadable", resourceCulture);
+            }
+        }
+        
+        public static string Checking_if_drive_supports_full_raw_subchannel_reading {
+            get {
+                return ResourceManager.GetString("Checking_if_drive_supports_full_raw_subchannel_reading", resourceCulture);
+            }
+        }
+        
+        public static string Checking_if_drive_supports_PQ_subchannel_reading {
+            get {
+                return ResourceManager.GetString("Checking_if_drive_supports_PQ_subchannel_reading", resourceCulture);
+            }
+        }
+        
+        public static string Reading_ATIP {
+            get {
+                return ResourceManager.GetString("Reading_ATIP", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Disc_Information {
+            get {
+                return ResourceManager.GetString("Reading_Disc_Information", resourceCulture);
+            }
+        }
+        
+        public static string Reading_PMA {
+            get {
+                return ResourceManager.GetString("Reading_PMA", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Session_Information {
+            get {
+                return ResourceManager.GetString("Reading_Session_Information", resourceCulture);
+            }
+        }
+        
+        public static string Reading_CD_Text_from_Lead_In {
+            get {
+                return ResourceManager.GetString("Reading_CD_Text_from_Lead_In", resourceCulture);
+            }
+        }
+        
+        public static string Reading_full_TOC {
+            get {
+                return ResourceManager.GetString("Reading_full_TOC", resourceCulture);
+            }
+        }
+        
+        public static string Building_track_map {
+            get {
+                return ResourceManager.GetString("Building_track_map", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_read_RAW_TOC_requesting_processed_one {
+            get {
+                return ResourceManager.GetString("Cannot_read_RAW_TOC_requesting_processed_one", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read_TOC_if_you_want_to_continue_use_force_and_will_try_from_LBA_0_to_360000 {
+            get {
+                return ResourceManager.GetString("Could_not_read_TOC_if_you_want_to_continue_use_force_and_will_try_from_LBA_0_to_3" +
+                        "60000", resourceCulture);
+            }
+        }
+        
+        public static string No_tracks_found_adding_a_single_track_from_zero_to_Lead_Out {
+            get {
+                return ResourceManager.GetString("No_tracks_found_adding_a_single_track_from_zero_to_Lead_Out", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_find_Lead_Out_if_you_want_to_continue_use_force_option {
+            get {
+                return ResourceManager.GetString("Could_not_find_Lead_Out_if_you_want_to_continue_use_force_option", resourceCulture);
+            }
+        }
+        
+        public static string WARNING_Could_not_find_Lead_Out_start_will_try_to_read_up_to {
+            get {
+                return ResourceManager.GetString("WARNING_Could_not_find_Lead_Out_start_will_try_to_read_up_to", resourceCulture);
+            }
+        }
+        
+        public static string Trimming_skipped_sectors {
+            get {
+                return ResourceManager.GetString("Trimming_skipped_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Trimming_sector_0 {
+            get {
+                return ResourceManager.GetString("Trimming_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string Trimming_finished_in_0_seconds {
+            get {
+                return ResourceManager.GetString("Trimming_finished_in_0_seconds", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read {
+            get {
+                return ResourceManager.GetString("Could_not_read", resourceCulture);
+            }
+        }
+        
+        public static string Retrode_partition_not_recognized_not_dumping {
+            get {
+                return ResourceManager.GetString("Retrode_partition_not_recognized_not_dumping", resourceCulture);
+            }
+        }
+        
+        public static string Reading_root_directory_in_sector_0 {
+            get {
+                return ResourceManager.GetString("Reading_root_directory_in_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string No_cartridge_found_not_dumping {
+            get {
+                return ResourceManager.GetString("No_cartridge_found_not_dumping", resourceCulture);
+            }
+        }
+        
+        public static string The_specified_format_does_not_support_the_inserted_cartridge {
+            get {
+                return ResourceManager.GetString("The_specified_format_does_not_support_the_inserted_cartridge", resourceCulture);
+            }
+        }
+        
+        public static string Cartridge_has_0_bytes_1_GiB {
+            get {
+                return ResourceManager.GetString("Cartridge_has_0_bytes_1_GiB", resourceCulture);
+            }
+        }
+        
+        public static string Cartridge_has_0_bytes_1_MiB {
+            get {
+                return ResourceManager.GetString("Cartridge_has_0_bytes_1_MiB", resourceCulture);
+            }
+        }
+        
+        public static string Cartridge_has_0_bytes_1_KiB {
+            get {
+                return ResourceManager.GetString("Cartridge_has_0_bytes_1_KiB", resourceCulture);
+            }
+        }
+        
+        public static string Cartridge_has_0_bytes {
+            get {
+                return ResourceManager.GetString("Cartridge_has_0_bytes", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_creating_output_image_not_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_creating_output_image_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Reading_byte_0_of_1_2_MiB_sec_ {
+            get {
+                return ResourceManager.GetString("Reading_byte_0_of_1_2_MiB_sec_", resourceCulture);
+            }
+        }
+        
+        public static string Skipping_0_bytes_from_errored_byte_1 {
+            get {
+                return ResourceManager.GetString("Skipping_0_bytes_from_errored_byte_1", resourceCulture);
+            }
+        }
+        
+        public static string Image_is_not_writable_aborting {
+            get {
+                return ResourceManager.GetString("Image_is_not_writable_aborting", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_detect_capacity {
+            get {
+                return ResourceManager.GetString("Could_not_detect_capacity", resourceCulture);
+            }
+        }
+        
+        public static string ERROR_Unable_to_read_medium_or_empty_medium_present {
+            get {
+                return ResourceManager.GetString("ERROR_Unable_to_read_medium_or_empty_medium_present", resourceCulture);
+            }
+        }
+        
+        public static string Unable_to_read_medium_or_empty_medium_present {
+            get {
+                return ResourceManager.GetString("Unable_to_read_medium_or_empty_medium_present", resourceCulture);
+            }
+        }
+        
+        public static string Media_detected_as_MemoryStick_Pro_Duo {
+            get {
+                return ResourceManager.GetString("Media_detected_as_MemoryStick_Pro_Duo", resourceCulture);
+            }
+        }
+        
+        public static string Media_detected_as_MemoryStick_Duo {
+            get {
+                return ResourceManager.GetString("Media_detected_as_MemoryStick_Duo", resourceCulture);
+            }
+        }
+        
+        public static string Correctly_retried_block_0_in_pass_1 {
+            get {
+                return ResourceManager.GetString("Correctly_retried_block_0_in_pass_1", resourceCulture);
+            }
+        }
+        
+        public static string Creating_sidecar {
+            get {
+                return ResourceManager.GetString("Creating_sidecar", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_opening_created_image {
+            get {
+                return ResourceManager.GetString("Error_0_opening_created_image", resourceCulture);
+            }
+        }
+        
+        public static string Sidecar_created_in_0_seconds {
+            get {
+                return ResourceManager.GetString("Sidecar_created_in_0_seconds", resourceCulture);
+            }
+        }
+        
+        public static string Average_checksum_speed_0_KiB_sec {
+            get {
+                return ResourceManager.GetString("Average_checksum_speed_0_KiB_sec", resourceCulture);
+            }
+        }
+        
+        public static string Found_filesystem_0_at_sector_1 {
+            get {
+                return ResourceManager.GetString("Found_filesystem_0_at_sector_1", resourceCulture);
+            }
+        }
+        
+        public static string Selected_output_plugin_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump {
+            get {
+                return ResourceManager.GetString("Selected_output_plugin_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump", resourceCulture);
+            }
+        }
+        
+        public static string Checking_if_media_is_UMD_or_MemoryStick {
+            get {
+                return ResourceManager.GetString("Checking_if_media_is_UMD_or_MemoryStick", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_get_MODE_SENSE {
+            get {
+                return ResourceManager.GetString("Could_not_get_MODE_SENSE", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_decode_MODE_SENSE {
+            get {
+                return ResourceManager.GetString("Could_not_decode_MODE_SENSE", resourceCulture);
+            }
+        }
+        
+        public static string FAT_starts_at_sector_0_and_runs_for_1_sectors {
+            get {
+                return ResourceManager.GetString("FAT_starts_at_sector_0_and_runs_for_1_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Reading_FAT {
+            get {
+                return ResourceManager.GetString("Reading_FAT", resourceCulture);
+            }
+        }
+        
+        public static string Traversing_FAT {
+            get {
+                return ResourceManager.GetString("Traversing_FAT", resourceCulture);
+            }
+        }
+        
+        public static string The_specified_plugin_does_not_support_storing_optical_disc_images {
+            get {
+                return ResourceManager.GetString("The_specified_plugin_does_not_support_storing_optical_disc_images", resourceCulture);
+            }
+        }
+        
+        public static string Device_reports_0_bytes_per_physical_block {
+            get {
+                return ResourceManager.GetString("Device_reports_0_bytes_per_physical_block", resourceCulture);
+            }
+        }
+        
+        public static string Media_part_number_is_0 {
+            get {
+                return ResourceManager.GetString("Media_part_number_is_0", resourceCulture);
+            }
+        }
+        
+        public static string Error_retrieving_CMI_for_sector_0 {
+            get {
+                return ResourceManager.GetString("Error_retrieving_CMI_for_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string Error_retrieving_title_key_for_sector_0 {
+            get {
+                return ResourceManager.GetString("Error_retrieving_title_key_for_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found {
+            get {
+                return ResourceManager.GetString("INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found", resourceCulture);
+            }
+        }
+        
+        public static string Initializing_reader {
+            get {
+                return ResourceManager.GetString("Initializing_reader", resourceCulture);
+            }
+        }
+        
+        public static string Requesting_MODE_SENSE_10 {
+            get {
+                return ResourceManager.GetString("Requesting_MODE_SENSE_10", resourceCulture);
+            }
+        }
+        
+        public static string Requesting_MODE_SENSE_6 {
+            get {
+                return ResourceManager.GetString("Requesting_MODE_SENSE_6", resourceCulture);
+            }
+        }
+        
+        public static string MiniDisc_albums_NetMD_discs_or_user_written_audio_MiniDisc_cannot_be_dumped {
+            get {
+                return ResourceManager.GetString("MiniDisc_albums_NetMD_discs_or_user_written_audio_MiniDisc_cannot_be_dumped", resourceCulture);
+            }
+        }
+        
+        public static string ERROR_Cannot_find_correct_read_command_0 {
+            get {
+                return ResourceManager.GetString("ERROR_Cannot_find_correct_read_command_0", resourceCulture);
+            }
+        }
+        
+        public static string Unable_to_read_medium {
+            get {
+                return ResourceManager.GetString("Unable_to_read_medium", resourceCulture);
+            }
+        }
+        
+        public static string ERROR_Cannot_get_blocks_to_read_0 {
+            get {
+                return ResourceManager.GetString("ERROR_Cannot_get_blocks_to_read_0", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_medium_type_0 {
+            get {
+                return ResourceManager.GetString("SCSI_medium_type_0", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_density_type_0 {
+            get {
+                return ResourceManager.GetString("SCSI_density_type_0", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_floppy_mode_page_present_0 {
+            get {
+                return ResourceManager.GetString("SCSI_floppy_mode_page_present_0", resourceCulture);
+            }
+        }
+        
+        public static string Device_doesnt_seem_capable_of_reading_raw_data_from_media {
+            get {
+                return ResourceManager.GetString("Device_doesnt_seem_capable_of_reading_raw_data_from_media", resourceCulture);
+            }
+        }
+        
+        public static string Device_is_capable_of_reading_raw_data_but_Ive_been_unable_to_guess_correct_sector_size {
+            get {
+                return ResourceManager.GetString("Device_is_capable_of_reading_raw_data_but_Ive_been_unable_to_guess_correct_sector" +
+                        "_size", resourceCulture);
+            }
+        }
+        
+        public static string If_you_want_to_continue_reading_cooked_data_when_raw_is_not_available_use_the_force_option {
+            get {
+                return ResourceManager.GetString("If_you_want_to_continue_reading_cooked_data_when_raw_is_not_available_use_the_for" +
+                        "ce_option", resourceCulture);
+            }
+        }
+        
+        public static string Continuing_dumping_cooked_data {
+            get {
+                return ResourceManager.GetString("Continuing_dumping_cooked_data", resourceCulture);
+            }
+        }
+        
+        public static string Reading_0_raw_bytes_1_cooked_bytes_per_sector {
+            get {
+                return ResourceManager.GetString("Reading_0_raw_bytes_1_cooked_bytes_per_sector", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_0 {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_0", resourceCulture);
+            }
+        }
+        
+        public static string Several_media_tags_not_supported_continuing {
+            get {
+                return ResourceManager.GetString("Several_media_tags_not_supported_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Several_media_tags_not_supported_not_continuing {
+            get {
+                return ResourceManager.GetString("Several_media_tags_not_supported_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Image_does_not_support_multiple_sessions_in_non_Compact_Disc_dumps_continuing {
+            get {
+                return ResourceManager.GetString("Image_does_not_support_multiple_sessions_in_non_Compact_Disc_dumps_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Image_does_not_support_multiple_sessions_in_non_Compact_Disc_dumps_not_continuing {
+            get {
+                return ResourceManager.GetString("Image_does_not_support_multiple_sessions_in_non_Compact_Disc_dumps_not_continuing" +
+                        "", resourceCulture);
+            }
+        }
+        
+        public static string Image_does_not_support_multiple_tracks_in_non_Compact_Disc_dumps_continuing {
+            get {
+                return ResourceManager.GetString("Image_does_not_support_multiple_tracks_in_non_Compact_Disc_dumps_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Image_does_not_support_multiple_tracks_in_non_Compact_Disc_dumps_not_continuing {
+            get {
+                return ResourceManager.GetString("Image_does_not_support_multiple_tracks_in_non_Compact_Disc_dumps_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Setting_geometry_to_0_cylinders_1_heads_2_sectors_per_track {
+            get {
+                return ResourceManager.GetString("Setting_geometry_to_0_cylinders_1_heads_2_sectors_per_track", resourceCulture);
+            }
+        }
+        
+        public static string Creating_single_track_as_could_not_retrieve_track_list_from_drive {
+            get {
+                return ResourceManager.GetString("Creating_single_track_as_could_not_retrieve_track_list_from_drive", resourceCulture);
+            }
+        }
+        
+        public static string Setting_speed_to_MAX {
+            get {
+                return ResourceManager.GetString("Setting_speed_to_MAX", resourceCulture);
+            }
+        }
+        
+        public static string Setting_speed_to_0_x {
+            get {
+                return ResourceManager.GetString("Setting_speed_to_0_x", resourceCulture);
+            }
+        }
+        
+        public static string Title_keys_dumping_is_enabled_This_will_be_very_slow {
+            get {
+                return ResourceManager.GetString("Title_keys_dumping_is_enabled_This_will_be_very_slow", resourceCulture);
+            }
+        }
+        
+        public static string Reading_USB_descriptors {
+            get {
+                return ResourceManager.GetString("Reading_USB_descriptors", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_USB_descriptors {
+            get {
+                return ResourceManager.GetString("Cannot_write_USB_descriptors", resourceCulture);
+            }
+        }
+        
+        public static string Requesting_ATAPI_IDENTIFY_PACKET_DEVICE {
+            get {
+                return ResourceManager.GetString("Requesting_ATAPI_IDENTIFY_PACKET_DEVICE", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_ATAPI_IDENTIFY_PACKET_DEVICE {
+            get {
+                return ResourceManager.GetString("Cannot_write_ATAPI_IDENTIFY_PACKET_DEVICE", resourceCulture);
+            }
+        }
+        
+        public static string Requesting_SCSI_INQUIRY {
+            get {
+                return ResourceManager.GetString("Requesting_SCSI_INQUIRY", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_SCSI_INQUIRY {
+            get {
+                return ResourceManager.GetString("Cannot_write_SCSI_INQUIRY", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_SCSI_MODE_SENSE_10 {
+            get {
+                return ResourceManager.GetString("Cannot_write_SCSI_MODE_SENSE_10", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_SCSI_MODE_SENSE_6 {
+            get {
+                return ResourceManager.GetString("Cannot_write_SCSI_MODE_SENSE_6", resourceCulture);
+            }
+        }
+        
+        public static string Found_blank_block_0_in_pass_1 {
+            get {
+                return ResourceManager.GetString("Found_blank_block_0_in_pass_1", resourceCulture);
+            }
+        }
+        
+        public static string Retrying_title_key_0_pass_1_forward {
+            get {
+                return ResourceManager.GetString("Retrying_title_key_0_pass_1_forward", resourceCulture);
+            }
+        }
+        
+        public static string Retrying_title_key_0_pass_1_reverse {
+            get {
+                return ResourceManager.GetString("Retrying_title_key_0_pass_1_reverse", resourceCulture);
+            }
+        }
+        
+        public static string Correctly_retried_title_key_0_in_pass_1 {
+            get {
+                return ResourceManager.GetString("Correctly_retried_title_key_0_in_pass_1", resourceCulture);
+            }
+        }
+        
+        public static string The_current_environment_doesn_t_support_the_medium_scan_command {
+            get {
+                return ResourceManager.GetString("The_current_environment_doesn_t_support_the_medium_scan_command", resourceCulture);
+            }
+        }
+        
+        public static string MEDIUM_SCAN_github_plead_message {
+            get {
+                return ResourceManager.GetString("MEDIUM_SCAN_github_plead_message", resourceCulture);
+            }
+        }
+        
+        public static string Scanning_for_0_written_blocks_starting_in_block_1 {
+            get {
+                return ResourceManager.GetString("Scanning_for_0_written_blocks_starting_in_block_1", resourceCulture);
+            }
+        }
+        
+        public static string Scanning_for_0_blank_blocks_starting_in_block_1 {
+            get {
+                return ResourceManager.GetString("Scanning_for_0_blank_blocks_starting_in_block_1", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_dump_empty_media {
+            get {
+                return ResourceManager.GetString("Cannot_dump_empty_media", resourceCulture);
+            }
+        }
+        
+        public static string Found_blank_block_0 {
+            get {
+                return ResourceManager.GetString("Found_blank_block_0", resourceCulture);
+            }
+        }
+        
+        public static string Raw_dumping_not_yet_supported_in_ATA_devices_continuing {
+            get {
+                return ResourceManager.GetString("Raw_dumping_not_yet_supported_in_ATA_devices_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Raw_dumping_not_yet_supported_in_ATA_devices_aborting {
+            get {
+                return ResourceManager.GetString("Raw_dumping_not_yet_supported_in_ATA_devices_aborting", resourceCulture);
+            }
+        }
+        
+        public static string Requesting_ATA_IDENTIFY_DEVICE {
+            get {
+                return ResourceManager.GetString("Requesting_ATA_IDENTIFY_DEVICE", resourceCulture);
+            }
+        }
+        
+        public static string ERROR_Cannot_get_block_size_0 {
+            get {
+                return ResourceManager.GetString("ERROR_Cannot_get_block_size_0", resourceCulture);
+            }
+        }
+        
+        public static string Device_reports_0_cylinders_1_heads_2_sectors_per_track {
+            get {
+                return ResourceManager.GetString("Device_reports_0_cylinders_1_heads_2_sectors_per_track", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_USB_descriptors {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_USB_descriptors", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_PCMCIA_CIS_descriptors {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_PCMCIA_CIS_descriptors", resourceCulture);
+            }
+        }
+        
+        public static string Dump_Ata_Output_format_does_not_support_ATA_IDENTIFY_ {
+            get {
+                return ResourceManager.GetString("Dump_Ata_Output_format_does_not_support_ATA_IDENTIFY_", resourceCulture);
+            }
+        }
+        
+        public static string Reading_cylinder_0_head_1_sector_2_3_MiB_sec {
+            get {
+                return ResourceManager.GetString("Reading_cylinder_0_head_1_sector_2_3_MiB_sec", resourceCulture);
+            }
+        }
+        
+        public static string Error_reading_cylinder_0_head_1_sector_2 {
+            get {
+                return ResourceManager.GetString("Error_reading_cylinder_0_head_1_sector_2", resourceCulture);
+            }
+        }
+        
+        public static string Reading_PCMCIA_CIS {
+            get {
+                return ResourceManager.GetString("Reading_PCMCIA_CIS", resourceCulture);
+            }
+        }
+        
+        public static string Decoding_PCMCIA_CIS {
+            get {
+                return ResourceManager.GetString("Decoding_PCMCIA_CIS", resourceCulture);
+            }
+        }
+        
+        public static string Unable_to_communicate_with_ATA_device {
+            get {
+                return ResourceManager.GetString("Unable_to_communicate_with_ATA_device", resourceCulture);
+            }
+        }
+        
+        public static string Device_not_in_database {
+            get {
+                return ResourceManager.GetString("Device_not_in_database", resourceCulture);
+            }
+        }
+        
+        public static string Device_in_database_since_0 {
+            get {
+                return ResourceManager.GetString("Device_in_database_since_0", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_detect_image_format {
+            get {
+                return ResourceManager.GetString("Could_not_detect_image_format", resourceCulture);
+            }
+        }
+        
+        public static string Device_reports_current_profile_is_0 {
+            get {
+                return ResourceManager.GetString("Device_reports_current_profile_is_0", resourceCulture);
+            }
+        }
+        
+        public static string Device_reports_disc_has_0_blocks {
+            get {
+                return ResourceManager.GetString("Device_reports_disc_has_0_blocks", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Physical_Format_Information {
+            get {
+                return ResourceManager.GetString("Reading_Physical_Format_Information", resourceCulture);
+            }
+        }
+        
+        public static string Dumping_Nintendo_GameCube_or_Wii_discs_is_not_yet_implemented {
+            get {
+                return ResourceManager.GetString("Dumping_Nintendo_GameCube_or_Wii_discs_is_not_yet_implemented", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Disc_Manufacturing_Information {
+            get {
+                return ResourceManager.GetString("Reading_Disc_Manufacturing_Information", resourceCulture);
+            }
+        }
+        
+        public static string Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware {
+            get {
+                return ResourceManager.GetString("Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Lead_in_Copyright_Information {
+            get {
+                return ResourceManager.GetString("Reading_Lead_in_Copyright_Information", resourceCulture);
+            }
+        }
+        
+        public static string Drive_reports_no_copy_protection_on_disc {
+            get {
+                return ResourceManager.GetString("Drive_reports_no_copy_protection_on_disc", resourceCulture);
+            }
+        }
+        
+        public static string Drive_reports_the_disc_uses_copy_protection_The_dump_will_be_incorrect_unless_decryption_is_enabled {
+            get {
+                return ResourceManager.GetString("Drive_reports_the_disc_uses_copy_protection_The_dump_will_be_incorrect_unless_dec" +
+                        "ryption_is_enabled", resourceCulture);
+            }
+        }
+        
+        public static string Drive_reports_disc_uses_CSS_copy_protection {
+            get {
+                return ResourceManager.GetString("Drive_reports_disc_uses_CSS_copy_protection", resourceCulture);
+            }
+        }
+        
+        public static string Reading_disc_key {
+            get {
+                return ResourceManager.GetString("Reading_disc_key", resourceCulture);
+            }
+        }
+        
+        public static string Disc_and_drive_authentication_succeeded {
+            get {
+                return ResourceManager.GetString("Disc_and_drive_authentication_succeeded", resourceCulture);
+            }
+        }
+        
+        public static string Disc_and_drive_regions_match {
+            get {
+                return ResourceManager.GetString("Disc_and_drive_regions_match", resourceCulture);
+            }
+        }
+        
+        public static string Disc_and_drive_regions_do_not_match_The_dump_will_be_incorrect {
+            get {
+                return ResourceManager.GetString("Disc_and_drive_regions_do_not_match_The_dump_will_be_incorrect", resourceCulture);
+            }
+        }
+        
+        public static string Decrypting_disc_key {
+            get {
+                return ResourceManager.GetString("Decrypting_disc_key", resourceCulture);
+            }
+        }
+        
+        public static string Decryption_of_disc_key_succeeded {
+            get {
+                return ResourceManager.GetString("Decryption_of_disc_key_succeeded", resourceCulture);
+            }
+        }
+        
+        public static string Decryption_of_disc_key_failed {
+            get {
+                return ResourceManager.GetString("Decryption_of_disc_key_failed", resourceCulture);
+            }
+        }
+        
+        public static string Drive_reports_0_copy_protection_not_yet_supported_dump_incorrect {
+            get {
+                return ResourceManager.GetString("Drive_reports_0_copy_protection_not_yet_supported_dump_incorrect", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Burst_Cutting_Area {
+            get {
+                return ResourceManager.GetString("Reading_Burst_Cutting_Area", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Disc_Description_Structure {
+            get {
+                return ResourceManager.GetString("Reading_Disc_Description_Structure", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Spare_Area_Information {
+            get {
+                return ResourceManager.GetString("Reading_Spare_Area_Information", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Pre_Recorded_Information {
+            get {
+                return ResourceManager.GetString("Reading_Pre_Recorded_Information", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Media_Identifier {
+            get {
+                return ResourceManager.GetString("Reading_Media_Identifier", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Recordable_Physical_Information {
+            get {
+                return ResourceManager.GetString("Reading_Recordable_Physical_Information", resourceCulture);
+            }
+        }
+        
+        public static string Reading_ADdress_In_Pregroove {
+            get {
+                return ResourceManager.GetString("Reading_ADdress_In_Pregroove", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Disc_Control_Blocks {
+            get {
+                return ResourceManager.GetString("Reading_Disc_Control_Blocks", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Disc_Definition_Structure {
+            get {
+                return ResourceManager.GetString("Reading_Disc_Definition_Structure", resourceCulture);
+            }
+        }
+        
+        public static string Resuming_CHS_devices_is_currently_not_supported {
+            get {
+                return ResourceManager.GetString("Resuming_CHS_devices_is_currently_not_supported", resourceCulture);
+            }
+        }
+        
+        public static string Resume_specifies_tape_but_device_is_not_tape {
+            get {
+                return ResourceManager.GetString("Resume_specifies_tape_but_device_is_not_tape", resourceCulture);
+            }
+        }
+        
+        public static string Resume_specifies_not_tape_but_device_is_tape {
+            get {
+                return ResourceManager.GetString("Resume_specifies_not_tape_but_device_is_tape", resourceCulture);
+            }
+        }
+        
+        public static string Resume_specifies_removable_but_device_is_non_removable {
+            get {
+                return ResourceManager.GetString("Resume_specifies_removable_but_device_is_non_removable", resourceCulture);
+            }
+        }
+        
+        public static string Resume_specifies_non_removable_but_device_is_removable {
+            get {
+                return ResourceManager.GetString("Resume_specifies_non_removable_but_device_is_removable", resourceCulture);
+            }
+        }
+        
+        public static string Resume_file_different_number_of_blocks_not_continuing {
+            get {
+                return ResourceManager.GetString("Resume_file_different_number_of_blocks_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Resume_file_different_manufacturer_not_continuing {
+            get {
+                return ResourceManager.GetString("Resume_file_different_manufacturer_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Resume_file_different_model_not_continuing {
+            get {
+                return ResourceManager.GetString("Resume_file_different_model_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Resume_file_different_serial_number_not_continuing {
+            get {
+                return ResourceManager.GetString("Resume_file_different_serial_number_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Resume_file_different_firmware_revision_not_continuing {
+            get {
+                return ResourceManager.GetString("Resume_file_different_firmware_revision_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Found_corrupt_resume_file_cannot_continue {
+            get {
+                return ResourceManager.GetString("Found_corrupt_resume_file_cannot_continue", resourceCulture);
+            }
+        }
+        
+        public static string Please_insert_media_in_drive {
+            get {
+                return ResourceManager.GetString("Please_insert_media_in_drive", resourceCulture);
+            }
+        }
+        
+        public static string Error_testing_unit_was_ready_0 {
+            get {
+                return ResourceManager.GetString("Error_testing_unit_was_ready_0", resourceCulture);
+            }
+        }
+        
+        public static string Unknown_testing_unit_was_ready {
+            get {
+                return ResourceManager.GetString("Unknown_testing_unit_was_ready", resourceCulture);
+            }
+        }
+        
+        public static string Tapes_cannot_be_dumped_raw {
+            get {
+                return ResourceManager.GetString("Tapes_cannot_be_dumped_raw", resourceCulture);
+            }
+        }
+        
+        public static string The_specified_plugin_does_not_support_storing_streaming_tape_images {
+            get {
+                return ResourceManager.GetString("The_specified_plugin_does_not_support_storing_streaming_tape_images", resourceCulture);
+            }
+        }
+        
+        public static string Raw_dumping_is_not_supported_in_MMC_or_SD_devices_Continuing {
+            get {
+                return ResourceManager.GetString("Raw_dumping_is_not_supported_in_MMC_or_SD_devices_Continuing", resourceCulture);
+            }
+        }
+        
+        public static string Raw_dumping_is_not_supported_in_MMC_or_SD_devices_Aborting {
+            get {
+                return ResourceManager.GetString("Raw_dumping_is_not_supported_in_MMC_or_SD_devices_Aborting", resourceCulture);
+            }
+        }
+        
+        public static string Reading_CSD {
+            get {
+                return ResourceManager.GetString("Reading_CSD", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Extended_CSD {
+            get {
+                return ResourceManager.GetString("Reading_Extended_CSD", resourceCulture);
+            }
+        }
+        
+        public static string Reading_OCR {
+            get {
+                return ResourceManager.GetString("Reading_OCR", resourceCulture);
+            }
+        }
+        
+        public static string Reading_SCR {
+            get {
+                return ResourceManager.GetString("Reading_SCR", resourceCulture);
+            }
+        }
+        
+        public static string Reading_CID {
+            get {
+                return ResourceManager.GetString("Reading_CID", resourceCulture);
+            }
+        }
+        
+        public static string Unable_to_get_device_size {
+            get {
+                return ResourceManager.GetString("Unable_to_get_device_size", resourceCulture);
+            }
+        }
+        
+        public static string Device_reports_0_blocks {
+            get {
+                return ResourceManager.GetString("Device_reports_0_blocks", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_reopening_device {
+            get {
+                return ResourceManager.GetString("Error_0_reopening_device", resourceCulture);
+            }
+        }
+        
+        public static string ERROR_Cannot_get_blocks_to_read_device_error_0 {
+            get {
+                return ResourceManager.GetString("ERROR_Cannot_get_blocks_to_read_device_error_0", resourceCulture);
+            }
+        }
+        
+        public static string DumBuffered_OS_reads_are_not_working_trying_direct_commands {
+            get {
+                return ResourceManager.GetString("DumBuffered_OS_reads_are_not_working_trying_direct_commands", resourceCulture);
+            }
+        }
+        
+        public static string ERROR_Could_not_read_from_device_device_error_0 {
+            get {
+                return ResourceManager.GetString("ERROR_Could_not_read_from_device_device_error_0", resourceCulture);
+            }
+        }
+        
+        public static string Device_error_0_trying_to_read_from_device {
+            get {
+                return ResourceManager.GetString("Device_error_0_trying_to_read_from_device", resourceCulture);
+            }
+        }
+        
+        public static string Device_can_read_0_blocks_at_a_time_using_OS_buffered_reads {
+            get {
+                return ResourceManager.GetString("Device_can_read_0_blocks_at_a_time_using_OS_buffered_reads", resourceCulture);
+            }
+        }
+        
+        public static string Device_can_read_0_blocks_using_sequential_commands {
+            get {
+                return ResourceManager.GetString("Device_can_read_0_blocks_using_sequential_commands", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_CID_to_output_image {
+            get {
+                return ResourceManager.GetString("Cannot_write_CID_to_output_image", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_CSD_to_output_image {
+            get {
+                return ResourceManager.GetString("Cannot_write_CSD_to_output_image", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_Extended_CSD_to_output_image {
+            get {
+                return ResourceManager.GetString("Cannot_write_Extended_CSD_to_output_image", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_OCR_to_output_image {
+            get {
+                return ResourceManager.GetString("Cannot_write_OCR_to_output_image", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_write_SCR_to_output_image {
+            get {
+                return ResourceManager.GetString("Cannot_write_SCR_to_output_image", resourceCulture);
+            }
+        }
+        
+        public static string Drive_has_status_error_please_correct_Sense_follows {
+            get {
+                return ResourceManager.GetString("Drive_has_status_error_please_correct_Sense_follows", resourceCulture);
+            }
+        }
+        
+        public static string Rewinding_please_wait {
+            get {
+                return ResourceManager.GetString("Rewinding_please_wait", resourceCulture);
+            }
+        }
+        
+        public static string Drive_could_not_rewind_please_correct_Sense_follows {
+            get {
+                return ResourceManager.GetString("Drive_could_not_rewind_please_correct_Sense_follows", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_get_position_Sense_follows {
+            get {
+                return ResourceManager.GetString("Could_not_get_position_Sense_follows", resourceCulture);
+            }
+        }
+        
+        public static string Drive_not_in_partition_0_Rewinding_please_wait {
+            get {
+                return ResourceManager.GetString("Drive_not_in_partition_0_Rewinding_please_wait", resourceCulture);
+            }
+        }
+        
+        public static string Drive_could_not_rewind_to_partition_0_but_no_error_occurred {
+            get {
+                return ResourceManager.GetString("Drive_could_not_rewind_to_partition_0_but_no_error_occurred", resourceCulture);
+            }
+        }
+        
+        public static string Drive_could_not_return_back_Sense_follows {
+            get {
+                return ResourceManager.GetString("Drive_could_not_return_back_Sense_follows", resourceCulture);
+            }
+        }
+        
+        public static string Drive_could_not_read_Sense_follows {
+            get {
+                return ResourceManager.GetString("Drive_could_not_read_Sense_follows", resourceCulture);
+            }
+        }
+        
+        public static string Blocksize_changed_to_0_bytes_at_block_1 {
+            get {
+                return ResourceManager.GetString("Blocksize_changed_to_0_bytes_at_block_1", resourceCulture);
+            }
+        }
+        
+        public static string Drive_could_not_go_back_one_block_Sense_follows {
+            get {
+                return ResourceManager.GetString("Drive_could_not_go_back_one_block_Sense_follows", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_read_device_dont_know_why_exiting {
+            get {
+                return ResourceManager.GetString("Cannot_read_device_dont_know_why_exiting", resourceCulture);
+            }
+        }
+        
+        public static string Positioning_tape_to_block_1 {
+            get {
+                return ResourceManager.GetString("Positioning_tape_to_block_1", resourceCulture);
+            }
+        }
+        
+        public static string LOCATE_LONG_works {
+            get {
+                return ResourceManager.GetString("LOCATE_LONG_works", resourceCulture);
+            }
+        }
+        
+        public static string LOCATE_works {
+            get {
+                return ResourceManager.GetString("LOCATE_works", resourceCulture);
+            }
+        }
+        
+        public static string Positioning_tape_to_block_0 {
+            get {
+                return ResourceManager.GetString("Positioning_tape_to_block_0", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_check_current_position_unable_to_resume_If_you_want_to_continue_use_force {
+            get {
+                return ResourceManager.GetString("Could_not_check_current_position_unable_to_resume_If_you_want_to_continue_use_for" +
+                        "ce", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_check_current_position_unable_to_resume_Dumping_from_the_start {
+            get {
+                return ResourceManager.GetString("Could_not_check_current_position_unable_to_resume_Dumping_from_the_start", resourceCulture);
+            }
+        }
+        
+        public static string Current_position_is_not_as_expected_unable_to_resume_If_you_want_to_continue_use_force {
+            get {
+                return ResourceManager.GetString("Current_position_is_not_as_expected_unable_to_resume_If_you_want_to_continue_use_" +
+                        "force", resourceCulture);
+            }
+        }
+        
+        public static string Current_position_is_not_as_expected_unable_to_resume_Dumping_from_the_start {
+            get {
+                return ResourceManager.GetString("Current_position_is_not_as_expected_unable_to_resume_Dumping_from_the_start", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_reposition_tape_unable_to_resume_If_you_want_to_continue_use_force {
+            get {
+                return ResourceManager.GetString("Cannot_reposition_tape_unable_to_resume_If_you_want_to_continue_use_force", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_reposition_tape_unable_to_resume_Dumping_from_the_start {
+            get {
+                return ResourceManager.GetString("Cannot_reposition_tape_unable_to_resume_Dumping_from_the_start", resourceCulture);
+            }
+        }
+        
+        public static string Error_setting_output_image_in_tape_mode_not_continuing {
+            get {
+                return ResourceManager.GetString("Error_setting_output_image_in_tape_mode_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Finished_partition_0 {
+            get {
+                return ResourceManager.GetString("Finished_partition_0", resourceCulture);
+            }
+        }
+        
+        public static string Seeking_to_partition_0 {
+            get {
+                return ResourceManager.GetString("Seeking_to_partition_0", resourceCulture);
+            }
+        }
+        
+        public static string Reading_block_0_1_MiB_sec {
+            get {
+                return ResourceManager.GetString("Reading_block_0_1_MiB_sec", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_dump_a_blank_tape {
+            get {
+                return ResourceManager.GetString("Cannot_dump_a_blank_tape", resourceCulture);
+            }
+        }
+        
+        public static string Found_end_of_tape_partition {
+            get {
+                return ResourceManager.GetString("Found_end_of_tape_partition", resourceCulture);
+            }
+        }
+        
+        public static string Blank_block_found_end_of_tape {
+            get {
+                return ResourceManager.GetString("Blank_block_found_end_of_tape", resourceCulture);
+            }
+        }
+        
+        public static string Changed_to_file_0_at_block_1 {
+            get {
+                return ResourceManager.GetString("Changed_to_file_0_at_block_1", resourceCulture);
+            }
+        }
+        
+        public static string Drive_could_not_read_block_0_Sense_cannot_be_decoded_look_at_log_for_dump {
+            get {
+                return ResourceManager.GetString("Drive_could_not_read_block_0_Sense_cannot_be_decoded_look_at_log_for_dump", resourceCulture);
+            }
+        }
+        
+        public static string Drive_could_not_read_block_0_Sense_bytes_follow {
+            get {
+                return ResourceManager.GetString("Drive_could_not_read_block_0_Sense_bytes_follow", resourceCulture);
+            }
+        }
+        
+        public static string Drive_could_not_read_block_0_Sense_follow_1_2 {
+            get {
+                return ResourceManager.GetString("Drive_could_not_read_block_0_Sense_follow_1_2", resourceCulture);
+            }
+        }
+        
+        public static string Drive_could_not_read_block_0_Sense_follows {
+            get {
+                return ResourceManager.GetString("Drive_could_not_read_block_0_Sense_follows", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_check_current_position_continuing {
+            get {
+                return ResourceManager.GetString("Could_not_check_current_position_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Current_position_is_not_as_expected_continuing {
+            get {
+                return ResourceManager.GetString("Current_position_is_not_as_expected_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_position_tape_to_block_0 {
+            get {
+                return ResourceManager.GetString("Cannot_position_tape_to_block_0", resourceCulture);
+            }
+        }
+        
+        public static string Block_0_could_not_be_read {
+            get {
+                return ResourceManager.GetString("Block_0_could_not_be_read", resourceCulture);
+            }
+        }
+        
+        public static string Because_of_commands_sent_dumping_XGD_must_be_administrative_Cannot_continue {
+            get {
+                return ResourceManager.GetString("Because_of_commands_sent_dumping_XGD_must_be_administrative_Cannot_continue", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_dump_XGD_without_administrative_privileges {
+            get {
+                return ResourceManager.GetString("Cannot_dump_XGD_without_administrative_privileges", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_get_disc_capacity {
+            get {
+                return ResourceManager.GetString("Cannot_get_disc_capacity", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_get_PFI {
+            get {
+                return ResourceManager.GetString("Cannot_get_PFI", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Xbox_Security_Sector {
+            get {
+                return ResourceManager.GetString("Reading_Xbox_Security_Sector", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_get_Xbox_Security_Sector_not_continuing {
+            get {
+                return ResourceManager.GetString("Cannot_get_Xbox_Security_Sector_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Decoding_Xbox_Security_Sector {
+            get {
+                return ResourceManager.GetString("Decoding_Xbox_Security_Sector", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_decode_Xbox_Security_Sector_not_continuing {
+            get {
+                return ResourceManager.GetString("Cannot_decode_Xbox_Security_Sector_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Getting_video_partition_size {
+            get {
+                return ResourceManager.GetString("Getting_video_partition_size", resourceCulture);
+            }
+        }
+        
+        public static string Locking_drive {
+            get {
+                return ResourceManager.GetString("Locking_drive", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_lock_drive_not_continuing {
+            get {
+                return ResourceManager.GetString("Cannot_lock_drive_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Video_partition_total_size_0_sectors {
+            get {
+                return ResourceManager.GetString("Video_partition_total_size_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_get_DMI {
+            get {
+                return ResourceManager.GetString("Cannot_get_DMI", resourceCulture);
+            }
+        }
+        
+        public static string Video_partition_is_too_big_did_lock_work_Trying_cold_values {
+            get {
+                return ResourceManager.GetString("Video_partition_is_too_big_did_lock_work_Trying_cold_values", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_get_video_partition_size_not_continuing {
+            get {
+                return ResourceManager.GetString("Cannot_get_video_partition_size_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Getting_game_partition_size {
+            get {
+                return ResourceManager.GetString("Getting_game_partition_size", resourceCulture);
+            }
+        }
+        
+        public static string Unlocking_drive_Xtreme_ {
+            get {
+                return ResourceManager.GetString("Unlocking_drive_Xtreme_", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_unlock_drive_not_continuing {
+            get {
+                return ResourceManager.GetString("Cannot_unlock_drive_not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string Game_partition_total_size_0_sectors {
+            get {
+                return ResourceManager.GetString("Game_partition_total_size_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Getting_middle_zone_size {
+            get {
+                return ResourceManager.GetString("Getting_middle_zone_size", resourceCulture);
+            }
+        }
+        
+        public static string Unlocking_drive_Wxripper {
+            get {
+                return ResourceManager.GetString("Unlocking_drive_Wxripper", resourceCulture);
+            }
+        }
+        
+        public static string Getting_disc_size {
+            get {
+                return ResourceManager.GetString("Getting_disc_size", resourceCulture);
+            }
+        }
+        
+        public static string Unlocked_total_size_0_sectors {
+            get {
+                return ResourceManager.GetString("Unlocked_total_size_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_decode_PFI {
+            get {
+                return ResourceManager.GetString("Cannot_decode_PFI", resourceCulture);
+            }
+        }
+        
+        public static string WxRipper_PFI_Data_Area_Start_PSN_0_sectors {
+            get {
+                return ResourceManager.GetString("WxRipper_PFI_Data_Area_Start_PSN_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string WxRipper_PFI_Layer_0_End_PSN_0_sectors {
+            get {
+                return ResourceManager.GetString("WxRipper_PFI_Layer_0_End_PSN_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Video_layer_0_size_0_sectors {
+            get {
+                return ResourceManager.GetString("Video_layer_0_size_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Video_layer_1_size_0_sectors {
+            get {
+                return ResourceManager.GetString("Video_layer_1_size_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Middle_zone_size_0_sectors {
+            get {
+                return ResourceManager.GetString("Middle_zone_size_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Game_data_size_0_sectors {
+            get {
+                return ResourceManager.GetString("Game_data_size_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Total_size_0_sectors {
+            get {
+                return ResourceManager.GetString("Total_size_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Real_layer_break_0 {
+            get {
+                return ResourceManager.GetString("Real_layer_break_0", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_read_medium_aborting_scan {
+            get {
+                return ResourceManager.GetString("Cannot_read_medium_aborting_scan", resourceCulture);
+            }
+        }
+        
+        public static string Using_SCSI_READ_12_command {
+            get {
+                return ResourceManager.GetString("Using_SCSI_READ_12_command", resourceCulture);
+            }
+        }
+        
+        public static string Reading_game_partition {
+            get {
+                return ResourceManager.GetString("Reading_game_partition", resourceCulture);
+            }
+        }
+        
+        public static string Writing_Middle_Zone_D_empty {
+            get {
+                return ResourceManager.GetString("Writing_Middle_Zone_D_empty", resourceCulture);
+            }
+        }
+        
+        public static string Reading_Video_Layer_1 {
+            get {
+                return ResourceManager.GetString("Reading_Video_Layer_1", resourceCulture);
+            }
+        }
+        
+        public static string Error_code_equals_0 {
+            get {
+                return ResourceManager.GetString("Error_code_equals_0", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_querying_ATA_IDENTIFY {
+            get {
+                return ResourceManager.GetString("Error_0_querying_ATA_IDENTIFY", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_querying_ATA_PACKET_IDENTIFY {
+            get {
+                return ResourceManager.GetString("Error_0_querying_ATA_PACKET_IDENTIFY", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_error_0 {
+            get {
+                return ResourceManager.GetString("SCSI_error_0", resourceCulture);
+            }
+        }
+        
+        public static string Unknown_device_type_0_cannot_get_information {
+            get {
+                return ResourceManager.GetString("Unknown_device_type_0_cannot_get_information", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_SECTORS_in_CHS_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_SECTORS_in_CHS_mode", resourceCulture);
+            }
+        }
+        
+        public static string Sense_0_Status_1_Error_2_Length_3 {
+            get {
+                return ResourceManager.GetString("Sense_0_Status_1_Error_2_Length_3", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_SECTORS_RETRY_in_CHS_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_SECTORS_RETRY_in_CHS_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_DMA_in_CHS_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_DMA_in_CHS_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_DMA_RETRY_in_CHS_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_DMA_RETRY_in_CHS_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SEEK_in_CHS_mode {
+            get {
+                return ResourceManager.GetString("Trying_SEEK_in_CHS_mode", resourceCulture);
+            }
+        }
+        
+        public static string Sense_0_Status_1_Error_2 {
+            get {
+                return ResourceManager.GetString("Sense_0_Status_1_Error_2", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_SECTORS_in_LBA_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_SECTORS_in_LBA_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_SECTORS_RETRY_in_LBA_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_SECTORS_RETRY_in_LBA_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_DMA_in_LBA_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_DMA_in_LBA_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_DMA_RETRY_in_LBA_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_DMA_RETRY_in_LBA_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SEEK_in_LBA_mode {
+            get {
+                return ResourceManager.GetString("Trying_SEEK_in_LBA_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_SECTORS_in_LBA48_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_SECTORS_in_LBA48_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_DMA_in_LBA48_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_DMA_in_LBA48_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_LONG_in_CHS_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_LONG_in_CHS_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_LONG_RETRY_in_CHS_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_LONG_RETRY_in_CHS_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_LONG_in_LBA_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_LONG_in_LBA_mode", resourceCulture);
+            }
+        }
+        
+        public static string Trying_READ_LONG_RETRY_in_LBA_mode {
+            get {
+                return ResourceManager.GetString("Trying_READ_LONG_RETRY_in_LBA_mode", resourceCulture);
+            }
+        }
+        
+        public static string Have_you_previously_tried_with_a_GD_ROM_disc_and_did_the_computer_hang_or_crash_Q {
+            get {
+                return ResourceManager.GetString("Have_you_previously_tried_with_a_GD_ROM_disc_and_did_the_computer_hang_or_crash_Q" +
+                        "", resourceCulture);
+            }
+        }
+        
+        public static string Ejecting_disc {
+            get {
+                return ResourceManager.GetString("Ejecting_disc", resourceCulture);
+            }
+        }
+        
+        public static string Please_insert_trap_disc_inside {
+            get {
+                return ResourceManager.GetString("Please_insert_trap_disc_inside", resourceCulture);
+            }
+        }
+        
+        public static string Press_any_key_to_continue {
+            get {
+                return ResourceManager.GetString("Press_any_key_to_continue", resourceCulture);
+            }
+        }
+        
+        public static string Sending_READ_FULL_TOC_to_the_device {
+            get {
+                return ResourceManager.GetString("Sending_READ_FULL_TOC_to_the_device", resourceCulture);
+            }
+        }
+        
+        public static string READ_FULL_TOC_failed {
+            get {
+                return ResourceManager.GetString("READ_FULL_TOC_failed", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_decode_TOC {
+            get {
+                return ResourceManager.GetString("Could_not_decode_TOC", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_find_lead_out {
+            get {
+                return ResourceManager.GetString("Cannot_find_lead_out", resourceCulture);
+            }
+        }
+        
+        public static string Trap_disc_shows_0_sectors {
+            get {
+                return ResourceManager.GetString("Trap_disc_shows_0_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Trap_disc_doesnt_have_enough_sectors {
+            get {
+                return ResourceManager.GetString("Trap_disc_doesnt_have_enough_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Stopping_motor {
+            get {
+                return ResourceManager.GetString("Stopping_motor", resourceCulture);
+            }
+        }
+        
+        public static string Please_MANUALLY_get_the_trap_disc_out_and_put_the_GD_ROM_disc_inside {
+            get {
+                return ResourceManager.GetString("Please_MANUALLY_get_the_trap_disc_out_and_put_the_GD_ROM_disc_inside", resourceCulture);
+            }
+        }
+        
+        public static string Waiting_5_seconds {
+            get {
+                return ResourceManager.GetString("Waiting_5_seconds", resourceCulture);
+            }
+        }
+        
+        public static string Lead_out_has_changed_this_drive_does_not_support_hot_swapping_discs {
+            get {
+                return ResourceManager.GetString("Lead_out_has_changed_this_drive_does_not_support_hot_swapping_discs", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_zero {
+            get {
+                return ResourceManager.GetString("Reading_LBA_zero", resourceCulture);
+            }
+        }
+        
+        public static string Success {
+            get {
+                return ResourceManager.GetString("Success", resourceCulture);
+            }
+        }
+        
+        public static string FAIL {
+            get {
+                return ResourceManager.GetString("FAIL", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_zero_as_audio_scrambled {
+            get {
+                return ResourceManager.GetString("Reading_LBA_zero_as_audio_scrambled", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_100000_as_audio {
+            get {
+                return ResourceManager.GetString("Reading_LBA_100000_as_audio", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_50000_as_audio {
+            get {
+                return ResourceManager.GetString("Reading_LBA_50000_as_audio", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_450000_as_audio {
+            get {
+                return ResourceManager.GetString("Reading_LBA_450000_as_audio", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_400000_as_audio {
+            get {
+                return ResourceManager.GetString("Reading_LBA_400000_as_audio", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_45000_as_audio {
+            get {
+                return ResourceManager.GetString("Reading_LBA_45000_as_audio", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_44990_as_audio {
+            get {
+                return ResourceManager.GetString("Reading_LBA_44990_as_audio", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_100000_as_audio_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_100000_as_audio_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_50000_as_audio_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_50000_as_audio_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_450000_as_audio_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_450000_as_audio_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_400000_as_audio_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_400000_as_audio_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_45000_as_audio_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_45000_as_audio_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_44990_as_audio_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_44990_as_audio_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_100000_as_audio_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_100000_as_audio_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_50000_as_audio_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_50000_as_audio_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_450000_as_audio_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_450000_as_audio_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_400000_as_audio_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_400000_as_audio_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_45000_as_audio_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_45000_as_audio_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_44990_as_audio_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_44990_as_audio_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_100000 {
+            get {
+                return ResourceManager.GetString("Reading_LBA_100000", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_50000 {
+            get {
+                return ResourceManager.GetString("Reading_LBA_50000", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_450000 {
+            get {
+                return ResourceManager.GetString("Reading_LBA_450000", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_400000 {
+            get {
+                return ResourceManager.GetString("Reading_LBA_400000", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_45000 {
+            get {
+                return ResourceManager.GetString("Reading_LBA_45000", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_44990 {
+            get {
+                return ResourceManager.GetString("Reading_LBA_44990", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_100000_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_100000_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_50000_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_50000_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_450000_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_450000_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_400000_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_400000_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_45000_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_45000_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_44990_with_PQ_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_44990_with_PQ_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_100000_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_100000_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_50000_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_50000_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_450000_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_450000_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_400000_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_400000_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_45000_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_45000_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_44990_with_RW_subchannel {
+            get {
+                return ResourceManager.GetString("Reading_LBA_44990_with_RW_subchannel", resourceCulture);
+            }
+        }
+        
+        public static string Test_read_whole_high_density_area_proceed_Q {
+            get {
+                return ResourceManager.GetString("Test_read_whole_high_density_area_proceed_Q", resourceCulture);
+            }
+        }
+        
+        public static string Reading_LBA_0_of_1 {
+            get {
+                return ResourceManager.GetString("Reading_LBA_0_of_1", resourceCulture);
+            }
+        }
+        
+        public static string Querying_MMC_GET_CONFIGURATION {
+            get {
+                return ResourceManager.GetString("Querying_MMC_GET_CONFIGURATION", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_READ_CAPACITY {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_READ_CAPACITY", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_READ_CAPACITY_16 {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_READ_CAPACITY_16", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_MODE_SENSE_10 {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_MODE_SENSE_10", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_MODE_SENSE {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_MODE_SENSE", resourceCulture);
+            }
+        }
+        
+        public static string Querying_CD_TOC {
+            get {
+                return ResourceManager.GetString("Querying_CD_TOC", resourceCulture);
+            }
+        }
+        
+        public static string Querying_CD_Full_TOC {
+            get {
+                return ResourceManager.GetString("Querying_CD_Full_TOC", resourceCulture);
+            }
+        }
+        
+        public static string Querying_CD_ATIP {
+            get {
+                return ResourceManager.GetString("Querying_CD_ATIP", resourceCulture);
+            }
+        }
+        
+        public static string Querying_CD_PMA {
+            get {
+                return ResourceManager.GetString("Querying_CD_PMA", resourceCulture);
+            }
+        }
+        
+        public static string Sense_equals_0 {
+            get {
+                return ResourceManager.GetString("Sense_equals_0", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_PFI {
+            get {
+                return ResourceManager.GetString("Querying_DVD_PFI", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_DMI {
+            get {
+                return ResourceManager.GetString("Querying_DVD_DMI", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_CMI {
+            get {
+                return ResourceManager.GetString("Querying_DVD_CMI", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_BCA {
+            get {
+                return ResourceManager.GetString("Querying_DVD_BCA", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_AACS {
+            get {
+                return ResourceManager.GetString("Querying_DVD_AACS", resourceCulture);
+            }
+        }
+        
+        public static string Querying_BD_BCA {
+            get {
+                return ResourceManager.GetString("Querying_BD_BCA", resourceCulture);
+            }
+        }
+        
+        public static string Querying_Disc_Definition_Structure {
+            get {
+                return ResourceManager.GetString("Querying_Disc_Definition_Structure", resourceCulture);
+            }
+        }
+        
+        public static string Querying_Spare_Area_Information {
+            get {
+                return ResourceManager.GetString("Querying_Spare_Area_Information", resourceCulture);
+            }
+        }
+        
+        public static string Querying_BD_DDS {
+            get {
+                return ResourceManager.GetString("Querying_BD_DDS", resourceCulture);
+            }
+        }
+        
+        public static string Querying_BD_SAI {
+            get {
+                return ResourceManager.GetString("Querying_BD_SAI", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_PRI {
+            get {
+                return ResourceManager.GetString("Querying_DVD_PRI", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_Media_ID {
+            get {
+                return ResourceManager.GetString("Querying_DVD_Media_ID", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_Embossed_PFI {
+            get {
+                return ResourceManager.GetString("Querying_DVD_Embossed_PFI", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_ADIP {
+            get {
+                return ResourceManager.GetString("Querying_DVD_ADIP", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_DCB {
+            get {
+                return ResourceManager.GetString("Querying_DVD_DCB", resourceCulture);
+            }
+        }
+        
+        public static string Querying_HD_DVD_CMI {
+            get {
+                return ResourceManager.GetString("Querying_HD_DVD_CMI", resourceCulture);
+            }
+        }
+        
+        public static string Querying_DVD_Layer_Capacity {
+            get {
+                return ResourceManager.GetString("Querying_DVD_Layer_Capacity", resourceCulture);
+            }
+        }
+        
+        public static string Querying_BD_Disc_Information {
+            get {
+                return ResourceManager.GetString("Querying_BD_Disc_Information", resourceCulture);
+            }
+        }
+        
+        public static string Querying_BD_PAC {
+            get {
+                return ResourceManager.GetString("Querying_BD_PAC", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_CD_scrambled {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_CD_scrambled", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_6 {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_6", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_10 {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_10", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_12 {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_12", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_16 {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_16", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_CD {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_CD", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_CD_MSF {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_CD_MSF", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_CD_full_sector {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_CD_full_sector", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_CD_MSF_full_sector {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_CD_MSF_full_sector", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_read_CD_Track_1_pre_gap {
+            get {
+                return ResourceManager.GetString("Trying_to_read_CD_Track_1_pre_gap", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_read_CD_Lead_In {
+            get {
+                return ResourceManager.GetString("Trying_to_read_CD_Lead_In", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_read_CD_Lead_Out {
+            get {
+                return ResourceManager.GetString("Trying_to_read_CD_Lead_Out", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_read_C2_Pointers {
+            get {
+                return ResourceManager.GetString("Trying_to_read_C2_Pointers", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_read_subchannels {
+            get {
+                return ResourceManager.GetString("Trying_to_read_subchannels", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_read_subchannels_with_C2_Pointers {
+            get {
+                return ResourceManager.GetString("Trying_to_read_subchannels_with_C2_Pointers", resourceCulture);
+            }
+        }
+        
+        public static string Plextor_READ_CD_DA {
+            get {
+                return ResourceManager.GetString("Plextor_READ_CD_DA", resourceCulture);
+            }
+        }
+        
+        public static string Trying_Pioneer_READ_CD_DA {
+            get {
+                return ResourceManager.GetString("Trying_Pioneer_READ_CD_DA", resourceCulture);
+            }
+        }
+        
+        public static string Trying_Pioneer_READ_CD_DA_MSF {
+            get {
+                return ResourceManager.GetString("Trying_Pioneer_READ_CD_DA_MSF", resourceCulture);
+            }
+        }
+        
+        public static string Trying_NEC_READ_CD_DA {
+            get {
+                return ResourceManager.GetString("Trying_NEC_READ_CD_DA", resourceCulture);
+            }
+        }
+        
+        public static string Trying_Plextor_trick_to_raw_read_DVDs {
+            get {
+                return ResourceManager.GetString("Trying_Plextor_trick_to_raw_read_DVDs", resourceCulture);
+            }
+        }
+        
+        public static string Trying_HL_DT_ST_aka_LG_trick_to_raw_read_DVDs {
+            get {
+                return ResourceManager.GetString("Trying_HL_DT_ST_aka_LG_trick_to_raw_read_DVDs", resourceCulture);
+            }
+        }
+        
+        public static string Trying_MediaTek_READ_DRAM_command {
+            get {
+                return ResourceManager.GetString("Trying_MediaTek_READ_DRAM_command", resourceCulture);
+            }
+        }
+        
+        public static string Trying_MediaTek_READ_DRAM_command_for_Lead_Out {
+            get {
+                return ResourceManager.GetString("Trying_MediaTek_READ_DRAM_command_for_Lead_Out", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_find_second_session_Have_you_inserted_the_correct_type_of_disc {
+            get {
+                return ResourceManager.GetString("Could_not_find_second_session_Have_you_inserted_the_correct_type_of_disc", resourceCulture);
+            }
+        }
+        
+        public static string First_session_Lead_Out_starts_at_0_1_2 {
+            get {
+                return ResourceManager.GetString("First_session_Lead_Out_starts_at_0_1_2", resourceCulture);
+            }
+        }
+        
+        public static string Second_session_starts_at_0_1_2 {
+            get {
+                return ResourceManager.GetString("Second_session_starts_at_0_1_2", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_CD_in_first_session_Lead_Out {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_CD_in_first_session_Lead_Out", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_CD_in_second_session_Lead_In {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_CD_in_second_session_Lead_In", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_INQUIRY {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_INQUIRY", resourceCulture);
+            }
+        }
+        
+        public static string Querying_list_of_SCSI_EVPDs {
+            get {
+                return ResourceManager.GetString("Querying_list_of_SCSI_EVPDs", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_EVPD_pages {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_EVPD_pages", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_EVPD_0 {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_EVPD_0", resourceCulture);
+            }
+        }
+        
+        public static string Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_10 {
+            get {
+                return ResourceManager.GetString("Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_10", resourceCulture);
+            }
+        }
+        
+        public static string Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_6 {
+            get {
+                return ResourceManager.GetString("Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_6", resourceCulture);
+            }
+        }
+        
+        public static string Trying_SCSI_READ_MEDIA_SERIAL_NUMBER {
+            get {
+                return ResourceManager.GetString("Trying_SCSI_READ_MEDIA_SERIAL_NUMBER", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_get_CID {
+            get {
+                return ResourceManager.GetString("Trying_to_get_CID", resourceCulture);
+            }
+        }
+        
+        public static string CID_obtained_correctly {
+            get {
+                return ResourceManager.GetString("CID_obtained_correctly", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read_CID {
+            get {
+                return ResourceManager.GetString("Could_not_read_CID", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_get_CSD {
+            get {
+                return ResourceManager.GetString("Trying_to_get_CSD", resourceCulture);
+            }
+        }
+        
+        public static string CSD_obtained_correctly {
+            get {
+                return ResourceManager.GetString("CSD_obtained_correctly", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read_CSD {
+            get {
+                return ResourceManager.GetString("Could_not_read_CSD", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_get_OCR {
+            get {
+                return ResourceManager.GetString("Trying_to_get_OCR", resourceCulture);
+            }
+        }
+        
+        public static string OCR_obtained_correctly {
+            get {
+                return ResourceManager.GetString("OCR_obtained_correctly", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read_OCR {
+            get {
+                return ResourceManager.GetString("Could_not_read_OCR", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_get_Extended_CSD {
+            get {
+                return ResourceManager.GetString("Trying_to_get_Extended_CSD", resourceCulture);
+            }
+        }
+        
+        public static string Extended_CSD_obtained_correctly {
+            get {
+                return ResourceManager.GetString("Extended_CSD_obtained_correctly", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read_Extended_CSD {
+            get {
+                return ResourceManager.GetString("Could_not_read_Extended_CSD", resourceCulture);
+            }
+        }
+        
+        public static string Trying_to_get_SCR {
+            get {
+                return ResourceManager.GetString("Trying_to_get_SCR", resourceCulture);
+            }
+        }
+        
+        public static string SCR_obtained_correctly {
+            get {
+                return ResourceManager.GetString("SCR_obtained_correctly", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read_SCR {
+            get {
+                return ResourceManager.GetString("Could_not_read_SCR", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_READ_BLOCK_LIMITS {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_READ_BLOCK_LIMITS", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_REPORT_DENSITY_SUPPORT {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_REPORT_DENSITY_SUPPORT", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_REPORT_DENSITY_SUPPORT_for_medium_types {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_REPORT_DENSITY_SUPPORT_for_medium_types", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_REPORT_DENSITY_SUPPORT_for_current_media {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_REPORT_DENSITY_SUPPORT_for_current_media", resourceCulture);
+            }
+        }
+        
+        public static string Querying_SCSI_REPORT_DENSITY_SUPPORT_for_medium_types_for_current_media {
+            get {
+                return ResourceManager.GetString("Querying_SCSI_REPORT_DENSITY_SUPPORT_for_medium_types_for_current_media", resourceCulture);
+            }
+        }
+        
+        public static string Seeking_to_sector_0 {
+            get {
+                return ResourceManager.GetString("Seeking_to_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string Seeking_to_cylinder_0_head_1_sector_2 {
+            get {
+                return ResourceManager.GetString("Seeking_to_cylinder_0_head_1_sector_2", resourceCulture);
+            }
+        }
+        
+        public static string Scanning_never_supported_in_SSC {
+            get {
+                return ResourceManager.GetString("Scanning_never_supported_in_SSC", resourceCulture);
+            }
+        }
+        
+        public static string Error_trying_to_decode_TOC {
+            get {
+                return ResourceManager.GetString("Error_trying_to_decode_TOC", resourceCulture);
+            }
+        }
+        
+        public static string Using_MMC_READ_CD_command {
+            get {
+                return ResourceManager.GetString("Using_MMC_READ_CD_command", resourceCulture);
+            }
+        }
+        
+        public static string READ_CD_error_0 {
+            get {
+                return ResourceManager.GetString("READ_CD_error_0", resourceCulture);
+            }
+        }
+        
+        public static string Environment_does_not_support_setting_block_count_downgrading_to_OS_reading {
+            get {
+                return ResourceManager.GetString("Environment_does_not_support_setting_block_count_downgrading_to_OS_reading", resourceCulture);
+            }
+        }
+        
+        public static string Reading_0_sectors_at_a_time_using_OS_buffered_reads {
+            get {
+                return ResourceManager.GetString("Reading_0_sectors_at_a_time_using_OS_buffered_reads", resourceCulture);
+            }
+        }
+        
+        public static string Reading_0_sectors_using_sequential_single_commands {
+            get {
+                return ResourceManager.GetString("Reading_0_sectors_using_sequential_single_commands", resourceCulture);
+            }
+        }
+        
+        public static string Unknown_device_type_0 {
+            get {
+                return ResourceManager.GetString("Unknown_device_type_0", resourceCulture);
+            }
+        }
+        
+        public static string Device_needs_48_bit_LBA_commands_but_I_cant_issue_them_Aborting {
+            get {
+                return ResourceManager.GetString("Device_needs_48_bit_LBA_commands_but_I_cant_issue_them_Aborting", resourceCulture);
+            }
+        }
+        
+        public static string Device_needs_28_bit_LBA_commands_but_I_cant_issue_them_Aborting {
+            get {
+                return ResourceManager.GetString("Device_needs_28_bit_LBA_commands_but_I_cant_issue_them_Aborting", resourceCulture);
+            }
+        }
+        
+        public static string Device_needs_CHS_commands_but_I_cant_issue_them_Aborting {
+            get {
+                return ResourceManager.GetString("Device_needs_CHS_commands_but_I_cant_issue_them_Aborting", resourceCulture);
+            }
+        }
+        
+        public static string Using_ATA_READ_DMA_EXT_command {
+            get {
+                return ResourceManager.GetString("Using_ATA_READ_DMA_EXT_command", resourceCulture);
+            }
+        }
+        
+        public static string Using_ATA_READ_EXT_command {
+            get {
+                return ResourceManager.GetString("Using_ATA_READ_EXT_command", resourceCulture);
+            }
+        }
+        
+        public static string Using_ATA_READ_DMA_command_with_retries_LBA {
+            get {
+                return ResourceManager.GetString("Using_ATA_READ_DMA_command_with_retries_LBA", resourceCulture);
+            }
+        }
+        
+        public static string Using_ATA_READ_DMA_command_LBA {
+            get {
+                return ResourceManager.GetString("Using_ATA_READ_DMA_command_LBA", resourceCulture);
+            }
+        }
+        
+        public static string Using_ATA_READ_command_with_retries_LBA {
+            get {
+                return ResourceManager.GetString("Using_ATA_READ_command_with_retries_LBA", resourceCulture);
+            }
+        }
+        
+        public static string Using_ATA_READ_command_LBA {
+            get {
+                return ResourceManager.GetString("Using_ATA_READ_command_LBA", resourceCulture);
+            }
+        }
+        
+        public static string Using_ATA_READ_DMA_command_with_retries_CHS {
+            get {
+                return ResourceManager.GetString("Using_ATA_READ_DMA_command_with_retries_CHS", resourceCulture);
+            }
+        }
+        
+        public static string Using_ATA_READ_DMA_command_CHS {
+            get {
+                return ResourceManager.GetString("Using_ATA_READ_DMA_command_CHS", resourceCulture);
+            }
+        }
+        
+        public static string Using_ATA_READ_command_with_retries_CHS {
+            get {
+                return ResourceManager.GetString("Using_ATA_READ_command_with_retries_CHS", resourceCulture);
+            }
+        }
+        
+        public static string Using_ATA_READ_command_CHS {
+            get {
+                return ResourceManager.GetString("Using_ATA_READ_command_CHS", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_get_a_working_read_command {
+            get {
+                return ResourceManager.GetString("Could_not_get_a_working_read_command", resourceCulture);
+            }
+        }
+        
+        public static string ATA_ERROR_0_STATUS_1 {
+            get {
+                return ResourceManager.GetString("ATA_ERROR_0_STATUS_1", resourceCulture);
+            }
+        }
+        
+        public static string Device_only_supports_SCSI_READ_6_but_has_more_than_0_blocks_1_blocks_total {
+            get {
+                return ResourceManager.GetString("Device_only_supports_SCSI_READ_6_but_has_more_than_0_blocks_1_blocks_total", resourceCulture);
+            }
+        }
+        
+        public static string Device_only_supports_SCSI_READ_10_but_has_more_than_0_blocks_1_blocks_total {
+            get {
+                return ResourceManager.GetString("Device_only_supports_SCSI_READ_10_but_has_more_than_0_blocks_1_blocks_total", resourceCulture);
+            }
+        }
+        
+        public static string Using_SCSI_READ_LONG_16_command {
+            get {
+                return ResourceManager.GetString("Using_SCSI_READ_LONG_16_command", resourceCulture);
+            }
+        }
+        
+        public static string Using_SCSI_READ_LONG_10_command {
+            get {
+                return ResourceManager.GetString("Using_SCSI_READ_LONG_10_command", resourceCulture);
+            }
+        }
+        
+        public static string Using_SyQuest_READ_LONG_10_command {
+            get {
+                return ResourceManager.GetString("Using_SyQuest_READ_LONG_10_command", resourceCulture);
+            }
+        }
+        
+        public static string Using_SyQuest_READ_LONG_6_command {
+            get {
+                return ResourceManager.GetString("Using_SyQuest_READ_LONG_6_command", resourceCulture);
+            }
+        }
+        
+        public static string Using_HL_DT_ST_raw_DVD_reading {
+            get {
+                return ResourceManager.GetString("Using_HL_DT_ST_raw_DVD_reading", resourceCulture);
+            }
+        }
+        
+        public static string Using_Plextor_raw_DVD_reading {
+            get {
+                return ResourceManager.GetString("Using_Plextor_raw_DVD_reading", resourceCulture);
+            }
+        }
+        
+        public static string Using_SCSI_READ_6_command {
+            get {
+                return ResourceManager.GetString("Using_SCSI_READ_6_command", resourceCulture);
+            }
+        }
+        
+        public static string Using_SCSI_READ_10_command {
+            get {
+                return ResourceManager.GetString("Using_SCSI_READ_10_command", resourceCulture);
+            }
+        }
+        
+        public static string Using_SCSI_READ_16_command {
+            get {
+                return ResourceManager.GetString("Using_SCSI_READ_16_command", resourceCulture);
+            }
+        }
+        
+        public static string Unable_to_get_media_capacity {
+            get {
+                return ResourceManager.GetString("Unable_to_get_media_capacity", resourceCulture);
+            }
+        }
+        
+        public static string Start_logging_at_0 {
+            get {
+                return ResourceManager.GetString("Start_logging_at_0", resourceCulture);
+            }
+        }
+        
+        public static string Running_as_superuser_Yes {
+            get {
+                return ResourceManager.GetString("Running_as_superuser_Yes", resourceCulture);
+            }
+        }
+        
+        public static string Running_as_superuser_No {
+            get {
+                return ResourceManager.GetString("Running_as_superuser_No", resourceCulture);
+            }
+        }
+        
+        public static string Remote_information {
+            get {
+                return ResourceManager.GetString("Remote_information", resourceCulture);
+            }
+        }
+        
+        public static string Server_0 {
+            get {
+                return ResourceManager.GetString("Server_0", resourceCulture);
+            }
+        }
+        
+        public static string Version_0 {
+            get {
+                return ResourceManager.GetString("Version_0", resourceCulture);
+            }
+        }
+        
+        public static string Operating_system_0_1 {
+            get {
+                return ResourceManager.GetString("Operating_system_0_1", resourceCulture);
+            }
+        }
+        
+        public static string Architecture_0 {
+            get {
+                return ResourceManager.GetString("Architecture_0", resourceCulture);
+            }
+        }
+        
+        public static string Protocol_version_0 {
+            get {
+                return ResourceManager.GetString("Protocol_version_0", resourceCulture);
+            }
+        }
+        
+        public static string Log_section_separator {
+            get {
+                return ResourceManager.GetString("Log_section_separator", resourceCulture);
+            }
+        }
+        
+        public static string Device_information {
+            get {
+                return ResourceManager.GetString("Device_information", resourceCulture);
+            }
+        }
+        
+        public static string Manufacturer_0 {
+            get {
+                return ResourceManager.GetString("Manufacturer_0", resourceCulture);
+            }
+        }
+        
+        public static string Model_0 {
+            get {
+                return ResourceManager.GetString("Model_0", resourceCulture);
+            }
+        }
+        
+        public static string Firmware_revision_0 {
+            get {
+                return ResourceManager.GetString("Firmware_revision_0", resourceCulture);
+            }
+        }
+        
+        public static string Serial_number_0 {
+            get {
+                return ResourceManager.GetString("Serial_number_0", resourceCulture);
+            }
+        }
+        
+        public static string Removable_device_0 {
+            get {
+                return ResourceManager.GetString("Removable_device_0", resourceCulture);
+            }
+        }
+        
+        public static string Device_type_0 {
+            get {
+                return ResourceManager.GetString("Device_type_0", resourceCulture);
+            }
+        }
+        
+        public static string CompactFlash_device_0 {
+            get {
+                return ResourceManager.GetString("CompactFlash_device_0", resourceCulture);
+            }
+        }
+        
+        public static string PCMCIA_device_0 {
+            get {
+                return ResourceManager.GetString("PCMCIA_device_0", resourceCulture);
+            }
+        }
+        
+        public static string USB_device_0 {
+            get {
+                return ResourceManager.GetString("USB_device_0", resourceCulture);
+            }
+        }
+        
+        public static string USB_manufacturer_0 {
+            get {
+                return ResourceManager.GetString("USB_manufacturer_0", resourceCulture);
+            }
+        }
+        
+        public static string USB_product_0 {
+            get {
+                return ResourceManager.GetString("USB_product_0", resourceCulture);
+            }
+        }
+        
+        public static string USB_serial_0 {
+            get {
+                return ResourceManager.GetString("USB_serial_0", resourceCulture);
+            }
+        }
+        
+        public static string USB_vendor_ID_0 {
+            get {
+                return ResourceManager.GetString("USB_vendor_ID_0", resourceCulture);
+            }
+        }
+        
+        public static string USB_product_ID_0 {
+            get {
+                return ResourceManager.GetString("USB_product_ID_0", resourceCulture);
+            }
+        }
+        
+        public static string FireWire_device_0 {
+            get {
+                return ResourceManager.GetString("FireWire_device_0", resourceCulture);
+            }
+        }
+        
+        public static string FireWire_vendor_0 {
+            get {
+                return ResourceManager.GetString("FireWire_vendor_0", resourceCulture);
+            }
+        }
+        
+        public static string FireWire_model_0 {
+            get {
+                return ResourceManager.GetString("FireWire_model_0", resourceCulture);
+            }
+        }
+        
+        public static string FireWire_GUID_0 {
+            get {
+                return ResourceManager.GetString("FireWire_GUID_0", resourceCulture);
+            }
+        }
+        
+        public static string FireWire_vendor_ID_0 {
+            get {
+                return ResourceManager.GetString("FireWire_vendor_ID_0", resourceCulture);
+            }
+        }
+        
+        public static string FireWire_product_ID_0 {
+            get {
+                return ResourceManager.GetString("FireWire_product_ID_0", resourceCulture);
+            }
+        }
+        
+        public static string Dumping_progress_log {
+            get {
+                return ResourceManager.GetString("Dumping_progress_log", resourceCulture);
+            }
+        }
+        
+        public static string End_logging_at_0 {
+            get {
+                return ResourceManager.GetString("End_logging_at_0", resourceCulture);
+            }
+        }
+        
+        public static string Start_error_logging_at_0 {
+            get {
+                return ResourceManager.GetString("Start_error_logging_at_0", resourceCulture);
+            }
+        }
+        
+        public static string ATA_command_0_operating_system_error_1 {
+            get {
+                return ResourceManager.GetString("ATA_command_0_operating_system_error_1", resourceCulture);
+            }
+        }
+        
+        public static string ATA_command_0_error_status_1_error_2 {
+            get {
+                return ResourceManager.GetString("ATA_command_0_error_status_1_error_2", resourceCulture);
+            }
+        }
+        
+        public static string ATA_reading_CHS_0_1_2_operating_system_error_3 {
+            get {
+                return ResourceManager.GetString("ATA_reading_CHS_0_1_2_operating_system_error_3", resourceCulture);
+            }
+        }
+        
+        public static string ATA_reading_CHS_0_1_2_error_status_3_error_4 {
+            get {
+                return ResourceManager.GetString("ATA_reading_CHS_0_1_2_error_status_3_error_4", resourceCulture);
+            }
+        }
+        
+        public static string ATA_reading_LBA_0_operating_system_error_1 {
+            get {
+                return ResourceManager.GetString("ATA_reading_LBA_0_operating_system_error_1", resourceCulture);
+            }
+        }
+        
+        public static string ATA_reading_LBA_0_error_status_1_error_2 {
+            get {
+                return ResourceManager.GetString("ATA_reading_LBA_0_error_status_1_error_2", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_command_0_operating_system_error_1 {
+            get {
+                return ResourceManager.GetString("SCSI_command_0_operating_system_error_1", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4_5 {
+            get {
+                return ResourceManager.GetString("SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4_5", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4 {
+            get {
+                return ResourceManager.GetString("SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_command_0_error_1_2 {
+            get {
+                return ResourceManager.GetString("SCSI_command_0_error_1_2", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_command_0_error_1 {
+            get {
+                return ResourceManager.GetString("SCSI_command_0_error_1", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_reading_LBA_0_operating_system_error_1 {
+            get {
+                return ResourceManager.GetString("SCSI_reading_LBA_0_operating_system_error_1", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4_5 {
+            get {
+                return ResourceManager.GetString("SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4_5", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4 {
+            get {
+                return ResourceManager.GetString("SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_reading_LBA_0_error_1_2 {
+            get {
+                return ResourceManager.GetString("SCSI_reading_LBA_0_error_1_2", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_reading_LBA_0_error_1 {
+            get {
+                return ResourceManager.GetString("SCSI_reading_LBA_0_error_1", resourceCulture);
+            }
+        }
+        
+        public static string SD_MMC_command_0_operating_system_error_1 {
+            get {
+                return ResourceManager.GetString("SD_MMC_command_0_operating_system_error_1", resourceCulture);
+            }
+        }
+        
+        public static string SD_MMC_command_0_error_1 {
+            get {
+                return ResourceManager.GetString("SD_MMC_command_0_error_1", resourceCulture);
+            }
+        }
+        
+        public static string SD_MMC_reading_LBA_0_byte_addressed_operating_system_error_1 {
+            get {
+                return ResourceManager.GetString("SD_MMC_reading_LBA_0_byte_addressed_operating_system_error_1", resourceCulture);
+            }
+        }
+        
+        public static string SD_MMC_reading_LBA_0_byte_addressed_error_1 {
+            get {
+                return ResourceManager.GetString("SD_MMC_reading_LBA_0_byte_addressed_error_1", resourceCulture);
+            }
+        }
+        
+        public static string SD_MMC_reading_LBA_0_block_addressed_operating_system_error_1 {
+            get {
+                return ResourceManager.GetString("SD_MMC_reading_LBA_0_block_addressed_operating_system_error_1", resourceCulture);
+            }
+        }
+        
+        public static string SD_MMC_reading_LBA_0_block_addressed_error_1 {
+            get {
+                return ResourceManager.GetString("SD_MMC_reading_LBA_0_block_addressed_error_1", resourceCulture);
+            }
+        }
+        
+        public static string Start_subchannel_logging_at_0 {
+            get {
+                return ResourceManager.GetString("Start_subchannel_logging_at_0", resourceCulture);
+            }
+        }
+        
+        public static string Data_length_is_invalid {
+            get {
+                return ResourceManager.GetString("Data_length_is_invalid", resourceCulture);
+            }
+        }
+        
+        public static string _GENERATED {
+            get {
+                return ResourceManager.GetString("_GENERATED", resourceCulture);
+            }
+        }
+        
+        public static string _FIXED {
+            get {
+                return ResourceManager.GetString("_FIXED", resourceCulture);
+            }
+        }
+        
+        public static string fixed_P_subchannel_using_weight_average {
+            get {
+                return ResourceManager.GetString("fixed_P_subchannel_using_weight_average", resourceCulture);
+            }
+        }
+        
+        public static string fixed_R_W_subchannels_writing_empty_data {
+            get {
+                return ResourceManager.GetString("fixed_R_W_subchannels_writing_empty_data", resourceCulture);
+            }
+        }
+        
+        public static string fixed_Q_subchannel_with_correct_ADR {
+            get {
+                return ResourceManager.GetString("fixed_Q_subchannel_with_correct_ADR", resourceCulture);
+            }
+        }
+        
+        public static string fixed_Q_subchannel_with_correct_CONTROL {
+            get {
+                return ResourceManager.GetString("fixed_Q_subchannel_with_correct_CONTROL", resourceCulture);
+            }
+        }
+        
+        public static string fixed_Q_subchannel_with_correct_ZERO {
+            get {
+                return ResourceManager.GetString("fixed_Q_subchannel_with_correct_ZERO", resourceCulture);
+            }
+        }
+        
+        public static string fixed_Q_subchannel_with_correct_TNO {
+            get {
+                return ResourceManager.GetString("fixed_Q_subchannel_with_correct_TNO", resourceCulture);
+            }
+        }
+        
+        public static string fixed_Q_subchannel_with_correct_INDEX {
+            get {
+                return ResourceManager.GetString("fixed_Q_subchannel_with_correct_INDEX", resourceCulture);
+            }
+        }
+        
+        public static string fixed_Q_subchannel_with_correct_RELATIVE_POSITION {
+            get {
+                return ResourceManager.GetString("fixed_Q_subchannel_with_correct_RELATIVE_POSITION", resourceCulture);
+            }
+        }
+        
+        public static string fixed_Q_subchannel_with_correct_ABSOLUTE_POSITION {
+            get {
+                return ResourceManager.GetString("fixed_Q_subchannel_with_correct_ABSOLUTE_POSITION", resourceCulture);
+            }
+        }
+        
+        public static string fixed_Q_subchannel_with_correct_CRC {
+            get {
+                return ResourceManager.GetString("fixed_Q_subchannel_with_correct_CRC", resourceCulture);
+            }
+        }
+        
+        public static string fixed_Q_subchannel_with_known_good_MCN {
+            get {
+                return ResourceManager.GetString("fixed_Q_subchannel_with_known_good_MCN", resourceCulture);
+            }
+        }
+        
+        public static string fixed_Q_subchannel_with_known_good_ISRC {
+            get {
+                return ResourceManager.GetString("fixed_Q_subchannel_with_known_good_ISRC", resourceCulture);
+            }
+        }
+        
+        public static string Lead_In {
+            get {
+                return ResourceManager.GetString("Lead_In", resourceCulture);
+            }
+        }
+        
+        public static string Program {
+            get {
+                return ResourceManager.GetString("Program", resourceCulture);
+            }
+        }
+        
+        public static string _0_1_2_LBA_3_4_area_5 {
+            get {
+                return ResourceManager.GetString("_0_1_2_LBA_3_4_area_5", resourceCulture);
+            }
+        }
+        
+        public static string TOC_says_disc_type_is_CD_i {
+            get {
+                return ResourceManager.GetString("TOC_says_disc_type_is_CD_i", resourceCulture);
+            }
+        }
+        
+        public static string TOC_says_disc_type_is_CD_ROM_XA {
+            get {
+                return ResourceManager.GetString("TOC_says_disc_type_is_CD_ROM_XA", resourceCulture);
+            }
+        }
+        
+        public static string Disc_has_audio_and_data_two_sessions_all_data_second_CD_Plus {
+            get {
+                return ResourceManager.GetString("Disc_has_audio_and_data_two_sessions_all_data_second_CD_Plus", resourceCulture);
+            }
+        }
+        
+        public static string Disc_has_only_audio_in_a_session_CD_Digital_Audio {
+            get {
+                return ResourceManager.GetString("Disc_has_only_audio_in_a_session_CD_Digital_Audio", resourceCulture);
+            }
+        }
+        
+        public static string Disc_has_only_data_in_a_session_CD_ROM {
+            get {
+                return ResourceManager.GetString("Disc_has_only_data_in_a_session_CD_ROM", resourceCulture);
+            }
+        }
+        
+        public static string Disc_has_video_tracks_CD_Video {
+            get {
+                return ResourceManager.GetString("Disc_has_video_tracks_CD_Video", resourceCulture);
+            }
+        }
+        
+        public static string Disc_has_a_mode_two_data_track_CD_ROM_XA {
+            get {
+                return ResourceManager.GetString("Disc_has_a_mode_two_data_track_CD_ROM_XA", resourceCulture);
+            }
+        }
+        
+        public static string Disc_has_hidden_CD_i_pregap_CD_i_Ready {
+            get {
+                return ResourceManager.GetString("Disc_has_hidden_CD_i_pregap_CD_i_Ready", resourceCulture);
+            }
+        }
+        
+        public static string Found_Photo_CD_description_file {
+            get {
+                return ResourceManager.GetString("Found_Photo_CD_description_file", resourceCulture);
+            }
+        }
+        
+        public static string Found_Mega_Sega_CD_IP_BIN {
+            get {
+                return ResourceManager.GetString("Found_Mega_Sega_CD_IP_BIN", resourceCulture);
+            }
+        }
+        
+        public static string Found_Sega_Saturn_IP_BIN {
+            get {
+                return ResourceManager.GetString("Found_Sega_Saturn_IP_BIN", resourceCulture);
+            }
+        }
+        
+        public static string Found_Sega_Dreamcast_IP_BIN {
+            get {
+                return ResourceManager.GetString("Found_Sega_Dreamcast_IP_BIN", resourceCulture);
+            }
+        }
+        
+        public static string PlayStation_2_boot_sectors_SHA256_0 {
+            get {
+                return ResourceManager.GetString("PlayStation_2_boot_sectors_SHA256_0", resourceCulture);
+            }
+        }
+        
+        public static string Found_Sony_PlayStation_2_boot_sectors {
+            get {
+                return ResourceManager.GetString("Found_Sony_PlayStation_2_boot_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Found_Opera_filesystem {
+            get {
+                return ResourceManager.GetString("Found_Opera_filesystem", resourceCulture);
+            }
+        }
+        
+        public static string Found_FM_Towns_boot {
+            get {
+                return ResourceManager.GetString("Found_FM_Towns_boot", resourceCulture);
+            }
+        }
+        
+        public static string Found_Playdia_copyright {
+            get {
+                return ResourceManager.GetString("Found_Playdia_copyright", resourceCulture);
+            }
+        }
+        
+        public static string Found_PC_Engine_CD_signature {
+            get {
+                return ResourceManager.GetString("Found_PC_Engine_CD_signature", resourceCulture);
+            }
+        }
+        
+        public static string Found_PC_FX_copyright {
+            get {
+                return ResourceManager.GetString("Found_PC_FX_copyright", resourceCulture);
+            }
+        }
+        
+        public static string Found_Atari_signature {
+            get {
+                return ResourceManager.GetString("Found_Atari_signature", resourceCulture);
+            }
+        }
+        
+        public static string Found_Sega_Dreamcast_IP_BIN_on_second_session {
+            get {
+                return ResourceManager.GetString("Found_Sega_Dreamcast_IP_BIN_on_second_session", resourceCulture);
+            }
+        }
+        
+        public static string Found_VideoNow_Color_frame {
+            get {
+                return ResourceManager.GetString("Found_VideoNow_Color_frame", resourceCulture);
+            }
+        }
+        
+        public static string Found_enhanced_graphics_RW_packet {
+            get {
+                return ResourceManager.GetString("Found_enhanced_graphics_RW_packet", resourceCulture);
+            }
+        }
+        
+        public static string Found_graphics_RW_packet {
+            get {
+                return ResourceManager.GetString("Found_graphics_RW_packet", resourceCulture);
+            }
+        }
+        
+        public static string Found_MIDI_RW_packet {
+            get {
+                return ResourceManager.GetString("Found_MIDI_RW_packet", resourceCulture);
+            }
+        }
+        
+        public static string Found_CD32_TM_file_in_root {
+            get {
+                return ResourceManager.GetString("Found_CD32_TM_file_in_root", resourceCulture);
+            }
+        }
+        
+        public static string Found_CDTV_TM_file_in_root {
+            get {
+                return ResourceManager.GetString("Found_CDTV_TM_file_in_root", resourceCulture);
+            }
+        }
+        
+        public static string Found_correct_IPL_TXT_file_in_root {
+            get {
+                return ResourceManager.GetString("Found_correct_IPL_TXT_file_in_root", resourceCulture);
+            }
+        }
+        
+        public static string Found_Video_CD_description_file {
+            get {
+                return ResourceManager.GetString("Found_Video_CD_description_file", resourceCulture);
+            }
+        }
+        
+        public static string Found_Super_Video_CD_description_file {
+            get {
+                return ResourceManager.GetString("Found_Super_Video_CD_description_file", resourceCulture);
+            }
+        }
+        
+        public static string Found_China_Video_Disc_description_file {
+            get {
+                return ResourceManager.GetString("Found_China_Video_Disc_description_file", resourceCulture);
+            }
+        }
+        
+        public static string Found_correct_SYSTEM_CNF_file_in_root_PS1 {
+            get {
+                return ResourceManager.GetString("Found_correct_SYSTEM_CNF_file_in_root_PS1", resourceCulture);
+            }
+        }
+        
+        public static string Found_correct_SYSTEM_CNF_file_in_root_PS2 {
+            get {
+                return ResourceManager.GetString("Found_correct_SYSTEM_CNF_file_in_root_PS2", resourceCulture);
+            }
+        }
+        
+        public static string Found_Sony_PlayStation_2_boot_sectors_DVD {
+            get {
+                return ResourceManager.GetString("Found_Sony_PlayStation_2_boot_sectors_DVD", resourceCulture);
+            }
+        }
+        
+        public static string Found_Sony_PlayStation_3_boot_sectors {
+            get {
+                return ResourceManager.GetString("Found_Sony_PlayStation_3_boot_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Found_Sony_PlayStation_3_boot_sectors_DVD {
+            get {
+                return ResourceManager.GetString("Found_Sony_PlayStation_3_boot_sectors_DVD", resourceCulture);
+            }
+        }
+        
+        public static string Found_Sony_PlayStation_4_boot_sectors {
+            get {
+                return ResourceManager.GetString("Found_Sony_PlayStation_4_boot_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Blu_ray_type_XG4_setting_disc_type_XGD4 {
+            get {
+                return ResourceManager.GetString("Blu_ray_type_XG4_setting_disc_type_XGD4", resourceCulture);
+            }
+        }
+        
+        public static string Found_Sony_PlayStation_5_boot_sectors {
+            get {
+                return ResourceManager.GetString("Found_Sony_PlayStation_5_boot_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Blu_ray_type_BDU_setting_disc_type_UHD {
+            get {
+                return ResourceManager.GetString("Blu_ray_type_BDU_setting_disc_type_UHD", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_find_VideoNow_Color_frame_offset {
+            get {
+                return ResourceManager.GetString("Could_not_find_VideoNow_Color_frame_offset", resourceCulture);
+            }
+        }
+        
+        public static string VideoNow_Color_frame_is_offset_0_bytes {
+            get {
+                return ResourceManager.GetString("VideoNow_Color_frame_is_offset_0_bytes", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Recognized_Format_Layers_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Recognized_Format_Layers_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Write_Protection_Status_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Write_Protection_Status_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_PFI_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_PFI_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_DMI_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_DMI_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_CMI_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_CMI_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_BCA_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_BCA_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_DVD_AACS_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_DVD_AACS_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_DDS_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_DDS_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Medium_Status_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Medium_Status_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_SAI_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_SAI_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Last_Out_Border_RMD_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Last_Out_Border_RMD_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Disc_Key_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Disc_Key_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Sector_CMI_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Sector_CMI_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Pre_Recorded_Info_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Pre_Recorded_Info_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_DVD_R_Media_ID_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_DVD_R_Media_ID_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_DVD_R_PFI_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_DVD_R_PFI_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_ADIP_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_ADIP_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_DCB_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_DCB_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_HD_DVD_CMI_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_HD_DVD_CMI_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_HD_DVD_R_Medium_Status {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_HD_DVD_R_Medium_Status", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Last_RMD_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Last_RMD_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Layer_Capacity_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Layer_Capacity_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_MEDIA_SERIAL_NUMBER_0 {
+            get {
+                return ResourceManager.GetString("READ_MEDIA_SERIAL_NUMBER_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Middle_Zone_Start_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Middle_Zone_Start_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Jump_Interval_Size_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Jump_Interval_Size_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Manual_Layer_Jump_Start_LBA_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Manual_Layer_Jump_Start_LBA_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Remap_Anchor_Point_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Remap_Anchor_Point_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_DI_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_DI_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_PAC_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_PAC_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Cartridge_Status_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Cartridge_Status_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_Raw_DFL_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_Raw_DFL_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_001b_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_001b_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_STRUCTURE_010b_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_STRUCTURE_010b_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_TOC_PMA_ATIP_TOC_0 {
+            get {
+                return ResourceManager.GetString("READ_TOC_PMA_ATIP_TOC_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_TOC_PMA_ATIP_ATIP_0 {
+            get {
+                return ResourceManager.GetString("READ_TOC_PMA_ATIP_ATIP_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_TOC_PMA_ATIP_Session_Info_0 {
+            get {
+                return ResourceManager.GetString("READ_TOC_PMA_ATIP_Session_Info_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_TOC_PMA_ATIP_Raw_TOC_0 {
+            get {
+                return ResourceManager.GetString("READ_TOC_PMA_ATIP_Raw_TOC_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_TOC_PMA_ATIP_PMA_0 {
+            get {
+                return ResourceManager.GetString("READ_TOC_PMA_ATIP_PMA_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_TOC_PMA_ATIP_CD_TEXT_0 {
+            get {
+                return ResourceManager.GetString("READ_TOC_PMA_ATIP_CD_TEXT_0", resourceCulture);
+            }
+        }
+        
+        public static string KREON_EXTRACT_SS_0 {
+            get {
+                return ResourceManager.GetString("KREON_EXTRACT_SS_0", resourceCulture);
+            }
+        }
+        
+        public static string READ_DISC_INFORMATION_000b_0 {
+            get {
+                return ResourceManager.GetString("READ_DISC_INFORMATION_000b_0", resourceCulture);
+            }
+        }
+        
+        public static string Found_new_ISRC_0_for_track_1 {
+            get {
+                return ResourceManager.GetString("Found_new_ISRC_0_for_track_1", resourceCulture);
+            }
+        }
+        
+        public static string ISRC_for_track_0_changed_from_1_to_2 {
+            get {
+                return ResourceManager.GetString("ISRC_for_track_0_changed_from_1_to_2", resourceCulture);
+            }
+        }
+        
+        public static string Found_new_MCN_0 {
+            get {
+                return ResourceManager.GetString("Found_new_MCN_0", resourceCulture);
+            }
+        }
+        
+        public static string MCN_changed_from_0_to_1 {
+            get {
+                return ResourceManager.GetString("MCN_changed_from_0_to_1", resourceCulture);
+            }
+        }
+        
+        public static string Pregap_for_track_0_set_to_1_sectors {
+            get {
+                return ResourceManager.GetString("Pregap_for_track_0_set_to_1_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Setting_index_0_for_track_1_to_LBA_2 {
+            get {
+                return ResourceManager.GetString("Setting_index_0_for_track_1_to_LBA_2", resourceCulture);
+            }
+        }
+        
+        public static string Generating_subchannel_for_sector_0 {
+            get {
+                return ResourceManager.GetString("Generating_subchannel_for_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_media_tags {
+            get {
+                return ResourceManager.GetString("Hashing_media_tags", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_reading_sector_1 {
+            get {
+                return ResourceManager.GetString("Error_0_reading_sector_1", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_sector_0_of_1 {
+            get {
+                return ResourceManager.GetString("Hashing_sector_0_of_1", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_partition_0 {
+            get {
+                return ResourceManager.GetString("Hashing_partition_0", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_blocks_0_of_1 {
+            get {
+                return ResourceManager.GetString("Hashing_blocks_0_of_1", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_file_0 {
+            get {
+                return ResourceManager.GetString("Hashing_file_0", resourceCulture);
+            }
+        }
+        
+        public static string Checking_filesystems {
+            get {
+                return ResourceManager.GetString("Checking_filesystems", resourceCulture);
+            }
+        }
+        
+        public static string Mounting_0 {
+            get {
+                return ResourceManager.GetString("Mounting_0", resourceCulture);
+            }
+        }
+        
+        public static string Saving_metadata {
+            get {
+                return ResourceManager.GetString("Saving_metadata", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_SuperCardPro_image {
+            get {
+                return ResourceManager.GetString("Hashing_SuperCardPro_image", resourceCulture);
+            }
+        }
+        
+        public static string SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring {
+            get {
+                return ResourceManager.GetString("SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring", resourceCulture);
+            }
+        }
+        
+        public static string SCP_image_do_not_same_number_heads_0_disk_image_1_ignoring {
+            get {
+                return ResourceManager.GetString("SCP_image_do_not_same_number_heads_0_disk_image_1_ignoring", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_KryoFlux_images {
+            get {
+                return ResourceManager.GetString("Hashing_KryoFlux_images", resourceCulture);
+            }
+        }
+        
+        public static string KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring {
+            get {
+                return ResourceManager.GetString("KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring", resourceCulture);
+            }
+        }
+        
+        public static string KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring {
+            get {
+                return ResourceManager.GetString("KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_DiscFerret_image {
+            get {
+                return ResourceManager.GetString("Hashing_DiscFerret_image", resourceCulture);
+            }
+        }
+        
+        public static string DiscFerret_image_do_not_same_number_tracks_0_disk_image_1_ignoring {
+            get {
+                return ResourceManager.GetString("DiscFerret_image_do_not_same_number_tracks_0_disk_image_1_ignoring", resourceCulture);
+            }
+        }
+        
+        public static string DiscFerret_image_do_not_same_number_heads_0_disk_image_1_ignoring {
+            get {
+                return ResourceManager.GetString("DiscFerret_image_do_not_same_number_heads_0_disk_image_1_ignoring", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_stat_0 {
+            get {
+                return ResourceManager.GetString("Cannot_stat_0", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_file_0_1 {
+            get {
+                return ResourceManager.GetString("Hashing_file_0_1", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_file_byte_0_of_1 {
+            get {
+                return ResourceManager.GetString("Hashing_file_byte_0_of_1", resourceCulture);
+            }
+        }
+        
+        public static string Track_0_of_1 {
+            get {
+                return ResourceManager.GetString("Track_0_of_1", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_subchannel_sector_0_of_1 {
+            get {
+                return ResourceManager.GetString("Hashing_subchannel_sector_0_of_1", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_image_file {
+            get {
+                return ResourceManager.GetString("Hashing_image_file", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_image_file_byte_0_of_1 {
+            get {
+                return ResourceManager.GetString("Hashing_image_file_byte_0_of_1", resourceCulture);
+            }
+        }
+        
+        public static string The_specified_image_says_it_contains_an_optical_media_but_at_the_same_time_says_it_does_not_support_them {
+            get {
+                return ResourceManager.GetString("The_specified_image_says_it_contains_an_optical_media_but_at_the_same_time_says_i" +
+                        "t_does_not_support_them", resourceCulture);
+            }
+        }
+        
+        public static string The_specified_image_says_it_contains_a_block_addressable_media_but_at_the_same_time_says_it_does_not_support_them {
+            get {
+                return ResourceManager.GetString("The_specified_image_says_it_contains_a_block_addressable_media_but_at_the_same_ti" +
+                        "me_says_it_does_not_support_them", resourceCulture);
+            }
+        }
+        
+        public static string Please_open_an_issue_at_Github {
+            get {
+                return ResourceManager.GetString("Please_open_an_issue_at_Github", resourceCulture);
+            }
+        }
+        
+        public static string The_specified_image_says_it_contains_a_byte_addressable_media_but_at_the_same_time_says_it_does_not_support_them {
+            get {
+                return ResourceManager.GetString("The_specified_image_says_it_contains_a_byte_addressable_media_but_at_the_same_tim" +
+                        "e_says_it_does_not_support_them", resourceCulture);
+            }
+        }
+        
+        public static string Not_overwriting_file_0 {
+            get {
+                return ResourceManager.GetString("Not_overwriting_file_0", resourceCulture);
+            }
+        }
+        
+        public static string Writing_0_to_1 {
+            get {
+                return ResourceManager.GetString("Writing_0_to_1", resourceCulture);
+            }
+        }
+        
+        public static string Unable_to_write_file_0 {
+            get {
+                return ResourceManager.GetString("Unable_to_write_file_0", resourceCulture);
+            }
+        }
+        
+        public static string Sectors_0 {
+            get {
+                return ResourceManager.GetString("Sectors_0", resourceCulture);
+            }
+        }
+        
+        public static string Entropying_sector_0 {
+            get {
+                return ResourceManager.GetString("Entropying_sector_0", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_while_reading_sector_1_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_while_reading_sector_1_continuing", resourceCulture);
+            }
+        }
+        
+        public static string _0_bytes {
+            get {
+                return ResourceManager.GetString("_0_bytes", resourceCulture);
+            }
+        }
+        
+        public static string The_selected_image_does_not_support_tracks {
+            get {
+                return ResourceManager.GetString("The_selected_image_does_not_support_tracks", resourceCulture);
+            }
+        }
+        
+        public static string Entropying_track_0_of_1 {
+            get {
+                return ResourceManager.GetString("Entropying_track_0_of_1", resourceCulture);
+            }
+        }
+        
+        public static string Track_0_has_1_sectors {
+            get {
+                return ResourceManager.GetString("Track_0_has_1_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Entropying_sector_0_of_track_1 {
+            get {
+                return ResourceManager.GetString("Entropying_sector_0_of_track_1", resourceCulture);
+            }
+        }
+        
+        public static string Unable_to_get_separate_tracks_not_calculating_their_entropy {
+            get {
+                return ResourceManager.GetString("Unable_to_get_separate_tracks_not_calculating_their_entropy", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_while_reading_data__not_continuing {
+            get {
+                return ResourceManager.GetString("Error_0_while_reading_data__not_continuing", resourceCulture);
+            }
+        }
+        
+        public static string error_code_0 {
+            get {
+                return ResourceManager.GetString("error_code_0", resourceCulture);
+            }
+        }
+        
+        public static string The_specified_device_cannot_be_found {
+            get {
+                return ResourceManager.GetString("The_specified_device_cannot_be_found", resourceCulture);
+            }
+        }
+        
+        public static string Not_enough_permissions_to_open_the_device {
+            get {
+                return ResourceManager.GetString("Not_enough_permissions_to_open_the_device", resourceCulture);
+            }
+        }
+        
+        public static string The_specified_device_is_in_use_by_another_process {
+            get {
+                return ResourceManager.GetString("The_specified_device_is_in_use_by_another_process", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_open_the_device_in_writable_mode_as_needed_by_some_commands {
+            get {
+                return ResourceManager.GetString("Cannot_open_the_device_in_writable_mode_as_needed_by_some_commands", resourceCulture);
+            }
+        }
+        
+        public static string Tried_to_open_a_file_instead_of_a_device {
+            get {
+                return ResourceManager.GetString("Tried_to_open_a_file_instead_of_a_device", resourceCulture);
+            }
+        }
+        
+        public static string Trying_plugin_0 {
+            get {
+                return ResourceManager.GetString("Trying_plugin_0", resourceCulture);
+            }
+        }
+        
+        public static string Title_Index {
+            get {
+                return ResourceManager.GetString("Title_Index", resourceCulture);
+            }
+        }
+        
+        public static string Title_Image_indexes {
+            get {
+                return ResourceManager.GetString("Title_Image_indexes", resourceCulture);
+            }
+        }
+        
+        public static string Found_0_at_1 {
+            get {
+                return ResourceManager.GetString("Found_0_at_1", resourceCulture);
+            }
+        }
+        
+        public static string Found_0_at_zero {
+            get {
+                return ResourceManager.GetString("Found_0_at_zero", resourceCulture);
+            }
+        }
+        
+        public static string Trying_0_at_1 {
+            get {
+                return ResourceManager.GetString("Trying_0_at_1", resourceCulture);
+            }
+        }
+        
+        public static string Got_0_children {
+            get {
+                return ResourceManager.GetString("Got_0_children", resourceCulture);
+            }
+        }
+        
+        public static string Got_0_parents {
+            get {
+                return ResourceManager.GetString("Got_0_parents", resourceCulture);
+            }
+        }
+        
+        public static string Got_0_partitions {
+            get {
+                return ResourceManager.GetString("Got_0_partitions", resourceCulture);
+            }
+        }
+        
+        public static string Found_unknown_vendor_mode_page_0_subpage_1 {
+            get {
+                return ResourceManager.GetString("Found_unknown_vendor_mode_page_0_subpage_1", resourceCulture);
+            }
+        }
+        
+        public static string Found_unknown_vendor_mode_page_0 {
+            get {
+                return ResourceManager.GetString("Found_unknown_vendor_mode_page_0", resourceCulture);
+            }
+        }
+        
+        public static string Found_unknown_mode_page_0_subpage_1 {
+            get {
+                return ResourceManager.GetString("Found_unknown_mode_page_0_subpage_1", resourceCulture);
+            }
+        }
+        
+        public static string Found_unknown_mode_page_0 {
+            get {
+                return ResourceManager.GetString("Found_unknown_mode_page_0", resourceCulture);
+            }
+        }
+        
+        public static string Uploading_device_report {
+            get {
+                return ResourceManager.GetString("Uploading_device_report", resourceCulture);
+            }
+        }
+        
+        public static string Creating_main_database {
+            get {
+                return ResourceManager.GetString("Creating_main_database", resourceCulture);
+            }
+        }
+        
+        public static string Updating_main_database {
+            get {
+                return ResourceManager.GetString("Updating_main_database", resourceCulture);
+            }
+        }
+        
+        public static string Last_update_0 {
+            get {
+                return ResourceManager.GetString("Last_update_0", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_when_trying_to_get_updated_entities {
+            get {
+                return ResourceManager.GetString("Error_0_when_trying_to_get_updated_entities", resourceCulture);
+            }
+        }
+        
+        public static string Adding_USB_vendors {
+            get {
+                return ResourceManager.GetString("Adding_USB_vendors", resourceCulture);
+            }
+        }
+        
+        public static string Added_0_usb_vendors {
+            get {
+                return ResourceManager.GetString("Added_0_usb_vendors", resourceCulture);
+            }
+        }
+        
+        public static string Adding_USB_products {
+            get {
+                return ResourceManager.GetString("Adding_USB_products", resourceCulture);
+            }
+        }
+        
+        public static string Added_0_usb_products {
+            get {
+                return ResourceManager.GetString("Added_0_usb_products", resourceCulture);
+            }
+        }
+        
+        public static string Adding_CompactDisc_read_offsets {
+            get {
+                return ResourceManager.GetString("Adding_CompactDisc_read_offsets", resourceCulture);
+            }
+        }
+        
+        public static string Added_0_CompactDisc_read_offsets {
+            get {
+                return ResourceManager.GetString("Added_0_CompactDisc_read_offsets", resourceCulture);
+            }
+        }
+        
+        public static string Adding_known_devices {
+            get {
+                return ResourceManager.GetString("Adding_known_devices", resourceCulture);
+            }
+        }
+        
+        public static string Added_0_known_devices {
+            get {
+                return ResourceManager.GetString("Added_0_known_devices", resourceCulture);
+            }
+        }
+        
+        public static string Adding_known_iNES_NES_2_0_headers {
+            get {
+                return ResourceManager.GetString("Adding_known_iNES_NES_2_0_headers", resourceCulture);
+            }
+        }
+        
+        public static string Added_0_known_iNES_NES_2_0_headers {
+            get {
+                return ResourceManager.GetString("Added_0_known_iNES_NES_2_0_headers", resourceCulture);
+            }
+        }
+        
+        public static string Updating_USB_vendors {
+            get {
+                return ResourceManager.GetString("Updating_USB_vendors", resourceCulture);
+            }
+        }
+        
+        public static string Modified_0_USB_vendors {
+            get {
+                return ResourceManager.GetString("Modified_0_USB_vendors", resourceCulture);
+            }
+        }
+        
+        public static string Updating_USB_products {
+            get {
+                return ResourceManager.GetString("Updating_USB_products", resourceCulture);
+            }
+        }
+        
+        public static string Modified_0_USB_products {
+            get {
+                return ResourceManager.GetString("Modified_0_USB_products", resourceCulture);
+            }
+        }
+        
+        public static string Updating_CompactDisc_read_offsets {
+            get {
+                return ResourceManager.GetString("Updating_CompactDisc_read_offsets", resourceCulture);
+            }
+        }
+        
+        public static string Modified_0_CompactDisc_read_offsets {
+            get {
+                return ResourceManager.GetString("Modified_0_CompactDisc_read_offsets", resourceCulture);
+            }
+        }
+        
+        public static string Updating_known_devices {
+            get {
+                return ResourceManager.GetString("Updating_known_devices", resourceCulture);
+            }
+        }
+        
+        public static string Modified_0_known_devices {
+            get {
+                return ResourceManager.GetString("Modified_0_known_devices", resourceCulture);
+            }
+        }
+        
+        public static string Updating_known_iNES_NES_2_0_headers {
+            get {
+                return ResourceManager.GetString("Updating_known_iNES_NES_2_0_headers", resourceCulture);
+            }
+        }
+        
+        public static string Modified_0_known_iNES_NES_2_0_headers {
+            get {
+                return ResourceManager.GetString("Modified_0_known_iNES_NES_2_0_headers", resourceCulture);
+            }
+        }
+        
+        public static string Exception_0_when_updating_database {
+            get {
+                return ResourceManager.GetString("Exception_0_when_updating_database", resourceCulture);
+            }
+        }
+        
+        public static string Saving_changes {
+            get {
+                return ResourceManager.GetString("Saving_changes", resourceCulture);
+            }
+        }
+        
+        public static string Exception_while_trying_to_save_statistics {
+            get {
+                return ResourceManager.GetString("Exception_while_trying_to_save_statistics", resourceCulture);
+            }
+        }
+        
+        public static string Uploading_statistics {
+            get {
+                return ResourceManager.GetString("Uploading_statistics", resourceCulture);
+            }
+        }
+        
+        public static string Uploading_partial_statistics_file_0 {
+            get {
+                return ResourceManager.GetString("Uploading_partial_statistics_file_0", resourceCulture);
+            }
+        }
+        
+        public static string Was_created_with_0_version_1_WithMarkup {
+            get {
+                return ResourceManager.GetString("Was_created_with_0_version_1_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Created_by_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Created_by_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Has_partitions {
+            get {
+                return ResourceManager.GetString("Has_partitions", resourceCulture);
+            }
+        }
+        
+        public static string Doesnt_have_partitions {
+            get {
+                return ResourceManager.GetString("Doesnt_have_partitions", resourceCulture);
+            }
+        }
+        
+        public static string Has_sessions {
+            get {
+                return ResourceManager.GetString("Has_sessions", resourceCulture);
+            }
+        }
+        
+        public static string Doesnt_have_sessions {
+            get {
+                return ResourceManager.GetString("Doesnt_have_sessions", resourceCulture);
+            }
+        }
+        
+        public static string Comments_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Comments_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Media_title_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Media_title_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Media_manufacturer_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Media_manufacturer_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Media_model_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Media_model_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Media_serial_number_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Media_serial_number_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Media_barcode_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Media_barcode_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Media_part_number_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Media_part_number_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Drive_manufacturer_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Drive_manufacturer_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Drive_model_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Drive_model_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Drive_firmware_info_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Drive_firmware_info_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Media_geometry_0_cylinders_1_heads_2_sectors_per_track_WithMarkup {
+            get {
+                return ResourceManager.GetString("Media_geometry_0_cylinders_1_heads_2_sectors_per_track_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Contains_0_readable_media_tags_WithMarkup {
+            get {
+                return ResourceManager.GetString("Contains_0_readable_media_tags_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Contains_0_readable_sector_tags_WithMarkup {
+            get {
+                return ResourceManager.GetString("Contains_0_readable_sector_tags_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Title_Manufacturer {
+            get {
+                return ResourceManager.GetString("Title_Manufacturer", resourceCulture);
+            }
+        }
+        
+        public static string Title_Model {
+            get {
+                return ResourceManager.GetString("Title_Model", resourceCulture);
+            }
+        }
+        
+        public static string Title_Serial {
+            get {
+                return ResourceManager.GetString("Title_Serial", resourceCulture);
+            }
+        }
+        
+        public static string Title_Software {
+            get {
+                return ResourceManager.GetString("Title_Software", resourceCulture);
+            }
+        }
+        
+        public static string Title_Version {
+            get {
+                return ResourceManager.GetString("Title_Version", resourceCulture);
+            }
+        }
+        
+        public static string Title_Operating_system {
+            get {
+                return ResourceManager.GetString("Title_Operating_system", resourceCulture);
+            }
+        }
+        
+        public static string Title_Dump_hardware_information {
+            get {
+                return ResourceManager.GetString("Title_Dump_hardware_information", resourceCulture);
+            }
+        }
+        
+        public static string Mapping_WithMarkup {
+            get {
+                return ResourceManager.GetString("Mapping_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_INQUIRY_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("SCSI_INQUIRY_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string ATA_IDENTIFY_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("ATA_IDENTIFY_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string ATAPI_IDENTIFY_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("ATAPI_IDENTIFY_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_MODE_SENSE_10_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("SCSI_MODE_SENSE_10_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_MODE_SENSE_6_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("SCSI_MODE_SENSE_6_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string CompactDisc_Table_of_Contents_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("CompactDisc_Table_of_Contents_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string CompactDisc_Absolute_Time_In_Pregroove_ATIP_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("CompactDisc_Absolute_Time_In_Pregroove_ATIP_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string CompactDisc_Lead_in_CD_Text_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("CompactDisc_Lead_in_CD_Text_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string CompactDisc_Media_Catalogue_Number_contained_in_image_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("CompactDisc_Media_Catalogue_Number_contained_in_image_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string DVD_RW_Pre_Recorded_Information_WithMarkup {
+            get {
+                return ResourceManager.GetString("DVD_RW_Pre_Recorded_Information_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string DVD_Physical_Format_Information_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("DVD_Physical_Format_Information_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string DVD_RAM_Disc_Definition_Structure_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("DVD_RAM_Disc_Definition_Structure_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string DVD_R_Physical_Format_Information_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("DVD_R_Physical_Format_Information_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Bluray_Disc_Information_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("Bluray_Disc_Information_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Bluray_Disc_Definition_Structure_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("Bluray_Disc_Definition_Structure_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string PCMCIA_CIS_WithMarkup {
+            get {
+                return ResourceManager.GetString("PCMCIA_CIS_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string SecureDigital_CID_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("SecureDigital_CID_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string SecureDigital_CSD_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("SecureDigital_CSD_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string SecureDigital_SCR_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("SecureDigital_SCR_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string SecureDigital_OCR_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("SecureDigital_OCR_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string MultiMediaCard_CID_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("MultiMediaCard_CID_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string MultiMediaCard_CSD_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("MultiMediaCard_CSD_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string MultiMediaCard_Extended_CSD_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("MultiMediaCard_Extended_CSD_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string MultiMediaCard_OCR_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("MultiMediaCard_OCR_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Xbox_Physical_Format_Information_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("Xbox_Physical_Format_Information_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Xbox_DMI_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("Xbox_DMI_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Xbox_360_DMI_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("Xbox_360_DMI_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Xbox_Security_Sectors_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("Xbox_Security_Sectors_contained_in_image_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Title_Image_tracks {
+            get {
+                return ResourceManager.GetString("Title_Image_tracks", resourceCulture);
+            }
+        }
+        
+        public static string Title_Image_sessions {
+            get {
+                return ResourceManager.GetString("Title_Image_sessions", resourceCulture);
+            }
+        }
+        
+        public static string Please_write_description_of_media_type {
+            get {
+                return ResourceManager.GetString("Please_write_description_of_media_type", resourceCulture);
+            }
+        }
+        
+        public static string Please_write_media_model {
+            get {
+                return ResourceManager.GetString("Please_write_media_model", resourceCulture);
+            }
+        }
+        
+        public static string Error_0 {
+            get {
+                return ResourceManager.GetString("Error_0", resourceCulture);
+            }
+        }
+        
+        public static string The_drive_has_returned_incorrect_Q_positioning_calculating_pregaps {
+            get {
+                return ResourceManager.GetString("The_drive_has_returned_incorrect_Q_positioning_calculating_pregaps", resourceCulture);
+            }
+        }
+        
+        public static string Output_format_does_not_support_sessions {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_sessions", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_setting_metadata {
+            get {
+                return ResourceManager.GetString("Error_0_setting_metadata", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_read_subchannel_for_this_track_supposing_zero_sectors {
+            get {
+                return ResourceManager.GetString("Could_not_read_subchannel_for_this_track_supposing_zero_sectors", resourceCulture);
+            }
+        }
+        
+        public static string System_information {
+            get {
+                return ResourceManager.GetString("System_information", resourceCulture);
+            }
+        }
+        
+        public static string Program_information {
+            get {
+                return ResourceManager.GetString("Program_information", resourceCulture);
+            }
+        }
+        
+        public static string Running_in_0_bit {
+            get {
+                return ResourceManager.GetString("Running_in_0_bit", resourceCulture);
+            }
+        }
+        
+        public static string DEBUG_version {
+            get {
+                return ResourceManager.GetString("DEBUG_version", resourceCulture);
+            }
+        }
+        
+        public static string Command_line_0 {
+            get {
+                return ResourceManager.GetString("Command_line_0", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_sectors {
+            get {
+                return ResourceManager.GetString("Hashing_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_files {
+            get {
+                return ResourceManager.GetString("Hashing_files", resourceCulture);
+            }
+        }
+        
+        public static string Hashing_tracks {
+            get {
+                return ResourceManager.GetString("Hashing_tracks", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_get_tracks_because_0 {
+            get {
+                return ResourceManager.GetString("Could_not_get_tracks_because_0", resourceCulture);
+            }
+        }
+        
+        public static string Invoke_Found_undecoded_tuple_ID_0 {
+            get {
+                return ResourceManager.GetString("Invoke_Found_undecoded_tuple_ID_0", resourceCulture);
+            }
+        }
+        
+        public static string Found_unknown_tuple_ID_0 {
+            get {
+                return ResourceManager.GetString("Found_unknown_tuple_ID_0", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_get_tuples {
+            get {
+                return ResourceManager.GetString("Could_not_get_tuples", resourceCulture);
+            }
+        }
+        
+        public static string Title_Type_for_media {
+            get {
+                return ResourceManager.GetString("Title_Type_for_media", resourceCulture);
+            }
+        }
+        
+        public static string Image_information_WithMarkup {
+            get {
+                return ResourceManager.GetString("Image_information_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Format_0_version_1_WithMarkup {
+            get {
+                return ResourceManager.GetString("Format_0_version_1_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Format_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Format_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Was_created_with_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Was_created_with_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Contains_a_media_of_type_0_and_XML_type_1_WithMarkup {
+            get {
+                return ResourceManager.GetString("Contains_a_media_of_type_0_and_XML_type_1_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string Drive_serial_number_0_WithMarkup {
+            get {
+                return ResourceManager.GetString("Drive_serial_number_0_WithMarkup", resourceCulture);
+            }
+        }
+        
+        public static string CompactDisc_Power_Management_Area_contained_in_image_WithMarkup {
+            get {
+                return ResourceManager.GetString("CompactDisc_Power_Management_Area_contained_in_image_WithMarkup", resourceCulture);
             }
         }
     }

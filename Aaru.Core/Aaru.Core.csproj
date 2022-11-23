@@ -139,6 +139,7 @@
     <ProjectReference Include="..\Aaru.Decryption\Aaru.Decryption.csproj"/>
     <ProjectReference Include="..\Aaru.Dto\Aaru.Dto.csproj"/>
     <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"/>
+    <ProjectReference Include="..\Aaru.Localization\Aaru.Localization.csproj"/>
     <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"/>
     <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
     <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"/>

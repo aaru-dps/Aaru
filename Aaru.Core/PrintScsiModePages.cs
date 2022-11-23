@@ -64,10 +64,10 @@ public static class PrintScsiModePages
                     else
                     {
                         if(page.Subpage != 0)
-                            AaruConsole.WriteLine("Found unknown vendor mode page {0:X2}h subpage {1:X2}h", page.Page,
-                                                  page.Subpage);
+                            AaruConsole.WriteLine(Localization.Core.Found_unknown_vendor_mode_page_0_subpage_1,
+                                                  page.Page, page.Subpage);
                         else
-                            AaruConsole.WriteLine("Found unknown vendor mode page {0:X2}h", page.Page);
+                            AaruConsole.WriteLine(Localization.Core.Found_unknown_vendor_mode_page_0, page.Page);
                     }
 
                     break;
@@ -316,7 +316,7 @@ public static class PrintScsiModePages
                 case 0x30:
                 {
                     if(Modes.IsAppleModePage_30(page.PageResponse))
-                        AaruConsole.WriteLine("Drive identifies as Apple OEM drive");
+                        AaruConsole.WriteLine(Localization.Core.Drive_identifies_as_Apple_OEM_drive);
                     else
                         goto default;
 
@@ -365,10 +365,10 @@ public static class PrintScsiModePages
                 default:
                 {
                     if(page.Subpage != 0)
-                        AaruConsole.WriteLine("Found unknown mode page {0:X2}h subpage {1:X2}h", page.Page,
+                        AaruConsole.WriteLine(Localization.Core.Found_unknown_mode_page_0_subpage_1, page.Page,
                                               page.Subpage);
                     else
-                        AaruConsole.WriteLine("Found unknown mode page {0:X2}h", page.Page);
+                        AaruConsole.WriteLine(Localization.Core.Found_unknown_mode_page_0, page.Page);
 
                     break;
                 }

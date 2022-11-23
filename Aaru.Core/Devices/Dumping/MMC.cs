@@ -76,7 +76,7 @@ partial class Dump
         {
             gotConfiguration = true;
             Features.SeparatedFeatures ftr = Features.Separate(cmdBuf);
-            _dumpLog.WriteLine("Device reports current profile is 0x{0:X4}", ftr.CurrentProfile);
+            _dumpLog.WriteLine(Localization.Core.Device_reports_current_profile_is_0, ftr.CurrentProfile);
 
             switch(ftr.CurrentProfile)
             {
@@ -277,7 +277,7 @@ partial class Dump
 
         var   scsiReader = new Reader(_dev, _dev.Timeout, null, _errorLog, _dumpRaw);
         ulong blocks     = scsiReader.GetDeviceBlocks();
-        _dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
+        _dumpLog.WriteLine(Localization.Core.Device_reports_disc_has_0_blocks, blocks);
         Dictionary<MediaTagType, byte[]> mediaTags = new();
 
         if(dskType == MediaType.PD650)
@@ -294,7 +294,7 @@ partial class Dump
         switch(dskType)
         {
             case MediaType.Unknown when blocks > 0:
-                _dumpLog.WriteLine("Reading Physical Format Information");
+                _dumpLog.WriteLine(Localization.Core.Reading_Physical_Format_Information);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.PhysicalInformation, 0, _dev.Timeout, out _);
@@ -305,9 +305,11 @@ partial class Dump
 
                     if(nintendoPfi is { DiskCategory: DiskCategory.Nintendo, PartVersion: 15 })
                     {
-                        _dumpLog.WriteLine("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
+                        _dumpLog.WriteLine(Localization.Core.
+                                                        Dumping_Nintendo_GameCube_or_Wii_discs_is_not_yet_implemented);
 
-                        StoppingErrorMessage?.Invoke("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
+                        StoppingErrorMessage?.Invoke(Localization.Core.
+                                                                  Dumping_Nintendo_GameCube_or_Wii_discs_is_not_yet_implemented);
 
                         return;
                     }
@@ -331,7 +333,7 @@ partial class Dump
             case MediaType.HDDVDROM:
             case MediaType.HDDVDRW:
             case MediaType.HDDVDRWDL:
-                _dumpLog.WriteLine("Reading Physical Format Information");
+                _dumpLog.WriteLine(Localization.Core.Reading_Physical_Format_Information);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.PhysicalInformation, 0, _dev.Timeout, out _);
@@ -370,7 +372,7 @@ partial class Dump
                     }
                 }
 
-                _dumpLog.WriteLine("Reading Disc Manufacturing Information");
+                _dumpLog.WriteLine(Localization.Core.Reading_Disc_Manufacturing_Information);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.DiscManufacturingInformation, 0, _dev.Timeout,
@@ -400,10 +402,11 @@ partial class Dump
 
                         if(sense || Inquiry.Decode(inqBuf)?.KreonPresent != true)
                         {
-                            _dumpLog.WriteLine("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
+                            _dumpLog.WriteLine(Localization.Core.
+                                                            Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware);
 
-                            StoppingErrorMessage?.
-                                Invoke("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
+                            StoppingErrorMessage?.Invoke(Localization.Core.
+                                                                      Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware);
 
                             if(!_force)
                                 return;
@@ -413,8 +416,8 @@ partial class Dump
 
                         if(_dumpRaw && !_force)
                         {
-                            StoppingErrorMessage?.
-                                Invoke("Not continuing. If you want to continue reading cooked data when raw is not available use the force option.");
+                            StoppingErrorMessage?.Invoke(Localization.Core.
+                                                                      If_you_want_to_continue_reading_cooked_data_when_raw_is_not_available_use_the_force_option);
 
                             // TODO: Exit more gracefully
                             return;
@@ -439,7 +442,7 @@ partial class Dump
         #region DVD-ROM
         if(dskType is MediaType.DVDDownload or MediaType.DVDROM)
         {
-            _dumpLog.WriteLine("Reading Lead-in Copyright Information.");
+            _dumpLog.WriteLine(Localization.Core.Reading_Lead_in_Copyright_Information);
 
             sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                            MmcDiscStructureFormat.CopyrightInformation, 0, _dev.Timeout, out _);
@@ -454,17 +457,17 @@ partial class Dump
                     CSS_CPRM.LeadInCopyright? cmi = CSS_CPRM.DecodeLeadInCopyright(cmdBuf);
 
                     if(cmi?.CopyrightType == CopyrightType.NoProtection)
-                        UpdateStatus?.Invoke("Drive reports no copy protection on disc.");
+                        UpdateStatus?.Invoke(Localization.Core.Drive_reports_no_copy_protection_on_disc);
                     else
                     {
                         if(!Settings.Settings.Current.EnableDecryption)
-                            UpdateStatus?.Invoke("Drive reports the disc uses copy protection. " +
-                                                 "The dump will be incorrect unless decryption is enabled.");
+                            UpdateStatus?.Invoke(Localization.Core.
+                                                              Drive_reports_the_disc_uses_copy_protection_The_dump_will_be_incorrect_unless_decryption_is_enabled);
                         else
                         {
                             if(cmi?.CopyrightType == CopyrightType.CSS)
                             {
-                                UpdateStatus?.Invoke("Drive reports disc uses CSS copy protection.");
+                                UpdateStatus?.Invoke(Localization.Core.Drive_reports_disc_uses_CSS_copy_protection);
 
                                 dvdDecrypt = new DVDDecryption(_dev);
 
@@ -476,7 +479,7 @@ partial class Dump
                                 {
                                     byte[] busKey = cmdBuf;
 
-                                    UpdateStatus?.Invoke("Reading disc key.");
+                                    UpdateStatus?.Invoke(Localization.Core.Reading_disc_key);
                                     sense = dvdDecrypt.ReadDiscKey(out cmdBuf, out _, _dev.Timeout, out _);
 
                                     if(!sense)
@@ -489,7 +492,8 @@ partial class Dump
                                         if(!sense)
                                             if(cmdBuf[7] == 1)
                                             {
-                                                UpdateStatus?.Invoke("Disc and drive authentication succeeded.");
+                                                UpdateStatus?.Invoke(Localization.Core.
+                                                                         Disc_and_drive_authentication_succeeded);
 
                                                 sense = dvdDecrypt.ReadRpc(out cmdBuf, out _,
                                                                            DvdCssKeyClass.DvdCssCppmOrCprm,
@@ -502,35 +506,41 @@ partial class Dump
 
                                                     if(rpc.HasValue)
                                                         UpdateStatus?.Invoke(CSS.CheckRegion(rpc.Value, cmi.Value)
-                                                                                 ? "Disc and drive regions match."
-                                                                                 : "Disc and drive regions do not match. The dump will be incorrect");
+                                                                                 ? Localization.Core.
+                                                                                     Disc_and_drive_regions_match
+                                                                                 : Localization.Core.
+                                                                                     Disc_and_drive_regions_do_not_match_The_dump_will_be_incorrect);
                                                 }
 
                                                 if(decodedDiscKey.HasValue)
                                                 {
                                                     mediaTags.Add(MediaTagType.DVD_DiscKey, decodedDiscKey.Value.Key);
 
-                                                    UpdateStatus?.Invoke("Decrypting disc key.");
+                                                    UpdateStatus?.Invoke(Localization.Core.Decrypting_disc_key);
 
                                                     CSS.DecryptDiscKey(decodedDiscKey.Value.Key, out byte[] discKey);
 
                                                     if(discKey != null)
                                                     {
-                                                        UpdateStatus?.Invoke("Decryption of disc key succeeded.");
+                                                        UpdateStatus?.Invoke(Localization.Core.
+                                                                                 Decryption_of_disc_key_succeeded);
+
                                                         mediaTags.Add(MediaTagType.DVD_DiscKey_Decrypted, discKey);
                                                     }
                                                     else
-                                                        UpdateStatus?.Invoke("Decryption of disc key failed.");
+                                                        UpdateStatus?.Invoke(Localization.Core.
+                                                                                 Decryption_of_disc_key_failed);
                                                 }
                                             }
                                     }
                                 }
                             }
                             else
-                                UpdateStatus?.Invoke($"Drive reports disc uses {
-                                    (CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ??
-                                     CopyrightType.NoProtection).ToString()} copy protection. " +
-                                                     "This is not yet supported and the dump will be incorrect.");
+                                UpdateStatus?.
+                                    Invoke(string.
+                                               Format(Localization.Core.Drive_reports_0_copy_protection_not_yet_supported_dump_incorrect,
+                                                      (CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ??
+                                                       CopyrightType.NoProtection).ToString()));
                         }
                     }
                 }
@@ -543,7 +553,7 @@ partial class Dump
             case MediaType.DVDDownload:
             case MediaType.DVDROM:
             case MediaType.HDDVDROM:
-                _dumpLog.WriteLine("Reading Burst Cutting Area.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Burst_Cutting_Area);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.BurstCuttingArea, 0, _dev.Timeout, out _);
@@ -561,7 +571,7 @@ partial class Dump
             #region DVD-RAM and HD DVD-RAM
             case MediaType.DVDRAM:
             case MediaType.HDDVDRAM:
-                _dumpLog.WriteLine("Reading Disc Description Structure.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Disc_Description_Structure);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.DvdramDds, 0, _dev.Timeout, out _);
@@ -574,7 +584,7 @@ partial class Dump
                         mediaTags.Add(MediaTagType.DVDRAM_DDS, tmpBuf);
                     }
 
-                _dumpLog.WriteLine("Reading Spare Area Information.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Spare_Area_Information);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.DvdramSpareAreaInformation, 0, _dev.Timeout,
@@ -594,7 +604,7 @@ partial class Dump
             #region DVD-R and DVD-RW
             case MediaType.DVDR:
             case MediaType.DVDRW:
-                _dumpLog.WriteLine("Reading Pre-Recorded Information.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Pre_Recorded_Information);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.PreRecordedInfo, 0, _dev.Timeout, out _);
@@ -616,7 +626,7 @@ partial class Dump
             case MediaType.DVDR:
             case MediaType.DVDRW:
             case MediaType.HDDVDR:
-                _dumpLog.WriteLine("Reading Media Identifier.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Media_Identifier);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.DvdrMediaIdentifier, 0, _dev.Timeout, out _);
@@ -628,7 +638,7 @@ partial class Dump
                     mediaTags.Add(MediaTagType.DVDR_MediaIdentifier, tmpBuf);
                 }
 
-                _dumpLog.WriteLine("Reading Recordable Physical Information.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Recordable_Physical_Information);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.DvdrPhysicalInformation, 0, _dev.Timeout, out _);
@@ -648,7 +658,7 @@ partial class Dump
             case MediaType.DVDPRDL:
             case MediaType.DVDPRW:
             case MediaType.DVDPRWDL:
-                _dumpLog.WriteLine("Reading ADdress In Pregroove.");
+                _dumpLog.WriteLine(Localization.Core.Reading_ADdress_In_Pregroove);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.Adip, 0, _dev.Timeout, out _);
@@ -660,7 +670,7 @@ partial class Dump
                     mediaTags.Add(MediaTagType.DVD_ADIP, tmpBuf);
                 }
 
-                _dumpLog.WriteLine("Reading Disc Control Blocks.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Disc_Control_Blocks);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.Dcb, 0, _dev.Timeout, out _);
@@ -677,7 +687,7 @@ partial class Dump
 
             #region HD DVD-ROM
             case MediaType.HDDVDROM:
-                _dumpLog.WriteLine("Reading Lead-in Copyright Information.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Lead_in_Copyright_Information);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                MmcDiscStructureFormat.HddvdCopyrightInformation, 0, _dev.Timeout,
@@ -700,7 +710,7 @@ partial class Dump
             case MediaType.BDRXL:
             case MediaType.BDREXL:
             case MediaType.UHDBD:
-                _dumpLog.WriteLine("Reading Disc Information.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Disc_Information);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
                                                MmcDiscStructureFormat.DiscInformation, 0, _dev.Timeout, out _);
@@ -733,7 +743,7 @@ partial class Dump
             #region BD-ROM only
             case MediaType.BDROM:
             case MediaType.UHDBD:
-                _dumpLog.WriteLine("Reading Burst Cutting Area.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Burst_Cutting_Area);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
                                                MmcDiscStructureFormat.BdBurstCuttingArea, 0, _dev.Timeout, out _);
@@ -753,7 +763,7 @@ partial class Dump
             case MediaType.BDRE:
             case MediaType.BDRXL:
             case MediaType.BDREXL:
-                _dumpLog.WriteLine("Reading Disc Definition Structure.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Disc_Definition_Structure);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
                                                MmcDiscStructureFormat.BdDds, 0, _dev.Timeout, out _);
@@ -765,7 +775,7 @@ partial class Dump
                     mediaTags.Add(MediaTagType.BD_DDS, tmpBuf);
                 }
 
-                _dumpLog.WriteLine("Reading Spare Area Information.");
+                _dumpLog.WriteLine(Localization.Core.Reading_Spare_Area_Information);
 
                 sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
                                                MmcDiscStructureFormat.BdSpareAreaInformation, 0, _dev.Timeout, out _);

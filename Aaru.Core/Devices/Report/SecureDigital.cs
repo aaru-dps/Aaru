@@ -53,13 +53,13 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying to get CID...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_to_get_CID).IsIndeterminate();
             sense = _dev.ReadCid(out cid, out _, _dev.Timeout, out _);
         });
 
         if(!sense)
         {
-            AaruConsole.WriteLine("CID obtained correctly...");
+            AaruConsole.WriteLine(Localization.Core.CID_obtained_correctly);
 
             switch(_dev.Type)
             {
@@ -87,28 +87,28 @@ public sealed partial class DeviceReport
             report.CID = cid;
         }
         else
-            AaruConsole.WriteLine("Could not read CID...");
+            AaruConsole.WriteLine(Localization.Core.Could_not_read_CID);
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying to get CSD...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_to_get_CSD).IsIndeterminate();
             sense = _dev.ReadCsd(out csd, out _, _dev.Timeout, out _);
         });
 
         if(!sense)
         {
-            AaruConsole.WriteLine("CSD obtained correctly...");
+            AaruConsole.WriteLine(Localization.Core.CSD_obtained_correctly);
             report.CSD = csd;
         }
         else
-            AaruConsole.WriteLine("Could not read CSD...");
+            AaruConsole.WriteLine(Localization.Core.Could_not_read_CSD);
 
         sense = true;
         byte[] ocr = null;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying to get OCR...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_to_get_OCR).IsIndeterminate();
 
             sense = _dev.Type switch
             {
@@ -120,11 +120,11 @@ public sealed partial class DeviceReport
 
         if(!sense)
         {
-            AaruConsole.WriteLine("OCR obtained correctly...");
+            AaruConsole.WriteLine(Localization.Core.OCR_obtained_correctly);
             report.OCR = ocr;
         }
         else
-            AaruConsole.WriteLine("Could not read OCR...");
+            AaruConsole.WriteLine(Localization.Core.Could_not_read_OCR);
 
         switch(_dev.Type)
         {
@@ -132,17 +132,17 @@ public sealed partial class DeviceReport
             {
                 Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Trying to get Extended CSD...").IsIndeterminate();
+                    ctx.AddTask(Localization.Core.Trying_to_get_Extended_CSD).IsIndeterminate();
                     sense = _dev.ReadExtendedCsd(out ecsd, out _, _dev.Timeout, out _);
                 });
 
                 if(!sense)
                 {
-                    AaruConsole.WriteLine("Extended CSD obtained correctly...");
+                    AaruConsole.WriteLine(Localization.Core.Extended_CSD_obtained_correctly);
                     report.ExtendedCSD = ecsd;
                 }
                 else
-                    AaruConsole.WriteLine("Could not read Extended CSD...");
+                    AaruConsole.WriteLine(Localization.Core.Could_not_read_Extended_CSD);
 
                 break;
             }
@@ -150,17 +150,17 @@ public sealed partial class DeviceReport
             {
                 Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Trying to get SCR...").IsIndeterminate();
+                    ctx.AddTask(Localization.Core.Trying_to_get_SCR).IsIndeterminate();
                     sense = _dev.ReadScr(out scr, out _, _dev.Timeout, out _);
                 });
 
                 if(!sense)
                 {
-                    AaruConsole.WriteLine("SCR obtained correctly...");
+                    AaruConsole.WriteLine(Localization.Core.SCR_obtained_correctly);
                     report.SCR = scr;
                 }
                 else
-                    AaruConsole.WriteLine("Could not read SCR...");
+                    AaruConsole.WriteLine(Localization.Core.Could_not_read_SCR);
 
                 break;
             }

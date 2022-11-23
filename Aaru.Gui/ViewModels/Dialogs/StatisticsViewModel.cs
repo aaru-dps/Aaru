@@ -707,7 +707,7 @@ public sealed class StatisticsViewModel : ViewModelBase
     [NotNull]
     public string MediaLabel => UI.Title_Media;
     [NotNull]
-    public string TypeLabel => UI.Title_Type_for_media;
+    public string TypeLabel => Localization.Core.Title_Type_for_media;
     [NotNull]
     public string Title => UI.Encodings;
     [NotNull]

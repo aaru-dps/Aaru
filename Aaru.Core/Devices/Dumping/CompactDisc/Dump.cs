@@ -126,8 +126,8 @@ sealed partial class Dump
 
         if(_dumpRaw)
         {
-            _dumpLog.WriteLine("Raw CD dumping not yet implemented");
-            StoppingErrorMessage?.Invoke("Raw CD dumping not yet implemented");
+            _dumpLog.WriteLine(Localization.Core.Raw_CD_dumping_not_yet_implemented);
+            StoppingErrorMessage?.Invoke(Localization.Core.Raw_CD_dumping_not_yet_implemented);
 
             return;
         }
@@ -137,8 +137,8 @@ sealed partial class Dump
 
         if(tracks is null)
         {
-            _dumpLog.WriteLine("Could not get tracks!");
-            StoppingErrorMessage?.Invoke("Could not get tracks!");
+            _dumpLog.WriteLine(Localization.Core.Could_not_get_tracks);
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_get_tracks);
 
             return;
         }
@@ -172,10 +172,11 @@ sealed partial class Dump
                     desiredSubchannel = MmcSubchannel.Raw;
                 else
                 {
-                    _dumpLog.WriteLine("Drive does not support the requested subchannel format, not continuing...");
+                    _dumpLog.WriteLine(Localization.Core.
+                                                    Drive_does_not_support_the_requested_subchannel_format_not_continuing);
 
-                    StoppingErrorMessage?.
-                        Invoke("Drive does not support the requested subchannel format, not continuing...");
+                    StoppingErrorMessage?.Invoke(Localization.Core.
+                                                              Drive_does_not_support_the_requested_subchannel_format_not_continuing);
 
                     return;
                 }
@@ -188,10 +189,11 @@ sealed partial class Dump
                     desiredSubchannel = MmcSubchannel.Q16;
                 else
                 {
-                    _dumpLog.WriteLine("Drive does not support the requested subchannel format, not continuing...");
+                    _dumpLog.WriteLine(Localization.Core.
+                                                    Drive_does_not_support_the_requested_subchannel_format_not_continuing);
 
-                    StoppingErrorMessage?.
-                        Invoke("Drive does not support the requested subchannel format, not continuing...");
+                    StoppingErrorMessage?.Invoke(Localization.Core.
+                                                              Drive_does_not_support_the_requested_subchannel_format_not_continuing);
 
                     return;
                 }
@@ -202,10 +204,11 @@ sealed partial class Dump
                     desiredSubchannel = MmcSubchannel.Q16;
                 else
                 {
-                    _dumpLog.WriteLine("Drive does not support the requested subchannel format, not continuing...");
+                    _dumpLog.WriteLine(Localization.Core.
+                                                    Drive_does_not_support_the_requested_subchannel_format_not_continuing);
 
-                    StoppingErrorMessage?.
-                        Invoke("Drive does not support the requested subchannel format, not continuing...");
+                    StoppingErrorMessage?.Invoke(Localization.Core.
+                                                              Drive_does_not_support_the_requested_subchannel_format_not_continuing);
 
                     return;
                 }
@@ -227,13 +230,15 @@ sealed partial class Dump
         {
             if(_force || _subchannel == DumpSubchannel.None)
             {
-                _dumpLog.WriteLine("Output format does not support subchannels, continuing...");
-                UpdateStatus?.Invoke("Output format does not support subchannels, continuing...");
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_subchannels_continuing);
+                UpdateStatus?.Invoke(Localization.Core.Output_format_does_not_support_subchannels_continuing);
             }
             else
             {
-                _dumpLog.WriteLine("Output format does not support subchannels, not continuing...");
-                StoppingErrorMessage?.Invoke("Output format does not support subchannels, not continuing...");
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_subchannels_not_continuing);
+
+                StoppingErrorMessage?.Invoke(Localization.Core.
+                                                          Output_format_does_not_support_subchannels_not_continuing);
 
                 return;
             }
@@ -244,8 +249,8 @@ sealed partial class Dump
         switch(supportedSubchannel)
         {
             case MmcSubchannel.None:
-                _dumpLog.WriteLine("Checking if drive supports reading without subchannel...");
-                UpdateStatus?.Invoke("Checking if drive supports reading without subchannel...");
+                _dumpLog.WriteLine(Localization.Core.Checking_if_drive_supports_reading_without_subchannel);
+                UpdateStatus?.Invoke(Localization.Core.Checking_if_drive_supports_reading_without_subchannel);
 
                 readcd = !_dev.ReadCd(out cmdBuf, out _, firstLba, sectorSize, 1, MmcSectorTypes.AllTypes, false, false,
                                       true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
@@ -253,26 +258,26 @@ sealed partial class Dump
 
                 if(!readcd)
                 {
-                    _dumpLog.WriteLine("Drive does not support READ CD, trying SCSI READ commands...");
-                    ErrorMessage?.Invoke("Drive does not support READ CD, trying SCSI READ commands...");
+                    _dumpLog.WriteLine(Localization.Core.Drive_does_not_support_READ_CD_trying_SCSI_READ_commands);
+                    ErrorMessage?.Invoke(Localization.Core.Drive_does_not_support_READ_CD_trying_SCSI_READ_commands);
 
-                    _dumpLog.WriteLine("Checking if drive supports READ(6)...");
-                    UpdateStatus?.Invoke("Checking if drive supports READ(6)...");
+                    _dumpLog.WriteLine(Localization.Core.Checking_if_drive_supports_READ_6);
+                    UpdateStatus?.Invoke(Localization.Core.Checking_if_drive_supports_READ_6);
                     read6 = !_dev.Read6(out cmdBuf, out _, firstLba, 2048, 1, _dev.Timeout, out _);
-                    _dumpLog.WriteLine("Checking if drive supports READ(10)...");
-                    UpdateStatus?.Invoke("Checking if drive supports READ(10)...");
+                    _dumpLog.WriteLine(Localization.Core.Checking_if_drive_supports_READ_10);
+                    UpdateStatus?.Invoke(Localization.Core.Checking_if_drive_supports_READ_10);
 
                     read10 = !_dev.Read10(out cmdBuf, out _, 0, false, true, false, false, firstLba, 2048, 0, 1,
                                           _dev.Timeout, out _);
 
-                    _dumpLog.WriteLine("Checking if drive supports READ(12)...");
-                    UpdateStatus?.Invoke("Checking if drive supports READ(12)...");
+                    _dumpLog.WriteLine(Localization.Core.Checking_if_drive_supports_READ_12);
+                    UpdateStatus?.Invoke(Localization.Core.Checking_if_drive_supports_READ_12);
 
                     read12 = !_dev.Read12(out cmdBuf, out _, 0, false, true, false, false, firstLba, 2048, 0, 1, false,
                                           _dev.Timeout, out _);
 
-                    _dumpLog.WriteLine("Checking if drive supports READ(16)...");
-                    UpdateStatus?.Invoke("Checking if drive supports READ(16)...");
+                    _dumpLog.WriteLine(Localization.Core.Checking_if_drive_supports_READ_16);
+                    UpdateStatus?.Invoke(Localization.Core.Checking_if_drive_supports_READ_16);
 
                     read16 = !_dev.Read16(out cmdBuf, out _, 0, false, true, false, firstLba, 2048, 0, 1, false,
                                           _dev.Timeout, out _);
@@ -280,57 +285,56 @@ sealed partial class Dump
                     switch(read6)
                     {
                         case false when !read10 && !read12 && !read16:
-                            _dumpLog.WriteLine("Cannot read from disc, not continuing...");
-                            StoppingErrorMessage?.Invoke("Cannot read from disc, not continuing...");
+                            _dumpLog.WriteLine(Localization.Core.Cannot_read_from_disc_not_continuing);
+                            StoppingErrorMessage?.Invoke(Localization.Core.Cannot_read_from_disc_not_continuing);
 
                             return;
                         case true:
-                            _dumpLog.WriteLine("Drive supports READ(6)...");
-                            UpdateStatus?.Invoke("Drive supports READ(6)...");
+                            _dumpLog.WriteLine(Localization.Core.Drive_supports_READ_6);
+                            UpdateStatus?.Invoke(Localization.Core.Drive_supports_READ_6);
 
                             break;
                     }
 
                     if(read10)
                     {
-                        _dumpLog.WriteLine("Drive supports READ(10)...");
-                        UpdateStatus?.Invoke("Drive supports READ(10)...");
+                        _dumpLog.WriteLine(Localization.Core.Drive_supports_READ_10);
+                        UpdateStatus?.Invoke(Localization.Core.Drive_supports_READ_10);
                     }
 
                     if(read12)
                     {
-                        _dumpLog.WriteLine("Drive supports READ(12)...");
-                        UpdateStatus?.Invoke("Drive supports READ(12)...");
+                        _dumpLog.WriteLine(Localization.Core.Drive_supports_READ_12);
+                        UpdateStatus?.Invoke(Localization.Core.Drive_supports_READ_12);
                     }
 
                     if(read16)
                     {
-                        _dumpLog.WriteLine("Drive supports READ(16)...");
-                        UpdateStatus?.Invoke("Drive supports READ(16)...");
+                        _dumpLog.WriteLine(Localization.Core.Drive_supports_READ_16);
+                        UpdateStatus?.Invoke(Localization.Core.Drive_supports_READ_16);
                     }
                 }
 
-                _dumpLog.WriteLine("Drive can read without subchannel...");
-                UpdateStatus?.Invoke("Drive can read without subchannel...");
+                _dumpLog.WriteLine(Localization.Core.Drive_can_read_without_subchannel);
+                UpdateStatus?.Invoke(Localization.Core.Drive_can_read_without_subchannel);
 
                 subSize = 0;
                 subType = TrackSubchannelType.None;
 
                 break;
             case MmcSubchannel.Raw:
-                _dumpLog.WriteLine("Full raw subchannel reading supported...");
-                UpdateStatus?.Invoke("Full raw subchannel reading supported...");
+                _dumpLog.WriteLine(Localization.Core.Full_raw_subchannel_reading_supported);
+                UpdateStatus?.Invoke(Localization.Core.Full_raw_subchannel_reading_supported);
                 subType = TrackSubchannelType.Raw;
                 subSize = 96;
 
                 break;
             case MmcSubchannel.Q16:
-                _dumpLog.WriteLine("PQ subchannel reading supported...");
-                _dumpLog.WriteLine("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
-                UpdateStatus?.Invoke("PQ subchannel reading supported...");
+                _dumpLog.WriteLine(Localization.Core.PQ_subchannel_reading_supported);
+                _dumpLog.WriteLine(Localization.Core.WARNING_If_disc_says_CDG_CDEG_CDMIDI_dump_will_be_incorrect);
+                UpdateStatus?.Invoke(Localization.Core.PQ_subchannel_reading_supported);
 
-                UpdateStatus?.
-                    Invoke("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
+                UpdateStatus?.Invoke(Localization.Core.WARNING_If_disc_says_CDG_CDEG_CDMIDI_dump_will_be_incorrect);
 
                 subType = TrackSubchannelType.Q16;
                 subSize = 16;
@@ -377,13 +381,13 @@ sealed partial class Dump
 
                 if(bcdSubchannel)
                 {
-                    _dumpLog.WriteLine("Drive returns subchannel in BCD...");
-                    UpdateStatus?.Invoke("Drive returns subchannel in BCD...");
+                    _dumpLog.WriteLine(Localization.Core.Drive_returns_subchannel_in_BCD);
+                    UpdateStatus?.Invoke(Localization.Core.Drive_returns_subchannel_in_BCD);
                 }
                 else
                 {
-                    _dumpLog.WriteLine("Drive does not returns subchannel in BCD...");
-                    UpdateStatus?.Invoke("Drive does not returns subchannel in BCD...");
+                    _dumpLog.WriteLine(Localization.Core.Drive_does_not_returns_subchannel_in_BCD);
+                    UpdateStatus?.Invoke(Localization.Core.Drive_does_not_returns_subchannel_in_BCD);
                 }
             }
         }
@@ -391,44 +395,42 @@ sealed partial class Dump
         foreach(Track trk in tracks)
             trk.SubchannelType = subType;
 
-        _dumpLog.WriteLine("Calculating pregaps, can take some time...");
-        UpdateStatus?.Invoke("Calculating pregaps, can take some time...");
+        _dumpLog.WriteLine(Localization.Core.Calculating_pregaps__can_take_some_time);
+        UpdateStatus?.Invoke(Localization.Core.Calculating_pregaps__can_take_some_time);
 
         SolveTrackPregaps(_dev, _dumpLog, UpdateStatus, tracks, supportsPqSubchannel, supportsRwSubchannel, _dbDev,
                           out bool inexactPositioning, true);
 
         if(inexactPositioning)
         {
-            _dumpLog.WriteLine("WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.");
+            _dumpLog.WriteLine(Localization.Core.The_drive_has_returned_incorrect_Q_positioning_calculating_pregaps);
 
-            UpdateStatus?.
-                Invoke("WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.");
+            UpdateStatus?.Invoke(Localization.Core.The_drive_has_returned_incorrect_Q_positioning_calculating_pregaps);
         }
 
         if(!outputOptical.OpticalCapabilities.HasFlag(OpticalImageCapabilities.CanStoreRawData))
         {
             if(!_force)
             {
-                _dumpLog.WriteLine("Output format does not support storing raw data, this may end in a loss of data, not continuing...");
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_storing_raw_data_not_continuing);
 
-                StoppingErrorMessage?.
-                    Invoke("Output format does not support storing raw data, this may end in a loss of data, not continuing...");
+                StoppingErrorMessage?.Invoke(Localization.Core.
+                                                          Output_format_does_not_support_storing_raw_data_not_continuing);
 
                 return;
             }
 
-            _dumpLog.WriteLine("Output format does not support storing raw data, this may end in a loss of data, continuing...");
+            _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_storing_raw_data_continuing);
 
-            ErrorMessage?.
-                Invoke("Output format does not support storing raw data, this may end in a loss of data, continuing...");
+            ErrorMessage?.Invoke(Localization.Core.Output_format_does_not_support_storing_raw_data_continuing);
         }
 
         if(!outputOptical.OpticalCapabilities.HasFlag(OpticalImageCapabilities.CanStoreAudioTracks) &&
            tracks.Any(track => track.Type == TrackType.Audio))
         {
-            _dumpLog.WriteLine("Output format does not support audio tracks, cannot continue...");
+            _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_audio_tracks_cannot_continue);
 
-            StoppingErrorMessage?.Invoke("Output format does not support audio tracks, cannot continue...");
+            StoppingErrorMessage?.Invoke(Localization.Core.Output_format_does_not_support_audio_tracks_cannot_continue);
 
             return;
         }
@@ -439,18 +441,16 @@ sealed partial class Dump
         {
             if(!_force)
             {
-                _dumpLog.WriteLine("Output format does not support pregaps, this may end in a loss of data, not continuing...");
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_pregaps_not_continuing);
 
-                StoppingErrorMessage?.
-                    Invoke("Output format does not support pregaps, this may end in a loss of data, not continuing...");
+                StoppingErrorMessage?.Invoke(Localization.Core.Output_format_does_not_support_pregaps_not_continuing);
 
                 return;
             }
 
-            _dumpLog.WriteLine("Output format does not support pregaps, this may end in a loss of data, continuing...");
+            _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_pregaps_continuing);
 
-            ErrorMessage?.
-                Invoke("Output format does not support pregaps, this may end in a loss of data, continuing...");
+            ErrorMessage?.Invoke(Localization.Core.Output_format_does_not_support_pregaps_continuing);
         }
 
         for(int t = 1; t < tracks.Length; t++)
@@ -461,7 +461,7 @@ sealed partial class Dump
 
         if(blocks == 0)
         {
-            StoppingErrorMessage?.Invoke("Cannot dump blank media.");
+            StoppingErrorMessage?.Invoke(Localization.Core.Cannot_dump_blank_media);
 
             return;
         }
@@ -472,7 +472,7 @@ sealed partial class Dump
         if(currentTry == null ||
            extents    == null)
         {
-            StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_process_resume_file_not_continuing);
 
             return;
         }
@@ -486,10 +486,9 @@ sealed partial class Dump
             // TODO: Disabled until 6.0
             /*if(!_force)
             {*/
-            _dumpLog.WriteLine("Output format does not support sessions, this will end in a loss of data, not continuing...");
+            _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_sessions);
 
-            StoppingErrorMessage?.
-                Invoke("Output format does not support sessions, this will end in a loss of data, not continuing...");
+            StoppingErrorMessage?.Invoke(Localization.Core.Output_format_does_not_support_sessions);
 
             return;
             /*}
@@ -504,20 +503,22 @@ sealed partial class Dump
         foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !outputOptical.SupportedMediaTags.Contains(tag)))
             if(_force)
             {
-                _dumpLog.WriteLine("Output format does not support {0}, continuing...", tag);
-                ErrorMessage?.Invoke($"Output format does not support {tag}, continuing...");
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_0_continuing, tag);
+                ErrorMessage?.Invoke(string.Format(Localization.Core.Output_format_does_not_support_0_continuing, tag));
             }
             else
             {
-                _dumpLog.WriteLine("Output format does not support {0}, not continuing...", tag);
-                StoppingErrorMessage?.Invoke($"Output format does not support {tag}, not continuing...");
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_0_not_continuing, tag);
+
+                StoppingErrorMessage?.
+                    Invoke(string.Format(Localization.Core.Output_format_does_not_support_0_not_continuing, tag));
 
                 return;
             }
 
         if(leadOutStarts.Any())
         {
-            UpdateStatus?.Invoke("Solving lead-outs...");
+            UpdateStatus?.Invoke(Localization.Core.Solving_lead_outs);
 
             foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
                 foreach(Track trk in tracks.Where(trk => trk.Session   == leadOuts.Key).
@@ -535,16 +536,16 @@ sealed partial class Dump
                 leadOutExtents.Add(dataExtentsArray[i].Item2 + 1, dataExtentsArray[i + 1].Item1 - 1);
         }
 
-        _dumpLog.WriteLine("Detecting disc type...");
-        UpdateStatus?.Invoke("Detecting disc type...");
+        _dumpLog.WriteLine(Localization.Core.Detecting_disc_type);
+        UpdateStatus?.Invoke(Localization.Core.Detecting_disc_type);
 
         MMC.DetectDiscType(ref dskType, sessions, toc, _dev, out hiddenTrack, out hiddenData, firstTrackLastSession,
                            blocks);
 
         if(hiddenTrack || firstLba > 0)
         {
-            _dumpLog.WriteLine("Disc contains a hidden track...");
-            UpdateStatus?.Invoke("Disc contains a hidden track...");
+            _dumpLog.WriteLine(Localization.Core.Disc_contains_a_hidden_track);
+            UpdateStatus?.Invoke(Localization.Core.Disc_contains_a_hidden_track);
 
             List<Track> trkList = new()
             {
@@ -568,10 +569,9 @@ sealed partial class Dump
         if(tracks.Any(t => t.Type == TrackType.Audio) &&
            desiredSubchannel != MmcSubchannel.Raw)
         {
-            _dumpLog.WriteLine("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
+            _dumpLog.WriteLine(Localization.Core.WARNING_If_disc_says_CDG_CDEG_CDMIDI_dump_will_be_incorrect);
 
-            UpdateStatus?.
-                Invoke("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
+            UpdateStatus?.Invoke(Localization.Core.WARNING_If_disc_says_CDG_CDEG_CDMIDI_dump_will_be_incorrect);
         }
 
         // Check mode for tracks
@@ -584,8 +584,8 @@ sealed partial class Dump
                 continue;
             }
 
-            _dumpLog.WriteLine("Checking mode for track {0}...", trk.Sequence);
-            UpdateStatus?.Invoke($"Checking mode for track {trk.Sequence}...");
+            _dumpLog.WriteLine(Localization.Core.Checking_mode_for_track_0, trk.Sequence);
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Checking_mode_for_track_0, trk.Sequence));
 
             sense = _dev.ReadCd(out cmdBuf, out _, (uint)(trk.StartSector + trk.Pregap), blockSize, 1,
                                 MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
@@ -593,9 +593,10 @@ sealed partial class Dump
 
             if(sense)
             {
-                _dumpLog.WriteLine("Unable to guess mode for track {0}, continuing...", trk.Sequence);
+                _dumpLog.WriteLine(Localization.Core.Unable_to_guess_mode_for_track_0_continuing, trk.Sequence);
 
-                UpdateStatus?.Invoke($"Unable to guess mode for track {trk.Sequence}, continuing...");
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Unable_to_guess_mode_for_track_0_continuing,
+                                                   trk.Sequence));
 
                 continue;
             }
@@ -625,8 +626,8 @@ sealed partial class Dump
             {
                 case 1:
                 case 0x61: // Scrambled
-                    UpdateStatus?.Invoke($"Track {trk.Sequence} is MODE1");
-                    _dumpLog.WriteLine("Track {0} is MODE1", trk.Sequence);
+                    UpdateStatus?.Invoke(string.Format(Localization.Core.Track_0_is_MODE1, trk.Sequence));
+                    _dumpLog.WriteLine(Localization.Core.Track_0_is_MODE1, trk.Sequence);
                     trk.Type = TrackType.CdMode1;
 
                     break;
@@ -634,8 +635,8 @@ sealed partial class Dump
                 case 0x62: // Scrambled
                     if(dskType is MediaType.CDI or MediaType.CDIREADY)
                     {
-                        UpdateStatus?.Invoke($"Track {trk.Sequence} is MODE2");
-                        _dumpLog.WriteLine("Track {0} is MODE2", trk.Sequence);
+                        UpdateStatus?.Invoke(string.Format(Localization.Core.Track_0_is_MODE2, trk.Sequence));
+                        _dumpLog.WriteLine(Localization.Core.Track_0_is_MODE2, trk.Sequence);
                         trk.Type = TrackType.CdMode2Formless;
 
                         break;
@@ -643,15 +644,15 @@ sealed partial class Dump
 
                     if((cmdBuf[0x012] & 0x20) == 0x20) // mode 2 form 2
                     {
-                        UpdateStatus?.Invoke($"Track {trk.Sequence} is MODE2 FORM 2");
-                        _dumpLog.WriteLine("Track {0} is MODE2 FORM 2", trk.Sequence);
+                        UpdateStatus?.Invoke(string.Format(Localization.Core.Track_0_is_MODE2_FORM_2, trk.Sequence));
+                        _dumpLog.WriteLine(Localization.Core.Track_0_is_MODE2_FORM_2, trk.Sequence);
                         trk.Type = TrackType.CdMode2Form2;
 
                         break;
                     }
 
-                    UpdateStatus?.Invoke($"Track {trk.Sequence} is MODE2 FORM 1");
-                    _dumpLog.WriteLine("Track {0} is MODE2 FORM 1", trk.Sequence);
+                    UpdateStatus?.Invoke(string.Format(Localization.Core.Track_0_is_MODE2_FORM_1, trk.Sequence));
+                    _dumpLog.WriteLine(Localization.Core.Track_0_is_MODE2_FORM_1, trk.Sequence);
                     trk.Type = TrackType.CdMode2Form1;
 
                     // These media type specifications do not legally allow mode 2 tracks to be present
@@ -660,8 +661,10 @@ sealed partial class Dump
 
                     break;
                 default:
-                    UpdateStatus?.Invoke($"Track {trk.Sequence} is unknown mode {cmdBuf[15]}");
-                    _dumpLog.WriteLine("Track {0} is unknown mode {1}", trk.Sequence, cmdBuf[15]);
+                    UpdateStatus?.Invoke(string.Format(Localization.Core.Track_0_is_unknown_mode_1, trk.Sequence,
+                                                       cmdBuf[15]));
+
+                    _dumpLog.WriteLine(Localization.Core.Track_0_is_unknown_mode_1, trk.Sequence, cmdBuf[15]);
 
                     break;
             }
@@ -671,24 +674,30 @@ sealed partial class Dump
         {
             if(tracks.Length > 1)
             {
-                StoppingErrorMessage?.Invoke("Output format does not support more than 1 track, not continuing...");
-                _dumpLog.WriteLine("Output format does not support more than 1 track, not continuing...");
+                StoppingErrorMessage?.Invoke(Localization.Core.
+                                                          Output_format_does_not_support_more_than_1_track_not_continuing);
+
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_more_than_1_track_not_continuing);
 
                 return;
             }
 
             if(tracks.Any(t => t.Type == TrackType.Audio))
             {
-                StoppingErrorMessage?.Invoke("Output format does not support audio tracks, not continuing...");
-                _dumpLog.WriteLine("Output format does not support audio tracks, not continuing...");
+                StoppingErrorMessage?.Invoke(Localization.Core.
+                                                          Output_format_does_not_support_audio_tracks_not_continuing);
+
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_audio_tracks_not_continuing);
 
                 return;
             }
 
             if(tracks.Any(t => t.Type != TrackType.CdMode1))
             {
-                StoppingErrorMessage?.Invoke("Output format only supports MODE 1 tracks, not continuing...");
-                _dumpLog.WriteLine("Output format only supports MODE 1 tracks, not continuing...");
+                StoppingErrorMessage?.Invoke(Localization.Core.
+                                                          Output_format_only_supports_MODE_1_tracks_not_continuing);
+
+                _dumpLog.WriteLine(Localization.Core.Output_format_only_supports_MODE_1_tracks_not_continuing);
 
                 return;
             }
@@ -702,15 +711,19 @@ sealed partial class Dump
             {
                 if(_force)
                 {
-                    _dumpLog.WriteLine("Output format does not support CD first track pregap, continuing...");
-                    ErrorMessage?.Invoke("Output format does not support CD first track pregap, continuing...");
+                    _dumpLog.WriteLine(Localization.Core.
+                                                    Output_format_does_not_support_CD_first_track_pregap_continuing);
+
+                    ErrorMessage?.Invoke(Localization.Core.
+                                                      Output_format_does_not_support_CD_first_track_pregap_continuing);
                 }
                 else
                 {
-                    _dumpLog.WriteLine("Output format does not support CD first track pregap, not continuing...");
+                    _dumpLog.WriteLine(Localization.Core.
+                                                    Output_format_does_not_support_CD_first_track_pregap_not_continuing);
 
-                    StoppingErrorMessage?.
-                        Invoke("Output format does not support CD first track pregap, not continuing...");
+                    StoppingErrorMessage?.Invoke(Localization.Core.
+                                                              Output_format_does_not_support_CD_first_track_pregap_not_continuing);
 
                     return;
                 }
@@ -769,8 +782,11 @@ sealed partial class Dump
 
         if(_dev.Error || sense)
         {
-            _dumpLog.WriteLine("Device error {0} trying to guess ideal transfer length.", _dev.LastError);
-            StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+            _dumpLog.WriteLine(Localization.Core.Device_error_0_trying_to_guess_ideal_transfer_length, _dev.LastError);
+
+            StoppingErrorMessage?.
+                Invoke(string.Format(Localization.Core.Device_error_0_trying_to_guess_ideal_transfer_length,
+                                     _dev.LastError));
         }
 
         bool cdiWithHiddenTrack1 = false;
@@ -786,19 +802,22 @@ sealed partial class Dump
         if(_dumpFirstTrackPregap && readcd)
             ReadCdFirstTrackPregap(blockSize, ref currentSpeed, mediaTags, supportedSubchannel, ref totalDuration);
 
-        _dumpLog.WriteLine("Reading {0} sectors at a time.", _maximumReadable);
-        _dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
-        _dumpLog.WriteLine("Device can read {0} blocks at a time.", _maximumReadable);
-        _dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
-        _dumpLog.WriteLine("SCSI device type: {0}.", _dev.ScsiType);
-        _dumpLog.WriteLine("Media identified as {0}.", dskType);
+        _dumpLog.WriteLine(Localization.Core.Reading_0_sectors_at_a_time, _maximumReadable);
+        _dumpLog.WriteLine(Localization.Core.Device_reports_0_blocks_1_bytes, blocks, blocks * blockSize);
+        _dumpLog.WriteLine(Localization.Core.Device_can_read_0_blocks_at_a_time, _maximumReadable);
+        _dumpLog.WriteLine(Localization.Core.Device_reports_0_bytes_per_logical_block, blockSize);
+        _dumpLog.WriteLine(Localization.Core.SCSI_device_type_0, _dev.ScsiType);
+        _dumpLog.WriteLine(Localization.Core.Media_identified_as_0, dskType);
 
-        UpdateStatus?.Invoke($"Reading {_maximumReadable} sectors at a time.");
-        UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
-        UpdateStatus?.Invoke($"Device can read {_maximumReadable} blocks at a time.");
-        UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
-        UpdateStatus?.Invoke($"SCSI device type: {_dev.ScsiType}.");
-        UpdateStatus?.Invoke($"Media identified as {dskType}.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, _maximumReadable));
+
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_blocks_1_bytes, blocks,
+                                           blocks * blockSize));
+
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Device_can_read_0_blocks_at_a_time, _maximumReadable));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_bytes_per_logical_block, blockSize));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_device_type_0, _dev.ScsiType));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Media_identified_as_0, dskType));
 
         ret = outputOptical.Create(_outputPath, dskType, _formatOptions, blocks,
                                    supportsLongSectors ? blockSize : 2048);
@@ -806,11 +825,11 @@ sealed partial class Dump
         // Cannot create image
         if(!ret)
         {
-            _dumpLog.WriteLine("Error creating output image, not continuing.");
+            _dumpLog.WriteLine(Localization.Core.Error_creating_output_image_not_continuing);
             _dumpLog.WriteLine(outputOptical.ErrorMessage);
 
-            StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                         outputOptical.ErrorMessage);
+            StoppingErrorMessage?.Invoke(Localization.Core.Error_creating_output_image_not_continuing +
+                                         Environment.NewLine + outputOptical.ErrorMessage);
 
             return;
         }
@@ -847,11 +866,11 @@ sealed partial class Dump
         if(!ret &&
            desiredSubchannel == MmcSubchannel.None)
         {
-            _dumpLog.WriteLine("Error sending tracks to output image, not continuing.");
+            _dumpLog.WriteLine(Localization.Core.Error_sending_tracks_to_output_image_not_continuing);
             _dumpLog.WriteLine(outputOptical.ErrorMessage);
 
-            StoppingErrorMessage?.Invoke("Error sending tracks to output image, not continuing." + Environment.NewLine +
-                                         outputOptical.ErrorMessage);
+            StoppingErrorMessage?.Invoke(Localization.Core.Error_sending_tracks_to_output_image_not_continuing +
+                                         Environment.NewLine + outputOptical.ErrorMessage);
 
             return;
         }
@@ -860,13 +879,17 @@ sealed partial class Dump
         if(desiredSubchannel != MmcSubchannel.None &&
            !outputOptical.OpticalCapabilities.HasFlag(OpticalImageCapabilities.CanStoreSubchannelRw))
         {
-            _dumpLog.WriteLine("Output image does not support subchannels, {0}continuing...", _force ? "" : "not ");
-
             if(_force)
-                ErrorMessage?.Invoke("Output image does not support subchannels, continuing...");
+            {
+                _dumpLog.WriteLine(Localization.Core.Output_image_does_not_support_subchannels_continuing);
+                ErrorMessage?.Invoke(Localization.Core.Output_image_does_not_support_subchannels_continuing);
+            }
             else
             {
-                StoppingErrorMessage?.Invoke("Output image does not support subchannels, not continuing...");
+                _dumpLog.WriteLine(Localization.Core.Output_image_does_not_support_subchannels_not_continuing);
+
+                StoppingErrorMessage?.Invoke(Localization.Core.
+                                                          Output_image_does_not_support_subchannels_not_continuing);
 
                 return;
             }
@@ -874,7 +897,9 @@ sealed partial class Dump
 
         if(supportedSubchannel != MmcSubchannel.None)
         {
-            _dumpLog.WriteLine($"Creating subchannel log in {_outputPrefix + ".sub.log"}");
+            _dumpLog.WriteLine(string.Format(Localization.Core.Creating_subchannel_log_in_0,
+                                             _outputPrefix + ".sub.log"));
+
             subLog = new SubchannelLog(_outputPrefix + ".sub.log", bcdSubchannel);
         }
 
@@ -886,8 +911,8 @@ sealed partial class Dump
             if(track is null)
                 continue;
 
-            _dumpLog.WriteLine("Setting flags for track {0}...", track.Sequence);
-            UpdateStatus?.Invoke($"Setting flags for track {track.Sequence}...");
+            _dumpLog.WriteLine(Localization.Core.Setting_flags_for_track_0, track.Sequence);
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Setting_flags_for_track_0, track.Sequence));
 
             outputOptical.WriteSectorTag(new[]
             {
@@ -904,8 +929,8 @@ sealed partial class Dump
                mcn != null &&
                mcn != "0000000000000")
             {
-                UpdateStatus?.Invoke($"Found Media Catalogue Number: {mcn}");
-                _dumpLog.WriteLine("Found Media Catalogue Number: {0}", mcn);
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Found_Media_Catalogue_Number_0, mcn));
+                _dumpLog.WriteLine(Localization.Core.Found_Media_Catalogue_Number_0, mcn);
             }
             else
                 mcn = null;
@@ -922,8 +947,8 @@ sealed partial class Dump
 
                 isrcs[(byte)trk.Sequence] = isrc;
 
-                UpdateStatus?.Invoke($"Found ISRC for track {trk.Sequence}: {isrc}");
-                _dumpLog.WriteLine($"Found ISRC for track {trk.Sequence}: {isrc}");
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Found_ISRC_for_track_0_1, trk.Sequence, isrc));
+                _dumpLog.WriteLine(string.Format(Localization.Core.Found_ISRC_for_track_0_1, trk.Sequence, isrc));
             }
 
         if(supportedSubchannel != MmcSubchannel.None &&
@@ -943,8 +968,8 @@ sealed partial class Dump
 
         if(_resume.NextBlock > 0)
         {
-            UpdateStatus?.Invoke($"Resuming from block {_resume.NextBlock}.");
-            _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Resuming_from_block_0, _resume.NextBlock));
+            _dumpLog.WriteLine(Localization.Core.Resuming_from_block_0, _resume.NextBlock);
         }
 
         if(_skip < _maximumReadable)
@@ -952,8 +977,8 @@ sealed partial class Dump
 
     #if DEBUG
         foreach(Track trk in tracks)
-            UpdateStatus?.Invoke($"Track {trk.Sequence} starts at LBA {trk.StartSector} and ends at LBA {trk.EndSector
-            }");
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Track_0_starts_at_LBA_1_and_ends_at_LBA_2,
+                                               trk.Sequence, trk.StartSector, trk.EndSector));
     #endif
 
         // Check offset
@@ -962,26 +987,30 @@ sealed partial class Dump
             if(tracks.All(t => t.Type != TrackType.Audio))
             {
                 // No audio tracks so no need to fix offset
-                _dumpLog.WriteLine("No audio tracks, disabling offset fix.");
-                UpdateStatus.Invoke("No audio tracks, disabling offset fix.");
+                _dumpLog.WriteLine(Localization.Core.No_audio_tracks_disabling_offset_fix);
+                UpdateStatus.Invoke(Localization.Core.No_audio_tracks_disabling_offset_fix);
 
                 _fixOffset = false;
             }
 
             if(!readcd)
             {
-                _dumpLog.WriteLine("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
+                _dumpLog.WriteLine(Localization.Core.
+                                                READ_CD_command_is_not_supported_disabling_offset_fix_Dump_may_not_be_correct);
 
-                UpdateStatus?.
-                    Invoke("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
+                UpdateStatus?.Invoke(Localization.Core.
+                                                  READ_CD_command_is_not_supported_disabling_offset_fix_Dump_may_not_be_correct);
 
                 _fixOffset = false;
             }
         }
         else if(tracks.Any(t => t.Type == TrackType.Audio))
         {
-            _dumpLog.WriteLine("There are audio tracks and offset fixing is disabled, dump may not be correct.");
-            UpdateStatus?.Invoke("There are audio tracks and offset fixing is disabled, dump may not be correct.");
+            _dumpLog.WriteLine(Localization.Core.
+                                            There_are_audio_tracks_and_offset_fixing_is_disabled_dump_may_not_be_correct);
+
+            UpdateStatus?.Invoke(Localization.Core.
+                                              There_are_audio_tracks_and_offset_fixing_is_disabled_dump_may_not_be_correct);
         }
 
         // Search for read offset in main database
@@ -997,16 +1026,16 @@ sealed partial class Dump
         {
             if(driveOffset is null)
             {
-                _dumpLog.WriteLine("Drive reading offset not found in database.");
-                UpdateStatus?.Invoke("Drive reading offset not found in database.");
-                _dumpLog.WriteLine("Disc offset cannot be calculated.");
-                UpdateStatus?.Invoke("Disc offset cannot be calculated.");
+                _dumpLog.WriteLine(Localization.Core.Drive_reading_offset_not_found_in_database);
+                UpdateStatus?.Invoke(Localization.Core.Drive_reading_offset_not_found_in_database);
+                _dumpLog.WriteLine(Localization.Core.Disc_offset_cannot_be_calculated);
+                UpdateStatus?.Invoke(Localization.Core.Disc_offset_cannot_be_calculated);
 
                 if(tracks.Any(t => t.Type == TrackType.Audio))
                 {
-                    _dumpLog.WriteLine("Dump may not be correct.");
+                    _dumpLog.WriteLine(Localization.Core.Dump_may_not_be_correct);
 
-                    UpdateStatus?.Invoke("Dump may not be correct.");
+                    UpdateStatus?.Invoke(Localization.Core.Dump_may_not_be_correct);
                 }
 
                 if(_fixOffset)
@@ -1014,11 +1043,14 @@ sealed partial class Dump
             }
             else
             {
-                _dumpLog.WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset   / 4} samples).");
-                UpdateStatus?.Invoke($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+                _dumpLog.WriteLine(string.Format(Localization.Core.Drive_reading_offset_is_0_bytes_1_samples,
+                                                 driveOffset, driveOffset / 4));
 
-                _dumpLog.WriteLine("Disc write offset is unknown, dump may not be correct.");
-                UpdateStatus?.Invoke("Disc write offset is unknown, dump may not be correct.");
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Drive_reading_offset_is_0_bytes_1_samples,
+                                                   driveOffset, driveOffset / 4));
+
+                _dumpLog.WriteLine(Localization.Core.Disc_write_offset_is_unknown_dump_may_not_be_correct);
+                UpdateStatus?.Invoke(Localization.Core.Disc_write_offset_is_unknown_dump_may_not_be_correct);
 
                 offsetBytes = driveOffset.Value;
 
@@ -1044,25 +1076,31 @@ sealed partial class Dump
 
             if(driveOffset is null)
             {
-                _dumpLog.WriteLine("Drive reading offset not found in database.");
-                UpdateStatus?.Invoke("Drive reading offset not found in database.");
+                _dumpLog.WriteLine(Localization.Core.Drive_reading_offset_not_found_in_database);
+                UpdateStatus?.Invoke(Localization.Core.Drive_reading_offset_not_found_in_database);
 
-                _dumpLog.WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4
-                } samples).");
+                _dumpLog.WriteLine(string.Format(Localization.Core.Combined_disc_and_drive_offset_are_0_bytes_1_samples,
+                                                 offsetBytes, offsetBytes / 4));
 
-                UpdateStatus?.Invoke($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4
-                } samples).");
+                UpdateStatus?.
+                    Invoke(string.Format(Localization.Core.Combined_disc_and_drive_offset_are_0_bytes_1_samples,
+                                         offsetBytes, offsetBytes / 4));
             }
             else
             {
-                _dumpLog.WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset   / 4} samples).");
-                UpdateStatus?.Invoke($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+                _dumpLog.WriteLine(string.Format(Localization.Core.Drive_reading_offset_is_0_bytes_1_samples,
+                                                 driveOffset, driveOffset / 4));
+
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Drive_reading_offset_is_0_bytes_1_samples,
+                                                   driveOffset, driveOffset / 4));
 
                 discOffset = offsetBytes - driveOffset;
 
-                _dumpLog.WriteLine($"Disc offsets is {discOffset} bytes ({discOffset / 4} samples)");
+                _dumpLog.WriteLine(string.Format(Localization.Core.Disc_offset_is_0_bytes_1_samples, discOffset,
+                                                 discOffset / 4));
 
-                UpdateStatus?.Invoke($"Disc offsets is {discOffset} bytes ({discOffset / 4} samples)");
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Disc_offset_is_0_bytes_1_samples, discOffset,
+                                                   discOffset / 4));
             }
         }
 
@@ -1084,8 +1122,11 @@ sealed partial class Dump
         // Set speed
         if(_speedMultiplier >= 0)
         {
-            _dumpLog.WriteLine($"Setting speed to {(_speed   == 0 ? "MAX for data reading" : $"{_speed}x")}.");
-            UpdateStatus?.Invoke($"Setting speed to {(_speed == 0 ? "MAX for data reading" : $"{_speed}x")}.");
+            _dumpLog.WriteLine(_speed == 0xFFFF ? Localization.Core.Setting_speed_to_MAX_for_data_reading
+                                   : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading, _speed));
+
+            UpdateStatus?.Invoke(_speed == 0xFFFF ? Localization.Core.Setting_speed_to_MAX_for_data_reading
+                                     : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading, _speed));
 
             _speed *= _speedMultiplier;
 
@@ -1106,19 +1147,22 @@ sealed partial class Dump
 
             if(!supportsLongSectors)
             {
-                _dumpLog.WriteLine("Dumping CD-i Ready requires the output image format to support long sectors.");
+                _dumpLog.WriteLine(Localization.Core.
+                                                Dumping_CD_i_Ready_requires_the_output_image_format_to_support_long_sectors);
 
-                StoppingErrorMessage?.
-                    Invoke("Dumping CD-i Ready requires the output image format to support long sectors.");
+                StoppingErrorMessage?.Invoke(Localization.Core.
+                                                          Dumping_CD_i_Ready_requires_the_output_image_format_to_support_long_sectors);
 
                 return;
             }
 
             if(!readcd)
             {
-                _dumpLog.WriteLine("Dumping CD-i Ready requires the drive to support the READ CD command.");
+                _dumpLog.WriteLine(Localization.Core.
+                                                Dumping_CD_i_Ready_requires_the_drive_to_support_the_READ_CD_command);
 
-                StoppingErrorMessage?.Invoke("Dumping CD-i Ready requires the drive to support the READ CD command.");
+                StoppingErrorMessage?.Invoke(Localization.Core.
+                                                          Dumping_CD_i_Ready_requires_the_drive_to_support_the_READ_CD_command);
 
                 return;
             }
@@ -1144,45 +1188,54 @@ sealed partial class Dump
                     if(offsetBytes % sectorSize != 0)
                         sectorsForOffset++;
 
-                    _dumpLog.WriteLine("Enabling skipping CD-i Ready hole because drive returns data as audio.");
+                    _dumpLog.WriteLine(Localization.Core.
+                                                    Enabling_skipping_CD_i_Ready_hole_because_drive_returns_data_as_audio);
 
-                    UpdateStatus?.Invoke("Enabling skipping CD-i Ready hole because drive returns data as audio.");
+                    UpdateStatus?.Invoke(Localization.Core.
+                                                      Enabling_skipping_CD_i_Ready_hole_because_drive_returns_data_as_audio);
 
                     _skipCdireadyHole = true;
 
                     if(driveOffset is null)
                     {
-                        _dumpLog.WriteLine("Drive reading offset not found in database.");
-                        UpdateStatus?.Invoke("Drive reading offset not found in database.");
+                        _dumpLog.WriteLine(Localization.Core.Drive_reading_offset_not_found_in_database);
+                        UpdateStatus?.Invoke(Localization.Core.Drive_reading_offset_not_found_in_database);
 
-                        _dumpLog.WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4
-                        } samples).");
+                        _dumpLog.
+                            WriteLine(string.
+                                          Format(Localization.Core.Combined_disc_and_drive_offset_are_0_bytes_1_samples,
+                                                 offsetBytes, offsetBytes / 4));
 
-                        UpdateStatus?.Invoke($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4
-                        } samples).");
+                        UpdateStatus?.
+                            Invoke(string.Format(Localization.Core.Combined_disc_and_drive_offset_are_0_bytes_1_samples,
+                                                 offsetBytes, offsetBytes / 4));
                     }
                     else
                     {
-                        _dumpLog.WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+                        _dumpLog.WriteLine(string.Format(Localization.Core.Drive_reading_offset_is_0_bytes_1_samples,
+                                                         driveOffset, driveOffset / 4));
 
-                        UpdateStatus?.Invoke($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4
-                        } samples).");
+                        UpdateStatus?.Invoke(string.Format(Localization.Core.Drive_reading_offset_is_0_bytes_1_samples,
+                                                           driveOffset, driveOffset / 4));
 
                         discOffset = offsetBytes - driveOffset;
 
-                        _dumpLog.WriteLine($"Disc offsets is {discOffset} bytes ({discOffset / 4} samples)");
+                        _dumpLog.WriteLine(string.Format(Localization.Core.Disc_offset_is_0_bytes_1_samples, discOffset,
+                                                         discOffset / 4));
 
-                        UpdateStatus?.Invoke($"Disc offsets is {discOffset} bytes ({discOffset / 4} samples)");
+                        UpdateStatus?.Invoke(string.Format(Localization.Core.Disc_offset_is_0_bytes_1_samples,
+                                                           discOffset, discOffset / 4));
                     }
                 }
             }
 
             if(!_skipCdireadyHole)
             {
-                _dumpLog.WriteLine("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
+                _dumpLog.WriteLine(Localization.Core.
+                                                There_will_be_thousand_of_errors_between_track_0_and_track_1_that_is_normal_and_you_can_ignore_them);
 
-                UpdateStatus?.
-                    Invoke("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
+                UpdateStatus?.Invoke(Localization.Core.
+                                                  There_will_be_thousand_of_errors_between_track_0_and_track_1_that_is_normal_and_you_can_ignore_them);
             }
 
             if(_skipCdireadyHole)
@@ -1212,20 +1265,20 @@ sealed partial class Dump
         ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                      blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
-        UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0_seconds, (end - start).TotalSeconds));
 
-        UpdateStatus?.Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000)
-            :F3} KiB/sec.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0_KiB_sec,
+                                           blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000)));
 
-        UpdateStatus?.Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration
-            :F3} KiB/sec.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0_KiB_sec,
+                                           blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration));
 
-        _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+        _dumpLog.WriteLine(Localization.Core.Dump_finished_in_0_seconds, (end - start).TotalSeconds);
 
-        _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
+        _dumpLog.WriteLine(Localization.Core.Average_dump_speed_0_KiB_sec,
                            blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
 
-        _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
+        _dumpLog.WriteLine(Localization.Core.Average_write_speed_0_KiB_sec,
                            blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
         TrimCdUserData(audioExtents, blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
@@ -1259,7 +1312,7 @@ sealed partial class Dump
             {
                 if(tag.Value is null)
                 {
-                    AaruConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
+                    AaruConsole.ErrorWriteLine(Localization.Core.Error_Tag_type_0_is_null_skipping, tag.Key);
 
                     continue;
                 }
@@ -1270,7 +1323,7 @@ sealed partial class Dump
                     continue;
 
                 // Cannot write tag to image
-                _dumpLog.WriteLine($"Cannot write tag {tag.Key}.");
+                _dumpLog.WriteLine(string.Format(Localization.Core.Cannot_write_tag_0, tag.Key));
                 StoppingErrorMessage?.Invoke(outputOptical.ErrorMessage);
 
                 return;
@@ -1279,7 +1332,7 @@ sealed partial class Dump
         _resume.BadBlocks.Sort();
 
         foreach(ulong bad in _resume.BadBlocks)
-            _dumpLog.WriteLine("Sector {0} could not be read.", bad);
+            _dumpLog.WriteLine(Localization.Core.Sector_0_could_not_be_read, bad);
 
         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
@@ -1301,7 +1354,7 @@ sealed partial class Dump
         };
 
         if(!outputOptical.SetMetadata(metadata))
-            ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
+            ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputOptical.ErrorMessage);
 
         outputOptical.SetDumpHardware(_resume.Tries);
@@ -1315,15 +1368,15 @@ sealed partial class Dump
             if(!outputOptical.WriteSectorTag(Encoding.ASCII.GetBytes(isrc.Value), isrc.Key, SectorTagType.CdTrackIsrc))
                 continue;
 
-            UpdateStatus?.Invoke($"Setting ISRC for track {isrc.Key} to {isrc.Value}");
-            _dumpLog.WriteLine("Setting ISRC for track {0} to {1}", isrc.Key, isrc.Value);
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Setting_ISRC_for_track_0_to_1, isrc.Key, isrc.Value));
+            _dumpLog.WriteLine(Localization.Core.Setting_ISRC_for_track_0_to_1, isrc.Key, isrc.Value);
         }
 
         if(mcn != null &&
            outputOptical.WriteMediaTag(Encoding.ASCII.GetBytes(mcn), MediaTagType.CD_MCN))
         {
-            UpdateStatus?.Invoke($"Setting disc Media Catalogue Number to {mcn}");
-            _dumpLog.WriteLine("Setting disc Media Catalogue Number to {0}", mcn);
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Setting_disc_Media_Catalogue_Number_to_0, mcn));
+            _dumpLog.WriteLine(Localization.Core.Setting_disc_Media_Catalogue_Number_to_0, mcn);
         }
 
         foreach(Track trk in tracks)
@@ -1348,18 +1401,20 @@ sealed partial class Dump
 
         outputOptical.SetTracks(tracks.ToList());
 
-        _dumpLog.WriteLine("Closing output file.");
-        UpdateStatus?.Invoke("Closing output file.");
+        _dumpLog.WriteLine(Localization.Core.Closing_output_file);
+        UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
         DateTime closeStart = DateTime.Now;
         outputOptical.Close();
         DateTime closeEnd = DateTime.Now;
-        UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
+
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Closed_in_0_seconds,
+                                           (closeEnd - closeStart).TotalSeconds));
 
         subLog?.Close();
 
         if(_aborted)
         {
-            _dumpLog.WriteLine("Aborted!");
+            _dumpLog.WriteLine(Localization.Core.Aborted);
 
             return;
         }
@@ -1373,21 +1428,25 @@ sealed partial class Dump
         end = DateTime.UtcNow;
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.Invoke($"Took a total of {(end - dumpStart).TotalSeconds:F3} seconds ({totalDuration / 1000
-            :F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {
-            (closeEnd - closeStart).TotalSeconds:F3} closing).");
+        UpdateStatus?.
+            Invoke(string.Format(Localization.Core.Took_a_total_of_0_seconds_1_processing_commands_2_checksumming_3_writing_4_closing,
+                                 (end - dumpStart).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000,
+                                 imageWriteDuration, (closeEnd - closeStart).TotalSeconds));
 
-        UpdateStatus?.Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000)
-            :F3} MiB/sec.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0_MiB_sec,
+                                           blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000)));
 
         if(maxSpeed > 0)
-            UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0_MiB_sec, maxSpeed));
 
         if(minSpeed is > 0 and < double.MaxValue)
-            UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0_MiB_sec, minSpeed));
 
-        UpdateStatus?.Invoke($"{_resume.BadBlocks.Count} sectors could not be read.");
-        UpdateStatus?.Invoke($"{_resume.BadSubchannels.Count} subchannels could not be read.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read, _resume.BadBlocks.Count));
+
+        UpdateStatus?.Invoke(string.Format(Localization.Core._0_subchannels_could_not_be_read,
+                                           _resume.BadSubchannels.Count));
+
         UpdateStatus?.Invoke("");
 
         Statistics.AddMedia(dskType, true);

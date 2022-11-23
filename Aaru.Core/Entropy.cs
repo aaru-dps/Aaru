@@ -79,7 +79,7 @@ public sealed class Entropy
 
         if(_inputFormat is not IOpticalMediaImage opticalMediaImage)
         {
-            AaruConsole.ErrorWriteLine("The selected image does not support tracks.");
+            AaruConsole.ErrorWriteLine(Localization.Core.The_selected_image_does_not_support_tracks);
 
             return entropyResults.ToArray();
         }
@@ -99,7 +99,7 @@ public sealed class Entropy
                 };
 
                 UpdateProgressEvent?.
-                    Invoke($"Entropying track {currentTrack.Sequence} of {inputTracks.Max(t => t.Sequence)}",
+                    Invoke(string.Format(Localization.Core.Entropying_track_0_of_1, currentTrack.Sequence, inputTracks.Max(t => t.Sequence)),
                            currentTrack.Sequence, inputTracks.Max(t => t.Sequence));
 
                 ulong[]      entTable              = new ulong[256];
@@ -108,20 +108,24 @@ public sealed class Entropy
 
                 trackEntropy.Sectors = currentTrack.EndSector - currentTrack.StartSector + 1;
 
-                AaruConsole.VerboseWriteLine("Track {0} has {1} sectors", currentTrack.Sequence, trackEntropy.Sectors);
+                AaruConsole.VerboseWriteLine(Localization.Core.Track_0_has_1_sectors, currentTrack.Sequence,
+                                             trackEntropy.Sectors);
 
                 InitProgress2Event?.Invoke();
 
                 for(ulong i = 0; i < trackEntropy.Sectors; i++)
                 {
-                    UpdateProgress2Event?.Invoke($"Entropying sector {i + 1} of track {currentTrack.Sequence}",
-                                                 (long)(i               + 1), (long)currentTrack.EndSector);
+                    UpdateProgress2Event?.
+                        Invoke(string.Format(Localization.Core.Entropying_sector_0_of_track_1, i + 1, currentTrack.Sequence),
+                               (long)(i + 1), (long)currentTrack.EndSector);
 
                     ErrorNumber errno = opticalMediaImage.ReadSector(i, currentTrack.Sequence, out byte[] sector);
 
                     if(errno != ErrorNumber.NoError)
                     {
-                        AaruConsole.ErrorWriteLine($"Error {errno} while reading sector {i}, continuing...");
+                        AaruConsole.
+                            ErrorWriteLine(string.Format(Localization.Core.Error_0_while_reading_sector_1_continuing,
+                                                         errno, i));
 
                         continue;
                     }
@@ -156,9 +160,10 @@ public sealed class Entropy
         catch(Exception ex)
         {
             if(_debug)
-                AaruConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
+                AaruConsole.DebugWriteLine(Localization.Core.Could_not_get_tracks_because_0, ex.Message);
             else
-                AaruConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
+                AaruConsole.ErrorWriteLine(Localization.Core.
+                                                        Unable_to_get_separate_tracks_not_calculating_their_entropy);
         }
 
         return entropyResults.ToArray();
@@ -182,17 +187,20 @@ public sealed class Entropy
         List<string> uniqueSectors = new();
 
         entropy.Sectors = mediaImage.Info.Sectors;
-        AaruConsole.WriteLine("Sectors {0}", entropy.Sectors);
+        AaruConsole.WriteLine(Localization.Core.Sectors_0, entropy.Sectors);
         InitProgressEvent?.Invoke();
 
         for(ulong i = 0; i < entropy.Sectors; i++)
         {
-            UpdateProgressEvent?.Invoke($"Entropying sector {i + 1}", (long)(i + 1), (long)entropy.Sectors);
+            UpdateProgressEvent?.Invoke(string.Format(Localization.Core.Entropying_sector_0, i + 1), (long)(i + 1),
+                                        (long)entropy.Sectors);
+
             ErrorNumber errno = mediaImage.ReadSector(i, out byte[] sector);
 
             if(errno != ErrorNumber.NoError)
             {
-                AaruConsole.ErrorWriteLine($"Error {errno} while reading sector {i}, continuing...");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_while_reading_sector_1_continuing,
+                                                         errno, i));
 
                 continue;
             }
@@ -238,14 +246,15 @@ public sealed class Entropy
         byte[]  data     = new byte[byteAddressableImage.Info.Sectors];
 
         entropy.Sectors = _inputFormat.Info.Sectors;
-        AaruConsole.WriteLine("{0} bytes", entropy.Sectors);
+        AaruConsole.WriteLine(Localization.Core._0_bytes, entropy.Sectors);
         InitProgressEvent?.Invoke();
 
         ErrorNumber errno = byteAddressableImage.ReadBytes(data, 0, data.Length, out int bytesRead);
 
         if(errno != ErrorNumber.NoError)
         {
-            AaruConsole.ErrorWriteLine($"Error {errno} while reading data, not continuing...");
+            AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_while_reading_data__not_continuing,
+                                                     errno));
 
             return entropy;
         }

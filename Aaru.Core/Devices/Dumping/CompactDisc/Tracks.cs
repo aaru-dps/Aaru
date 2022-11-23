@@ -76,8 +76,8 @@ partial class Dump
 
         // We discarded all discs that falsify a TOC before requesting a real TOC
         // No TOC, no CD (or an empty one)
-        dumpLog?.WriteLine("Reading full TOC");
-        updateStatus?.Invoke("Reading full TOC");
+        dumpLog?.WriteLine(Localization.Core.Reading_full_TOC);
+        updateStatus?.Invoke(Localization.Core.Reading_full_TOC);
         sense = dev.ReadRawToc(out cmdBuf, out _, 0, dev.Timeout, out _);
 
         if(!sense)
@@ -92,8 +92,8 @@ partial class Dump
             }
         }
 
-        updateStatus?.Invoke("Building track map...");
-        dumpLog?.WriteLine("Building track map...");
+        updateStatus?.Invoke(Localization.Core.Building_track_map);
+        dumpLog?.WriteLine(Localization.Core.Building_track_map);
 
         if(toc.HasValue)
         {
@@ -175,8 +175,8 @@ partial class Dump
         }
         else
         {
-            updateStatus?.Invoke("Cannot read RAW TOC, requesting processed one...");
-            dumpLog?.WriteLine("Cannot read RAW TOC, requesting processed one...");
+            updateStatus?.Invoke(Localization.Core.Cannot_read_RAW_TOC_requesting_processed_one);
+            dumpLog?.WriteLine(Localization.Core.Cannot_read_RAW_TOC_requesting_processed_one);
             sense = dev.ReadToc(out cmdBuf, out _, false, 0, dev.Timeout, out _);
 
             TOC.CDTOC? oldToc = TOC.Decode(cmdBuf);
@@ -184,10 +184,11 @@ partial class Dump
             if((sense || !oldToc.HasValue) &&
                !force)
             {
-                dumpLog?.WriteLine("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
+                dumpLog?.WriteLine(Localization.Core.
+                                                Could_not_read_TOC_if_you_want_to_continue_use_force_and_will_try_from_LBA_0_to_360000);
 
-                stoppingErrorMessage?.
-                    Invoke("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
+                stoppingErrorMessage?.Invoke(Localization.Core.
+                                                          Could_not_read_TOC_if_you_want_to_continue_use_force_and_will_try_from_LBA_0_to_360000);
 
                 return null;
             }
@@ -227,8 +228,8 @@ partial class Dump
 
         if(trackList.Count == 0)
         {
-            updateStatus?.Invoke("No tracks found, adding a single track from 0 to Lead-Out");
-            dumpLog?.WriteLine("No tracks found, adding a single track from 0 to Lead-Out");
+            updateStatus?.Invoke(Localization.Core.No_tracks_found_adding_a_single_track_from_zero_to_Lead_Out);
+            dumpLog?.WriteLine(Localization.Core.No_tracks_found_adding_a_single_track_from_zero_to_Lead_Out);
 
             trackList.Add(new Track
             {
@@ -269,18 +270,17 @@ partial class Dump
 
         if(!force)
         {
-            stoppingErrorMessage?.
-                Invoke("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
+            stoppingErrorMessage?.Invoke(Localization.Core.
+                                                      Could_not_find_Lead_Out_if_you_want_to_continue_use_force_option);
 
-            dumpLog?.WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
+            dumpLog?.WriteLine(Localization.Core.Could_not_find_Lead_Out_if_you_want_to_continue_use_force_option);
 
             return null;
         }
 
-        updateStatus?.
-            Invoke("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+        updateStatus?.Invoke(Localization.Core.WARNING_Could_not_find_Lead_Out_start_will_try_to_read_up_to);
 
-        dumpLog?.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+        dumpLog?.WriteLine(Localization.Core.WARNING_Could_not_find_Lead_Out_start_will_try_to_read_up_to);
         lastSector = 360000;
 
         return trackList.ToArray();

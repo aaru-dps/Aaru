@@ -62,7 +62,7 @@ public sealed partial class Sidecar
 
             if(ret != ErrorNumber.NoError)
             {
-                AaruConsole.DebugWriteLine("Create-Sidecar command", "Cannot stat {0}", dirent);
+                AaruConsole.DebugWriteLine("Create-Sidecar command", Localization.Core.Cannot_stat_0, dirent);
 
                 continue;
             }
@@ -165,7 +165,7 @@ public sealed partial class Sidecar
 
             if(ret != ErrorNumber.NoError)
             {
-                AaruConsole.DebugWriteLine("Create-Sidecar command", "Cannot stat {0}", dirent);
+                AaruConsole.DebugWriteLine("Create-Sidecar command", Localization.Core.Cannot_stat_0, dirent);
 
                 continue;
             }
@@ -261,7 +261,7 @@ public sealed partial class Sidecar
         if(stat.Length > 0)
         {
             long position = 0;
-            UpdateStatus($"Hashing file {path}/{filename}...");
+            UpdateStatus(string.Format(Localization.Core.Hashing_file_0_1, path, filename));
             InitProgress2();
 
             while(position < stat.Length - 1048576)
@@ -272,7 +272,7 @@ public sealed partial class Sidecar
                 data = new byte[1048576];
                 filesystem.Read(path + "/" + filename, position, 1048576, ref data);
 
-                UpdateProgress2("Hashing file byte {0} of {1}", position, stat.Length);
+                UpdateProgress2(Localization.Core.Hashing_file_byte_0_of_1, position, stat.Length);
 
                 fileChkWorker.Update(data);
 
@@ -282,7 +282,7 @@ public sealed partial class Sidecar
             data = new byte[stat.Length - position];
             filesystem.Read(path + "/" + filename, position, stat.Length - position, ref data);
 
-            UpdateProgress2("Hashing file byte {0} of {1}", position, stat.Length);
+            UpdateProgress2(Localization.Core.Hashing_file_byte_0_of_1, position, stat.Length);
 
             fileChkWorker.Update(data);
 

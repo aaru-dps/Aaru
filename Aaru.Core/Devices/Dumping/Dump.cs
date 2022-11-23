@@ -212,15 +212,14 @@ public partial class Dump
 
         if(_dbDev is null)
         {
-            _dumpLog.WriteLine("Device not in database, please create a device report and attach it to a Github issue.");
+            _dumpLog.WriteLine(Localization.Core.Device_not_in_database);
 
-            UpdateStatus?.
-                Invoke("Device not in database, please create a device report and attach it to a Github issue.");
+            UpdateStatus?.Invoke(Localization.Core.Device_not_in_database);
         }
         else
         {
-            _dumpLog.WriteLine($"Device in database since {_dbDev.LastSynchronized}.");
-            UpdateStatus?.Invoke($"Device in database since {_dbDev.LastSynchronized}.");
+            _dumpLog.WriteLine(string.Format(Localization.Core.Device_in_database_since_0, _dbDev.LastSynchronized));
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Device_in_database_since_0, _dbDev.LastSynchronized));
 
             if(_dbDev.OptimalMultipleSectorsRead > 0)
                 _maximumReadable = (uint)_dbDev.OptimalMultipleSectorsRead;
@@ -258,9 +257,9 @@ public partial class Dump
 
                         break;
                     default:
-                        _dumpLog.WriteLine("Unknown device type.");
+                        _dumpLog.WriteLine(Localization.Core.Unknown_device_type);
                         _dumpLog.Close();
-                        StoppingErrorMessage?.Invoke("Unknown device type.");
+                        StoppingErrorMessage?.Invoke(Localization.Core.Unknown_device_type);
 
                         return;
                 }

@@ -100,14 +100,15 @@ public partial class DeviceInfo
 
                     AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.DeviceHead);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
+                    AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.Error_code_equals_0,
+                                               dev.LastError);
 
                     break;
                 }
 
                 if(dev.Error)
                 {
-                    AaruConsole.ErrorWriteLine("Error {0} querying ATA IDENTIFY", dev.LastError);
+                    AaruConsole.ErrorWriteLine(Localization.Core.Error_0_querying_ATA_IDENTIFY, dev.LastError);
 
                     break;
                 }
@@ -142,7 +143,8 @@ public partial class DeviceInfo
 
                     AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.DeviceHead);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
+                    AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.Error_code_equals_0,
+                                               dev.LastError);
 
                     break;
                 }
@@ -150,7 +152,7 @@ public partial class DeviceInfo
                 if(!dev.Error)
                     AtapiIdentify = ataBuf;
                 else
-                    AaruConsole.ErrorWriteLine("Error {0} querying ATA PACKET IDENTIFY", dev.LastError);
+                    AaruConsole.ErrorWriteLine(Localization.Core.Error_0_querying_ATA_PACKET_IDENTIFY, dev.LastError);
 
                 // ATAPI devices are also SCSI devices
                 goto case DeviceType.SCSI;
@@ -162,7 +164,7 @@ public partial class DeviceInfo
 
                 if(sense)
                 {
-                    AaruConsole.ErrorWriteLine("SCSI error:\n{0}", Sense.PrettifySense(senseBuf));
+                    AaruConsole.ErrorWriteLine(Localization.Core.SCSI_error_0, Sense.PrettifySense(senseBuf));
 
                     break;
                 }
@@ -599,7 +601,7 @@ public partial class DeviceInfo
 
                 break;
             default:
-                AaruConsole.ErrorWriteLine("Unknown device type {0}, cannot get information.", dev.Type);
+                AaruConsole.ErrorWriteLine(Localization.Core.Unknown_device_type_0_cannot_get_information, dev.Type);
 
                 break;
         }

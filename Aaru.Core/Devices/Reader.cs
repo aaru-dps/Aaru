@@ -62,7 +62,7 @@ sealed partial class Reader
                     _ataId = ataIdNullable.Value;
 
                 break;
-            case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
+            case DeviceType.NVMe: throw new NotImplementedException(Localization.Core.NVMe_devices_not_yet_supported);
         }
     }
 
@@ -84,7 +84,7 @@ sealed partial class Reader
             case DeviceType.ATAPI:
             case DeviceType.SCSI: return ScsiGetBlocks();
             default:
-                ErrorMessage = $"Unknown device type {_dev.Type}.";
+                ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
                 return 0;
         }
@@ -98,7 +98,7 @@ sealed partial class Reader
             case DeviceType.ATAPI:
             case DeviceType.SCSI: return ScsiFindReadCommand();
             default:
-                ErrorMessage = $"Unknown device type {_dev.Type}.";
+                ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
                 return true;
         }
@@ -112,7 +112,7 @@ sealed partial class Reader
             case DeviceType.ATAPI:
             case DeviceType.SCSI: return ScsiGetBlockSize();
             default:
-                ErrorMessage = $"Unknown device type {_dev.Type}.";
+                ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
                 return true;
         }
@@ -126,7 +126,7 @@ sealed partial class Reader
             case DeviceType.ATAPI:
             case DeviceType.SCSI: return ScsiGetBlocksToRead(startWithBlocks);
             default:
-                ErrorMessage = $"Unknown device type {_dev.Type}.";
+                ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
                 return true;
         }

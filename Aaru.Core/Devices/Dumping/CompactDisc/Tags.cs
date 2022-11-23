@@ -61,8 +61,8 @@ partial class Dump
         firstTrackLastSession = 1;
 
         // ATIP exists on blank CDs
-        _dumpLog.WriteLine("Reading ATIP");
-        UpdateStatus?.Invoke("Reading ATIP");
+        _dumpLog.WriteLine(Localization.Core.Reading_ATIP);
+        UpdateStatus?.Invoke(Localization.Core.Reading_ATIP);
         sense = _dev.ReadAtip(out cmdBuf, out _, _dev.Timeout, out _);
 
         if(!sense)
@@ -80,8 +80,8 @@ partial class Dump
             }
         }
 
-        _dumpLog.WriteLine("Reading Disc Information");
-        UpdateStatus?.Invoke("Reading Disc Information");
+        _dumpLog.WriteLine(Localization.Core.Reading_Disc_Information);
+        UpdateStatus?.Invoke(Localization.Core.Reading_Disc_Information);
 
         sense = _dev.ReadDiscInformation(out cmdBuf, out _, MmcDiscInformationDataTypes.DiscInformation, _dev.Timeout,
                                          out _);
@@ -100,8 +100,8 @@ partial class Dump
                 };
         }
 
-        _dumpLog.WriteLine("Reading PMA");
-        UpdateStatus?.Invoke("Reading PMA");
+        _dumpLog.WriteLine(Localization.Core.Reading_PMA);
+        UpdateStatus?.Invoke(Localization.Core.Reading_PMA);
         sense = _dev.ReadPma(out cmdBuf, out _, _dev.Timeout, out _);
 
         if(!sense &&
@@ -112,8 +112,8 @@ partial class Dump
             mediaTags.Add(MediaTagType.CD_PMA, tmpBuf);
         }
 
-        _dumpLog.WriteLine("Reading Session Information");
-        UpdateStatus?.Invoke("Reading Session Information");
+        _dumpLog.WriteLine(Localization.Core.Reading_Session_Information);
+        UpdateStatus?.Invoke(Localization.Core.Reading_Session_Information);
         sense = _dev.ReadSessionInfo(out cmdBuf, out _, _dev.Timeout, out _);
 
         if(!sense)
@@ -127,8 +127,8 @@ partial class Dump
             }
         }
 
-        _dumpLog.WriteLine("Reading CD-Text from Lead-In");
-        UpdateStatus?.Invoke("Reading CD-Text from Lead-In");
+        _dumpLog.WriteLine(Localization.Core.Reading_CD_Text_from_Lead_In);
+        UpdateStatus?.Invoke(Localization.Core.Reading_CD_Text_from_Lead_In);
         sense = _dev.ReadCdText(out cmdBuf, out _, _dev.Timeout, out _);
 
         if(sense || !CDTextOnLeadIn.Decode(cmdBuf).HasValue)

@@ -106,8 +106,8 @@ partial class Dump
             return;
 
         start = DateTime.UtcNow;
-        UpdateStatus?.Invoke("Trimming skipped sectors");
-        _dumpLog.WriteLine("Trimming skipped sectors");
+        UpdateStatus?.Invoke(Localization.Core.Trimming_skipped_sectors);
+        _dumpLog.WriteLine(Localization.Core.Trimming_skipped_sectors);
         InitProgress?.Invoke();
 
         trimStart:
@@ -120,13 +120,13 @@ partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
 
-            PulseProgress?.Invoke($"Trimming sector {badSector}");
+            PulseProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector));
 
             Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
@@ -286,7 +286,10 @@ partial class Dump
 
         EndProgress?.Invoke();
         end = DateTime.UtcNow;
-        UpdateStatus?.Invoke($"Trimming finished in {(end - start).TotalSeconds} seconds.");
-        _dumpLog.WriteLine("Trimming finished in {0} seconds.", (end - start).TotalSeconds);
+
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Trimming_finished_in_0_seconds,
+                                           (end - start).TotalSeconds));
+
+        _dumpLog.WriteLine(Localization.Core.Trimming_finished_in_0_seconds, (end - start).TotalSeconds);
     }
 }

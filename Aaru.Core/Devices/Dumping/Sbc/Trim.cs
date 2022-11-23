@@ -52,7 +52,7 @@ partial class Dump
 
         if(_outputPlugin is not IWritableImage outputFormat)
         {
-            StoppingErrorMessage?.Invoke("Image is not writable, aborting...");
+            StoppingErrorMessage?.Invoke(Localization.Core.Image_is_not_writable_aborting);
 
             return;
         }
@@ -62,13 +62,13 @@ partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
 
-            PulseProgress?.Invoke($"Trimming sector {badSector}");
+            PulseProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector));
 
             sense = scsiReader.ReadBlock(out buffer, badSector, out double _, out recoveredError, out blankCheck);
 
@@ -78,8 +78,8 @@ partial class Dump
                 newBlank = true;
                 _resume.BadBlocks.Remove(badSector);
 
-                UpdateStatus?.Invoke($"Found blank block {badSector}.");
-                _dumpLog.WriteLine("Found blank block {0}.", badSector);
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Found_blank_block_0, badSector));
+                _dumpLog.WriteLine(Localization.Core.Found_blank_block_0, badSector);
 
                 continue;
             }

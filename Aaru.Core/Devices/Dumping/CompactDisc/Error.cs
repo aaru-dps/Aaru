@@ -181,8 +181,8 @@ partial class Dump
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
             md10 = Modes.EncodeMode10(md, _dev.ScsiType);
 
-            UpdateStatus?.Invoke("Sending MODE SELECT to drive (return damaged blocks).");
-            _dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
+            UpdateStatus?.Invoke(Localization.Core.Sending_MODE_SELECT_to_drive_return_damaged_blocks);
+            _dumpLog.WriteLine(Localization.Core.Sending_MODE_SELECT_to_drive_return_damaged_blocks);
             sense = _dev.ModeSelect(md6, out senseBuf, true, false, _dev.Timeout, out _);
 
             if(sense)
@@ -190,12 +190,13 @@ partial class Dump
 
             if(sense)
             {
-                UpdateStatus?.
-                    Invoke("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                UpdateStatus?.Invoke(Localization.Core.
+                                                  Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading);
 
-                AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+                AaruConsole.DebugWriteLine(Localization.Core.Error_0, Sense.PrettifySense(senseBuf));
 
-                _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                _dumpLog.WriteLine(Localization.Core.
+                                                Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading);
             }
             else
                 runningPersistent = true;
@@ -213,14 +214,25 @@ partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                _dumpLog.WriteLine("Aborted!");
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
 
-            PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
-                                                forward ? "forward" : "reverse",
-                                                runningPersistent ? "recovering partial data, " : ""));
+            if(forward)
+                PulseProgress?.Invoke(runningPersistent
+                                          ? string.
+                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                     badSector, pass)
+                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward, badSector,
+                                                          pass));
+            else
+                PulseProgress?.Invoke(runningPersistent
+                                          ? string.
+                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                     badSector, pass)
+                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse, badSector,
+                                                          pass));
 
             Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
@@ -327,8 +339,11 @@ partial class Dump
             {
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
-                UpdateStatus?.Invoke($"Correctly retried sector {badSector} in pass {pass}.");
-                _dumpLog.WriteLine("Correctly retried sector {0} in pass {1}.", badSector, pass);
+
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_sector_0_in_pass_1, badSector,
+                                                   pass));
+
+                _dumpLog.WriteLine(Localization.Core.Correctly_retried_sector_0_in_pass_1, badSector, pass);
                 sectorsNotEvenPartial.Remove(badSector);
             }
             else
@@ -421,7 +436,7 @@ partial class Dump
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
             md10 = Modes.EncodeMode10(md, _dev.ScsiType);
 
-            _dumpLog.WriteLine("Sending MODE SELECT to drive (ignore error correction).");
+            _dumpLog.WriteLine(Localization.Core.Sending_MODE_SELECT_to_drive_ignore_error_correction);
             sense = _dev.ModeSelect(md6, out senseBuf, true, false, _dev.Timeout, out _);
 
             if(sense)
@@ -440,12 +455,13 @@ partial class Dump
                     if(_aborted)
                     {
                         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                        _dumpLog.WriteLine("Aborted!");
+                        _dumpLog.WriteLine(Localization.Core.Aborted);
 
                         break;
                     }
 
-                    PulseProgress?.Invoke($"Trying to get partial data for sector {badSector}");
+                    PulseProgress?.Invoke(string.Format(Localization.Core.Trying_to_get_partial_data_for_sector_0,
+                                                        badSector));
 
                     Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
@@ -466,7 +482,7 @@ partial class Dump
                         continue;
                     }
 
-                    _dumpLog.WriteLine("Got partial data for sector {0} in pass {1}.", badSector, pass);
+                    _dumpLog.WriteLine(Localization.Core.Got_partial_data_for_sector_0_in_pass_1, badSector, pass);
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
@@ -519,7 +535,7 @@ partial class Dump
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
             md10 = Modes.EncodeMode10(md, _dev.ScsiType);
 
-            _dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
+            _dumpLog.WriteLine(Localization.Core.Sending_MODE_SELECT_to_drive_return_device_to_previous_status);
             sense = _dev.ModeSelect(md6, out senseBuf, true, false, _dev.Timeout, out _);
 
             if(sense)
@@ -592,13 +608,16 @@ partial class Dump
 
             if(_aborted)
             {
-                _dumpLog.WriteLine("Aborted!");
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
 
-            PulseProgress?.Invoke($"Retrying sector {badSector} subchannel, pass {pass}, {
-                (forward ? "forward" : "reverse")}");
+            PulseProgress?.Invoke(forward
+                                      ? string.Format(Localization.Core.Retrying_sector_0_subchannel_pass_1_forward,
+                                                      badSector, pass)
+                                      : string.Format(Localization.Core.Retrying_sector_0_subchannel_pass_1_reverse,
+                                                      badSector, pass));
 
             uint startSector = badSector - 2;
 
@@ -635,8 +654,10 @@ partial class Dump
             if(subchannelExtents.Contains(bs))
                 continue;
 
-            UpdateStatus?.Invoke($"Correctly retried sector {badSector} subchannel in pass {pass}.");
-            _dumpLog.WriteLine("Correctly retried sector {0} subchannel in pass {1}.", badSector, pass);
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_sector_0_subchannel_in_pass_1,
+                                               badSector, pass));
+
+            _dumpLog.WriteLine(Localization.Core.Correctly_retried_sector_0_subchannel_in_pass_1, badSector, pass);
         }
 
         if(pass < _retryPasses &&

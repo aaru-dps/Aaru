@@ -81,8 +81,8 @@ partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
@@ -98,8 +98,9 @@ partial class Dump
                currentSpeed > 0)
                 minSpeed = currentSpeed;
 
-            UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
-                                   (long)blocks);
+            UpdateProgress?.
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, blocks, currentSpeed),
+                       (long)i, (long)blocks);
 
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
             totalDuration += cmdDuration;
@@ -192,14 +193,15 @@ partial class Dump
                             outputFormat.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdCmi, out byte[] cmi);
 
                         if(errno != ErrorNumber.NoError)
-                            ErrorMessage?.Invoke($"Error retrieving CMI for sector {i}");
+                            ErrorMessage?.Invoke(string.Format(Localization.Core.Error_retrieving_CMI_for_sector_0, i));
                         else
                         {
                             errno = outputFormat.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdTitleKeyDecrypted,
                                                                 out byte[] titleKey);
 
                             if(errno != ErrorNumber.NoError)
-                                ErrorMessage?.Invoke($"Error retrieving title key for sector {i}");
+                                ErrorMessage?.
+                                    Invoke(string.Format(Localization.Core.Error_retrieving_title_key_for_sector_0, i));
                             else
                                 buffer = CSS.DecryptSector(buffer, cmi, titleKey, blocksToRead, blockSize);
                         }
@@ -222,11 +224,11 @@ partial class Dump
                     _resume.NextBlock++;
                     _aborted = true;
 
-                    _dumpLog?.
-                        WriteLine("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately.");
+                    _dumpLog?.WriteLine(Localization.Core.
+                                                     INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found);
 
-                    UpdateStatus?.
-                        Invoke("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately");
+                    UpdateStatus?.Invoke(Localization.Core.
+                                                      INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found);
 
                     continue;
                 }
@@ -249,7 +251,7 @@ partial class Dump
                 mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                 ibgLog.Write(i, 0);
-                _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
+                _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, _skip, i);
                 i       += _skip - blocksToRead;
                 newTrim =  true;
             }

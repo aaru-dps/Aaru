@@ -855,7 +855,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 }
 
                 warning = true;
-                AaruConsole.ErrorWriteLine(UI.Error_0_setting_metadata, outputFormat.ErrorMessage);
+                AaruConsole.ErrorWriteLine(Localization.Core.Error_0_setting_metadata, outputFormat.ErrorMessage);
             }
 
         if(tracks != null &&

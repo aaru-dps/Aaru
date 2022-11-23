@@ -137,21 +137,21 @@ public sealed class DataFile
                 File.Delete(filename);
             else
             {
-                AaruConsole.ErrorWriteLine("Not overwriting file {0}", filename);
+                AaruConsole.ErrorWriteLine(Localization.Core.Not_overwriting_file_0, filename);
 
                 return;
             }
 
         try
         {
-            AaruConsole.DebugWriteLine(who, "Writing " + whatWriting + " to {0}", filename);
+            AaruConsole.DebugWriteLine(who, string.Format(Localization.Core.Writing_0_to_1, whatWriting, filename));
             var outputFs = new FileStream(filename, FileMode.CreateNew);
             outputFs.Write(data, 0, data.Length);
             outputFs.Close();
         }
         catch
         {
-            AaruConsole.ErrorWriteLine("Unable to write file {0}", filename);
+            AaruConsole.ErrorWriteLine(Localization.Core.Unable_to_write_file_0, filename);
         }
     }
 }

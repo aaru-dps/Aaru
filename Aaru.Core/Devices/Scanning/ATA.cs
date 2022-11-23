@@ -122,7 +122,7 @@ public sealed partial class MediaScan
 
             if(ataReader.IsLba)
             {
-                UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
 
                 InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ataProfile);
                 mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
@@ -149,8 +149,9 @@ public sealed partial class MediaScan
                        currentSpeed > 0)
                         results.MinSpeed = currentSpeed;
 
-                    UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
-                                           (long)i, (long)results.Blocks);
+                    UpdateProgress?.
+                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, results.Blocks, currentSpeed),
+                               (long)i, (long)results.Blocks);
 
                     bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
 
@@ -232,7 +233,7 @@ public sealed partial class MediaScan
 
                         uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
-                        PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
+                        PulseProgress?.Invoke(string.Format(Localization.Core.Seeking_to_sector_0, seekPos));
 
                         ataReader.Seek(seekPos, out seekCur);
 
@@ -280,8 +281,9 @@ public sealed partial class MediaScan
                                currentSpeed > 0)
                                 results.MinSpeed = currentSpeed;
 
-                            PulseProgress?.Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed
-                                :F3} MiB/sec.)");
+                            PulseProgress?.
+                                Invoke(string.Format(Localization.Core.Reading_cylinder_0_head_1_sector_2_3_MiB_sec, cy,
+                                                     hd, sc, currentSpeed));
 
                             bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out _);
 
@@ -365,7 +367,8 @@ public sealed partial class MediaScan
                         byte   seekHd = (byte)rnd.Next(heads);
                         byte   seekSc = (byte)rnd.Next(sectors);
 
-                        PulseProgress?.Invoke($"\rSeeking to cylinder {seekCy}, head {seekHd}, sector {seekSc}...\t\t");
+                        PulseProgress?.Invoke(string.Format(Localization.Core.Seeking_to_cylinder_0_head_1_sector_2,
+                                                            seekCy, seekHd, seekSc));
 
                         ataReader.SeekChs(seekCy, seekHd, seekSc, out seekCur);
 
@@ -392,7 +395,7 @@ public sealed partial class MediaScan
             return results;
         }
 
-        StoppingErrorMessage?.Invoke("Unable to communicate with ATA device.");
+        StoppingErrorMessage?.Invoke(Localization.Core.Unable_to_communicate_with_ATA_device);
 
         return results;
     }

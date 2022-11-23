@@ -193,7 +193,7 @@ sealed class CompareCommand : Command
         if(opened1 != ErrorNumber.NoError)
         {
             AaruConsole.WriteLine(UI.Unable_to_open_first_image_format);
-            AaruConsole.WriteLine(UI.Error_0, opened1);
+            AaruConsole.WriteLine(Localization.Core.Error_0, opened1);
 
             return (int)opened1;
         }
@@ -207,7 +207,7 @@ sealed class CompareCommand : Command
         if(opened2 != ErrorNumber.NoError)
         {
             AaruConsole.WriteLine(UI.Unable_to_open_second_image_format);
-            AaruConsole.WriteLine(UI.Error_0, opened2);
+            AaruConsole.WriteLine(Localization.Core.Error_0, opened2);
 
             return (int)opened2;
         }

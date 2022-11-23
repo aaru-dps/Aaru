@@ -206,7 +206,7 @@ sealed class ChecksumCommand : Command
         if(opened != ErrorNumber.NoError)
         {
             AaruConsole.WriteLine(UI.Unable_to_open_image_format);
-            AaruConsole.WriteLine(UI.Error_0, opened);
+            AaruConsole.WriteLine(Localization.Core.Error_0, opened);
 
             return (int)opened;
         }
@@ -272,7 +272,7 @@ sealed class ChecksumCommand : Command
                                 Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                                 Start(ctx =>
                                 {
-                                    ProgressTask discTask = ctx.AddTask(UI.Hashing_tracks);
+                                    ProgressTask discTask = ctx.AddTask(Localization.Core.Hashing_tracks);
                                     discTask.MaxValue = inputTracks.Count;
 
                                     foreach(Track currentTrack in inputTracks)
@@ -415,7 +415,7 @@ sealed class ChecksumCommand : Command
                 catch(Exception ex)
                 {
                     if(debug)
-                        AaruConsole.DebugWriteLine(UI.Could_not_get_tracks_because_0, ex.Message);
+                        AaruConsole.DebugWriteLine(Localization.Core.Could_not_get_tracks_because_0, ex.Message);
                     else
                         AaruConsole.WriteLine("Unable to get separate tracks, not checksumming them");
                 }
@@ -435,7 +435,7 @@ sealed class ChecksumCommand : Command
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask tapeTask = ctx.AddTask(UI.Hashing_files);
+                                ProgressTask tapeTask = ctx.AddTask(Localization.Core.Hashing_files);
                                 tapeTask.MaxValue = tapeImage.Files.Count;
 
                                 foreach(TapeFile currentFile in tapeImage.Files)
@@ -683,7 +683,7 @@ sealed class ChecksumCommand : Command
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask diskTask = ctx.AddTask(UI.Hashing_sectors);
+                                ProgressTask diskTask = ctx.AddTask(Localization.Core.Hashing_sectors);
                                 ulong        sectors  = mediaImage.Info.Sectors;
                                 diskTask.MaxValue = sectors;
                                 ulong doneSectors = 0;

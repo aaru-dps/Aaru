@@ -254,18 +254,18 @@ sealed class DeviceInfoCommand : Command
                         case TupleCodes.CISTPL_SPCL:
                         case TupleCodes.CISTPL_SWIL:
                         case TupleCodes.CISTPL_VERS_2:
-                            AaruConsole.DebugWriteLine("Device-Info command", UI.Invoke_Found_undecoded_tuple_ID_0,
-                                                       tuple.Code);
+                            AaruConsole.DebugWriteLine("Device-Info command",
+                                                       Localization.Core.Invoke_Found_undecoded_tuple_ID_0, tuple.Code);
 
                             break;
                         default:
-                            AaruConsole.DebugWriteLine("Device-Info command", UI.Found_unknown_tuple_ID_0,
-                                                       (byte)tuple.Code);
+                            AaruConsole.DebugWriteLine("Device-Info command",
+                                                       Localization.Core.Found_unknown_tuple_ID_0, (byte)tuple.Code);
 
                             break;
                     }
             else
-                AaruConsole.DebugWriteLine("Device-Info command", UI.Could_not_get_tuples);
+                AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.Could_not_get_tuples);
         }
 
         var devInfo = new DeviceInfo(dev);
@@ -1152,11 +1152,10 @@ sealed class DeviceInfoCommand : Command
                                             d.Revision     == dev.FirmwareRevision);
 
         if(dbDev is null)
-            AaruConsole.
-                WriteLine("Device not in database, please create a device report and attach it to a Github issue.");
+            AaruConsole.WriteLine(Localization.Core.Device_not_in_database);
         else
         {
-            AaruConsole.WriteLine($"Device in database since {dbDev.LastSynchronized}.");
+            AaruConsole.WriteLine(string.Format(Localization.Core.Device_in_database_since_0, dbDev.LastSynchronized));
 
             if(dbDev.OptimalMultipleSectorsRead > 0)
                 AaruConsole.WriteLine($"Optimal multiple read is {dbDev.LastSynchronized} sectors.");

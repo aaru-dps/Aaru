@@ -36,7 +36,7 @@ public sealed partial class MediaScan
 {
     ScanResults Nvme()
     {
-        StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
+        StoppingErrorMessage?.Invoke(Localization.Core.NVMe_devices_not_yet_supported);
 
         return default;
     }

@@ -343,8 +343,11 @@ public static class CompactDisc
 
                     if(!isrcs.ContainsKey(currentTrackNumber))
                     {
-                        dumpLog?.WriteLine($"Found new ISRC {isrc} for track {currentTrackNumber}.");
-                        updateStatus?.Invoke($"Found new ISRC {isrc} for track {currentTrackNumber}.");
+                        dumpLog?.WriteLine(string.Format(Localization.Core.Found_new_ISRC_0_for_track_1, isrc,
+                                                         currentTrackNumber));
+
+                        updateStatus?.Invoke(string.Format(Localization.Core.Found_new_ISRC_0_for_track_1, isrc,
+                                                           currentTrackNumber));
 
                         isrcs[currentTrackNumber] = isrc;
                     }
@@ -355,11 +358,11 @@ public static class CompactDisc
 
                         if(currentTrack?.Sequence == currentTrackNumber)
                         {
-                            dumpLog?.WriteLine($"ISRC for track {currentTrackNumber} changed from {
-                                isrcs[currentTrackNumber]} to {isrc}.");
+                            dumpLog?.WriteLine(string.Format(Localization.Core.ISRC_for_track_0_changed_from_1_to_2,
+                                                             currentTrackNumber, isrcs[currentTrackNumber], isrc));
 
-                            updateStatus?.Invoke($"ISRC for track {currentTrackNumber} changed from {
-                                isrcs[currentTrackNumber]} to {isrc}.");
+                            updateStatus?.Invoke(string.Format(Localization.Core.ISRC_for_track_0_changed_from_1_to_2,
+                                                               currentTrackNumber, isrcs[currentTrackNumber], isrc));
 
                             isrcs[currentTrackNumber] = isrc;
                         }
@@ -381,13 +384,13 @@ public static class CompactDisc
 
                     if(mcn is null)
                     {
-                        dumpLog?.WriteLine($"Found new MCN {newMcn}.");
-                        updateStatus?.Invoke($"Found new MCN {newMcn}.");
+                        dumpLog?.WriteLine(string.Format(Localization.Core.Found_new_MCN_0, newMcn));
+                        updateStatus?.Invoke(string.Format(Localization.Core.Found_new_MCN_0, newMcn));
                     }
                     else if(mcn != newMcn)
                     {
-                        dumpLog?.WriteLine($"MCN changed from {mcn} to {newMcn}.");
-                        updateStatus?.Invoke($"MCN changed from {mcn} to {newMcn}.");
+                        dumpLog?.WriteLine(string.Format(Localization.Core.MCN_changed_from_0_to_1, mcn, newMcn));
+                        updateStatus?.Invoke(string.Format(Localization.Core.MCN_changed_from_0_to_1, mcn, newMcn));
                     }
 
                     mcn = newMcn;
@@ -438,9 +441,12 @@ public static class CompactDisc
                                    tracks[i - 1].EndSector >= tracks[i].StartSector)
                                     tracks[i - 1].EndSector = tracks[i].StartSector - 1;
 
-                                dumpLog?.WriteLine($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
+                                dumpLog?.WriteLine(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors,
+                                                                 trackNo, tracks[i].Pregap));
 
-                                updateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
+                                updateStatus?.
+                                    Invoke(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors, trackNo,
+                                                         tracks[i].Pregap));
 
                                 for(int p = 0; p < dif; p++)
                                     newPregapSectors.Add(tracks[i].StartSector + (ulong)p);
@@ -460,9 +466,11 @@ public static class CompactDisc
                                tracks[i - 1].EndSector >= tracks[i].StartSector)
                                 tracks[i - 1].EndSector = tracks[i].StartSector - 1;
 
-                            dumpLog?.WriteLine($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
+                            dumpLog?.WriteLine(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors,
+                                                             trackNo, tracks[i].Pregap));
 
-                            updateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
+                            updateStatus?.Invoke(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors,
+                                                               trackNo, tracks[i].Pregap));
 
                             for(int p = 0; p < (int)(tracks[i].Pregap - oldPregap); p++)
                                 newPregapSectors.Add(tracks[i].StartSector + (ulong)p);
@@ -489,8 +497,11 @@ public static class CompactDisc
                            aPos >= tracks[i].Indexes[q[2]])
                             continue;
 
-                        dumpLog?.WriteLine($"Setting index {q[2]} for track {trackNo} to LBA {aPos}.");
-                        updateStatus?.Invoke($"Setting index {q[2]} for track {trackNo} to LBA {aPos}.");
+                        dumpLog?.WriteLine(string.Format(Localization.Core.Setting_index_0_for_track_1_to_LBA_2, q[2],
+                                                         trackNo, aPos));
+
+                        updateStatus?.Invoke(string.Format(Localization.Core.Setting_index_0_for_track_1_to_LBA_2, q[2],
+                                                           trackNo, aPos));
 
                         tracks[i].Indexes[q[2]] = aPos;
 
@@ -1639,7 +1650,9 @@ public static class CompactDisc
             else
                 index = 0;
 
-            updateProgress?.Invoke($"Generating subchannel for sector {sector}...", sector, (long)blocks);
+            updateProgress?.Invoke(string.Format(Localization.Core.Generating_subchannel_for_sector_0, sector), sector,
+                                   (long)blocks);
+
             dumpLog?.WriteLine($"Generating subchannel for sector {sector}.");
 
             byte[] sub = Subchannel.Generate(sector, track?.Sequence ?? 0, (int)pregap, (int)trackStart, flags, index);

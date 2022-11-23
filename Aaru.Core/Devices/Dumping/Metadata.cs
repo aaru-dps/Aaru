@@ -59,14 +59,14 @@ partial class Dump
                              Dictionary<MediaTagType, byte[]> mediaTags, int sessions, out double totalChkDuration,
                              int? discOffset)
     {
-        _dumpLog.WriteLine("Creating sidecar.");
+        _dumpLog.WriteLine(Localization.Core.Creating_sidecar);
         var     filters = new FiltersList();
         IFilter filter  = filters.GetFilter(_outputPath);
         totalChkDuration = 0;
 
         if(ImageFormat.Detect(filter) is not IMediaImage inputPlugin)
         {
-            StoppingErrorMessage?.Invoke("Could not detect image format.");
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_detect_image_format);
 
             return;
         }
@@ -75,7 +75,7 @@ partial class Dump
 
         if(opened != ErrorNumber.NoError)
         {
-            StoppingErrorMessage?.Invoke($"Error {opened} opening created image.");
+            StoppingErrorMessage?.Invoke(string.Format(Localization.Core.Error_0_opening_created_image, opened));
 
             return;
         }
@@ -98,9 +98,9 @@ partial class Dump
             return;
 
         totalChkDuration = (end - chkStart).TotalMilliseconds;
-        _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
+        _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0_seconds, (end - chkStart).TotalSeconds);
 
-        _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
+        _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0_KiB_sec,
                            blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
         if(_preSidecar != null)
@@ -124,7 +124,7 @@ partial class Dump
                         o.start,
                         o.type
                     }).Distinct())
-                _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                _dumpLog.WriteLine(Localization.Core.Found_filesystem_0_at_sector_1, filesystem.type, filesystem.start);
 
         sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(mediaType);
         (string type, string subType) discType = CommonTypes.Metadata.MediaType.MediaTypeToString(mediaType);
@@ -145,7 +145,7 @@ partial class Dump
                                                                                   Contains(tag.Key)))
                 AddMediaTagToSidecar(_outputPath, tag.Key, tag.Value, ref sidecar);
 
-        UpdateStatus?.Invoke("Writing metadata sidecar");
+        UpdateStatus?.Invoke(Localization.Core.Writing_metadata_sidecar);
 
         var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
 

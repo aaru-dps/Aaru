@@ -103,7 +103,7 @@ public sealed partial class Sidecar
         MediaType   dskType = image.Info.MediaType;
         ErrorNumber errno;
 
-        UpdateStatus("Hashing media tags...");
+        UpdateStatus(Localization.Core.Hashing_media_tags);
 
         foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
         {
@@ -255,11 +255,11 @@ public sealed partial class Sidecar
 
         InitProgress();
 
-        UpdateStatus("Checking filesystems");
+        UpdateStatus(Localization.Core.Checking_filesystems);
         List<Partition> partitions = Partitions.GetAll(image);
         Partitions.AddSchemesToStats(partitions);
 
-        UpdateStatus("Hashing tracks...");
+        UpdateStatus(Localization.Core.Hashing_tracks);
 
         foreach(Track trk in tracks)
         {
@@ -349,7 +349,7 @@ public sealed partial class Sidecar
                 xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
             else
             {
-                UpdateProgress("Track {0} of {1}", trk.Sequence, tracks.Count);
+                UpdateProgress(Localization.Core.Track_0_of_1, trk.Sequence, tracks.Count);
 
                 // For fast debugging, skip checksum
                 //goto skipChecksum;
@@ -375,12 +375,12 @@ public sealed partial class Sidecar
                         errno = image.ReadSectorsLong(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber,
                                                       out sector);
 
-                        UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors,
+                        UpdateProgress2(Localization.Core.Hashing_sector_0_of_1, (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
 
                         if(errno != ErrorNumber.NoError)
                         {
-                            UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                            UpdateStatus(string.Format(Localization.Core.Error_0_reading_sector_1, errno, doneSectors));
                             EndProgress2();
 
                             return;
@@ -393,12 +393,12 @@ public sealed partial class Sidecar
                         errno = image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
                                                       xmlTrk.Sequence.TrackNumber, out sector);
 
-                        UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors,
+                        UpdateProgress2(Localization.Core.Hashing_sector_0_of_1, (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
 
                         if(errno != ErrorNumber.NoError)
                         {
-                            UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                            UpdateStatus(string.Format(Localization.Core.Error_0_reading_sector_1, errno, doneSectors));
                             EndProgress2();
 
                             return;
@@ -479,12 +479,12 @@ public sealed partial class Sidecar
                         errno = image.ReadSectorsTag(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber,
                                                      SectorTagType.CdSectorSubchannel, out sector);
 
-                        UpdateProgress2("Hashing subchannel sector {0} of {1}", (long)doneSectors,
+                        UpdateProgress2(Localization.Core.Hashing_subchannel_sector_0_of_1, (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
 
                         if(errno != ErrorNumber.NoError)
                         {
-                            UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                            UpdateStatus(string.Format(Localization.Core.Error_0_reading_sector_1, errno, doneSectors));
                             EndProgress2();
 
                             return;
@@ -498,12 +498,12 @@ public sealed partial class Sidecar
                                                      xmlTrk.Sequence.TrackNumber, SectorTagType.CdSectorSubchannel,
                                                      out sector);
 
-                        UpdateProgress2("Hashing subchannel sector {0} of {1}", (long)doneSectors,
+                        UpdateProgress2(Localization.Core.Hashing_subchannel_sector_0_of_1, (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
 
                         if(errno != ErrorNumber.NoError)
                         {
-                            UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                            UpdateStatus(string.Format(Localization.Core.Error_0_reading_sector_1, errno, doneSectors));
                             EndProgress2();
 
                             return;

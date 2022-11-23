@@ -130,8 +130,8 @@ partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
@@ -224,8 +224,8 @@ partial class Dump
             switch(inData)
             {
                 case false when currentReadSpeed == 0xFFFF:
-                    _dumpLog.WriteLine("Setting speed to 8x for audio reading.");
-                    UpdateStatus?.Invoke("Setting speed to 8x for audio reading.");
+                    _dumpLog.WriteLine(Localization.Core.Setting_speed_to_8x_for_audio_reading);
+                    UpdateStatus?.Invoke(Localization.Core.Setting_speed_to_8x_for_audio_reading);
 
                     _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
 
@@ -234,11 +234,13 @@ partial class Dump
                     break;
                 case true when currentReadSpeed != _speed:
                 {
-                    _dumpLog.WriteLine($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")
-                    }.");
+                    _dumpLog.WriteLine(_speed == 0xFFFF ? Localization.Core.Setting_speed_to_MAX_for_data_reading
+                                           : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading,
+                                                           _speed));
 
-                    UpdateStatus?.Invoke($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")
-                    }.");
+                    UpdateStatus?.Invoke(_speed == 0xFFFF ? Localization.Core.Setting_speed_to_MAX_for_data_reading
+                                             : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading,
+                                                             _speed));
 
                     _speed *= _speedMultiplier;
 
@@ -268,8 +270,9 @@ partial class Dump
                currentSpeed > 0)
                 minSpeed = currentSpeed;
 
-            UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
-                                   (long)blocks);
+            UpdateProgress?.
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, blocks, currentSpeed),
+                       (long)i, (long)blocks);
 
             if(crossingLeadOut       &&
                failedCrossingLeadOut &&
@@ -419,8 +422,9 @@ partial class Dump
             {
                 for(uint r = 0; r < blocksToRead; r++)
                 {
-                    UpdateProgress?.Invoke($"Reading sector {i + r} of {blocks} ({currentSpeed:F3} MiB/sec.)",
-                                           (long)i + r, (long)blocks);
+                    UpdateProgress?.
+                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i + r, blocks, currentSpeed),
+                               (long)i + r, (long)blocks);
 
                     if(_supportsPlextorD8)
                     {
@@ -585,11 +589,13 @@ partial class Dump
 
                         _resume.BadBlocks.Add(i + r);
 
-                        AaruConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
+                        AaruConsole.DebugWriteLine("Dump-Media", Localization.Core.READ_error_0,
+                                                   Sense.PrettifySense(senseBuf));
+
                         mhddLog.Write(i + r, cmdDuration < 500 ? 65535 : cmdDuration);
 
-                        ibgLog.Write(i                                                         + r, 0);
-                        _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", 1, i + r);
+                        ibgLog.Write(i                                                                    + r, 0);
+                        _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, 1, i + r);
                         newTrim = true;
                     }
 
@@ -761,11 +767,11 @@ partial class Dump
                 for(ulong b = i; b < i + _skip; b++)
                     _resume.BadBlocks.Add(b);
 
-                AaruConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
+                AaruConsole.DebugWriteLine("Dump-Media", Localization.Core.READ_error_0, Sense.PrettifySense(senseBuf));
                 mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                 ibgLog.Write(i, 0);
-                _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
+                _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, _skip, i);
                 i       += _skip - blocksToRead;
                 newTrim =  true;
             }
@@ -791,7 +797,7 @@ partial class Dump
         if(!failedCrossingLeadOut)
             return;
 
-        _dumpLog.WriteLine("Failed crossing into Lead-Out, dump may not be correct.");
-        UpdateStatus?.Invoke("Failed crossing into Lead-Out, dump may not be correct.");
+        _dumpLog.WriteLine(Localization.Core.Failed_crossing_into_Lead_Out);
+        UpdateStatus?.Invoke(Localization.Core.Failed_crossing_into_Lead_Out);
     }
 }

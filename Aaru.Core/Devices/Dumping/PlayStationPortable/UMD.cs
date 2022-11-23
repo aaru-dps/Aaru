@@ -68,7 +68,7 @@ public partial class Dump
 
         if(_outputPlugin is not IWritableOpticalImage outputOptical)
         {
-            StoppingErrorMessage?.Invoke("Image is not writable, aborting...");
+            StoppingErrorMessage?.Invoke(Localization.Core.Image_is_not_writable_aborting);
 
             return;
         }
@@ -78,8 +78,8 @@ public partial class Dump
 
         if(sense)
         {
-            _dumpLog.WriteLine("Could not read...");
-            StoppingErrorMessage?.Invoke("Could not read...");
+            _dumpLog.WriteLine(Localization.Core.Could_not_read);
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_read);
 
             return;
         }
@@ -90,16 +90,16 @@ public partial class Dump
         ushort rootSize      = (ushort)(((readBuffer[0x12] << 8) + readBuffer[0x11]) * 32 / 512);
         ushort umdStart      = (ushort)(rootStart + rootSize);
 
-        UpdateStatus?.Invoke($"Reading root directory in sector {rootStart}...");
-        _dumpLog.WriteLine("Reading root directory in sector {0}...", rootStart);
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_root_directory_in_sector_0, rootStart));
+        _dumpLog.WriteLine(Localization.Core.Reading_root_directory_in_sector_0, rootStart);
 
         sense = _dev.Read12(out readBuffer, out _, 0, false, true, false, false, rootStart, 512, 0, 1, false,
                             _dev.Timeout, out _);
 
         if(sense)
         {
-            _dumpLog.WriteLine("Could not read...");
-            StoppingErrorMessage?.Invoke("Could not read...");
+            _dumpLog.WriteLine(Localization.Core.Could_not_read);
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_read);
 
             return;
         }
@@ -113,41 +113,47 @@ public partial class Dump
         switch(totalSize)
         {
             case > 1073741824:
-                UpdateStatus?.Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {
-                    totalSize / 1073741824d:F3} GiB)");
+                UpdateStatus?.
+                    Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_GiB,
+                                         blocks, blockSize, totalSize / 1073741824d));
 
                 break;
             case > 1048576:
-                UpdateStatus?.Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {
-                    totalSize / 1048576d:F3} MiB)");
+                UpdateStatus?.
+                    Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_MiB,
+                                         blocks, blockSize, totalSize / 1048576d));
 
                 break;
             case > 1024:
-                UpdateStatus?.Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {
-                    totalSize / 1024d:F3} KiB)");
+                UpdateStatus?.
+                    Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_KiB,
+                                         blocks, blockSize, totalSize / 1024d));
 
                 break;
             default:
-                UpdateStatus?.Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize
-                } bytes)");
+                UpdateStatus?.
+                    Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_bytes,
+                                         blocks, blockSize, totalSize));
 
                 break;
         }
 
-        UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
-        UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
-        UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
-        UpdateStatus?.Invoke($"Device reports {2048} bytes per physical block.");
-        UpdateStatus?.Invoke($"SCSI device type: {_dev.ScsiType}.");
-        UpdateStatus?.Invoke($"Media identified as {dskType}.");
-        UpdateStatus?.Invoke($"Media part number is {mediaPartNumber}.");
-        _dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
-        _dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
-        _dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
-        _dumpLog.WriteLine("Device reports {0} bytes per physical block.", 2048);
-        _dumpLog.WriteLine("SCSI device type: {0}.", _dev.ScsiType);
-        _dumpLog.WriteLine("Media identified as {0}.", dskType);
-        _dumpLog.WriteLine("Media part number is {0}.", mediaPartNumber);
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_blocks_1_bytes, blocks,
+                                           blocks * blockSize));
+
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Device_can_read_0_blocks_at_a_time, blocksToRead));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_bytes_per_logical_block, blockSize));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_bytes_per_physical_block, blockSize));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_device_type_0, _dev.ScsiType));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Media_identified_as_0, dskType));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Media_part_number_is_0, mediaPartNumber));
+        _dumpLog.WriteLine(Localization.Core.Device_reports_0_blocks_1_bytes, blocks, blocks * blockSize);
+        _dumpLog.WriteLine(Localization.Core.Device_can_read_0_blocks_at_a_time, blocksToRead);
+        _dumpLog.WriteLine(Localization.Core.Device_reports_0_bytes_per_logical_block, blockSize);
+        _dumpLog.WriteLine(Localization.Core.Device_reports_0_bytes_per_physical_block, blockSize);
+        _dumpLog.WriteLine(Localization.Core.SCSI_device_type_0, _dev.ScsiType);
+        _dumpLog.WriteLine(Localization.Core.Media_identified_as_0, dskType);
+        _dumpLog.WriteLine(Localization.Core.Media_part_number_is_0, mediaPartNumber);
 
         bool ret;
 
@@ -158,11 +164,11 @@ public partial class Dump
         // Cannot create image
         if(!ret)
         {
-            _dumpLog.WriteLine("Error creating output image, not continuing.");
+            _dumpLog.WriteLine(Localization.Core.Error_creating_output_image_not_continuing);
             _dumpLog.WriteLine(outputOptical.ErrorMessage);
 
-            StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                         outputOptical.ErrorMessage);
+            StoppingErrorMessage?.Invoke(Localization.Core.Error_creating_output_image_not_continuing +
+                                         Environment.NewLine + outputOptical.ErrorMessage);
 
             return;
         }
@@ -194,13 +200,13 @@ public partial class Dump
         if(currentTry == null ||
            extents    == null)
         {
-            StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_process_resume_file_not_continuing);
 
             return;
         }
 
         if(_resume.NextBlock > 0)
-            _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
+            _dumpLog.WriteLine(Localization.Core.Resuming_from_block_0, _resume.NextBlock);
 
         bool newTrim = false;
 
@@ -213,8 +219,8 @@ public partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
@@ -230,8 +236,9 @@ public partial class Dump
                currentSpeed > 0)
                 minSpeed = currentSpeed;
 
-            UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
-                                   (long)blocks);
+            UpdateProgress?.
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, blocks, currentSpeed),
+                       (long)i, (long)blocks);
 
             sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)(umdStart + (i * 4)),
                                 512, 0, blocksToRead * 4, false, _dev.Timeout, out double cmdDuration);
@@ -270,7 +277,7 @@ public partial class Dump
                 mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                 ibgLog.Write(i, 0);
-                _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
+                _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, _skip, i);
                 i       += _skip - blocksToRead;
                 newTrim =  true;
             }
@@ -297,20 +304,20 @@ public partial class Dump
         ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                      blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
-        UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0_seconds, (end - start).TotalSeconds));
 
-        UpdateStatus?.Invoke($"Average dump speed {blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000)
-            :F3} KiB/sec.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0_KiB_sec,
+                                           blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000)));
 
-        UpdateStatus?.Invoke($"Average write speed {blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration
-            :F3} KiB/sec.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0_KiB_sec,
+                                           blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration));
 
-        _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+        _dumpLog.WriteLine(Localization.Core.Dump_finished_in_0_seconds, (end - start).TotalSeconds);
 
-        _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
+        _dumpLog.WriteLine(Localization.Core.Average_dump_speed_0_KiB_sec,
                            blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
 
-        _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
+        _dumpLog.WriteLine(Localization.Core.Average_write_speed_0_KiB_sec,
                            blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
         #region Trimming
@@ -320,7 +327,7 @@ public partial class Dump
            newTrim)
         {
             start = DateTime.UtcNow;
-            _dumpLog.WriteLine("Trimming skipped sectors");
+            _dumpLog.WriteLine(Localization.Core.Trimming_skipped_sectors);
 
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
             InitProgress?.Invoke();
@@ -330,12 +337,12 @@ public partial class Dump
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    _dumpLog.WriteLine("Aborted!");
+                    _dumpLog.WriteLine(Localization.Core.Aborted);
 
                     break;
                 }
 
-                PulseProgress?.Invoke($"Trimming sector {badSector}");
+                PulseProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector));
 
                 sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false,
                                     (uint)(umdStart + (badSector * 4)), 512, 0, 4, false, _dev.Timeout, out double _);
@@ -354,7 +361,7 @@ public partial class Dump
 
             EndProgress?.Invoke();
             end = DateTime.UtcNow;
-            _dumpLog.WriteLine("Trimming finished in {0} seconds.", (end - start).TotalSeconds);
+            _dumpLog.WriteLine(Localization.Core.Trimming_finished_in_0_seconds, (end - start).TotalSeconds);
         }
         #endregion Trimming
 
@@ -441,17 +448,18 @@ public partial class Dump
 
                 md6 = Modes.EncodeMode6(md, _dev.ScsiType);
 
-                _dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
+                _dumpLog.WriteLine(Localization.Core.Sending_MODE_SELECT_to_drive_return_damaged_blocks);
                 sense = _dev.ModeSelect(md6, out senseBuf, true, false, _dev.Timeout, out _);
 
                 if(sense)
                 {
-                    UpdateStatus?.
-                        Invoke("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                    UpdateStatus?.Invoke(Localization.Core.
+                                                      Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading);
 
-                    AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+                    AaruConsole.DebugWriteLine(Localization.Core.Error_0, Sense.PrettifySense(senseBuf));
 
-                    _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                    _dumpLog.WriteLine(Localization.Core.
+                                                    Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading);
                 }
                 else
                     runningPersistent = true;
@@ -466,13 +474,25 @@ public partial class Dump
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    _dumpLog.WriteLine("Aborted!");
+                    _dumpLog.WriteLine(Localization.Core.Aborted);
 
                     break;
                 }
 
-                PulseProgress?.Invoke($"Retrying sector {badSector}, pass {pass}, {
-                    (runningPersistent ? "recovering partial data, " : "")}{(forward ? "forward" : "reverse")}");
+                if(forward)
+                    PulseProgress?.Invoke(runningPersistent
+                                              ? string.
+                                                  Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                         badSector, pass)
+                                              : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
+                                                              badSector, pass));
+                else
+                    PulseProgress?.Invoke(runningPersistent
+                                              ? string.
+                                                  Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                         badSector, pass)
+                                              : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
+                                                              badSector, pass));
 
                 sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false,
                                     (uint)(umdStart + (badSector * 4)), 512, 0, 4, false, _dev.Timeout,
@@ -490,9 +510,10 @@ public partial class Dump
                     extents.Add(badSector);
                     outputOptical.WriteSector(readBuffer, badSector);
 
-                    UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
+                    UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector,
+                                                       pass));
 
-                    _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
+                    _dumpLog.WriteLine(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector, pass);
                 }
                 else if(runningPersistent)
                     outputOptical.WriteSector(readBuffer, badSector);
@@ -525,7 +546,7 @@ public partial class Dump
 
                 md6 = Modes.EncodeMode6(md, _dev.ScsiType);
 
-                _dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
+                _dumpLog.WriteLine(Localization.Core.Sending_MODE_SELECT_to_drive_return_device_to_previous_status);
                 _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
             }
 
@@ -537,7 +558,7 @@ public partial class Dump
         _resume.BadBlocks.Sort();
 
         foreach(ulong bad in _resume.BadBlocks)
-            _dumpLog.WriteLine("Sector {0} could not be read.", bad);
+            _dumpLog.WriteLine(Localization.Core.Sector_0_could_not_be_read, bad);
 
         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
@@ -549,7 +570,7 @@ public partial class Dump
         };
 
         if(!outputOptical.SetMetadata(metadata))
-            ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
+            ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputOptical.ErrorMessage);
 
         outputOptical.SetDumpHardware(_resume.Tries);
@@ -557,17 +578,17 @@ public partial class Dump
         if(_preSidecar != null)
             outputOptical.SetCicmMetadata(_preSidecar);
 
-        _dumpLog.WriteLine("Closing output file.");
-        UpdateStatus?.Invoke("Closing output file.");
+        _dumpLog.WriteLine(Localization.Core.Closing_output_file);
+        UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
         DateTime closeStart = DateTime.Now;
         outputOptical.Close();
         DateTime closeEnd = DateTime.Now;
-        _dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
+        _dumpLog.WriteLine(Localization.Core.Closed_in_0_seconds, (closeEnd - closeStart).TotalSeconds);
 
         if(_aborted)
         {
-            UpdateStatus?.Invoke("Aborted!");
-            _dumpLog.WriteLine("Aborted!");
+            UpdateStatus?.Invoke(Localization.Core.Aborted);
+            _dumpLog.WriteLine(Localization.Core.Aborted);
 
             return;
         }
@@ -579,20 +600,21 @@ public partial class Dump
 
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000
-            :F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {
-            (closeEnd - closeStart).TotalSeconds:F3} closing).");
+        UpdateStatus?.
+            Invoke(string.Format(Localization.Core.Took_a_total_of_0_seconds_1_processing_commands_2_checksumming_3_writing_4_closing,
+                                 (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000,
+                                 imageWriteDuration, (closeEnd - closeStart).TotalSeconds));
 
-        UpdateStatus?.Invoke($"Average speed: {blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000)
-            :F3} MiB/sec.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0_MiB_sec,
+                                           blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000)));
 
         if(maxSpeed > 0)
-            UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0_MiB_sec, maxSpeed));
 
         if(minSpeed is > 0 and < double.MaxValue)
-            UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0_MiB_sec, minSpeed));
 
-        UpdateStatus?.Invoke($"{_resume.BadBlocks.Count} sectors could not be read.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read, _resume.BadBlocks.Count));
         UpdateStatus?.Invoke("");
 
         Statistics.AddMedia(dskType, true);

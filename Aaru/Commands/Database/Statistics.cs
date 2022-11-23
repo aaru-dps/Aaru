@@ -296,7 +296,7 @@ sealed class StatisticsCommand : Command
                 Title = new TableTitle(UI.Media_found_in_real_device_statistics)
             };
 
-            table.AddColumn(UI.Title_Type_for_media);
+            table.AddColumn(Localization.Core.Title_Type_for_media);
             table.AddColumn(UI.Title_Times_used);
             table.Columns[1].RightAligned();
 
@@ -326,7 +326,7 @@ sealed class StatisticsCommand : Command
                 Title = new TableTitle(UI.Media_found_in_images_statistics)
             };
 
-            table.AddColumn(UI.Title_Type_for_media);
+            table.AddColumn(Localization.Core.Title_Type_for_media);
             table.AddColumn(UI.Title_Times_used);
             table.Columns[1].RightAligned();
 

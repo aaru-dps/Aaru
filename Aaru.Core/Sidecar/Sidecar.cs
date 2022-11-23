@@ -96,7 +96,7 @@ public sealed partial class Sidecar
 
         byte[] data;
         long   position = 0;
-        UpdateStatus("Hashing image file...");
+        UpdateStatus(Localization.Core.Hashing_image_file);
         InitProgress();
 
         while(position < _fi.Length - 1048576)
@@ -107,7 +107,7 @@ public sealed partial class Sidecar
             data = new byte[1048576];
             _fs.EnsureRead(data, 0, 1048576);
 
-            UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
+            UpdateProgress(Localization.Core.Hashing_image_file_byte_0_of_1, position, _fi.Length);
 
             _imgChkWorker.Update(data);
 
@@ -117,7 +117,7 @@ public sealed partial class Sidecar
         data = new byte[_fi.Length - position];
         _fs.EnsureRead(data, 0, (int)(_fi.Length - position));
 
-        UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
+        UpdateProgress(Localization.Core.Hashing_image_file_byte_0_of_1, position, _fi.Length);
 
         _imgChkWorker.Update(data);
 
@@ -145,10 +145,10 @@ public sealed partial class Sidecar
                                 _encoding);
                 else
                 {
-                    AaruConsole.
-                        ErrorWriteLine("The specified image says it contains an optical media but at the same time says it does not support them.");
+                    AaruConsole.ErrorWriteLine(Localization.Core.
+                                                            The_specified_image_says_it_contains_an_optical_media_but_at_the_same_time_says_it_does_not_support_them);
 
-                    AaruConsole.ErrorWriteLine("Please open an issue at Github.");
+                    AaruConsole.ErrorWriteLine(Localization.Core.Please_open_an_issue_at_Github);
                 }
 
                 break;
@@ -157,10 +157,10 @@ public sealed partial class Sidecar
                     BlockMedia(blockImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
                 else
                 {
-                    AaruConsole.
-                        ErrorWriteLine("The specified image says it contains a block addressable media but at the same time says it does not support them.");
+                    AaruConsole.ErrorWriteLine(Localization.Core.
+                                                            The_specified_image_says_it_contains_a_block_addressable_media_but_at_the_same_time_says_it_does_not_support_them);
 
-                    AaruConsole.ErrorWriteLine("Please open an issue at Github.");
+                    AaruConsole.ErrorWriteLine(Localization.Core.Please_open_an_issue_at_Github);
                 }
 
                 break;
@@ -170,10 +170,10 @@ public sealed partial class Sidecar
                                 _encoding);
                 else
                 {
-                    AaruConsole.
-                        ErrorWriteLine("The specified image says it contains a byte addressable media but at the same time says it does not support them.");
+                    AaruConsole.ErrorWriteLine(Localization.Core.
+                                                            The_specified_image_says_it_contains_a_byte_addressable_media_but_at_the_same_time_says_it_does_not_support_them);
 
-                    AaruConsole.ErrorWriteLine("Please open an issue at Github.");
+                    AaruConsole.ErrorWriteLine(Localization.Core.Please_open_an_issue_at_Github);
                 }
 
                 break;
@@ -189,7 +189,7 @@ public sealed partial class Sidecar
     /// <summary>Aborts sidecar running operation</summary>
     public void Abort()
     {
-        UpdateStatus("Aborting...");
+        UpdateStatus(Localization.Core.Aborting);
         _aborted = true;
     }
 }

@@ -171,7 +171,7 @@ sealed class DecodeCommand : Command
         if(opened != ErrorNumber.NoError)
         {
             AaruConsole.WriteLine(UI.Unable_to_open_image_format);
-            AaruConsole.WriteLine(UI.Error_0, opened);
+            AaruConsole.WriteLine(Localization.Core.Error_0, opened);
 
             return (int)opened;
         }

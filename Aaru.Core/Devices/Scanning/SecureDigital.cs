@@ -134,7 +134,7 @@ public sealed partial class MediaScan
 
         if(results.Blocks == 0)
         {
-            StoppingErrorMessage?.Invoke("Unable to get device size.");
+            StoppingErrorMessage?.Invoke(Localization.Core.Unable_to_get_device_size);
 
             return results;
         }
@@ -145,7 +145,8 @@ public sealed partial class MediaScan
 
             if(sense || _dev.Error)
             {
-                UpdateStatus?.Invoke("Environment does not support setting block count, downgrading to OS reading.");
+                UpdateStatus?.Invoke(Localization.Core.
+                                                  Environment_does_not_support_setting_block_count_downgrading_to_OS_reading);
 
                 supportsCmd23 = false;
             }
@@ -155,7 +156,7 @@ public sealed partial class MediaScan
 
             if(sense)
             {
-                StoppingErrorMessage?.Invoke($"Error {_dev.LastError} reopening device.");
+                StoppingErrorMessage?.Invoke(string.Format(Localization.Core.Error_0_reopening_device, _dev.LastError));
 
                 return results;
             }
@@ -178,7 +179,9 @@ public sealed partial class MediaScan
 
             if(sense)
             {
-                StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+                StoppingErrorMessage?.
+                    Invoke(string.Format(Localization.Core.Device_error_0_trying_to_guess_ideal_transfer_length,
+                                         _dev.LastError));
 
                 return results;
             }
@@ -206,11 +209,13 @@ public sealed partial class MediaScan
         var rnd = new Random();
 
         if(supportsCmd23 || blocksToRead == 1)
-            UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
         else if(_useBufferedReads)
-            UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time using OS buffered reads.");
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time_using_OS_buffered_reads,
+                                               blocksToRead));
         else
-            UpdateStatus?.Invoke($"Reading {blocksToRead} sectors using sequential single commands.");
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_using_sequential_single_commands,
+                                               blocksToRead));
 
         InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, sdProfile);
         var mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
@@ -237,8 +242,9 @@ public sealed partial class MediaScan
                currentSpeed > 0)
                 results.MinSpeed = currentSpeed;
 
-            UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
-                                   (long)results.Blocks);
+            UpdateProgress?.
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, results.Blocks, currentSpeed),
+                       (long)i, (long)results.Blocks);
 
             bool error;
 
@@ -330,7 +336,7 @@ public sealed partial class MediaScan
 
             uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
-            PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
+            PulseProgress?.Invoke(string.Format(Localization.Core.Seeking_to_sector_0, seekPos));
 
             _dev.ReadSingleBlock(out cmdBuf, out _, seekPos, blockSize, byteAddressed, timeout, out double seekCur);
 

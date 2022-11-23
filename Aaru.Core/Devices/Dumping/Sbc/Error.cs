@@ -205,8 +205,8 @@ partial class Dump
                 md10 = Modes.EncodeMode10(md, _dev.ScsiType);
             }
 
-            UpdateStatus?.Invoke("Sending MODE SELECT to drive (return damaged blocks).");
-            _dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
+            UpdateStatus?.Invoke(Localization.Core.Sending_MODE_SELECT_to_drive_return_damaged_blocks);
+            _dumpLog.WriteLine(Localization.Core.Sending_MODE_SELECT_to_drive_return_damaged_blocks);
             sense = _dev.ModeSelect(md6, out byte[] senseBuf, true, false, _dev.Timeout, out _);
 
             if(sense)
@@ -214,12 +214,13 @@ partial class Dump
 
             if(sense)
             {
-                UpdateStatus?.
-                    Invoke("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                UpdateStatus?.Invoke(Localization.Core.
+                                                  Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading);
 
-                AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+                AaruConsole.DebugWriteLine(Localization.Core.Error_0, Sense.PrettifySense(senseBuf));
 
-                _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                _dumpLog.WriteLine(Localization.Core.
+                                                Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading);
             }
             else
                 runningPersistent = true;
@@ -234,15 +235,26 @@ partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
 
-            PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
-                                                forward ? "forward" : "reverse",
-                                                runningPersistent ? "recovering partial data, " : ""));
+            if(forward)
+                PulseProgress?.Invoke(runningPersistent
+                                          ? string.
+                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                     badSector, pass)
+                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward, badSector,
+                                                          pass));
+            else
+                PulseProgress?.Invoke(runningPersistent
+                                          ? string.
+                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                     badSector, pass)
+                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse, badSector,
+                                                          pass));
 
             sense = scsiReader.ReadBlock(out buffer, badSector, out double cmdDuration, out recoveredError,
                                          out blankCheck);
@@ -255,8 +267,8 @@ partial class Dump
                 blankExtents.Add(badSector, badSector);
                 newBlank = true;
 
-                UpdateStatus?.Invoke($"Found blank block {badSector} in pass {pass}.");
-                _dumpLog.WriteLine("Found blank block {0} in pass {1}.", badSector, pass);
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Found_blank_block_0_in_pass_1, badSector, pass));
+                _dumpLog.WriteLine(Localization.Core.Found_blank_block_0_in_pass_1, badSector, pass);
 
                 continue;
             }
@@ -266,8 +278,11 @@ partial class Dump
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
                 outputFormat.WriteSector(buffer, badSector);
-                UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
-                _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
+
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector,
+                                                   pass));
+
+                _dumpLog.WriteLine(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector, pass);
             }
             else if(runningPersistent)
                 outputFormat.WriteSector(buffer, badSector);
@@ -301,8 +316,8 @@ partial class Dump
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
             md10 = Modes.EncodeMode10(md, _dev.ScsiType);
 
-            UpdateStatus?.Invoke("Sending MODE SELECT to drive (return device to previous status).");
-            _dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
+            UpdateStatus?.Invoke(Localization.Core.Sending_MODE_SELECT_to_drive_return_device_to_previous_status);
+            _dumpLog.WriteLine(Localization.Core.Sending_MODE_SELECT_to_drive_return_device_to_previous_status);
             sense = _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
 
             if(sense)
@@ -334,14 +349,17 @@ partial class Dump
         {
             if(_aborted)
             {
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
 
-            PulseProgress?.Invoke(string.Format("Retrying title key {0}, pass {1}, {2}", missingKey, pass,
-                                                forward ? "forward" : "reverse"));
+            PulseProgress?.Invoke(forward
+                                      ? string.Format(Localization.Core.Retrying_title_key_0_pass_1_forward, missingKey,
+                                                      pass)
+                                      : string.Format(Localization.Core.Retrying_title_key_0_pass_1_reverse, missingKey,
+                                                      pass));
 
             sense = dvdDecrypt.ReadTitleKey(out buffer, out _, DvdCssKeyClass.DvdCssCppmOrCprm, missingKey,
                                             _dev.Timeout, out double cmdDuration);
@@ -377,8 +395,11 @@ partial class Dump
                 }, missingKey, SectorTagType.DvdTitleKeyDecrypted);
 
                 _resume.MissingTitleKeys.Remove(missingKey);
-                UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
-                _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
+
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_title_key_0_in_pass_1,
+                                                   missingKey, pass));
+
+                _dumpLog.WriteLine(Localization.Core.Correctly_retried_title_key_0_in_pass_1, missingKey, pass);
             }
             else
             {
@@ -391,8 +412,10 @@ partial class Dump
                     outputFormat.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
                 }
 
-                UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
-                _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_title_key_0_in_pass_1,
+                                                   missingKey, pass));
+
+                _dumpLog.WriteLine(Localization.Core.Correctly_retried_title_key_0_in_pass_1, missingKey, pass);
             }
         }
 

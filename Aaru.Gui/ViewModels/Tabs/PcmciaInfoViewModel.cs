@@ -131,7 +131,7 @@ public class PcmciaInfoViewModel : ViewModelBase
                         break;
                     default:
                         tupleCode        = $"0x{(byte)tuple.Code:X2}";
-                        tupleDescription = string.Format(UI.Found_unknown_tuple_ID_0, (byte)tuple.Code);
+                        tupleDescription = string.Format(Localization.Core.Found_unknown_tuple_ID_0, (byte)tuple.Code);
 
                         break;
                 }

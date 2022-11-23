@@ -69,8 +69,7 @@ partial class Dump
             if(_dev.LastError         != 0 ||
                decodedSense?.SenseKey == SenseKeys.IllegalRequest)
             {
-                UpdateStatus?.
-                    Invoke("The current environment doesn't support the medium scan command, dump will take much longer than normal.");
+                UpdateStatus?.Invoke(Localization.Core.The_current_environment_doesn_t_support_the_medium_scan_command);
 
                 canMediumScan = false;
                 writtenExtents.Add(0, blocks - 1);
@@ -79,8 +78,7 @@ partial class Dump
             // TODO: Find a place where MEDIUM SCAN works properly
             else if(buffer?.Length > 0 &&
                     !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
-                AaruConsole.
-                    WriteLine("Please open a bug report in github with the manufacturer and model of this device, as well as your operating system name and version and this message: This environment correctly supports MEDIUM SCAN command.");
+                AaruConsole.WriteLine(Localization.Core.MEDIUM_SCAN_github_plead_message);
 
             changingCounter = false;
             changingWritten = false;
@@ -93,8 +91,8 @@ partial class Dump
                 if(_aborted)
                 {
                     _resume.BlankExtents = null;
-                    UpdateStatus?.Invoke("Aborted!");
-                    _dumpLog.WriteLine("Aborted!");
+                    UpdateStatus?.Invoke(Localization.Core.Aborted);
+                    _dumpLog.WriteLine(Localization.Core.Aborted);
 
                     break;
                 }
@@ -116,8 +114,8 @@ partial class Dump
                     c = (uint)(blocks - b);
 
                 UpdateProgress?.
-                    Invoke($"Scanning for {c} {(written ? "written" : "blank")} blocks starting in block {b}", b,
-                           (long)blocks);
+                    Invoke(written ? string.Format(Localization.Core.Scanning_for_0_written_blocks_starting_in_block_1, c, b) : string.Format(Localization.Core.Scanning_for_0_blank_blocks_starting_in_block_1, c, b),
+                           b, (long)blocks);
 
                 conditionMet = _dev.MediumScan(out _, written, false, false, false, false, b, c, c, out _, out _,
                                                uint.MaxValue, out _);
@@ -165,8 +163,8 @@ partial class Dump
 
         if(writtenExtents.Count == 0)
         {
-            UpdateStatus?.Invoke("Cannot dump empty media!");
-            _dumpLog.WriteLine("Cannot dump empty media!");
+            UpdateStatus?.Invoke(Localization.Core.Cannot_dump_empty_media);
+            _dumpLog.WriteLine(Localization.Core.Cannot_dump_empty_media);
 
             return;
         }
@@ -190,8 +188,8 @@ partial class Dump
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    UpdateStatus?.Invoke("Aborted!");
-                    _dumpLog.WriteLine("Aborted!");
+                    UpdateStatus?.Invoke(Localization.Core.Aborted);
+                    _dumpLog.WriteLine(Localization.Core.Aborted);
 
                     break;
                 }
@@ -207,8 +205,9 @@ partial class Dump
                    currentSpeed > 0)
                     minSpeed = currentSpeed;
 
-                UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
-                                       (long)blocks);
+                UpdateProgress?.
+                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, blocks, currentSpeed),
+                           (long)i, (long)blocks);
 
                 sense = scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
                 totalDuration += cmdDuration;
@@ -243,7 +242,7 @@ partial class Dump
                     mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                     ibgLog.Write(i, 0);
-                    _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
+                    _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, _skip, i);
                     i       += _skip - blocksToRead;
                     newTrim =  true;
                 }

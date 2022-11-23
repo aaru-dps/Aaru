@@ -760,7 +760,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                                               ButtonEnum.Ok, Icon.Error);
 
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
-                AaruConsole.ErrorWriteLine(UI.Error_0, ex.Message);
+                AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
                 AaruConsole.DebugWriteLine("Image-info command", Localization.Core.Stack_trace_0, ex.StackTrace);
             }
         }

@@ -326,13 +326,16 @@ public static class CompactDisc
 
             if(videoNowColorFrame is null)
             {
-                dumpLog?.WriteLine("Could not find VideoNow Color frame offset, dump may not be correct.");
+                dumpLog?.WriteLine(Localization.Core.Could_not_find_VideoNow_Color_frame_offset);
                 updateStatus?.Invoke("Could not find VideoNow Color frame offset, dump may not be correct.");
             }
             else
             {
                 combinedOffset = MMC.GetVideoNowColorOffset(videoNowColorFrame);
-                dumpLog?.WriteLine($"VideoNow Color frame is offset {combinedOffset} bytes.");
+
+                dumpLog?.WriteLine(string.Format(Localization.Core.VideoNow_Color_frame_is_offset_0_bytes,
+                                                 combinedOffset));
+
                 updateStatus?.Invoke($"VideoNow Color frame is offset {combinedOffset} bytes.");
             }
         }

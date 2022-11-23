@@ -504,7 +504,9 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
                             if(errno != ErrorNumber.NoError)
                             {
-                                AaruConsole.ErrorWriteLine($"Error {errno} reading sector {i}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                         errno, i));
+
                                 _cancel = true;
 
                                 break;
@@ -545,7 +547,9 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
                             if(errno != ErrorNumber.NoError)
                             {
-                                AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                         errno, doneSectors));
+
                                 _cancel = true;
 
                                 continue;
@@ -570,7 +574,9 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
                             if(errno != ErrorNumber.NoError)
                             {
-                                AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                         errno, doneSectors));
+
                                 _cancel = true;
 
                                 continue;
@@ -632,7 +638,9 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
                         if(errno != ErrorNumber.NoError)
                         {
-                            AaruConsole.ErrorWriteLine($"Error {errno} reading sector {i}");
+                            AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1, errno,
+                                                                     i));
+
                             _cancel = true;
 
                             break;
@@ -656,7 +664,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
             }
             catch(Exception ex)
             {
-                AaruConsole.DebugWriteLine(UI.Could_not_get_tracks_because_0, ex.Message);
+                AaruConsole.DebugWriteLine(Localization.Core.Could_not_get_tracks_because_0, ex.Message);
                 AaruConsole.WriteLine("Unable to get separate tracks, not checksumming them");
             }
         else
@@ -692,7 +700,9 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
                     if(errno != ErrorNumber.NoError)
                     {
-                        AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                        AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1, errno,
+                                                                 doneSectors));
+
                         _cancel = true;
 
                         continue;
@@ -717,7 +727,9 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
                     if(errno != ErrorNumber.NoError)
                     {
-                        AaruConsole.ErrorWriteLine($"Error {errno} reading sector {doneSectors}");
+                        AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1, errno,
+                                                                 doneSectors));
+
                         _cancel = true;
 
                         continue;

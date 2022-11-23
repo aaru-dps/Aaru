@@ -55,7 +55,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI INQUIRY...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_INQUIRY).IsIndeterminate();
             sense = _dev.ScsiInquiry(out buffer, out _);
         });
 
@@ -104,7 +104,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying list of SCSI EVPDs...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_list_of_SCSI_EVPDs).IsIndeterminate();
             sense = _dev.ScsiInquiry(out buffer, out _, 0x00);
         });
 
@@ -120,13 +120,12 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ProgressTask task = ctx.
-                                AddTask("Querying SCSI EVPD pages...", maxValue: evpdPages.Count(page => page != 0x80)).
-                                IsIndeterminate();
+            ProgressTask task = ctx.AddTask(Localization.Core.Querying_SCSI_EVPD_pages,
+                                            maxValue: evpdPages.Count(page => page != 0x80)).IsIndeterminate();
 
             foreach(byte page in evpdPages.Where(page => page != 0x80))
             {
-                task.Description = $"Querying SCSI EVPD {page:X2}h...";
+                task.Description = string.Format(Localization.Core.Querying_SCSI_EVPD_0, page);
                 task.Increment(1);
                 sense = _dev.ScsiInquiry(out buffer, out _, page);
 
@@ -227,7 +226,8 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying all mode pages and subpages using SCSI MODE SENSE (10)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_10).
+                IsIndeterminate();
 
             foreach(ScsiModeSensePageControl pageControl in new[]
                     {
@@ -309,7 +309,8 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying all mode pages and subpages using SCSI MODE SENSE (6)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_6).
+                IsIndeterminate();
 
             foreach(ScsiModeSensePageControl pageControl in new[]
                     {
@@ -471,7 +472,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI READ CAPACITY...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_READ_CAPACITY).IsIndeterminate();
             sense = _dev.ReadCapacity(out buffer, out senseBuffer, _dev.Timeout, out _);
         });
 
@@ -488,7 +489,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI READ CAPACITY (16)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_READ_CAPACITY_16).IsIndeterminate();
             sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
         });
 
@@ -507,7 +508,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_MODE_SENSE_10).IsIndeterminate();
 
             sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
                                      0x00, _dev.Timeout, out _);
@@ -522,7 +523,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_MODE_SENSE).IsIndeterminate();
             sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
         });
 
@@ -544,53 +545,53 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ (6)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_6).IsIndeterminate();
 
             mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0, mediaTest.BlockSize ?? 512,
                                                   _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
+        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead6);
         mediaTest.Read6Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ (10)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_10).IsIndeterminate();
 
             mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, false, false, false, 0,
                                                     mediaTest.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
+        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead10);
         mediaTest.Read10Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ (12)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_12).IsIndeterminate();
 
             mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, false, false, false, 0,
                                                     mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
+        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead12);
         mediaTest.Read12Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ (16)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_16).IsIndeterminate();
 
             mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, false, false, 0,
                                                     mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
+        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead16);
         mediaTest.Read16Data = buffer;
 
         mediaTest.LongBlockSize = mediaTest.BlockSize;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_10).IsIndeterminate();
             sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, _dev.Timeout, out _);
         });
 
@@ -621,7 +622,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_16).IsIndeterminate();
             sense = _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 0xFFFF, _dev.Timeout, out _);
 
             if(sense && !_dev.Error)
@@ -754,7 +755,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ MEDIA SERIAL NUMBER...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_MEDIA_SERIAL_NUMBER).IsIndeterminate();
 
             mediaTest.CanReadMediaSerial =
                 !_dev.ReadMediaSerialNumber(out buffer, out senseBuffer, _dev.Timeout, out _);
@@ -778,7 +779,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI READ CAPACITY...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_READ_CAPACITY).IsIndeterminate();
             sense = _dev.ReadCapacity(out buffer, out senseBuffer, _dev.Timeout, out _);
         });
 
@@ -795,7 +796,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI READ CAPACITY (16)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_READ_CAPACITY_16).IsIndeterminate();
             sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
         });
 
@@ -814,7 +815,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_MODE_SENSE_10).IsIndeterminate();
 
             sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
                                      0x00, _dev.Timeout, out _);
@@ -829,7 +830,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_MODE_SENSE).IsIndeterminate();
             sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
         });
 
@@ -851,53 +852,53 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ (6)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_6).IsIndeterminate();
 
             capabilities.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0, capabilities.BlockSize ?? 512,
                                                      _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead6);
+        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !capabilities.SupportsRead6);
         capabilities.Read6Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ (10)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_10).IsIndeterminate();
 
             capabilities.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, false, false, false, 0,
                                                        capabilities.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead10);
+        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !capabilities.SupportsRead10);
         capabilities.Read10Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ (12)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_12).IsIndeterminate();
 
             capabilities.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, false, false, false, 0,
                                                        capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead12);
+        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !capabilities.SupportsRead12);
         capabilities.Read12Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ (16)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_16).IsIndeterminate();
 
             capabilities.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, false, false, 0,
                                                        capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead16);
+        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !capabilities.SupportsRead16);
         capabilities.Read16Data = buffer;
 
         capabilities.LongBlockSize = capabilities.BlockSize;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ LONG (10)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_10).IsIndeterminate();
             sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, _dev.Timeout, out _);
         });
 
@@ -928,7 +929,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ LONG (16)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_16).IsIndeterminate();
             sense = _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 0xFFFF, _dev.Timeout, out _);
         });
 
@@ -964,8 +965,8 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask(capabilities.SupportsReadLong16 == true ? "Trying SCSI READ LONG (16)..."
-                            : "Trying SCSI READ LONG (10)...").IsIndeterminate();
+            ctx.AddTask(capabilities.SupportsReadLong16 == true ? Localization.Core.Trying_SCSI_READ_LONG_16
+                            : Localization.Core.Trying_SCSI_READ_LONG_10).IsIndeterminate();
 
             switch(capabilities.BlockSize)
             {

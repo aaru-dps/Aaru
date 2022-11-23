@@ -60,10 +60,11 @@ public partial class Dump
 
                 if(decSense.HasValue)
                 {
-                    ErrorMessage?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC
-                        :X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+                    ErrorMessage?.Invoke(string.Format(Localization.Core.Device_not_ready_Sense,
+                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                       decSense.Value.ASCQ));
 
-                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h", decSense.Value.SenseKey,
+                    _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
                                        decSense.Value.ASC, decSense.Value.ASCQ);
 
                     // Just retry, for 5 times
@@ -83,7 +84,7 @@ public partial class Dump
 
                             while(leftRetries > 0)
                             {
-                                PulseProgress?.Invoke("Waiting for drive to become ready");
+                                PulseProgress?.Invoke(Localization.Core.Waiting_for_drive_to_become_ready);
                                 Thread.Sleep(2000);
                                 sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
@@ -94,10 +95,11 @@ public partial class Dump
 
                                 if(decSense.HasValue)
                                 {
-                                    ErrorMessage?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {
-                                        decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+                                    ErrorMessage?.Invoke(string.Format(Localization.Core.Device_not_ready_Sense,
+                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                       decSense.Value.ASCQ));
 
-                                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
+                                    _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense,
                                                        decSense.Value.SenseKey, decSense.Value.ASC,
                                                        decSense.Value.ASCQ);
                                 }
@@ -107,7 +109,7 @@ public partial class Dump
 
                             if(sense)
                             {
-                                StoppingErrorMessage?.Invoke("Please insert media in drive");
+                                StoppingErrorMessage?.Invoke(Localization.Core.Please_insert_media_in_drive);
 
                                 return;
                             }
@@ -120,7 +122,7 @@ public partial class Dump
 
                             while(leftRetries > 0)
                             {
-                                PulseProgress?.Invoke("Waiting for drive to become ready");
+                                PulseProgress?.Invoke(Localization.Core.Waiting_for_drive_to_become_ready);
                                 Thread.Sleep(2000);
                                 sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
@@ -131,10 +133,11 @@ public partial class Dump
 
                                 if(decSense.HasValue)
                                 {
-                                    ErrorMessage?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {
-                                        decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+                                    ErrorMessage?.Invoke(string.Format(Localization.Core.Device_not_ready_Sense,
+                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                       decSense.Value.ASCQ));
 
-                                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                    _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense,
                                                        decSense.Value.SenseKey, decSense.Value.ASC,
                                                        decSense.Value.ASCQ);
                                 }
@@ -144,8 +147,9 @@ public partial class Dump
 
                             if(sense)
                             {
-                                StoppingErrorMessage?.Invoke($"Error testing unit was ready:\n{
-                                    Sense.PrettifySense(senseBuf)}");
+                                StoppingErrorMessage?.
+                                    Invoke(string.Format(Localization.Core.Error_testing_unit_was_ready_0,
+                                                         Sense.PrettifySense(senseBuf)));
 
                                 return;
                             }
@@ -172,7 +176,7 @@ public partial class Dump
 
                             while(leftRetries > 0)
                             {
-                                PulseProgress?.Invoke("Waiting for drive to become ready");
+                                PulseProgress?.Invoke(Localization.Core.Waiting_for_drive_to_become_ready);
                                 Thread.Sleep(2000);
                                 sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
@@ -183,10 +187,11 @@ public partial class Dump
 
                                 if(decSense.HasValue)
                                 {
-                                    ErrorMessage?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {
-                                        decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+                                    ErrorMessage?.Invoke(string.Format(Localization.Core.Device_not_ready_Sense,
+                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                       decSense.Value.ASCQ));
 
-                                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                    _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense,
                                                        decSense.Value.SenseKey, decSense.Value.ASC,
                                                        decSense.Value.ASCQ);
                                 }
@@ -196,8 +201,9 @@ public partial class Dump
 
                             if(sense)
                             {
-                                StoppingErrorMessage?.Invoke($"Error testing unit was ready:\n{
-                                    Sense.PrettifySense(senseBuf)}");
+                                StoppingErrorMessage?.
+                                    Invoke(string.Format(Localization.Core.Error_testing_unit_was_ready_0,
+                                                         Sense.PrettifySense(senseBuf)));
 
                                 return;
                             }
@@ -205,15 +211,15 @@ public partial class Dump
                             break;
                         }
                         default:
-                            StoppingErrorMessage?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)
-                            }");
+                            StoppingErrorMessage?.Invoke(string.Format(Localization.Core.Error_testing_unit_was_ready_0,
+                                                                       Sense.PrettifySense(senseBuf)));
 
                             return;
                     }
                 }
                 else
                 {
-                    StoppingErrorMessage?.Invoke("Unknown testing unit was ready.");
+                    StoppingErrorMessage?.Invoke(Localization.Core.Unknown_testing_unit_was_ready);
 
                     return;
                 }
@@ -227,7 +233,7 @@ public partial class Dump
             case PeripheralDeviceTypes.SequentialAccess:
                 if(_dumpRaw)
                 {
-                    StoppingErrorMessage?.Invoke("Tapes cannot be dumped raw.");
+                    StoppingErrorMessage?.Invoke(Localization.Core.Tapes_cannot_be_dumped_raw);
 
                     return;
                 }
@@ -235,15 +241,16 @@ public partial class Dump
                 if(_outputPlugin is IWritableTapeImage)
                     Ssc();
                 else
-                    StoppingErrorMessage?.
-                        Invoke("The specified plugin does not support storing streaming tape images.");
+                    StoppingErrorMessage?.Invoke(Localization.Core.
+                                                              The_specified_plugin_does_not_support_storing_streaming_tape_images);
 
                 return;
             case PeripheralDeviceTypes.MultiMediaDevice:
                 if(_outputPlugin is IWritableOpticalImage)
                     Mmc();
                 else
-                    StoppingErrorMessage?.Invoke("The specified plugin does not support storing optical disc images.");
+                    StoppingErrorMessage?.Invoke(Localization.Core.
+                                                              The_specified_plugin_does_not_support_storing_optical_disc_images);
 
                 return;
             case PeripheralDeviceTypes.BridgingExpander

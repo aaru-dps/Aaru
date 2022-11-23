@@ -75,13 +75,13 @@ public static class Error
             case PlatformID.OpenServer:
             case PlatformID.UnixWare:
             case PlatformID.zOS: return PrintUnixError(errno);
-            case PlatformID.Wii:          return $"Unknown error code {errno}";
-            case PlatformID.WiiU:         return $"Unknown error code {errno}";
-            case PlatformID.PlayStation3: return $"Unknown error code {errno}";
-            case PlatformID.PlayStation4: return $"Unknown error code {errno}";
-            case PlatformID.NonStop:      return $"Unknown error code {errno}";
-            case PlatformID.Unknown:      return $"Unknown error code {errno}";
-            default:                      return $"Unknown error code {errno}";
+            case PlatformID.Wii:          return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.WiiU:         return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.PlayStation3: return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.PlayStation4: return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.NonStop:      return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.Unknown:      return string.Format(Localization.Core.error_code_0, errno);
+            default:                      return string.Format(Localization.Core.error_code_0, errno);
         }
     }
 
@@ -91,14 +91,14 @@ public static class Error
         {
             case 2:  // ENOENT
             case 19: // ENODEV
-                return "The specified device cannot be found.";
+                return Localization.Core.The_specified_device_cannot_be_found;
             case 13: // EACCESS
-                return "Not enough permissions to open the device.";
+                return Localization.Core.Not_enough_permissions_to_open_the_device;
             case 16: // EBUSY
-                return "The specified device is in use by another process.";
+                return Localization.Core.The_specified_device_is_in_use_by_another_process;
             case 30: // EROFS
-                return "Cannot open the device in writable mode, as needed by some commands.";
-            default: return $"Unknown error code {errno}";
+                return Localization.Core.Cannot_open_the_device_in_writable_mode_as_needed_by_some_commands;
+            default: return string.Format(Localization.Core.error_code_0, errno);
         }
     }
 
@@ -108,19 +108,19 @@ public static class Error
         {
             case 2: // ERROR_FILE_NOT_FOUND
             case 3: // ERROR_PATH_NOT_FOUND
-                return "The specified device cannot be found.";
+                return Localization.Core.The_specified_device_cannot_be_found;
             case 5: // ERROR_ACCESS_DENIED
-                return "Not enough permissions to open the device.";
+                return Localization.Core.Not_enough_permissions_to_open_the_device;
             case 19: // ERROR_WRITE_PROTECT
-                return "Cannot open the device in writable mode, as needed by some commands.";
+                return Localization.Core.Cannot_open_the_device_in_writable_mode_as_needed_by_some_commands;
             case 32:  // ERROR_SHARING_VIOLATION
             case 33:  // ERROR_LOCK_VIOLATION
             case 108: // ERROR_DRIVE_LOCKED
             case 170: // ERROR_BUSY
-                return "The specified device is in use by another process.";
+                return Localization.Core.The_specified_device_is_in_use_by_another_process;
             case 130: // ERROR_DIRECT_ACCESS_HANDLE
-                return "Tried to open a file instead of a device.";
-            default: return $"Unknown error code {errno}";
+                return Localization.Core.Tried_to_open_a_file_instead_of_a_device;
+            default: return string.Format(Localization.Core.error_code_0, errno);
         }
     }
 }

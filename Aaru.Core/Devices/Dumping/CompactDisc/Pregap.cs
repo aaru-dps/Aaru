@@ -69,8 +69,8 @@ partial class Dump
         int      firstTrackPregapSectorsGood = 0;
         var      firstTrackPregapMs          = new MemoryStream();
 
-        _dumpLog.WriteLine("Reading first track pregap");
-        UpdateStatus?.Invoke("Reading first track pregap");
+        _dumpLog.WriteLine(Localization.Core.Reading_first_track_pregap);
+        UpdateStatus?.Invoke(Localization.Core.Reading_first_track_pregap);
         InitProgress?.Invoke();
         timeSpeedStart = DateTime.UtcNow;
 
@@ -79,14 +79,14 @@ partial class Dump
         {
             if(_aborted)
             {
-                _dumpLog.WriteLine("Aborted!");
-                UpdateStatus?.Invoke("Aborted!");
+                _dumpLog.WriteLine(Localization.Core.Aborted);
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
 
                 break;
             }
 
-            PulseProgress?.Invoke($"Trying to read first track pregap sector {firstTrackPregapBlock} ({currentSpeed
-                :F3} MiB/sec.)");
+            PulseProgress?.Invoke(string.Format(Localization.Core.Trying_to_read_first_track_pregap_sector_0_1_MiB_sec,
+                                                firstTrackPregapBlock, currentSpeed));
 
             // ReSharper disable IntVariableOverflowInUncheckedContext
             sense = _dev.ReadCd(out cmdBuf, out _, (uint)firstTrackPregapBlock, blockSize, 1, MmcSectorTypes.AllTypes,
@@ -126,8 +126,11 @@ partial class Dump
             mediaTags.Add(MediaTagType.CD_FirstTrackPregap, firstTrackPregapMs.ToArray());
 
         EndProgress?.Invoke();
-        UpdateStatus?.Invoke($"Got {firstTrackPregapSectorsGood} first track pregap sectors.");
-        _dumpLog.WriteLine("Got {0} first track pregap sectors.", firstTrackPregapSectorsGood);
+
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Got_0_first_track_pregap_sectors,
+                                           firstTrackPregapSectorsGood));
+
+        _dumpLog.WriteLine(Localization.Core.Got_0_first_track_pregap_sectors, firstTrackPregapSectorsGood);
 
         firstTrackPregapMs.Close();
     }
@@ -175,17 +178,18 @@ partial class Dump
 
         AaruConsole.DebugWriteLine("Pregap calculator", bcd switch
         {
-            true  => "Subchannel is BCD",
-            false => "Subchannel is not BCD",
-            _     => "Could not detect drive subchannel BCD"
+            true  => Localization.Core.Subchannel_is_BCD,
+            false => Localization.Core.Subchannel_is_not_BCD,
+            _     => Localization.Core.Could_not_detect_drive_subchannel_BCD
         });
 
         if(bcd is null)
         {
-            dumpLog?.WriteLine("Could not detect if drive subchannel is BCD or not, pregaps could not be calculated, dump may be incorrect...");
+            dumpLog?.WriteLine(Localization.Core.
+                                            Could_not_detect_if_drive_subchannel_is_BCD_or_not_pregaps_could_not_be_calculated_dump_may_be_incorrect);
 
-            updateStatus?.
-                Invoke("Could not detect if drive subchannel is BCD or not, pregaps could not be calculated, dump may be incorrect...");
+            updateStatus?.Invoke(Localization.Core.
+                                              Could_not_detect_if_drive_subchannel_is_BCD_or_not_pregaps_could_not_be_calculated_dump_may_be_incorrect);
 
             return;
         }
@@ -202,7 +206,7 @@ partial class Dump
             // First track of each session has at least 150 sectors of pregap and is not always readable
             if(tracks.Where(trk => trk.Session == track.Session).MinBy(trk => trk.Sequence).Sequence == track.Sequence)
             {
-                AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.Sequence);
+                AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.Skipping_track_0, track.Sequence);
 
                 if(track.Sequence > 1)
                     pregaps[track.Sequence] = 150;
@@ -214,20 +218,21 @@ partial class Dump
                tracks[t - 1].Type == tracks[t].Type &&
                dumping)
             {
-                AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.Sequence);
+                AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.Skipping_track_0, track.Sequence);
 
                 continue;
             }
 
             if(dumping && dev.Manufacturer.ToLowerInvariant().StartsWith("plextor", StringComparison.Ordinal))
             {
-                AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0} due to Plextor firmware bug",
+                AaruConsole.DebugWriteLine("Pregap calculator",
+                                           Localization.Core.Skipping_track_0_due_to_Plextor_firmware_bug,
                                            track.Sequence);
 
                 continue;
             }
 
-            AaruConsole.DebugWriteLine("Pregap calculator", "Track {0}", track.Sequence);
+            AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.Track_0, track.Sequence);
 
             int   lba           = (int)track.StartSector - 1;
             bool  pregapFound   = false;
@@ -248,8 +253,8 @@ partial class Dump
 
                 if(sense)
                 {
-                    AaruConsole.DebugWriteLine("Pregap calculator", "LBA: {0}, Try {1}, Sense {2}", lba, retries + 1,
-                                               sense);
+                    AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.LBA_0_Try_1_Sense_2, lba,
+                                               retries + 1, sense);
 
                     continue;
                 }
@@ -260,7 +265,8 @@ partial class Dump
                 CRC16CCITTContext.Data(subBuf, 10, out crc);
 
                 AaruConsole.DebugWriteLine("Pregap calculator",
-                                           "LBA: {0}, Try {1}, Sense {2}, Q: {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                           Localization.Core.
+                                                        LBA_0_Try_1_Sense_2_Q_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16,
                                            lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
                                            subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9], subBuf[10],
                                            subBuf[11], crc[0], crc[1]);
@@ -300,7 +306,8 @@ partial class Dump
 
                     if(crcOk)
                         AaruConsole.DebugWriteLine("Pregap calculator",
-                                                   "LBA: {0}, Try {1}, Sense {2}, Q (FIXED): {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                                   Localization.Core.
+                                                                LBA_0_Try_1_Sense_2_Q_FIXED_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16,
                                                    lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
                                                    subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9],
                                                    subBuf[10], subBuf[11], crc[0], crc[1]);
@@ -358,7 +365,8 @@ partial class Dump
                     CRC16CCITTContext.Data(subBuf, 10, out crc);
 
                     AaruConsole.DebugWriteLine("Pregap calculator",
-                                               "LBA: {0}, Try {1}, Sense {2}, Q: {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                               Localization.Core.
+                                                            LBA_0_Try_1_Sense_2_Q_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16,
                                                lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
                                                subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9],
                                                subBuf[10], subBuf[11], crc[0], crc[1]);
@@ -399,7 +407,8 @@ partial class Dump
                         if(crcOk)
                         {
                             AaruConsole.DebugWriteLine("Pregap calculator",
-                                                       "LBA: {0}, Try {1}, Sense {2}, Q (FIXED): {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                                       Localization.Core.
+                                                                    LBA_0_Try_1_Sense_2_Q_FIXED_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16,
                                                        lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2],
                                                        subBuf[3], subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8],
                                                        subBuf[9], subBuf[10], subBuf[11], crc[0], crc[1]);
@@ -425,35 +434,42 @@ partial class Dump
                                 if((previousTrack.Type == TrackType.Audio && track.Type != TrackType.Audio) ||
                                    (previousTrack.Type != TrackType.Audio && track.Type == TrackType.Audio))
                                 {
-                                    dumpLog?.
-                                        WriteLine("Could not read subchannel for this track, supposing 150 sectors.");
+                                    dumpLog?.WriteLine(Localization.Core.
+                                                                    Could_not_read_subchannel_for_this_track_supposing_hundred_fifty_sectors);
 
-                                    updateStatus?.
-                                        Invoke("Could not read subchannel for this track, supposing 150 sectors.");
+                                    updateStatus?.Invoke(Localization.Core.
+                                                                      Could_not_read_subchannel_for_this_track_supposing_hundred_fifty_sectors);
                                 }
                                 else
                                 {
-                                    dumpLog?.
-                                        WriteLine("Could not read subchannel for this track, supposing 0 sectors.");
+                                    dumpLog?.WriteLine(Localization.Core.
+                                                                    Could_not_read_subchannel_for_this_track_supposing_zero_sectors);
 
-                                    updateStatus?.
-                                        Invoke("Could not read subchannel for this track, supposing 0 sectors.");
+                                    updateStatus?.Invoke(Localization.Core.
+                                                                      Could_not_read_subchannel_for_this_track_supposing_zero_sectors);
                                 }
                             }
                             else
                             {
-                                dumpLog?.WriteLine($"Could not read subchannel for this track, supposing {
-                                    pregaps[track.Sequence]} sectors.");
+                                dumpLog?.
+                                    WriteLine(string.
+                                                  Format(Localization.Core.Could_not_read_subchannel_for_this_track_supposing_0_sectors,
+                                                         pregaps[track.Sequence]));
 
-                                updateStatus?.Invoke($"Could not read subchannel for this track, supposing {
-                                    pregaps[track.Sequence]} sectors.");
+                                updateStatus?.
+                                    Invoke(string.
+                                               Format(Localization.Core.Could_not_read_subchannel_for_this_track_supposing_0_sectors,
+                                                      pregaps[track.Sequence]));
                             }
 
                             break;
                         }
 
-                        dumpLog?.WriteLine($"Could not read subchannel for sector {lba}");
-                        updateStatus?.Invoke($"Could not read subchannel for sector {lba}");
+                        dumpLog?.WriteLine(string.Format(Localization.Core.Could_not_read_subchannel_for_sector_0,
+                                                         lba));
+
+                        updateStatus?.Invoke(string.Format(Localization.Core.Could_not_read_subchannel_for_sector_0,
+                                                           lba));
 
                         lba++;
                         forward = true;
@@ -461,15 +477,18 @@ partial class Dump
                         continue;
                     }
 
-                    dumpLog?.WriteLine($"Could not get correct subchannel for sector {lba}");
-                    updateStatus?.Invoke($"Could not get correct subchannel for sector {lba}");
+                    dumpLog?.WriteLine(string.Format(Localization.Core.Could_not_get_correct_subchannel_for_sector_0,
+                                                     lba));
+
+                    updateStatus?.Invoke(string.Format(Localization.Core.Could_not_get_correct_subchannel_for_sector_0,
+                                                       lba));
                 }
 
                 if(subBuf.All(b => b == 0))
                 {
                     inexactPositioning = true;
 
-                    AaruConsole.DebugWriteLine("Pregap calculator", "All Q empty for LBA {0}", lba);
+                    AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.All_Q_empty_for_LBA_0, lba);
 
                     break;
                 }
@@ -535,8 +554,8 @@ partial class Dump
 
                 if(diff != 0)
                 {
-                    AaruConsole.DebugWriteLine("Pregap calculator", "Invalid Q position for LBA {0}, got {1}", lba,
-                                               posQ);
+                    AaruConsole.DebugWriteLine("Pregap calculator",
+                                               Localization.Core.Invalid_Q_position_for_LBA_0_got_1, lba, posQ);
 
                     inexactPositioning = true;
                 }
@@ -558,8 +577,8 @@ partial class Dump
                     // If CRC is not OK, only accept pregaps less than 10 sectors longer than previously now
                     if(crcOk || pregapQ - pregaps[track.Sequence] < 10)
                     {
-                        AaruConsole.DebugWriteLine("Pregap calculator", "Pregap for track {0}: {1}", track.Sequence,
-                                                   pregapQ);
+                        AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.Pregap_for_track_0_1,
+                                                   track.Sequence, pregapQ);
 
                         pregaps[track.Sequence] = pregapQ;
                     }
@@ -604,8 +623,10 @@ partial class Dump
             trk.StartSector -= trk.Pregap;
 
         #if DEBUG
-            dumpLog?.WriteLine($"Track {trk.Sequence} pregap is {trk.Pregap} sectors");
-            updateStatus?.Invoke($"Track {trk.Sequence} pregap is {trk.Pregap} sectors");
+            dumpLog?.WriteLine(string.Format(Localization.Core.Track_0_pregap_is_1_sectors, trk.Sequence, trk.Pregap));
+
+            updateStatus?.Invoke(string.Format(Localization.Core.Track_0_pregap_is_1_sectors, trk.Sequence,
+                                               trk.Pregap));
         #endif
         }
     }

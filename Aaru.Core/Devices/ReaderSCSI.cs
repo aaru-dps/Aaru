@@ -120,7 +120,7 @@ sealed partial class Reader
                 // Magneto-opticals may have empty LBA 0 but we know they work with READ(12)
                 if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
                 {
-                    ErrorMessage = "Cannot read medium, aborting scan...";
+                    ErrorMessage = Localization.Core.Cannot_read_medium_aborting_scan;
 
                     return true;
                 }
@@ -130,8 +130,9 @@ sealed partial class Reader
                 break;
             }
             case true when !_read10 && !_read12 && !_read16 && Blocks > 0x001FFFFF + 1:
-                ErrorMessage = $"Device only supports SCSI READ (6) but has more than {0x001FFFFF + 1} blocks ({Blocks
-                } blocks total)";
+                ErrorMessage =
+                    string.Format(Localization.Core.Device_only_supports_SCSI_READ_6_but_has_more_than_0_blocks_1_blocks_total,
+                                  0x001FFFFF + 1, Blocks);
 
                 return true;
         }
@@ -145,8 +146,9 @@ sealed partial class Reader
         if(!_read16 &&
            Blocks > 0xFFFFFFFF + (long)1)
         {
-            ErrorMessage = $"Device only supports SCSI READ (10) but has more than {0xFFFFFFFF + (long)1} blocks ({
-                Blocks} blocks total)";
+            ErrorMessage =
+                string.Format(Localization.Core.Device_only_supports_SCSI_READ_10_but_has_more_than_0_blocks_1_blocks_total,
+                              0xFFFFFFFF + (long)1, Blocks);
 
             return true;
         }
@@ -524,26 +526,26 @@ sealed partial class Reader
         if(CanReadRaw)
         {
             if(_readLong16)
-                AaruConsole.WriteLine("Using SCSI READ LONG (16) command.");
+                AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_LONG_16_command);
             else if(_readLong10 || _readLongDvd)
-                AaruConsole.WriteLine("Using SCSI READ LONG (10) command.");
+                AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_LONG_10_command);
             else if(_syqReadLong10)
-                AaruConsole.WriteLine("Using SyQuest READ LONG (10) command.");
+                AaruConsole.WriteLine(Localization.Core.Using_SyQuest_READ_LONG_10_command);
             else if(_syqReadLong6)
-                AaruConsole.WriteLine("Using SyQuest READ LONG (6) command.");
+                AaruConsole.WriteLine(Localization.Core.Using_SyQuest_READ_LONG_6_command);
             else if(_hldtstReadRaw)
-                AaruConsole.WriteLine("Using HL-DT-ST raw DVD reading.");
+                AaruConsole.WriteLine(Localization.Core.Using_HL_DT_ST_raw_DVD_reading);
             else if(_plextorReadRaw)
-                AaruConsole.WriteLine("Using Plextor raw DVD reading.");
+                AaruConsole.WriteLine(Localization.Core.Using_Plextor_raw_DVD_reading);
         }
         else if(_read6)
-            AaruConsole.WriteLine("Using SCSI READ (6) command.");
+            AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_6_command);
         else if(_read10)
-            AaruConsole.WriteLine("Using SCSI READ (10) command.");
+            AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_10_command);
         else if(_read12)
-            AaruConsole.WriteLine("Using SCSI READ (12) command.");
+            AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_12_command);
         else if(_read16)
-            AaruConsole.WriteLine("Using SCSI READ (16) command.");
+            AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_16_command);
 
         return false;
     }
@@ -567,7 +569,8 @@ sealed partial class Reader
             switch(sense)
             {
                 case true when Blocks == 0 && _dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice:
-                    ErrorMessage = "Unable to get media capacity\n" + $"{Sense.PrettifySense(senseBuf)}";
+                    ErrorMessage = string.Format(Localization.Core.Unable_to_get_media_capacity,
+                                                 Sense.PrettifySense(senseBuf));
 
                     return true;
                 case false:
@@ -645,7 +648,9 @@ sealed partial class Reader
         }
 
         BlocksToRead = 1;
-        ErrorMessage = $"Device error {_dev.LastError} trying to guess ideal transfer length.";
+
+        ErrorMessage = string.Format(Localization.Core.Device_error_0_trying_to_guess_ideal_transfer_length,
+                                     _dev.LastError);
 
         return true;
     }
@@ -709,7 +714,7 @@ sealed partial class Reader
 
         blankCheck = Sense.Decode(senseBuf)?.SenseKey == SenseKeys.BlankCheck;
 
-        AaruConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
+        AaruConsole.DebugWriteLine("SCSI Reader", Localization.Core.READ_error_0, Sense.PrettifySense(senseBuf));
 
         return sense;
     }

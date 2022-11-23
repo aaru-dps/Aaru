@@ -63,7 +63,7 @@ public static class Remote
         {
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Uploading device report").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Uploading_device_report).IsIndeterminate();
 
                 try
                 {
@@ -167,12 +167,12 @@ public static class Remote
             if(lastUpdate == 0)
             {
                 create = true;
-                AaruConsole.WriteLine("Creating main database");
+                AaruConsole.WriteLine(Localization.Core.Creating_main_database);
             }
             else
             {
-                AaruConsole.WriteLine("Updating main database");
-                AaruConsole.WriteLine("Last update: {0}", latest);
+                AaruConsole.WriteLine(Localization.Core.Updating_main_database);
+                AaruConsole.WriteLine(Localization.Core.Last_update_0, latest);
             }
 
             DateTime updateStart = DateTime.UtcNow;
@@ -186,7 +186,8 @@ public static class Remote
 
             if(!response.IsSuccessStatusCode)
             {
-                AaruConsole.ErrorWriteLine("Error {0} when trying to get updated entities.", response.StatusCode);
+                AaruConsole.ErrorWriteLine(Localization.Core.Error_0_when_trying_to_get_updated_entities,
+                                           response.StatusCode);
 
                 return;
             }
@@ -201,7 +202,7 @@ public static class Remote
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask task = ctx.AddTask("Adding USB vendors");
+                                ProgressTask task = ctx.AddTask(Localization.Core.Adding_USB_vendors);
                                 task.MaxValue = sync.UsbVendors.Count;
 
                                 foreach(UsbVendorDto vendor in sync.UsbVendors)
@@ -211,13 +212,13 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} usb vendors", sync.UsbVendors.Count);
+                AaruConsole.WriteLine(Localization.Core.Added_0_usb_vendors, sync.UsbVendors.Count);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask task = ctx.AddTask("Adding USB products");
+                                ProgressTask task = ctx.AddTask(Localization.Core.Adding_USB_products);
                                 task.MaxValue = sync.UsbProducts.Count;
 
                                 foreach(UsbProductDto product in sync.UsbProducts)
@@ -229,13 +230,13 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} usb products", sync.UsbProducts.Count);
+                AaruConsole.WriteLine(Localization.Core.Added_0_usb_products, sync.UsbProducts.Count);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask task = ctx.AddTask("Adding CompactDisc read offsets");
+                                ProgressTask task = ctx.AddTask(Localization.Core.Adding_CompactDisc_read_offsets);
                                 task.MaxValue = sync.Offsets.Count;
 
                                 foreach(CdOffsetDto offset in sync.Offsets)
@@ -249,13 +250,13 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} CompactDisc read offsets", sync.Offsets.Count);
+                AaruConsole.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets, sync.Offsets.Count);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask task = ctx.AddTask("Adding known devices");
+                                ProgressTask task = ctx.AddTask(Localization.Core.Adding_known_devices);
                                 task.MaxValue = sync.Devices.Count;
 
                                 foreach(DeviceDto device in sync.Devices)
@@ -270,13 +271,13 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} known devices", sync.Devices.Count);
+                AaruConsole.WriteLine(Localization.Core.Added_0_known_devices, sync.Devices.Count);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask task = ctx.AddTask("Adding known iNES/NES 2.0 headers");
+                                ProgressTask task = ctx.AddTask(Localization.Core.Adding_known_iNES_NES_2_0_headers);
                                 task.MaxValue = sync.NesHeaders?.Count ?? 0;
 
                                 foreach(NesHeaderDto header in sync.NesHeaders ?? new List<NesHeaderDto>())
@@ -304,7 +305,8 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} known iNES/NES 2.0 headers", sync.NesHeaders?.Count ?? 0);
+                AaruConsole.WriteLine(Localization.Core.Added_0_known_iNES_NES_2_0_headers,
+                                      sync.NesHeaders?.Count ?? 0);
             }
             else
             {
@@ -323,7 +325,7 @@ public static class Remote
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask task = ctx.AddTask("Updating USB vendors");
+                                ProgressTask task = ctx.AddTask(Localization.Core.Updating_USB_vendors);
                                 task.MaxValue = sync.UsbVendors.Count;
 
                                 foreach(UsbVendorDto vendor in sync.UsbVendors)
@@ -347,14 +349,14 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} USB vendors", addedVendors);
-                AaruConsole.WriteLine("Modified {0} USB vendors", modifiedVendors);
+                AaruConsole.WriteLine(Localization.Core.Added_0_usb_vendors, addedVendors);
+                AaruConsole.WriteLine(Localization.Core.Modified_0_USB_vendors, modifiedVendors);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask task = ctx.AddTask("Updating USB products");
+                                ProgressTask task = ctx.AddTask(Localization.Core.Updating_USB_products);
                                 task.MaxValue = sync.UsbVendors.Count;
 
                                 foreach(UsbProductDto product in sync.UsbProducts)
@@ -382,14 +384,14 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} USB products", addedProducts);
-                AaruConsole.WriteLine("Modified {0} USB products", modifiedProducts);
+                AaruConsole.WriteLine(Localization.Core.Added_0_usb_products, addedProducts);
+                AaruConsole.WriteLine(Localization.Core.Modified_0_USB_products, modifiedProducts);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask task = ctx.AddTask("Updating CompactDisc read offsets");
+                                ProgressTask task = ctx.AddTask(Localization.Core.Updating_CompactDisc_read_offsets);
                                 task.MaxValue = sync.Offsets.Count;
 
                                 foreach(CdOffsetDto offset in sync.Offsets)
@@ -420,14 +422,14 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} CompactDisc read offsets", addedOffsets);
-                AaruConsole.WriteLine("Modified {0} CompactDisc read offsets", modifiedOffsets);
+                AaruConsole.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets, addedOffsets);
+                AaruConsole.WriteLine(Localization.Core.Modified_0_CompactDisc_read_offsets, modifiedOffsets);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask task = ctx.AddTask("Updating known devices");
+                                ProgressTask task = ctx.AddTask(Localization.Core.Updating_known_devices);
                                 task.MaxValue = sync.Offsets.Count;
 
                                 foreach(DeviceDto device in sync.Devices)
@@ -464,14 +466,14 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} known devices", addedDevices);
-                AaruConsole.WriteLine("Modified {0} known devices", modifiedDevices);
+                AaruConsole.WriteLine(Localization.Core.Added_0_known_devices, addedDevices);
+                AaruConsole.WriteLine(Localization.Core.Modified_0_known_devices, modifiedDevices);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
-                                ProgressTask task = ctx.AddTask("Updating known iNES/NES 2.0 headers");
+                                ProgressTask task = ctx.AddTask(Localization.Core.Updating_known_iNES_NES_2_0_headers);
                                 task.MaxValue = sync.Offsets.Count;
 
                                 sync.NesHeaders ??= new List<NesHeaderDto>();
@@ -535,19 +537,19 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine("Added {0} known iNES/NES 2.0 headers", addedNesHeaders);
-                AaruConsole.WriteLine("Modified {0} known iNES/NES 2.0 headers", modifiedNesHeaders);
+                AaruConsole.WriteLine(Localization.Core.Added_0_known_iNES_NES_2_0_headers, addedNesHeaders);
+                AaruConsole.WriteLine(Localization.Core.Modified_0_known_iNES_NES_2_0_headers, modifiedNesHeaders);
             }
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine("Exception {0} when updating database.", ex);
+            AaruConsole.ErrorWriteLine(Localization.Core.Exception_0_when_updating_database, ex);
         }
         finally
         {
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Saving changes...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Saving_changes).IsIndeterminate();
                 mctx.SaveChanges();
             });
         }

@@ -399,12 +399,6 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string Title_Type_for_media {
-            get {
-                return ResourceManager.GetString("Title_Type_for_media", resourceCulture);
-            }
-        }
-        
         public static string Media_found_in_images_statistics {
             get {
                 return ResourceManager.GetString("Media_found_in_images_statistics", resourceCulture);
@@ -504,18 +498,6 @@ namespace Aaru.Localization {
         public static string Please_insert_it_in_the_drive {
             get {
                 return ResourceManager.GetString("Please_insert_it_in_the_drive", resourceCulture);
-            }
-        }
-        
-        public static string Please_write_description_of_media_type {
-            get {
-                return ResourceManager.GetString("Please_write_description_of_media_type", resourceCulture);
-            }
-        }
-        
-        public static string Please_write_media_model {
-            get {
-                return ResourceManager.GetString("Please_write_media_model", resourceCulture);
             }
         }
         
@@ -699,24 +681,6 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string Invoke_Found_undecoded_tuple_ID_0 {
-            get {
-                return ResourceManager.GetString("Invoke_Found_undecoded_tuple_ID_0", resourceCulture);
-            }
-        }
-        
-        public static string Found_unknown_tuple_ID_0 {
-            get {
-                return ResourceManager.GetString("Found_unknown_tuple_ID_0", resourceCulture);
-            }
-        }
-        
-        public static string Could_not_get_tuples {
-            get {
-                return ResourceManager.GetString("Could_not_get_tuples", resourceCulture);
-            }
-        }
-        
         public static string aaruremote_host {
             get {
                 return ResourceManager.GetString("aaruremote_host", resourceCulture);
@@ -864,12 +828,6 @@ namespace Aaru.Localization {
         public static string Unable_to_open_image_format {
             get {
                 return ResourceManager.GetString("Unable_to_open_image_format", resourceCulture);
-            }
-        }
-        
-        public static string Error_0 {
-            get {
-                return ResourceManager.GetString("Error_0", resourceCulture);
             }
         }
         
@@ -1083,12 +1041,6 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string Title_Start {
-            get {
-                return ResourceManager.GetString("Title_Start", resourceCulture);
-            }
-        }
-        
         public static string Title_Length {
             get {
                 return ResourceManager.GetString("Title_Length", resourceCulture);
@@ -1299,12 +1251,6 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string Hashing_tracks {
-            get {
-                return ResourceManager.GetString("Hashing_tracks", resourceCulture);
-            }
-        }
-        
         public static string Hashing_track_0_of_1 {
             get {
                 return ResourceManager.GetString("Hashing_track_0_of_1", resourceCulture);
@@ -1344,18 +1290,6 @@ namespace Aaru.Localization {
         public static string Checksums_Disc_has_0 {
             get {
                 return ResourceManager.GetString("Checksums_Disc_has_0", resourceCulture);
-            }
-        }
-        
-        public static string Could_not_get_tracks_because_0 {
-            get {
-                return ResourceManager.GetString("Could_not_get_tracks_because_0", resourceCulture);
-            }
-        }
-        
-        public static string Hashing_files {
-            get {
-                return ResourceManager.GetString("Hashing_files", resourceCulture);
             }
         }
         
@@ -1422,12 +1356,6 @@ namespace Aaru.Localization {
         public static string Checksums_Media_has_0 {
             get {
                 return ResourceManager.GetString("Checksums_Media_has_0", resourceCulture);
-            }
-        }
-        
-        public static string Hashing_sectors {
-            get {
-                return ResourceManager.GetString("Hashing_sectors", resourceCulture);
             }
         }
         
@@ -2013,9 +1941,9 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string Incorrect_metadata_sidecar_file {
+        public static string Incorrect_metadata_sidecar_file_not_continuing {
             get {
-                return ResourceManager.GetString("Incorrect_metadata_sidecar_file", resourceCulture);
+                return ResourceManager.GetString("Incorrect_metadata_sidecar_file_not_continuing", resourceCulture);
             }
         }
         
@@ -2140,12 +2068,6 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string Output_format_does_not_support_sessions {
-            get {
-                return ResourceManager.GetString("Output_format_does_not_support_sessions", resourceCulture);
-            }
-        }
-        
         public static string Error_0_creating_output_image {
             get {
                 return ResourceManager.GetString("Error_0_creating_output_image", resourceCulture);
@@ -2155,12 +2077,6 @@ namespace Aaru.Localization {
         public static string Error_0_setting_metadata_not_continuing {
             get {
                 return ResourceManager.GetString("Error_0_setting_metadata_not_continuing", resourceCulture);
-            }
-        }
-        
-        public static string Error_0_setting_metadata {
-            get {
-                return ResourceManager.GetString("Error_0_setting_metadata", resourceCulture);
             }
         }
         
@@ -3148,12 +3064,6 @@ namespace Aaru.Localization {
             }
         }
         
-        public static string The_drive_has_returned_incorrect_Q_positioning_calculating_pregaps {
-            get {
-                return ResourceManager.GetString("The_drive_has_returned_incorrect_Q_positioning_calculating_pregaps", resourceCulture);
-            }
-        }
-        
         public static string Hidden_track_starts_at_LBA_0_ends_at_LBA_1 {
             get {
                 return ResourceManager.GetString("Hidden_track_starts_at_LBA_0_ends_at_LBA_1", resourceCulture);
@@ -3355,6 +3265,2592 @@ namespace Aaru.Localization {
         public static string Title_Namespace {
             get {
                 return ResourceManager.GetString("Title_Namespace", resourceCulture);
+            }
+        }
+        
+        public static string Invalid_list_of_items {
+            get {
+                return ResourceManager.GetString("Invalid_list_of_items", resourceCulture);
+            }
+        }
+        
+        public static string Invalid_item_in_list {
+            get {
+                return ResourceManager.GetString("Invalid_item_in_list", resourceCulture);
+            }
+        }
+        
+        public static string Duration_cannot_be_negative_or_infinite {
+            get {
+                return ResourceManager.GetString("Duration_cannot_be_negative_or_infinite", resourceCulture);
+            }
+        }
+        
+        public static string Items_must_be_a_IList_ulong_double {
+            get {
+                return ResourceManager.GetString("Items_must_be_a_IList_ulong_double", resourceCulture);
+            }
+        }
+        
+        public static string Label_About {
+            get {
+                return ResourceManager.GetString("Label_About", resourceCulture);
+            }
+        }
+        
+        public static string Label_Libraries {
+            get {
+                return ResourceManager.GetString("Label_Libraries", resourceCulture);
+            }
+        }
+        
+        public static string Label_Authors {
+            get {
+                return ResourceManager.GetString("Label_Authors", resourceCulture);
+            }
+        }
+        
+        public static string Title_About_Aaru {
+            get {
+                return ResourceManager.GetString("Title_About_Aaru", resourceCulture);
+            }
+        }
+        
+        public static string Label_License {
+            get {
+                return ResourceManager.GetString("Label_License", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Close {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Close", resourceCulture);
+            }
+        }
+        
+        public static string Title_Library {
+            get {
+                return ResourceManager.GetString("Title_Library", resourceCulture);
+            }
+        }
+        
+        public static string Title_Version {
+            get {
+                return ResourceManager.GetString("Title_Version", resourceCulture);
+            }
+        }
+        
+        public static string Text_Authors {
+            get {
+                return ResourceManager.GetString("Text_Authors", resourceCulture);
+            }
+        }
+        
+        public static string Title_Console {
+            get {
+                return ResourceManager.GetString("Title_Console", resourceCulture);
+            }
+        }
+        
+        public static string Enable_debug_console {
+            get {
+                return ResourceManager.GetString("Enable_debug_console", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Clear {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Clear", resourceCulture);
+            }
+        }
+        
+        public static string Title_Time {
+            get {
+                return ResourceManager.GetString("Title_Time", resourceCulture);
+            }
+        }
+        
+        public static string Title_Module {
+            get {
+                return ResourceManager.GetString("Title_Module", resourceCulture);
+            }
+        }
+        
+        public static string Title_Message {
+            get {
+                return ResourceManager.GetString("Title_Message", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Log_files {
+            get {
+                return ResourceManager.GetString("Dialog_Log_files", resourceCulture);
+            }
+        }
+        
+        public static string Log_saved_at_0 {
+            get {
+                return ResourceManager.GetString("Log_saved_at_0", resourceCulture);
+            }
+        }
+        
+        public static string Console_with_ornament {
+            get {
+                return ResourceManager.GetString("Console_with_ornament", resourceCulture);
+            }
+        }
+        
+        public static string LogEntry_Type_Info {
+            get {
+                return ResourceManager.GetString("LogEntry_Type_Info", resourceCulture);
+            }
+        }
+        
+        public static string Title_Error {
+            get {
+                return ResourceManager.GetString("Title_Error", resourceCulture);
+            }
+        }
+        
+        public static string Exception_0_trying_to_save_logfile_details_has_been_sent_to_console {
+            get {
+                return ResourceManager.GetString("Exception_0_trying_to_save_logfile_details_has_been_sent_to_console", resourceCulture);
+            }
+        }
+        
+        public static string Encodings {
+            get {
+                return ResourceManager.GetString("Encodings", resourceCulture);
+            }
+        }
+        
+        public static string Title_Code_for_encoding {
+            get {
+                return ResourceManager.GetString("Title_Code_for_encoding", resourceCulture);
+            }
+        }
+        
+        public static string Title_Aaru_license {
+            get {
+                return ResourceManager.GetString("Title_Aaru_license", resourceCulture);
+            }
+        }
+        
+        public static string Title_Plugins {
+            get {
+                return ResourceManager.GetString("Title_Plugins", resourceCulture);
+            }
+        }
+        
+        public static string Title_Filters {
+            get {
+                return ResourceManager.GetString("Title_Filters", resourceCulture);
+            }
+        }
+        
+        public static string Title_Partitions {
+            get {
+                return ResourceManager.GetString("Title_Partitions", resourceCulture);
+            }
+        }
+        
+        public static string Title_Filesystems {
+            get {
+                return ResourceManager.GetString("Title_Filesystems", resourceCulture);
+            }
+        }
+        
+        public static string Title_Identify_only {
+            get {
+                return ResourceManager.GetString("Title_Identify_only", resourceCulture);
+            }
+        }
+        
+        public static string Title_Media_images {
+            get {
+                return ResourceManager.GetString("Title_Media_images", resourceCulture);
+            }
+        }
+        
+        public static string Title_Floppy_images {
+            get {
+                return ResourceManager.GetString("Title_Floppy_images", resourceCulture);
+            }
+        }
+        
+        public static string Title_Readable {
+            get {
+                return ResourceManager.GetString("Title_Readable", resourceCulture);
+            }
+        }
+        
+        public static string Title_Writable {
+            get {
+                return ResourceManager.GetString("Title_Writable", resourceCulture);
+            }
+        }
+        
+        public static string Title_UUID {
+            get {
+                return ResourceManager.GetString("Title_UUID", resourceCulture);
+            }
+        }
+        
+        public static string Title_Author {
+            get {
+                return ResourceManager.GetString("Title_Author", resourceCulture);
+            }
+        }
+        
+        public static string Title_Settings {
+            get {
+                return ResourceManager.GetString("Title_Settings", resourceCulture);
+            }
+        }
+        
+        public static string Title_GDPR {
+            get {
+                return ResourceManager.GetString("Title_GDPR", resourceCulture);
+            }
+        }
+        
+        public static string Title_Reports {
+            get {
+                return ResourceManager.GetString("Title_Reports", resourceCulture);
+            }
+        }
+        
+        public static string Title_Statistics {
+            get {
+                return ResourceManager.GetString("Title_Statistics", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Cancel {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Cancel", resourceCulture);
+            }
+        }
+        
+        public static string Save_device_reports_in_shared_folder_of_your_computer_Q {
+            get {
+                return ResourceManager.GetString("Save_device_reports_in_shared_folder_of_your_computer_Q", resourceCulture);
+            }
+        }
+        
+        public static string Share_your_device_reports_with_us_Q {
+            get {
+                return ResourceManager.GetString("Share_your_device_reports_with_us_Q", resourceCulture);
+            }
+        }
+        
+        public static string Save_stats_about_your_Aaru_usage_Q {
+            get {
+                return ResourceManager.GetString("Save_stats_about_your_Aaru_usage_Q", resourceCulture);
+            }
+        }
+        
+        public static string Share_your_stats_anonymously_Q {
+            get {
+                return ResourceManager.GetString("Share_your_stats_anonymously_Q", resourceCulture);
+            }
+        }
+        
+        public static string Gather_statistics_about_command_usage_Q {
+            get {
+                return ResourceManager.GetString("Gather_statistics_about_command_usage_Q", resourceCulture);
+            }
+        }
+        
+        public static string Gather_statistics_about_found_devices_Q {
+            get {
+                return ResourceManager.GetString("Gather_statistics_about_found_devices_Q", resourceCulture);
+            }
+        }
+        
+        public static string Gather_statistics_about_found_filesystems_Q {
+            get {
+                return ResourceManager.GetString("Gather_statistics_about_found_filesystems_Q", resourceCulture);
+            }
+        }
+        
+        public static string Gather_statistics_about_found_file_filters_Q {
+            get {
+                return ResourceManager.GetString("Gather_statistics_about_found_file_filters_Q", resourceCulture);
+            }
+        }
+        
+        public static string Gather_statistics_about_found_media_image_formats_Q {
+            get {
+                return ResourceManager.GetString("Gather_statistics_about_found_media_image_formats_Q", resourceCulture);
+            }
+        }
+        
+        public static string Gather_statistics_about_scanned_media_Q {
+            get {
+                return ResourceManager.GetString("Gather_statistics_about_scanned_media_Q", resourceCulture);
+            }
+        }
+        
+        public static string Gather_statistics_about_found_partitioning_schemes_Q {
+            get {
+                return ResourceManager.GetString("Gather_statistics_about_found_partitioning_schemes_Q", resourceCulture);
+            }
+        }
+        
+        public static string Gather_statistics_about_media_types_Q {
+            get {
+                return ResourceManager.GetString("Gather_statistics_about_media_types_Q", resourceCulture);
+            }
+        }
+        
+        public static string Gather_statistics_about_media_image_verifications_Q {
+            get {
+                return ResourceManager.GetString("Gather_statistics_about_media_image_verifications_Q", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Filesystem_Info_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Filesystem_Info_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Checksum_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Checksum_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Compare_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Compare_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Convert_Image_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Convert_Image_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Create_Sidecar_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Create_Sidecar_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Decode_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Decode_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Device_Info_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Device_Info_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Device_Report_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Device_Report_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Dump_Media_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Dump_Media_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Entropy_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Entropy_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Formats_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Formats_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Image_Info_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Image_Info_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Media_Info_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Media_Info_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Media_Scan_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Media_Scan_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Print_Hex_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Print_Hex_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string You_have_called_the_Verify_command_0_times {
+            get {
+                return ResourceManager.GetString("You_have_called_the_Verify_command_0_times", resourceCulture);
+            }
+        }
+        
+        public static string Media_found_type_real {
+            get {
+                return ResourceManager.GetString("Media_found_type_real", resourceCulture);
+            }
+        }
+        
+        public static string Media_found_type_image {
+            get {
+                return ResourceManager.GetString("Media_found_type_image", resourceCulture);
+            }
+        }
+        
+        public static string Title_Commands {
+            get {
+                return ResourceManager.GetString("Title_Commands", resourceCulture);
+            }
+        }
+        
+        public static string Title_Partition {
+            get {
+                return ResourceManager.GetString("Title_Partition", resourceCulture);
+            }
+        }
+        
+        public static string Title_Formats {
+            get {
+                return ResourceManager.GetString("Title_Formats", resourceCulture);
+            }
+        }
+        
+        public static string Title_Devices {
+            get {
+                return ResourceManager.GetString("Title_Devices", resourceCulture);
+            }
+        }
+        
+        public static string Title_Device {
+            get {
+                return ResourceManager.GetString("Title_Device", resourceCulture);
+            }
+        }
+        
+        public static string Title_Medias {
+            get {
+                return ResourceManager.GetString("Title_Medias", resourceCulture);
+            }
+        }
+        
+        public static string Title_Media {
+            get {
+                return ResourceManager.GetString("Title_Media", resourceCulture);
+            }
+        }
+        
+        public static string _0_Kb_sec {
+            get {
+                return ResourceManager.GetString("_0_Kb_sec", resourceCulture);
+            }
+        }
+        
+        public static string unlimited_as_in_speed {
+            get {
+                return ResourceManager.GetString("unlimited_as_in_speed", resourceCulture);
+            }
+        }
+        
+        public static string Save_descriptors_to_file {
+            get {
+                return ResourceManager.GetString("Save_descriptors_to_file", resourceCulture);
+            }
+        }
+        
+        public static string Title_USB {
+            get {
+                return ResourceManager.GetString("Title_USB", resourceCulture);
+            }
+        }
+        
+        public static string Title_Connected_by_USB {
+            get {
+                return ResourceManager.GetString("Title_Connected_by_USB", resourceCulture);
+            }
+        }
+        
+        public static string Title_Removable_media {
+            get {
+                return ResourceManager.GetString("Title_Removable_media", resourceCulture);
+            }
+        }
+        
+        public static string Title_Peripheral_device_type {
+            get {
+                return ResourceManager.GetString("Title_Peripheral_device_type", resourceCulture);
+            }
+        }
+        
+        public static string Title_Device_type {
+            get {
+                return ResourceManager.GetString("Title_Device_type", resourceCulture);
+            }
+        }
+        
+        public static string Title_General {
+            get {
+                return ResourceManager.GetString("Title_General", resourceCulture);
+            }
+        }
+        
+        public static string Title_Device_information {
+            get {
+                return ResourceManager.GetString("Title_Device_information", resourceCulture);
+            }
+        }
+        
+        public static string Title_FireWire {
+            get {
+                return ResourceManager.GetString("Title_FireWire", resourceCulture);
+            }
+        }
+        
+        public static string Title_Plextor {
+            get {
+                return ResourceManager.GetString("Title_Plextor", resourceCulture);
+            }
+        }
+        
+        public static string Total_loaded_discs {
+            get {
+                return ResourceManager.GetString("Total_loaded_discs", resourceCulture);
+            }
+        }
+        
+        public static string Time_spent_reading_CDs {
+            get {
+                return ResourceManager.GetString("Time_spent_reading_CDs", resourceCulture);
+            }
+        }
+        
+        public static string Time_spent_writing_CDs {
+            get {
+                return ResourceManager.GetString("Time_spent_writing_CDs", resourceCulture);
+            }
+        }
+        
+        public static string Time_spent_reading_DVDs {
+            get {
+                return ResourceManager.GetString("Time_spent_reading_DVDs", resourceCulture);
+            }
+        }
+        
+        public static string Time_spent_writing_DVDs {
+            get {
+                return ResourceManager.GetString("Time_spent_writing_DVDs", resourceCulture);
+            }
+        }
+        
+        public static string Supports_PoweRec {
+            get {
+                return ResourceManager.GetString("Supports_PoweRec", resourceCulture);
+            }
+        }
+        
+        public static string PoweRec_is_enabled {
+            get {
+                return ResourceManager.GetString("PoweRec_is_enabled", resourceCulture);
+            }
+        }
+        
+        public static string Recommended_speed {
+            get {
+                return ResourceManager.GetString("Recommended_speed", resourceCulture);
+            }
+        }
+        
+        public static string Selected_PoweRec_speed_for_currently_inserted_media {
+            get {
+                return ResourceManager.GetString("Selected_PoweRec_speed_for_currently_inserted_media", resourceCulture);
+            }
+        }
+        
+        public static string Maximum_PoweRec_speed_for_currently_inserted_media {
+            get {
+                return ResourceManager.GetString("Maximum_PoweRec_speed_for_currently_inserted_media", resourceCulture);
+            }
+        }
+        
+        public static string Last_PoweRec_used_speed {
+            get {
+                return ResourceManager.GetString("Last_PoweRec_used_speed", resourceCulture);
+            }
+        }
+        
+        public static string Supports_SilentMode {
+            get {
+                return ResourceManager.GetString("Supports_SilentMode", resourceCulture);
+            }
+        }
+        
+        public static string SilentMode_is_enabled {
+            get {
+                return ResourceManager.GetString("SilentMode_is_enabled", resourceCulture);
+            }
+        }
+        
+        public static string CD_read_speed_limited_to {
+            get {
+                return ResourceManager.GetString("CD_read_speed_limited_to", resourceCulture);
+            }
+        }
+        
+        public static string CD_write_speed_limited_to {
+            get {
+                return ResourceManager.GetString("CD_write_speed_limited_to", resourceCulture);
+            }
+        }
+        
+        public static string DVD_read_speed_limited_to {
+            get {
+                return ResourceManager.GetString("DVD_read_speed_limited_to", resourceCulture);
+            }
+        }
+        
+        public static string Supports_GigaRec {
+            get {
+                return ResourceManager.GetString("Supports_GigaRec", resourceCulture);
+            }
+        }
+        
+        public static string Supports_SecuRec {
+            get {
+                return ResourceManager.GetString("Supports_SecuRec", resourceCulture);
+            }
+        }
+        
+        public static string Supports_SpeedRead {
+            get {
+                return ResourceManager.GetString("Supports_SpeedRead", resourceCulture);
+            }
+        }
+        
+        public static string SpeedRead_is_enabled {
+            get {
+                return ResourceManager.GetString("SpeedRead_is_enabled", resourceCulture);
+            }
+        }
+        
+        public static string Supports_hiding_CD_Rs_and_sessions {
+            get {
+                return ResourceManager.GetString("Supports_hiding_CD_Rs_and_sessions", resourceCulture);
+            }
+        }
+        
+        public static string Is_hiding_CD_Rs {
+            get {
+                return ResourceManager.GetString("Is_hiding_CD_Rs", resourceCulture);
+            }
+        }
+        
+        public static string Is_forcing_only_first_session {
+            get {
+                return ResourceManager.GetString("Is_forcing_only_first_session", resourceCulture);
+            }
+        }
+        
+        public static string Supports_VariRec {
+            get {
+                return ResourceManager.GetString("Supports_VariRec", resourceCulture);
+            }
+        }
+        
+        public static string Supports_VariRec_on_DVDs {
+            get {
+                return ResourceManager.GetString("Supports_VariRec_on_DVDs", resourceCulture);
+            }
+        }
+        
+        public static string Supports_bitsetting_DVD_R_book_type {
+            get {
+                return ResourceManager.GetString("Supports_bitsetting_DVD_R_book_type", resourceCulture);
+            }
+        }
+        
+        public static string Supports_bitsetting_DVD_R_DL_book_type {
+            get {
+                return ResourceManager.GetString("Supports_bitsetting_DVD_R_DL_book_type", resourceCulture);
+            }
+        }
+        
+        public static string Supports_test_writing_DVD_Plus {
+            get {
+                return ResourceManager.GetString("Supports_test_writing_DVD_Plus", resourceCulture);
+            }
+        }
+        
+        public static string Title_Kreon {
+            get {
+                return ResourceManager.GetString("Title_Kreon", resourceCulture);
+            }
+        }
+        
+        public static string Densities_supported_by_device {
+            get {
+                return ResourceManager.GetString("Densities_supported_by_device", resourceCulture);
+            }
+        }
+        
+        public static string Medium_types_supported_by_device {
+            get {
+                return ResourceManager.GetString("Medium_types_supported_by_device", resourceCulture);
+            }
+        }
+        
+        public static string Title_CID {
+            get {
+                return ResourceManager.GetString("Title_CID", resourceCulture);
+            }
+        }
+        
+        public static string Title_CSD {
+            get {
+                return ResourceManager.GetString("Title_CSD", resourceCulture);
+            }
+        }
+        
+        public static string Title_OCR {
+            get {
+                return ResourceManager.GetString("Title_OCR", resourceCulture);
+            }
+        }
+        
+        public static string Title_Extended_CSD {
+            get {
+                return ResourceManager.GetString("Title_Extended_CSD", resourceCulture);
+            }
+        }
+        
+        public static string Title_SCR {
+            get {
+                return ResourceManager.GetString("Title_SCR", resourceCulture);
+            }
+        }
+        
+        public static string Title_PCMCIA {
+            get {
+                return ResourceManager.GetString("Title_PCMCIA", resourceCulture);
+            }
+        }
+        
+        public static string Title_ATA_ATAPI {
+            get {
+                return ResourceManager.GetString("Title_ATA_ATAPI", resourceCulture);
+            }
+        }
+        
+        public static string Title_SCSI {
+            get {
+                return ResourceManager.GetString("Title_SCSI", resourceCulture);
+            }
+        }
+        
+        public static string Title_SD_MMC {
+            get {
+                return ResourceManager.GetString("Title_SD_MMC", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Binary_files {
+            get {
+                return ResourceManager.GetString("Dialog_Binary_files", resourceCulture);
+            }
+        }
+        
+        public static string Title_Details {
+            get {
+                return ResourceManager.GetString("Title_Details", resourceCulture);
+            }
+        }
+        
+        public static string Path_0 {
+            get {
+                return ResourceManager.GetString("Path_0", resourceCulture);
+            }
+        }
+        
+        public static string Filter_0 {
+            get {
+                return ResourceManager.GetString("Filter_0", resourceCulture);
+            }
+        }
+        
+        public static string Format_0_version_1 {
+            get {
+                return ResourceManager.GetString("Format_0_version_1", resourceCulture);
+            }
+        }
+        
+        public static string Format_0 {
+            get {
+                return ResourceManager.GetString("Format_0", resourceCulture);
+            }
+        }
+        
+        public static string Has_partitions {
+            get {
+                return ResourceManager.GetString("Has_partitions", resourceCulture);
+            }
+        }
+        
+        public static string Doesnt_have_partitions {
+            get {
+                return ResourceManager.GetString("Doesnt_have_partitions", resourceCulture);
+            }
+        }
+        
+        public static string Has_sessions {
+            get {
+                return ResourceManager.GetString("Has_sessions", resourceCulture);
+            }
+        }
+        
+        public static string Doesnt_have_sessions {
+            get {
+                return ResourceManager.GetString("Doesnt_have_sessions", resourceCulture);
+            }
+        }
+        
+        public static string Media_title_0 {
+            get {
+                return ResourceManager.GetString("Media_title_0", resourceCulture);
+            }
+        }
+        
+        public static string Media_model_0 {
+            get {
+                return ResourceManager.GetString("Media_model_0", resourceCulture);
+            }
+        }
+        
+        public static string Media_barcode_0 {
+            get {
+                return ResourceManager.GetString("Media_barcode_0", resourceCulture);
+            }
+        }
+        
+        public static string Media_part_number_0 {
+            get {
+                return ResourceManager.GetString("Media_part_number_0", resourceCulture);
+            }
+        }
+        
+        public static string Drive_manufacturer_0 {
+            get {
+                return ResourceManager.GetString("Drive_manufacturer_0", resourceCulture);
+            }
+        }
+        
+        public static string Drive_model_0 {
+            get {
+                return ResourceManager.GetString("Drive_model_0", resourceCulture);
+            }
+        }
+        
+        public static string Drive_firmware_info_0 {
+            get {
+                return ResourceManager.GetString("Drive_firmware_info_0", resourceCulture);
+            }
+        }
+        
+        public static string Media_geometry_0_cylinders_1_heads_2_sectors_per_track {
+            get {
+                return ResourceManager.GetString("Media_geometry_0_cylinders_1_heads_2_sectors_per_track", resourceCulture);
+            }
+        }
+        
+        public static string Title_Image_information {
+            get {
+                return ResourceManager.GetString("Title_Image_information", resourceCulture);
+            }
+        }
+        
+        public static string Title_Comments {
+            get {
+                return ResourceManager.GetString("Title_Comments", resourceCulture);
+            }
+        }
+        
+        public static string Title_Media_information {
+            get {
+                return ResourceManager.GetString("Title_Media_information", resourceCulture);
+            }
+        }
+        
+        public static string Title_Drive_information {
+            get {
+                return ResourceManager.GetString("Title_Drive_information", resourceCulture);
+            }
+        }
+        
+        public static string Title_Readable_media_tags {
+            get {
+                return ResourceManager.GetString("Title_Readable_media_tags", resourceCulture);
+            }
+        }
+        
+        public static string Title_Readable_sector_tags {
+            get {
+                return ResourceManager.GetString("Title_Readable_sector_tags", resourceCulture);
+            }
+        }
+        
+        public static string Title_Sessions {
+            get {
+                return ResourceManager.GetString("Title_Sessions", resourceCulture);
+            }
+        }
+        
+        public static string Title_Tracks {
+            get {
+                return ResourceManager.GetString("Title_Tracks", resourceCulture);
+            }
+        }
+        
+        public static string Title_Dump_hardware {
+            get {
+                return ResourceManager.GetString("Title_Dump_hardware", resourceCulture);
+            }
+        }
+        
+        public static string Title_Software {
+            get {
+                return ResourceManager.GetString("Title_Software", resourceCulture);
+            }
+        }
+        
+        public static string Title_Operating_system {
+            get {
+                return ResourceManager.GetString("Title_Operating_system", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Calculate_entropy {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Calculate_entropy", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Verify {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Verify", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Checksum {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Checksum", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Convert_to {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Convert_to", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Create_CICM_XML_sidecar {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Create_CICM_XML_sidecar", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_View_sectors {
+            get {
+                return ResourceManager.GetString("ButtonLabel_View_sectors", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Decode_media_tags {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Decode_media_tags", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_READ_MEDIA_SERIAL_NUMBER_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_READ_MEDIA_SERIAL_NUMBER_response", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_READ_CAPACITY_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_READ_CAPACITY_response", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_READ_CAPACITY_16_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_READ_CAPACITY_16_response", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_GET_CONFIGURATION_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_GET_CONFIGURATION_response", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_RECOGNIZED_FORMAT_LAYERS_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_RECOGNIZED_FORMAT_LAYERS_response", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_WRITE_PROTECTION_STATUS_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_WRITE_PROTECTION_STATUS_response", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIA_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIA_response", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIUM_MEDIA_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIUM_MEDIA_response", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Dump_media_to_image {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Dump_media_to_image", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Scan_media_surface {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Scan_media_surface", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_trying_to_read_1_of_chosen_filesystem {
+            get {
+                return ResourceManager.GetString("Error_0_trying_to_read_1_of_chosen_filesystem", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_trying_to_get_information_about_filesystem_entry_named_1 {
+            get {
+                return ResourceManager.GetString("Error_0_trying_to_get_information_about_filesystem_entry_named_1", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Extract_to {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Extract_to", resourceCulture);
+            }
+        }
+        
+        public static string Title_Creation {
+            get {
+                return ResourceManager.GetString("Title_Creation", resourceCulture);
+            }
+        }
+        
+        public static string Title_Last_access {
+            get {
+                return ResourceManager.GetString("Title_Last_access", resourceCulture);
+            }
+        }
+        
+        public static string Title_Changed {
+            get {
+                return ResourceManager.GetString("Title_Changed", resourceCulture);
+            }
+        }
+        
+        public static string Title_Last_backup {
+            get {
+                return ResourceManager.GetString("Title_Last_backup", resourceCulture);
+            }
+        }
+        
+        public static string Title_Last_write {
+            get {
+                return ResourceManager.GetString("Title_Last_write", resourceCulture);
+            }
+        }
+        
+        public static string Title_Attributes {
+            get {
+                return ResourceManager.GetString("Title_Attributes", resourceCulture);
+            }
+        }
+        
+        public static string Title_GID {
+            get {
+                return ResourceManager.GetString("Title_GID", resourceCulture);
+            }
+        }
+        
+        public static string Title_UID {
+            get {
+                return ResourceManager.GetString("Title_UID", resourceCulture);
+            }
+        }
+        
+        public static string Title_Inode {
+            get {
+                return ResourceManager.GetString("Title_Inode", resourceCulture);
+            }
+        }
+        
+        public static string Title_Links {
+            get {
+                return ResourceManager.GetString("Title_Links", resourceCulture);
+            }
+        }
+        
+        public static string Title_Mode {
+            get {
+                return ResourceManager.GetString("Title_Mode", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Choose_destination_folder {
+            get {
+                return ResourceManager.GetString("Dialog_Choose_destination_folder", resourceCulture);
+            }
+        }
+        
+        public static string Unsupported_filename {
+            get {
+                return ResourceManager.GetString("Unsupported_filename", resourceCulture);
+            }
+        }
+        
+        public static string Filename_0_not_supported_want_to_rename_to_1 {
+            get {
+                return ResourceManager.GetString("Filename_0_not_supported_want_to_rename_to_1", resourceCulture);
+            }
+        }
+        
+        public static string Existing_file {
+            get {
+                return ResourceManager.GetString("Existing_file", resourceCulture);
+            }
+        }
+        
+        public static string File_named_0_exists_overwrite_Q {
+            get {
+                return ResourceManager.GetString("File_named_0_exists_overwrite_Q", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_delete {
+            get {
+                return ResourceManager.GetString("Cannot_delete", resourceCulture);
+            }
+        }
+        
+        public static string Could_note_delete_existe_file_continue_Q {
+            get {
+                return ResourceManager.GetString("Could_note_delete_existe_file_continue_Q", resourceCulture);
+            }
+        }
+        
+        public static string Error_reading_file {
+            get {
+                return ResourceManager.GetString("Error_reading_file", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_reading_file_continue_Q {
+            get {
+                return ResourceManager.GetString("Error_0_reading_file_continue_Q", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_create_file {
+            get {
+                return ResourceManager.GetString("Cannot_create_file", resourceCulture);
+            }
+        }
+        
+        public static string Could_not_create_destination_file_continue_Q {
+            get {
+                return ResourceManager.GetString("Could_not_create_destination_file_continue_Q", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_binary_to_file {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_binary_to_file", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_text_to_file {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_text_to_file", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Text_files {
+            get {
+                return ResourceManager.GetString("Dialog_Text_files", resourceCulture);
+            }
+        }
+        
+        public static string Disc_information {
+            get {
+                return ResourceManager.GetString("Disc_information", resourceCulture);
+            }
+        }
+        
+        public static string Burst_Cutting_Area {
+            get {
+                return ResourceManager.GetString("Burst_Cutting_Area", resourceCulture);
+            }
+        }
+        
+        public static string Cartridge_Status {
+            get {
+                return ResourceManager.GetString("Cartridge_Status", resourceCulture);
+            }
+        }
+        
+        public static string Pseudo_OverWrite_Resources {
+            get {
+                return ResourceManager.GetString("Pseudo_OverWrite_Resources", resourceCulture);
+            }
+        }
+        
+        public static string Disc_Definition_Structure {
+            get {
+                return ResourceManager.GetString("Disc_Definition_Structure", resourceCulture);
+            }
+        }
+        
+        public static string Spare_Area_Information {
+            get {
+                return ResourceManager.GetString("Spare_Area_Information", resourceCulture);
+            }
+        }
+        
+        public static string Track_Resources {
+            get {
+                return ResourceManager.GetString("Track_Resources", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Disc_Information {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Disc_Information", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Burst_Cutting_Area {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Burst_Cutting_Area", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Disc_Definition_Structure {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Disc_Definition_Structure", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Cartridge_Status {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Cartridge_Status", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Spare_Area_Information {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Spare_Area_Information", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Pseudo_OverWrite_Resources {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Pseudo_OverWrite_Resources", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Track_Resources {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Track_Resources", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_raw_DFL {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_raw_DFL", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_PAC {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_PAC", resourceCulture);
+            }
+        }
+        
+        public static string Title_Information {
+            get {
+                return ResourceManager.GetString("Title_Information", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_READ_DISC_INFORMATION_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_READ_DISC_INFORMATION_response", resourceCulture);
+            }
+        }
+        
+        public static string Title_TOC {
+            get {
+                return ResourceManager.GetString("Title_TOC", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_READ_TOC_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_READ_TOC_response", resourceCulture);
+            }
+        }
+        
+        public static string Title_TOC_full {
+            get {
+                return ResourceManager.GetString("Title_TOC_full", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_READ_RAW_TOC_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_READ_RAW_TOC_response", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_READ_SESSION_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_READ_SESSION_response", resourceCulture);
+            }
+        }
+        
+        public static string Title_CD_TEXT {
+            get {
+                return ResourceManager.GetString("Title_CD_TEXT", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Lead_In_CD_TEXT {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Lead_In_CD_TEXT", resourceCulture);
+            }
+        }
+        
+        public static string Title_ATIP {
+            get {
+                return ResourceManager.GetString("Title_ATIP", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_READ_ATIP_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_READ_ATIP_response", resourceCulture);
+            }
+        }
+        
+        public static string Title_Miscellaneous {
+            get {
+                return ResourceManager.GetString("Title_Miscellaneous", resourceCulture);
+            }
+        }
+        
+        public static string Title_Media_catalog_number {
+            get {
+                return ResourceManager.GetString("Title_Media_catalog_number", resourceCulture);
+            }
+        }
+        
+        public static string Title_ISRCs {
+            get {
+                return ResourceManager.GetString("Title_ISRCs", resourceCulture);
+            }
+        }
+        
+        public static string Title_ISRC {
+            get {
+                return ResourceManager.GetString("Title_ISRC", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_READ_PMA_response {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_READ_PMA_response", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Physical_Format_Information {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Physical_Format_Information", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Disc_Manufacturer_Information {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Disc_Manufacturer_Information", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Copyright_Management_Information {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Copyright_Management_Information", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_AACS_Information {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_AACS_Information", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Last_Border_Out_RMD {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Last_Border_Out_RMD", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Pre_Recorded_Physical_Information {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Pre_Recorded_Physical_Information", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Media_Identifier {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Media_Identifier", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Recordable_Physical_Information {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Recordable_Physical_Information", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Medium_Status {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Medium_Status", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Layer_Capacity {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Layer_Capacity", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Middle_Zone_Start {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Middle_Zone_Start", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Jump_Interval_Size {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Jump_Interval_Size", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Manual_Layer_Jump_Start_LBA {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Manual_Layer_Jump_Start_LBA", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Remap_Anchor_Point {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Remap_Anchor_Point", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_ADIP {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_ADIP", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Disc_Control_Blocks {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Disc_Control_Blocks", resourceCulture);
+            }
+        }
+        
+        public static string Device_Geometry_Tuples {
+            get {
+                return ResourceManager.GetString("Device_Geometry_Tuples", resourceCulture);
+            }
+        }
+        
+        public static string Manufacturer_Identification_Tuple {
+            get {
+                return ResourceManager.GetString("Manufacturer_Identification_Tuple", resourceCulture);
+            }
+        }
+        
+        public static string Level_1_Version_Product_Information_Tuple {
+            get {
+                return ResourceManager.GetString("Level_1_Version_Product_Information_Tuple", resourceCulture);
+            }
+        }
+        
+        public static string Undecoded_tuple_ID_0 {
+            get {
+                return ResourceManager.GetString("Undecoded_tuple_ID_0", resourceCulture);
+            }
+        }
+        
+        public static string PCMCIA_CIS_returned_no_tuples {
+            get {
+                return ResourceManager.GetString("PCMCIA_CIS_returned_no_tuples", resourceCulture);
+            }
+        }
+        
+        public static string Title_CIS {
+            get {
+                return ResourceManager.GetString("Title_CIS", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_PCMCIA_CIS_to_file {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_PCMCIA_CIS_to_file", resourceCulture);
+            }
+        }
+        
+        public static string Title_Header {
+            get {
+                return ResourceManager.GetString("Title_Header", resourceCulture);
+            }
+        }
+        
+        public static string MODE_0_Subpage_1 {
+            get {
+                return ResourceManager.GetString("MODE_0_Subpage_1", resourceCulture);
+            }
+        }
+        
+        public static string MODE_0 {
+            get {
+                return ResourceManager.GetString("MODE_0", resourceCulture);
+            }
+        }
+        
+        public static string Undecoded {
+            get {
+                return ResourceManager.GetString("Undecoded", resourceCulture);
+            }
+        }
+        
+        public static string Error_decoding_page_please_open_an_issue {
+            get {
+                return ResourceManager.GetString("Error_decoding_page_please_open_an_issue", resourceCulture);
+            }
+        }
+        
+        public static string ASCII_Page_0 {
+            get {
+                return ResourceManager.GetString("ASCII_Page_0", resourceCulture);
+            }
+        }
+        
+        public static string Unit_Serial_Number {
+            get {
+                return ResourceManager.GetString("Unit_Serial_Number", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_Implemented_operating_definitions {
+            get {
+                return ResourceManager.GetString("SCSI_Implemented_operating_definitions", resourceCulture);
+            }
+        }
+        
+        public static string ASCII_implemented_operating_definitions {
+            get {
+                return ResourceManager.GetString("ASCII_implemented_operating_definitions", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_Device_identification {
+            get {
+                return ResourceManager.GetString("SCSI_Device_identification", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_Software_Interface_Identifiers {
+            get {
+                return ResourceManager.GetString("SCSI_Software_Interface_Identifiers", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_Management_Network_Addresses {
+            get {
+                return ResourceManager.GetString("SCSI_Management_Network_Addresses", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_Extended_INQUIRY_Data {
+            get {
+                return ResourceManager.GetString("SCSI_Extended_INQUIRY_Data", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_to_ATA_Translation_Layer_Data {
+            get {
+                return ResourceManager.GetString("SCSI_to_ATA_Translation_Layer_Data", resourceCulture);
+            }
+        }
+        
+        public static string SCSI_Sequential_access_Device_Capabilities {
+            get {
+                return ResourceManager.GetString("SCSI_Sequential_access_Device_Capabilities", resourceCulture);
+            }
+        }
+        
+        public static string Manufacturer_assigned_Serial_Number {
+            get {
+                return ResourceManager.GetString("Manufacturer_assigned_Serial_Number", resourceCulture);
+            }
+        }
+        
+        public static string TapeAlert_Supported_Flags_Bitmap {
+            get {
+                return ResourceManager.GetString("TapeAlert_Supported_Flags_Bitmap", resourceCulture);
+            }
+        }
+        
+        public static string Automation_Device_Serial_Number {
+            get {
+                return ResourceManager.GetString("Automation_Device_Serial_Number", resourceCulture);
+            }
+        }
+        
+        public static string Data_Transfer_Device_Element_Address {
+            get {
+                return ResourceManager.GetString("Data_Transfer_Device_Element_Address", resourceCulture);
+            }
+        }
+        
+        public static string Quantum_Firmware_Build_Information_page {
+            get {
+                return ResourceManager.GetString("Quantum_Firmware_Build_Information_page", resourceCulture);
+            }
+        }
+        
+        public static string Seagate_Firmware_Numbers_page {
+            get {
+                return ResourceManager.GetString("Seagate_Firmware_Numbers_page", resourceCulture);
+            }
+        }
+        
+        public static string IBM_Drive_Component_Revision_Levels_page {
+            get {
+                return ResourceManager.GetString("IBM_Drive_Component_Revision_Levels_page", resourceCulture);
+            }
+        }
+        
+        public static string IBM_Drive_Serial_Numbers_page {
+            get {
+                return ResourceManager.GetString("IBM_Drive_Serial_Numbers_page", resourceCulture);
+            }
+        }
+        
+        public static string Certance_Drive_Component_Revision_Levels_page {
+            get {
+                return ResourceManager.GetString("Certance_Drive_Component_Revision_Levels_page", resourceCulture);
+            }
+        }
+        
+        public static string Head_Assembly_Serial_Number {
+            get {
+                return ResourceManager.GetString("Head_Assembly_Serial_Number", resourceCulture);
+            }
+        }
+        
+        public static string Reel_Motor_1_Serial_Number {
+            get {
+                return ResourceManager.GetString("Reel_Motor_1_Serial_Number", resourceCulture);
+            }
+        }
+        
+        public static string Reel_Motor_2_Serial_Number {
+            get {
+                return ResourceManager.GetString("Reel_Motor_2_Serial_Number", resourceCulture);
+            }
+        }
+        
+        public static string Board_Serial_Number {
+            get {
+                return ResourceManager.GetString("Board_Serial_Number", resourceCulture);
+            }
+        }
+        
+        public static string Base_Mechanical_Serial_Number {
+            get {
+                return ResourceManager.GetString("Base_Mechanical_Serial_Number", resourceCulture);
+            }
+        }
+        
+        public static string HP_Drive_Firmware_Revision_Levels_page {
+            get {
+                return ResourceManager.GetString("HP_Drive_Firmware_Revision_Levels_page", resourceCulture);
+            }
+        }
+        
+        public static string HP_Drive_Hardware_Revision_Levels_page {
+            get {
+                return ResourceManager.GetString("HP_Drive_Hardware_Revision_Levels_page", resourceCulture);
+            }
+        }
+        
+        public static string HP_Drive_PCA_Revision_Levels_page {
+            get {
+                return ResourceManager.GetString("HP_Drive_PCA_Revision_Levels_page", resourceCulture);
+            }
+        }
+        
+        public static string HP_Drive_Mechanism_Revision_Levels_page {
+            get {
+                return ResourceManager.GetString("HP_Drive_Mechanism_Revision_Levels_page", resourceCulture);
+            }
+        }
+        
+        public static string HP_Drive_Head_Assembly_Revision_Levels_page {
+            get {
+                return ResourceManager.GetString("HP_Drive_Head_Assembly_Revision_Levels_page", resourceCulture);
+            }
+        }
+        
+        public static string HP_Drive_ACI_Revision_Levels_page {
+            get {
+                return ResourceManager.GetString("HP_Drive_ACI_Revision_Levels_page", resourceCulture);
+            }
+        }
+        
+        public static string Certance_drive_status_page {
+            get {
+                return ResourceManager.GetString("Certance_drive_status_page", resourceCulture);
+            }
+        }
+        
+        public static string Page_0_h {
+            get {
+                return ResourceManager.GetString("Page_0_h", resourceCulture);
+            }
+        }
+        
+        public static string Unknown_feature {
+            get {
+                return ResourceManager.GetString("Unknown_feature", resourceCulture);
+            }
+        }
+        
+        public static string Title_INQUIRY {
+            get {
+                return ResourceManager.GetString("Title_INQUIRY", resourceCulture);
+            }
+        }
+        
+        public static string Title_SCSI_INQUIRY {
+            get {
+                return ResourceManager.GetString("Title_SCSI_INQUIRY", resourceCulture);
+            }
+        }
+        
+        public static string Title_MODE_SENSE {
+            get {
+                return ResourceManager.GetString("Title_MODE_SENSE", resourceCulture);
+            }
+        }
+        
+        public static string Title_Page {
+            get {
+                return ResourceManager.GetString("Title_Page", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_MODE_SENSE_6_response_to_file {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_MODE_SENSE_6_response_to_file", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_MODE_SENSE_10_response_to_file {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_MODE_SENSE_10_response_to_file", resourceCulture);
+            }
+        }
+        
+        public static string Title_EVPD {
+            get {
+                return ResourceManager.GetString("Title_EVPD", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_EVPD_page_to_file {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_EVPD_page_to_file", resourceCulture);
+            }
+        }
+        
+        public static string Title_MMC_FEATURES {
+            get {
+                return ResourceManager.GetString("Title_MMC_FEATURES", resourceCulture);
+            }
+        }
+        
+        public static string Title_Feature {
+            get {
+                return ResourceManager.GetString("Title_Feature", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_MMC_GET_CONFIGURATION_response_to_file {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_MMC_GET_CONFIGURATION_response_to_file", resourceCulture);
+            }
+        }
+        
+        public static string Title_Disc_Manufacturing_Information {
+            get {
+                return ResourceManager.GetString("Title_Disc_Manufacturing_Information", resourceCulture);
+            }
+        }
+        
+        public static string Title_Security_Sector {
+            get {
+                return ResourceManager.GetString("Title_Security_Sector", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Save_Xbox_Security_Sector {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Save_Xbox_Security_Sector", resourceCulture);
+            }
+        }
+        
+        public static string Title_Tag {
+            get {
+                return ResourceManager.GetString("Title_Tag", resourceCulture);
+            }
+        }
+        
+        public static string Title_HexView {
+            get {
+                return ResourceManager.GetString("Title_HexView", resourceCulture);
+            }
+        }
+        
+        public static string Title_Decoded {
+            get {
+                return ResourceManager.GetString("Title_Decoded", resourceCulture);
+            }
+        }
+        
+        public static string Title_Track_checksums {
+            get {
+                return ResourceManager.GetString("Title_Track_checksums", resourceCulture);
+            }
+        }
+        
+        public static string Title_Algorithms {
+            get {
+                return ResourceManager.GetString("Title_Algorithms", resourceCulture);
+            }
+        }
+        
+        public static string Title_Hash {
+            get {
+                return ResourceManager.GetString("Title_Hash", resourceCulture);
+            }
+        }
+        
+        public static string Title_Media_checksums {
+            get {
+                return ResourceManager.GetString("Title_Media_checksums", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Start {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Start", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Stop {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Stop", resourceCulture);
+            }
+        }
+        
+        public static string Source_image {
+            get {
+                return ResourceManager.GetString("Source_image", resourceCulture);
+            }
+        }
+        
+        public static string Output_format {
+            get {
+                return ResourceManager.GetString("Output_format", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Choose {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Choose", resourceCulture);
+            }
+        }
+        
+        public static string ButtonLabel_Get_from_source_image {
+            get {
+                return ResourceManager.GetString("ButtonLabel_Get_from_source_image", resourceCulture);
+            }
+        }
+        
+        public static string Title_Metadata {
+            get {
+                return ResourceManager.GetString("Title_Metadata", resourceCulture);
+            }
+        }
+        
+        public static string Title_Title {
+            get {
+                return ResourceManager.GetString("Title_Title", resourceCulture);
+            }
+        }
+        
+        public static string Title_Barcode {
+            get {
+                return ResourceManager.GetString("Title_Barcode", resourceCulture);
+            }
+        }
+        
+        public static string Title_Part_number {
+            get {
+                return ResourceManager.GetString("Title_Part_number", resourceCulture);
+            }
+        }
+        
+        public static string Title_Number_in_sequence {
+            get {
+                return ResourceManager.GetString("Title_Number_in_sequence", resourceCulture);
+            }
+        }
+        
+        public static string Title_Last_media_of_the_sequence {
+            get {
+                return ResourceManager.GetString("Title_Last_media_of_the_sequence", resourceCulture);
+            }
+        }
+        
+        public static string Title_Drive {
+            get {
+                return ResourceManager.GetString("Title_Drive", resourceCulture);
+            }
+        }
+        
+        public static string Title_Firmware_revision {
+            get {
+                return ResourceManager.GetString("Title_Firmware_revision", resourceCulture);
+            }
+        }
+        
+        public static string Title_Existing_CICM_XML_sidecar {
+            get {
+                return ResourceManager.GetString("Title_Existing_CICM_XML_sidecar", resourceCulture);
+            }
+        }
+        
+        public static string Title_From_image {
+            get {
+                return ResourceManager.GetString("Title_From_image", resourceCulture);
+            }
+        }
+        
+        public static string Title_Existing_resume_file {
+            get {
+                return ResourceManager.GetString("Title_Existing_resume_file", resourceCulture);
+            }
+        }
+        
+        public static string _From_image_ {
+            get {
+                return ResourceManager.GetString("_From_image_", resourceCulture);
+            }
+        }
+        
+        public static string Error_trying_to_find_selected_plugin {
+            get {
+                return ResourceManager.GetString("Error_trying_to_find_selected_plugin", resourceCulture);
+            }
+        }
+        
+        public static string Creating_output_image {
+            get {
+                return ResourceManager.GetString("Creating_output_image", resourceCulture);
+            }
+        }
+        
+        public static string Setting_image_metadata {
+            get {
+                return ResourceManager.GetString("Setting_image_metadata", resourceCulture);
+            }
+        }
+        
+        public static string Setting_tracks_list {
+            get {
+                return ResourceManager.GetString("Setting_tracks_list", resourceCulture);
+            }
+        }
+        
+        public static string Converting_sectors {
+            get {
+                return ResourceManager.GetString("Converting_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Converting_sectors_0_to_1_2_done {
+            get {
+                return ResourceManager.GetString("Converting_sectors_0_to_1_2_done", resourceCulture);
+            }
+        }
+        
+        public static string Converting_tag_0 {
+            get {
+                return ResourceManager.GetString("Converting_tag_0", resourceCulture);
+            }
+        }
+        
+        public static string Converting_tag_0_for_sectors_1_to_2_3_done {
+            get {
+                return ResourceManager.GetString("Converting_tag_0_for_sectors_1_to_2_3_done", resourceCulture);
+            }
+        }
+        
+        public static string Converting_sectors_in_track_0 {
+            get {
+                return ResourceManager.GetString("Converting_sectors_in_track_0", resourceCulture);
+            }
+        }
+        
+        public static string Converting_sectors_0_to_1_in_track_2_3_done {
+            get {
+                return ResourceManager.GetString("Converting_sectors_0_to_1_in_track_2_3_done", resourceCulture);
+            }
+        }
+        
+        public static string Converting_tag_0_for_sectors_1_to_2_in_track_3_4_done {
+            get {
+                return ResourceManager.GetString("Converting_tag_0_for_sectors_1_to_2_in_track_3_4_done", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_writing_dump_hardware_list_to_output_image {
+            get {
+                return ResourceManager.GetString("Error_0_writing_dump_hardware_list_to_output_image", resourceCulture);
+            }
+        }
+        
+        public static string Writing_CICM_XML_metadata_to_output_image {
+            get {
+                return ResourceManager.GetString("Writing_CICM_XML_metadata_to_output_image", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_writing_CICM_XML_metadata_to_output_image {
+            get {
+                return ResourceManager.GetString("Error_0_writing_CICM_XML_metadata_to_output_image", resourceCulture);
+            }
+        }
+        
+        public static string Operation_canceled_the_output_file_is_not_correct {
+            get {
+                return ResourceManager.GetString("Operation_canceled_the_output_file_is_not_correct", resourceCulture);
+            }
+        }
+        
+        public static string Title_Warning {
+            get {
+                return ResourceManager.GetString("Title_Warning", resourceCulture);
+            }
+        }
+        
+        public static string Title_Conversion_success {
+            get {
+                return ResourceManager.GetString("Title_Conversion_success", resourceCulture);
+            }
+        }
+        
+        public static string Some_warnings_happened_Check_console {
+            get {
+                return ResourceManager.GetString("Some_warnings_happened_Check_console", resourceCulture);
+            }
+        }
+        
+        public static string Image_converted_successfully {
+            get {
+                return ResourceManager.GetString("Image_converted_successfully", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Choose_destination_file {
+            get {
+                return ResourceManager.GetString("Dialog_Choose_destination_file", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Choose_existing_metadata_sidecar {
+            get {
+                return ResourceManager.GetString("Dialog_Choose_existing_metadata_sidecar", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_CICM_XML_metadata {
+            get {
+                return ResourceManager.GetString("Dialog_CICM_XML_metadata", resourceCulture);
+            }
+        }
+        
+        public static string Incorrect_metadata_sidecar_file {
+            get {
+                return ResourceManager.GetString("Incorrect_metadata_sidecar_file", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Choose_existing_resume_file {
+            get {
+                return ResourceManager.GetString("Dialog_Choose_existing_resume_file", resourceCulture);
+            }
+        }
+        
+        public static string Resume_file_does_not_contain_dump_hardware_information {
+            get {
+                return ResourceManager.GetString("Resume_file_does_not_contain_dump_hardware_information", resourceCulture);
+            }
+        }
+        
+        public static string Title_Track_entropy {
+            get {
+                return ResourceManager.GetString("Title_Track_entropy", resourceCulture);
+            }
+        }
+        
+        public static string Title_Entropy {
+            get {
+                return ResourceManager.GetString("Title_Entropy", resourceCulture);
+            }
+        }
+        
+        public static string Title_Unique_sectors {
+            get {
+                return ResourceManager.GetString("Title_Unique_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Title_Calculating_entropy {
+            get {
+                return ResourceManager.GetString("Title_Calculating_entropy", resourceCulture);
+            }
+        }
+        
+        public static string Title_Destination_file {
+            get {
+                return ResourceManager.GetString("Title_Destination_file", resourceCulture);
+            }
+        }
+        
+        public static string Title_LBA {
+            get {
+                return ResourceManager.GetString("Title_LBA", resourceCulture);
+            }
+        }
+        
+        public static string Disc_image_does_not_support_verification {
+            get {
+                return ResourceManager.GetString("Disc_image_does_not_support_verification", resourceCulture);
+            }
+        }
+        
+        public static string Checking_media_image {
+            get {
+                return ResourceManager.GetString("Checking_media_image", resourceCulture);
+            }
+        }
+        
+        public static string Verifying_track_0_of_1 {
+            get {
+                return ResourceManager.GetString("Verifying_track_0_of_1", resourceCulture);
+            }
+        }
+        
+        public static string All_sectors_contain_errors {
+            get {
+                return ResourceManager.GetString("All_sectors_contain_errors", resourceCulture);
+            }
+        }
+        
+        public static string All_sectors_are_unknown {
+            get {
+                return ResourceManager.GetString("All_sectors_are_unknown", resourceCulture);
+            }
+        }
+        
+        public static string Unknown_LBAs {
+            get {
+                return ResourceManager.GetString("Unknown_LBAs", resourceCulture);
+            }
+        }
+        
+        public static string Title_Images {
+            get {
+                return ResourceManager.GetString("Title_Images", resourceCulture);
+            }
+        }
+        
+        public static string Menu_File {
+            get {
+                return ResourceManager.GetString("Menu_File", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Open {
+            get {
+                return ResourceManager.GetString("Menu_Open", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Settings {
+            get {
+                return ResourceManager.GetString("Menu_Settings", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Exit {
+            get {
+                return ResourceManager.GetString("Menu_Exit", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Devices {
+            get {
+                return ResourceManager.GetString("Menu_Devices", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Refresh {
+            get {
+                return ResourceManager.GetString("Menu_Refresh", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Window {
+            get {
+                return ResourceManager.GetString("Menu_Window", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Console {
+            get {
+                return ResourceManager.GetString("Menu_Console", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Help {
+            get {
+                return ResourceManager.GetString("Menu_Help", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Encodings {
+            get {
+                return ResourceManager.GetString("Menu_Encodings", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Plugins {
+            get {
+                return ResourceManager.GetString("Menu_Plugins", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Statistics {
+            get {
+                return ResourceManager.GetString("Menu_Statistics", resourceCulture);
+            }
+        }
+        
+        public static string Menu_About {
+            get {
+                return ResourceManager.GetString("Menu_About", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Refresh_devices {
+            get {
+                return ResourceManager.GetString("Menu_Refresh_devices", resourceCulture);
+            }
+        }
+        
+        public static string Menu_Close_all_images {
+            get {
+                return ResourceManager.GetString("Menu_Close_all_images", resourceCulture);
+            }
+        }
+        
+        public static string Welcome_to_Aaru {
+            get {
+                return ResourceManager.GetString("Welcome_to_Aaru", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_opening_device {
+            get {
+                return ResourceManager.GetString("Error_0_opening_device", resourceCulture);
+            }
+        }
+        
+        public static string Non_removable_device_commands_not_yet_implemented {
+            get {
+                return ResourceManager.GetString("Non_removable_device_commands_not_yet_implemented", resourceCulture);
+            }
+        }
+        
+        public static string No_media_inserted {
+            get {
+                return ResourceManager.GetString("No_media_inserted", resourceCulture);
+            }
+        }
+        
+        public static string Dialog_Choose_image_to_open {
+            get {
+                return ResourceManager.GetString("Dialog_Choose_image_to_open", resourceCulture);
+            }
+        }
+        
+        public static string Error_0_opening_image_format {
+            get {
+                return ResourceManager.GetString("Error_0_opening_image_format", resourceCulture);
+            }
+        }
+        
+        public static string No_error_given {
+            get {
+                return ResourceManager.GetString("No_error_given", resourceCulture);
+            }
+        }
+        
+        public static string Exception_reading_file {
+            get {
+                return ResourceManager.GetString("Exception_reading_file", resourceCulture);
+            }
+        }
+        
+        public static string Refreshing_devices {
+            get {
+                return ResourceManager.GetString("Refreshing_devices", resourceCulture);
+            }
+        }
+        
+        public static string Found_supported_device_model_0_by_manufacturer_1_on_bus_2_and_path_3 {
+            get {
+                return ResourceManager.GetString("Found_supported_device_model_0_by_manufacturer_1_on_bus_2_and_path_3", resourceCulture);
+            }
+        }
+        
+        public static string Continue_dumping_whatever_happens {
+            get {
+                return ResourceManager.GetString("Continue_dumping_whatever_happens", resourceCulture);
+            }
+        }
+        
+        public static string Retry_passes {
+            get {
+                return ResourceManager.GetString("Retry_passes", resourceCulture);
+            }
+        }
+        
+        public static string Create_use_resume_mapfile {
+            get {
+                return ResourceManager.GetString("Create_use_resume_mapfile", resourceCulture);
+            }
+        }
+        
+        public static string Try_to_read_track_1_pregap {
+            get {
+                return ResourceManager.GetString("Try_to_read_track_1_pregap", resourceCulture);
+            }
+        }
+        
+        public static string Skipped_sectors_on_error {
+            get {
+                return ResourceManager.GetString("Skipped_sectors_on_error", resourceCulture);
+            }
+        }
+        
+        public static string Create_CICM_XML_metadata_sidecar {
+            get {
+                return ResourceManager.GetString("Create_CICM_XML_metadata_sidecar", resourceCulture);
+            }
+        }
+        
+        public static string Trim_errors_from_skipped_sectors {
+            get {
+                return ResourceManager.GetString("Trim_errors_from_skipped_sectors", resourceCulture);
+            }
+        }
+        
+        public static string Encoding_to_use_on_metadata_sidecar_creation {
+            get {
+                return ResourceManager.GetString("Encoding_to_use_on_metadata_sidecar_creation", resourceCulture);
+            }
+        }
+        
+        public static string Writing_image_to {
+            get {
+                return ResourceManager.GetString("Writing_image_to", resourceCulture);
+            }
+        }
+        
+        public static string Title_Log {
+            get {
+                return ResourceManager.GetString("Title_Log", resourceCulture);
+            }
+        }
+        
+        public static string Incorrect_resume_file_cannot_use_it {
+            get {
+                return ResourceManager.GetString("Incorrect_resume_file_cannot_use_it", resourceCulture);
+            }
+        }
+        
+        public static string Media_already_dumped_correctly_please_choose_another_destination {
+            get {
+                return ResourceManager.GetString("Media_already_dumped_correctly_please_choose_another_destination", resourceCulture);
+            }
+        }
+        
+        public static string Cannot_open_output_plugin {
+            get {
+                return ResourceManager.GetString("Cannot_open_output_plugin", resourceCulture);
+            }
+        }
+        
+        public static string Kb_s {
+            get {
+                return ResourceManager.GetString("Kb_s", resourceCulture);
+            }
+        }
+        
+        public static string Title_Block {
+            get {
+                return ResourceManager.GetString("Title_Block", resourceCulture);
+            }
+        }
+        
+        public static string Initializing_console {
+            get {
+                return ResourceManager.GetString("Initializing_console", resourceCulture);
+            }
+        }
+        
+        public static string Aaru_started {
+            get {
+                return ResourceManager.GetString("Aaru_started", resourceCulture);
+            }
+        }
+        
+        public static string Loading_settings {
+            get {
+                return ResourceManager.GetString("Loading_settings", resourceCulture);
+            }
+        }
+        
+        public static string Migrating_local_database {
+            get {
+                return ResourceManager.GetString("Migrating_local_database", resourceCulture);
+            }
+        }
+        
+        public static string Updating_main_database {
+            get {
+                return ResourceManager.GetString("Updating_main_database", resourceCulture);
+            }
+        }
+        
+        public static string Checking_GDPR_compliance {
+            get {
+                return ResourceManager.GetString("Checking_GDPR_compliance", resourceCulture);
+            }
+        }
+        
+        public static string Loading_statistics {
+            get {
+                return ResourceManager.GetString("Loading_statistics", resourceCulture);
+            }
+        }
+        
+        public static string Registering_encodings {
+            get {
+                return ResourceManager.GetString("Registering_encodings", resourceCulture);
+            }
+        }
+        
+        public static string Saving_statistics {
+            get {
+                return ResourceManager.GetString("Saving_statistics", resourceCulture);
+            }
+        }
+        
+        public static string Loading_main_window {
+            get {
+                return ResourceManager.GetString("Loading_main_window", resourceCulture);
+            }
+        }
+        
+        public static string Title_Sector {
+            get {
+                return ResourceManager.GetString("Title_Sector", resourceCulture);
+            }
+        }
+        
+        public static string Show_long_sector {
+            get {
+                return ResourceManager.GetString("Show_long_sector", resourceCulture);
             }
         }
     }

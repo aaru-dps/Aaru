@@ -122,7 +122,7 @@ public sealed class ConsoleViewModel : ViewModelBase
                                              typeof(AssemblyInformationalVersionAttribute)) as
                     AssemblyInformationalVersionAttribute;
 
-            logSw.WriteLine(UI.System_information);
+            logSw.WriteLine(Localization.Core.System_information);
 
             logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
                             Environment.Is64BitOperatingSystem ? 64 : 32);
@@ -131,13 +131,13 @@ public sealed class ConsoleViewModel : ViewModelBase
 
             logSw.WriteLine();
 
-            logSw.WriteLine(UI.Program_information);
+            logSw.WriteLine(Localization.Core.Program_information);
             logSw.WriteLine("Aaru {0}", assemblyVersion?.InformationalVersion);
-            logSw.WriteLine(UI.Running_in_0_bit, Environment.Is64BitProcess ? 64 : 32);
+            logSw.WriteLine(Localization.Core.Running_in_0_bit, Environment.Is64BitProcess ? 64 : 32);
         #if DEBUG
-            logSw.WriteLine(UI.DEBUG_version);
+            logSw.WriteLine(Localization.Core.DEBUG_version);
         #endif
-            logSw.WriteLine(UI.Command_line_0, Environment.CommandLine);
+            logSw.WriteLine(Localization.Core.Command_line_0, Environment.CommandLine);
             logSw.WriteLine();
 
             logSw.WriteLine(UI.Console_with_ornament);

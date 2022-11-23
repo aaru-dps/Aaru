@@ -101,7 +101,7 @@ public sealed partial class Sidecar
             sidecar.BlockMedia[0].Sequence.TotalMedia    = 1;
         }
 
-        UpdateStatus("Hashing media tags...");
+        UpdateStatus(Localization.Core.Hashing_media_tags);
         ErrorNumber errno;
         byte[]      buffer;
 
@@ -387,7 +387,7 @@ public sealed partial class Sidecar
             sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
         else
         {
-            UpdateStatus("Hashing sectors...");
+            UpdateStatus(Localization.Core.Hashing_sectors);
 
             var contentChkWorker = new Checksum();
 
@@ -417,13 +417,13 @@ public sealed partial class Sidecar
 
                     if(errno != ErrorNumber.NoError)
                     {
-                        UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                        UpdateStatus(string.Format(Localization.Core.Error_0_reading_sector_1, errno, doneSectors));
                         EndProgress2();
 
                         return;
                     }
 
-                    UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors, (long)sectors);
+                    UpdateProgress2(Localization.Core.Hashing_sector_0_of_1, (long)doneSectors, (long)sectors);
                     doneSectors += sectorsToRead;
                 }
                 else
@@ -432,13 +432,13 @@ public sealed partial class Sidecar
 
                     if(errno != ErrorNumber.NoError)
                     {
-                        UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                        UpdateStatus(string.Format(Localization.Core.Error_0_reading_sector_1, errno, doneSectors));
                         EndProgress2();
 
                         return;
                     }
 
-                    UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors, (long)sectors);
+                    UpdateProgress2(Localization.Core.Hashing_sector_0_of_1, (long)doneSectors, (long)sectors);
                     doneSectors += sectors - doneSectors;
                 }
 
@@ -486,7 +486,7 @@ public sealed partial class Sidecar
                     thisPartition.Checksums = sidecar.BlockMedia[0].ContentChecksums;
                 else
                 {
-                    UpdateStatus($"Hashing partition {tapePartition.Number}...");
+                    UpdateStatus(string.Format(Localization.Core.Hashing_partition_0, tapePartition.Number));
 
                     if(_aborted)
                         return;
@@ -520,15 +520,16 @@ public sealed partial class Sidecar
 
                             if(errno != ErrorNumber.NoError)
                             {
-                                AaruConsole.ErrorWriteLine($"Error {errno} reading sector {
-                                    tapePartition.FirstBlock + doneSectors}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                         errno,
+                                                                         tapePartition.FirstBlock + doneSectors));
 
                                 EndProgress2();
 
                                 return;
                             }
 
-                            UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                            UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1, (long)doneSectors, (long)sectors);
                             doneSectors += sectorsToRead;
                         }
                         else
@@ -538,15 +539,16 @@ public sealed partial class Sidecar
 
                             if(errno != ErrorNumber.NoError)
                             {
-                                AaruConsole.ErrorWriteLine($"Error {errno} reading sector {
-                                    tapePartition.FirstBlock + doneSectors}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                         errno,
+                                                                         tapePartition.FirstBlock + doneSectors));
 
                                 EndProgress2();
 
                                 return;
                             }
 
-                            UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                            UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1, (long)doneSectors, (long)sectors);
                             doneSectors += sectors - doneSectors;
                         }
 
@@ -586,7 +588,7 @@ public sealed partial class Sidecar
                     }
                     else
                     {
-                        UpdateStatus($"Hashing file {tapeFile.File}...");
+                        UpdateStatus(string.Format(Localization.Core.Hashing_file_0, tapeFile.File));
 
                         if(_aborted)
                             return;
@@ -619,15 +621,17 @@ public sealed partial class Sidecar
 
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.ErrorWriteLine($"Error {errno} reading sector {
-                                        tapeFile.FirstBlock + doneSectors}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                             errno, tapeFile.FirstBlock + doneSectors));
 
                                     EndProgress2();
 
                                     return;
                                 }
 
-                                UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                                UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1, (long)doneSectors,
+                                                (long)sectors);
+
                                 doneSectors += sectorsToRead;
                             }
                             else
@@ -637,15 +641,17 @@ public sealed partial class Sidecar
 
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.ErrorWriteLine($"Error {errno} reading sector {
-                                        tapeFile.FirstBlock + doneSectors}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                             errno, tapeFile.FirstBlock + doneSectors));
 
                                     EndProgress2();
 
                                     return;
                                 }
 
-                                UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                                UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1, (long)doneSectors,
+                                                (long)sectors);
+
                                 doneSectors += sectors - doneSectors;
                             }
 
@@ -677,7 +683,7 @@ public sealed partial class Sidecar
             sidecar.BlockMedia[0].TapeInformation = tapePartitions.ToArray();
         }
 
-        UpdateStatus("Checking filesystems...");
+        UpdateStatus(Localization.Core.Checking_filesystems);
 
         if(_aborted)
             return;
@@ -720,7 +726,7 @@ public sealed partial class Sidecar
                         if(plugin is IReadOnlyFilesystem fsPlugin &&
                            fsPlugin.Mount(image, partitions[i], encoding, null, null) == ErrorNumber.NoError)
                         {
-                            UpdateStatus($"Mounting {fsPlugin.XmlFsType.Type}");
+                            UpdateStatus(string.Format(Localization.Core.Mounting_0, fsPlugin.XmlFsType.Type));
 
                             fsPlugin.XmlFsType.Contents = Files(fsPlugin);
 
@@ -756,7 +762,7 @@ public sealed partial class Sidecar
 
             var wholePart = new Partition
             {
-                Name   = "Whole device",
+                Name   = Localization.Core.Whole_device,
                 Length = image.Info.Sectors,
                 Size   = image.Info.Sectors * image.Info.SectorSize
             };
@@ -775,7 +781,7 @@ public sealed partial class Sidecar
                     if(plugin is IReadOnlyFilesystem fsPlugin &&
                        fsPlugin.Mount(image, wholePart, encoding, null, null) == ErrorNumber.NoError)
                     {
-                        UpdateStatus($"Mounting {fsPlugin.XmlFsType.Type}");
+                        UpdateStatus(string.Format(Localization.Core.Mounting_0, fsPlugin.XmlFsType.Type));
 
                         fsPlugin.XmlFsType.Contents = Files(fsPlugin);
 
@@ -798,7 +804,7 @@ public sealed partial class Sidecar
                 sidecar.BlockMedia[0].FileSystemInformation[0].FileSystems = lstFs.ToArray();
         }
 
-        UpdateStatus("Saving metadata...");
+        UpdateStatus(Localization.Core.Saving_metadata);
 
         if(image.Info.Cylinders > 0 &&
            image.Info is { Heads: > 0, SectorsPerTrack: > 0 })
@@ -985,7 +991,7 @@ public sealed partial class Sidecar
 
         if(File.Exists(scpFilePath))
         {
-            UpdateStatus("Hashing SuperCardPro image...");
+            UpdateStatus(Localization.Core.Hashing_SuperCardPro_image);
             var scpImage  = new SuperCardPro();
             var scpFilter = new ZZZNoFilter();
             scpFilter.Open(scpFilePath);
@@ -1054,12 +1060,12 @@ public sealed partial class Sidecar
                     }
                     else
                         AaruConsole.
-                            ErrorWriteLine("SuperCardPro image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
+                            ErrorWriteLine(Localization.Core.SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
                                            scpImage.Header.end + 1, image.Info.Cylinders);
                 else
                     AaruConsole.
-                        ErrorWriteLine("SuperCardPro image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
-                                       2, image.Info.Heads);
+                        ErrorWriteLine(Localization.Core.SCP_image_do_not_same_number_heads_0_disk_image_1_ignoring, 2,
+                                       image.Info.Heads);
             }
         }
         #endregion
@@ -1091,7 +1097,7 @@ public sealed partial class Sidecar
 
         if(kfFile != null)
         {
-            UpdateStatus("Hashing KryoFlux images...");
+            UpdateStatus(Localization.Core.Hashing_KryoFlux_images);
 
             var kfImage  = new KryoFlux();
             var kfFilter = new ZZZNoFilter();
@@ -1158,11 +1164,11 @@ public sealed partial class Sidecar
                     }
                     else
                         AaruConsole.
-                            ErrorWriteLine("KryoFlux image does not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
+                            ErrorWriteLine(Localization.Core.KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
                                            kfImage.Info.Cylinders, image.Info.Cylinders);
                 else
                     AaruConsole.
-                        ErrorWriteLine("KryoFlux image does not contain same number of heads ({0}) than disk image ({1}), ignoring...",
+                        ErrorWriteLine(Localization.Core.KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring,
                                        kfImage.Info.Heads, image.Info.Heads);
             }
         }
@@ -1191,7 +1197,7 @@ public sealed partial class Sidecar
         }
         catch(NotImplementedException) {}
 
-        UpdateStatus("Hashing DiscFerret image...");
+        UpdateStatus(Localization.Core.Hashing_DiscFerret_image);
 
         if(image.Info.Heads == dfiImage.Info.Heads)
             if(dfiImage.Info.Cylinders >= image.Info.Cylinders)
@@ -1244,11 +1250,11 @@ public sealed partial class Sidecar
             }
             else
                 AaruConsole.
-                    ErrorWriteLine("DiscFerret image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
+                    ErrorWriteLine(Localization.Core.DiscFerret_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
                                    dfiImage.Info.Cylinders, image.Info.Cylinders);
         else
             AaruConsole.
-                ErrorWriteLine("DiscFerret image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
+                ErrorWriteLine(Localization.Core.DiscFerret_image_do_not_same_number_heads_0_disk_image_1_ignoring,
                                dfiImage.Info.Heads, image.Info.Heads);
         #endregion
 

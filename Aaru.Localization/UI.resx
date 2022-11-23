@@ -198,9 +198,6 @@
   <data name="Media_found_in_real_device_statistics" xml:space="preserve">
     <value>Media found in real device statistics</value>
   </data>
-  <data name="Title_Type_for_media" xml:space="preserve">
-    <value>Type</value>
-  </data>
   <data name="Media_found_in_images_statistics" xml:space="preserve">
     <value>Media found in images statistics</value>
   </data>
@@ -251,12 +248,6 @@
   </data>
   <data name="Please_insert_it_in_the_drive" xml:space="preserve">
     <value>Please insert it in the drive and press any key when it is ready.</value>
-  </data>
-  <data name="Please_write_description_of_media_type" xml:space="preserve">
-    <value>Please write a description of the media type and press enter: </value>
-  </data>
-  <data name="Please_write_media_model" xml:space="preserve">
-    <value>Please write the media model and press enter: </value>
   </data>
   <data name="Unsupported_device_type_for_report" xml:space="preserve">
     <value>Unsupported device type, report cannot be created</value>
@@ -350,15 +341,6 @@ In you are unsure, please press N to not continue.</value>
   <data name="PCMCIA_CIS_is_0_bytes" xml:space="preserve">
     <value>PCMCIA CIS is {0} bytes</value>
   </data>
-  <data name="Invoke_Found_undecoded_tuple_ID_0" xml:space="preserve">
-    <value>Found undecoded tuple ID {0}</value>
-  </data>
-  <data name="Found_unknown_tuple_ID_0" xml:space="preserve">
-    <value>Found unknown tuple ID 0x{0:X2}</value>
-  </data>
-  <data name="Could_not_get_tuples" xml:space="preserve">
-    <value>Could not get tuples</value>
-  </data>
   <data name="aaruremote_host" xml:space="preserve">
     <value>aaruremote host</value>
   </data>
@@ -434,9 +416,6 @@ In you are unsure, please press N to not continue.</value>
   </data>
   <data name="Unable_to_open_image_format" xml:space="preserve">
     <value>Unable to open image format</value>
-  </data>
-  <data name="Error_0" xml:space="preserve">
-    <value>Error: {0}</value>
   </data>
   <data name="Correctly_opened_image_file" xml:space="preserve">
     <value>Correctly opened image file.</value>
@@ -542,9 +521,6 @@ In you are unsure, please press N to not continue.</value>
   </data>
   <data name="Title_Type" xml:space="preserve">
     <value>Type</value>
-  </data>
-  <data name="Title_Start" xml:space="preserve">
-    <value>Start</value>
   </data>
   <data name="Title_Length" xml:space="preserve">
     <value>Length</value>
@@ -653,9 +629,6 @@ In you are unsure, please press N to not continue.</value>
   <data name="Unable_to_recognize_image_format_not_checksumming" xml:space="preserve">
     <value>Unable to recognize image format, not checksumming</value>
   </data>
-  <data name="Hashing_tracks" xml:space="preserve">
-    <value>Hashing tracks...</value>
-  </data>
   <data name="Hashing_track_0_of_1" xml:space="preserve">
     <value>Hashing track {0} of {1}</value>
   </data>
@@ -678,13 +651,6 @@ In you are unsure, please press N to not continue.</value>
   <data name="Checksums_Disc_has_0" xml:space="preserve">
     <value>Disc's {0}</value>
     <comment>{0} is checksum name</comment>
-  </data>
-  <data name="Could_not_get_tracks_because_0" xml:space="preserve">
-    <value>Could not get tracks because {0}</value>
-    <comment>{0} is exception message</comment>
-  </data>
-  <data name="Hashing_files" xml:space="preserve">
-    <value>Hashing files...</value>
   </data>
   <data name="Hashing_file_0_of_1" xml:space="preserve">
     <value>Hashing file {0} of {1}</value>
@@ -721,9 +687,6 @@ In you are unsure, please press N to not continue.</value>
   <data name="Checksums_Media_has_0" xml:space="preserve">
     <value>Media's {0}:</value>
     <comment>{0} is checksum name</comment>
-  </data>
-  <data name="Hashing_sectors" xml:space="preserve">
-    <value>Hashing sectors...</value>
   </data>
   <data name="Hashing_sectors_0_to_1" xml:space="preserve">
     <value>Hashing sectors {0} to {1}</value>
@@ -931,7 +894,7 @@ In you are unsure, please press N to not continue.</value>
     <value>How many sectors to convert at once.</value>
   </data>
   <data name="Who_person_created_the_image" xml:space="preserve">
-    <value>Who (person) created the image?.</value>
+    <value>Who (person) created the image?</value>
   </data>
   <data name="Manufacturer_of_drive_read_the_media_by_image" xml:space="preserve">
     <value>Manufacturer of the drive used to read the media represented by the image.</value>
@@ -1017,14 +980,14 @@ In you are unsure, please press N to not continue.</value>
   <data name="Invalid_sectors_per_track_specified" xml:space="preserve">
     <value>Invalid sectors per track specified</value>
   </data>
-  <data name="Incorrect_metadata_sidecar_file" xml:space="preserve">
+  <data name="Incorrect_metadata_sidecar_file_not_continuing" xml:space="preserve">
     <value>Incorrect metadata sidecar file, not continuing...</value>
   </data>
   <data name="Could_not_find_metadata_sidecar" xml:space="preserve">
     <value>Could not find metadata sidecar, not continuing...</value>
   </data>
   <data name="Incorrect_resume_file" xml:space="preserve">
-    <value>Incorrect resume file, not continuing...</value>
+    <value>Incorrect resume file...</value>
   </data>
   <data name="Could_not_find_resume_file" xml:space="preserve">
     <value>Could not find resume file, not continuing...</value>
@@ -1081,17 +1044,11 @@ In you are unsure, please press N to not continue.</value>
   <data name="Error_setting_output_image_in_tape_mode" xml:space="preserve">
     <value>Error setting output image in tape mode, not continuing...</value>
   </data>
-  <data name="Output_format_does_not_support_sessions" xml:space="preserve">
-    <value>Output format does not support sessions, this will end in a loss of data, not continuing...</value>
-  </data>
   <data name="Error_0_creating_output_image" xml:space="preserve">
     <value>Error {0} creating output image.</value>
   </data>
   <data name="Error_0_setting_metadata_not_continuing" xml:space="preserve">
     <value>Error {0} setting metadata, not continuing...</value>
-  </data>
-  <data name="Error_0_setting_metadata" xml:space="preserve">
-    <value>Error {0} setting metadata, continuing...</value>
   </data>
   <data name="Converting_media_tag_0" xml:space="preserve">
     <value>Converting media tag {0}</value>
@@ -1590,9 +1547,6 @@ In you are unsure, please press N to not continue.</value>
   <data name="Medium_types_currently_inserted_in_device" xml:space="preserve">
     <value>Medium types currently inserted in device</value>
   </data>
-  <data name="The_drive_has_returned_incorrect_Q_positioning_calculating_pregaps" xml:space="preserve">
-    <value>WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.</value>
-  </data>
   <data name="Hidden_track_starts_at_LBA_0_ends_at_LBA_1" xml:space="preserve">
     <value>Hidden track starts at LBA {0}, ends at LBA {1}</value>
   </data>
@@ -1724,5 +1678,1326 @@ pool with no way of using them to identify you.</value>
   </data>
   <data name="Title_Namespace" xml:space="preserve">
     <value>Namespace</value>
+  </data>
+  <data name="Invalid_list_of_items" xml:space="preserve">
+    <value>Invalid list of items</value>
+  </data>
+  <data name="Invalid_item_in_list" xml:space="preserve">
+    <value>Invalid item in list</value>
+  </data>
+  <data name="Duration_cannot_be_negative_or_infinite" xml:space="preserve">
+    <value>Duration cannot be negative or infinite</value>
+  </data>
+  <data name="Items_must_be_a_IList_ulong_double" xml:space="preserve">
+    <value>Items must be a IList&lt;(ulong, double)&gt; with ulong being the block and double being the time spent reading it, or NaN for an error.</value>
+  </data>
+  <data name="Label_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Label_Libraries" xml:space="preserve">
+    <value>Libraries</value>
+  </data>
+  <data name="Label_Authors" xml:space="preserve">
+    <value>Authors</value>
+  </data>
+  <data name="Title_About_Aaru" xml:space="preserve">
+    <value>About Aaru</value>
+  </data>
+  <data name="Label_License" xml:space="preserve">
+    <value>License: GNU General Public License Version 3</value>
+  </data>
+  <data name="ButtonLabel_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Title_Library" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="Title_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Text_Authors" xml:space="preserve">
+    <value>Developers:
+    Natalia Portillo
+    Michael Drüing
+    Rebecca Wallander
+
+Testers:
+    Silas Laspada</value>
+  </data>
+  <data name="Title_Console" xml:space="preserve">
+    <value>Console</value>
+  </data>
+  <data name="Enable_debug_console" xml:space="preserve">
+    <value>Enable debug console</value>
+  </data>
+  <data name="ButtonLabel_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ButtonLabel_Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Title_Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Title_Module" xml:space="preserve">
+    <value>Module</value>
+  </data>
+  <data name="Title_Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="Dialog_Log_files" xml:space="preserve">
+    <value>Log files</value>
+  </data>
+  <data name="Log_saved_at_0" xml:space="preserve">
+    <value>Log saved at {0}</value>
+    <comment>{0} is a date with time</comment>
+  </data>
+  <data name="Console_with_ornament" xml:space="preserve">
+    <value>################# Console ################</value>
+  </data>
+  <data name="LogEntry_Type_Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Title_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Exception_0_trying_to_save_logfile_details_has_been_sent_to_console" xml:space="preserve">
+    <value>Exception {0} trying to save logfile, details has been sent to console.</value>
+  </data>
+  <data name="Encodings" xml:space="preserve">
+    <value>Encodings</value>
+  </data>
+  <data name="Title_Code_for_encoding" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Title_Aaru_license" xml:space="preserve">
+    <value>Aaru's license</value>
+  </data>
+  <data name="Title_Plugins" xml:space="preserve">
+    <value>Plugins</value>
+  </data>
+  <data name="Title_Filters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="Title_Partitions" xml:space="preserve">
+    <value>Partitions</value>
+  </data>
+  <data name="Title_Filesystems" xml:space="preserve">
+    <value>Filesystems</value>
+  </data>
+  <data name="Title_Identify_only" xml:space="preserve">
+    <value>Identify only:</value>
+  </data>
+  <data name="Title_Media_images" xml:space="preserve">
+    <value>Media images</value>
+  </data>
+  <data name="Title_Floppy_images" xml:space="preserve">
+    <value>Floppy images</value>
+  </data>
+  <data name="Title_Readable" xml:space="preserve">
+    <value>Readable:</value>
+  </data>
+  <data name="Title_Writable" xml:space="preserve">
+    <value>Writable:</value>
+  </data>
+  <data name="Title_UUID" xml:space="preserve">
+    <value>UUID</value>
+  </data>
+  <data name="Title_Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="Title_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Title_GDPR" xml:space="preserve">
+    <value>GDPR</value>
+  </data>
+  <data name="Title_Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="Title_Statistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="ButtonLabel_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Save_device_reports_in_shared_folder_of_your_computer_Q" xml:space="preserve">
+    <value>Save device reports in shared folder of your computer?</value>
+  </data>
+  <data name="Share_your_device_reports_with_us_Q" xml:space="preserve">
+    <value>Share your device reports with us?</value>
+  </data>
+  <data name="Save_stats_about_your_Aaru_usage_Q" xml:space="preserve">
+    <value>Save stats about your Aaru usage?</value>
+  </data>
+  <data name="Share_your_stats_anonymously_Q" xml:space="preserve">
+    <value>Share your stats (anonymously)?</value>
+  </data>
+  <data name="Gather_statistics_about_command_usage_Q" xml:space="preserve">
+    <value>Gather statistics about command usage?</value>
+  </data>
+  <data name="Gather_statistics_about_found_devices_Q" xml:space="preserve">
+    <value>Gather statistics about found devices?</value>
+  </data>
+  <data name="Gather_statistics_about_found_filesystems_Q" xml:space="preserve">
+    <value>Gather statistics about found filesystems?</value>
+  </data>
+  <data name="Gather_statistics_about_found_file_filters_Q" xml:space="preserve">
+    <value>Gather statistics about found file filters?</value>
+  </data>
+  <data name="Gather_statistics_about_found_media_image_formats_Q" xml:space="preserve">
+    <value>Gather statistics about found media image formats?</value>
+  </data>
+  <data name="Gather_statistics_about_scanned_media_Q" xml:space="preserve">
+    <value>Gather statistics about scanned media?</value>
+  </data>
+  <data name="Gather_statistics_about_found_partitioning_schemes_Q" xml:space="preserve">
+    <value>Gather statistics about found partitioning schemes?</value>
+  </data>
+  <data name="Gather_statistics_about_media_types_Q" xml:space="preserve">
+    <value>Gather statistics about media types?</value>
+  </data>
+  <data name="Gather_statistics_about_media_image_verifications_Q" xml:space="preserve">
+    <value>Gather statistics about media image verifications?</value>
+  </data>
+  <data name="You_have_called_the_Filesystem_Info_command_0_times" xml:space="preserve">
+    <value>You have called the Filesystem Info command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Checksum_command_0_times" xml:space="preserve">
+    <value>You have called the Checksum command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Compare_command_0_times" xml:space="preserve">
+    <value>You have called the Compare command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Convert_Image_command_0_times" xml:space="preserve">
+    <value>You have called the Convert-Image command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Create_Sidecar_command_0_times" xml:space="preserve">
+    <value>You have called the Create-Sidecar command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Decode_command_0_times" xml:space="preserve">
+    <value>You have called the Decode command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Device_Info_command_0_times" xml:space="preserve">
+    <value>You have called the Device-Info command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Device_Report_command_0_times" xml:space="preserve">
+    <value>You have called the Device-Report command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Dump_Media_command_0_times" xml:space="preserve">
+    <value>You have called the Dump-Media command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Entropy_command_0_times" xml:space="preserve">
+    <value>You have called the Entropy command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Formats_command_0_times" xml:space="preserve">
+    <value>You have called the Formats command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Image_Info_command_0_times" xml:space="preserve">
+    <value>You have called the Image-Info command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Media_Info_command_0_times" xml:space="preserve">
+    <value>You have called the Media-Info command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Media_Scan_command_0_times" xml:space="preserve">
+    <value>You have called the Media-Scan command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Print_Hex_command_0_times" xml:space="preserve">
+    <value>You have called the Print-Hex command {0} times</value>
+  </data>
+  <data name="You_have_called_the_Verify_command_0_times" xml:space="preserve">
+    <value>You have called the Verify command {0} times</value>
+  </data>
+  <data name="Media_found_type_real" xml:space="preserve">
+    <value>real</value>
+  </data>
+  <data name="Media_found_type_image" xml:space="preserve">
+    <value>image</value>
+  </data>
+  <data name="Title_Commands" xml:space="preserve">
+    <value>Commands</value>
+  </data>
+  <data name="Title_Partition" xml:space="preserve">
+    <value>Partition</value>
+  </data>
+  <data name="Title_Formats" xml:space="preserve">
+    <value>Formats</value>
+  </data>
+  <data name="Title_Devices" xml:space="preserve">
+    <value>Devices</value>
+  </data>
+  <data name="Title_Device" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="Title_Medias" xml:space="preserve">
+    <value>Medias</value>
+  </data>
+  <data name="Title_Media" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="_0_Kb_sec" xml:space="preserve">
+    <value>{0} Kb/sec.</value>
+  </data>
+  <data name="unlimited_as_in_speed" xml:space="preserve">
+    <value>unlimited</value>
+    <comment>From "unlimited speed"</comment>
+  </data>
+  <data name="Save_descriptors_to_file" xml:space="preserve">
+    <value>Save descriptors to file</value>
+  </data>
+  <data name="Title_USB" xml:space="preserve">
+    <value>USB</value>
+  </data>
+  <data name="Title_Connected_by_USB" xml:space="preserve">
+    <value>Connected by USB</value>
+  </data>
+  <data name="Title_Removable_media" xml:space="preserve">
+    <value>Removable media</value>
+  </data>
+  <data name="Title_Peripheral_device_type" xml:space="preserve">
+    <value>Peripheral device type</value>
+  </data>
+  <data name="Title_Device_type" xml:space="preserve">
+    <value>Device type</value>
+  </data>
+  <data name="Title_General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Title_Device_information" xml:space="preserve">
+    <value>Device information</value>
+  </data>
+  <data name="Title_FireWire" xml:space="preserve">
+    <value>FireWire</value>
+  </data>
+  <data name="Title_Plextor" xml:space="preserve">
+    <value>Plextor</value>
+  </data>
+  <data name="Total_loaded_discs" xml:space="preserve">
+    <value>Total loaded discs:</value>
+  </data>
+  <data name="Time_spent_reading_CDs" xml:space="preserve">
+    <value>Time spent reading CDs</value>
+  </data>
+  <data name="Time_spent_writing_CDs" xml:space="preserve">
+    <value>Time spent writing CDs</value>
+  </data>
+  <data name="Time_spent_reading_DVDs" xml:space="preserve">
+    <value>Time spent reading DVDs</value>
+  </data>
+  <data name="Time_spent_writing_DVDs" xml:space="preserve">
+    <value>Time spent writing DVDs</value>
+  </data>
+  <data name="Supports_PoweRec" xml:space="preserve">
+    <value>Supports PoweRec</value>
+  </data>
+  <data name="PoweRec_is_enabled" xml:space="preserve">
+    <value>PoweRec is enabled</value>
+  </data>
+  <data name="Recommended_speed" xml:space="preserve">
+    <value>Recommended speed</value>
+  </data>
+  <data name="Selected_PoweRec_speed_for_currently_inserted_media" xml:space="preserve">
+    <value>Selected PoweRec speed for currently inserted media:</value>
+  </data>
+  <data name="Maximum_PoweRec_speed_for_currently_inserted_media" xml:space="preserve">
+    <value>Maximum PoweRec speed for currently inserted media:</value>
+  </data>
+  <data name="Last_PoweRec_used_speed" xml:space="preserve">
+    <value>Last PoweRec used speed</value>
+  </data>
+  <data name="Supports_SilentMode" xml:space="preserve">
+    <value>Supports SilentMode</value>
+  </data>
+  <data name="SilentMode_is_enabled" xml:space="preserve">
+    <value>SilentMode is enabled</value>
+  </data>
+  <data name="CD_read_speed_limited_to" xml:space="preserve">
+    <value>CD read speed limited to</value>
+  </data>
+  <data name="CD_write_speed_limited_to" xml:space="preserve">
+    <value>CD write speed limited to</value>
+  </data>
+  <data name="DVD_read_speed_limited_to" xml:space="preserve">
+    <value>DVD read speed limited to</value>
+  </data>
+  <data name="Supports_GigaRec" xml:space="preserve">
+    <value>Supports GigaRec</value>
+  </data>
+  <data name="Supports_SecuRec" xml:space="preserve">
+    <value>Supports SecuRec</value>
+  </data>
+  <data name="Supports_SpeedRead" xml:space="preserve">
+    <value>Supports SpeedRead</value>
+  </data>
+  <data name="SpeedRead_is_enabled" xml:space="preserve">
+    <value>SpeedRead is enabled</value>
+  </data>
+  <data name="Supports_hiding_CD_Rs_and_sessions" xml:space="preserve">
+    <value>Supports hiding CD-Rs and sessions</value>
+  </data>
+  <data name="Is_hiding_CD_Rs" xml:space="preserve">
+    <value>Is hiding CD-Rs</value>
+  </data>
+  <data name="Is_forcing_only_first_session" xml:space="preserve">
+    <value>Is forcing only first session</value>
+  </data>
+  <data name="Supports_VariRec" xml:space="preserve">
+    <value>Supports VariRec</value>
+  </data>
+  <data name="Supports_VariRec_on_DVDs" xml:space="preserve">
+    <value>Supports VariRec on DVDs</value>
+  </data>
+  <data name="Supports_bitsetting_DVD_R_book_type" xml:space="preserve">
+    <value>Supports bitsetting DVD+R book type</value>
+  </data>
+  <data name="Supports_bitsetting_DVD_R_DL_book_type" xml:space="preserve">
+    <value>Supports bitsetting DVD+R DL book type</value>
+  </data>
+  <data name="Supports_test_writing_DVD_Plus" xml:space="preserve">
+    <value>Supports test writing DVD+</value>
+  </data>
+  <data name="Title_Kreon" xml:space="preserve">
+    <value>Kreon</value>
+  </data>
+  <data name="Densities_supported_by_device" xml:space="preserve">
+    <value>Densities supported by device:</value>
+  </data>
+  <data name="Medium_types_supported_by_device" xml:space="preserve">
+    <value>Medium types supported by device:</value>
+  </data>
+  <data name="Title_CID" xml:space="preserve">
+    <value>CID</value>
+  </data>
+  <data name="Title_CSD" xml:space="preserve">
+    <value>CSD</value>
+  </data>
+  <data name="Title_OCR" xml:space="preserve">
+    <value>OCR</value>
+  </data>
+  <data name="Title_Extended_CSD" xml:space="preserve">
+    <value>Extended CSD</value>
+  </data>
+  <data name="Title_SCR" xml:space="preserve">
+    <value>SCR</value>
+  </data>
+  <data name="Title_PCMCIA" xml:space="preserve">
+    <value>PCMCIA</value>
+  </data>
+  <data name="Title_ATA_ATAPI" xml:space="preserve">
+    <value>ATA / ATAPI</value>
+  </data>
+  <data name="Title_SCSI" xml:space="preserve">
+    <value>SCSI</value>
+  </data>
+  <data name="Title_SD_MMC" xml:space="preserve">
+    <value>SD / MMC</value>
+  </data>
+  <data name="Dialog_Binary_files" xml:space="preserve">
+    <value>Binary</value>
+  </data>
+  <data name="Title_Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Path_0" xml:space="preserve">
+    <value>Path: {0}</value>
+  </data>
+  <data name="Filter_0" xml:space="preserve">
+    <value>Filter: {0}</value>
+  </data>
+  <data name="Format_0_version_1" xml:space="preserve">
+    <value>Format: {0} version {1}</value>
+  </data>
+  <data name="Format_0" xml:space="preserve">
+    <value>Format: {0}</value>
+  </data>
+  <data name="Has_partitions" xml:space="preserve">
+    <value>Has partitions</value>
+  </data>
+  <data name="Doesnt_have_partitions" xml:space="preserve">
+    <value>Doesn't have partitions</value>
+  </data>
+  <data name="Has_sessions" xml:space="preserve">
+    <value>Has sessions</value>
+  </data>
+  <data name="Doesnt_have_sessions" xml:space="preserve">
+    <value>Doesn't have sessions</value>
+  </data>
+  <data name="Media_title_0" xml:space="preserve">
+    <value>Media title: {0}</value>
+  </data>
+  <data name="Media_model_0" xml:space="preserve">
+    <value>Media model: {0}</value>
+  </data>
+  <data name="Media_barcode_0" xml:space="preserve">
+    <value>Media barcode: {0}</value>
+  </data>
+  <data name="Media_part_number_0" xml:space="preserve">
+    <value>Media part number: {0}</value>
+  </data>
+  <data name="Drive_manufacturer_0" xml:space="preserve">
+    <value>Drive manufacturer: {0}</value>
+  </data>
+  <data name="Drive_model_0" xml:space="preserve">
+    <value>Drive model: {0}</value>
+  </data>
+  <data name="Drive_firmware_info_0" xml:space="preserve">
+    <value>Drive firmware info: {0}</value>
+  </data>
+  <data name="Media_geometry_0_cylinders_1_heads_2_sectors_per_track" xml:space="preserve">
+    <value>Media geometry: {0} cylinders, {1} heads, {2} sectors per track</value>
+  </data>
+  <data name="Title_Image_information" xml:space="preserve">
+    <value>Image information</value>
+  </data>
+  <data name="Title_Comments" xml:space="preserve">
+    <value>Comments</value>
+  </data>
+  <data name="Title_Media_information" xml:space="preserve">
+    <value>Media information</value>
+  </data>
+  <data name="Title_Drive_information" xml:space="preserve">
+    <value>Drive information</value>
+  </data>
+  <data name="Title_Readable_media_tags" xml:space="preserve">
+    <value>Readable media tags</value>
+  </data>
+  <data name="Title_Readable_sector_tags" xml:space="preserve">
+    <value>Readable sector tags</value>
+  </data>
+  <data name="Title_Sessions" xml:space="preserve">
+    <value>Sessions</value>
+  </data>
+  <data name="Title_Tracks" xml:space="preserve">
+    <value>Tracks</value>
+  </data>
+  <data name="Title_Dump_hardware" xml:space="preserve">
+    <value>Dump hardware</value>
+  </data>
+  <data name="Title_Software" xml:space="preserve">
+    <value>Software</value>
+  </data>
+  <data name="Title_Operating_system" xml:space="preserve">
+    <value>Operating system</value>
+  </data>
+  <data name="ButtonLabel_Calculate_entropy" xml:space="preserve">
+    <value>Calculate entropy</value>
+  </data>
+  <data name="ButtonLabel_Verify" xml:space="preserve">
+    <value>Verify</value>
+  </data>
+  <data name="ButtonLabel_Checksum" xml:space="preserve">
+    <value>Checksum</value>
+  </data>
+  <data name="ButtonLabel_Convert_to" xml:space="preserve">
+    <value>Convert to...</value>
+  </data>
+  <data name="ButtonLabel_Create_CICM_XML_sidecar" xml:space="preserve">
+    <value>Create CICM XML sidecar...</value>
+  </data>
+  <data name="ButtonLabel_View_sectors" xml:space="preserve">
+    <value>View sectors</value>
+  </data>
+  <data name="ButtonLabel_Decode_media_tags" xml:space="preserve">
+    <value>Decode media tags</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_MEDIA_SERIAL_NUMBER_response" xml:space="preserve">
+    <value>Save READ MEDIA SERIAL NUMBER response</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_CAPACITY_response" xml:space="preserve">
+    <value>Save READ CAPACITY response</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_CAPACITY_16_response" xml:space="preserve">
+    <value>Save READ CAPACITY (16) response</value>
+  </data>
+  <data name="ButtonLabel_Save_GET_CONFIGURATION_response" xml:space="preserve">
+    <value>Save GET CONFIGURATION response</value>
+  </data>
+  <data name="ButtonLabel_Save_RECOGNIZED_FORMAT_LAYERS_response" xml:space="preserve">
+    <value>Save RECOGNIZED FORMAT LAYERS response</value>
+  </data>
+  <data name="ButtonLabel_Save_WRITE_PROTECTION_STATUS_response" xml:space="preserve">
+    <value>Save WRITE PROTECTION STATUS response</value>
+  </data>
+  <data name="ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIA_response" xml:space="preserve">
+    <value>Save REPORT DENSITY SUPPORT (MEDIA) response</value>
+  </data>
+  <data name="ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIUM_MEDIA_response" xml:space="preserve">
+    <value>Save REPORT DENSITY SUPPORT (MEDIUM &amp; MEDIA) response</value>
+  </data>
+  <data name="ButtonLabel_Dump_media_to_image" xml:space="preserve">
+    <value>Dump media to image</value>
+  </data>
+  <data name="ButtonLabel_Scan_media_surface" xml:space="preserve">
+    <value>Scan media surface</value>
+  </data>
+  <data name="Error_0_trying_to_read_1_of_chosen_filesystem" xml:space="preserve">
+    <value>Error {0} trying to read "{1}" of chosen filesystem</value>
+  </data>
+  <data name="Error_0_trying_to_get_information_about_filesystem_entry_named_1" xml:space="preserve">
+    <value>Error {0} trying to get information about filesystem entry named {1}</value>
+  </data>
+  <data name="ButtonLabel_Extract_to" xml:space="preserve">
+    <value>Extract to...</value>
+  </data>
+  <data name="Title_Creation" xml:space="preserve">
+    <value>Creation</value>
+  </data>
+  <data name="Title_Last_access" xml:space="preserve">
+    <value>Last access</value>
+  </data>
+  <data name="Title_Changed" xml:space="preserve">
+    <value>Changed</value>
+  </data>
+  <data name="Title_Last_backup" xml:space="preserve">
+    <value>Last backup</value>
+  </data>
+  <data name="Title_Last_write" xml:space="preserve">
+    <value>Last write</value>
+  </data>
+  <data name="Title_Attributes" xml:space="preserve">
+    <value>Attributes</value>
+  </data>
+  <data name="Title_GID" xml:space="preserve">
+    <value>GID</value>
+  </data>
+  <data name="Title_UID" xml:space="preserve">
+    <value>UID</value>
+  </data>
+  <data name="Title_Inode" xml:space="preserve">
+    <value>Inode</value>
+  </data>
+  <data name="Title_Links" xml:space="preserve">
+    <value>Links</value>
+  </data>
+  <data name="Title_Mode" xml:space="preserve">
+    <value>Mode</value>
+  </data>
+  <data name="Dialog_Choose_destination_folder" xml:space="preserve">
+    <value>Choose destination folder...</value>
+  </data>
+  <data name="Unsupported_filename" xml:space="preserve">
+    <value>Unsupported filename</value>
+  </data>
+  <data name="Filename_0_not_supported_want_to_rename_to_1" xml:space="preserve">
+    <value>The file name {0} is not supported on this platform.
+Do you want to rename it to {1}?</value>
+  </data>
+  <data name="Existing_file" xml:space="preserve">
+    <value>Existing file</value>
+  </data>
+  <data name="File_named_0_exists_overwrite_Q" xml:space="preserve">
+    <value>A file named {0} already exists on the destination folder.
+Do you want to overwrite it?</value>
+  </data>
+  <data name="Cannot_delete" xml:space="preserve">
+    <value>Cannot delete</value>
+  </data>
+  <data name="Could_note_delete_existe_file_continue_Q" xml:space="preserve">
+    <value>Could not delete existing file.
+Do you want to continue?</value>
+  </data>
+  <data name="Error_reading_file" xml:space="preserve">
+    <value>Error reading file</value>
+  </data>
+  <data name="Error_0_reading_file_continue_Q" xml:space="preserve">
+    <value>Error {0} reading file.
+Do you want to continue?</value>
+  </data>
+  <data name="Cannot_create_file" xml:space="preserve">
+    <value>Cannot create file</value>
+  </data>
+  <data name="Could_not_create_destination_file_continue_Q" xml:space="preserve">
+    <value>Could not create destination file.
+Do you want to continue?</value>
+  </data>
+  <data name="ButtonLabel_Save_binary_to_file" xml:space="preserve">
+    <value>Save binary to file</value>
+  </data>
+  <data name="ButtonLabel_Save_text_to_file" xml:space="preserve">
+    <value>Save text to file</value>
+  </data>
+  <data name="Dialog_Text_files" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Disc_information" xml:space="preserve">
+    <value>Disc information</value>
+  </data>
+  <data name="Burst_Cutting_Area" xml:space="preserve">
+    <value>Burst Cutting Area</value>
+  </data>
+  <data name="Cartridge_Status" xml:space="preserve">
+    <value>Cartridge Status</value>
+  </data>
+  <data name="Pseudo_OverWrite_Resources" xml:space="preserve">
+    <value>Pseudo-OverWrite Resources</value>
+  </data>
+  <data name="Disc_Definition_Structure" xml:space="preserve">
+    <value>Disc Definition Structure</value>
+  </data>
+  <data name="Spare_Area_Information" xml:space="preserve">
+    <value>Spare Area Information</value>
+  </data>
+  <data name="Track_Resources" xml:space="preserve">
+    <value>Track Resources</value>
+  </data>
+  <data name="ButtonLabel_Save_Disc_Information" xml:space="preserve">
+    <value>Save Disc Information</value>
+  </data>
+  <data name="ButtonLabel_Save_Burst_Cutting_Area" xml:space="preserve">
+    <value>Save Burst Cutting Area</value>
+  </data>
+  <data name="ButtonLabel_Save_Disc_Definition_Structure" xml:space="preserve">
+    <value>Save Disc Definition Structure</value>
+  </data>
+  <data name="ButtonLabel_Save_Cartridge_Status" xml:space="preserve">
+    <value>Save Cartridge Status</value>
+  </data>
+  <data name="ButtonLabel_Save_Spare_Area_Information" xml:space="preserve">
+    <value>Save Spare Area Information</value>
+  </data>
+  <data name="ButtonLabel_Save_Pseudo_OverWrite_Resources" xml:space="preserve">
+    <value>Save Pseudo-OverWrite Resources</value>
+  </data>
+  <data name="ButtonLabel_Save_Track_Resources" xml:space="preserve">
+    <value>Save Track Resources</value>
+  </data>
+  <data name="ButtonLabel_Save_raw_DFL" xml:space="preserve">
+    <value>Save raw DFL</value>
+  </data>
+  <data name="ButtonLabel_Save_PAC" xml:space="preserve">
+    <value>Save PAC</value>
+  </data>
+  <data name="Title_Information" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_DISC_INFORMATION_response" xml:space="preserve">
+    <value>Save READ DISC INFORMATION response</value>
+  </data>
+  <data name="Title_TOC" xml:space="preserve">
+    <value>TOC</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_TOC_response" xml:space="preserve">
+    <value>Save READ TOC response</value>
+  </data>
+  <data name="Title_TOC_full" xml:space="preserve">
+    <value>TOC (full)</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_RAW_TOC_response" xml:space="preserve">
+    <value>Save READ RAW TOC response</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_SESSION_response" xml:space="preserve">
+    <value>Save READ SESSION response</value>
+  </data>
+  <data name="Title_CD_TEXT" xml:space="preserve">
+    <value>CD-TEXT</value>
+  </data>
+  <data name="ButtonLabel_Save_Lead_In_CD_TEXT" xml:space="preserve">
+    <value>Save Lead-In CD-TEXT</value>
+  </data>
+  <data name="Title_ATIP" xml:space="preserve">
+    <value>ATIP</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_ATIP_response" xml:space="preserve">
+    <value>Save READ ATIP response</value>
+  </data>
+  <data name="Title_Miscellaneous" xml:space="preserve">
+    <value>Miscellaneous</value>
+  </data>
+  <data name="Title_Media_catalog_number" xml:space="preserve">
+    <value>Media catalog number</value>
+  </data>
+  <data name="Title_ISRCs" xml:space="preserve">
+    <value>ISRCs</value>
+  </data>
+  <data name="Title_ISRC" xml:space="preserve">
+    <value>ISRC</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_PMA_response" xml:space="preserve">
+    <value>Save READ PMA response</value>
+  </data>
+  <data name="ButtonLabel_Save_Physical_Format_Information" xml:space="preserve">
+    <value>Save Physical Format Information</value>
+  </data>
+  <data name="ButtonLabel_Save_Disc_Manufacturer_Information" xml:space="preserve">
+    <value>Save Disc Manufacturer Information</value>
+  </data>
+  <data name="ButtonLabel_Save_Copyright_Management_Information" xml:space="preserve">
+    <value>Save Copyright Management Information</value>
+  </data>
+  <data name="ButtonLabel_Save_AACS_Information" xml:space="preserve">
+    <value>Save AACS Information</value>
+  </data>
+  <data name="ButtonLabel_Save_Last_Border_Out_RMD" xml:space="preserve">
+    <value>Save Last Border-Out RMD</value>
+  </data>
+  <data name="ButtonLabel_Save_Pre_Recorded_Physical_Information" xml:space="preserve">
+    <value>Save Pre-Recorded Physical Information</value>
+  </data>
+  <data name="ButtonLabel_Save_Media_Identifier" xml:space="preserve">
+    <value>Save Media Identifier</value>
+  </data>
+  <data name="ButtonLabel_Save_Recordable_Physical_Information" xml:space="preserve">
+    <value>Save Recordable Physical Information</value>
+  </data>
+  <data name="ButtonLabel_Save_Medium_Status" xml:space="preserve">
+    <value>Save Medium Status</value>
+  </data>
+  <data name="ButtonLabel_Save_Layer_Capacity" xml:space="preserve">
+    <value>Save Layer Capacity</value>
+  </data>
+  <data name="ButtonLabel_Save_Middle_Zone_Start" xml:space="preserve">
+    <value>Save Middle Zone Start</value>
+  </data>
+  <data name="ButtonLabel_Save_Jump_Interval_Size" xml:space="preserve">
+    <value>Save Jump Interval Size</value>
+  </data>
+  <data name="ButtonLabel_Save_Manual_Layer_Jump_Start_LBA" xml:space="preserve">
+    <value>Save Manual Layer Jump Start LBA</value>
+  </data>
+  <data name="ButtonLabel_Save_Remap_Anchor_Point" xml:space="preserve">
+    <value>Save Remap Anchor Point</value>
+  </data>
+  <data name="ButtonLabel_Save_ADIP" xml:space="preserve">
+    <value>Save ADIP</value>
+  </data>
+  <data name="ButtonLabel_Save_Disc_Control_Blocks" xml:space="preserve">
+    <value>Save Disc Control Blocks</value>
+  </data>
+  <data name="Device_Geometry_Tuples" xml:space="preserve">
+    <value>Device Geometry Tuples</value>
+  </data>
+  <data name="Manufacturer_Identification_Tuple" xml:space="preserve">
+    <value>Manufacturer Identification Tuple</value>
+  </data>
+  <data name="Level_1_Version_Product_Information_Tuple" xml:space="preserve">
+    <value>Level 1 Version / Product Information Tuple</value>
+  </data>
+  <data name="Undecoded_tuple_ID_0" xml:space="preserve">
+    <value>Undecoded tuple ID {0}</value>
+  </data>
+  <data name="PCMCIA_CIS_returned_no_tuples" xml:space="preserve">
+    <value>PCMCIA CIS returned no tuples</value>
+  </data>
+  <data name="Title_CIS" xml:space="preserve">
+    <value>CIS</value>
+  </data>
+  <data name="ButtonLabel_Save_PCMCIA_CIS_to_file" xml:space="preserve">
+    <value>Save PCMCIA CIS to file</value>
+  </data>
+  <data name="Title_Header" xml:space="preserve">
+    <value>Header</value>
+  </data>
+  <data name="MODE_0_Subpage_1" xml:space="preserve">
+    <value>MODE {0:X2} Subpage {1:X2}</value>
+  </data>
+  <data name="MODE_0" xml:space="preserve">
+    <value>MODE {0:X2}h</value>
+  </data>
+  <data name="Undecoded" xml:space="preserve">
+    <value>Undecoded</value>
+  </data>
+  <data name="Error_decoding_page_please_open_an_issue" xml:space="preserve">
+    <value>Error decoding page, please open an issue.</value>
+  </data>
+  <data name="ASCII_Page_0" xml:space="preserve">
+    <value>ASCII Page {0:X2}h</value>
+  </data>
+  <data name="Unit_Serial_Number" xml:space="preserve">
+    <value>Unit Serial Number</value>
+  </data>
+  <data name="SCSI_Implemented_operating_definitions" xml:space="preserve">
+    <value>SCSI Implemented operating definitions</value>
+  </data>
+  <data name="ASCII_implemented_operating_definitions" xml:space="preserve">
+    <value>ASCII implemented operating definitions</value>
+  </data>
+  <data name="SCSI_Device_identification" xml:space="preserve">
+    <value>SCSI Device identification</value>
+  </data>
+  <data name="SCSI_Software_Interface_Identifiers" xml:space="preserve">
+    <value>SCSI Software Interface Identifiers</value>
+  </data>
+  <data name="SCSI_Management_Network_Addresses" xml:space="preserve">
+    <value>SCSI Management Network Addresses</value>
+  </data>
+  <data name="SCSI_Extended_INQUIRY_Data" xml:space="preserve">
+    <value>SCSI Extended INQUIRY Data</value>
+  </data>
+  <data name="SCSI_to_ATA_Translation_Layer_Data" xml:space="preserve">
+    <value>SCSI to ATA Translation Layer Data</value>
+  </data>
+  <data name="SCSI_Sequential_access_Device_Capabilities" xml:space="preserve">
+    <value>SCSI Sequential-access Device Capabilities</value>
+  </data>
+  <data name="Manufacturer_assigned_Serial_Number" xml:space="preserve">
+    <value>Manufacturer-assigned Serial Number</value>
+  </data>
+  <data name="TapeAlert_Supported_Flags_Bitmap" xml:space="preserve">
+    <value>TapeAlert Supported Flags Bitmap</value>
+  </data>
+  <data name="Automation_Device_Serial_Number" xml:space="preserve">
+    <value>Automation Device Serial Number</value>
+  </data>
+  <data name="Data_Transfer_Device_Element_Address" xml:space="preserve">
+    <value>Data Transfer Device Element Address</value>
+  </data>
+  <data name="Quantum_Firmware_Build_Information_page" xml:space="preserve">
+    <value>Quantum Firmware Build Information page</value>
+  </data>
+  <data name="Seagate_Firmware_Numbers_page" xml:space="preserve">
+    <value>Seagate Firmware Numbers page</value>
+  </data>
+  <data name="IBM_Drive_Component_Revision_Levels_page" xml:space="preserve">
+    <value>IBM Drive Component Revision Levels page</value>
+  </data>
+  <data name="IBM_Drive_Serial_Numbers_page" xml:space="preserve">
+    <value>IBM Drive Serial Numbers page</value>
+  </data>
+  <data name="Certance_Drive_Component_Revision_Levels_page" xml:space="preserve">
+    <value>Certance Drive Component Revision Levels page</value>
+  </data>
+  <data name="Head_Assembly_Serial_Number" xml:space="preserve">
+    <value>Head Assembly Serial Number</value>
+  </data>
+  <data name="Reel_Motor_1_Serial_Number" xml:space="preserve">
+    <value>Reel Motor 1 Serial Number</value>
+  </data>
+  <data name="Reel_Motor_2_Serial_Number" xml:space="preserve">
+    <value>Reel Motor 2 Serial Number</value>
+  </data>
+  <data name="Board_Serial_Number" xml:space="preserve">
+    <value>Board Serial Number</value>
+  </data>
+  <data name="Base_Mechanical_Serial_Number" xml:space="preserve">
+    <value>Base Mechanical Serial Number</value>
+  </data>
+  <data name="HP_Drive_Firmware_Revision_Levels_page" xml:space="preserve">
+    <value>HP Drive Firmware Revision Levels page</value>
+  </data>
+  <data name="HP_Drive_Hardware_Revision_Levels_page" xml:space="preserve">
+    <value>HP Drive Hardware Revision Levels page</value>
+  </data>
+  <data name="HP_Drive_PCA_Revision_Levels_page" xml:space="preserve">
+    <value>HP Drive PCA Revision Levels page</value>
+  </data>
+  <data name="HP_Drive_Mechanism_Revision_Levels_page" xml:space="preserve">
+    <value>HP Drive Mechanism Revision Levels page</value>
+  </data>
+  <data name="HP_Drive_Head_Assembly_Revision_Levels_page" xml:space="preserve">
+    <value>HP Drive Head Assembly Revision Levels page</value>
+  </data>
+  <data name="HP_Drive_ACI_Revision_Levels_page" xml:space="preserve">
+    <value>HP Drive ACI Revision Levels page</value>
+  </data>
+  <data name="Certance_drive_status_page" xml:space="preserve">
+    <value>Certance drive status page</value>
+  </data>
+  <data name="Page_0_h" xml:space="preserve">
+    <value>Page {0:X2}h</value>
+  </data>
+  <data name="Unknown_feature" xml:space="preserve">
+    <value>Unknown feature</value>
+  </data>
+  <data name="Title_INQUIRY" xml:space="preserve">
+    <value>INQUIRY</value>
+  </data>
+  <data name="Title_SCSI_INQUIRY" xml:space="preserve">
+    <value>SCSI INQUIRY</value>
+  </data>
+  <data name="Title_MODE_SENSE" xml:space="preserve">
+    <value>MODE SENSE</value>
+  </data>
+  <data name="Title_Page" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="ButtonLabel_Save_MODE_SENSE_6_response_to_file" xml:space="preserve">
+    <value>Save MODE SENSE (6) response to file</value>
+  </data>
+  <data name="ButtonLabel_Save_MODE_SENSE_10_response_to_file" xml:space="preserve">
+    <value>Save MODE SENSE (10) response to file</value>
+  </data>
+  <data name="Title_EVPD" xml:space="preserve">
+    <value>EVPD</value>
+  </data>
+  <data name="ButtonLabel_Save_EVPD_page_to_file" xml:space="preserve">
+    <value>Save EVPD page to file</value>
+  </data>
+  <data name="Title_MMC_FEATURES" xml:space="preserve">
+    <value>MMC FEATURES</value>
+  </data>
+  <data name="Title_Feature" xml:space="preserve">
+    <value>Feature</value>
+  </data>
+  <data name="ButtonLabel_Save_MMC_GET_CONFIGURATION_response_to_file" xml:space="preserve">
+    <value>Save MMC GET CONFIGURATION response to file</value>
+  </data>
+  <data name="Title_Disc_Manufacturing_Information" xml:space="preserve">
+    <value>Disc Manufacturing Information</value>
+  </data>
+  <data name="Title_Security_Sector" xml:space="preserve">
+    <value>Security Sector</value>
+  </data>
+  <data name="ButtonLabel_Save_Xbox_Security_Sector" xml:space="preserve">
+    <value>Save Xbox Security Sector</value>
+  </data>
+  <data name="Title_Tag" xml:space="preserve">
+    <value>Tag:</value>
+  </data>
+  <data name="Title_HexView" xml:space="preserve">
+    <value>HexView</value>
+  </data>
+  <data name="Title_Decoded" xml:space="preserve">
+    <value>Decoded</value>
+  </data>
+  <data name="Title_Track_checksums" xml:space="preserve">
+    <value>Track checksums:</value>
+  </data>
+  <data name="Title_Algorithms" xml:space="preserve">
+    <value>Algorithms</value>
+  </data>
+  <data name="Title_Hash" xml:space="preserve">
+    <value>Hash</value>
+  </data>
+  <data name="Title_Media_checksums" xml:space="preserve">
+    <value>Media checksums:</value>
+  </data>
+  <data name="ButtonLabel_Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="ButtonLabel_Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Source_image" xml:space="preserve">
+    <value>Source image</value>
+  </data>
+  <data name="Output_format" xml:space="preserve">
+    <value>Output format</value>
+  </data>
+  <data name="ButtonLabel_Choose" xml:space="preserve">
+    <value>Choose...</value>
+  </data>
+  <data name="ButtonLabel_Get_from_source_image" xml:space="preserve">
+    <value>Get from source image</value>
+  </data>
+  <data name="Title_Metadata" xml:space="preserve">
+    <value>Metadata</value>
+  </data>
+  <data name="Title_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Title_Barcode" xml:space="preserve">
+    <value>Barcode</value>
+  </data>
+  <data name="Title_Part_number" xml:space="preserve">
+    <value>Part number</value>
+  </data>
+  <data name="Title_Number_in_sequence" xml:space="preserve">
+    <value>Number in sequence</value>
+  </data>
+  <data name="Title_Last_media_of_the_sequence" xml:space="preserve">
+    <value>Last media of the sequence</value>
+  </data>
+  <data name="Title_Drive" xml:space="preserve">
+    <value>Drive</value>
+  </data>
+  <data name="Title_Firmware_revision" xml:space="preserve">
+    <value>Firmware revision</value>
+  </data>
+  <data name="Title_Existing_CICM_XML_sidecar" xml:space="preserve">
+    <value>Existing CICM XML sidecar</value>
+  </data>
+  <data name="Title_From_image" xml:space="preserve">
+    <value>From image...</value>
+  </data>
+  <data name="Title_Existing_resume_file" xml:space="preserve">
+    <value>Existing resume file</value>
+  </data>
+  <data name="_From_image_" xml:space="preserve">
+    <value>&lt;From image&gt;</value>
+  </data>
+  <data name="Error_trying_to_find_selected_plugin" xml:space="preserve">
+    <value>Error trying to find selected plugin</value>
+  </data>
+  <data name="Creating_output_image" xml:space="preserve">
+    <value>Creating output image</value>
+  </data>
+  <data name="Setting_image_metadata" xml:space="preserve">
+    <value>Setting image metadata</value>
+  </data>
+  <data name="Setting_tracks_list" xml:space="preserve">
+    <value>Setting tracks list</value>
+  </data>
+  <data name="Converting_sectors" xml:space="preserve">
+    <value>Converting sectors</value>
+  </data>
+  <data name="Converting_sectors_0_to_1_2_done" xml:space="preserve">
+    <value>Converting sectors {0} to {1} ({2:P2} done)</value>
+  </data>
+  <data name="Converting_tag_0" xml:space="preserve">
+    <value>Converting tag {0}</value>
+  </data>
+  <data name="Converting_tag_0_for_sectors_1_to_2_3_done" xml:space="preserve">
+    <value>Converting tag {0} for sectors {1} to {2} ({3:P2} done)</value>
+  </data>
+  <data name="Converting_sectors_in_track_0" xml:space="preserve">
+    <value>Converting sectors in track {0}</value>
+  </data>
+  <data name="Converting_sectors_0_to_1_in_track_2_3_done" xml:space="preserve">
+    <value>Converting sectors {0} to {1} in track {2} ({3:P2} done)</value>
+  </data>
+  <data name="Converting_tag_0_for_sectors_1_to_2_in_track_3_4_done" xml:space="preserve">
+    <value>Converting tag {0} for sectors {1} to {2} in track {3} ({4:P2} done)</value>
+  </data>
+  <data name="Error_0_writing_dump_hardware_list_to_output_image" xml:space="preserve">
+    <value>Error {0} writing dump hardware list to output image.</value>
+  </data>
+  <data name="Writing_CICM_XML_metadata_to_output_image" xml:space="preserve">
+    <value>Writing CICM XML metadata to output image.</value>
+  </data>
+  <data name="Error_0_writing_CICM_XML_metadata_to_output_image" xml:space="preserve">
+    <value>Error {0} writing CICM XML metadata to output image.</value>
+  </data>
+  <data name="Operation_canceled_the_output_file_is_not_correct" xml:space="preserve">
+    <value>Operation canceled, the output file is not correct.</value>
+  </data>
+  <data name="Title_Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Title_Conversion_success" xml:space="preserve">
+    <value>Conversion success</value>
+  </data>
+  <data name="Some_warnings_happened_Check_console" xml:space="preserve">
+    <value>Some warnings happened. Check console for more information. Image should be correct.</value>
+  </data>
+  <data name="Image_converted_successfully" xml:space="preserve">
+    <value>Image converted successfully.</value>
+  </data>
+  <data name="Dialog_Choose_destination_file" xml:space="preserve">
+    <value>Choose destination file</value>
+  </data>
+  <data name="Dialog_Choose_existing_metadata_sidecar" xml:space="preserve">
+    <value>Choose existing metadata sidecar</value>
+  </data>
+  <data name="Dialog_CICM_XML_metadata" xml:space="preserve">
+    <value>CICM XML metadata</value>
+  </data>
+  <data name="Incorrect_metadata_sidecar_file" xml:space="preserve">
+    <value>Incorrect metadata sidecar file...</value>
+  </data>
+  <data name="Dialog_Choose_existing_resume_file" xml:space="preserve">
+    <value>Choose existing resume file</value>
+  </data>
+  <data name="Resume_file_does_not_contain_dump_hardware_information" xml:space="preserve">
+    <value>Resume file does not contain dump hardware information...</value>
+  </data>
+  <data name="Title_Track_entropy" xml:space="preserve">
+    <value>Track entropy</value>
+  </data>
+  <data name="Title_Entropy" xml:space="preserve">
+    <value>Entropy</value>
+  </data>
+  <data name="Title_Unique_sectors" xml:space="preserve">
+    <value>Unique sectors</value>
+  </data>
+  <data name="Title_Calculating_entropy" xml:space="preserve">
+    <value>Calculating entropy</value>
+  </data>
+  <data name="Title_Destination_file" xml:space="preserve">
+    <value>Destination file</value>
+  </data>
+  <data name="Title_LBA" xml:space="preserve">
+    <value>LBA</value>
+  </data>
+  <data name="Disc_image_does_not_support_verification" xml:space="preserve">
+    <value>Disc image does not support verification.</value>
+  </data>
+  <data name="Checking_media_image" xml:space="preserve">
+    <value>Checking media image...</value>
+  </data>
+  <data name="Verifying_track_0_of_1" xml:space="preserve">
+    <value>Verifying track {0} of {1}</value>
+  </data>
+  <data name="All_sectors_contain_errors" xml:space="preserve">
+    <value>All sectors contain errors</value>
+  </data>
+  <data name="All_sectors_are_unknown" xml:space="preserve">
+    <value>All sectors are unknown</value>
+  </data>
+  <data name="Unknown_LBAs" xml:space="preserve">
+    <value>Unknown LBAs:</value>
+  </data>
+  <data name="Title_Images" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="Menu_File" xml:space="preserve">
+    <value>_File</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Open" xml:space="preserve">
+    <value>_Open</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Settings" xml:space="preserve">
+    <value>_Settings</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Exit" xml:space="preserve">
+    <value>E_xit</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Devices" xml:space="preserve">
+    <value>_Devices</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Refresh" xml:space="preserve">
+    <value>_Refresh</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Window" xml:space="preserve">
+    <value>_Window</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Console" xml:space="preserve">
+    <value>_Console</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Help" xml:space="preserve">
+    <value>_Help</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Encodings" xml:space="preserve">
+    <value>_Encodings</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Plugins" xml:space="preserve">
+    <value>_Plugins</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Statistics" xml:space="preserve">
+    <value>_Statistics</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_About" xml:space="preserve">
+    <value>_About</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Refresh_devices" xml:space="preserve">
+    <value>_Refresh devices</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Menu_Close_all_images" xml:space="preserve">
+    <value>_Close all images</value>
+    <comment>'_' is the character that will be used for the keyboard accelerator</comment>
+  </data>
+  <data name="Welcome_to_Aaru" xml:space="preserve">
+    <value>Welcome to Aaru!</value>
+  </data>
+  <data name="Error_0_opening_device" xml:space="preserve">
+    <value>Error {0} opening device</value>
+  </data>
+  <data name="Non_removable_device_commands_not_yet_implemented" xml:space="preserve">
+    <value>Non-removable device commands not yet implemented</value>
+  </data>
+  <data name="No_media_inserted" xml:space="preserve">
+    <value>No media inserted</value>
+  </data>
+  <data name="Dialog_Choose_image_to_open" xml:space="preserve">
+    <value>Choose image to open</value>
+  </data>
+  <data name="Error_0_opening_image_format" xml:space="preserve">
+    <value>Error {0} opening image format.</value>
+  </data>
+  <data name="No_error_given" xml:space="preserve">
+    <value>No error given</value>
+  </data>
+  <data name="Exception_reading_file" xml:space="preserve">
+    <value>Exception reading file.</value>
+  </data>
+  <data name="Refreshing_devices" xml:space="preserve">
+    <value>Refreshing devices</value>
+  </data>
+  <data name="Found_supported_device_model_0_by_manufacturer_1_on_bus_2_and_path_3" xml:space="preserve">
+    <value>Found supported device model {0} by manufacturer {1} on bus {2} and path {3}</value>
+  </data>
+  <data name="Continue_dumping_whatever_happens" xml:space="preserve">
+    <value>Continue dumping whatever happens</value>
+  </data>
+  <data name="Retry_passes" xml:space="preserve">
+    <value>Retry passes</value>
+  </data>
+  <data name="Create_use_resume_mapfile" xml:space="preserve">
+    <value>Create/use resume mapfile</value>
+  </data>
+  <data name="Try_to_read_track_1_pregap" xml:space="preserve">
+    <value>Try to read track 1 pregap</value>
+  </data>
+  <data name="Skipped_sectors_on_error" xml:space="preserve">
+    <value>Skipped sectors on error</value>
+  </data>
+  <data name="Create_CICM_XML_metadata_sidecar" xml:space="preserve">
+    <value>Create CICM XML metadata sidecar</value>
+  </data>
+  <data name="Trim_errors_from_skipped_sectors" xml:space="preserve">
+    <value>Trim errors from skipped sectors</value>
+  </data>
+  <data name="Encoding_to_use_on_metadata_sidecar_creation" xml:space="preserve">
+    <value>Encoding to use on metadata sidecar creation</value>
+  </data>
+  <data name="Writing_image_to" xml:space="preserve">
+    <value>Writing image to:</value>
+  </data>
+  <data name="Title_Log" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="Incorrect_resume_file_cannot_use_it" xml:space="preserve">
+    <value>Incorrect resume file, cannot use it...</value>
+  </data>
+  <data name="Media_already_dumped_correctly_please_choose_another_destination" xml:space="preserve">
+    <value>Media already dumped correctly, please choose another destination...</value>
+  </data>
+  <data name="Cannot_open_output_plugin" xml:space="preserve">
+    <value>Cannot open output plugin.</value>
+  </data>
+  <data name="Kb_s" xml:space="preserve">
+    <value>Kb/s</value>
+  </data>
+  <data name="Title_Block" xml:space="preserve">
+    <value>Block</value>
+  </data>
+  <data name="Initializing_console" xml:space="preserve">
+    <value>Initializing console...</value>
+  </data>
+  <data name="Aaru_started" xml:space="preserve">
+    <value>Aaru started!</value>
+  </data>
+  <data name="Loading_settings" xml:space="preserve">
+    <value>Loading settings...</value>
+  </data>
+  <data name="Migrating_local_database" xml:space="preserve">
+    <value>Migrating local database...</value>
+  </data>
+  <data name="Updating_main_database" xml:space="preserve">
+    <value>Updating main database...</value>
+  </data>
+  <data name="Checking_GDPR_compliance" xml:space="preserve">
+    <value>Checking GDPR compliance...</value>
+  </data>
+  <data name="Loading_statistics" xml:space="preserve">
+    <value>Loading statistics...</value>
+  </data>
+  <data name="Registering_encodings" xml:space="preserve">
+    <value>Registering encodings...</value>
+  </data>
+  <data name="Saving_statistics" xml:space="preserve">
+    <value>Saving statistics...</value>
+  </data>
+  <data name="Loading_main_window" xml:space="preserve">
+    <value>Loading main window...</value>
+  </data>
+  <data name="Title_Sector" xml:space="preserve">
+    <value>Sector</value>
+  </data>
+  <data name="Show_long_sector" xml:space="preserve">
+    <value>Show long sector</value>
   </data>
 </root>

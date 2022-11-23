@@ -93,8 +93,8 @@ partial class Dump
         byte[]     senseBuf      = null;
         var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
-        UpdateStatus?.Invoke("Reading lead-outs");
-        _dumpLog.WriteLine("Reading lead-outs");
+        UpdateStatus?.Invoke(Localization.Core.Reading_lead_outs);
+        _dumpLog.WriteLine(Localization.Core.Reading_lead_outs);
 
         InitProgress?.Invoke();
 
@@ -104,7 +104,7 @@ partial class Dump
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    _dumpLog.WriteLine("Aborted!");
+                    _dumpLog.WriteLine(Localization.Core.Aborted);
 
                     break;
                 }
@@ -119,7 +119,8 @@ partial class Dump
                    currentSpeed > 0)
                     minSpeed = currentSpeed;
 
-                PulseProgress?.Invoke($"Reading sector {i} at lead-out ({currentSpeed:F3} MiB/sec.)");
+                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1_MiB_sec, i,
+                                                    currentSpeed));
 
                 if(readcd)
                 {
@@ -275,7 +276,7 @@ partial class Dump
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    _dumpLog.WriteLine("Aborted!");
+                    _dumpLog.WriteLine(Localization.Core.Aborted);
 
                     break;
                 }
@@ -290,7 +291,8 @@ partial class Dump
                    currentSpeed > 0)
                     minSpeed = currentSpeed;
 
-                PulseProgress?.Invoke($"Reading sector {i} at lead-out ({currentSpeed:F3} MiB/sec.)");
+                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1_MiB_sec, i,
+                                                    currentSpeed));
 
                 if(readcd)
                 {

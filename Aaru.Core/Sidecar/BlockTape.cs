@@ -90,7 +90,7 @@ public sealed partial class Sidecar
         var                tapeWorker   = new Checksum();
         List<TapeFileType> tapeFiles    = new();
 
-        UpdateStatus("Hashing files...");
+        UpdateStatus(Localization.Core.Hashing_files);
 
         for(int i = 0; i < files.Count; i++)
         {

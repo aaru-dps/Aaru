@@ -170,8 +170,8 @@ partial class Dump
 
         if(cdiReadyReadAsAudio)
         {
-            _dumpLog.WriteLine("Setting speed to 8x for CD-i Ready reading as audio.");
-            UpdateStatus?.Invoke("Setting speed to 8x for CD-i Ready reading as audio.");
+            _dumpLog.WriteLine(Localization.Core.Setting_speed_to_8x_for_CD_i_Ready_reading_as_audio);
+            UpdateStatus?.Invoke(Localization.Core.Setting_speed_to_8x_for_CD_i_Ready_reading_as_audio);
 
             _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
         }
@@ -183,8 +183,8 @@ partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
@@ -213,8 +213,9 @@ partial class Dump
                currentSpeed > 0)
                 minSpeed = currentSpeed;
 
-            UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
-                                   (long)blocks);
+            UpdateProgress?.
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, blocks, currentSpeed),
+                       (long)i, (long)blocks);
 
             sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
                                 MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
@@ -228,8 +229,9 @@ partial class Dump
             if(sense)
                 for(uint r = 0; r < _maximumReadable; r++)
                 {
-                    UpdateProgress?.Invoke($"Reading sector {i + r} of {blocks} ({currentSpeed:F3} MiB/sec.)",
-                                           (long)i + r, (long)blocks);
+                    UpdateProgress?.
+                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i + r, blocks, currentSpeed),
+                               (long)i + r, (long)blocks);
 
                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(i + r), blockSize, (uint)sectorsForOffset + 1,
                                         MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
@@ -289,10 +291,11 @@ partial class Dump
 
                         leadOutExtents.Add(i + r, firstTrack.EndSector);
 
-                        UpdateStatus?.Invoke($"Adding CD-i Ready hole from LBA {i + r} to {firstTrack.EndSector
-                        } inclusive.");
+                        UpdateStatus?.
+                            Invoke(string.Format(Localization.Core.Adding_CD_i_Ready_hole_from_LBA_0_to_1_inclusive,
+                                                 i + r, firstTrack.EndSector));
 
-                        _dumpLog.WriteLine("Adding CD-i Ready hole from LBA {0} to {1} inclusive.", i + r,
+                        _dumpLog.WriteLine(Localization.Core.Adding_CD_i_Ready_hole_from_LBA_0_to_1_inclusive, i + r,
                                            firstTrack.EndSector);
 
                         break;

@@ -49,16 +49,16 @@ public sealed class ErrorLog
 
         _logSw = new StreamWriter(outputFile, true);
 
-        _logSw.WriteLine("Start error logging at {0}", DateTime.Now);
-        _logSw.WriteLine("######################################################");
+        _logSw.WriteLine(Localization.Core.Start_error_logging_at_0, DateTime.Now);
+        _logSw.WriteLine(Localization.Core.Log_section_separator);
         _logSw.Flush();
     }
 
     /// <summary>Finishes and closes the error log</summary>
     public void Close()
     {
-        _logSw.WriteLine("######################################################");
-        _logSw.WriteLine("End logging at {0}", DateTime.Now);
+        _logSw.WriteLine(Localization.Core.Log_section_separator);
+        _logSw.WriteLine(Localization.Core.End_logging_at_0, DateTime.Now);
         _logSw.Close();
     }
 
@@ -71,7 +71,7 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine("ATA command {0} operating system error: {1}.", command, errno);
+            _logSw.WriteLine(Localization.Core.ATA_command_0_operating_system_error_1, command, errno);
             _logSw.Flush();
         }
         else
@@ -127,7 +127,7 @@ public sealed class ErrorLog
             if((registers.Error & 0x80) == 0x80)
                 error.Add("BBK");
 
-            _logSw.WriteLine("ATA command {0} error: status = {1}, error = {2}.", command, string.Join(' ', status),
+            _logSw.WriteLine(Localization.Core.ATA_command_0_error_status_1_error_2, command, string.Join(' ', status),
                              string.Join(' ', error));
 
             _logSw.Flush();
@@ -146,7 +146,7 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine("ATA reading C/H/S {0}/{1}/{2} operating system error: {3}.", cylinder, head, sector,
+            _logSw.WriteLine(Localization.Core.ATA_reading_CHS_0_1_2_operating_system_error_3, cylinder, head, sector,
                              errno);
 
             _logSw.Flush();
@@ -204,7 +204,7 @@ public sealed class ErrorLog
             if((registers.Error & 0x80) == 0x80)
                 error.Add("BBK");
 
-            _logSw.WriteLine("ATA reading C/H/S {0}/{1}/{2} error: status = {3}, error = {4}.", cylinder, head, sector,
+            _logSw.WriteLine(Localization.Core.ATA_reading_CHS_0_1_2_error_status_3_error_4, cylinder, head, sector,
                              string.Join(' ', status), string.Join(' ', error));
 
             _logSw.Flush();
@@ -220,7 +220,7 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine("ATA reading LBA {0} operating system error: {1}.", block, errno);
+            _logSw.WriteLine(Localization.Core.ATA_reading_LBA_0_operating_system_error_1, block, errno);
             _logSw.Flush();
         }
         else
@@ -276,8 +276,8 @@ public sealed class ErrorLog
             if((registers.Error & 0x80) == 0x80)
                 error.Add("BBK");
 
-            _logSw.WriteLine("ATA reading LBA {0} error: status = {1}, error = {2}.", block, string.Join(' ', status),
-                             string.Join(' ', error));
+            _logSw.WriteLine(Localization.Core.ATA_reading_LBA_0_error_status_1_error_2, block,
+                             string.Join(' ', status), string.Join(' ', error));
 
             _logSw.Flush();
         }
@@ -292,7 +292,7 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine("ATA reading LBA {0} operating system error: {1}.", block, errno);
+            _logSw.WriteLine(Localization.Core.ATA_reading_LBA_0_operating_system_error_1, block, errno);
             _logSw.Flush();
         }
         else
@@ -348,8 +348,8 @@ public sealed class ErrorLog
             if((registers.Error & 0x80) == 0x80)
                 error.Add("BBK");
 
-            _logSw.WriteLine("ATA reading LBA {0} error: status = {1}, error = {2}.", block, string.Join(' ', status),
-                             string.Join(' ', error));
+            _logSw.WriteLine(Localization.Core.ATA_reading_LBA_0_error_status_1_error_2, block,
+                             string.Join(' ', status), string.Join(' ', error));
 
             _logSw.Flush();
         }
@@ -364,7 +364,7 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine("SCSI command {0} operating system error: {1}.", command, errno);
+            _logSw.WriteLine(Localization.Core.SCSI_command_0_operating_system_error_1, command, errno);
             _logSw.Flush();
 
             return;
@@ -386,12 +386,12 @@ public sealed class ErrorLog
 
                 prettySense = prettySense.Replace("\n", " - ");
 
-                _logSw.WriteLine("SCSI command {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.", command,
+                _logSw.WriteLine(Localization.Core.SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4_5, command,
                                  decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ, hexSense,
                                  prettySense);
             }
             else
-                _logSw.WriteLine("SCSI command {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.", command,
+                _logSw.WriteLine(Localization.Core.SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4, command,
                                  decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ,
                                  hexSense);
         }
@@ -407,10 +407,10 @@ public sealed class ErrorLog
 
                 prettySense = prettySense.Replace("\n", " - ");
 
-                _logSw.WriteLine("SCSI command {0} error: {1}, {2}.", command, hexSense, prettySense);
+                _logSw.WriteLine(Localization.Core.SCSI_command_0_error_1_2, command, hexSense, prettySense);
             }
             else
-                _logSw.WriteLine("SCSI command {0} error: {1}", command, hexSense);
+                _logSw.WriteLine(Localization.Core.SCSI_command_0_error_1, command, hexSense);
         }
 
         _logSw.Flush();
@@ -425,7 +425,7 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine("SCSI reading LBA {0} operating system error: {1}.", block, errno);
+            _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_operating_system_error_1, block, errno);
             _logSw.Flush();
 
             if(senseBuffer is null     ||
@@ -450,12 +450,12 @@ public sealed class ErrorLog
 
                 prettySense = prettySense.Replace("\n", " - ");
 
-                _logSw.WriteLine("SCSI reading LBA {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.", block,
+                _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4_5, block,
                                  decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ, hexSense,
                                  prettySense);
             }
             else
-                _logSw.WriteLine("SCSI reading LBA {0} error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.", block,
+                _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4, block,
                                  decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ,
                                  hexSense);
         }
@@ -471,10 +471,10 @@ public sealed class ErrorLog
 
                 prettySense = prettySense.Replace("\n", " - ");
 
-                _logSw.WriteLine("SCSI reading LBA {0} error: {1}, {2}.", block, hexSense, prettySense);
+                _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_error_1_2, block, hexSense, prettySense);
             }
             else
-                _logSw.WriteLine("SCSI reading LBA {0} error: {1}", block, hexSense);
+                _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_error_1, block, hexSense);
         }
 
         _logSw.Flush();
@@ -489,14 +489,14 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine("SD/MMC command {0} operating system error: {1}.", command, errno);
+            _logSw.WriteLine(Localization.Core.SD_MMC_command_0_operating_system_error_1, command, errno);
             _logSw.Flush();
 
             return;
         }
 
         // TODO: Decode response
-        _logSw.WriteLine("SD/MMC command {0} error: {1}", command,
+        _logSw.WriteLine(Localization.Core.SD_MMC_command_0_error_1, command,
                          string.Join(" - ", response.Select(r => $"0x{r:X8}")));
 
         _logSw.Flush();
@@ -513,16 +513,16 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine("SD/MMC reading LBA {0} ({1}-addressed) operating system error: {2}.", block,
-                             byteAddressed ? "byte" : "block", errno);
+            _logSw.WriteLine(byteAddressed ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_operating_system_error_1 : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_operating_system_error_1,
+                             block, errno);
 
             _logSw.Flush();
 
             return;
         }
 
-        _logSw.WriteLine("SD/MMC reading LBA {0} ({1}-addressed) error: {2}", block, byteAddressed ? "byte" : "block",
-                         string.Join(" - ", response.Select(r => $"0x{r:X8}")));
+        _logSw.WriteLine(byteAddressed ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_error_1 : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_error_1,
+                         block, string.Join(" - ", response.Select(r => $"0x{r:X8}")));
 
         throw new NotImplementedException();
     }

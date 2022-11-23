@@ -196,7 +196,7 @@ sealed class FilesystemInfoCommand : Command
                 if(opened != ErrorNumber.NoError)
                 {
                     AaruConsole.WriteLine(UI.Unable_to_open_image_format);
-                    AaruConsole.WriteLine(UI.Error_0, opened);
+                    AaruConsole.WriteLine(Localization.Core.Error_0, opened);
 
                     return (int)opened;
                 }
@@ -214,7 +214,7 @@ sealed class FilesystemInfoCommand : Command
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
-                AaruConsole.ErrorWriteLine(UI.Error_0, ex.Message);
+                AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
                 AaruConsole.DebugWriteLine("Fs-info command", Localization.Core.Stack_trace_0, ex.StackTrace);
 
                 return (int)ErrorNumber.CannotOpenFormat;

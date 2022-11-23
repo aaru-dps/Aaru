@@ -81,7 +81,7 @@ public sealed partial class MediaScan
             case DeviceType.NVMe: return Nvme();
             case DeviceType.ATAPI:
             case DeviceType.SCSI: return Scsi();
-            default: throw new NotSupportedException("Unknown device type.");
+            default: throw new NotSupportedException(Localization.Core.Unknown_device_type);
         }
     }
 

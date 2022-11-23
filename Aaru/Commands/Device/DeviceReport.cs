@@ -287,9 +287,10 @@ sealed class DeviceReportCommand : Command
                         AaruConsole.WriteLine(UI.Please_insert_it_in_the_drive);
                         System.Console.ReadKey(true);
 
-                        mediumTypeName = AnsiConsole.Ask<string>(UI.Please_write_description_of_media_type);
+                        mediumTypeName =
+                            AnsiConsole.Ask<string>(Localization.Core.Please_write_description_of_media_type);
 
-                        mediumModel = AnsiConsole.Ask<string>(UI.Please_write_media_model);
+                        mediumModel = AnsiConsole.Ask<string>(Localization.Core.Please_write_media_model);
 
                         TestedMedia mediaTest = reporter.ReportAtaMedia();
                         mediaTest.MediumTypeName = mediumTypeName;
@@ -943,12 +944,13 @@ sealed class DeviceReportCommand : Command
 
                             System.Console.ReadKey(true);
 
-                            mediumTypeName = AnsiConsole.Ask<string>(UI.Please_write_description_of_media_type);
+                            mediumTypeName =
+                                AnsiConsole.Ask<string>(Localization.Core.Please_write_description_of_media_type);
 
                             mediumManufacturer =
                                 AnsiConsole.Ask<string>(Localization.Core.Please_write_media_manufacturer);
 
-                            mediumModel = AnsiConsole.Ask<string>(UI.Please_write_media_model);
+                            mediumModel = AnsiConsole.Ask<string>(Localization.Core.Please_write_media_model);
 
                             bool mediaIsRecognized = true;
 
@@ -1319,12 +1321,13 @@ sealed class DeviceReportCommand : Command
 
                                 System.Console.ReadKey(true);
 
-                                mediumTypeName = AnsiConsole.Ask<string>(UI.Please_write_description_of_media_type);
+                                mediumTypeName =
+                                    AnsiConsole.Ask<string>(Localization.Core.Please_write_description_of_media_type);
 
                                 mediumManufacturer =
                                     AnsiConsole.Ask<string>(Localization.Core.Please_write_media_manufacturer);
 
-                                mediumModel = AnsiConsole.Ask<string>(UI.Please_write_media_model);
+                                mediumModel = AnsiConsole.Ask<string>(Localization.Core.Please_write_media_model);
 
                                 bool mediaIsRecognized = true;
 

@@ -405,7 +405,7 @@ sealed class ConvertImageCommand : Command
             if(opened != ErrorNumber.NoError)
             {
                 AaruConsole.WriteLine(UI.Unable_to_open_image_format);
-                AaruConsole.WriteLine(UI.Error_0, opened);
+                AaruConsole.WriteLine(Localization.Core.Error_0, opened);
 
                 return (int)opened;
             }
@@ -439,7 +439,7 @@ sealed class ConvertImageCommand : Command
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
-            AaruConsole.ErrorWriteLine(UI.Error_0, ex.Message);
+            AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
             AaruConsole.DebugWriteLine("Convert-image command", Localization.Core.Stack_trace_0, ex.StackTrace);
 
             return (int)ErrorNumber.CannotOpenFormat;
@@ -556,7 +556,7 @@ sealed class ConvertImageCommand : Command
             // TODO: Disabled until 6.0
             /*if(!_force)
             {*/
-            AaruConsole.ErrorWriteLine(UI.Output_format_does_not_support_sessions);
+            AaruConsole.ErrorWriteLine(Localization.Core.Output_format_does_not_support_sessions);
 
             return (int)ErrorNumber.UnsupportedMedia;
             /*}
@@ -610,7 +610,7 @@ sealed class ConvertImageCommand : Command
                 return (int)ErrorNumber.WriteError;
             }
 
-            AaruConsole.ErrorWriteLine(UI.Error_0_setting_metadata, outputFormat.ErrorMessage);
+            AaruConsole.ErrorWriteLine(Localization.Core.Error_0_setting_metadata, outputFormat.ErrorMessage);
         }
 
         CICMMetadataType       cicmMetadata = inputFormat.CicmMetadata;

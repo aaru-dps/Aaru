@@ -52,7 +52,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI READ BLOCK LIMITS...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_READ_BLOCK_LIMITS).IsIndeterminate();
             sense = _dev.ReadBlockLimits(out buffer, out _, _dev.Timeout, out _);
         });
 
@@ -72,7 +72,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_REPORT_DENSITY_SUPPORT).IsIndeterminate();
             sense = _dev.ReportDensitySupport(out buffer, out _, false, false, _dev.Timeout, out _);
         });
 
@@ -107,7 +107,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for medium types...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_REPORT_DENSITY_SUPPORT_for_medium_types).IsIndeterminate();
             sense = _dev.ReportDensitySupport(out buffer, out _, true, false, _dev.Timeout, out _);
         });
 
@@ -164,7 +164,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_MODE_SENSE_10).IsIndeterminate();
 
             sense = _dev.ModeSense10(out buffer, out _, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00,
                                      _dev.Timeout, out _);
@@ -179,7 +179,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_MODE_SENSE).IsIndeterminate();
             sense = _dev.ModeSense(out buffer, out _, _dev.Timeout, out _);
         });
 
@@ -201,7 +201,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for current media...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_REPORT_DENSITY_SUPPORT_for_current_media).IsIndeterminate();
             sense = _dev.ReportDensitySupport(out buffer, out _, false, true, _dev.Timeout, out _);
         });
 
@@ -236,7 +236,8 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_REPORT_DENSITY_SUPPORT_for_medium_types_for_current_media).
+                IsIndeterminate();
 
             sense = _dev.ReportDensitySupport(out buffer, out _, true, true, _dev.Timeout, out _);
         });
@@ -281,7 +282,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ MEDIA SERIAL NUMBER...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_MEDIA_SERIAL_NUMBER).IsIndeterminate();
             seqTest.CanReadMediaSerial = !_dev.ReadMediaSerialNumber(out buffer, out _, _dev.Timeout, out _);
         });
 
