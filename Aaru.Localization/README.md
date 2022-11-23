@@ -1,6 +1,8 @@
-This is the project where all the localized strings of the Aaru application reside.
+This is the project where shared the localized strings of the Aaru application reside.
 
-Many of them are shared between different projects, and even with the Aaru server, that's why they reside there.
+Many of them are shared between different projects, that's why they reside there.
+
+Strings that are not, or at least should not, be shared, are in each project's folder.
 
 Here are following some tips for translators:
 - The files are in the Microsoft Resource format, it shall be editable with most translation tools and if not they can be edited with Visual Studio Community (it's free).
