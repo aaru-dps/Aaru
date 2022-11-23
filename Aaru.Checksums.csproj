@@ -50,6 +50,11 @@
     <Compile Include="CRC32\arm_simd.cs"/>
     <Compile Include="CRC32\clmul.cs"/>
     <Compile Include="CRC64\clmul.cs"/>
+    <Compile Include="Localization\Localization.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Localization.resx</DependentUpon>
+    </Compile>
     <Compile Include="Native.cs"/>
     <Compile Include="Register.cs"/>
     <Compile Include="SpamSumContext.cs"/>
@@ -77,6 +82,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\LICENSE">
       <Link>LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Localization\Localization.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localization.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

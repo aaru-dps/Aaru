@@ -148,7 +148,7 @@ public class ReedSolomon
             {
                 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1
             },
-            _ => throw new ArgumentOutOfRangeException(nameof(m), "m must be between 2 and 16 inclusive")
+            _ => throw new ArgumentOutOfRangeException(nameof(m), Localization.m_must_be_between_2_and_16_inclusive)
         };
 
         _mm      = m;
@@ -332,7 +332,7 @@ public class ReedSolomon
     public int encode_rs(int[] data, out int[] bb)
     {
         if(!_initialized)
-            throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
+            throw new UnauthorizedAccessException(Localization.Trying_to_calculate_RS_without_initializing);
 
         int i;
         bb = new int[_nn - _kk];
@@ -393,7 +393,7 @@ public class ReedSolomon
     public int eras_dec_rs(ref int[] data, out int[] erasPos, int noEras)
     {
         if(!_initialized)
-            throw new UnauthorizedAccessException("Trying to calculate RS without initializing!");
+            throw new UnauthorizedAccessException(Localization.Trying_to_calculate_RS_without_initializing);
 
         erasPos = new int[_nn - _kk];
         int   i, j;
@@ -494,13 +494,13 @@ public class ReedSolomon
 
             if(count != noEras)
             {
-                AaruConsole.DebugWriteLine("Reed Solomon", "\n lambda(x) is WRONG\n");
+                AaruConsole.DebugWriteLine("Reed Solomon", Localization.lambda_is_wrong);
 
                 return -1;
             }
 
             AaruConsole.DebugWriteLine("Reed Solomon",
-                                       "\n Erasure positions as determined by roots of Eras Loc Poly:\n");
+                                       Localization.Erasure_positions_as_determined_by_roots_of_Eras_Loc_Poly);
 
             for(i = 0; i < count; i++)
                 AaruConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
@@ -612,7 +612,7 @@ public class ReedSolomon
         }
 
     #if DEBUG
-        AaruConsole.DebugWriteLine("Reed Solomon", "\n Final error positions:\t");
+        AaruConsole.DebugWriteLine("Reed Solomon", Localization.Final_error_positions);
 
         for(i = 0; i < count; i++)
             AaruConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
@@ -669,7 +669,7 @@ public class ReedSolomon
 
             if(den == 0)
             {
-                AaruConsole.DebugWriteLine("Reed Solomon", "\n ERROR: denominator = 0\n");
+                AaruConsole.DebugWriteLine("Reed Solomon", Localization.ERROR_denominator_equals_zero);
 
                 return -1;
             }

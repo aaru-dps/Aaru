@@ -508,36 +508,36 @@ public static class CdChecksums
         switch(cdSubRwPack1[0])
         {
             case 0x00:
-                AaruConsole.DebugWriteLine("CD checksums", "Detected Zero Pack in subchannel");
+                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_Zero_Pack_in_subchannel);
 
                 break;
             case 0x08:
-                AaruConsole.DebugWriteLine("CD checksums", "Detected Line Graphics Pack in subchannel");
+                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_Line_Graphics_Pack_in_subchannel);
 
                 break;
             case 0x09:
-                AaruConsole.DebugWriteLine("CD checksums", "Detected CD+G Pack in subchannel");
+                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_CD_G_Pack_in_subchannel);
 
                 break;
             case 0x0A:
-                AaruConsole.DebugWriteLine("CD checksums", "Detected CD+EG Pack in subchannel");
+                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_CD_EG_Pack_in_subchannel);
 
                 break;
             case 0x14:
-                AaruConsole.DebugWriteLine("CD checksums", "Detected CD-TEXT Pack in subchannel");
+                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_CD_TEXT_Pack_in_subchannel);
 
                 break;
             case 0x18:
-                AaruConsole.DebugWriteLine("CD checksums", "Detected CD+MIDI Pack in subchannel");
+                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_CD_MIDI_Pack_in_subchannel);
 
                 break;
             case 0x38:
-                AaruConsole.DebugWriteLine("CD checksums", "Detected User Pack in subchannel");
+                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_User_Pack_in_subchannel);
 
                 break;
             default:
                 AaruConsole.DebugWriteLine("CD checksums",
-                                           "Detected unknown Pack type in subchannel: mode {0}, item {1}",
+                                           Localization.Detected_unknown_Pack_type_in_subchannel_mode_0_item_1,
                                            Convert.ToString(cdSubRwPack1[0] & 0x38, 2),
                                            Convert.ToString(cdSubRwPack1[0] & 0x07, 2));
 
@@ -551,7 +551,7 @@ public static class CdChecksums
 
         if(qSubChannelCrc != calculatedQcrc)
         {
-            AaruConsole.DebugWriteLine("CD checksums", "Q subchannel CRC 0x{0:X4}, expected 0x{1:X4}", calculatedQcrc,
+            AaruConsole.DebugWriteLine("CD checksums", Localization.Q_subchannel_CRC_0_expected_1, calculatedQcrc,
                                        qSubChannelCrc);
 
             status = false;
@@ -567,7 +567,7 @@ public static class CdChecksums
             if(cdTextPack1Crc != calculatedCdtp1Crc &&
                cdTextPack1Crc != 0)
             {
-                AaruConsole.DebugWriteLine("CD checksums", "CD-Text Pack 1 CRC 0x{0:X4}, expected 0x{1:X4}",
+                AaruConsole.DebugWriteLine("CD checksums", Localization.CD_Text_Pack_one_CRC_0_expected_1,
                                            cdTextPack1Crc, calculatedCdtp1Crc);
 
                 status = false;
@@ -581,13 +581,13 @@ public static class CdChecksums
             Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
             ushort calculatedCdtp2Crc = CRC16CCITTContext.Calculate(cdTextPack2ForCrc);
 
-            AaruConsole.DebugWriteLine("CD checksums", "Cyclic CDTP2 0x{0:X4}, Calc CDTP2 0x{1:X4}", cdTextPack2Crc,
+            AaruConsole.DebugWriteLine("CD checksums", Localization.Cyclic_CDTP2_0_Calc_CDTP2_1, cdTextPack2Crc,
                                        calculatedCdtp2Crc);
 
             if(cdTextPack2Crc != calculatedCdtp2Crc &&
                cdTextPack2Crc != 0)
             {
-                AaruConsole.DebugWriteLine("CD checksums", "CD-Text Pack 2 CRC 0x{0:X4}, expected 0x{1:X4}",
+                AaruConsole.DebugWriteLine("CD checksums", Localization.CD_Text_Pack_two_CRC_0_expected_1,
                                            cdTextPack2Crc, calculatedCdtp2Crc);
 
                 status = false;
@@ -601,13 +601,13 @@ public static class CdChecksums
             Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
             ushort calculatedCdtp3Crc = CRC16CCITTContext.Calculate(cdTextPack3ForCrc);
 
-            AaruConsole.DebugWriteLine("CD checksums", "Cyclic CDTP3 0x{0:X4}, Calc CDTP3 0x{1:X4}", cdTextPack3Crc,
+            AaruConsole.DebugWriteLine("CD checksums", Localization.Cyclic_CDTP3_0_Calc_CDTP3_1, cdTextPack3Crc,
                                        calculatedCdtp3Crc);
 
             if(cdTextPack3Crc != calculatedCdtp3Crc &&
                cdTextPack3Crc != 0)
             {
-                AaruConsole.DebugWriteLine("CD checksums", "CD-Text Pack 3 CRC 0x{0:X4}, expected 0x{1:X4}",
+                AaruConsole.DebugWriteLine("CD checksums", Localization.CD_Text_Pack_three_CRC_0_expected_1,
                                            cdTextPack3Crc, calculatedCdtp3Crc);
 
                 status = false;
@@ -622,14 +622,14 @@ public static class CdChecksums
         Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
         ushort calculatedCdtp4Crc = CRC16CCITTContext.Calculate(cdTextPack4ForCrc);
 
-        AaruConsole.DebugWriteLine("CD checksums", "Cyclic CDTP4 0x{0:X4}, Calc CDTP4 0x{1:X4}", cdTextPack4Crc,
+        AaruConsole.DebugWriteLine("CD checksums", Localization.Cyclic_CDTP4_0_Calc_CDTP4_1, cdTextPack4Crc,
                                    calculatedCdtp4Crc);
 
         if(cdTextPack4Crc == calculatedCdtp4Crc ||
            cdTextPack4Crc == 0)
             return status;
 
-        AaruConsole.DebugWriteLine("CD checksums", "CD-Text Pack 4 CRC 0x{0:X4}, expected 0x{1:X4}", cdTextPack4Crc,
+        AaruConsole.DebugWriteLine("CD checksums", Localization.CD_Text_Pack_four_CRC_0_expected_1, cdTextPack4Crc,
                                    calculatedCdtp4Crc);
 
         return false;
