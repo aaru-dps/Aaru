@@ -1008,7 +1008,7 @@ public static class Identify
         if(IdentifyDeviceResponse.Length != 512)
         {
             AaruConsole.DebugWriteLine("ATA/ATAPI IDENTIFY decoder",
-                                       "IDENTIFY response is different than 512 bytes, not decoding.");
+                                       Localization.IDENTIFY_response_is_different_than_512_bytes_not_decoding);
 
             return null;
         }

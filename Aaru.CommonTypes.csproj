@@ -86,6 +86,11 @@
     <Compile Include="Interop\DetectOS.cs"/>
     <Compile Include="Interop\PlatformID.cs"/>
     <Compile Include="Interop\Version.cs"/>
+    <Compile Include="Localization\Localization.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Localization.resx</DependentUpon>
+    </Compile>
     <Compile Include="MediaTypeFromDevice\FromAta.cs"/>
     <Compile Include="MediaTypeFromDevice\FromMmc.cs"/>
     <Compile Include="MediaTypeFromDevice\FromOdc.cs"/>
@@ -127,5 +132,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
     <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+    <ProjectReference Include="..\Aaru.Localization\Aaru.Localization.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\Localization.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localization.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -80,8 +80,7 @@ public static partial class MediaTypeFromDevice
                            model.StartsWith("MDH", StringComparison.Ordinal):
                 if(blockSize == 2048)
                 {
-                    AaruConsole.DebugWriteLine("Media detection",
-                                               "SCSI peripheral type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to MiniDisc for Data.",
+                    AaruConsole.DebugWriteLine("Media detection", Localization.SCSI_Media_Type_Description_MDDATA,
                                                scsiPeripheralType, blocks, blockSize);
 
                     return MediaType.MDData;
@@ -91,34 +90,32 @@ public static partial class MediaTypeFromDevice
                 {
                     case 57312:
                         AaruConsole.DebugWriteLine("Media detection",
-                                                   "SCSI peripheral type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 60 minute MiniDisc.",
+                                                   Localization.SCSI_Media_Type_Description_MD60_MDDATA,
                                                    scsiPeripheralType, blocks, blockSize);
 
                         return MediaType.MD60;
                     case 70464:
                         AaruConsole.DebugWriteLine("Media detection",
-                                                   "SCSI peripheral type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 74 minute MiniDisc.",
+                                                   Localization.SCSI_Media_Type_Description_MD74_MDDATA,
                                                    scsiPeripheralType, blocks, blockSize);
 
                         return MediaType.MD74;
                     case 76096:
                         AaruConsole.DebugWriteLine("Media detection",
-                                                   "SCSI peripheral type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 80 minute MiniDisc.",
+                                                   Localization.SCSI_Media_Type_Description_MD80_MDDATA,
                                                    scsiPeripheralType, blocks, blockSize);
 
                         return MediaType.MD80;
                 }
 
-                AaruConsole.DebugWriteLine("Media detection",
-                                           "SCSI peripheral type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 60 minute MiniDisc.",
+                AaruConsole.DebugWriteLine("Media detection", Localization.SCSI_Media_Type_Description_MD60_MDDATA,
                                            scsiPeripheralType, blocks, blockSize);
 
                 return MediaType.MD;
 
             // Host managed zoned block device
             case 0x14:
-                AaruConsole.DebugWriteLine("Media detection",
-                                           "SCSI peripheral type is {0:X2}h, setting media type to host managed zoned block device.",
+                AaruConsole.DebugWriteLine("Media detection", Localization.SCSI_Media_Type_Description_ZBC_Host_Managed,
                                            scsiPeripheralType, blocks, blockSize);
 
                 return MediaType.Zone_HDD;

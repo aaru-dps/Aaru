@@ -70,7 +70,7 @@ public sealed class FiltersList
             }
             catch(Exception exception)
             {
-                AaruConsole.ErrorWriteLine("Exception {0}", exception);
+                AaruConsole.ErrorWriteLine(Localization.Exception_0, exception);
             }
     }
 

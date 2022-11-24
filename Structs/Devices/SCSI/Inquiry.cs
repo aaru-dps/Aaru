@@ -264,7 +264,7 @@ public struct Inquiry
            SCSIInquiryResponse.Length != 5)
         {
             AaruConsole.DebugWriteLine("SCSI INQUIRY decoder",
-                                       "INQUIRY response is {0} bytes, less than minimum of 36 bytes, decoded data can be incorrect, not decoding.",
+                                       Localization.INQUIRY_response_is_0_bytes_less_than_minimum_of_36_bytes,
                                        SCSIInquiryResponse.Length);
 
             return null;
@@ -274,7 +274,8 @@ public struct Inquiry
            SCSIInquiryResponse.Length != SCSIInquiryResponse[4])
         {
             AaruConsole.DebugWriteLine("SCSI INQUIRY decoder",
-                                       "INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.",
+                                       Localization.
+                                           INQUIRY_response_length_0_bytes_is_different_than_specified_in_length_field,
                                        SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
 
             return null;

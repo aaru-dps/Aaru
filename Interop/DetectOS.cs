@@ -126,7 +126,8 @@ public static class DetectOS
         int error = uname(out utsname unixname);
 
         if(error != 0)
-            throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
+            throw new Exception(string.Format(Localization.Unhandled_exception_calling_uname_0,
+                                              Marshal.GetLastWin32Error()));
 
         switch(unixname.sysname)
         {
@@ -149,7 +150,8 @@ public static class DetectOS
                 {
                     Marshal.FreeHGlobal(pLen);
 
-                    throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
+                    throw new Exception(string.Format(Localization.Unhandled_exception_calling_uname_0,
+                                                      Marshal.GetLastWin32Error()));
                 }
 
                 int    length = Marshal.ReadInt32(pLen);
@@ -161,7 +163,8 @@ public static class DetectOS
                     Marshal.FreeHGlobal(pStr);
                     Marshal.FreeHGlobal(pLen);
 
-                    throw new Exception($"Unhandled exception calling uname: {Marshal.GetLastWin32Error()}");
+                    throw new Exception(string.Format(Localization.Unhandled_exception_calling_uname_0,
+                                                      Marshal.GetLastWin32Error()));
                 }
 
                 string machine = Marshal.PtrToStringAnsi(pStr);
