@@ -73,11 +73,12 @@ public partial class Device
 
         var registers = new AtaRegistersChs
         {
-            Command = (byte)AtaCommands.IdentifyPacketDevice
+            Command = (byte)AtaCommands.IdentifyPacketDevice,
+            Sector = 1
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout, true, out duration, out bool sense);
 
         Error = LastError != 0;
 
