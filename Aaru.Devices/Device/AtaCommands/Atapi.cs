@@ -73,11 +73,12 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersChs
             {
-                Command = (byte)AtaCommands.IdentifyPacketDevice
+                Command = (byte)AtaCommands.IdentifyPacketDevice,
+                SectorCount = 1
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
+                                       AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
                                        out bool sense);
 
             Error = LastError != 0;
