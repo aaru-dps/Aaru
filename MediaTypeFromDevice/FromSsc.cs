@@ -1003,7 +1003,7 @@ public static partial class MediaTypeFromDevice
                     {
                         if(model.ToLowerInvariant().StartsWith("exb", StringComparison.Ordinal))
                         {
-                            AaruConsole.DebugWriteLine("Media detection", Core.SCSI_Media_Type_Description_Exatape_80m,
+                            AaruConsole.DebugWriteLine("Media detection", Localization.SCSI_Media_Type_Description_Exatape_80m,
                                                        mediumType, densityCode);
 
                             return MediaType.Exatape80m;
@@ -1029,7 +1029,7 @@ public static partial class MediaTypeFromDevice
                     {
                         if(model.ToLowerInvariant().StartsWith("exb", StringComparison.Ordinal))
                         {
-                            AaruConsole.DebugWriteLine("Media detection", Core.SCSI_Media_Type_Description_Exatape_80m,
+                            AaruConsole.DebugWriteLine("Media detection", Localization.SCSI_Media_Type_Description_Exatape_80m,
                                                        mediumType, densityCode);
 
                             return MediaType.Exatape80m;

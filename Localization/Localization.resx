@@ -612,6 +612,9 @@
   <data name="SCSI_Media_Type_Description_Exatape_75m" xml:space="preserve">
     <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 75m Exatape.</value>
   </data>
+  <data name="SCSI_Media_Type_Description_Exatape_80m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 80m Exatape.</value>
+  </data>
   <data name="IDENTIFY_response_is_different_than_512_bytes_not_decoding" xml:space="preserve">
     <value>IDENTIFY response is different than 512 bytes, not decoding.</value>
   </data>

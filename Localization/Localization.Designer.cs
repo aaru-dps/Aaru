@@ -1221,6 +1221,12 @@ namespace Aaru.CommonTypes {
             }
         }
         
+        internal static string SCSI_Media_Type_Description_Exatape_80m {
+            get {
+                return ResourceManager.GetString("SCSI_Media_Type_Description_Exatape_80m", resourceCulture);
+            }
+        }
+        
         internal static string IDENTIFY_response_is_different_than_512_bytes_not_decoding {
             get {
                 return ResourceManager.GetString("IDENTIFY_response_is_different_than_512_bytes_not_decoding", resourceCulture);
