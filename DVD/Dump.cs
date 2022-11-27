@@ -80,7 +80,7 @@ public sealed class Dump
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine("SCSI Device", "REPORT ASF (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.REPORT_ASF_AGID_1_Sense_2_Last_Error_3_took_0_ms,
                                    duration, Agid, sense, _dev.LastError);
 
         return sense;
@@ -108,7 +108,7 @@ public sealed class Dump
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine("SCSI Device", "REPORT ASF (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.REPORT_ASF_AGID_1_Sense_2_Last_Error_3_took_0_ms,
                                    duration, Agid, sense, _dev.LastError);
 
         return sense;
@@ -136,9 +136,8 @@ public sealed class Dump
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "INVALIDATE AGID (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.", duration,
-                                   Agid, sense, _dev.LastError);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.INVALIDATE_AGID_AGID_1_Sense_2_Last_Error_3_took_0_ms,
+                                   duration, Agid, sense, _dev.LastError);
 
         return sense;
     }
@@ -166,8 +165,8 @@ public sealed class Dump
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruConsole.DebugWriteLine("SCSI Device",
-                                   "REPORT AGID CSS/CPPM (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
-                                   duration, Agid, sense, _dev.LastError);
+                                   Localization.REPORT_AGID_CSS_CPPM_AGID_1_Sense_2_Last_Error_3_took_0_ms, duration,
+                                   Agid, sense, _dev.LastError);
 
         return sense;
     }
@@ -194,7 +193,7 @@ public sealed class Dump
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine("SCSI Device", "REPORT KEY1 (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.REPORT_KEY1_AGID_1_Sense_2_Last_Error_3_took_0_ms,
                                    duration, Agid, sense, _dev.LastError);
 
         return sense;
@@ -222,9 +221,8 @@ public sealed class Dump
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "REPORT CHALLENGE (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.", duration,
-                                   Agid, sense, _dev.LastError);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.REPORT_CHALLENGE_AGID_1_Sense_2_Last_Error_3_took_0_ms,
+                                   duration, Agid, sense, _dev.LastError);
 
         return sense;
     }
@@ -266,7 +264,7 @@ public sealed class Dump
                              out bool sense);
 
         AaruConsole.DebugWriteLine("SCSI Device",
-                                   "SEND CHALLENGE (AGID: {1}, Challenge {2}, Sense: {3}, Last Error: {4}) took {0} ms.",
+                                   Localization.SEND_CHALLENGE_AGID_1_Challenge_2_Sense_3_Last_Error_4_took_0_ms,
                                    duration, Agid, challengeKey, sense, _dev.LastError);
 
         return sense;
@@ -304,8 +302,8 @@ public sealed class Dump
                              out bool sense);
 
         AaruConsole.DebugWriteLine("SCSI Device",
-                                   "SEND CHALLENGE (AGID: {1}, KEY2 {2}, Sense: {3}, Last Error: {4}) took {0} ms.",
-                                   duration, Agid, key2, sense, _dev.LastError);
+                                   Localization.SEND_CHALLENGE_AGID_1_KEY2_2_Sense_3_Last_Error_4_took_0_ms, duration,
+                                   Agid, key2, sense, _dev.LastError);
 
         return sense;
     }
@@ -475,8 +473,8 @@ public sealed class Dump
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine("SCSI Device", "GET TITLE KEY (AGID: {1}, LBA: {2}, Sense: {3}) took {0} ms.",
-                                   duration, Agid, address, sense);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.GET_TITLE_KEY_AGID_1_LBA_2_Sense_3_took_0_ms, duration,
+                                   Agid, address, sense);
 
         return sense;
     }
