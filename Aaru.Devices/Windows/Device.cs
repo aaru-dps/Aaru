@@ -98,10 +98,10 @@ partial class Device : Devices.Device
         };
 
         IntPtr descriptorPtr = Marshal.AllocHGlobal(1000);
-        var    descriptorB   = new byte[1000];
+        byte[] descriptorB   = new byte[1000];
 
         uint returned = 0;
-        var  error    = 0;
+        int  error    = 0;
 
         bool hasError = !Extern.DeviceIoControlStorageQuery(dev._fileHandle, WindowsIoctl.IoctlStorageQueryProperty,
                                                             ref query, (uint)Marshal.SizeOf(query), descriptorPtr, 1000,
@@ -196,7 +196,7 @@ partial class Device : Devices.Device
 
         if(IsSdhci(dev._fileHandle))
         {
-            var sdBuffer = new byte[16];
+            byte[] sdBuffer = new byte[16];
 
             dev.LastError = dev.SendMmcCommand(MmcCommands.SendCsd, false, false,
                                                MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16,

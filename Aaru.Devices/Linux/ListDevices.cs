@@ -48,8 +48,8 @@ static class ListDevices
     {
         string[] sysdevs = Directory.GetFileSystemEntries(PATH_SYS_DEVBLOCK, "*", SearchOption.TopDirectoryOnly);
 
-        var  devices = new DeviceInfo[sysdevs.Length];
-        bool hasUdev;
+        DeviceInfo[] devices = new DeviceInfo[sysdevs.Length];
+        bool         hasUdev;
 
         IntPtr udev = IntPtr.Zero;
 
@@ -63,7 +63,7 @@ static class ListDevices
             hasUdev = false;
         }
 
-        for(var i = 0; i < sysdevs.Length; i++)
+        for(int i = 0; i < sysdevs.Length; i++)
         {
             devices[i] = new DeviceInfo
             {

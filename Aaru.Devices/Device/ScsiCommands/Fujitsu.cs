@@ -103,7 +103,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "FUJITSU DISPLAY took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.FUJITSU_DISPLAY_took_0_ms, duration);
 
         return sense;
     }

@@ -69,7 +69,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.PIONEER_READ_CD_DA_took_0_ms, duration);
 
         return sense;
     }
@@ -107,7 +107,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA MSF took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.PIONEER_READ_CD_DA_MSF_took_0_ms, duration);
 
         return sense;
     }
@@ -161,7 +161,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-XA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.PIONEER_READ_CD_XA_took_0_ms, duration);
 
         return sense;
     }

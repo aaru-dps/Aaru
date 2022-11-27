@@ -108,7 +108,8 @@ public partial class Device
             if(OperatingSystem.IsLinux())
                 return Linux.ListDevices.GetList();
 
-            throw new InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
+            throw new InvalidOperationException(string.Format(Localization.Platform_0_not_yet_supported,
+                                                              DetectOS.GetRealPlatformID()));
         }
 
         try
@@ -118,7 +119,7 @@ public partial class Device
             if(aaruUri.Scheme != "aaru" &&
                aaruUri.Scheme != "dic")
             {
-                AaruConsole.ErrorWriteLine("Invalid remote URI.");
+                AaruConsole.ErrorWriteLine(Localization.Invalid_remote_URI);
 
                 return Array.Empty<DeviceInfo>();
             }
@@ -136,7 +137,7 @@ public partial class Device
         }
         catch(Exception)
         {
-            AaruConsole.ErrorWriteLine("Error connecting to host.");
+            AaruConsole.ErrorWriteLine(Localization.Error_connecting_to_host);
 
             return Array.Empty<DeviceInfo>();
         }

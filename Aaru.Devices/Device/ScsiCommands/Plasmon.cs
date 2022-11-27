@@ -101,7 +101,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "PLASMON READ SECTOR LOCATION took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.PLASMON_READ_SECTOR_LOCATION_took_0_ms, duration);
 
         return sense;
     }

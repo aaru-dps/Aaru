@@ -58,7 +58,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "KREON DEPRECATED UNLOCK took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.KREON_DEPRECATED_UNLOCK_took_0_ms, duration);
 
         return sense;
     }
@@ -110,7 +110,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "KREON SET LOCK STATE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.KREON_SET_LOCK_STATE_took_0_ms, duration);
 
         return sense || Error;
     }
@@ -139,7 +139,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "KREON GET FEATURE LIST took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.KREON_GET_FEATURE_LIST_took_0_ms, duration);
 
         if(sense)
             return true;
@@ -237,7 +237,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "KREON EXTRACT SS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.KREON_EXTRACT_SS_took_0_ms, duration);
 
         return sense || Error;
     }

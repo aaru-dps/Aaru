@@ -60,7 +60,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "SMART DISABLE OPERATIONS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.SMART_DISABLE_OPERATIONS_took_0_ms, duration);
 
         return sense;
     }
@@ -89,7 +89,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "SMART ENABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.SMART_ENABLE_ATTRIBUTE_AUTOSAVE_took_0_ms, duration);
 
         return sense;
     }
@@ -117,7 +117,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "SMART DISABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.SMART_DISABLE_ATTRIBUTE_AUTOSAVE_took_0_ms, duration);
 
         return sense;
     }
@@ -144,7 +144,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "SMART ENABLE OPERATIONS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.SMART_ENABLE_OPERATIONS_took_0_ms, duration);
 
         return sense;
     }
@@ -174,7 +174,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "SMART EXECUTE OFF-LINE IMMEDIATE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.SMART_EXECUTE_OFF_LINE_IMMEDIATE_took_0_ms, duration);
 
         return sense;
     }
@@ -203,7 +203,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "SMART READ DATA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.SMART_READ_DATA_took_0_ms, duration);
 
         return sense;
     }
@@ -234,7 +234,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "SMART READ LOG took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.SMART_READ_LOG_took_0_ms, duration);
 
         return sense;
     }
@@ -261,7 +261,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "SMART RETURN STATUS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.SMART_RETURN_STATUS_took_0_ms, duration);
 
         return sense;
     }

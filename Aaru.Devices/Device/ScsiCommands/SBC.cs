@@ -77,7 +77,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "READ (6) took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.READ_6_took_0_ms, duration);
 
         return sense;
     }
@@ -140,7 +140,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "READ (10) took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.READ_10_took_0_ms, duration);
 
         return sense;
     }
@@ -209,7 +209,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "READ (12) took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.READ_12_took_0_ms, duration);
 
         return sense;
     }
@@ -279,7 +279,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "READ (16) took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.READ_16_took_0_ms, duration);
 
         return sense;
     }
@@ -325,7 +325,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "READ LONG (10) took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.READ_LONG_10_took_0_ms, duration);
 
         return sense;
     }
@@ -372,7 +372,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "READ LONG (16) took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.READ_LONG_16_took_0_ms, duration);
 
         return sense;
     }
@@ -398,7 +398,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "SEEK (6) took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.SEEK_6_took_0_ms, duration);
 
         return sense;
     }
@@ -425,7 +425,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "SEEK (10) took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.SEEK_10_took_0_ms, duration);
 
         return sense;
     }

@@ -61,7 +61,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "ARCHIVE CORP. REQUEST BLOCK ADDRESS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.ARCHIVE_CORP_REQUEST_BLOCK_ADDRESS_took_0_ms, duration);
 
         return sense;
     }
@@ -100,7 +100,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "ARCHIVE CORP. SEEK BLOCK took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.ARCHIVE_CORP_SEEK_BLOCK_took_0_ms, duration);
 
         return sense;
     }

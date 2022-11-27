@@ -59,7 +59,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ BUFFER took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_BUFFER_took_0_ms, duration);
 
         return sense;
     }
@@ -85,7 +85,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ BUFFER DMA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_BUFFER_DMA_took_0_ms, duration);
 
         return sense;
     }
@@ -133,7 +133,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ DMA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_DMA_took_0_ms, duration);
 
         return sense;
     }
@@ -171,7 +171,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ MULTIPLE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_MULTIPLE_took_0_ms, duration);
 
         return sense;
     }
@@ -209,7 +209,7 @@ public partial class Device
             lba += statusRegisters.LbaLow;
         }
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ NATIVE MAX ADDRESS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_NATIVE_MAX_ADDRESS_took_0_ms, duration);
 
         return sense;
     }
@@ -257,7 +257,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ SECTORS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_SECTORS_took_0_ms, duration);
 
         return sense;
     }
@@ -305,7 +305,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ LONG took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_LONG_took_0_ms, duration);
 
         return sense;
     }
@@ -336,7 +336,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "SEEK took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.SEEK_took_0_ms, duration);
 
         return sense;
     }

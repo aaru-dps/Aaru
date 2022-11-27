@@ -74,7 +74,7 @@ public partial class Device
         var registers = new AtaRegistersChs
         {
             Command = (byte)AtaCommands.IdentifyPacketDevice,
-            Sector = 1
+            Sector  = 1
         };
 
         LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
@@ -82,7 +82,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "IDENTIFY PACKET DEVICE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.IDENTIFY_PACKET_DEVICE_took_0_ms, duration);
 
         return sense;
     }

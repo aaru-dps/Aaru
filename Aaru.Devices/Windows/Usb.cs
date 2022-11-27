@@ -49,8 +49,8 @@ static partial class Usb
     /// <returns>List of USB Host Controllers</returns>
     static IEnumerable<UsbController> GetHostControllers()
     {
-        var hostList = new List<UsbController>();
-        var hostGuid = new Guid(GUID_DEVINTERFACE_HUBCONTROLLER);
+        List<UsbController> hostList = new List<UsbController>();
+        var                 hostGuid = new Guid(GUID_DEVINTERFACE_HUBCONTROLLER);
 
         // We start at the "root" of the device tree and look for all
         // devices that match the interface GUID of a Hub Controller
@@ -61,7 +61,7 @@ static partial class Usb
 
         IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
         bool   success;
-        var    i = 0;
+        int    i = 0;
 
         do
         {
@@ -92,14 +92,14 @@ static partial class Usb
                 // trust me :)
 
                 // now we can get some more detailed information
-                var nRequiredSize = 0;
+                int nRequiredSize = 0;
 
                 if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, BUFFER_SIZE, ref nRequiredSize, ref da))
                 {
                     host._controllerDevicePath = didd.DevicePath;
 
                     // get the Device Description and DriverKeyName
-                    var requiredSize = 0;
+                    int requiredSize = 0;
                     int regType      = REG_SZ;
 
                     if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DEVICEDESC, ref regType, ptrBuf, BUFFER_SIZE,
@@ -129,7 +129,7 @@ static partial class Usb
     /// <returns>USB device description</returns>
     static string GetDescriptionByKeyName(string driverKeyName)
     {
-        var ans = "";
+        string ans = "";
 
         // Use the "enumerator form" of the SetupDiGetClassDevs API
         // to generate a list of all USB devices
@@ -141,7 +141,7 @@ static partial class Usb
         IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
 
         bool success;
-        var  i = 0;
+        int  i = 0;
 
         do
         {
@@ -154,9 +154,9 @@ static partial class Usb
 
             if(success)
             {
-                var requiredSize = 0;
-                int regType      = REG_SZ;
-                var keyName      = "";
+                int    requiredSize = 0;
+                int    regType      = REG_SZ;
+                string keyName      = "";
 
                 if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
                                                     ref requiredSize))
@@ -187,7 +187,7 @@ static partial class Usb
     /// <returns>Device instance ID</returns>
     static string GetInstanceIdByKeyName(string driverKeyName)
     {
-        var ans = "";
+        string ans = "";
 
         // Use the "enumerator form" of the SetupDiGetClassDevs API
         // to generate a list of all USB devices
@@ -199,7 +199,7 @@ static partial class Usb
         IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
 
         bool success;
-        var  i = 0;
+        int  i = 0;
 
         do
         {
@@ -212,10 +212,10 @@ static partial class Usb
 
             if(success)
             {
-                var requiredSize = 0;
+                int requiredSize = 0;
                 int regType      = REG_SZ;
 
-                var keyName = "";
+                string keyName = "";
 
                 if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
                                                     ref requiredSize))
@@ -396,7 +396,7 @@ static partial class Usb
         /// <returns>List of downstream ports</returns>
         internal IEnumerable<UsbPort> GetPorts()
         {
-            var portList = new List<UsbPort>();
+            List<UsbPort> portList = new List<UsbPort>();
 
             // Open a handle to the Hub device
             IntPtr h = CreateFile(_hubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
@@ -410,7 +410,7 @@ static partial class Usb
 
             // loop thru all of the ports on the hub
             // BTW: Ports are numbered starting at 1
-            for(var i = 1; i <= _hubPortCount; i++)
+            for(int i = 1; i <= _hubPortCount; i++)
             {
                 var nodeConnection = new UsbNodeConnectionInformationEx
                 {
@@ -517,7 +517,7 @@ static partial class Usb
             int nBytes = BUFFER_SIZE;
 
             // We use this to zero fill a buffer
-            var nullString = new string((char)0, BUFFER_SIZE / Marshal.SystemDefaultCharSize);
+            string nullString = new string((char)0, BUFFER_SIZE / Marshal.SystemDefaultCharSize);
 
             // The iManufacturer, iProduct and iSerialNumber entries in the
             // Device Descriptor are really just indexes.  So, we have to

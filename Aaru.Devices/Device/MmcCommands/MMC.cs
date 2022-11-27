@@ -53,7 +53,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("MMC Device", "SEND_CSD took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("MMC Device", Localization.SEND_CSD_took_0_ms, duration);
 
         return sense;
     }
@@ -74,7 +74,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("MMC Device", "SEND_CID took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("MMC Device", Localization.SEND_CID_took_0_ms, duration);
 
         return sense;
     }
@@ -95,7 +95,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SecureDigital Device", "SEND_OP_COND took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("MMC Device", Localization.SEND_OP_COND_took_0_ms, duration);
 
         return sense;
     }
@@ -116,7 +116,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("MMC Device", "SEND_EXT_CSD took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("MMC Device", Localization.SEND_EXT_CSD_took_0_ms, duration);
 
         return sense;
     }
@@ -137,7 +137,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("MMC Device", "SET_BLOCKLEN took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("MMC Device", Localization.SET_BLOCKLEN_took_0_ms, duration);
 
         return sense;
     }
@@ -201,7 +201,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("MMC Device", "READ_SINGLE_BLOCK took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("MMC Device", Localization.READ_SINGLE_BLOCK_took_0_ms, duration);
 
         return sense;
     }
@@ -238,8 +238,8 @@ public partial class Device
         Error = LastError != 0;
 
         AaruConsole.DebugWriteLine("MMC Device",
-                                   transferLength > 1 ? "READ_MULTIPLE_BLOCK took {0} ms."
-                                       : "READ_SINGLE_BLOCK took {0} ms.", duration);
+                                   transferLength > 1 ? Localization.READ_MULTIPLE_BLOCK_took_0_ms
+                                       : Localization.READ_SINGLE_BLOCK_took_0_ms, duration);
 
         return sense;
     }
@@ -287,7 +287,7 @@ public partial class Device
             Array.Copy(blockBuffer, 0, buffer, i * blockSize, blockSize);
         }
 
-        AaruConsole.DebugWriteLine("MMC Device", "Multiple READ_SINGLE_BLOCKs took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("MMC Device", Localization.Multiple_READ_SINGLE_BLOCKs_took_0_ms, duration);
 
         return sense;
     }
@@ -308,7 +308,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SecureDigital Device", "SEND_STATUS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SecureDigital Device", Localization.SEND_STATUS_took_0_ms, duration);
 
         return sense;
     }
@@ -373,7 +373,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SecureDigital Device", "READ_MULTIPLE_BLOCK took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SecureDigital Device", Localization.READ_MULTIPLE_BLOCK_took_0_ms, duration);
 
         buffer   = commands[1].buffer;
         response = commands[1].response;

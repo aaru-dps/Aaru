@@ -52,7 +52,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SecureDigital Device", "SD_STATUS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SecureDigital Device", Localization.SD_STATUS_took_0_ms, duration);
 
         return sense;
     }
@@ -73,7 +73,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SecureDigital Device", "SD_SEND_OP_COND took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SecureDigital Device", Localization.SD_SEND_OP_COND_took_0_ms, duration);
 
         return sense;
     }
@@ -94,7 +94,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SecureDigital Device", "SEND_SCR took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SecureDigital Device", Localization.SEND_SCR_took_0_ms, duration);
 
         return sense;
     }

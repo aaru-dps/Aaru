@@ -54,8 +54,8 @@ static class ListDevices
         var          result   = new StringBuilder();
         const string hexTable = "0123456789abcdef";
 
-        for(var i = 0; i < hex.Length / 2; i++)
-            result.Append((char)(16 * hexTable.IndexOf(hex[2 * i]) + hexTable.IndexOf(hex[2 * i + 1])));
+        for(int i = 0; i < hex.Length / 2; i++)
+            result.Append((char)((16 * hexTable.IndexOf(hex[2 * i])) + hexTable.IndexOf(hex[(2 * i) + 1])));
 
         return result.ToString();
     }
@@ -65,7 +65,7 @@ static class ListDevices
     [SuppressMessage("ReSharper", "RedundantCatchClause")]
     internal static DeviceInfo[] GetList()
     {
-        var deviceIDs = new List<string>();
+        List<string> deviceIDs = new List<string>();
 
         try
         {
@@ -94,7 +94,7 @@ static class ListDevices
         #endif
         }
 
-        var devList = new List<DeviceInfo>();
+        List<DeviceInfo> devList = new List<DeviceInfo>();
 
         foreach(string devId in deviceIDs)
         {
@@ -125,10 +125,10 @@ static class ListDevices
             //descriptor.RawDeviceProperties = new byte[16384];
 
             IntPtr descriptorPtr = Marshal.AllocHGlobal(1000);
-            var    descriptorB   = new byte[1000];
+            byte[] descriptorB   = new byte[1000];
 
             uint returned = 0;
-            var  error    = 0;
+            int  error    = 0;
 
             bool hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IoctlStorageQueryProperty, ref query,
                                                                 (uint)Marshal.SizeOf(query), descriptorPtr, 1000,

@@ -94,7 +94,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "READ ATTRIBUTE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.READ_ATTRIBUTE_took_0_ms, duration);
 
         return sense;
     }

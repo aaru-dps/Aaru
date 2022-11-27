@@ -84,7 +84,7 @@ partial class Device
         Array.Copy(cdb, sptdSb.sptd.Cdb, cdb.Length);
 
         uint k     = 0;
-        var  error = 0;
+        int  error = 0;
 
         Marshal.Copy(buffer, 0, sptdSb.sptd.DataBuffer, buffer.Length);
 
@@ -179,7 +179,7 @@ partial class Device
         aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
         uint k     = 0;
-        var  error = 0;
+        int  error = 0;
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
@@ -279,7 +279,7 @@ partial class Device
         aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
         uint k     = 0;
-        var  error = 0;
+        int  error = 0;
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
@@ -388,7 +388,7 @@ partial class Device
         aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
         uint k     = 0;
-        var  error = 0;
+        int  error = 0;
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
@@ -547,7 +547,8 @@ partial class Device
         if(flags.HasFlag(MmcFlags.ResponseR6))
             commandDescriptor.responseType = SdResponseType.R6;
 
-        var commandB = new byte[commandData.size + commandData.protocolArgumentSize + commandData.deviceDataBufferSize];
+        byte[] commandB =
+            new byte[commandData.size + commandData.protocolArgumentSize + commandData.deviceDataBufferSize];
 
         Array.Copy(buffer, 0, commandB, commandData.size + commandData.protocolArgumentSize, buffer.Length);
         IntPtr hBuf = Marshal.AllocHGlobal(commandB.Length);
@@ -557,7 +558,7 @@ partial class Device
         Marshal.Copy(hBuf, commandB, 0, commandB.Length);
         Marshal.FreeHGlobal(hBuf);
 
-        var error = 0;
+        int error = 0;
         start = DateTime.Now;
 
         sense = !Extern.DeviceIoControl(_fileHandle, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB,
@@ -585,7 +586,7 @@ partial class Device
         if(timeout == 0)
             timeout = Timeout > 0 ? Timeout : 15;
 
-        var error = 0;
+        int error = 0;
         duration = 0;
         sense    = false;
 

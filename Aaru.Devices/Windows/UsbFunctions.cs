@@ -55,7 +55,7 @@ static partial class Usb
     /// <returns>List of usb devices</returns>
     internal static List<UsbDevice> GetConnectedDevices()
     {
-        var devList = new List<UsbDevice>();
+        List<UsbDevice> devList = new List<UsbDevice>();
 
         foreach(UsbController controller in GetHostControllers())
             ListHub(controller.GetRootHub(), devList);
@@ -205,7 +205,7 @@ static partial class Usb
     static UsbDevice FindDeviceNumber(int devNum, string deviceGuid)
     {
         UsbDevice foundDevice = null;
-        var       instanceId  = "";
+        string    instanceId  = "";
 
         var diskGuid = new Guid(deviceGuid);
 
@@ -216,7 +216,7 @@ static partial class Usb
         if(h != _invalidHandleValue)
         {
             bool success;
-            var  i = 0;
+            int  i = 0;
 
             do
             {
@@ -240,7 +240,7 @@ static partial class Usb
                     }; // trust me :)
 
                     // now we can get some more detailed information
-                    var nRequiredSize = 0;
+                    int nRequiredSize = 0;
 
                     if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, BUFFER_SIZE, ref nRequiredSize, ref da))
                         if(GetDeviceNumber(didd.DevicePath) == devNum)

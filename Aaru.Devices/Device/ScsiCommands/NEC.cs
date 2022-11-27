@@ -65,7 +65,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("SCSI Device", Localization.NEC_READ_CD_DA_took_0_ms, duration);
 
         return sense;
     }

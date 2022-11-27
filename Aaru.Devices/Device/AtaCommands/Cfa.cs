@@ -66,7 +66,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.CFA_TRANSLATE_SECTOR_took_0_ms, duration);
 
         return sense;
     }
@@ -99,7 +99,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.CFA_TRANSLATE_SECTOR_took_0_ms, duration);
 
         return sense;
     }
@@ -127,7 +127,7 @@ public partial class Device
 
         errorCode = statusRegisters.Error;
 
-        AaruConsole.DebugWriteLine("ATA Device", "CFA REQUEST EXTENDED ERROR CODE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.CFA_REQUEST_EXTENDED_ERROR_CODE_took_0_ms, duration);
 
         return sense;
     }

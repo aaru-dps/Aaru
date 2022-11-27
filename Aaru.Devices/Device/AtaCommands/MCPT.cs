@@ -78,7 +78,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "CHECK MEDIA CARD TYPE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine("ATA Device", Localization.CHECK_MEDIA_CARD_TYPE_took_0_ms, duration);
 
         return sense;
     }
