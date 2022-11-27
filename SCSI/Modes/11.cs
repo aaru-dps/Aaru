@@ -143,42 +143,49 @@ public static partial class Modes
         ModePage_11 page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI medium partition page:");
+        sb.AppendLine(Localization.SCSI_medium_partition_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\t{0} maximum additional partitions", page.MaxAdditionalPartitions).AppendLine();
-        sb.AppendFormat("\t{0} additional partitions defined", page.AdditionalPartitionsDefined).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_maximum_additional_partitions, page.MaxAdditionalPartitions).
+           AppendLine();
+
+        sb.AppendFormat("\t" + Localization._0_additional_partitions_defined, page.AdditionalPartitionsDefined).
+           AppendLine();
 
         if(page.FDP)
-            sb.AppendLine("\tPartitions are fixed under device definitions");
+            sb.AppendLine("\t" + Localization.Partitions_are_fixed_under_device_definitions);
 
         if(page.SDP)
-            sb.AppendLine("\tNumber of partitions can be defined but their size is defined by the device");
+            sb.AppendLine("\t" + Localization.
+                              Number_of_partitions_can_be_defined_but_their_size_is_defined_by_the_device);
 
         if(page.IDP)
-            sb.AppendLine("\tNumber and size of partitions can be manually defined");
+            sb.AppendLine("\t" + Localization.Number_and_size_of_partitions_can_be_manually_defined);
 
         if(page.POFM)
-            sb.AppendLine("\tPartition parameters will not be applied until a FORMAT MEDIUM command is received");
+            sb.AppendLine("\t" + Localization.
+                              Partition_parameters_will_not_be_applied_until_a_FORMAT_MEDIUM_command_is_received);
 
         switch(page.CLEAR)
         {
             case false when !page.ADDP:
-                sb.AppendLine("\tDevice may erase any or all partitions on MODE SELECT for partitioning");
+                sb.AppendLine("\t" + Localization.
+                                  Device_may_erase_any_or_all_partitions_on_MODE_SELECT_for_partitioning);
 
                 break;
             case true when !page.ADDP:
-                sb.AppendLine("\tDevice shall erase all partitions on MODE SELECT for partitioning");
+                sb.AppendLine("\t" + Localization.Device_shall_erase_all_partitions_on_MODE_SELECT_for_partitioning);
 
                 break;
             case false:
-                sb.AppendLine("\tDevice shall not erase any partition on MODE SELECT for partitioning");
+                sb.AppendLine("\t" + Localization.Device_shall_not_erase_any_partition_on_MODE_SELECT_for_partitioning);
 
                 break;
             default:
-                sb.AppendLine("\tDevice shall erase all partitions differing on size on MODE SELECT for partitioning");
+                sb.AppendLine("\t" + Localization.
+                                  Device_shall_erase_all_partitions_differing_on_size_on_MODE_SELECT_for_partitioning);
 
                 break;
         }
@@ -188,30 +195,30 @@ public static partial class Modes
         switch(page.PSUM)
         {
             case PartitionSizeUnitOfMeasures.Bytes:
-                sb.AppendLine("\tPartitions are defined in bytes");
-                measure = "bytes";
+                sb.AppendLine("\t" + Localization.Partitions_are_defined_in_bytes);
+                measure = Localization.bytes;
 
                 break;
             case PartitionSizeUnitOfMeasures.Kilobytes:
-                sb.AppendLine("\tPartitions are defined in kilobytes");
-                measure = "kilobytes";
+                sb.AppendLine("\t" + Localization.Partitions_are_defined_in_kilobytes);
+                measure = Localization.kilobytes;
 
                 break;
             case PartitionSizeUnitOfMeasures.Megabytes:
-                sb.AppendLine("\tPartitions are defined in megabytes");
-                measure = "megabytes";
+                sb.AppendLine("\t" + Localization.Partitions_are_defined_in_megabytes);
+                measure = Localization.megabytes;
 
                 break;
             case PartitionSizeUnitOfMeasures.Exponential:
-                sb.AppendFormat("\tPartitions are defined in units of {0} bytes", Math.Pow(10, page.PartitionUnits)).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Partitions_are_defined_in_units_of_0_bytes,
+                                Math.Pow(10, page.PartitionUnits)).AppendLine();
 
-                measure = $"units of {Math.Pow(10, page.PartitionUnits)} bytes";
+                measure = string.Format(Localization.units_of_0_bytes, Math.Pow(10, page.PartitionUnits));
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown partition size unit code {0}", (byte)page.PSUM).AppendLine();
-                measure = "units";
+                sb.AppendFormat("\t" + Localization.Unknown_partition_size_unit_code_0, (byte)page.PSUM).AppendLine();
+                measure = Localization.units;
 
                 break;
         }
@@ -219,38 +226,40 @@ public static partial class Modes
         switch(page.MediumFormatRecognition)
         {
             case MediumFormatRecognitionValues.Capable:
-                sb.AppendLine("\tDevice is capable of recognizing both medium partitions and format");
+                sb.AppendLine("\t" + Localization.Device_is_capable_of_recognizing_both_medium_partitions_and_format);
 
                 break;
             case MediumFormatRecognitionValues.FormatCapable:
-                sb.AppendLine("\tDevice is capable of recognizing medium format");
+                sb.AppendLine("\t" + Localization.Device_is_capable_of_recognizing_medium_format);
 
                 break;
             case MediumFormatRecognitionValues.PartitionCapable:
-                sb.AppendLine("\tDevice is capable of recognizing medium partitions");
+                sb.AppendLine("\t" + Localization.Device_is_capable_of_recognizing_medium_partitions);
 
                 break;
             case MediumFormatRecognitionValues.Incapable:
-                sb.AppendLine("\tDevice is not capable of recognizing neither medium partitions nor format");
+                sb.AppendLine("\t" + Localization.
+                                  Device_is_not_capable_of_recognizing_neither_medium_partitions_nor_format);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown medium recognition code {0}", (byte)page.MediumFormatRecognition).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_medium_recognition_code_0,
+                                (byte)page.MediumFormatRecognition).AppendLine();
 
                 break;
         }
 
-        sb.AppendFormat("\tMedium has defined {0} partitions", page.PartitionSizes.Length).AppendLine();
+        sb.AppendFormat("\t" + Localization.Medium_has_defined_0_partitions, page.PartitionSizes.Length).AppendLine();
 
         for(int i = 0; i < page.PartitionSizes.Length; i++)
             if(page.PartitionSizes[i] == 0)
                 if(page.PartitionSizes.Length == 1)
-                    sb.AppendLine("\tDevice recognizes one single partition spanning whole medium");
+                    sb.AppendLine("\t" + Localization.Device_recognizes_one_single_partition_spanning_whole_medium);
                 else
-                    sb.AppendFormat("\tPartition {0} runs for rest of medium", i).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Partition_0_runs_for_rest_of_medium, i).AppendLine();
             else
-                sb.AppendFormat("\tPartition {0} is {1} {2} long", i, page.PartitionSizes[i], measure).AppendLine();
+                sb.AppendFormat("\t" + Localization.Partition_0_is_1_2_long, i, page.PartitionSizes[i], measure).
+                   AppendLine();
 
         return sb.ToString();
     }

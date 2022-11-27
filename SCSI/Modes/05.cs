@@ -157,89 +157,94 @@ public static partial class Modes
         ModePage_05 page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Flexible disk page:");
+        sb.AppendLine(Localization.SCSI_Flexible_disk_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\tTransfer rate: {0} kbit/s", page.TransferRate).AppendLine();
-        sb.AppendFormat("\t{0} heads", page.Heads).AppendLine();
-        sb.AppendFormat("\t{0} cylinders", page.Cylinders).AppendLine();
-        sb.AppendFormat("\t{0} sectors per track", page.SectorsPerTrack).AppendLine();
-        sb.AppendFormat("\t{0} bytes per sector", page.BytesPerSector).AppendLine();
+        sb.AppendFormat("\t" + Localization.Transfer_rate_0_kbits, page.TransferRate).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_heads, page.Heads).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_cylinders, page.Cylinders).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_sectors_per_track, page.SectorsPerTrack).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_bytes_per_sector, page.BytesPerSector).AppendLine();
 
         if(page.WritePrecompCylinder < page.Cylinders)
-            sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).AppendLine();
+            sb.AppendFormat("\t" + Localization.Write_pre_compensation_starts_at_cylinder_0, page.WritePrecompCylinder).
+               AppendLine();
 
         if(page.WriteReduceCylinder < page.Cylinders)
-            sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).AppendLine();
+            sb.AppendFormat("\t" + Localization.Write_current_reduction_starts_at_cylinder_0, page.WriteReduceCylinder).
+               AppendLine();
 
         if(page.DriveStepRate > 0)
-            sb.AppendFormat("\tDrive steps in {0} μs", (uint)page.DriveStepRate * 100).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_steps_in_0_μs, (uint)page.DriveStepRate * 100).AppendLine();
 
         if(page.DriveStepPulse > 0)
-            sb.AppendFormat("\tEach step pulse is {0} ms", page.DriveStepPulse).AppendLine();
+            sb.AppendFormat("\t" + Localization.Each_step_pulse_is_0_ms, page.DriveStepPulse).AppendLine();
 
         if(page.HeadSettleDelay > 0)
-            sb.AppendFormat("\tHeads settles in {0} μs", (uint)page.HeadSettleDelay * 100).AppendLine();
+            sb.AppendFormat("\t" + Localization.Heads_settles_in_0_μs, (uint)page.HeadSettleDelay * 100).AppendLine();
 
         if(!page.TRDY)
             sb.
-                AppendFormat("\tTarget shall wait {0} seconds before attempting to access the medium after motor on is asserted",
+                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_before_attempting_to_access_the_medium_after_motor_on_is_asserted,
                              (double)page.MotorOnDelay * 10).AppendLine();
         else
             sb.
-                AppendFormat("\tTarget shall wait {0} seconds after drive is ready before aborting medium access attempts",
+                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_after_drive_is_ready_before_aborting_medium_access_attempts,
                              (double)page.MotorOnDelay * 10).AppendLine();
 
         if(page.MotorOffDelay != 0xFF)
-            sb.AppendFormat("\tTarget shall wait {0} seconds before releasing the motor on signal after becoming idle",
-                            (double)page.MotorOffDelay * 10).AppendLine();
+            sb.
+                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_before_releasing_the_motor_on_signal_after_becoming_idle,
+                             (double)page.MotorOffDelay * 10).AppendLine();
         else
-            sb.AppendLine("\tTarget shall never release the motor on signal");
+            sb.AppendLine("\t" + Localization.Target_shall_never_release_the_motor_on_signal);
 
         if(page.TRDY)
-            sb.AppendLine("\tThere is a drive ready signal");
+            sb.AppendLine("\t" + Localization.There_is_a_drive_ready_signal);
 
         if(page.SSN)
-            sb.AppendLine("\tSectors start at 1");
+            sb.AppendLine("\t" + Localization.Sectors_start_at_1);
 
         if(page.MO)
-            sb.AppendLine("\tThe motor on signal shall remain released");
+            sb.AppendLine("\t" + Localization.The_motor_on_signal_shall_remain_released);
 
-        sb.AppendFormat("\tDrive needs to do {0} step pulses per cylinder", page.SPC + 1).AppendLine();
+        sb.AppendFormat("\t" + Localization.Drive_needs_to_do_0_step_pulses_per_cylinder, page.SPC + 1).AppendLine();
 
         if(page.WriteCompensation > 0)
-            sb.AppendFormat("\tWrite pre-compensation is {0}", page.WriteCompensation).AppendLine();
+            sb.AppendFormat("\t" + Localization.Write_pre_compensation_is_0, page.WriteCompensation).AppendLine();
 
         if(page.HeadLoadDelay > 0)
-            sb.AppendFormat("\tHead takes {0} ms to load", page.HeadLoadDelay).AppendLine();
+            sb.AppendFormat("\t" + Localization.Head_takes_0_ms_to_load, page.HeadLoadDelay).AppendLine();
 
         if(page.HeadUnloadDelay > 0)
-            sb.AppendFormat("\tHead takes {0} ms to unload", page.HeadUnloadDelay).AppendLine();
+            sb.AppendFormat("\t" + Localization.Head_takes_0_ms_to_unload, page.HeadUnloadDelay).AppendLine();
 
         if(page.MediumRotationRate > 0)
-            sb.AppendFormat("\tMedium rotates at {0} rpm", page.MediumRotationRate).AppendLine();
+            sb.AppendFormat("\t" + Localization.Medium_rotates_at_0_rpm, page.MediumRotationRate).AppendLine();
 
         switch(page.Pin34 & 0x07)
         {
             case 0:
-                sb.AppendLine("\tPin 34 is unconnected");
+                sb.AppendLine("\t" + Localization.Pin_34_is_unconnected);
 
                 break;
             case 1:
-                sb.Append("\tPin 34 indicates drive is ready when active ");
-                sb.Append((page.Pin34 & 0x08) == 0x08 ? "high" : "low");
+                sb.Append("\t" + ((page.Pin34 & 0x08) == 0x08
+                                      ? Localization.Pin_34_indicates_drive_is_ready_when_active_high
+                                      : Localization.Pin_34_indicates_drive_is_ready_when_active_low));
 
                 break;
             case 2:
-                sb.Append("\tPin 34 indicates disk has changed when active ");
-                sb.Append((page.Pin34 & 0x08) == 0x08 ? "high" : "low");
+                sb.Append("\t" + ((page.Pin34 & 0x08) == 0x08
+                                      ? Localization.Pin_34_indicates_disk_has_changed_when_active_high
+                                      : Localization.Pin_34_indicates_disk_has_changed_when_active_low));
 
                 break;
             default:
-                sb.AppendFormat("\tPin 34 indicates unknown function {0} when active ", page.Pin34 & 0x07);
-                sb.Append((page.Pin34 & 0x08) == 0x08 ? "high" : "low");
+                sb.AppendFormat("\t" + ((page.Pin34 & 0x08) == 0x08 ? Localization.Pin_34_indicates_unknown_function_0_when_active_high : Localization.Pin_34_indicates_unknown_function_0_when_active_low),
+                                page.Pin34 & 0x07);
 
                 break;
         }
@@ -247,27 +252,28 @@ public static partial class Modes
         switch(page.Pin4 & 0x07)
         {
             case 0:
-                sb.AppendLine("\tPin 4 is unconnected");
+                sb.AppendLine("\t" + Localization.Pin_4_is_unconnected);
 
                 break;
             case 1:
-                sb.Append("\tPin 4 indicates drive is in use when active ");
-                sb.Append((page.Pin4 & 0x08) == 0x08 ? "high" : "low");
+                sb.Append("\t" + ((page.Pin4 & 0x08) == 0x08
+                                      ? Localization.Pin_4_indicates_drive_is_in_use_when_active_high
+                                      : Localization.Pin_4_indicates_drive_is_in_use_when_active_low));
 
                 break;
             case 2:
-                sb.Append("\tPin 4 indicates eject when active ");
-                sb.Append((page.Pin4 & 0x08) == 0x08 ? "high" : "low");
+                sb.Append("\t" + ((page.Pin4 & 0x08) == 0x08 ? Localization.Pin_4_indicates_eject_when_active_high
+                                      : Localization.Pin_4_indicates_eject_when_active_low));
 
                 break;
             case 3:
-                sb.Append("\tPin 4 indicates head load when active ");
-                sb.Append((page.Pin4 & 0x08) == 0x08 ? "high" : "low");
+                sb.Append("\t" + ((page.Pin4 & 0x08) == 0x08 ? Localization.Pin_4_indicates_head_load_when_active_high
+                                      : Localization.Pin_4_indicates_head_load_when_active_low));
 
                 break;
             default:
-                sb.AppendFormat("\tPin 4 indicates unknown function {0} when active ", page.Pin4 & 0x07);
-                sb.Append((page.Pin4 & 0x08) == 0x08 ? "high" : "low");
+                sb.AppendFormat("\t" + ((page.Pin4 & 0x08) == 0x08 ? Localization.Pin_4_indicates_unknown_function_0_when_active_high : Localization.Pin_4_indicates_unknown_function_0_when_active_low),
+                                page.Pin4 & 0x07);
 
                 break;
         }
@@ -275,12 +281,12 @@ public static partial class Modes
         switch(page.Pin2 & 0x07)
         {
             case 0:
-                sb.AppendLine("\tPin 2 is unconnected");
+                sb.AppendLine("\t" + Localization.Pin_2_is_unconnected);
 
                 break;
             default:
-                sb.AppendFormat("\tPin 2 indicates unknown function {0} when active ", page.Pin2 & 0x07);
-                sb.Append((page.Pin2 & 0x08) == 0x08 ? "high" : "low");
+                sb.AppendFormat("\t" + ((page.Pin2 & 0x08) == 0x08 ? Localization.Pin_2_indicates_unknown_function_0_when_active_high : Localization.Pin_2_indicates_unknown_function_0_when_active_low),
+                                page.Pin2 & 0x07);
 
                 break;
         }
@@ -288,17 +294,18 @@ public static partial class Modes
         switch(page.Pin1 & 0x07)
         {
             case 0:
-                sb.AppendLine("\tPin 1 is unconnected");
+                sb.AppendLine("\t" + Localization.Pin_1_is_unconnected);
 
                 break;
             case 1:
-                sb.Append("\tPin 1 indicates disk change reset when active ");
-                sb.Append((page.Pin1 & 0x08) == 0x08 ? "high" : "low");
+                sb.Append("\t" + ((page.Pin1 & 0x08) == 0x08
+                                      ? Localization.Pin_1_indicates_disk_change_reset_when_active_high
+                                      : Localization.Pin_1_indicates_disk_change_reset_when_active_low));
 
                 break;
             default:
-                sb.AppendFormat("\tPin 1 indicates unknown function {0} when active ", page.Pin1 & 0x07);
-                sb.Append((page.Pin1 & 0x08) == 0x08 ? "high" : "low");
+                sb.AppendFormat("\t" + ((page.Pin1 & 0x08) == 0x08 ? Localization.Pin_1_indicates_unknown_function_0_when_active_high : Localization.Pin_1_indicates_unknown_function_0_when_active_low),
+                                page.Pin1 & 0x07);
 
                 break;
         }

@@ -102,29 +102,30 @@ public static partial class Modes
         ModePage_10 page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI XOR control mode page:");
+        sb.AppendLine(Localization.SCSI_XOR_control_mode_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.XORDIS)
-            sb.AppendLine("\tXOR operations are disabled");
+            sb.AppendLine("\t" + Localization.XOR_operations_are_disabled);
         else
         {
             if(page.MaxXorWrite > 0)
-                sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a single XOR WRITE command",
+                sb.AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_single_XOR_WRITE_command,
                                 page.MaxXorWrite).AppendLine();
 
             if(page.MaxRegenSize > 0)
-                sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a REGENERATE command", page.MaxRegenSize).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_REGENERATE_command,
+                                page.MaxRegenSize).AppendLine();
 
             if(page.MaxRebuildRead > 0)
-                sb.AppendFormat("\tDrive accepts a maximum of {0} blocks in a READ command during rebuild",
-                                page.MaxRebuildRead).AppendLine();
+                sb.
+                    AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_READ_command_during_rebuild,
+                                 page.MaxRebuildRead).AppendLine();
 
             if(page.RebuildDelay > 0)
-                sb.AppendFormat("\tDrive needs a minimum of {0} ms between READ commands during rebuild",
+                sb.AppendFormat("\t" + Localization.Drive_needs_a_minimum_of_0_ms_between_READ_commands_during_rebuild,
                                 page.RebuildDelay).AppendLine();
         }
 

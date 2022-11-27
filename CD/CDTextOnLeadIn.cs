@@ -111,7 +111,8 @@ public static class CDTextOnLeadIn
         if(decoded.DataLength + 2 != CDTextResponse.Length)
         {
             AaruConsole.DebugWriteLine("CD-TEXT decoder",
-                                       "Expected CD-TEXT size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                       Localization.
+                                           Expected_CD_TEXT_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
                                        decoded.DataLength + 2, CDTextResponse.Length);
 
             return null;
@@ -143,10 +144,10 @@ public static class CDTextOnLeadIn
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
     #endif
 
         foreach(CDTextPack descriptor in response.DataPacks)
@@ -154,7 +155,8 @@ public static class CDTextOnLeadIn
             {
                 // Ignore NOPs
                 if((descriptor.HeaderID1 & 0x80) != 0)
-                    sb.AppendFormat("Incorrect CD-Text pack type {0}, not decoding", descriptor.HeaderID1).AppendLine();
+                    sb.AppendFormat(Localization.Incorrect_CD_Text_pack_type_0_not_decoding, descriptor.HeaderID1).
+                       AppendLine();
             }
             else
             {
@@ -162,36 +164,33 @@ public static class CDTextOnLeadIn
                 {
                     case 0x80:
                     {
-                        sb.Append("CD-Text pack contains title for ");
-
                         if(descriptor.HeaderID2 == 0x00)
-                            sb.AppendLine("album");
+                            sb.AppendLine(Localization.CD_Text_pack_contains_title_for_album);
                         else
-                            sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
+                            sb.AppendFormat(Localization.CD_Text_pack_contains_title_for_track_0, descriptor.HeaderID2).
+                               AppendLine();
 
                         break;
                     }
 
                     case 0x81:
                     {
-                        sb.Append("CD-Text pack contains performer for ");
-
                         if(descriptor.HeaderID2 == 0x00)
-                            sb.AppendLine("album");
+                            sb.AppendLine(Localization.CD_Text_pack_contains_performer_for_album);
                         else
-                            sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
+                            sb.AppendFormat(Localization.CD_Text_pack_contains_performer_for_track_0,
+                                            descriptor.HeaderID2).AppendLine();
 
                         break;
                     }
 
                     case 0x82:
                     {
-                        sb.Append("CD-Text pack contains songwriter for ");
-
                         if(descriptor.HeaderID2 == 0x00)
-                            sb.AppendLine("album");
+                            sb.AppendLine(Localization.CD_Text_pack_contains_songwriter_for_album);
                         else
-                            sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
+                            sb.AppendFormat(Localization.CD_Text_pack_contains_songwriter_for_track_0,
+                                            descriptor.HeaderID2).AppendLine();
 
                         break;
                     }
@@ -199,61 +198,59 @@ public static class CDTextOnLeadIn
                     case 0x83:
                     {
                         if(descriptor.HeaderID2 == 0x00)
-                            sb.AppendLine("album");
+                            sb.AppendLine(Localization.album);
                         else
-                            sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
+                            sb.AppendFormat(Localization.track_0, descriptor.HeaderID2).AppendLine();
 
                         break;
                     }
 
                     case 0x84:
                     {
-                        sb.Append("CD-Text pack contains arranger for ");
-
                         if(descriptor.HeaderID2 == 0x00)
-                            sb.AppendLine("album");
+                            sb.AppendLine(Localization.CD_Text_pack_contains_arranger_for_album);
                         else
-                            sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
+                            sb.AppendFormat(Localization.CD_Text_pack_contains_arranger_for_track_0,
+                                            descriptor.HeaderID2).AppendLine();
 
                         break;
                     }
 
                     case 0x85:
                     {
-                        sb.Append("CD-Text pack contains content provider's message for ");
-
                         if(descriptor.HeaderID2 == 0x00)
-                            sb.AppendLine("album");
+                            sb.AppendLine(Localization.CD_Text_pack_contains_content_provider_message_for_album);
                         else
-                            sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
+                            sb.AppendFormat(Localization.CD_Text_pack_contains_content_provider_message_for_track_0,
+                                            descriptor.HeaderID2).AppendLine();
 
                         break;
                     }
 
                     case 0x86:
                     {
-                        sb.AppendLine("CD-Text pack contains disc identification information");
+                        sb.AppendLine(Localization.CD_Text_pack_contains_disc_identification_information);
 
                         break;
                     }
 
                     case 0x87:
                     {
-                        sb.AppendLine("CD-Text pack contains genre identification information");
+                        sb.AppendLine(Localization.CD_Text_pack_contains_genre_identification_information);
 
                         break;
                     }
 
                     case 0x88:
                     {
-                        sb.AppendLine("CD-Text pack contains table of contents information");
+                        sb.AppendLine(Localization.CD_Text_pack_contains_table_of_contents_information);
 
                         break;
                     }
 
                     case 0x89:
                     {
-                        sb.AppendLine("CD-Text pack contains second table of contents information");
+                        sb.AppendLine(Localization.CD_Text_pack_contains_second_table_of_contents_information);
 
                         break;
                     }
@@ -262,14 +259,14 @@ public static class CDTextOnLeadIn
                     case 0x8B:
                     case 0x8C:
                     {
-                        sb.AppendLine("CD-Text pack contains reserved data");
+                        sb.AppendLine(Localization.CD_Text_pack_contains_reserved_data);
 
                         break;
                     }
 
                     case 0x8D:
                     {
-                        sb.AppendLine("CD-Text pack contains data reserved for content provider only");
+                        sb.AppendLine(Localization.CD_Text_pack_contains_data_reserved_for_content_provider_only);
 
                         break;
                     }
@@ -277,16 +274,16 @@ public static class CDTextOnLeadIn
                     case 0x8E:
                     {
                         if(descriptor.HeaderID2 == 0x00)
-                            sb.AppendLine("CD-Text pack contains UPC");
+                            sb.AppendLine(Localization.CD_Text_pack_contains_UPC);
                         else
-                            sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
+                            sb.AppendFormat(Localization.track_0, descriptor.HeaderID2).AppendLine();
 
                         break;
                     }
 
                     case 0x8F:
                     {
-                        sb.AppendLine("CD-Text pack contains size block information");
+                        sb.AppendLine(Localization.CD_Text_pack_contains_size_block_information);
 
                         break;
                     }
@@ -305,12 +302,12 @@ public static class CDTextOnLeadIn
                     case 0x8E:
                     {
                         if(descriptor.DBCC)
-                            sb.AppendLine("Double Byte Character Code is used");
+                            sb.AppendLine(Localization.Double_Byte_Character_Code_is_used);
 
-                        sb.AppendFormat("Block number {0}", descriptor.BlockNumber).AppendLine();
-                        sb.AppendFormat("Character position {0}", descriptor.CharacterPosition).AppendLine();
+                        sb.AppendFormat(Localization.Block_number_0, descriptor.BlockNumber).AppendLine();
+                        sb.AppendFormat(Localization.Character_position_0, descriptor.CharacterPosition).AppendLine();
 
-                        sb.AppendFormat("Text field: \"{0}\"",
+                        sb.AppendFormat(Localization.Text_field_0,
                                         StringHandlers.CToString(descriptor.TextDataField,
                                                                  Encoding.GetEncoding("iso-8859-1"))).AppendLine();
 
@@ -319,14 +316,14 @@ public static class CDTextOnLeadIn
 
                     default:
                     {
-                        sb.AppendFormat("Binary contents: {0}",
+                        sb.AppendFormat(Localization.Binary_contents_0,
                                         PrintHex.ByteArrayToHexArrayString(descriptor.TextDataField, 28)).AppendLine();
 
                         break;
                     }
                 }
 
-                sb.AppendFormat("CRC: 0x{0:X4}", descriptor.CRC).AppendLine();
+                sb.AppendFormat(Localization.CRC_0_X4, descriptor.CRC).AppendLine();
             }
 
         return sb.ToString();

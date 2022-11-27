@@ -80,23 +80,23 @@ public static partial class Modes
         HP_ModePage_3D page = modePage.Value;
         var            sb   = new StringBuilder();
 
-        sb.AppendLine("HP Extended Reset Mode Page:");
+        sb.AppendLine(Localization.HP_Extended_Reset_Mode_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.ResetBehaviour)
         {
             case 0:
-                sb.AppendLine("\tNormal reset behaviour");
+                sb.AppendLine("\t" + Localization.Normal_reset_behaviour);
 
                 break;
             case 1:
-                sb.AppendLine("\tDrive will flush and position itself on a LUN or target reset");
+                sb.AppendLine("\t" + Localization.Drive_will_flush_and_position_itself_on_a_LUN_or_target_reset);
 
                 break;
             case 2:
-                sb.AppendLine("\tDrive will maintain position on a LUN or target reset");
+                sb.AppendLine("\t" + Localization.Drive_will_maintain_position_on_a_LUN_or_target_reset);
 
                 break;
         }

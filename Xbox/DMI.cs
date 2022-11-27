@@ -138,7 +138,7 @@ public static class DMI
         XboxDMI decoded = dmi.Value;
         var     sb      = new StringBuilder();
 
-        sb.Append("Catalogue number: ");
+        sb.Append(Localization.Catalogue_number);
 
         for(int i = 0; i < 2; i++)
             sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
@@ -152,7 +152,7 @@ public static class DMI
         sb.AppendFormat("{0}", decoded.CatalogNumber[7]);
         sb.AppendLine();
 
-        sb.AppendFormat("Timestamp: {0}", DateTime.FromFileTimeUtc(decoded.Timestamp)).AppendLine();
+        sb.AppendFormat(Localization.Timestamp_0, DateTime.FromFileTimeUtc(decoded.Timestamp)).AppendLine();
 
         return sb.ToString();
     }
@@ -165,7 +165,7 @@ public static class DMI
         Xbox360DMI decoded = dmi.Value;
         var        sb      = new StringBuilder();
 
-        sb.Append("Catalogue number: ");
+        sb.Append(Localization.Catalogue_number);
 
         for(int i = 0; i < 2; i++)
             sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
@@ -218,7 +218,7 @@ public static class DMI
 
         sb.AppendLine();
 
-        sb.Append("Media ID: ");
+        sb.Append(Localization.Media_ID);
 
         for(int i = 0; i < 12; i++)
             sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
@@ -230,7 +230,7 @@ public static class DMI
 
         sb.AppendLine();
 
-        sb.AppendFormat("Timestamp: {0}", DateTime.FromFileTimeUtc(decoded.Timestamp)).AppendLine();
+        sb.AppendFormat(Localization.Timestamp_0, DateTime.FromFileTimeUtc(decoded.Timestamp)).AppendLine();
 
         return sb.ToString();
     }

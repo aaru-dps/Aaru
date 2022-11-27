@@ -479,42 +479,42 @@ public static class PFI
 
         string sizeString = decoded.DiscSize switch
         {
-            DVDSize.Eighty    => "80mm",
-            DVDSize.OneTwenty => "120mm",
-            _                 => $"unknown size identifier {decoded.DiscSize}"
+            DVDSize.Eighty    => Localization._80mm,
+            DVDSize.OneTwenty => Localization._120mm,
+            _                 => string.Format(Localization.unknown_size_identifier_0, decoded.DiscSize)
         };
-
-        const string categorySentence = "Disc is a {0} {1} version {2}";
 
         switch(decoded.DiskCategory)
         {
             case DiskCategory.DVDROM:
-                sb.AppendFormat(categorySentence, sizeString, "DVD-ROM", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD-ROM", decoded.PartVersion).
+                   AppendLine();
 
                 switch(decoded.DiscSize)
                 {
                     case DVDSize.OneTwenty when decoded.PartVersion == 1:
-                        sb.AppendLine("Disc claims conformation to ECMA-267");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_267);
 
                         break;
                     case DVDSize.Eighty when decoded.PartVersion == 1:
-                        sb.AppendLine("Disc claims conformation to ECMA-268");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_268);
 
                         break;
                 }
 
                 break;
             case DiskCategory.DVDRAM:
-                sb.AppendFormat(categorySentence, sizeString, "DVD-RAM", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD-RAM", decoded.PartVersion).
+                   AppendLine();
 
                 switch(decoded.PartVersion)
                 {
                     case 1:
-                        sb.AppendLine("Disc claims conformation to ECMA-272");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_272);
 
                         break;
                     case 6:
-                        sb.AppendLine("Disc claims conformation to ECMA-330");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_330);
 
                         break;
                 }
@@ -522,22 +522,24 @@ public static class PFI
                 break;
             case DiskCategory.DVDR:
                 if(decoded.PartVersion >= 6)
-                    sb.AppendFormat(categorySentence, sizeString, "DVD-R DL", decoded.PartVersion).AppendLine();
+                    sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD-R DL", decoded.PartVersion).
+                       AppendLine();
                 else
-                    sb.AppendFormat(categorySentence, sizeString, "DVD-R", decoded.PartVersion).AppendLine();
+                    sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD-R", decoded.PartVersion).
+                       AppendLine();
 
                 switch(decoded.PartVersion)
                 {
                     case 1:
-                        sb.AppendLine("Disc claims conformation to ECMA-279");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_279);
 
                         break;
                     case 5:
-                        sb.AppendLine("Disc claims conformation to ECMA-359");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_359);
 
                         break;
                     case 6:
-                        sb.AppendLine("Disc claims conformation to ECMA-382");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_382);
 
                         break;
                 }
@@ -545,18 +547,20 @@ public static class PFI
                 break;
             case DiskCategory.DVDRW:
                 if(decoded.PartVersion >= 15)
-                    sb.AppendFormat(categorySentence, sizeString, "DVD-RW DL", decoded.PartVersion).AppendLine();
+                    sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD-RW DL", decoded.PartVersion).
+                       AppendLine();
                 else
-                    sb.AppendFormat(categorySentence, sizeString, "DVD-RW", decoded.PartVersion).AppendLine();
+                    sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD-RW", decoded.PartVersion).
+                       AppendLine();
 
                 switch(decoded.PartVersion)
                 {
                     case 2:
-                        sb.AppendLine("Disc claims conformation to ECMA-338");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_338);
 
                         break;
                     case 3:
-                        sb.AppendLine("Disc claims conformation to ECMA-384");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_384);
 
                         break;
                 }
@@ -564,70 +568,76 @@ public static class PFI
                 break;
             case DiskCategory.UMD:
                 if(decoded.DiscSize == DVDSize.OneTwenty)
-                    sb.AppendFormat(categorySentence, "60mm", "UMD", decoded.PartVersion).AppendLine();
+                    sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, Localization._60mm, "UMD",
+                                    decoded.PartVersion).AppendLine();
                 else
-                    sb.AppendFormat(categorySentence, "invalid size", "UMD", decoded.PartVersion).AppendLine();
+                    sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, Localization.invalid_size, "UMD",
+                                    decoded.PartVersion).AppendLine();
 
                 switch(decoded.PartVersion)
                 {
                     case 0:
-                        sb.AppendLine("Disc claims conformation to ECMA-365");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_365);
 
                         break;
                 }
 
                 break;
             case DiskCategory.DVDPRW:
-                sb.AppendFormat(categorySentence, sizeString, "DVD+RW", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD+RW", decoded.PartVersion).
+                   AppendLine();
 
                 switch(decoded.PartVersion)
                 {
                     case 1:
-                        sb.AppendLine("Disc claims conformation to ECMA-274");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_274);
 
                         break;
                     case 2:
-                        sb.AppendLine("Disc claims conformation to ECMA-337");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_337);
 
                         break;
                     case 3:
-                        sb.AppendLine("Disc claims conformation to ECMA-371");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_371);
 
                         break;
                 }
 
                 break;
             case DiskCategory.DVDPR:
-                sb.AppendFormat(categorySentence, sizeString, "DVD+R", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD+R", decoded.PartVersion).
+                   AppendLine();
 
                 switch(decoded.PartVersion)
                 {
                     case 1:
-                        sb.AppendLine("Disc claims conformation to ECMA-349");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_349);
 
                         break;
                 }
 
                 break;
             case DiskCategory.DVDPRWDL:
-                sb.AppendFormat(categorySentence, sizeString, "DVD+RW DL", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD+RW DL", decoded.PartVersion).
+                   AppendLine();
 
                 switch(decoded.PartVersion)
                 {
                     case 1:
-                        sb.AppendLine("Disc claims conformation to ECMA-374");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_374);
 
                         break;
                 }
 
                 break;
             case DiskCategory.DVDPRDL:
-                sb.AppendFormat(categorySentence, sizeString, "DVD+R DL", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD+R DL", decoded.PartVersion).
+                   AppendLine();
 
                 switch(decoded.PartVersion)
                 {
                     case 1:
-                        sb.AppendLine("Disc claims conformation to ECMA-364");
+                        sb.AppendLine(Localization.Disc_claims_conformation_to_ECMA_364);
 
                         break;
                 }
@@ -636,9 +646,9 @@ public static class PFI
             case DiskCategory.Nintendo:
                 if(decoded.PartVersion == 15)
                     if(decoded.DiscSize == DVDSize.Eighty)
-                        sb.AppendLine("Disc is a Nintendo Gamecube Optical Disc (GOD)");
+                        sb.AppendLine(Localization.Disc_is_a_Nintendo_Gamecube_Optical_Disc_GOD);
                     else if(decoded.DiscSize == DVDSize.OneTwenty)
-                        sb.AppendLine("Disc is a Nintendo Wii Optical Disc (WOD)");
+                        sb.AppendLine(Localization.Disc_is_a_Nintendo_Wii_Optical_Disc_WOD);
                     else
                         goto default;
                 else
@@ -646,93 +656,96 @@ public static class PFI
 
                 break;
             case DiskCategory.HDDVDROM:
-                sb.AppendFormat(categorySentence, sizeString, "HD DVD-ROM", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "HD DVD-ROM", decoded.PartVersion).
+                   AppendLine();
 
                 break;
             case DiskCategory.HDDVDRAM:
-                sb.AppendFormat(categorySentence, sizeString, "HD DVD-RAM", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "HD DVD-RAM", decoded.PartVersion).
+                   AppendLine();
 
                 break;
             case DiskCategory.HDDVDR:
-                sb.AppendFormat(categorySentence, sizeString, "HD DVD-R", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "HD DVD-R", decoded.PartVersion).
+                   AppendLine();
 
                 break;
             case DiskCategory.HDDVDRW:
-                sb.AppendFormat(categorySentence, sizeString, "HD DVD-RW", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "HD DVD-RW", decoded.PartVersion).
+                   AppendLine();
 
                 break;
             default:
-                sb.AppendFormat(categorySentence, sizeString, "unknown disc type", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, Localization.unknown_disc_type,
+                                decoded.PartVersion).AppendLine();
 
                 break;
         }
 
         if(decoded.RecordedBookType != decoded.DiskCategory)
         {
-            const string bookTypeSentence = "Disc book type is {0}";
-
             switch(decoded.RecordedBookType)
             {
                 case DiskCategory.DVDROM:
-                    sb.AppendFormat(bookTypeSentence, "DVD-ROM").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "DVD-ROM").AppendLine();
 
                     break;
                 case DiskCategory.DVDRAM:
-                    sb.AppendFormat(bookTypeSentence, "DVD-RAM").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "DVD-RAM").AppendLine();
 
                     break;
                 case DiskCategory.DVDR:
                     if(decoded.PartVersion >= 6)
-                        sb.AppendFormat(bookTypeSentence, "DVD-R DL").AppendLine();
+                        sb.AppendFormat(Localization.Disc_book_type_is_0, "DVD-R DL").AppendLine();
                     else
-                        sb.AppendFormat(bookTypeSentence, "DVD-R").AppendLine();
+                        sb.AppendFormat(Localization.Disc_book_type_is_0, "DVD-R").AppendLine();
 
                     break;
                 case DiskCategory.DVDRW:
                     if(decoded.PartVersion >= 15)
-                        sb.AppendFormat(bookTypeSentence, "DVD-RW DL").AppendLine();
+                        sb.AppendFormat(Localization.Disc_book_type_is_0, "DVD-RW DL").AppendLine();
                     else
-                        sb.AppendFormat(bookTypeSentence, "DVD-RW").AppendLine();
+                        sb.AppendFormat(Localization.Disc_book_type_is_0, "DVD-RW").AppendLine();
 
                     break;
                 case DiskCategory.UMD:
-                    sb.AppendFormat(bookTypeSentence, "UMD").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "UMD").AppendLine();
 
                     break;
                 case DiskCategory.DVDPRW:
-                    sb.AppendFormat(bookTypeSentence, "DVD+RW").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "DVD+RW").AppendLine();
 
                     break;
                 case DiskCategory.DVDPR:
-                    sb.AppendFormat(bookTypeSentence, "DVD+R").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "DVD+R").AppendLine();
 
                     break;
                 case DiskCategory.DVDPRWDL:
-                    sb.AppendFormat(bookTypeSentence, "DVD+RW DL").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "DVD+RW DL").AppendLine();
 
                     break;
                 case DiskCategory.DVDPRDL:
-                    sb.AppendFormat(bookTypeSentence, "DVD+R DL").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "DVD+R DL").AppendLine();
 
                     break;
                 case DiskCategory.HDDVDROM:
-                    sb.AppendFormat(bookTypeSentence, "HD DVD-ROM").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "HD DVD-ROM").AppendLine();
 
                     break;
                 case DiskCategory.HDDVDRAM:
-                    sb.AppendFormat(bookTypeSentence, "HD DVD-RAM").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "HD DVD-RAM").AppendLine();
 
                     break;
                 case DiskCategory.HDDVDR:
-                    sb.AppendFormat(bookTypeSentence, "HD DVD-R").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "HD DVD-R").AppendLine();
 
                     break;
                 case DiskCategory.HDDVDRW:
-                    sb.AppendFormat(bookTypeSentence, "HD DVD-RW").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, "HD DVD-RW").AppendLine();
 
                     break;
                 default:
-                    sb.AppendFormat(bookTypeSentence, "unknown").AppendLine();
+                    sb.AppendFormat(Localization.Disc_book_type_is_0, Localization.unit_unknown).AppendLine();
 
                     break;
             }
@@ -741,46 +754,46 @@ public static class PFI
         switch(decoded.MaximumRate)
         {
             case MaximumRateField.TwoMbps:
-                sb.AppendLine("Disc maximum transfer rate is 2,52 Mbit/sec.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_2_52_Mbit_sec);
 
                 break;
             case MaximumRateField.FiveMbps:
-                sb.AppendLine("Disc maximum transfer rate is 5,04 Mbit/sec.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_5_04_Mbit_sec);
 
                 break;
             case MaximumRateField.TenMbps:
-                sb.AppendLine("Disc maximum transfer rate is 10,08 Mbit/sec.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_10_08_Mbit_sec);
 
                 break;
             case MaximumRateField.TwentyMbps:
-                sb.AppendLine("Disc maximum transfer rate is 20,16 Mbit/sec.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_20_16_Mbit_sec);
 
                 break;
             case MaximumRateField.ThirtyMbps:
-                sb.AppendLine("Disc maximum transfer rate is 30,24 Mbit/sec.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_30_24_Mbit_sec);
 
                 break;
             case MaximumRateField.Unspecified:
-                sb.AppendLine("Disc maximum transfer rate is unspecified.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_unspecified);
 
                 break;
             default:
-                sb.AppendFormat("Disc maximum transfer rate is specified by unknown key {0}", decoded.MaximumRate).
-                   AppendLine();
+                sb.AppendFormat(Localization.Disc_maximum_transfer_rate_is_specified_by_unknown_key_0,
+                                decoded.MaximumRate).AppendLine();
 
                 break;
         }
 
-        sb.AppendFormat("Disc has {0} layers", decoded.Layers + 1).AppendLine();
+        sb.AppendFormat(Localization.Disc_has_0_layers, decoded.Layers + 1).AppendLine();
 
         switch(decoded.TrackPath)
         {
             case true when decoded.Layers == 1:
-                sb.AppendLine("Layers are in parallel track path");
+                sb.AppendLine(Localization.Layers_are_in_parallel_track_path);
 
                 break;
             case false when decoded.Layers == 1:
-                sb.AppendLine("Layers are in opposite track path");
+                sb.AppendLine(Localization.Layers_are_in_opposite_track_path);
 
                 break;
         }
@@ -788,35 +801,35 @@ public static class PFI
         switch(decoded.LinearDensity)
         {
             case LinearDensityField.TwoSix:
-                sb.AppendLine("Pitch size is 0,267 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_0_267_μm_bit);
 
                 break;
             case LinearDensityField.TwoNine:
-                sb.AppendLine("Pitch size is 0,147 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_0_147_μm_bit);
 
                 break;
             case LinearDensityField.FourZero:
-                sb.AppendLine("Pitch size is between 0,409 μm/bit and 0,435 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_between_0_409_μm_bit_and_0_435_μm_bit);
 
                 break;
             case LinearDensityField.TwoEight:
-                sb.AppendLine("Pitch size is between 0,140 μm/bit and 0,148 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_between_0_140_μm_bit_and_0_148_μm_bit);
 
                 break;
             case LinearDensityField.OneFive:
-                sb.AppendLine("Pitch size is 0,153 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_0_153_μm_bit);
 
                 break;
             case LinearDensityField.OneThree:
-                sb.AppendLine("Pitch size is between 0,130 μm/bit and 0,140 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_between_0_130_μm_bit_and_0_140_μm_bit);
 
                 break;
             case LinearDensityField.ThreeFive:
-                sb.AppendLine("Pitch size is 0,353 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_0_353_μm_bit);
 
                 break;
             default:
-                sb.AppendFormat("Unknown pitch size key {0}", decoded.LinearDensity).AppendLine();
+                sb.AppendFormat(Localization.Unknown_pitch_size_key_0, decoded.LinearDensity).AppendLine();
 
                 break;
         }
@@ -824,27 +837,27 @@ public static class PFI
         switch(decoded.TrackDensity)
         {
             case TrackDensityField.Seven:
-                sb.AppendLine("Track size is 0,74 μm");
+                sb.AppendLine(Localization.Track_size_is_0_74_μm);
 
                 break;
             case TrackDensityField.Eight:
-                sb.AppendLine("Track size is 0,80 μm");
+                sb.AppendLine(Localization.Track_size_is_0_80_μm);
 
                 break;
             case TrackDensityField.Six:
-                sb.AppendLine("Track size is 0,615 μm");
+                sb.AppendLine(Localization.Track_size_is_0_615_μm);
 
                 break;
             case TrackDensityField.Four:
-                sb.AppendLine("Track size is 0,40 μm");
+                sb.AppendLine(Localization.Track_size_is_0_40_μm);
 
                 break;
             case TrackDensityField.Three:
-                sb.AppendLine("Track size is 0,34 μm");
+                sb.AppendLine(Localization.Track_size_is_0_34_μm);
 
                 break;
             default:
-                sb.AppendFormat("Unknown track size key {0}", decoded.LinearDensity).AppendLine();
+                sb.AppendFormat(Localization.Unknown_track_size_key__0_, decoded.LinearDensity).AppendLine();
 
                 break;
         }
@@ -852,59 +865,60 @@ public static class PFI
         if(decoded.DataAreaStartPSN > 0)
             if(decoded.DataAreaEndPSN > 0)
             {
-                sb.AppendFormat("Data area starts at PSN {0:X}h", decoded.DataAreaStartPSN).AppendLine();
-                sb.AppendFormat("Data area ends at PSN {0:X}h", decoded.DataAreaEndPSN).AppendLine();
+                sb.AppendFormat(Localization.Data_area_starts_at_PSN_0, decoded.DataAreaStartPSN).AppendLine();
+                sb.AppendFormat(Localization.Data_area_ends_at_PSN_0, decoded.DataAreaEndPSN).AppendLine();
 
                 if(decoded is { Layers: 1, TrackPath: false })
-                    sb.AppendFormat("Layer 0 ends at PSN {0:X}h", decoded.Layer0EndPSN).AppendLine();
+                    sb.AppendFormat(Localization.Layer_zero_ends_at_PSN_0, decoded.Layer0EndPSN).AppendLine();
             }
             else
-                sb.AppendLine("Disc is empty");
+                sb.AppendLine(Localization.Disc_is_empty);
         else
-            sb.AppendLine("Disc is empty");
+            sb.AppendLine(Localization.Disc_is_empty);
 
         if(decoded.BCA)
-            sb.AppendLine("Disc has a burst cutting area");
+            sb.AppendLine(Localization.Disc_has_a_burst_cutting_area);
 
         switch(decoded.DiskCategory)
         {
             case DiskCategory.UMD:
-                sb.AppendFormat("Media attribute is {0}", decoded.MediaAttribute).AppendLine();
+                sb.AppendFormat(Localization.Media_attribute_is_0, decoded.MediaAttribute).AppendLine();
 
                 break;
             case DiskCategory.DVDRAM:
                 switch(decoded.DiscType)
                 {
                     case DVDRAMDiscType.Cased:
-                        sb.AppendLine("Disc shall be recorded with a case");
+                        sb.AppendLine(Localization.Disc_shall_be_recorded_with_a_case);
 
                         break;
                     case DVDRAMDiscType.Uncased:
-                        sb.AppendLine("Disc can be recorded with or without a case");
+                        sb.AppendLine(Localization.Disc_can_be_recorded_with_or_without_a_case);
 
                         break;
                     default:
-                        sb.AppendFormat("Unknown DVD-RAM case type key {0}", decoded.DiscType).AppendLine();
+                        sb.AppendFormat(Localization.Unknown_DVD_RAM_case_type_key_0, decoded.DiscType).AppendLine();
 
                         break;
                 }
 
                 if(decoded.PartVersion == 6)
                 {
-                    sb.AppendFormat("Disc manufacturer is {0}", ManufacturerFromDVDRAM(decoded.DiskManufacturer)).
-                       AppendLine();
+                    sb.AppendFormat(Localization.Disc_manufacturer_is_0,
+                                    ManufacturerFromDVDRAM(decoded.DiskManufacturer)).AppendLine();
 
-                    sb.AppendFormat("Disc manufacturer supplementary information is {0}",
+                    sb.AppendFormat(Localization.Disc_manufacturer_supplementary_information_is_0,
                                     decoded.DiskManufacturerSupplementary).AppendLine();
                 }
 
                 break;
             case DiskCategory.DVDR when decoded.PartVersion  < 6:
             case DiskCategory.DVDRW when decoded.PartVersion < 15:
-                sb.AppendFormat("Current Border-Out first sector is PSN {0:X}h", decoded.CurrentBorderOutSector).
+                sb.AppendFormat(Localization.Current_Border_Out_first_sector_is_PSN_0, decoded.CurrentBorderOutSector).
                    AppendLine();
 
-                sb.AppendFormat("Next Border-In first sector is PSN {0:X}h", decoded.NextBorderInSector).AppendLine();
+                sb.AppendFormat(Localization.Next_Border_In_first_sector_is_PSN_0, decoded.NextBorderInSector).
+                   AppendLine();
 
                 break;
             case DiskCategory.DVDPR:
@@ -912,15 +926,15 @@ public static class PFI
             case DiskCategory.DVDPRDL:
             case DiskCategory.DVDPRWDL:
                 if(decoded.VCPS)
-                    sb.AppendLine("Disc contains extended information for VCPS");
+                    sb.AppendLine(Localization.Disc_contains_extended_information_for_VCPS);
 
-                sb.AppendFormat("Disc application code is {0}", decoded.ApplicationCode).AppendLine();
+                sb.AppendFormat(Localization.Disc_application_code_is_0, decoded.ApplicationCode).AppendLine();
 
-                sb.AppendFormat("Disc manufacturer is {0}", ManufacturerFromDVDPlusID(decoded.DiskManufacturerID)).
-                   AppendLine();
+                sb.AppendFormat(Localization.Disc_manufacturer_is_0,
+                                ManufacturerFromDVDPlusID(decoded.DiskManufacturerID)).AppendLine();
 
-                sb.AppendFormat("Disc media type is {0}", decoded.MediaTypeID).AppendLine();
-                sb.AppendFormat("Disc product revision is {0}", decoded.ProductRevision).AppendLine();
+                sb.AppendFormat(Localization.Disc_media_type_is_0, decoded.MediaTypeID).AppendLine();
+                sb.AppendFormat(Localization.Disc_product_revision_is_0, decoded.ProductRevision).AppendLine();
 
                 break;
         }
@@ -929,19 +943,19 @@ public static class PFI
            (decoded.DiskCategory != DiskCategory.DVDRW || decoded.PartVersion < 15))
             return sb.ToString();
 
-        sb.AppendFormat("Current RMD in extra Border zone starts at PSN {0:X}h", decoded.CurrentRMDExtraBorderPSN).
-           AppendLine();
+        sb.AppendFormat(Localization.Current_RMD_in_extra_Border_zone_starts_at_PSN_0,
+                        decoded.CurrentRMDExtraBorderPSN).AppendLine();
 
-        sb.AppendFormat("PFI in extra Border zone starts at PSN {0:X}h", decoded.PFIExtraBorderPSN).AppendLine();
+        sb.AppendFormat(Localization.PFI_in_extra_Border_zone_starts_at_PSN_0, decoded.PFIExtraBorderPSN).AppendLine();
 
         if(!decoded.PreRecordedControlDataInv)
-            sb.AppendLine("Control Data Zone is pre-recorded");
+            sb.AppendLine(Localization.Control_Data_Zone_is_pre_recorded);
 
         if(decoded.PreRecordedLeadIn)
-            sb.AppendLine("Lead-In is pre-recorded");
+            sb.AppendLine(Localization.Lead_In_is_pre_recorded);
 
         if(decoded.PreRecordedLeadOut)
-            sb.AppendLine("Lead-Out is pre-recorded");
+            sb.AppendLine(Localization.Lead_Out_is_pre_recorded);
 
         return sb.ToString();
     }

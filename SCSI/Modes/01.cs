@@ -180,47 +180,51 @@ public static partial class Modes
         ModePage_01 page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Read-write error recovery page:");
+        sb.AppendLine(Localization.SCSI_Read_write_error_recovery_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.AWRE)
-            sb.AppendLine("\tAutomatic write reallocation is enabled");
+            sb.AppendLine("\t" + Localization.Automatic_write_reallocation_is_enabled);
 
         if(page.ARRE)
-            sb.AppendLine("\tAutomatic read reallocation is enabled");
+            sb.AppendLine("\t" + Localization.Automatic_read_reallocation_is_enabled);
 
         if(page.TB)
-            sb.AppendLine("\tData not recovered within limits shall be transferred back before a CHECK CONDITION");
+            sb.AppendLine("\t" + Localization.
+                              Data_not_recovered_within_limits_shall_be_transferred_back_before_a_CHECK_CONDITION);
 
         if(page.RC)
-            sb.AppendLine("\tDrive will transfer the entire requested length without delaying to perform error recovery");
+            sb.AppendLine("\t" + Localization.
+                              Drive_will_transfer_the_entire_requested_length_without_delaying_to_perform_error_recovery);
 
         if(page.EER)
-            sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
+            sb.AppendLine("\t" + Localization.Drive_will_use_the_most_expedient_form_of_error_recovery_first);
 
         if(page.PER)
-            sb.AppendLine("\tDrive shall report recovered errors");
+            sb.AppendLine("\t" + Localization.Drive_shall_report_recovered_errors);
 
         if(page.DTE)
-            sb.AppendLine("\tTransfer will be terminated upon error detection");
+            sb.AppendLine("\t" + Localization.Transfer_will_be_terminated_upon_error_detection);
 
         if(page.DCR)
-            sb.AppendLine("\tError correction is disabled");
+            sb.AppendLine("\t" + Localization.Error_correction_is_disabled);
 
         if(page.ReadRetryCount > 0)
-            sb.AppendFormat("\tDrive will repeat read operations {0} times", page.ReadRetryCount).AppendLine();
-
-        if(page.WriteRetryCount > 0)
-            sb.AppendFormat("\tDrive will repeat write operations {0} times", page.WriteRetryCount).AppendLine();
-
-        if(page.RecoveryTimeLimit > 0)
-            sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).
+            sb.AppendFormat("\t" + Localization.Drive_will_repeat_read_operations_0_times, page.ReadRetryCount).
                AppendLine();
 
+        if(page.WriteRetryCount > 0)
+            sb.AppendFormat("\t" + Localization.Drive_will_repeat_write_operations_0_times, page.WriteRetryCount).
+               AppendLine();
+
+        if(page.RecoveryTimeLimit > 0)
+            sb.AppendFormat("\t" + Localization.Drive_will_employ_a_maximum_of_0_ms_to_recover_data,
+                            page.RecoveryTimeLimit).AppendLine();
+
         if(page.LBPERE)
-            sb.AppendLine("Logical block provisioning error reporting is enabled");
+            sb.AppendLine(Localization.Logical_block_provisioning_error_reporting_is_enabled);
 
         return sb.ToString();
     }

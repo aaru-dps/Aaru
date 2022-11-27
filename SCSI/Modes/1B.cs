@@ -95,25 +95,25 @@ public static partial class Modes
         ModePage_1B page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Removable Block Access Capabilities page:");
+        sb.AppendLine(Localization.SCSI_Removable_Block_Access_Capabilities_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.SFLP)
-            sb.AppendLine("\tDrive can be used as a system floppy device");
+            sb.AppendLine("\t" + Localization.Drive_can_be_used_as_a_system_floppy_device);
 
         if(page.SRFP)
-            sb.AppendLine("\tDrive supports reporting progress of format");
+            sb.AppendLine("\t" + Localization.Drive_supports_reporting_progress_of_format);
 
         if(page.NCD)
-            sb.AppendLine("\tDrive is a Non-CD Optical Device");
+            sb.AppendLine("\t" + Localization.Drive_is_a_Non_CD_Optical_Device);
 
         if(page.SML)
-            sb.AppendLine("\tDevice is a dual device supporting CD and Non-CD Optical");
+            sb.AppendLine("\t" + Localization.Device_is_a_dual_device_supporting_CD_and_Non_CD_Optical);
 
         if(page.TLUN > 0)
-            sb.AppendFormat("\tDrive supports {0} LUNs", page.TLUN).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_supports_0_LUNs, page.TLUN).AppendLine();
 
         return sb.ToString();
     }

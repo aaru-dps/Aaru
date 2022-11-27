@@ -87,23 +87,26 @@ public static partial class Modes
         ModePage_0B page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Medium types supported page:");
+        sb.AppendLine(Localization.SCSI_Medium_types_supported_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.MediumType1 != MediumTypes.Default)
-            sb.AppendFormat("Supported medium type one: {0}", GetMediumTypeDescription(page.MediumType1)).AppendLine();
+            sb.AppendFormat(Localization.Supported_medium_type_one_0, GetMediumTypeDescription(page.MediumType1)).
+               AppendLine();
 
         if(page.MediumType2 != MediumTypes.Default)
-            sb.AppendFormat("Supported medium type two: {0}", GetMediumTypeDescription(page.MediumType2)).AppendLine();
+            sb.AppendFormat(Localization.Supported_medium_type_two_0, GetMediumTypeDescription(page.MediumType2)).
+               AppendLine();
 
         if(page.MediumType3 != MediumTypes.Default)
-            sb.AppendFormat("Supported medium type three: {0}", GetMediumTypeDescription(page.MediumType3)).
+            sb.AppendFormat(Localization.Supported_medium_type_three_0, GetMediumTypeDescription(page.MediumType3)).
                AppendLine();
 
         if(page.MediumType4 != MediumTypes.Default)
-            sb.AppendFormat("Supported medium type four: {0}", GetMediumTypeDescription(page.MediumType4)).AppendLine();
+            sb.AppendFormat(Localization.Supported_medium_type_four_0, GetMediumTypeDescription(page.MediumType4)).
+               AppendLine();
 
         return sb.ToString();
     }

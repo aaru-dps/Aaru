@@ -133,54 +133,54 @@ public static class DDS
 
         if(decoded.InProcess)
         {
-            sb.AppendLine("Formatting in progress.");
+            sb.AppendLine(Localization.Formatting_in_progress);
 
             if(decoded.Groups == 24)
             {
                 if(decoded.PartialCertification)
-                    sb.AppendLine("Formatting is only using partial certification");
+                    sb.AppendLine(Localization.Formatting_is_only_using_partial_certification);
 
                 if(decoded.FormattingOnlyAGroup)
-                    sb.AppendLine("Only a group is being formatted");
+                    sb.AppendLine(Localization.Only_a_group_is_being_formatted);
             }
         }
 
         if(decoded.UserCertification)
-            sb.AppendLine("Disc has been certified by an user");
+            sb.AppendLine(Localization.Disc_has_been_certified_by_a_user);
 
         if(decoded.ManufacturerCertification)
-            sb.AppendLine("Disc has been certified by a manufacturer");
+            sb.AppendLine(Localization.Disc_has_been_certified_by_a_manufacturer);
 
-        sb.AppendFormat("DDS has been updated {0} times", decoded.UpdateCount).AppendLine();
+        sb.AppendFormat(Localization.DDS_has_been_updated_0_times, decoded.UpdateCount).AppendLine();
 
         if(decoded.Groups == 24)
             for(int i = 0; i < decoded.GroupCertificationFlags.Length; i++)
             {
                 if(decoded.GroupCertificationFlags[i].InProcess)
                 {
-                    sb.AppendFormat("Group {0} is being formatted", i).AppendLine();
+                    sb.AppendFormat(Localization.Group_0_is_being_formatted, i).AppendLine();
 
                     if(decoded.GroupCertificationFlags[i].PartialCertification)
-                        sb.AppendFormat("Group {0} is being certified partially", i).AppendLine();
+                        sb.AppendFormat(Localization.Group_0_is_being_certified_partially, i).AppendLine();
                 }
 
                 if(decoded.GroupCertificationFlags[i].UserCertification)
-                    sb.AppendFormat("Group {0} has been certified by an user", i).AppendLine();
+                    sb.AppendFormat(Localization.Group_0_has_been_certified_by_an_user, i).AppendLine();
             }
 
         if(decoded.Groups != 1)
             return sb.ToString();
 
         {
-            sb.AppendFormat("Disc has {0} zones", decoded.Zones).AppendLine();
+            sb.AppendFormat(Localization.Disc_has_0_zones, decoded.Zones).AppendLine();
 
-            sb.AppendFormat("Primary Spare Area stats at PSN {0:X}h and ends at PSN {1:X}h, inclusively",
+            sb.AppendFormat(Localization.Primary_Spare_Area_stats_at_PSN_0_and_ends_at_PSN_1_inclusively,
                             decoded.SpareAreaFirstPSN, decoded.SpareAreaLastPSN).AppendLine();
 
-            sb.AppendFormat("LSN 0 is at PSN {0:X}h", decoded.LSN0Location).AppendLine();
+            sb.AppendFormat(Localization.LSN_zero_is_at_PSN_0, decoded.LSN0Location).AppendLine();
 
             for(int i = 0; i < decoded.StartLSNForZone.Length; i++)
-                sb.AppendFormat("Zone {0} starts at LSN {1}", i, decoded.StartLSNForZone[i]).AppendLine();
+                sb.AppendFormat(Localization.Zone_0_starts_at_LSN_1, i, decoded.StartLSNForZone[i]).AppendLine();
         }
 
         return sb.ToString();

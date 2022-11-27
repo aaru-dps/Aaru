@@ -140,25 +140,28 @@ public static class SS
 
         string sizeString = decoded.DiscSize switch
         {
-            DVDSize.Eighty    => "80mm",
-            DVDSize.OneTwenty => "120mm",
-            _                 => $"unknown size identifier {decoded.DiscSize}"
+            DVDSize.Eighty    => Localization._80mm,
+            DVDSize.OneTwenty => Localization._120mm,
+            _                 => string.Format(Localization.unknown_size_identifier_0, decoded.DiscSize)
         };
 
-        const string categorySentence = "Disc is a {0} {1} version {2}";
+        string categorySentence = Localization.Disc_is_a_0_1_version_2;
 
         switch(decoded.DiskCategory)
         {
             case DiskCategory.DVDPRWDL:
-                sb.AppendFormat(categorySentence, sizeString, "Xbox Game Disc", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(categorySentence, sizeString, Localization.Xbox_Game_Disc, decoded.PartVersion).
+                   AppendLine();
 
                 break;
             case DiskCategory.DVDPRDL:
-                sb.AppendFormat(categorySentence, sizeString, "Xbox 360 Game Disc", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(categorySentence, sizeString, Localization.Xbox_360_Game_Disc, decoded.PartVersion).
+                   AppendLine();
 
                 break;
             default:
-                sb.AppendFormat(categorySentence, sizeString, "unknown disc type", decoded.PartVersion).AppendLine();
+                sb.AppendFormat(categorySentence, sizeString, Localization.unknown_disc_type, decoded.PartVersion).
+                   AppendLine();
 
                 break;
         }
@@ -166,46 +169,46 @@ public static class SS
         switch(decoded.MaximumRate)
         {
             case MaximumRateField.TwoMbps:
-                sb.AppendLine("Disc maximum transfer rate is 2,52 Mbit/sec.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_2_52_Mbit_sec);
 
                 break;
             case MaximumRateField.FiveMbps:
-                sb.AppendLine("Disc maximum transfer rate is 5,04 Mbit/sec.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_5_04_Mbit_sec);
 
                 break;
             case MaximumRateField.TenMbps:
-                sb.AppendLine("Disc maximum transfer rate is 10,08 Mbit/sec.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_10_08_Mbit_sec);
 
                 break;
             case MaximumRateField.TwentyMbps:
-                sb.AppendLine("Disc maximum transfer rate is 20,16 Mbit/sec.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_20_16_Mbit_sec);
 
                 break;
             case MaximumRateField.ThirtyMbps:
-                sb.AppendLine("Disc maximum transfer rate is 30,24 Mbit/sec.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_30_24_Mbit_sec);
 
                 break;
             case MaximumRateField.Unspecified:
-                sb.AppendLine("Disc maximum transfer rate is unspecified.");
+                sb.AppendLine(Localization.Disc_maximum_transfer_rate_is_unspecified);
 
                 break;
             default:
-                sb.AppendFormat("Disc maximum transfer rate is specified by unknown key {0}", decoded.MaximumRate).
-                   AppendLine();
+                sb.AppendFormat(Localization.Disc_maximum_transfer_rate_is_specified_by_unknown_key_0,
+                                decoded.MaximumRate).AppendLine();
 
                 break;
         }
 
-        sb.AppendFormat("Disc has {0} layers", decoded.Layers + 1).AppendLine();
+        sb.AppendFormat(Localization.Disc_has_0_layers, decoded.Layers + 1).AppendLine();
 
         switch(decoded.TrackPath)
         {
             case true when decoded.Layers == 1:
-                sb.AppendLine("Layers are in parallel track path");
+                sb.AppendLine(Localization.Layers_are_in_parallel_track_path);
 
                 break;
             case false when decoded.Layers == 1:
-                sb.AppendLine("Layers are in opposite track path");
+                sb.AppendLine(Localization.Layers_are_in_opposite_track_path);
 
                 break;
         }
@@ -213,35 +216,35 @@ public static class SS
         switch(decoded.LinearDensity)
         {
             case LinearDensityField.TwoSix:
-                sb.AppendLine("Pitch size is 0,267 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_0_267_μm_bit);
 
                 break;
             case LinearDensityField.TwoNine:
-                sb.AppendLine("Pitch size is 0,147 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_0_147_μm_bit);
 
                 break;
             case LinearDensityField.FourZero:
-                sb.AppendLine("Pitch size is between 0,409 μm/bit and 0,435 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_between_0_409_μm_bit_and_0_435_μm_bit);
 
                 break;
             case LinearDensityField.TwoEight:
-                sb.AppendLine("Pitch size is between 0,140 μm/bit and 0,148 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_between_0_140_μm_bit_and_0_148_μm_bit);
 
                 break;
             case LinearDensityField.OneFive:
-                sb.AppendLine("Pitch size is 0,153 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_0_153_μm_bit);
 
                 break;
             case LinearDensityField.OneThree:
-                sb.AppendLine("Pitch size is between 0,130 μm/bit and 0,140 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_between_0_130_μm_bit_and_0_140_μm_bit);
 
                 break;
             case LinearDensityField.ThreeFive:
-                sb.AppendLine("Pitch size is 0,353 μm/bit");
+                sb.AppendLine(Localization.Pitch_size_is_0_353_μm_bit);
 
                 break;
             default:
-                sb.AppendFormat("Unknown pitch size key {0}", decoded.LinearDensity).AppendLine();
+                sb.AppendFormat(Localization.Unknown_pitch_size_key_0, decoded.LinearDensity).AppendLine();
 
                 break;
         }
@@ -249,27 +252,27 @@ public static class SS
         switch(decoded.TrackDensity)
         {
             case TrackDensityField.Seven:
-                sb.AppendLine("Track size is 0,74 μm");
+                sb.AppendLine(Localization.Track_size_is_0_74_μm);
 
                 break;
             case TrackDensityField.Eight:
-                sb.AppendLine("Track size is 0,80 μm");
+                sb.AppendLine(Localization.Track_size_is_0_80_μm);
 
                 break;
             case TrackDensityField.Six:
-                sb.AppendLine("Track size is 0,615 μm");
+                sb.AppendLine(Localization.Track_size_is_0_615_μm);
 
                 break;
             case TrackDensityField.Four:
-                sb.AppendLine("Track size is 0,40 μm");
+                sb.AppendLine(Localization.Track_size_is_0_40_μm);
 
                 break;
             case TrackDensityField.Three:
-                sb.AppendLine("Track size is 0,34 μm");
+                sb.AppendLine(Localization.Track_size_is_0_34_μm);
 
                 break;
             default:
-                sb.AppendFormat("Unknown track size key {0}", decoded.LinearDensity).AppendLine();
+                sb.AppendFormat(Localization.Unknown_track_size_key__0_, decoded.LinearDensity).AppendLine();
 
                 break;
         }
@@ -277,30 +280,30 @@ public static class SS
         if(decoded.DataAreaStartPSN > 0)
             if(decoded.DataAreaEndPSN > 0)
             {
-                sb.AppendFormat("Data area starts at PSN {0:X}h", decoded.DataAreaStartPSN).AppendLine();
-                sb.AppendFormat("Data area ends at PSN {0:X}h", decoded.DataAreaEndPSN).AppendLine();
+                sb.AppendFormat(Localization.Data_area_starts_at_PSN_0, decoded.DataAreaStartPSN).AppendLine();
+                sb.AppendFormat(Localization.Data_area_ends_at_PSN_0, decoded.DataAreaEndPSN).AppendLine();
 
                 if(decoded is { Layers: 1, TrackPath: false })
-                    sb.AppendFormat("Layer 0 ends at PSN {0:X}h", decoded.Layer0EndPSN).AppendLine();
+                    sb.AppendFormat(Localization.Layer_zero_ends_at_PSN_0, decoded.Layer0EndPSN).AppendLine();
             }
             else
-                sb.AppendLine("Disc is empty");
+                sb.AppendLine(Localization.Disc_is_empty);
         else
-            sb.AppendLine("Disc is empty");
+            sb.AppendLine(Localization.Disc_is_empty);
 
         sb.AppendLine("Challenges:");
 
         foreach(ChallengeEntry entry in decoded.ChallengeEntries)
         {
-            sb.AppendFormat("\tChallenge ID: {0}", entry.ChallengeId).AppendLine();
-            sb.AppendFormat("\tChallenge level: {0}", entry.Level).AppendLine();
-            sb.AppendFormat("\tChallenge value: 0x{0:X8}", entry.ChallengeValue).AppendLine();
-            sb.AppendFormat("\tResponse modifier: {0}", entry.ResponseModifier).AppendLine();
-            sb.AppendFormat("\tResponse value: 0x{0:X8}", entry.ResponseValue).AppendLine();
+            sb.AppendFormat("\t" + Localization.Challenge_ID_0, entry.ChallengeId).AppendLine();
+            sb.AppendFormat("\t" + Localization.Challenge_level_0, entry.Level).AppendLine();
+            sb.AppendFormat("\t" + Localization.Challenge_value_0, entry.ChallengeValue).AppendLine();
+            sb.AppendFormat("\t" + Localization.Response_modifier_0, entry.ResponseModifier).AppendLine();
+            sb.AppendFormat("\t" + Localization.Response_value_0, entry.ResponseValue).AppendLine();
         }
 
         for(int i = 0; i < 16; i++)
-            sb.AppendFormat("Extent starts at PSN {0:X6}h and ends at PSN {1:X6}h", decoded.Extents[i].StartPSN,
+            sb.AppendFormat(Localization.Extent_starts_at_PSN_0_and_ends_at_PSN_1, decoded.Extents[i].StartPSN,
                             decoded.Extents[i].EndPSN).AppendLine();
 
         return sb.ToString();

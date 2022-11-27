@@ -94,15 +94,15 @@ public static partial class Modes
         ModePage_12_13_14 page = modePage.Value;
         var               sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI medium partition page (extra):");
+        sb.AppendLine(Localization.SCSI_medium_partition_page_extra);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\tMedium has defined {0} partitions", page.PartitionSizes.Length).AppendLine();
+        sb.AppendFormat("\t" + Localization.Medium_has_defined_0_partitions, page.PartitionSizes.Length).AppendLine();
 
         for(int i = 0; i < page.PartitionSizes.Length; i++)
-            sb.AppendFormat("\tPartition {0} is {1} units long", i, page.PartitionSizes[i]).AppendLine();
+            sb.AppendFormat("\t" + Localization.Partition_0_is_1_units_long, i, page.PartitionSizes[i]).AppendLine();
 
         return sb.ToString();
     }

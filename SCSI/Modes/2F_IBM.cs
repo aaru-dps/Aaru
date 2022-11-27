@@ -98,23 +98,23 @@ public static partial class Modes
         IBM_ModePage_2F page = modePage.Value;
         var             sb   = new StringBuilder();
 
-        sb.AppendLine("IBM Behaviour Configuration Mode Page:");
+        sb.AppendLine(Localization.IBM_Behaviour_Configuration_Mode_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.FenceBehaviour)
         {
             case 0:
-                sb.AppendLine("\tFence behaviour is normal");
+                sb.AppendLine("\t" + Localization.Fence_behaviour_is_normal);
 
                 break;
             case 1:
-                sb.AppendLine("\tPanic fence behaviour is enabled");
+                sb.AppendLine("\t" + Localization.Panic_fence_behaviour_is_enabled);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown fence behaviour code {0}", page.FenceBehaviour).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_fence_behaviour_code_0, page.FenceBehaviour).AppendLine();
 
                 break;
         }
@@ -122,15 +122,16 @@ public static partial class Modes
         switch(page.CleanBehaviour)
         {
             case 0:
-                sb.AppendLine("\tCleaning behaviour is normal");
+                sb.AppendLine("\t" + Localization.Cleaning_behaviour_is_normal);
 
                 break;
             case 1:
-                sb.AppendLine("\tDrive will periodically request cleaning");
+                sb.AppendLine("\t" + Localization.Drive_will_periodically_request_cleaning);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown cleaning behaviour code {0}", page.CleanBehaviour).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_cleaning_behaviour_code_0, page.CleanBehaviour).
+                   AppendLine();
 
                 break;
         }
@@ -138,15 +139,15 @@ public static partial class Modes
         switch(page.WORMEmulation)
         {
             case 0:
-                sb.AppendLine("\tWORM emulation is disabled");
+                sb.AppendLine("\t" + Localization.WORM_emulation_is_disabled);
 
                 break;
             case 1:
-                sb.AppendLine("\tWORM emulation is enabled");
+                sb.AppendLine("\t" + Localization.WORM_emulation_is_enabled);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown WORM emulation code {0}", page.WORMEmulation).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_WORM_emulation_code_0, page.WORMEmulation).AppendLine();
 
                 break;
         }
@@ -154,39 +155,40 @@ public static partial class Modes
         switch(page.SenseDataBehaviour)
         {
             case 0:
-                sb.AppendLine("\tUses 35-bytes sense data");
+                sb.AppendLine("\t" + Localization.Uses_35_bytes_sense_data);
 
                 break;
             case 1:
-                sb.AppendLine("\tUses 96-bytes sense data");
+                sb.AppendLine("\t" + Localization.Uses_96_bytes_sense_data);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown sense data behaviour code {0}", page.WORMEmulation).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_sense_data_behaviour_code_0, page.WORMEmulation).
+                   AppendLine();
 
                 break;
         }
 
         if(page.CLNCHK)
-            sb.AppendLine("\tDrive will set Check Condition when cleaning is needed");
+            sb.AppendLine("\t" + Localization.Drive_will_set_Check_Condition_when_cleaning_is_needed);
 
         if(page.DDEOR)
-            sb.AppendLine("\tNo deferred error will be reported to a rewind command");
+            sb.AppendLine("\t" + Localization.No_deferred_error_will_be_reported_to_a_rewind_command);
 
         if(page.CCDM)
-            sb.AppendLine("\tDrive will set Check Condition when the criteria for Dead Media is met");
+            sb.AppendLine("\t" + Localization.Drive_will_set_Check_Condition_when_the_criteria_for_Dead_Media_is_met);
 
         if(page.FirmwareUpdateBehaviour > 0)
-            sb.AppendLine("\tDrive will not accept downlevel firmware via an FMR tape");
+            sb.AppendLine("\t" + Localization.Drive_will_not_accept_downlevel_firmware_via_an_FMR_tape);
 
         if(page.UOE_C == 1)
-            sb.AppendLine("\tDrive will eject cleaning cartridges on error");
+            sb.AppendLine("\t" + Localization.Drive_will_eject_cleaning_cartridges_on_error);
 
         if(page.UOE_F == 1)
-            sb.AppendLine("\tDrive will eject firmware cartridges on error");
+            sb.AppendLine("\t" + Localization.Drive_will_eject_firmware_cartridges_on_error);
 
         if(page.UOE_D == 1)
-            sb.AppendLine("\tDrive will eject data cartridges on error");
+            sb.AppendLine("\t" + Localization.Drive_will_eject_data_cartridges_on_error);
 
         return sb.ToString();
     }

@@ -60,13 +60,6 @@ namespace Aaru.Decoders.CD;
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class FullTOC
 {
-    const string StereoNoPre = "Stereo audio track with no pre-emphasis";
-    const string StereoPreEm = "Stereo audio track with 50/15 μs pre-emphasis";
-    const string QuadNoPreEm = "Quadraphonic audio track with no pre-emphasis";
-    const string QuadPreEmph = "Quadraphonic audio track with 50/15 μs pre-emphasis";
-    const string DataUnintrp = "Data track, recorded uninterrupted";
-    const string DataIncrtly = "Data track, recorded incrementally";
-
     public static CDFullTOC? Decode(byte[] CDFullTOCResponse)
     {
         if(CDFullTOCResponse is not { Length: > 4 })
@@ -84,7 +77,8 @@ public static class FullTOC
         if(decoded.DataLength + 2 != CDFullTOCResponse.Length)
         {
             AaruConsole.DebugWriteLine("CD full TOC decoder",
-                                       "Expected CDFullTOC size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                       Localization.
+                                           Expected_CDFullTOC_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
                                        decoded.DataLength + 2, CDFullTOCResponse.Length);
 
             return null;
@@ -122,34 +116,34 @@ public static class FullTOC
 
         int lastSession = 0;
 
-        sb.AppendFormat("First complete session number: {0}", response.FirstCompleteSession).AppendLine();
-        sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
+        sb.AppendFormat(Localization.First_complete_session_number_0, response.FirstCompleteSession).AppendLine();
+        sb.AppendFormat(Localization.Last_complete_session_number_0, response.LastCompleteSession).AppendLine();
 
         foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
             if((descriptor.CONTROL & 0x08) == 0x08                                                        ||
                (descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6) ||
                descriptor.TNO != 0)
             {
-                sb.AppendLine("Unknown TOC entry format, printing values as-is");
-                sb.AppendFormat("SessionNumber = {0}", descriptor.SessionNumber).AppendLine();
-                sb.AppendFormat("ADR = {0}", descriptor.ADR).AppendLine();
-                sb.AppendFormat("CONTROL = {0}", descriptor.CONTROL).AppendLine();
-                sb.AppendFormat("TNO = {0}", descriptor.TNO).AppendLine();
-                sb.AppendFormat("POINT = {0}", descriptor.POINT).AppendLine();
-                sb.AppendFormat("Min = {0}", descriptor.Min).AppendLine();
-                sb.AppendFormat("Sec = {0}", descriptor.Sec).AppendLine();
-                sb.AppendFormat("Frame = {0}", descriptor.Frame).AppendLine();
-                sb.AppendFormat("HOUR = {0}", descriptor.HOUR).AppendLine();
-                sb.AppendFormat("PHOUR = {0}", descriptor.PHOUR).AppendLine();
-                sb.AppendFormat("PMIN = {0}", descriptor.PMIN).AppendLine();
-                sb.AppendFormat("PSEC = {0}", descriptor.PSEC).AppendLine();
-                sb.AppendFormat("PFRAME = {0}", descriptor.PFRAME).AppendLine();
+                sb.AppendLine(Localization.Unknown_TOC_entry_format_printing_values_as_is);
+                sb.AppendLine($"SessionNumber = {descriptor.SessionNumber}");
+                sb.AppendLine($"ADR = {descriptor.ADR}");
+                sb.AppendLine($"CONTROL = {descriptor.CONTROL}");
+                sb.AppendLine($"TNO = {descriptor.TNO}");
+                sb.AppendLine($"POINT = {descriptor.POINT}");
+                sb.AppendLine($"Min = {descriptor.Min}");
+                sb.AppendLine($"Sec = {descriptor.Sec}");
+                sb.AppendLine($"Frame = {descriptor.Frame}");
+                sb.AppendLine($"HOUR = {descriptor.HOUR}");
+                sb.AppendLine($"PHOUR = {descriptor.PHOUR}");
+                sb.AppendLine($"PMIN = {descriptor.PMIN}");
+                sb.AppendLine($"PSEC = {descriptor.PSEC}");
+                sb.AppendLine($"PFRAME = {descriptor.PFRAME}");
             }
             else
             {
                 if(descriptor.SessionNumber > lastSession)
                 {
-                    sb.AppendFormat("Session {0}", descriptor.SessionNumber).AppendLine();
+                    sb.AppendFormat(Localization.Session_0, descriptor.SessionNumber).AppendLine();
                     lastSession = descriptor.SessionNumber;
                 }
 
@@ -162,40 +156,45 @@ public static class FullTOC
                         {
                             case 0xA0 when descriptor.ADR == 4:
                             {
-                                sb.AppendFormat("First video track number: {0}", descriptor.PMIN).AppendLine();
+                                sb.AppendFormat(Localization.First_video_track_number_0, descriptor.PMIN).AppendLine();
 
                                 switch(descriptor.PSEC)
                                 {
                                     case 0x10:
-                                        sb.AppendLine("CD-V single in NTSC format with digital stereo sound");
+                                        sb.AppendLine(Localization.
+                                                          CD_V_single_in_NTSC_format_with_digital_stereo_sound);
 
                                         break;
                                     case 0x11:
-                                        sb.AppendLine("CD-V single in NTSC format with digital bilingual sound");
+                                        sb.AppendLine(Localization.
+                                                          CD_V_single_in_NTSC_format_with_digital_bilingual_sound);
 
                                         break;
                                     case 0x12:
-                                        sb.AppendLine("CD-V disc in NTSC format with digital stereo sound");
+                                        sb.AppendLine(Localization.CD_V_disc_in_NTSC_format_with_digital_stereo_sound);
 
                                         break;
                                     case 0x13:
-                                        sb.AppendLine("CD-V disc in NTSC format with digital bilingual sound");
+                                        sb.AppendLine(Localization.
+                                                          CD_V_disc_in_NTSC_format_with_digital_bilingual_sound);
 
                                         break;
                                     case 0x20:
-                                        sb.AppendLine("CD-V single in PAL format with digital stereo sound");
+                                        sb.AppendLine(Localization.CD_V_single_in_PAL_format_with_digital_stereo_sound);
 
                                         break;
                                     case 0x21:
-                                        sb.AppendLine("CD-V single in PAL format with digital bilingual sound");
+                                        sb.AppendLine(Localization.
+                                                          CD_V_single_in_PAL_format_with_digital_bilingual_sound);
 
                                         break;
                                     case 0x22:
-                                        sb.AppendLine("CD-V disc in PAL format with digital stereo sound");
+                                        sb.AppendLine(Localization.CD_V_disc_in_PAL_format_with_digital_stereo_sound);
 
                                         break;
                                     case 0x23:
-                                        sb.AppendLine("CD-V disc in PAL format with digital bilingual sound");
+                                        sb.AppendLine(Localization.
+                                                          CD_V_disc_in_PAL_format_with_digital_bilingual_sound);
 
                                         break;
                                 }
@@ -205,80 +204,80 @@ public static class FullTOC
 
                             case 0xA0 when descriptor.ADR == 1:
                             {
-                                sb.AppendFormat("First track number: {0} (", descriptor.PMIN);
+                                sb.AppendFormat(Localization.First_track_number_0_open_parenthesis, descriptor.PMIN);
 
                                 switch((TocControl)(descriptor.CONTROL & 0x0D))
                                 {
                                     case TocControl.TwoChanNoPreEmph:
-                                        sb.Append(StereoNoPre);
+                                        sb.Append(Localization.Stereo_audio_track_with_no_pre_emphasis);
 
                                         break;
                                     case TocControl.TwoChanPreEmph:
-                                        sb.Append(StereoPreEm);
+                                        sb.Append(Localization.Stereo_audio_track_with_50_15_us_pre_emphasis);
 
                                         break;
                                     case TocControl.FourChanNoPreEmph:
-                                        sb.Append(QuadNoPreEm);
+                                        sb.Append(Localization.Quadraphonic_audio_track_with_no_pre_emphasis);
 
                                         break;
                                     case TocControl.FourChanPreEmph:
-                                        sb.Append(QuadPreEmph);
+                                        sb.Append(Localization.Quadraphonic_audio_track_with_50_15_us_pre_emphasis);
 
                                         break;
                                     case TocControl.DataTrack:
-                                        sb.Append(DataUnintrp);
+                                        sb.Append(Localization.Data_track_recorded_uninterrupted);
 
                                         break;
                                     case TocControl.DataTrackIncremental:
-                                        sb.Append(DataIncrtly);
+                                        sb.Append(Localization.Data_track_recorded_incrementally);
 
                                         break;
                                 }
 
-                                sb.AppendLine(")");
-                                sb.AppendFormat("Disc type: {0}", descriptor.PSEC).AppendLine();
+                                sb.AppendLine(Localization.close_parenthesis);
+                                sb.AppendFormat(Localization.Disc_type_0, descriptor.PSEC).AppendLine();
 
                                 //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
                                 break;
                             }
 
                             case 0xA1 when descriptor.ADR == 4:
-                                sb.AppendFormat("Last video track number: {0}", descriptor.PMIN).AppendLine();
+                                sb.AppendFormat(Localization.Last_video_track_number_0, descriptor.PMIN).AppendLine();
 
                                 break;
                             case 0xA1 when descriptor.ADR == 1:
                             {
-                                sb.AppendFormat("Last track number: {0} (", descriptor.PMIN);
+                                sb.AppendFormat(Localization.Last_track_number_0_open_parenthesis, descriptor.PMIN);
 
                                 switch((TocControl)(descriptor.CONTROL & 0x0D))
                                 {
                                     case TocControl.TwoChanNoPreEmph:
-                                        sb.Append(StereoNoPre);
+                                        sb.Append(Localization.Stereo_audio_track_with_no_pre_emphasis);
 
                                         break;
                                     case TocControl.TwoChanPreEmph:
-                                        sb.Append(StereoPreEm);
+                                        sb.Append(Localization.Stereo_audio_track_with_50_15_us_pre_emphasis);
 
                                         break;
                                     case TocControl.FourChanNoPreEmph:
-                                        sb.Append(QuadNoPreEm);
+                                        sb.Append(Localization.Quadraphonic_audio_track_with_no_pre_emphasis);
 
                                         break;
                                     case TocControl.FourChanPreEmph:
-                                        sb.Append(QuadPreEmph);
+                                        sb.Append(Localization.Quadraphonic_audio_track_with_50_15_us_pre_emphasis);
 
                                         break;
                                     case TocControl.DataTrack:
-                                        sb.Append(DataUnintrp);
+                                        sb.Append(Localization.Data_track_recorded_uninterrupted);
 
                                         break;
                                     case TocControl.DataTrackIncremental:
-                                        sb.Append(DataIncrtly);
+                                        sb.Append(Localization.Data_track_recorded_incrementally);
 
                                         break;
                                 }
 
-                                sb.AppendLine(")");
+                                sb.AppendLine(Localization.close_parenthesis);
 
                                 //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
                                 break;
@@ -287,11 +286,10 @@ public static class FullTOC
                             case 0xA2:
                             {
                                 if(descriptor.PHOUR > 0)
-                                    sb.AppendFormat("Lead-out start position: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
-                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                    descriptor.PHOUR).AppendLine();
+                                    sb.AppendFormat(Localization.Lead_out_start_position_3_0_1_2, descriptor.PMIN,
+                                                    descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR).AppendLine();
                                 else
-                                    sb.AppendFormat("Lead-out start position: {0:D2}:{1:D2}:{2:D2}", descriptor.PMIN,
+                                    sb.AppendFormat(Localization.Lead_out_start_position_0_1_2, descriptor.PMIN,
                                                     descriptor.PSEC, descriptor.PFRAME).AppendLine();
 
                                 //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
@@ -302,12 +300,12 @@ public static class FullTOC
                                     case TocControl.TwoChanPreEmph:
                                     case TocControl.FourChanNoPreEmph:
                                     case TocControl.FourChanPreEmph:
-                                        sb.AppendLine("Lead-out is audio type");
+                                        sb.AppendLine(Localization.Lead_out_is_audio_type);
 
                                         break;
                                     case TocControl.DataTrack:
                                     case TocControl.DataTrackIncremental:
-                                        sb.AppendLine("Lead-out is data type");
+                                        sb.AppendLine(Localization.Lead_out_is_data_type);
 
                                         break;
                                 }
@@ -317,16 +315,16 @@ public static class FullTOC
 
                             case 0xF0:
                             {
-                                sb.AppendFormat("Book type: 0x{0:X2}", descriptor.PMIN);
-                                sb.AppendFormat("Material type: 0x{0:X2}", descriptor.PSEC);
-                                sb.AppendFormat("Moment of inertia: 0x{0:X2}", descriptor.PFRAME);
+                                sb.AppendFormat(Localization.Book_type_0, descriptor.PMIN);
+                                sb.AppendFormat(Localization.Material_type_0, descriptor.PSEC);
+                                sb.AppendFormat(Localization.Moment_of_inertia_0, descriptor.PFRAME);
 
                                 if(descriptor.PHOUR > 0)
-                                    sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min,
-                                                    descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
+                                    sb.AppendFormat(Localization.Absolute_time_3_0_1_2, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR).AppendLine();
                                 else
-                                    sb.AppendFormat("Absolute time: {0:D2}:{1:D2}:{2:D2}", descriptor.Min,
-                                                    descriptor.Sec, descriptor.Frame).AppendLine();
+                                    sb.AppendFormat(Localization.Absolute_time_0_1_2, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame).AppendLine();
 
                                 break;
                             }
@@ -335,70 +333,70 @@ public static class FullTOC
                             {
                                 if(descriptor.POINT is >= 0x01 and <= 0x63)
                                     if(descriptor.ADR == 4)
-                                        sb.AppendFormat("Video track {3} starts at: {0:D2}:{1:D2}:{2:D2}",
-                                                        descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                        descriptor.POINT).AppendLine();
+                                        sb.AppendFormat(Localization.Video_track_3_starts_at_0_1_2, descriptor.PMIN,
+                                                        descriptor.PSEC, descriptor.PFRAME, descriptor.POINT).
+                                           AppendLine();
                                     else
                                     {
-                                        string type = "Audio";
-
-                                        if((TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                           (TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
-                                            type = "Data";
+                                        bool data = (TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                                    (TocControl)(descriptor.CONTROL & 0x0D) ==
+                                                    TocControl.DataTrackIncremental;
 
                                         if(descriptor.PHOUR > 0)
-                                            sb.AppendFormat("{5} track {3} starts at: {4:D2}:{0:D2}:{1:D2}:{2:D2} (",
+                                            sb.AppendFormat(data ? Localization.Data_track_3_starts_at_4_0_1_2_open_parenthesis : Localization.Audio_track_3_starts_at_4_0_1_2_open_parenthesis,
                                                             descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                            descriptor.POINT, descriptor.PHOUR, type);
+                                                            descriptor.POINT, descriptor.PHOUR);
+
                                         else
-                                            sb.AppendFormat("{4} track {3} starts at: {0:D2}:{1:D2}:{2:D2} (",
+                                            sb.AppendFormat(data ? Localization.Data_track_3_starts_at_0_1_2_open_parenthesis : Localization.Audio_track_3_starts_at_0_1_2_open_parenthesis,
                                                             descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                            descriptor.POINT, type);
+                                                            descriptor.POINT);
 
                                         switch((TocControl)(descriptor.CONTROL & 0x0D))
                                         {
                                             case TocControl.TwoChanNoPreEmph:
-                                                sb.Append(StereoNoPre);
+                                                sb.Append(Localization.Stereo_audio_track_with_no_pre_emphasis);
 
                                                 break;
                                             case TocControl.TwoChanPreEmph:
-                                                sb.Append(StereoPreEm);
+                                                sb.Append(Localization.Stereo_audio_track_with_50_15_us_pre_emphasis);
 
                                                 break;
                                             case TocControl.FourChanNoPreEmph:
-                                                sb.Append(QuadNoPreEm);
+                                                sb.Append(Localization.Quadraphonic_audio_track_with_no_pre_emphasis);
 
                                                 break;
                                             case TocControl.FourChanPreEmph:
-                                                sb.Append(QuadPreEmph);
+                                                sb.Append(Localization.
+                                                              Quadraphonic_audio_track_with_50_15_us_pre_emphasis);
 
                                                 break;
                                             case TocControl.DataTrack:
-                                                sb.Append(DataUnintrp);
+                                                sb.Append(Localization.Data_track_recorded_uninterrupted);
 
                                                 break;
                                             case TocControl.DataTrackIncremental:
-                                                sb.Append(DataIncrtly);
+                                                sb.Append(Localization.Data_track_recorded_incrementally);
 
                                                 break;
                                         }
 
-                                        sb.AppendLine(")");
+                                        sb.AppendLine(Localization.close_parenthesis);
                                     }
                                 else
                                 {
-                                    sb.AppendFormat("ADR = {0}", descriptor.ADR).AppendLine();
-                                    sb.AppendFormat("CONTROL = {0}", descriptor.CONTROL).AppendLine();
-                                    sb.AppendFormat("TNO = {0}", descriptor.TNO).AppendLine();
-                                    sb.AppendFormat("POINT = {0}", descriptor.POINT).AppendLine();
-                                    sb.AppendFormat("Min = {0}", descriptor.Min).AppendLine();
-                                    sb.AppendFormat("Sec = {0}", descriptor.Sec).AppendLine();
-                                    sb.AppendFormat("Frame = {0}", descriptor.Frame).AppendLine();
-                                    sb.AppendFormat("HOUR = {0}", descriptor.HOUR).AppendLine();
-                                    sb.AppendFormat("PHOUR = {0}", descriptor.PHOUR).AppendLine();
-                                    sb.AppendFormat("PMIN = {0}", descriptor.PMIN).AppendLine();
-                                    sb.AppendFormat("PSEC = {0}", descriptor.PSEC).AppendLine();
-                                    sb.AppendFormat("PFRAME = {0}", descriptor.PFRAME).AppendLine();
+                                    sb.Append($"ADR = {descriptor.ADR}").AppendLine();
+                                    sb.Append($"CONTROL = {descriptor.CONTROL}").AppendLine();
+                                    sb.Append($"TNO = {descriptor.TNO}").AppendLine();
+                                    sb.Append($"POINT = {descriptor.POINT}").AppendLine();
+                                    sb.Append($"Min = {descriptor.Min}").AppendLine();
+                                    sb.Append($"Sec = {descriptor.Sec}").AppendLine();
+                                    sb.Append($"Frame = {descriptor.Frame}").AppendLine();
+                                    sb.Append($"HOUR = {descriptor.HOUR}").AppendLine();
+                                    sb.Append($"PHOUR = {descriptor.PHOUR}").AppendLine();
+                                    sb.Append($"PMIN = {descriptor.PMIN}").AppendLine();
+                                    sb.Append($"PSEC = {descriptor.PSEC}").AppendLine();
+                                    sb.Append($"PFRAME = {descriptor.PFRAME}").AppendLine();
                                 }
 
                                 break;
@@ -417,23 +415,23 @@ public static class FullTOC
                                 if(descriptor.PHOUR > 0)
                                 {
                                     sb.
-                                        AppendFormat("Start of next possible program in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
+                                        AppendFormat(Localization.Start_of_next_possible_program_in_the_recordable_area_of_the_disc_3_0_1_2,
                                                      descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).
                                         AppendLine();
 
                                     sb.
-                                        AppendFormat("Maximum start of outermost Lead-out in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
+                                        AppendFormat(Localization.Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_3_0_1_2,
                                                      descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
                                                      descriptor.PHOUR).AppendLine();
                                 }
                                 else
                                 {
                                     sb.
-                                        AppendFormat("Start of next possible program in the recordable area of the disc: {0:D2}:{1:D2}:{2:D2}",
+                                        AppendFormat(Localization.Start_of_next_possible_program_in_the_recordable_area_of_the_disc_0_1_2,
                                                      descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
 
                                     sb.
-                                        AppendFormat("Maximum start of outermost Lead-out in the recordable area of the disc: {0:D2}:{1:D2}:{2:D2}",
+                                        AppendFormat(Localization.Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_0_1_2,
                                                      descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
                                 }
 
@@ -442,9 +440,11 @@ public static class FullTOC
 
                             case 0xB1:
                             {
-                                sb.AppendFormat("Number of skip interval pointers: {0}", descriptor.PMIN).AppendLine();
+                                sb.AppendFormat(Localization.Number_of_skip_interval_pointers_0, descriptor.PMIN).
+                                   AppendLine();
 
-                                sb.AppendFormat("Number of skip track pointers: {0}", descriptor.PSEC).AppendLine();
+                                sb.AppendFormat(Localization.Number_of_skip_track_pointers_0, descriptor.PSEC).
+                                   AppendLine();
 
                                 break;
                             }
@@ -453,44 +453,43 @@ public static class FullTOC
                             case 0xB3:
                             case 0xB4:
                             {
-                                sb.AppendFormat("Skip track {0}", descriptor.Min).AppendLine();
-                                sb.AppendFormat("Skip track {0}", descriptor.Sec).AppendLine();
-                                sb.AppendFormat("Skip track {0}", descriptor.Frame).AppendLine();
-                                sb.AppendFormat("Skip track {0}", descriptor.Zero).AppendLine();
-                                sb.AppendFormat("Skip track {0}", descriptor.PMIN).AppendLine();
-                                sb.AppendFormat("Skip track {0}", descriptor.PSEC).AppendLine();
-                                sb.AppendFormat("Skip track {0}", descriptor.PFRAME).AppendLine();
+                                sb.AppendFormat(Localization.Skip_track_0, descriptor.Min).AppendLine();
+                                sb.AppendFormat(Localization.Skip_track_0, descriptor.Sec).AppendLine();
+                                sb.AppendFormat(Localization.Skip_track_0, descriptor.Frame).AppendLine();
+                                sb.AppendFormat(Localization.Skip_track_0, descriptor.Zero).AppendLine();
+                                sb.AppendFormat(Localization.Skip_track_0, descriptor.PMIN).AppendLine();
+                                sb.AppendFormat(Localization.Skip_track_0, descriptor.PSEC).AppendLine();
+                                sb.AppendFormat(Localization.Skip_track_0, descriptor.PFRAME).AppendLine();
 
                                 break;
                             }
 
                             case 0xC0:
                             {
-                                sb.AppendFormat("Optimum recording power: 0x{0:X2}", descriptor.Min).AppendLine();
+                                sb.AppendFormat(Localization.Optimum_recording_power_0, descriptor.Min).AppendLine();
 
                                 if(descriptor.PHOUR > 0)
                                     sb.
-                                        AppendFormat("Start time of the first Lead-in area in the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
+                                        AppendFormat(Localization.Start_time_of_the_first_Lead_in_area_in_the_disc_3_0_1_2,
                                                      descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
                                                      descriptor.PHOUR).AppendLine();
                                 else
-                                    sb.
-                                        AppendFormat("Start time of the first Lead-in area in the disc: {0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
+                                    sb.AppendFormat(Localization.Start_time_of_the_first_Lead_in_area_in_the_disc_0_1_2,
+                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
 
                                 break;
                             }
 
                             case 0xC1:
                             {
-                                sb.AppendFormat("Copy of information of A1 from ATIP found");
-                                sb.AppendFormat("Min = {0}", descriptor.Min).AppendLine();
-                                sb.AppendFormat("Sec = {0}", descriptor.Sec).AppendLine();
-                                sb.AppendFormat("Frame = {0}", descriptor.Frame).AppendLine();
-                                sb.AppendFormat("Zero = {0}", descriptor.Zero).AppendLine();
-                                sb.AppendFormat("PMIN = {0}", descriptor.PMIN).AppendLine();
-                                sb.AppendFormat("PSEC = {0}", descriptor.PSEC).AppendLine();
-                                sb.AppendFormat("PFRAME = {0}", descriptor.PFRAME).AppendLine();
+                                sb.AppendFormat(Localization.Copy_of_information_of_A1_from_ATIP_found);
+                                sb.Append($"Min = {descriptor.Min}").AppendLine();
+                                sb.Append($"Sec = {descriptor.Sec}").AppendLine();
+                                sb.Append($"Frame = {descriptor.Frame}").AppendLine();
+                                sb.Append($"Zero = {descriptor.Zero}").AppendLine();
+                                sb.Append($"PMIN = {descriptor.PMIN}").AppendLine();
+                                sb.Append($"PSEC = {descriptor.PSEC}").AppendLine();
+                                sb.Append($"PFRAME = {descriptor.PFRAME}").AppendLine();
 
                                 break;
                             }
@@ -499,22 +498,20 @@ public static class FullTOC
                             {
                                 if(descriptor.PHOUR > 0)
                                 {
-                                    sb.
-                                        AppendFormat("Start position of outer part lead-in area: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                     descriptor.PHOUR).AppendLine();
+                                    sb.AppendFormat(Localization.Start_position_of_outer_part_lead_in_area_3_0_1_2,
+                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                                    descriptor.PHOUR).AppendLine();
 
-                                    sb.
-                                        AppendFormat("Stop position of inner part lead-out area: {3:D2}:{0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).
-                                        AppendLine();
+                                    sb.AppendFormat(Localization.Stop_position_of_inner_part_lead_out_area_3_0_1_2,
+                                                    descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).
+                                       AppendLine();
                                 }
                                 else
                                 {
-                                    sb.AppendFormat("Start position of outer part lead-in area: {0:D2}:{1:D2}:{2:D2}",
+                                    sb.AppendFormat(Localization.Start_position_of_outer_part_lead_in_area_0_1_2,
                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
 
-                                    sb.AppendFormat("Stop position of inner part lead-out area: {0:D2}:{1:D2}:{2:D2}",
+                                    sb.AppendFormat(Localization.Stop_position_of_inner_part_lead_out_area_0_1_2,
                                                     descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
                                 }
 
@@ -525,28 +522,26 @@ public static class FullTOC
                             {
                                 if(descriptor.POINT is >= 0x01 and <= 0x40)
                                 {
-                                    sb.
-                                        AppendFormat("Start time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
+                                    sb.AppendFormat(Localization.Start_time_for_interval_that_should_be_skipped_0_1_2,
+                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
 
-                                    sb.
-                                        AppendFormat("Ending time for interval that should be skipped: {0:D2}:{1:D2}:{2:D2}",
-                                                     descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
+                                    sb.AppendFormat(Localization.Ending_time_for_interval_that_should_be_skipped_0_1_2,
+                                                    descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
                                 }
                                 else
                                 {
-                                    sb.AppendFormat("ADR = {0}", descriptor.ADR).AppendLine();
-                                    sb.AppendFormat("CONTROL = {0}", descriptor.CONTROL).AppendLine();
-                                    sb.AppendFormat("TNO = {0}", descriptor.TNO).AppendLine();
-                                    sb.AppendFormat("POINT = {0}", descriptor.POINT).AppendLine();
-                                    sb.AppendFormat("Min = {0}", descriptor.Min).AppendLine();
-                                    sb.AppendFormat("Sec = {0}", descriptor.Sec).AppendLine();
-                                    sb.AppendFormat("Frame = {0}", descriptor.Frame).AppendLine();
-                                    sb.AppendFormat("HOUR = {0}", descriptor.HOUR).AppendLine();
-                                    sb.AppendFormat("PHOUR = {0}", descriptor.PHOUR).AppendLine();
-                                    sb.AppendFormat("PMIN = {0}", descriptor.PMIN).AppendLine();
-                                    sb.AppendFormat("PSEC = {0}", descriptor.PSEC).AppendLine();
-                                    sb.AppendFormat("PFRAME = {0}", descriptor.PFRAME).AppendLine();
+                                    sb.Append($"ADR = {descriptor.ADR}").AppendLine();
+                                    sb.Append($"CONTROL = {descriptor.CONTROL}").AppendLine();
+                                    sb.Append($"TNO = {descriptor.TNO}").AppendLine();
+                                    sb.Append($"POINT = {descriptor.POINT}").AppendLine();
+                                    sb.Append($"Min = {descriptor.Min}").AppendLine();
+                                    sb.Append($"Sec = {descriptor.Sec}").AppendLine();
+                                    sb.Append($"Frame = {descriptor.Frame}").AppendLine();
+                                    sb.Append($"HOUR = {descriptor.HOUR}").AppendLine();
+                                    sb.Append($"PHOUR = {descriptor.PHOUR}").AppendLine();
+                                    sb.Append($"PMIN = {descriptor.PMIN}").AppendLine();
+                                    sb.Append($"PSEC = {descriptor.PSEC}").AppendLine();
+                                    sb.Append($"PFRAME = {descriptor.PFRAME}").AppendLine();
                                 }
 
                                 break;
@@ -559,7 +554,7 @@ public static class FullTOC
                     case 6:
                     {
                         uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
-                        sb.AppendFormat("Disc ID: {0:X6}", id & 0x00FFFFFF).AppendLine();
+                        sb.AppendFormat(Localization.Disc_ID_0_X6, id & 0x00FFFFFF).AppendLine();
 
                         break;
                     }

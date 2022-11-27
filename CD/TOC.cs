@@ -73,7 +73,8 @@ public static class TOC
         if(decoded.DataLength + 2 != CDTOCResponse.Length)
         {
             AaruConsole.DebugWriteLine("CD TOC decoder",
-                                       "Expected CD TOC size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                       Localization.
+                                           Expected_CD_TOC_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
                                        decoded.DataLength + 2, CDTOCResponse.Length);
 
             return null;
@@ -103,17 +104,17 @@ public static class TOC
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("First track number in first complete session: {0}", response.FirstTrack).AppendLine();
-        sb.AppendFormat("Last track number in last complete session: {0}", response.LastTrack).AppendLine();
+        sb.AppendFormat(Localization.First_track_number_in_first_complete_session_0, response.FirstTrack).AppendLine();
+        sb.AppendFormat(Localization.Last_track_number_in_last_complete_session_0, response.LastTrack).AppendLine();
 
         foreach(CDTOCTrackDataDescriptor descriptor in response.TrackDescriptors)
         {
             if(descriptor.TrackNumber == 0xAA)
-                sb.AppendLine("Track number: Lead-Out");
+                sb.AppendLine(Localization.Track_number_Lead_Out);
             else
-                sb.AppendFormat("Track number: {0}", descriptor.TrackNumber).AppendLine();
+                sb.AppendFormat(Localization.Track_number_0, descriptor.TrackNumber).AppendLine();
 
-            sb.AppendFormat("Track starts at LBA {0}, or MSF {1:X2}:{2:X2}:{3:X2}", descriptor.TrackStartAddress,
+            sb.AppendFormat(Localization.Track_starts_at_LBA_0_or_MSF_2_3, descriptor.TrackStartAddress,
                             (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
                             (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
                             (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
@@ -121,73 +122,73 @@ public static class TOC
             switch((TocAdr)descriptor.ADR)
             {
                 case TocAdr.NoInformation:
-                    sb.AppendLine("Q subchannel mode not given");
+                    sb.AppendLine(Localization.Q_subchannel_mode_not_given);
 
                     break;
                 case TocAdr.TrackPointer:
-                    sb.AppendLine("Q subchannel stores track pointer");
+                    sb.AppendLine(Localization.Q_subchannel_stores_track_pointer);
 
                     break;
                 case TocAdr.VideoTrackPointer:
-                    sb.AppendLine("Q subchannel stores video track pointer");
+                    sb.AppendLine(Localization.Q_subchannel_stores_video_track_pointer);
 
                     break;
                 case TocAdr.ISRC:
-                    sb.AppendLine("Q subchannel stores ISRC");
+                    sb.AppendLine(Localization.Q_subchannel_stores_ISRC);
 
                     break;
                 case TocAdr.MediaCatalogNumber:
-                    sb.AppendLine("Q subchannel stores media catalog number");
+                    sb.AppendLine(Localization.Q_subchannel_stores_media_catalog_number);
 
                     break;
                 default:
-                    sb.AppendFormat("Q subchannel mode {0}", descriptor.ADR).AppendLine();
+                    sb.AppendFormat(Localization.Q_subchannel_mode_0, descriptor.ADR).AppendLine();
 
                     break;
             }
 
             if((descriptor.CONTROL & (byte)TocControl.ReservedMask) == (byte)TocControl.ReservedMask)
-                sb.AppendFormat("Reserved flags 0x{0:X2} set", descriptor.CONTROL).AppendLine();
+                sb.AppendFormat(Localization.Reserved_flags_0_set, descriptor.CONTROL).AppendLine();
             else
             {
                 switch((TocControl)(descriptor.CONTROL & 0x0D))
                 {
                     case TocControl.TwoChanNoPreEmph:
-                        sb.AppendLine("Stereo audio track with no pre-emphasis");
+                        sb.AppendLine(Localization.Stereo_audio_track_with_no_pre_emphasis);
 
                         break;
                     case TocControl.TwoChanPreEmph:
-                        sb.AppendLine("Stereo audio track with 50/15 μs pre-emphasis");
+                        sb.AppendLine(Localization.Stereo_audio_track_with_50_15_us_pre_emphasis);
 
                         break;
                     case TocControl.FourChanNoPreEmph:
-                        sb.AppendLine("Quadraphonic audio track with no pre-emphasis");
+                        sb.AppendLine(Localization.Quadraphonic_audio_track_with_no_pre_emphasis);
 
                         break;
                     case TocControl.FourChanPreEmph:
-                        sb.AppendLine("Quadraphonic audio track with 50/15 μs pre-emphasis");
+                        sb.AppendLine(Localization.Quadraphonic_audio_track_with_50_15_us_pre_emphasis);
 
                         break;
                     case TocControl.DataTrack:
-                        sb.AppendLine("Data track, recorded uninterrupted");
+                        sb.AppendLine(Localization.Data_track_recorded_uninterrupted);
 
                         break;
                     case TocControl.DataTrackIncremental:
-                        sb.AppendLine("Data track, recorded incrementally");
+                        sb.AppendLine(Localization.Data_track_recorded_incrementally);
 
                         break;
                 }
 
                 sb.AppendLine((descriptor.CONTROL & (byte)TocControl.CopyPermissionMask) ==
-                              (byte)TocControl.CopyPermissionMask ? "Digital copy of track is permitted"
-                                  : "Digital copy of track is prohibited");
+                              (byte)TocControl.CopyPermissionMask ? Localization.Digital_copy_of_track_is_permitted
+                                  : Localization.Digital_copy_of_track_is_prohibited);
 
             #if DEBUG
                 if(descriptor.Reserved1 != 0)
-                    sb.AppendFormat("Reserved1 = 0x{0:X2}", descriptor.Reserved1).AppendLine();
+                    sb.AppendFormat(Localization.Reserved1_equals_0_X8, descriptor.Reserved1).AppendLine();
 
                 if(descriptor.Reserved2 != 0)
-                    sb.AppendFormat("Reserved2 = 0x{0:X2}", descriptor.Reserved2).AppendLine();
+                    sb.AppendFormat(Localization.Reserved2_equals_0_X8, descriptor.Reserved2).AppendLine();
             #endif
 
                 sb.AppendLine();

@@ -89,72 +89,73 @@ public static class Hybrid
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("{0} format layers recognized", response.NumberOfLayers);
+        sb.AppendFormat(Localization._0_format_layers_recognized, response.NumberOfLayers);
 
         for(int i = 0; i < response.FormatLayers.Length; i++)
             switch(response.FormatLayers[i])
             {
                 case (ushort)FormatLayerTypeCodes.BDLayer:
                 {
-                    sb.AppendFormat("Layer {0} is of type Blu-ray", i).AppendLine();
+                    sb.AppendFormat(Localization.Layer_0_is_of_type_Blu_ray, i).AppendLine();
 
                     if(response.DefaultFormatLayer == i)
-                        sb.AppendLine("This is the default layer.");
+                        sb.AppendLine(Localization.This_is_the_default_layer);
 
                     if(response.OnlineFormatLayer == i)
-                        sb.AppendLine("This is the layer actually in use.");
+                        sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
 
                     break;
                 }
 
                 case (ushort)FormatLayerTypeCodes.CDLayer:
                 {
-                    sb.AppendFormat("Layer {0} is of type CD", i).AppendLine();
+                    sb.AppendFormat(Localization.Layer_0_is_of_type_CD, i).AppendLine();
 
                     if(response.DefaultFormatLayer == i)
-                        sb.AppendLine("This is the default layer.");
+                        sb.AppendLine(Localization.This_is_the_default_layer);
 
                     if(response.OnlineFormatLayer == i)
-                        sb.AppendLine("This is the layer actually in use.");
+                        sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
 
                     break;
                 }
 
                 case (ushort)FormatLayerTypeCodes.DVDLayer:
                 {
-                    sb.AppendFormat("Layer {0} is of type DVD", i).AppendLine();
+                    sb.AppendFormat(Localization.Layer_0_is_of_type_DVD, i).AppendLine();
 
                     if(response.DefaultFormatLayer == i)
-                        sb.AppendLine("This is the default layer.");
+                        sb.AppendLine(Localization.This_is_the_default_layer);
 
                     if(response.OnlineFormatLayer == i)
-                        sb.AppendLine("This is the layer actually in use.");
+                        sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
 
                     break;
                 }
 
                 case (ushort)FormatLayerTypeCodes.HDDVDLayer:
                 {
-                    sb.AppendFormat("Layer {0} is of type HD DVD", i).AppendLine();
+                    sb.AppendFormat(Localization.Layer_0_is_of_type_HD_DVD, i).AppendLine();
 
                     if(response.DefaultFormatLayer == i)
-                        sb.AppendLine("This is the default layer.");
+                        sb.AppendLine(Localization.This_is_the_default_layer);
 
                     if(response.OnlineFormatLayer == i)
-                        sb.AppendLine("This is the layer actually in use.");
+                        sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
 
                     break;
                 }
 
                 default:
                 {
-                    sb.AppendFormat("Layer {0} is of unknown type 0x{1:X4}", i, response.FormatLayers[i]).AppendLine();
+                    sb.AppendFormat(Localization.Layer_0_is_of_unknown_type_1, i, response.FormatLayers[i]).
+                       AppendLine();
 
                     if(response.DefaultFormatLayer == i)
-                        sb.AppendLine("This is the default layer.");
+                        sb.AppendLine(Localization.This_is_the_default_layer);
 
                     if(response.OnlineFormatLayer == i)
-                        sb.AppendLine("This is the layer actually in use.");
+                        sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
 
                     break;
                 }

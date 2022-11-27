@@ -151,34 +151,36 @@ public static partial class Modes
         ModePage_08 page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Caching mode page:");
+        sb.AppendLine(Localization.SCSI_Caching_mode_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.RCD)
-            sb.AppendLine("\tRead-cache is enabled");
+            sb.AppendLine("\t" + Localization.Read_cache_is_enabled);
 
         if(page.WCE)
-            sb.AppendLine("\tWrite-cache is enabled");
+            sb.AppendLine("\t" + Localization.Write_cache_is_enabled);
 
         switch(page.DemandReadRetentionPrio)
         {
             case 0:
-                sb.AppendLine("\tDrive does not distinguish between cached read data");
+                sb.AppendLine("\t" + Localization.Drive_does_not_distinguish_between_cached_read_data);
 
                 break;
             case 1:
-                sb.AppendLine("\tData put by READ commands should be evicted from cache sooner than data put in read cache by other means");
+                sb.AppendLine("\t" + Localization.
+                                  Data_put_by_READ_commands_should_be_evicted_from_cache_sooner_than_data_put_in_read_cache_by_other_means);
 
                 break;
             case 0xF:
-                sb.AppendLine("\tData put by READ commands should not be evicted if there is data cached by other means that can be evicted");
+                sb.AppendLine("\t" + Localization.
+                                  Data_put_by_READ_commands_should_not_be_evicted_if_there_is_data_cached_by_other_means_that_can_be_evicted);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown demand read retention priority value {0}", page.DemandReadRetentionPrio).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_demand_read_retention_priority_value_0,
+                                page.DemandReadRetentionPrio).AppendLine();
 
                 break;
         }
@@ -186,89 +188,96 @@ public static partial class Modes
         switch(page.WriteRetentionPriority)
         {
             case 0:
-                sb.AppendLine("\tDrive does not distinguish between cached write data");
+                sb.AppendLine("\t" + Localization.Drive_does_not_distinguish_between_cached_write_data);
 
                 break;
             case 1:
-                sb.AppendLine("\tData put by WRITE commands should be evicted from cache sooner than data put in write cache by other means");
+                sb.AppendLine("\t" + Localization.
+                                  Data_put_by_WRITE_commands_should_be_evicted_from_cache_sooner_than_data_put_in_write_cache_by_other_means);
 
                 break;
             case 0xF:
-                sb.AppendLine("\tData put by WRITE commands should not be evicted if there is data cached by other means that can be evicted");
+                sb.AppendLine("\t" + Localization.
+                                  Data_put_by_WRITE_commands_should_not_be_evicted_if_there_is_data_cached_by_other_means_that_can_be_evicted);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown demand write retention priority value {0}", page.DemandReadRetentionPrio).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_demand_write_retention_priority_value_0,
+                                page.DemandReadRetentionPrio).AppendLine();
 
                 break;
         }
 
         if(page.DRA)
-            sb.AppendLine("\tRead-ahead is disabled");
+            sb.AppendLine("\t" + Localization.Read_ahead_is_disabled);
         else
         {
             if(page.MF)
-                sb.AppendLine("\tPre-fetch values indicate a block multiplier");
+                sb.AppendLine("\t" + Localization.Pre_fetch_values_indicate_a_block_multiplier);
 
             if(page.DisablePreFetch == 0)
-                sb.AppendLine("\tNo pre-fetch will be done");
+                sb.AppendLine("\t" + Localization.No_pre_fetch_will_be_done);
             else
             {
-                sb.AppendFormat("\tPre-fetch will be done for READ commands of {0} blocks or less",
+                sb.AppendFormat("\t" + Localization.Pre_fetch_will_be_done_for_READ_commands_of_0_blocks_or_less,
                                 page.DisablePreFetch).AppendLine();
 
                 if(page.MinimumPreFetch > 0)
-                    sb.AppendFormat("At least {0} blocks will be always pre-fetched", page.MinimumPreFetch).
+                    sb.AppendFormat(Localization.At_least_0_blocks_will_be_always_pre_fetched, page.MinimumPreFetch).
                        AppendLine();
 
                 if(page.MaximumPreFetch > 0)
-                    sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch).AppendLine();
+                    sb.AppendFormat("\t" + Localization.A_maximum_of_0_blocks_will_be_pre_fetched,
+                                    page.MaximumPreFetch).AppendLine();
 
                 if(page.MaximumPreFetchCeiling > 0)
                     sb.
-                        AppendFormat("\tA maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more",
+                        AppendFormat("\t" + Localization.A_maximum_of_0_blocks_will_be_pre_fetched_even_if_it_is_commanded_to_pre_fetch_more,
                                      page.MaximumPreFetchCeiling).AppendLine();
 
                 if(page.IC)
-                    sb.AppendLine("\tDevice should use number of cache segments or cache segment size for caching");
+                    sb.AppendLine("\t" + Localization.
+                                      Device_should_use_number_of_cache_segments_or_cache_segment_size_for_caching);
 
                 if(page.ABPF)
-                    sb.AppendLine("\tPre-fetch should be aborted upon receiving a new command");
+                    sb.AppendLine("\t" + Localization.Pre_fetch_should_be_aborted_upon_receiving_a_new_command);
 
                 if(page.CAP)
-                    sb.AppendLine("\tCaching analysis is permitted");
+                    sb.AppendLine("\t" + Localization.Caching_analysis_is_permitted);
 
                 if(page.Disc)
-                    sb.AppendLine("\tPre-fetch can continue across discontinuities (such as cylinders or tracks)");
+                    sb.AppendLine("\t" + Localization.
+                                      Pre_fetch_can_continue_across_discontinuities_such_as_cylinders_or_tracks);
             }
         }
 
         if(page.FSW)
-            sb.AppendLine("\tDrive should not reorder the sequence of write commands to be faster");
+            sb.AppendLine("\t" + Localization.Drive_should_not_reorder_the_sequence_of_write_commands_to_be_faster);
 
         if(page.Size)
         {
             if(page.CacheSegmentSize > 0)
                 if(page.LBCSS)
-                    sb.AppendFormat("\tDrive cache segments should be {0} blocks long", page.CacheSegmentSize).
-                       AppendLine();
+                    sb.AppendFormat("\t" + Localization.Drive_cache_segments_should_be_0_blocks_long,
+                                    page.CacheSegmentSize).AppendLine();
                 else
-                    sb.AppendFormat("\tDrive cache segments should be {0} bytes long", page.CacheSegmentSize).
-                       AppendLine();
+                    sb.AppendFormat("\t" + Localization.Drive_cache_segments_should_be_0_bytes_long,
+                                    page.CacheSegmentSize).AppendLine();
         }
         else
         {
             if(page.CacheSegments > 0)
-                sb.AppendFormat("\tDrive should have {0} cache segments", page.CacheSegments).AppendLine();
+                sb.AppendFormat("\t" + Localization.Drive_should_have_0_cache_segments, page.CacheSegments).
+                   AppendLine();
         }
 
         if(page.NonCacheSegmentSize > 0)
-            sb.AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted",
-                            page.NonCacheSegmentSize).AppendLine();
+            sb.
+                AppendFormat("\t" + Localization.Drive_shall_allocate_0_bytes_to_buffer_even_when_all_cached_data_cannot_be_evicted,
+                             page.NonCacheSegmentSize).AppendLine();
 
         if(page.NV_DIS)
-            sb.AppendLine("\tNon-Volatile cache is disabled");
+            sb.AppendLine("\t" + Localization.Non_Volatile_cache_is_disabled);
 
         return sb.ToString();
     }

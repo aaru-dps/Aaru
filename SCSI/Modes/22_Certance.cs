@@ -100,56 +100,57 @@ public static partial class Modes
         Certance_ModePage_22 page = modePage.Value;
         var                  sb   = new StringBuilder();
 
-        sb.AppendLine("Certance Interface Control Mode Page:");
+        sb.AppendLine(Localization.Certance_Interface_Control_Mode_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.BaudRate)
         {
             case 0:
             case 1:
             case 2:
-                sb.AppendLine("\tLibrary interface will operate at 9600 baud on next reset");
+                sb.AppendLine("\t" + Localization.Library_interface_will_operate_at_9600_baud_on_next_reset);
 
                 break;
             case 3:
-                sb.AppendLine("\tLibrary interface will operate at 19200 baud on next reset");
+                sb.AppendLine("\t" + Localization.Library_interface_will_operate_at_19200_baud_on_next_reset);
 
                 break;
             case 4:
-                sb.AppendLine("\tLibrary interface will operate at 38400 baud on next reset");
+                sb.AppendLine("\t" + Localization.Library_interface_will_operate_at_38400_baud_on_next_reset);
 
                 break;
             case 5:
-                sb.AppendLine("\tLibrary interface will operate at 57600 baud on next reset");
+                sb.AppendLine("\t" + Localization.Library_interface_will_operate_at_57600_baud_on_next_reset);
 
                 break;
             case 6:
-                sb.AppendLine("\tLibrary interface will operate at 115200 baud on next reset");
+                sb.AppendLine("\t" + Localization.Library_interface_will_operate_at_115200_baud_on_next_reset);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown library interface baud rate code {0}", page.BaudRate).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_library_interface_baud_rate_code_0, page.BaudRate).
+                   AppendLine();
 
                 break;
         }
 
-        sb.AppendLine(page.StopBits ? "Library interface transmits 2 stop bits per byte"
-                          : "Library interface transmits 1 stop bits per byte");
+        sb.AppendLine(page.StopBits ? Localization.Library_interface_transmits_2_stop_bits_per_byte
+                          : Localization.Library_interface_transmits_1_stop_bits_per_byte);
 
         switch(page.CmdFwd)
         {
             case 0:
-                sb.AppendLine("\tCommand forwarding is disabled");
+                sb.AppendLine("\t" + Localization.Command_forwarding_is_disabled);
 
                 break;
             case 1:
-                sb.AppendLine("\tCommand forwarding is enabled");
+                sb.AppendLine("\t" + Localization.Command_forwarding_is_enabled);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown command forwarding code {0}", page.CmdFwd).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_command_forwarding_code_0, page.CmdFwd).AppendLine();
 
                 break;
         }
@@ -157,30 +158,33 @@ public static partial class Modes
         switch(page.PortATransportType)
         {
             case 0:
-                sb.AppendLine("\tPort A link is down");
+                sb.AppendLine("\t" + Localization.Port_A_link_is_down);
 
                 break;
             case 3:
-                sb.AppendLine("\tPort A uses Parallel SCSI Ultra-160 interface");
+                sb.AppendLine("\t" + Localization.Port_A_uses_Parallel_SCSI_Ultra160_interface);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown port A transport type code {0}", page.PortATransportType).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_port_A_transport_type_code_0, page.PortATransportType).
+                   AppendLine();
 
                 break;
         }
 
         if(page.PortATransportType > 0)
-            sb.AppendFormat("\tDrive responds to SCSI ID {0}", page.PortAPresentSelectionID).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_responds_to_SCSI_ID_0, page.PortAPresentSelectionID).AppendLine();
 
-        sb.AppendFormat("\tDrive will respond to SCSI ID {0} on Port A enabling", page.NextSelectionID).AppendLine();
+        sb.AppendFormat("\t" + Localization.Drive_will_respond_to_SCSI_ID_0_on_Port_A_enabling, page.NextSelectionID).
+           AppendLine();
 
-        sb.AppendFormat("\tDrive jumpers choose SCSI ID {0}", page.JumperedSelectionID).AppendLine();
+        sb.AppendFormat("\t" + Localization.Drive_jumpers_choose_SCSI_ID_0, page.JumperedSelectionID).AppendLine();
 
-        sb.AppendLine(page.PortAEnabled ? "\tSCSI port is enabled" : "\tSCSI port is disabled");
+        sb.AppendLine(page.PortAEnabled ? "\t" + Localization.SCSI_port_is_enabled
+                          : "\t"               + Localization.SCSI_port_is_disabled);
 
-        sb.AppendLine(page.PortAEnabledOnPower ? "\tSCSI port will be enabled on next power up"
-                          : "\tSCSI port will be disabled on next power up");
+        sb.AppendLine(page.PortAEnabledOnPower ? "\t" + Localization.SCSI_port_will_be_enabled_on_next_power_up
+                          : "\t"                      + Localization.SCSI_port_will_be_disabled_on_next_power_up);
 
         return sb.ToString();
     }

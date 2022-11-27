@@ -105,39 +105,40 @@ public static class CSS_CPRM
         switch(typeCode)
         {
             case TypeCode.None:
-                sb.AppendLine("No drive region setting.");
+                sb.AppendLine(Localization.No_drive_region_setting);
 
                 break;
             case TypeCode.Set:
-                sb.AppendLine("Drive region is set.");
+                sb.AppendLine(Localization.Drive_region_is_set);
 
                 break;
             case TypeCode.LastChance:
-                sb.AppendLine("Drive region is set, with additional restrictions required to make a change.");
+                sb.AppendLine(Localization.Drive_region_is_set_with_additional_restrictions_required_to_make_a_change);
 
                 break;
             case TypeCode.Perm:
-                sb.AppendLine("Drive region has been set permanently, but may be reset by the vendor if necessary.");
+                sb.AppendLine(Localization.
+                                  Drive_region_has_been_set_permanently_but_may_be_reset_by_the_vendor_if_necessary);
 
                 break;
         }
 
-        sb.AppendLine($"Drive has {vendorResets} vendor resets available.");
-        sb.AppendLine($"Drive has {userControlledChanges} user controlled changes available.");
+        sb.AppendLine(string.Format(Localization.Drive_has_0_vendor_resets_available, vendorResets));
+        sb.AppendLine(string.Format(Localization.Drive_has_0_user_controlled_changes_available, userControlledChanges));
 
         switch(decoded.RegionMask)
         {
             case 0xFF:
-                sb.AppendLine("Drive has no region set.");
+                sb.AppendLine(Localization.Drive_has_no_region_set);
 
                 break;
             case 0x00:
-                sb.AppendLine("Drive is region free.");
+                sb.AppendLine(Localization.Drive_is_region_free);
 
                 break;
             default:
             {
-                sb.Append("Drive has the following regions set:");
+                sb.Append(Localization.Drive_has_the_following_regions_set);
 
                 if((decoded.RegionMask & 0x01) != 0x01)
                     sb.Append(" 1");
@@ -172,15 +173,16 @@ public static class CSS_CPRM
         switch(decoded.RPCScheme)
         {
             case 0x00:
-                sb.AppendLine("The Logical Unit does not enforce Region Playback Controls (RPC).");
+                sb.AppendLine(Localization.The_Logical_Unit_does_not_enforce_Region_Playback_Controls_RPC);
 
                 break;
             case 0x01:
-                sb.AppendLine("The Logical Unit shall adhere to the specification and all requirements of the CSS license agreement concerning RPC.");
+                sb.AppendLine(Localization.
+                                  The_Logical_Unit_shall_adhere_to_the_specification_and_all_requirements_of_the_CSS_license_agreement_concerning_RPC);
 
                 break;
             default:
-                sb.AppendLine("The Logical Unit uses an unknown region enforcement scheme.");
+                sb.AppendLine(Localization.The_Logical_Unit_uses_an_unknown_region_enforcement_scheme);
 
                 break;
         }
@@ -202,23 +204,24 @@ public static class CSS_CPRM
         switch(decoded.CopyrightType)
         {
             case CopyrightType.NoProtection:
-                sb.AppendLine("Disc has no encryption.");
+                sb.AppendLine(Localization.Disc_has_no_encryption);
 
                 break;
             case CopyrightType.CSS:
-                sb.AppendLine("Disc is encrypted using CSS or CPPM.");
+                sb.AppendLine(Localization.Disc_is_encrypted_using_CSS_or_CPPM);
 
                 break;
             case CopyrightType.CPRM:
-                sb.AppendLine("Disc is encrypted using CPRM.");
+                sb.AppendLine(Localization.Disc_is_encrypted_using_CPRM);
 
                 break;
             case CopyrightType.AACS:
-                sb.AppendLine("Disc is encrypted using AACS.");
+                sb.AppendLine(Localization.Disc_is_encrypted_using_AACS);
 
                 break;
             default:
-                sb.AppendFormat("Disc is encrypted using unknown algorithm with ID {0}.", decoded.CopyrightType);
+                sb.AppendFormat(Localization.Disc_is_encrypted_using_unknown_algorithm_with_ID_0,
+                                decoded.CopyrightType);
 
                 break;
         }
@@ -229,16 +232,16 @@ public static class CSS_CPRM
         switch(decoded.RegionInformation)
         {
             case 0xFF:
-                sb.AppendLine("Disc cannot be played in any region at all.");
+                sb.AppendLine(Localization.Disc_cannot_be_played_in_any_region_at_all);
 
                 break;
             case 0x00:
-                sb.AppendLine("Disc can be played in any region.");
+                sb.AppendLine(Localization.Disc_can_be_played_in_any_region);
 
                 break;
             default:
             {
-                sb.Append("Disc can be played in the following regions:");
+                sb.Append(Localization.Disc_can_be_played_in_the_following_regions);
 
                 if((decoded.RegionInformation & 0x01) != 0x01)
                     sb.Append(" 1");

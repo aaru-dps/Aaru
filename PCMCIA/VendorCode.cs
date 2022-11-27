@@ -357,7 +357,7 @@ public static class VendorCode
             case 0xC020: return "NextCom K.K.";
             case 0xC250: return "EMTAC Technology Corporation";
             case 0xD601: return "Elsa";
-            default:     return $"Unknown vendor id 0x{id:X4}";
+            default:     return string.Format(Localization.Unknown_vendor_id_0, id);
         }
     }
 }

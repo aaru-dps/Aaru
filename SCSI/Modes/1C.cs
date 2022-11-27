@@ -120,81 +120,84 @@ public static partial class Modes
         ModePage_1C page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Informational exceptions control page:");
+        sb.AppendLine(Localization.SCSI_Informational_exceptions_control_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.DExcpt)
-            sb.AppendLine("\tInformational exceptions are disabled");
+            sb.AppendLine("\t" + Localization.Informational_exceptions_are_disabled);
         else
         {
-            sb.AppendLine("\tInformational exceptions are enabled");
+            sb.AppendLine("\t" + Localization.Informational_exceptions_are_enabled);
 
             switch(page.MRIE)
             {
                 case 0:
-                    sb.AppendLine("\tNo reporting of informational exception condition");
+                    sb.AppendLine("\t" + Localization.No_reporting_of_informational_exception_condition);
 
                     break;
                 case 1:
-                    sb.AppendLine("\tAsynchronous event reporting of informational exceptions");
+                    sb.AppendLine("\t" + Localization.Asynchronous_event_reporting_of_informational_exceptions);
 
                     break;
                 case 2:
-                    sb.AppendLine("\tGenerate unit attention on informational exceptions");
+                    sb.AppendLine("\t" + Localization.Generate_unit_attention_on_informational_exceptions);
 
                     break;
                 case 3:
-                    sb.AppendLine("\tConditionally generate recovered error on informational exceptions");
+                    sb.AppendLine("\t" + Localization.
+                                      Conditionally_generate_recovered_error_on_informational_exceptions);
 
                     break;
                 case 4:
-                    sb.AppendLine("\tUnconditionally generate recovered error on informational exceptions");
+                    sb.AppendLine("\t" + Localization.
+                                      Unconditionally_generate_recovered_error_on_informational_exceptions);
 
                     break;
                 case 5:
-                    sb.AppendLine("\tGenerate no sense on informational exceptions");
+                    sb.AppendLine("\t" + Localization.Generate_no_sense_on_informational_exceptions);
 
                     break;
                 case 6:
-                    sb.AppendLine("\tOnly report informational exception condition on request");
+                    sb.AppendLine("\t" + Localization.Only_report_informational_exception_condition_on_request);
 
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown method of reporting {0}", page.MRIE).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Unknown_method_of_reporting_0, page.MRIE).AppendLine();
 
                     break;
             }
 
             if(page.Perf)
-                sb.AppendLine("\tInformational exceptions reporting should not affect drive performance");
+                sb.AppendLine("\t" + Localization.
+                                  Informational_exceptions_reporting_should_not_affect_drive_performance);
 
             if(page.Test)
-                sb.AppendLine("\tA test informational exception will raise on next timer");
+                sb.AppendLine("\t" + Localization.A_test_informational_exception_will_raise_on_next_timer);
 
             if(page.LogErr)
-                sb.AppendLine("\tDrive shall log informational exception conditions");
+                sb.AppendLine("\t" + Localization.Drive_shall_log_informational_exception_conditions);
 
             if(page.IntervalTimer > 0)
                 if(page.IntervalTimer == 0xFFFFFFFF)
-                    sb.AppendLine("\tTimer interval is vendor-specific");
+                    sb.AppendLine("\t" + Localization.Timer_interval_is_vendor_specific);
                 else
-                    sb.AppendFormat("\tTimer interval is {0} ms", page.IntervalTimer * 100).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Timer_interval_is_0_ms, page.IntervalTimer * 100).AppendLine();
 
             if(page.ReportCount > 0)
-                sb.AppendFormat("\tInformational exception conditions will be reported a maximum of {0} times",
+                sb.AppendFormat("\t" + Localization.Informational_exception_conditions_will_be_reported_a_maximum_of_0_times,
                                 page.ReportCount);
         }
 
         if(page.EWasc)
-            sb.AppendLine("\tWarning reporting is enabled");
+            sb.AppendLine("\t" + Localization.Warning_reporting_is_enabled);
 
         if(page.EBF)
-            sb.AppendLine("\tBackground functions are enabled");
+            sb.AppendLine("\t" + Localization.Background_functions_are_enabled);
 
         if(page.EBACKERR)
-            sb.AppendLine("\tDrive will report background self-test errors");
+            sb.AppendLine("\t" + Localization.Drive_will_report_background_self_test_errors);
 
         return sb.ToString();
     }
@@ -269,38 +272,40 @@ public static partial class Modes
         ModePage_1C_S01 page = modePage.Value;
         var             sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Background Control page:");
+        sb.AppendLine(Localization.SCSI_Background_Control_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.S_L_Full)
-            sb.AppendLine("\tBackground scans will be halted if log is full");
+            sb.AppendLine("\t" + Localization.Background_scans_will_be_halted_if_log_is_full);
 
         if(page.LOWIR)
-            sb.AppendLine("\tBackground scans will only be logged if they require intervention");
+            sb.AppendLine("\t" + Localization.Background_scans_will_only_be_logged_if_they_require_intervention);
 
         if(page.En_Bms)
-            sb.AppendLine("\tBackground medium scans are enabled");
+            sb.AppendLine("\t" + Localization.Background_medium_scans_are_enabled);
 
         if(page.En_Ps)
-            sb.AppendLine("\tBackground pre-scans are enabled");
+            sb.AppendLine("\t" + Localization.Background_pre_scans_are_enabled);
 
         if(page.BackgroundScanInterval > 0)
-            sb.AppendFormat("\t{0} hours shall be between the start of a background scan operation and the next",
-                            page.BackgroundScanInterval).AppendLine();
+            sb.
+                AppendFormat("\t" + Localization._0__hours_shall_be_between_the_start_of_a_background_scan_operation_and_the_next,
+                             page.BackgroundScanInterval).AppendLine();
 
         if(page.BackgroundPrescanTimeLimit > 0)
-            sb.AppendFormat("\tBackground pre-scan operations can take a maximum of {0} hours",
+            sb.AppendFormat("\t" + Localization.Background_pre_scan_operations_can_take_a_maximum_of_0_hours,
                             page.BackgroundPrescanTimeLimit).AppendLine();
 
         if(page.MinIdleBeforeBgScan > 0)
-            sb.AppendFormat("\tAt least {0} ms must be idle before resuming a suspended background scan operation",
-                            page.MinIdleBeforeBgScan).AppendLine();
+            sb.
+                AppendFormat("\t" + Localization.At_least_0_ms_must_be_idle_before_resuming_a_suspended_background_scan_operation,
+                             page.MinIdleBeforeBgScan).AppendLine();
 
         if(page.MaxTimeSuspendBgScan > 0)
             sb.
-                AppendFormat("\tAt most {0} ms must be before suspending a background scan operation and processing received commands",
+                AppendFormat("\t" + Localization.At_most_0_ms_must_be_before_suspending_a_background_scan_operation_and_processing_received_commands,
                              page.MaxTimeSuspendBgScan).AppendLine();
 
         return sb.ToString();

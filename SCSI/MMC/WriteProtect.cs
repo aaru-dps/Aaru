@@ -87,35 +87,35 @@ public static class WriteProtect
         var sb = new StringBuilder();
 
         if(response.MSWI)
-            sb.AppendLine("Writing inhibited by media specific reason");
+            sb.AppendLine(Localization.Writing_inhibited_by_media_specific_reason);
 
         if(response.CWP)
-            sb.AppendLine("Cartridge sets write protection");
+            sb.AppendLine(Localization.Cartridge_sets_write_protection);
 
         if(response.PWP)
-            sb.AppendLine("Media surface sets write protection");
+            sb.AppendLine(Localization.Media_surface_sets_write_protection);
 
         if(response.SWPP)
-            sb.AppendLine("Software write protection is set until power down");
+            sb.AppendLine(Localization.Software_write_protection_is_set_until_power_down);
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
 
         if(response.Reserved3 != 0)
-            sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
+            sb.AppendFormat(Localization.Reserved_3_equals_0_X2, response.Reserved3).AppendLine();
 
         if(response.Reserved4 != 0)
-            sb.AppendFormat("Reserved4 = 0x{0:X2}", response.Reserved4).AppendLine();
+            sb.AppendFormat(Localization.Reserved_4_equals_0_X2, response.Reserved4).AppendLine();
 
         if(response.Reserved5 != 0)
-            sb.AppendFormat("Reserved5 = 0x{0:X2}", response.Reserved5).AppendLine();
+            sb.AppendFormat(Localization.Reserved_5_equals_0_X2, response.Reserved5).AppendLine();
 
         if(response.Reserved6 != 0)
-            sb.AppendFormat("Reserved6 = 0x{0:X2}", response.Reserved6).AppendLine();
+            sb.AppendFormat(Localization.Reserved_6_equals_0_X2, response.Reserved6).AppendLine();
     #endif
 
         return sb.ToString();

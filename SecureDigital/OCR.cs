@@ -93,46 +93,46 @@ public static partial class Decoders
             return null;
 
         var sb = new StringBuilder();
-        sb.AppendLine("SecureDigital Operation Conditions Register:");
+        sb.AppendLine(Localization.SecureDigital_Operation_Conditions_Register);
 
         if(!ocr.PowerUp)
-            sb.AppendLine("\tDevice is powering up");
+            sb.AppendLine("\t" + Localization.Device_is_powering_up);
 
         if(ocr.CCS)
-            sb.AppendLine("\tDevice is SDHC, SDXC or higher");
+            sb.AppendLine("\t" + Localization.Device_is_SDHC_SDXC_or_higher);
 
         if(ocr.UHS)
-            sb.AppendLine("\tDevice is UHS-II or higher");
+            sb.AppendLine("\t" + Localization.Device_is_UHS_II_or_higher);
 
         if(ocr.ThreeFive)
-            sb.AppendLine("\tDevice can work with supply 3.5~3.6V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_5_3_6V);
 
         if(ocr.ThreeFour)
-            sb.AppendLine("\tDevice can work with supply 3.4~3.5V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_4_3_5V);
 
         if(ocr.ThreeThree)
-            sb.AppendLine("\tDevice can work with supply 3.3~3.4V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_3_3_4V);
 
         if(ocr.ThreeTwo)
-            sb.AppendLine("\tDevice can work with supply 3.2~3.3V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_2_3_3V);
 
         if(ocr.ThreeOne)
-            sb.AppendLine("\tDevice can work with supply 3.1~3.2V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_1_3_2V);
 
         if(ocr.TwoNine)
-            sb.AppendLine("\tDevice can work with supply 2.9~3.0V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_9_3_0V);
 
         if(ocr.TwoEight)
-            sb.AppendLine("\tDevice can work with supply 2.8~2.9V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_8_2_9V);
 
         if(ocr.TwoSeven)
-            sb.AppendLine("\tDevice can work with supply 2.7~2.8V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_7_2_8V);
 
         if(ocr.OneEight)
-            sb.AppendLine("\tDevice can switch to work with 1.8V supply");
+            sb.AppendLine("\t" + Localization.Device_can_switch_to_work_with_1_8V_supply);
 
         if(ocr.LowPower)
-            sb.AppendLine("\tDevice is in low power mode");
+            sb.AppendLine("\t" + Localization.Device_is_in_low_power_mode);
 
         return sb.ToString();
     }

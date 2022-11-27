@@ -103,74 +103,74 @@ public static partial class Decoders
             return null;
 
         var sb = new StringBuilder();
-        sb.AppendLine("MultiMediaCard Operation Conditions Register:");
+        sb.AppendLine(Localization.MultiMediaCard_Operation_Conditions_Register);
 
         if(!ocr.PowerUp)
-            sb.AppendLine("\tDevice is powering up");
+            sb.AppendLine("\t" + Localization.Device_is_powering_up);
 
         switch(ocr.AccessMode)
         {
             case 0:
-                sb.AppendLine("\tDevice is byte addressed");
+                sb.AppendLine("\t" + Localization.Device_is_byte_addressed);
 
                 break;
             case 2:
-                sb.AppendLine("\tDevice is sector addressed");
+                sb.AppendLine("\t" + Localization.Device_is_sector_addressed);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown device access mode {0}", ocr.AccessMode).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_device_access_mode_0, ocr.AccessMode).AppendLine();
 
                 break;
         }
 
         if(ocr.ThreeFive)
-            sb.AppendLine("\tDevice can work with supply 3.5~3.6V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_5_3_6V);
 
         if(ocr.ThreeFour)
-            sb.AppendLine("\tDevice can work with supply 3.4~3.5V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_4_3_5V);
 
         if(ocr.ThreeThree)
-            sb.AppendLine("\tDevice can work with supply 3.3~3.4V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_3_3_4V);
 
         if(ocr.ThreeTwo)
-            sb.AppendLine("\tDevice can work with supply 3.2~3.3V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_2_3_3V);
 
         if(ocr.ThreeOne)
-            sb.AppendLine("\tDevice can work with supply 3.1~3.2V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_1_3_2V);
 
         if(ocr.TwoNine)
-            sb.AppendLine("\tDevice can work with supply 2.9~3.0V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_9_3_0V);
 
         if(ocr.TwoEight)
-            sb.AppendLine("\tDevice can work with supply 2.8~2.9V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_8_2_9V);
 
         if(ocr.TwoSeven)
-            sb.AppendLine("\tDevice can work with supply 2.7~2.8V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_7_2_8V);
 
         if(ocr.TwoSix)
-            sb.AppendLine("\tDevice can work with supply 2.6~2.7V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_6_2_7V);
 
         if(ocr.TwoFive)
-            sb.AppendLine("\tDevice can work with supply 2.5~2.6V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_5_2_6V);
 
         if(ocr.TwoFour)
-            sb.AppendLine("\tDevice can work with supply 2.4~2.5V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_4_2_5V);
 
         if(ocr.TwoThree)
-            sb.AppendLine("\tDevice can work with supply 2.3~2.4V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_3_2_4V);
 
         if(ocr.TwoTwo)
-            sb.AppendLine("\tDevice can work with supply 2.2~2.3V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_2_2_3V);
 
         if(ocr.TwoOne)
-            sb.AppendLine("\tDevice can work with supply 2.1~2.2V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_1_2_2V);
 
         if(ocr.TwoZero)
-            sb.AppendLine("\tDevice can work with supply 2.0~2.1V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_0_2_1V);
 
         if(ocr.OneSix)
-            sb.AppendLine("\tDevice can work with supply 1.65~1.95V");
+            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_1_65_1_95V);
 
         return sb.ToString();
     }

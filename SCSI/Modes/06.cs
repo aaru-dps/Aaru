@@ -82,13 +82,13 @@ public static partial class Modes
         ModePage_06 page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI optical memory:");
+        sb.AppendLine(Localization.SCSI_optical_memory);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.RUBR)
-            sb.AppendLine("\tOn reading an updated block drive will return RECOVERED ERROR");
+            sb.AppendLine("\t" + Localization.On_reading_an_updated_block_drive_will_return_RECOVERED_ERROR);
 
         return sb.ToString();
     }

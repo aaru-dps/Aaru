@@ -133,23 +133,23 @@ public static class DiscInformation
         switch(information.Value.DiscType)
         {
             case 0x00:
-                sb.AppendLine("Disc type declared as CD-DA or CD-ROM");
+                sb.AppendLine(Localization.Disc_type_declared_as_CD_DA_or_CD_ROM);
 
                 break;
             case 0x10:
-                sb.AppendLine("Disc type declared as CD-i");
+                sb.AppendLine(Localization.Disc_type_declared_as_CD_i);
 
                 break;
             case 0x20:
-                sb.AppendLine("Disc type declared as CD-ROM XA");
+                sb.AppendLine(Localization.Disc_type_declared_as_CD_ROM_XA);
 
                 break;
             case 0xFF:
-                sb.AppendLine("Disc type is undefined");
+                sb.AppendLine(Localization.Disc_type_is_undefined);
 
                 break;
             default:
-                sb.AppendFormat("Unknown disc type {0:X2}h", information.Value.DiscType).AppendLine();
+                sb.AppendFormat(Localization.Unknown_disc_type_0, information.Value.DiscType).AppendLine();
 
                 break;
         }
@@ -157,38 +157,38 @@ public static class DiscInformation
         switch(information.Value.DiscStatus)
         {
             case 0:
-                sb.AppendLine("Disc is empty");
+                sb.AppendLine(Localization.Disc_is_empty);
 
                 break;
             case 1:
-                sb.AppendLine("Disc is incomplete");
+                sb.AppendLine(Localization.Disc_is_incomplete);
 
                 break;
             case 2:
-                sb.AppendLine("Disc is finalized");
+                sb.AppendLine(Localization.Disc_is_finalized);
 
                 break;
         }
 
         if(information.Value.Erasable)
-            sb.AppendLine("Disc is erasable");
+            sb.AppendLine(Localization.Disc_is_erasable);
 
         switch(information.Value.LastSessionStatus)
         {
             case 0:
-                sb.AppendLine("Last session is empty");
+                sb.AppendLine(Localization.Last_session_is_empty);
 
                 break;
             case 1:
-                sb.AppendLine("Last session is incomplete");
+                sb.AppendLine(Localization.Last_session_is_incomplete);
 
                 break;
             case 2:
-                sb.AppendLine("Last session is damaged");
+                sb.AppendLine(Localization.Last_session_is_damaged);
 
                 break;
             case 3:
-                sb.AppendLine("Last session is complete");
+                sb.AppendLine(Localization.Last_session_is_complete);
 
                 break;
         }
@@ -196,61 +196,63 @@ public static class DiscInformation
         switch(information.Value.BGFormatStatus)
         {
             case 1:
-                sb.AppendLine("Media was being formatted in the background but it is stopped and incomplete");
+                sb.AppendLine(Localization.
+                                  Media_was_being_formatted_in_the_background_but_it_is_stopped_and_incomplete);
 
                 break;
             case 2:
-                sb.AppendLine("Media is currently being formatted in the background");
+                sb.AppendLine(Localization.Media_is_currently_being_formatted_in_the_background);
 
                 break;
             case 3:
-                sb.AppendLine("Media background formatting has completed");
+                sb.AppendLine(Localization.Media_background_formatting_has_completed);
 
                 break;
         }
 
         if(information.Value.Dbit)
-            sb.AppendLine("MRW is dirty");
+            sb.AppendLine(Localization.MRW_is_dirty);
 
-        sb.AppendFormat("First track on disc is track {0}", information.Value.FirstTrackNumber).AppendLine();
-        sb.AppendFormat("Disc has {0} sessions", information.Value.Sessions).AppendLine();
+        sb.AppendFormat(Localization.First_track_on_disc_is_track_0, information.Value.FirstTrackNumber).AppendLine();
+        sb.AppendFormat(Localization.Disc_has_0_sessions, information.Value.Sessions).AppendLine();
 
-        sb.AppendFormat("First track in last session is track {0}", information.Value.FirstTrackLastSession).
+        sb.AppendFormat(Localization.First_track_in_last_session_is_track_0, information.Value.FirstTrackLastSession).
            AppendLine();
 
-        sb.AppendFormat("Last track in last session is track {0}", information.Value.LastTrackLastSession).AppendLine();
+        sb.AppendFormat(Localization.Last_track_in_last_session_is_track_0, information.Value.LastTrackLastSession).
+           AppendLine();
 
-        sb.AppendFormat("Last session Lead-In address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
+        sb.AppendFormat(Localization.Last_session_Lead_In_address_is_0_as_LBA_or_1_2_3,
                         information.Value.LastSessionLeadInStartLBA,
                         (information.Value.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
                         (information.Value.LastSessionLeadInStartLBA & 0xFF00)   >> 8,
                         information.Value.LastSessionLeadInStartLBA & 0xFF).AppendLine();
 
-        sb.AppendFormat("Last possible Lead-Out address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
+        sb.AppendFormat(Localization.Last_possible_Lead_Out_address_is_0_as_LBA_or_1_2_3,
                         information.Value.LastPossibleLeadOutStartLBA,
                         (information.Value.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
                         (information.Value.LastPossibleLeadOutStartLBA & 0xFF00)   >> 8,
                         information.Value.LastPossibleLeadOutStartLBA & 0xFF).AppendLine();
 
-        sb.AppendLine(information.Value.URU ? "Disc is defined for unrestricted use"
-                          : "Disc is defined for restricted use");
+        sb.AppendLine(information.Value.URU ? Localization.Disc_is_defined_for_unrestricted_use
+                          : Localization.Disc_is_defined_for_restricted_use);
 
         if(information.Value.DID_V)
-            sb.AppendFormat("Disc ID: {0:X6}", information.Value.DiscIdentification & 0x00FFFFFF).AppendLine();
+            sb.AppendFormat(Localization.Disc_ID_0_X6, information.Value.DiscIdentification & 0x00FFFFFF).AppendLine();
 
         if(information.Value.DBC_V)
-            sb.AppendFormat("Disc barcode: {0:X16}", information.Value.DiscBarcode).AppendLine();
+            sb.AppendFormat(Localization.Disc_barcode_0, information.Value.DiscBarcode).AppendLine();
 
         if(information.Value.DAC_V)
-            sb.AppendFormat("Disc application code: {0}", information.Value.DiscApplicationCode).AppendLine();
+            sb.AppendFormat(Localization.Disc_application_code_0, information.Value.DiscApplicationCode).AppendLine();
 
         if(information.Value.OPCTables == null)
             return sb.ToString();
 
         foreach(OPCTable table in information.Value.OPCTables)
-            sb.AppendFormat("OPC values for {0}Kbit/sec.: {1}, {2}, {3}, {4}, {5}, {6}", table.Speed,
-                            table.OPCValues[0], table.OPCValues[1], table.OPCValues[2], table.OPCValues[3],
-                            table.OPCValues[4], table.OPCValues[5]).AppendLine();
+            sb.AppendFormat(Localization.OPC_values_for_0_Kbit_sec_1_2_3_4_5_6, table.Speed, table.OPCValues[0],
+                            table.OPCValues[1], table.OPCValues[2], table.OPCValues[3], table.OPCValues[4],
+                            table.OPCValues[5]).AppendLine();
 
         return sb.ToString();
     }
@@ -287,13 +289,13 @@ public static class DiscInformation
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("{0} maximum possible tracks on the disc", information.Value.MaxTracks).AppendLine();
-        sb.AppendFormat("{0} assigned tracks on the disc", information.Value.AssignedTracks).AppendLine();
+        sb.AppendFormat(Localization._0_maximum_possible_tracks_on_the_disc, information.Value.MaxTracks).AppendLine();
+        sb.AppendFormat(Localization._0_assigned_tracks_on_the_disc, information.Value.AssignedTracks).AppendLine();
 
-        sb.AppendFormat("{0} maximum possible appendable tracks on the disc", information.Value.AppendableTracks).
-           AppendLine();
+        sb.AppendFormat(Localization._0_maximum_possible_appendable_tracks_on_the_disc,
+                        information.Value.AppendableTracks).AppendLine();
 
-        sb.AppendFormat("{0} current appendable tracks on the disc", information.Value.MaxAppendableTracks).
+        sb.AppendFormat(Localization._0_current_appendable_tracks_on_the_disc, information.Value.MaxAppendableTracks).
            AppendLine();
 
         return sb.ToString();
@@ -336,12 +338,13 @@ public static class DiscInformation
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("{0} remaining POW replacements", information.Value.RemainingPOWReplacements).AppendLine();
-
-        sb.AppendFormat("{0} remaining POW reallocation map entries", information.Value.RemainingPOWReallocation).
+        sb.AppendFormat(Localization._0_remaining_POW_replacements, information.Value.RemainingPOWReplacements).
            AppendLine();
 
-        sb.AppendFormat("{0} remaining POW updates", information.Value.RemainingPOWUpdates).AppendLine();
+        sb.AppendFormat(Localization._0_remaining_POW_reallocation_map_entries,
+                        information.Value.RemainingPOWReallocation).AppendLine();
+
+        sb.AppendFormat(Localization._0_remaining_POW_updates, information.Value.RemainingPOWUpdates).AppendLine();
 
         return sb.ToString();
     }

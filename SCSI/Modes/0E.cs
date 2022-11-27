@@ -118,16 +118,16 @@ public static partial class Modes
         ModePage_0E page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI CD-ROM audio control parameters page:");
+        sb.AppendLine(Localization.SCSI_CD_ROM_audio_control_parameters_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendLine(page.Immed ? "\tDrive will return from playback command immediately"
-                          : "\tDrive will return from playback command when playback ends");
+        sb.AppendLine(page.Immed ? "\t" + Localization.Drive_will_return_from_playback_command_immediately
+                          : "\t"        + Localization.Drive_will_return_from_playback_command_when_playback_ends);
 
         if(page.SOTC)
-            sb.AppendLine("\tDrive will stop playback on track end");
+            sb.AppendLine("\t" + Localization.Drive_will_stop_playback_on_track_end);
 
         if(page.APRVal)
         {
@@ -138,12 +138,12 @@ public static partial class Modes
             else
                 blocks = page.BlocksPerSecondOfAudio;
 
-            sb.AppendFormat("\tThere are {0} blocks per each second of audio", blocks).AppendLine();
+            sb.AppendFormat("\t" + Localization.There_are_0_blocks_per_each_second_of_audio, blocks).AppendLine();
         }
 
         if(page.OutputPort0ChannelSelection > 0)
         {
-            sb.Append("\tOutput port 0 has channels ");
+            sb.Append("\t" + Localization.Output_port_0_has_channels);
 
             if((page.OutputPort0ChannelSelection & 0x01) == 0x01)
                 sb.Append("0 ");
@@ -160,15 +160,15 @@ public static partial class Modes
             switch(page.OutputPort0Volume)
             {
                 case 0:
-                    sb.AppendLine("muted");
+                    sb.AppendLine(Localization.muted);
 
                     break;
                 case 0xFF:
-                    sb.AppendLine("at maximum volume");
+                    sb.AppendLine(Localization.at_maximum_volume);
 
                     break;
                 default:
-                    sb.AppendFormat("at volume {0}", page.OutputPort0Volume).AppendLine();
+                    sb.AppendFormat(Localization.at_volume_0, page.OutputPort0Volume).AppendLine();
 
                     break;
             }
@@ -176,7 +176,7 @@ public static partial class Modes
 
         if(page.OutputPort1ChannelSelection > 0)
         {
-            sb.Append("\tOutput port 1 has channels ");
+            sb.Append("\t" + Localization.Output_port_1_has_channels);
 
             if((page.OutputPort1ChannelSelection & 0x01) == 0x01)
                 sb.Append("0 ");
@@ -193,15 +193,15 @@ public static partial class Modes
             switch(page.OutputPort1Volume)
             {
                 case 0:
-                    sb.AppendLine("muted");
+                    sb.AppendLine(Localization.muted);
 
                     break;
                 case 0xFF:
-                    sb.AppendLine("at maximum volume");
+                    sb.AppendLine(Localization.at_maximum_volume);
 
                     break;
                 default:
-                    sb.AppendFormat("at volume {0}", page.OutputPort1Volume).AppendLine();
+                    sb.AppendFormat(Localization.at_volume_0, page.OutputPort1Volume).AppendLine();
 
                     break;
             }
@@ -209,7 +209,7 @@ public static partial class Modes
 
         if(page.OutputPort2ChannelSelection > 0)
         {
-            sb.Append("\tOutput port 2 has channels ");
+            sb.Append("\t" + Localization.Output_port_2_has_channels);
 
             if((page.OutputPort2ChannelSelection & 0x01) == 0x01)
                 sb.Append("0 ");
@@ -226,15 +226,15 @@ public static partial class Modes
             switch(page.OutputPort2Volume)
             {
                 case 0:
-                    sb.AppendLine("muted");
+                    sb.AppendLine(Localization.muted);
 
                     break;
                 case 0xFF:
-                    sb.AppendLine("at maximum volume");
+                    sb.AppendLine(Localization.at_maximum_volume);
 
                     break;
                 default:
-                    sb.AppendFormat("at volume {0}", page.OutputPort2Volume).AppendLine();
+                    sb.AppendFormat(Localization.at_volume_0, page.OutputPort2Volume).AppendLine();
 
                     break;
             }
@@ -243,7 +243,7 @@ public static partial class Modes
         if(page.OutputPort3ChannelSelection <= 0)
             return sb.ToString();
 
-        sb.Append("\tOutput port 3 has channels ");
+        sb.Append("\t" + Localization.Output_port_3_has_channels);
 
         if((page.OutputPort3ChannelSelection & 0x01) == 0x01)
             sb.Append("0 ");
@@ -260,15 +260,15 @@ public static partial class Modes
         switch(page.OutputPort3Volume)
         {
             case 0:
-                sb.AppendLine("muted");
+                sb.AppendLine(Localization.muted);
 
                 break;
             case 0xFF:
-                sb.AppendLine("at maximum volume");
+                sb.AppendLine(Localization.at_maximum_volume);
 
                 break;
             default:
-                sb.AppendFormat("at volume {0}", page.OutputPort3Volume).AppendLine();
+                sb.AppendFormat(Localization.at_volume_0, page.OutputPort3Volume).AppendLine();
 
                 break;
         }

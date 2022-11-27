@@ -101,29 +101,30 @@ public static partial class Modes
         ModePage_07 page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Verify error recovery page:");
+        sb.AppendLine(Localization.SCSI_Verify_error_recovery_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.EER)
-            sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
+            sb.AppendLine("\t" + Localization.Drive_will_use_the_most_expedient_form_of_error_recovery_first);
 
         if(page.PER)
-            sb.AppendLine("\tDrive shall report recovered errors");
+            sb.AppendLine("\t" + Localization.Drive_shall_report_recovered_errors);
 
         if(page.DTE)
-            sb.AppendLine("\tTransfer will be terminated upon error detection");
+            sb.AppendLine("\t" + Localization.Transfer_will_be_terminated_upon_error_detection);
 
         if(page.DCR)
-            sb.AppendLine("\tError correction is disabled");
+            sb.AppendLine("\t" + Localization.Error_correction_is_disabled);
 
         if(page.VerifyRetryCount > 0)
-            sb.AppendFormat("\tDrive will repeat verify operations {0} times", page.VerifyRetryCount).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_will_repeat_verify_operations_0_times, page.VerifyRetryCount).
+               AppendLine();
 
         if(page.RecoveryTimeLimit > 0)
-            sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_will_employ_a_maximum_of_0_ms_to_recover_data,
+                            page.RecoveryTimeLimit).AppendLine();
 
         return sb.ToString();
     }

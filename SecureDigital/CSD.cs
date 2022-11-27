@@ -151,16 +151,16 @@ public static partial class Decoders
         string unit       = "";
 
         var sb = new StringBuilder();
-        sb.AppendLine("SecureDigital Device Specific Data Register:");
+        sb.AppendLine(Localization.SecureDigital_Device_Specific_Data_Register);
 
         switch(csd.Structure)
         {
             case 0:
-                sb.AppendLine("\tRegister version 1.0");
+                sb.AppendLine("\t" + Localization.Register_version_1_0);
 
                 break;
             case 1:
-                sb.AppendLine("\tRegister version 2.0");
+                sb.AppendLine("\t" + Localization.Register_version_2_0);
 
                 break;
         }
@@ -168,42 +168,42 @@ public static partial class Decoders
         switch(csd.TAAC & 0x07)
         {
             case 0:
-                unit       = "ns";
+                unit       = Localization.unit_ns;
                 unitFactor = 1;
 
                 break;
             case 1:
-                unit       = "ns";
+                unit       = Localization.unit_ns;
                 unitFactor = 10;
 
                 break;
             case 2:
-                unit       = "ns";
+                unit       = Localization.unit_ns;
                 unitFactor = 100;
 
                 break;
             case 3:
-                unit       = "μs";
+                unit       = Localization.unit_μs;
                 unitFactor = 1;
 
                 break;
             case 4:
-                unit       = "μs";
+                unit       = Localization.unit_μs;
                 unitFactor = 10;
 
                 break;
             case 5:
-                unit       = "μs";
+                unit       = Localization.unit_μs;
                 unitFactor = 100;
 
                 break;
             case 6:
-                unit       = "ms";
+                unit       = Localization.unit_ms;
                 unitFactor = 1;
 
                 break;
             case 7:
-                unit       = "ms";
+                unit       = Localization.unit_ms;
                 unitFactor = 10;
 
                 break;
@@ -231,11 +231,12 @@ public static partial class Decoders
         };
 
         double result = unitFactor * multiplier;
-        sb.AppendFormat("\tAsynchronous data access time is {0}{1}", result, unit).AppendLine();
+        sb.AppendFormat("\t" + Localization.Asynchronous_data_access_time_is_0_1, result, unit).AppendLine();
 
-        sb.AppendFormat("\tClock dependent part of data access is {0} clock cycles", csd.NSAC * 100).AppendLine();
+        sb.AppendFormat("\t" + Localization.Clock_dependent_part_of_data_access_is_0_clock_cycles, csd.NSAC * 100).
+           AppendLine();
 
-        unit = "MBit/s";
+        unit = Localization.MBit_s;
 
         switch(csd.Speed & 0x07)
         {
@@ -256,7 +257,7 @@ public static partial class Decoders
 
                 break;
             default:
-                unit       = "unknown";
+                unit       = Localization.unit_unknown;
                 unitFactor = 0;
 
                 break;
@@ -284,7 +285,7 @@ public static partial class Decoders
         };
 
         result = unitFactor * multiplier;
-        sb.AppendFormat("\tDevice's transfer speed: {0}{1}", result, unit).AppendLine();
+        sb.AppendFormat("\t" + Localization.Device_transfer_speed_0_1, result, unit).AppendLine();
 
         unit = "";
 
@@ -292,73 +293,75 @@ public static partial class Decoders
             if((csd.Classes & mask) == mask)
                 unit += $" {cl}";
 
-        sb.AppendFormat("\tDevice support command classes {0}", unit).AppendLine();
-        sb.AppendFormat("\tRead block length is {0} bytes", Math.Pow(2, csd.ReadBlockLength)).AppendLine();
+        sb.AppendFormat("\t" + Localization.Device_support_command_classes_0, unit).AppendLine();
+
+        sb.AppendFormat("\t" + Localization.Read_block_length_is_0_bytes, Math.Pow(2, csd.ReadBlockLength)).
+           AppendLine();
 
         if(csd.ReadsPartialBlocks)
-            sb.AppendLine("\tDevice allows reading partial blocks");
+            sb.AppendLine("\t" + Localization.Device_allows_reading_partial_blocks);
 
         if(csd.WriteMisalignment)
-            sb.AppendLine("\tWrite commands can cross physical block boundaries");
+            sb.AppendLine("\t" + Localization.Write_commands_can_cross_physical_block_boundaries);
 
         if(csd.ReadMisalignment)
-            sb.AppendLine("\tRead commands can cross physical block boundaries");
+            sb.AppendLine("\t" + Localization.Read_commands_can_cross_physical_block_boundaries);
 
         if(csd.DSRImplemented)
-            sb.AppendLine("\tDevice implements configurable driver stage");
+            sb.AppendLine("\t" + Localization.Device_implements_configurable_driver_stage);
 
         if(csd.Structure == 0)
         {
-            result = (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2);
-            sb.AppendFormat("\tDevice has {0} blocks", (int)result).AppendLine();
+            result = (csd.Size   + 1) * Math.Pow(2, csd.SizeMultiplier + 2);
+            sb.AppendFormat("\t" + Localization.Device_has_0_blocks, (int)result).AppendLine();
 
             result = (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2) * Math.Pow(2, csd.ReadBlockLength);
 
             switch(result)
             {
                 case > 1073741824:
-                    sb.AppendFormat("\tDevice has {0} GiB", result / 1073741824.0).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_has_0_GiB, result / 1073741824.0).AppendLine();
 
                     break;
                 case > 1048576:
-                    sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_has_0_MiB, result / 1048576.0).AppendLine();
 
                     break;
                 case > 1024:
-                    sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_has_0_KiB, result / 1024.0).AppendLine();
 
                     break;
                 default:
-                    sb.AppendFormat("\tDevice has {0} bytes", result).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_has_0_bytes, result).AppendLine();
 
                     break;
             }
         }
         else
         {
-            sb.AppendFormat("\tDevice has {0} blocks", (csd.Size + 1) * 1024).AppendLine();
+            sb.AppendFormat("\t"      + Localization.Device_has_0_blocks, (csd.Size + 1) * 1024).AppendLine();
             result = ((ulong)csd.Size + 1) * 1024 * 512;
 
             switch(result)
             {
                 case > 1099511627776:
-                    sb.AppendFormat("\tDevice has {0} TiB", result / 1099511627776.0).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_has_0_TiB, result / 1099511627776.0).AppendLine();
 
                     break;
                 case > 1073741824:
-                    sb.AppendFormat("\tDevice has {0} GiB", result / 1073741824.0).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_has_0_GiB, result / 1073741824.0).AppendLine();
 
                     break;
                 case > 1048576:
-                    sb.AppendFormat("\tDevice has {0} MiB", result / 1048576.0).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_has_0_MiB, result / 1048576.0).AppendLine();
 
                     break;
                 case > 1024:
-                    sb.AppendFormat("\tDevice has {0} KiB", result / 1024.0).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_has_0_KiB, result / 1024.0).AppendLine();
 
                     break;
                 default:
-                    sb.AppendFormat("\tDevice has {0} bytes", result).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_has_0_bytes, result).AppendLine();
 
                     break;
             }
@@ -369,35 +372,35 @@ public static partial class Decoders
             switch(csd.ReadCurrentAtVddMin & 0x07)
             {
                 case 0:
-                    sb.AppendLine("\tDevice uses a maximum of 0.5mA for reading at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_0_5mA_for_reading_at_minimum_voltage);
 
                     break;
                 case 1:
-                    sb.AppendLine("\tDevice uses a maximum of 1mA for reading at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_1mA_for_reading_at_minimum_voltage);
 
                     break;
                 case 2:
-                    sb.AppendLine("\tDevice uses a maximum of 5mA for reading at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_5mA_for_reading_at_minimum_voltage);
 
                     break;
                 case 3:
-                    sb.AppendLine("\tDevice uses a maximum of 10mA for reading at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_10mA_for_reading_at_minimum_voltage);
 
                     break;
                 case 4:
-                    sb.AppendLine("\tDevice uses a maximum of 25mA for reading at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_25mA_for_reading_at_minimum_voltage);
 
                     break;
                 case 5:
-                    sb.AppendLine("\tDevice uses a maximum of 35mA for reading at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_35mA_for_reading_at_minimum_voltage);
 
                     break;
                 case 6:
-                    sb.AppendLine("\tDevice uses a maximum of 60mA for reading at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_60mA_for_reading_at_minimum_voltage);
 
                     break;
                 case 7:
-                    sb.AppendLine("\tDevice uses a maximum of 100mA for reading at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_100mA_for_reading_at_minimum_voltage);
 
                     break;
             }
@@ -405,35 +408,35 @@ public static partial class Decoders
             switch(csd.ReadCurrentAtVddMax & 0x07)
             {
                 case 0:
-                    sb.AppendLine("\tDevice uses a maximum of 1mA for reading at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_1mA_for_reading_at_maximum_voltage);
 
                     break;
                 case 1:
-                    sb.AppendLine("\tDevice uses a maximum of 5mA for reading at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_5mA_for_reading_at_maximum_voltage);
 
                     break;
                 case 2:
-                    sb.AppendLine("\tDevice uses a maximum of 10mA for reading at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_10mA_for_reading_at_maximum_voltage);
 
                     break;
                 case 3:
-                    sb.AppendLine("\tDevice uses a maximum of 25mA for reading at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_25mA_for_reading_at_maximum_voltage);
 
                     break;
                 case 4:
-                    sb.AppendLine("\tDevice uses a maximum of 35mA for reading at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_35mA_for_reading_at_maximum_voltage);
 
                     break;
                 case 5:
-                    sb.AppendLine("\tDevice uses a maximum of 45mA for reading at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_45mA_for_reading_at_maximum_voltage);
 
                     break;
                 case 6:
-                    sb.AppendLine("\tDevice uses a maximum of 80mA for reading at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_80mA_for_reading_at_maximum_voltage);
 
                     break;
                 case 7:
-                    sb.AppendLine("\tDevice uses a maximum of 200mA for reading at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_200mA_for_reading_at_maximum_voltage);
 
                     break;
             }
@@ -441,35 +444,35 @@ public static partial class Decoders
             switch(csd.WriteCurrentAtVddMin & 0x07)
             {
                 case 0:
-                    sb.AppendLine("\tDevice uses a maximum of 0.5mA for writing at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_0_5mA_for_writing_at_minimum_voltage);
 
                     break;
                 case 1:
-                    sb.AppendLine("\tDevice uses a maximum of 1mA for writing at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_1mA_for_writing_at_minimum_voltage);
 
                     break;
                 case 2:
-                    sb.AppendLine("\tDevice uses a maximum of 5mA for writing at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_5mA_for_writing_at_minimum_voltage);
 
                     break;
                 case 3:
-                    sb.AppendLine("\tDevice uses a maximum of 10mA for writing at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_10mA_for_writing_at_minimum_voltage);
 
                     break;
                 case 4:
-                    sb.AppendLine("\tDevice uses a maximum of 25mA for writing at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_25mA_for_writing_at_minimum_voltage);
 
                     break;
                 case 5:
-                    sb.AppendLine("\tDevice uses a maximum of 35mA for writing at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_35mA_for_writing_at_minimum_voltage);
 
                     break;
                 case 6:
-                    sb.AppendLine("\tDevice uses a maximum of 60mA for writing at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_60mA_for_writing_at_minimum_voltage);
 
                     break;
                 case 7:
-                    sb.AppendLine("\tDevice uses a maximum of 100mA for writing at minimum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_100mA_for_writing_at_minimum_voltage);
 
                     break;
             }
@@ -477,101 +480,104 @@ public static partial class Decoders
             switch(csd.WriteCurrentAtVddMax & 0x07)
             {
                 case 0:
-                    sb.AppendLine("\tDevice uses a maximum of 1mA for writing at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_1mA_for_writing_at_maximum_voltage);
 
                     break;
                 case 1:
-                    sb.AppendLine("\tDevice uses a maximum of 5mA for writing at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_5mA_for_writing_at_maximum_voltage);
 
                     break;
                 case 2:
-                    sb.AppendLine("\tDevice uses a maximum of 10mA for writing at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_10mA_for_writing_at_maximum_voltage);
 
                     break;
                 case 3:
-                    sb.AppendLine("\tDevice uses a maximum of 25mA for writing at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_25mA_for_writing_at_maximum_voltage);
 
                     break;
                 case 4:
-                    sb.AppendLine("\tDevice uses a maximum of 35mA for writing at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_35mA_for_writing_at_maximum_voltage);
 
                     break;
                 case 5:
-                    sb.AppendLine("\tDevice uses a maximum of 45mA for writing at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_45mA_for_writing_at_maximum_voltage);
 
                     break;
                 case 6:
-                    sb.AppendLine("\tDevice uses a maximum of 80mA for writing at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_80mA_for_writing_at_maximum_voltage);
 
                     break;
                 case 7:
-                    sb.AppendLine("\tDevice uses a maximum of 200mA for writing at maximum voltage");
+                    sb.AppendLine("\t" + Localization.Device_uses_a_maximum_of_200mA_for_writing_at_maximum_voltage);
 
                     break;
             }
 
             if(csd.EraseBlockEnable)
-                sb.AppendLine("\tDevice can erase multiple blocks");
+                sb.AppendLine("\t" + Localization.Device_can_erase_multiple_blocks);
 
             // TODO: Check specification
-            sb.AppendFormat("\tDevice must erase a minimum of {0} blocks at a time",
+            sb.AppendFormat("\t" + Localization.Device_must_erase_a_minimum_of_0_blocks_at_a_time,
                             Convert.ToUInt32(csd.EraseSectorSize) + 1).AppendLine();
 
             if(csd.WriteProtectGroupEnable)
             {
-                sb.AppendLine("\tDevice can write protect regions");
+                sb.AppendLine("\t" + Localization.Device_can_write_protect_regions);
 
                 // TODO: Check specification
                 // unitFactor = Convert.ToDouble(csd.WriteProtectGroupSize);
 
-                sb.AppendFormat("\tDevice can write protect a minimum of {0} blocks at a time", (int)(result + 1)).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Device_can_write_protect_a_minimum_of_0_blocks_at_a_time,
+                                (int)(result + 1)).AppendLine();
             }
             else
-                sb.AppendLine("\tDevice can't write protect regions");
+                sb.AppendLine("\t" + Localization.Device_cant_write_protect_regions);
         }
 
-        sb.AppendFormat("\tWriting is {0} times slower than reading", Math.Pow(2, csd.WriteSpeedFactor)).AppendLine();
+        sb.AppendFormat("\t" + Localization.Writing_is_0_times_slower_than_reading, Math.Pow(2, csd.WriteSpeedFactor)).
+           AppendLine();
 
-        sb.AppendFormat("\tWrite block length is {0} bytes", Math.Pow(2, csd.WriteBlockLength)).AppendLine();
+        sb.AppendFormat("\t" + Localization.Write_block_length_is_0_bytes, Math.Pow(2, csd.WriteBlockLength)).
+           AppendLine();
 
         if(csd.WritesPartialBlocks)
-            sb.AppendLine("\tDevice allows writing partial blocks");
+            sb.AppendLine("\t" + Localization.Device_allows_writing_partial_blocks);
 
         if(!csd.Copy)
-            sb.AppendLine("\tDevice contents are original");
+            sb.AppendLine("\t" + Localization.Device_contents_are_original);
 
         if(csd.PermanentWriteProtect)
-            sb.AppendLine("\tDevice is permanently write protected");
+            sb.AppendLine("\t" + Localization.Device_is_permanently_write_protected);
 
         if(csd.TemporaryWriteProtect)
-            sb.AppendLine("\tDevice is temporarily write protected");
+            sb.AppendLine("\t" + Localization.Device_is_temporarily_write_protected);
 
         if(!csd.FileFormatGroup)
             switch(csd.FileFormat)
             {
                 case 0:
-                    sb.AppendLine("\tDevice is formatted like a hard disk");
+                    sb.AppendLine("\t" + Localization.Device_is_formatted_like_a_hard_disk);
 
                     break;
                 case 1:
-                    sb.AppendLine("\tDevice is formatted like a floppy disk using Microsoft FAT");
+                    sb.AppendLine("\t" + Localization.Device_is_formatted_like_a_floppy_disk_using_Microsoft_FAT);
 
                     break;
                 case 2:
-                    sb.AppendLine("\tDevice uses Universal File Format");
+                    sb.AppendLine("\t" + Localization.Device_uses_Universal_File_Format);
 
                     break;
                 default:
-                    sb.AppendFormat("\tDevice uses unknown file format code {0}", csd.FileFormat).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_uses_unknown_file_format_code_0, csd.FileFormat).
+                       AppendLine();
 
                     break;
             }
         else
-            sb.AppendFormat("\tDevice uses unknown file format code {0} and file format group 1", csd.FileFormat).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Device_uses_unknown_file_format_code_0_and_file_format_group_1,
+                            csd.FileFormat).AppendLine();
 
-        sb.AppendFormat("\tCSD CRC: 0x{0:X2}", csd.CRC).AppendLine();
+        sb.AppendFormat("\t" + Localization.CSD_CRC_0, csd.CRC).AppendLine();
 
         return sb.ToString();
     }

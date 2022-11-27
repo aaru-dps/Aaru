@@ -102,7 +102,8 @@ public static class DI
         if(DIResponse.Length != 4100)
         {
             AaruConsole.DebugWriteLine("BD Disc Information decoder",
-                                       "Found incorrect Blu-ray Disc Information size ({0} bytes)", DIResponse.Length);
+                                       Localization.Found_incorrect_Blu_ray_Disc_Information_size_0_bytes,
+                                       DIResponse.Length);
 
             return null;
         }
@@ -192,7 +193,7 @@ public static class DI
                 default:
                 {
                     AaruConsole.DebugWriteLine("BD Disc Information decoder",
-                                               "Found unknown disc type identifier \"{0}\"",
+                                               Localization.Found_unknown_disc_type_identifier_0,
                                                Encoding.ASCII.GetString(unit.DiscTypeIdentifier));
 
                     break;
@@ -226,56 +227,58 @@ public static class DI
 
         foreach(DiscInformationUnits unit in response.Units)
         {
-            sb.AppendFormat("DI Unit Sequence: {0}", unit.Sequence).AppendLine();
-            sb.AppendFormat("DI Unit Format: 0x{0:X2}", unit.Format).AppendLine();
-            sb.AppendFormat("There are {0} per block", unit.UnitsPerBlock).AppendLine();
-            sb.AppendFormat("This DI refers to layer {0}", unit.Layer).AppendLine();
+            sb.AppendFormat(Localization.DI_Unit_Sequence_0, unit.Sequence).AppendLine();
+            sb.AppendFormat(Localization.DI_Unit_Format_0, unit.Format).AppendLine();
+            sb.AppendFormat(Localization.There_are_0_per_block, unit.UnitsPerBlock).AppendLine();
+            sb.AppendFormat(Localization.This_DI_refers_to_layer_0, unit.Layer).AppendLine();
 
             if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDRE)
-                sb.AppendFormat("Legacy value: 0x{0:X2}", unit.Legacy).AppendLine();
+                sb.AppendFormat(Localization.Legacy_value_0, unit.Legacy).AppendLine();
 
-            sb.AppendLine(unit.Continuation ? "This DI continues previous unit" : "This DI starts a new unit");
-            sb.AppendFormat("DI Unit is {0} bytes", unit.Length).AppendLine();
+            sb.AppendLine(unit.Continuation ? Localization.This_DI_continues_previous_unit
+                              : Localization.This_DI_starts_a_new_unit);
 
-            sb.AppendFormat("Disc type identifier: \"{0}\"", Encoding.ASCII.GetString(unit.DiscTypeIdentifier)).
+            sb.AppendFormat(Localization.DI_Unit_is_0_bytes, unit.Length).AppendLine();
+
+            sb.AppendFormat(Localization.Disc_type_identifier_0, Encoding.ASCII.GetString(unit.DiscTypeIdentifier)).
                AppendLine();
 
             switch(unit.DiscSize)
             {
                 case BluSize.OneTwenty:
-                    sb.AppendLine("Disc size: 120mm");
+                    sb.AppendLine(Localization.Disc_size_120mm);
 
                     break;
                 case BluSize.Eighty:
-                    sb.AppendLine("Disc size: 80mm");
+                    sb.AppendLine(Localization.Disc_size_80mm);
 
                     break;
                 default:
-                    sb.AppendFormat("Disc size: Unknown code {0}", (byte)unit.DiscSize).AppendLine();
+                    sb.AppendFormat(Localization.Disc_size_Unknown_code_0, (byte)unit.DiscSize).AppendLine();
 
                     break;
             }
 
-            sb.AppendFormat("Disc class: {0}", unit.DiscClass).AppendLine();
-            sb.AppendFormat("Disc version: {0}", unit.DiscVersion).AppendLine();
-            sb.AppendFormat("This disc has {0} layers", unit.Layers).AppendLine();
+            sb.AppendFormat(Localization.Disc_class_0, unit.DiscClass).AppendLine();
+            sb.AppendFormat(Localization.Disc_version_0, unit.DiscVersion).AppendLine();
+            sb.AppendFormat(Localization.This_disc_has_0_layers, unit.Layers).AppendLine();
 
             switch(unit.DvdLayer)
             {
                 case HybridLayer.None:
-                    sb.AppendLine("This disc does not contain a DVD layer.");
+                    sb.AppendLine(Localization.This_disc_does_not_contain_a_DVD_layer);
 
                     break;
                 case HybridLayer.ReadOnly:
-                    sb.AppendLine("This disc contains a DVD-ROM layer.");
+                    sb.AppendLine(Localization.This_disc_contains_a_DVD_ROM_layer);
 
                     break;
                 case HybridLayer.Recordable:
-                    sb.AppendLine("This disc contains a DVD-R layer.");
+                    sb.AppendLine(Localization.This_disc_contains_a_DVD_R_layer);
 
                     break;
                 case HybridLayer.Rewritable:
-                    sb.AppendLine("This disc contains a DVD-RW layer.");
+                    sb.AppendLine(Localization.This_disc_contains_a_DVD_RW_layer);
 
                     break;
             }
@@ -283,19 +286,19 @@ public static class DI
             switch(unit.CdLayer)
             {
                 case HybridLayer.None:
-                    sb.AppendLine("This disc does not contain a CD layer.");
+                    sb.AppendLine(Localization.This_disc_does_not_contain_a_CD_layer);
 
                     break;
                 case HybridLayer.ReadOnly:
-                    sb.AppendLine("This disc contains a CD-ROM layer.");
+                    sb.AppendLine(Localization.This_disc_contains_a_CD_ROM_layer);
 
                     break;
                 case HybridLayer.Recordable:
-                    sb.AppendLine("This disc contains a CD-R layer.");
+                    sb.AppendLine(Localization.This_disc_contains_a_CD_R_layer);
 
                     break;
                 case HybridLayer.Rewritable:
-                    sb.AppendLine("This disc contains a CD-RW layer.");
+                    sb.AppendLine(Localization.This_disc_contains_a_CD_RW_layer);
 
                     break;
             }
@@ -303,16 +306,16 @@ public static class DI
             switch(unit.ChannelLength)
             {
                 case ChannelLength.Seventy:
-                    sb.AppendLine("Disc uses a 74.5nm channel giving 25 Gb per layer.");
+                    sb.AppendLine(Localization.Disc_uses_a_74_5nm_channel_giving_25_Gb_per_layer);
 
                     break;
                 case ChannelLength.Sixty:
-                    sb.AppendLine("Disc uses a 69.0nm channel giving 27 Gb per layer.");
+                    sb.AppendLine(Localization.Disc_uses_a_69_0nm_channel_giving_27_Gb_per_layer);
 
                     break;
                 default:
-                    sb.AppendFormat("Disc uses unknown channel length with code {0}", (byte)unit.ChannelLength).
-                       AppendLine();
+                    sb.AppendFormat(Localization.Disc_uses_unknown_channel_length_with_code_0,
+                                    (byte)unit.ChannelLength).AppendLine();
 
                     break;
             }
@@ -320,15 +323,15 @@ public static class DI
             switch(unit.Polarity)
             {
                 case 0:
-                    sb.AppendLine("Disc uses positive polarity.");
+                    sb.AppendLine(Localization.Disc_uses_positive_polarity);
 
                     break;
                 case 1:
-                    sb.AppendLine("Disc uses negative polarity.");
+                    sb.AppendLine(Localization.Disc_uses_negative_polarity);
 
                     break;
                 default:
-                    sb.AppendFormat("Disc uses unknown polarity with code {0}", unit.Polarity).AppendLine();
+                    sb.AppendFormat(Localization.Disc_uses_unknown_polarity_with_code_0, unit.Polarity).AppendLine();
 
                     break;
             }
@@ -337,15 +340,17 @@ public static class DI
                 switch(unit.RecordedPolarity)
                 {
                     case 0:
-                        sb.AppendLine("Recorded marks have a lower reflectivity than unrecorded ones (HTL disc).");
+                        sb.AppendLine(Localization.
+                                          Recorded_marks_have_a_lower_reflectivity_than_unrecorded_ones_HTL_disc);
 
                         break;
                     case 1:
-                        sb.AppendLine("Recorded marks have a higher reflectivity than unrecorded ones (LTH disc).");
+                        sb.AppendLine(Localization.
+                                          Recorded_marks_have_a_higher_reflectivity_than_unrecorded_ones_LTH_disc);
 
                         break;
                     default:
-                        sb.AppendFormat("Disc uses unknown recorded reflectivity polarity with code {0}",
+                        sb.AppendFormat(Localization.Disc_uses_unknown_recorded_reflectivity_polarity_with_code_0,
                                         unit.RecordedPolarity).AppendLine();
 
                         break;
@@ -354,43 +359,47 @@ public static class DI
             switch(unit.Bca)
             {
                 case 0:
-                    sb.AppendLine("Disc doesn't have a BCA.");
+                    sb.AppendLine(Localization.Disc_doesn_t_have_a_BCA);
 
                     break;
                 case 1:
-                    sb.AppendLine("Disc has a BCA.");
+                    sb.AppendLine(Localization.Disc_has_a_BCA);
 
                     break;
                 default:
-                    sb.AppendFormat("Disc uses unknown BCA code {0}", unit.Bca).AppendLine();
+                    sb.AppendFormat(Localization.Disc_uses_unknown_BCA_code_0, unit.Bca).AppendLine();
 
                     break;
             }
 
             if(unit.MaxTransfer > 0)
-                sb.AppendFormat("Disc has a maximum transfer rate of {0} Mbit/sec.", unit.MaxTransfer).AppendLine();
+                sb.AppendFormat(Localization.Disc_has_a_maximum_transfer_rate_of_0_Mbit_sec, unit.MaxTransfer).
+                   AppendLine();
             else
-                sb.AppendLine("Disc does not specify a maximum transfer rate.");
+                sb.AppendLine(Localization.Disc_does_not_specify_a_maximum_transfer_rate);
 
-            sb.AppendFormat("Last user data PSN for disc: {0}", unit.LastPsn).AppendLine();
+            sb.AppendFormat(Localization.Last_user_data_PSN_for_disc_0, unit.LastPsn).AppendLine();
 
-            sb.AppendFormat("First address unit number of data zone in this layer: {0}", unit.FirstAun).AppendLine();
+            sb.AppendFormat(Localization.First_address_unit_number_of_data_zone_in_this_layer_0, unit.FirstAun).
+               AppendLine();
 
-            sb.AppendFormat("Last address unit number of data zone in this layer: {0}", unit.LastAun).AppendLine();
+            sb.AppendFormat(Localization.Last_address_unit_number_of_data_zone_in_this_layer_0, unit.LastAun).
+               AppendLine();
 
             if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDR ||
                Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDRE)
             {
-                sb.AppendFormat("Disc manufacturer ID: \"{0}\"", Encoding.ASCII.GetString(unit.ManufacturerID)).
+                sb.AppendFormat(Localization.Disc_manufacturer_ID_0, Encoding.ASCII.GetString(unit.ManufacturerID)).
                    AppendLine();
 
-                sb.AppendFormat("Disc media type ID: \"{0}\"", Encoding.ASCII.GetString(unit.MediaTypeID)).AppendLine();
+                sb.AppendFormat(Localization.Disc_media_type_ID_0, Encoding.ASCII.GetString(unit.MediaTypeID)).
+                   AppendLine();
 
-                sb.AppendFormat("Disc timestamp: 0x{0:X2}", unit.TimeStamp).AppendLine();
-                sb.AppendFormat("Disc product revision number: {0}", unit.ProductRevisionNumber).AppendLine();
+                sb.AppendFormat(Localization.Disc_timestamp_0, unit.TimeStamp).AppendLine();
+                sb.AppendFormat(Localization.Disc_product_revision_number_0, unit.ProductRevisionNumber).AppendLine();
             }
 
-            sb.AppendFormat("Blu-ray DI Unit format dependent contents as hex follows:");
+            sb.AppendFormat(Localization.Blu_ray_DI_Unit_format_dependent_contents_as_hex_follows);
             sb.AppendLine(PrintHex.ByteArrayToHexArrayString(unit.FormatDependentContents, 80));
         }
 

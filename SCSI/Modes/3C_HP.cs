@@ -112,36 +112,36 @@ public static partial class Modes
         HP_ModePage_3C page = modePage.Value;
         var            sb   = new StringBuilder();
 
-        sb.AppendLine("HP Device Time Mode Page:");
+        sb.AppendLine(Localization.HP_Device_Time_Mode_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.PT)
         {
-            sb.AppendFormat("\tDrive has been powered up {0} times", page.CurrentPowerOn);
+            sb.AppendFormat("\t" + Localization.Drive_has_been_powered_up_0_times, page.CurrentPowerOn);
 
-            sb.AppendFormat("\tDrive has been powered up since {0} this time", TimeSpan.FromSeconds(page.PowerOnTime)).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_has_been_powered_up_since_0_seconds_ago_this_time,
+                            TimeSpan.FromSeconds(page.PowerOnTime)).AppendLine();
 
-            sb.AppendFormat("\tDrive has been powered up a total of {0}", TimeSpan.FromSeconds(page.CumulativePowerOn)).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_has_been_powered_up_a_total_of_0_seconds,
+                            TimeSpan.FromSeconds(page.CumulativePowerOn)).AppendLine();
         }
 
         if(page.WT)
         {
-            sb.AppendFormat("\tDrive's date/time is: {0}", DateHandlers.UnixUnsignedToDateTime(page.WorldTime)).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_date_time_is_0,
+                            DateHandlers.UnixUnsignedToDateTime(page.WorldTime)).AppendLine();
 
             if(page.UTC)
-                sb.AppendLine("\tDrive's time is UTC");
+                sb.AppendLine("\t" + Localization.Drive_time_is_UTC);
 
             if(page.NTP)
-                sb.AppendLine("\tDrive's time is synchronized with a NTP source");
+                sb.AppendLine("\t" + Localization.Drive_time_is_synchronized_with_a_NTP_source);
         }
 
         if(page.LT)
-            sb.AppendFormat("\tLibrary time is {0}",
+            sb.AppendFormat("\t" + Localization.Library_time_is_0,
                             new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, page.LibraryHours,
                                          page.LibraryMinutes, page.LibrarySeconds)).AppendLine();
 

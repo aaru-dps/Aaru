@@ -52,151 +52,159 @@ public static partial class Modes
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("SCSI CD-ROM capabilities page:");
+        sb.AppendLine(Localization.SCSI_CD_ROM_capabilities_page);
 
         if(modePage.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(modePage.AudioPlay)
-            sb.AppendLine("\tDrive can play audio");
+            sb.AppendLine("\t" + Localization.Drive_can_play_audio);
 
         if(modePage.Mode2Form1)
-            sb.AppendLine("\tDrive can read sectors in Mode 2 Form 1 format");
+            sb.AppendLine("\t" + Localization.Drive_can_read_sectors_in_Mode_2_Form_1_format);
 
         if(modePage.Mode2Form2)
-            sb.AppendLine("\tDrive can read sectors in Mode 2 Form 2 format");
+            sb.AppendLine("\t" + Localization.Drive_can_read_sectors_in_Mode_2_Form_2_format);
 
         if(modePage.MultiSession)
-            sb.AppendLine("\tDrive supports multi-session discs and/or Photo-CD");
+            sb.AppendLine("\t" + Localization.Drive_supports_multi_session_discs_and_or_Photo_CD);
 
         if(modePage.CDDACommand)
-            sb.AppendLine("\tDrive can read digital audio");
+            sb.AppendLine("\t" + Localization.Drive_can_read_digital_audio);
 
         if(modePage.AccurateCDDA)
-            sb.AppendLine("\tDrive can continue from streaming loss");
+            sb.AppendLine("\t" + Localization.Drive_can_continue_from_streaming_loss);
 
         if(modePage.Subchannel)
-            sb.AppendLine("\tDrive can read uncorrected and interleaved R-W subchannels");
+            sb.AppendLine("\t" + Localization.Drive_can_read_uncorrected_and_interleaved_R_W_subchannels);
 
         if(modePage.DeinterlaveSubchannel)
-            sb.AppendLine("\tDrive can read, deinterleave and correct R-W subchannels");
+            sb.AppendLine("\t" + Localization.Drive_can_read__deinterleave_and_correct_R_W_subchannels);
 
         if(modePage.C2Pointer)
-            sb.AppendLine("\tDrive supports C2 pointers");
+            sb.AppendLine("\t" + Localization.Drive_supports_C2_pointers);
 
         if(modePage.UPC)
-            sb.AppendLine("\tDrive can read Media Catalogue Number");
+            sb.AppendLine("\t" + Localization.Drive_can_read_Media_Catalogue_Number);
 
         if(modePage.ISRC)
-            sb.AppendLine("\tDrive can read ISRC");
+            sb.AppendLine("\t" + Localization.Drive_can_read_ISRC);
 
         switch(modePage.LoadingMechanism)
         {
             case 0:
-                sb.AppendLine("\tDrive uses media caddy");
+                sb.AppendLine("\t" + Localization.Drive_uses_media_caddy);
 
                 break;
             case 1:
-                sb.AppendLine("\tDrive uses a tray");
+                sb.AppendLine("\t" + Localization.Drive_uses_a_tray);
 
                 break;
             case 2:
-                sb.AppendLine("\tDrive is pop-up");
+                sb.AppendLine("\t" + Localization.Drive_is_pop_up);
 
                 break;
             case 4:
-                sb.AppendLine("\tDrive is a changer with individually changeable discs");
+                sb.AppendLine("\t" + Localization.Drive_is_a_changer_with_individually_changeable_discs);
 
                 break;
             case 5:
-                sb.AppendLine("\tDrive is a changer using cartridges");
+                sb.AppendLine("\t" + Localization.Drive_is_a_changer_using_cartridges);
 
                 break;
             default:
-                sb.AppendFormat("\tDrive uses unknown loading mechanism type {0}", modePage.LoadingMechanism).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Drive_uses_unknown_loading_mechanism_type__0_,
+                                modePage.LoadingMechanism).AppendLine();
 
                 break;
         }
 
         if(modePage.Lock)
-            sb.AppendLine("\tDrive can lock media");
+            sb.AppendLine("\t" + Localization.Drive_can_lock_media);
 
         if(modePage.PreventJumper)
         {
-            sb.AppendLine("\tDrive power ups locked");
+            sb.AppendLine("\t" + Localization.Drive_power_ups_locked);
 
-            sb.AppendLine(modePage.LockState ? "\tDrive is locked, media cannot be ejected or inserted"
-                              : "\tDrive is not locked, media can be ejected and inserted");
+            sb.AppendLine(modePage.LockState ? "\t" + Localization.Drive_is_locked__media_cannot_be_ejected_or_inserted
+                              : "\t" + Localization.Drive_is_not_locked__media_can_be_ejected_and_inserted);
         }
         else
             sb.AppendLine(modePage.LockState
-                              ? "\tDrive is locked, media cannot be ejected, but if empty, can be inserted"
-                              : "\tDrive is not locked, media can be ejected and inserted");
+                              ? "\t" + Localization.
+                                    Drive_is_locked__media_cannot_be_ejected__but_if_empty__can_be_inserted
+                              : "\t" + Localization.Drive_is_not_locked__media_can_be_ejected_and_inserted);
 
         if(modePage.Eject)
-            sb.AppendLine("\tDrive can eject media");
+            sb.AppendLine("\t" + Localization.Drive_can_eject_media);
 
         if(modePage.SeparateChannelMute)
-            sb.AppendLine("\tEach channel can be muted independently");
+            sb.AppendLine("\t" + Localization.Each_channel_can_be_muted_independently);
 
         if(modePage.SeparateChannelVolume)
-            sb.AppendLine("\tEach channel's volume can be controlled independently");
+            sb.AppendLine("\t" + Localization.Each_channel_s_volume_can_be_controlled_independently);
 
         if(modePage.SupportedVolumeLevels > 0)
-            sb.AppendFormat("\tDrive supports {0} volume levels", modePage.SupportedVolumeLevels).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_supports_0_volume_levels, modePage.SupportedVolumeLevels).
+               AppendLine();
 
         if(modePage.BufferSize > 0)
-            sb.AppendFormat("\tDrive has {0} Kbyte of buffer", modePage.BufferSize).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_has_0_Kbyte_of_buffer, modePage.BufferSize).AppendLine();
 
         if(modePage.MaximumSpeed > 0)
-            sb.AppendFormat("\tDrive's maximum reading speed is {0} Kbyte/sec.", modePage.MaximumSpeed).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_maximum_reading_speed_is_0_Kbyte_sec, modePage.MaximumSpeed).
+               AppendLine();
 
         if(modePage.CurrentSpeed > 0)
-            sb.AppendFormat("\tDrive's current reading speed is {0} Kbyte/sec.", modePage.CurrentSpeed).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_current_reading_speed_is_0_Kbyte_sec, modePage.CurrentSpeed).
+               AppendLine();
 
         if(modePage.ReadCDR)
         {
-            sb.AppendLine(modePage.WriteCDR ? "\tDrive can read and write CD-R" : "\tDrive can read CD-R");
+            sb.AppendLine(modePage.WriteCDR ? "\t" + Localization.Drive_can_read_and_write_CD_R
+                              : "\t"               + Localization.Drive_can_read_CD_R);
 
             if(modePage.Method2)
-                sb.AppendLine("\tDrive supports reading CD-R packet media");
+                sb.AppendLine("\t" + Localization.Drive_supports_reading_CD_R_packet_media);
         }
 
         if(modePage.ReadCDRW)
-            sb.AppendLine(modePage.WriteCDRW ? "\tDrive can read and write CD-RW" : "\tDrive can read CD-RW");
+            sb.AppendLine(modePage.WriteCDRW ? "\t" + Localization.Drive_can_read_and_write_CD_RW
+                              : "\t"                + Localization.Drive_can_read_CD_RW);
 
         if(modePage.ReadDVDROM)
-            sb.AppendLine("\tDrive can read DVD-ROM");
+            sb.AppendLine("\t" + Localization.Drive_can_read_DVD_ROM);
 
         if(modePage.ReadDVDR)
-            sb.AppendLine(modePage.WriteDVDR ? "\tDrive can read and write DVD-R" : "\tDrive can read DVD-R");
+            sb.AppendLine(modePage.WriteDVDR ? "\t" + Localization.Drive_can_read_and_write_DVD_R
+                              : "\t"                + Localization.Drive_can_read_DVD_R);
 
         if(modePage.ReadDVDRAM)
-            sb.AppendLine(modePage.WriteDVDRAM ? "\tDrive can read and write DVD-RAM" : "\tDrive can read DVD-RAM");
+            sb.AppendLine(modePage.WriteDVDRAM ? "\t" + Localization.Drive_can_read_and_write_DVD_RAM
+                              : "\t"                  + Localization.Drive_can_read_DVD_RAM);
 
         if(modePage.Composite)
-            sb.AppendLine("\tDrive can deliver a composite audio and video data stream");
+            sb.AppendLine("\t" + Localization.Drive_can_deliver_a_composite_audio_and_video_data_stream);
 
         if(modePage.DigitalPort1)
-            sb.AppendLine("\tDrive supports IEC-958 digital output on port 1");
+            sb.AppendLine("\t" + Localization.Drive_supports_IEC_958_digital_output_on_port_1);
 
         if(modePage.DigitalPort2)
-            sb.AppendLine("\tDrive supports IEC-958 digital output on port 2");
+            sb.AppendLine("\t" + Localization.Drive_supports_IEC_958_digital_output_on_port_2);
 
         if(modePage.SDP)
-            sb.AppendLine("\tDrive contains a changer that can report the exact contents of the slots");
+            sb.AppendLine("\t" + Localization.Drive_contains_a_changer_that_can_report_the_exact_contents_of_the_slots);
 
         if(modePage.CurrentWriteSpeedSelected > 0)
             switch(modePage.RotationControlSelected)
             {
                 case 0:
-                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in CLV mode",
+                    sb.AppendFormat("\t" + Localization.Drive_current_writing_speed_is_0_Kbyte_sec_in_CLV_mode,
                                     modePage.CurrentWriteSpeedSelected).AppendLine();
 
                     break;
                 case 1:
-                    sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec. in pure CAV mode",
+                    sb.AppendFormat("\t" + Localization.Drive_current_writing_speed_is_0_Kbyte_sec_in_pure_CAV_mode,
                                     modePage.CurrentWriteSpeedSelected).AppendLine();
 
                     break;
@@ -204,12 +212,12 @@ public static partial class Modes
         else
         {
             if(modePage.MaxWriteSpeed > 0)
-                sb.AppendFormat("\tDrive's maximum writing speed is {0} Kbyte/sec.", modePage.MaxWriteSpeed).
+                sb.AppendFormat("\t" + Localization.Drive_maximum_writing_speed_is_0_Kbyte_sec, modePage.MaxWriteSpeed).
                    AppendLine();
 
             if(modePage.CurrentWriteSpeed > 0)
-                sb.AppendFormat("\tDrive's current writing speed is {0} Kbyte/sec.", modePage.CurrentWriteSpeed).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Drive_current_writing_speed_is_0_Kbyte_sec,
+                                modePage.CurrentWriteSpeed).AppendLine();
         }
 
         if(modePage.WriteSpeedPerformanceDescriptors != null)
@@ -218,34 +226,34 @@ public static partial class Modes
                 switch(descriptor.RotationControl)
                 {
                     case 0:
-                        sb.AppendFormat("\tDrive supports writing at {0} Kbyte/sec. in CLV mode",
+                        sb.AppendFormat("\t" + Localization.Drive_supports_writing_at_0_Kbyte_sec_in_CLV_mode,
                                         descriptor.WriteSpeed).AppendLine();
 
                         break;
                     case 1:
-                        sb.AppendFormat("\tDrive supports writing at is {0} Kbyte/sec. in pure CAV mode",
+                        sb.AppendFormat("\t" + Localization.Drive_supports_writing_at_is_0_Kbyte_sec_in_pure_CAV_mode,
                                         descriptor.WriteSpeed).AppendLine();
 
                         break;
                 }
 
         if(modePage.TestWrite)
-            sb.AppendLine("\tDrive supports test writing");
+            sb.AppendLine("\t" + Localization.Drive_supports_test_writing);
 
         if(modePage.ReadBarcode)
-            sb.AppendLine("\tDrive can read barcode");
+            sb.AppendLine("\t" + Localization.Drive_can_read_barcode);
 
         if(modePage.SCC)
-            sb.AppendLine("\tDrive can read both sides of a disc");
+            sb.AppendLine("\t" + Localization.Drive_can_read_both_sides_of_a_disc);
 
         if(modePage.LeadInPW)
-            sb.AppendLine("\tDrive an read raw R-W subchannel from the Lead-In");
+            sb.AppendLine("\t" + Localization.Drive_an_read_raw_R_W_subchannel_from_the_Lead_In);
 
         if(modePage.CMRSupported == 1)
-            sb.AppendLine("\tDrive supports DVD CSS and/or DVD CPPM");
+            sb.AppendLine("\t" + Localization.Drive_supports_DVD_CSS_and_or_DVD_CPPM);
 
         if(modePage.BUF)
-            sb.AppendLine("\tDrive supports buffer under-run free recording");
+            sb.AppendLine("\t" + Localization.Drive_supports_buffer_under_run_free_recording);
 
         return sb.ToString();
     }

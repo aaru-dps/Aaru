@@ -38,6 +38,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Helpers;
+using Aaru.Localization;
 
 namespace Aaru.Decoders.SCSI.MMC;
 
@@ -3083,7 +3084,7 @@ public static class Features
         Feature_0000 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Supported Profiles:");
+        sb.AppendLine(Localization.MMC_Supported_Profiles);
 
         if(ftr.Profiles == null)
             return sb.ToString();
@@ -3093,169 +3094,169 @@ public static class Features
             switch(prof.Number)
             {
                 case ProfileNumber.Reserved:
-                    sb.Append("\tDrive reported a reserved profile number");
+                    sb.Append("\t" + Localization.Drive_reported_a_reserved_profile_number);
 
                     break;
                 case ProfileNumber.NonRemovable:
-                    sb.Append("\tDrive supports non-removable changeable media");
+                    sb.Append("\t" + Localization.Drive_supports_non_removable_changeable_media);
 
                     break;
                 case ProfileNumber.Removable:
-                    sb.Append("\tDrive supports rewritable and removable media");
+                    sb.Append("\t" + Localization.Drive_supports_rewritable_and_removable_media);
 
                     break;
                 case ProfileNumber.MOErasable:
-                    sb.Append("\tDrive supports Magnet-Optical media");
+                    sb.Append("\t" + Localization.Drive_supports_Magneto_Optical_media);
 
                     break;
                 case ProfileNumber.OpticalWORM:
-                    sb.Append("\tDrive supports optical write-once media");
+                    sb.Append("\t" + Localization.Drive_supports_optical_write_once_media);
 
                     break;
                 case ProfileNumber.ASMO:
-                    sb.Append("\tDrive supports Advanced Storage - Magneto-Optical");
+                    sb.Append("\t" + Localization.Drive_supports_Advanced_Storage_Magneto_Optical);
 
                     break;
                 case ProfileNumber.CDROM:
-                    sb.Append("\tDrive supports CD-ROM");
+                    sb.Append("\t" + Localization.Drive_supports_CD_ROM);
 
                     break;
                 case ProfileNumber.CDR:
-                    sb.Append("\tDrive supports CD-R");
+                    sb.Append("\t" + Localization.Drive_supports_CD_R);
 
                     break;
                 case ProfileNumber.CDRW:
-                    sb.Append("\tDrive supports CD-RW");
+                    sb.Append("\t" + Localization.Drive_supports_CD_RW);
 
                     break;
                 case ProfileNumber.DVDROM:
-                    sb.Append("\tDrive supports DVD-ROM");
+                    sb.Append("\t" + Localization.Drive_supports_DVD_ROM);
 
                     break;
                 case ProfileNumber.DVDRSeq:
-                    sb.Append("\tDrive supports DVD-R");
+                    sb.Append("\t" + Localization.Drive_supports_DVD_R);
 
                     break;
                 case ProfileNumber.DVDRAM:
-                    sb.Append("\tDrive supports DVD-RAM");
+                    sb.Append("\t" + Localization.Drive_supports_DVD_RAM);
 
                     break;
                 case ProfileNumber.DVDRWRes:
-                    sb.Append("\tDrive supports restricted overwrite DVD-RW");
+                    sb.Append("\t" + Localization.Drive_supports_restricted_overwrite_DVD_RW);
 
                     break;
                 case ProfileNumber.DVDRWSeq:
-                    sb.Append("\tDrive supports sequentially recorded DVD-RW");
+                    sb.Append("\t" + Localization.Drive_supports_sequentially_recorded_DVD_RW);
 
                     break;
                 case ProfileNumber.DVDRDLSeq:
-                    sb.Append("\tDrive supports sequentially recorded DVD-R DL");
+                    sb.Append("\t" + Localization.Drive_supports_sequentially_recorded_DVD_R_DL);
 
                     break;
                 case ProfileNumber.DVDRDLJump:
-                    sb.Append("\tDrive supports layer jump recorded DVD-R DL");
+                    sb.Append("\t" + Localization.Drive_supports_layer_jump_recorded_DVD_R_DL);
 
                     break;
                 case ProfileNumber.DVDRWDL:
-                    sb.Append("\tDrive supports DVD-RW DL");
+                    sb.Append("\t" + Localization.Drive_supports_DVD_RW_DL);
 
                     break;
                 case ProfileNumber.DVDDownload:
-                    sb.Append("\tDrive supports DVD-Download");
+                    sb.Append("\t" + Localization.Drive_supports_DVD_Download);
 
                     break;
                 case ProfileNumber.DVDRWPlus:
-                    sb.Append("\tDrive supports DVD+RW");
+                    sb.Append("\t" + Localization.Drive_supports_DVD_Plus_RW);
 
                     break;
                 case ProfileNumber.DVDRPlus:
-                    sb.Append("\tDrive supports DVD+R");
+                    sb.Append("\t" + Localization.Drive_supports_DVD_Plus_R);
 
                     break;
                 case ProfileNumber.DDCDROM:
-                    sb.Append("\tDrive supports DDCD-ROM");
+                    sb.Append("\t" + Localization.Drive_supports_DDCD_ROM);
 
                     break;
                 case ProfileNumber.DDCDR:
-                    sb.Append("\tDrive supports DDCD-R");
+                    sb.Append("\t" + Localization.Drive_supports_DDCD_R);
 
                     break;
                 case ProfileNumber.DDCDRW:
-                    sb.Append("\tDrive supports DDCD-RW");
+                    sb.Append("\t" + Localization.Drive_supports_DDCD_RW);
 
                     break;
                 case ProfileNumber.DVDRWDLPlus:
-                    sb.Append("\tDrive supports DVD+RW DL");
+                    sb.Append("\t" + Localization.Drive_supports_DVD_Plus_RW_DL);
 
                     break;
                 case ProfileNumber.DVDRDLPlus:
-                    sb.Append("\tDrive supports DVD+R DL");
+                    sb.Append("\t" + Localization.Drive_supports_DVD_Plus_R_DL);
 
                     break;
                 case ProfileNumber.BDROM:
-                    sb.Append("\tDrive supports BD-ROM");
+                    sb.Append("\t" + Localization.Drive_supports_BD_ROM);
 
                     break;
                 case ProfileNumber.BDRSeq:
-                    sb.Append("\tDrive supports BD-R SRM");
+                    sb.Append("\t" + Localization.Drive_supports_BD_R_SRM);
 
                     break;
                 case ProfileNumber.BDRRdm:
-                    sb.Append("\tDrive supports BD-R RRM");
+                    sb.Append("\t" + Localization.Drive_supports_BD_R_RRM);
 
                     break;
                 case ProfileNumber.BDRE:
-                    sb.Append("\tDrive supports BD-RE");
+                    sb.Append("\t" + Localization.Drive_supports_BD_RE);
 
                     break;
                 case ProfileNumber.HDDVDROM:
-                    sb.Append("\tDrive supports HD DVD-ROM");
+                    sb.Append("\t" + Localization.Drive_supports_HD_DVD_ROM);
 
                     break;
                 case ProfileNumber.HDDVDR:
-                    sb.Append("\tDrive supports HD DVD-R");
+                    sb.Append("\t" + Localization.Drive_supports_HD_DVD_R);
 
                     break;
                 case ProfileNumber.HDDVDRAM:
-                    sb.Append("\tDrive supports HD DVD-RAM");
+                    sb.Append("\t" + Localization.Drive_supports_HD_DVD_RAM);
 
                     break;
                 case ProfileNumber.HDDVDRW:
-                    sb.Append("\tDrive supports HD DVD-RW");
+                    sb.Append("\t" + Localization.Drive_supports_HD_DVD_RW);
 
                     break;
                 case ProfileNumber.HDDVDRDL:
-                    sb.Append("\tDrive supports HD DVD-R DL");
+                    sb.Append("\t" + Localization.Drive_supports_HD_DVD_R_DL);
 
                     break;
                 case ProfileNumber.HDDVDRWDL:
-                    sb.Append("\tDrive supports HD DVD-RW DL");
+                    sb.Append("\t" + Localization.Drive_supports_HD_DVD_RW_DL);
 
                     break;
                 case ProfileNumber.HDBURNROM:
-                    sb.Append("\tDrive supports HDBurn CD-ROM");
+                    sb.Append("\t" + Localization.Drive_supports_HDBurn_CD_ROM);
 
                     break;
                 case ProfileNumber.HDBURNR:
-                    sb.Append("\tDrive supports HDBurn CD-R");
+                    sb.Append("\t" + Localization.Drive_supports_HDBurn_CD_R);
 
                     break;
                 case ProfileNumber.HDBURNRW:
-                    sb.Append("\tDrive supports HDBurn CD-RW");
+                    sb.Append("\t" + Localization.Drive_supports_HDBurn_CD_RW);
 
                     break;
                 case ProfileNumber.Unconforming:
-                    sb.Append("\tDrive is not conforming to any profile");
+                    sb.Append("\t" + Localization.Drive_is_not_conforming_to_any_profile);
 
                     break;
                 default:
-                    sb.AppendFormat("\tDrive informs of unknown profile 0x{0:X4}", (ushort)prof.Number);
+                    sb.AppendFormat("\t" + Localization.Drive_informs_of_unknown_profile_0, (ushort)prof.Number);
 
                     break;
             }
 
             if(prof.Current)
-                sb.AppendLine(" (current)");
+                sb.AppendLine(Localization.current);
             else
                 sb.AppendLine();
         }
@@ -3271,62 +3272,64 @@ public static class Features
         Feature_0001 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Core Feature:");
-        sb.Append("\tDrive uses ");
+        sb.AppendLine(Localization.MMC_Core_Feature);
+        sb.Append("\t");
 
         switch(ftr.PhysicalInterfaceStandard)
         {
             case PhysicalInterfaces.Unspecified:
-                sb.AppendLine("an unspecified physical interface");
+                sb.AppendLine(Localization.Drive_uses_an_unspecified_physical_interface);
 
                 break;
             case PhysicalInterfaces.SCSI:
-                sb.AppendLine("SCSI interface");
+                sb.AppendLine(Localization.Drive_uses_a_SCSI_interface);
 
                 break;
             case PhysicalInterfaces.ATAPI:
-                sb.AppendLine("ATAPI interface");
+                sb.AppendLine(Localization.Drive_uses_an_ATAPI_interface);
 
                 break;
             case PhysicalInterfaces.IEEE1394:
-                sb.AppendLine("IEEE-1394 interface");
+                sb.AppendLine(Localization.Drive_uses_an_IEEE_1394_interface);
 
                 break;
             case PhysicalInterfaces.IEEE1394A:
-                sb.AppendLine("IEEE-1394A interface");
+                sb.AppendLine(Localization.Drive_uses_an_IEEE_1394A_interface);
 
                 break;
             case PhysicalInterfaces.FC:
-                sb.AppendLine("Fibre Channel interface");
+                sb.AppendLine(Localization.Drive_uses_a_Fibre_Channel_interface);
 
                 break;
             case PhysicalInterfaces.IEEE1394B:
-                sb.AppendLine("IEEE-1394B interface");
+                sb.AppendLine(Localization.Drive_uses_an_IEEE_1394B_interface);
 
                 break;
             case PhysicalInterfaces.SerialATAPI:
-                sb.AppendLine("Serial ATAPI interface");
+                sb.AppendLine(Localization.Drive_uses_a_Serial_ATAPI_interface);
 
                 break;
             case PhysicalInterfaces.USB:
-                sb.AppendLine("USB interface");
+                sb.AppendLine(Localization.Drive_uses_an_USB_interface);
 
                 break;
             case PhysicalInterfaces.Vendor:
-                sb.AppendLine("a vendor unique interface");
+                sb.AppendLine(Localization.Drive_uses_a_vendor_unique_interface);
 
                 break;
             default:
-                sb.AppendFormat("an unknown interface with code {0}", (uint)ftr.PhysicalInterfaceStandard).AppendLine();
+                sb.AppendFormat(Localization.Drive_uses_an_unknown_interface_with_code_0,
+                                (uint)ftr.PhysicalInterfaceStandard).AppendLine();
 
                 break;
         }
 
         if(ftr.DBE)
-            sb.AppendLine("\tDrive supports Device Busy events");
+            sb.AppendLine("\t" + Localization.Drive_supports_Device_Busy_events);
 
         if(ftr.INQ2)
-            sb.AppendLine("\tDrive supports EVPD, Page Code and 16-bit Allocation Length as described in SPC-3");
+            sb.AppendLine("\t" + Localization.
+                              Drive_supports_EVPD_Page_Code_and_16_bit_Allocation_Length_as_described_in_SPC_3);
 
         return sb.ToString();
     }
@@ -3339,13 +3342,14 @@ public static class Features
         Feature_0002 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Morphing:");
+        sb.AppendLine(Localization.MMC_Morphing);
 
-        sb.AppendLine(ftr.Async ? "\tDrive supports polling and asynchronous GET EVENT STATUS NOTIFICATION"
-                          : "\tDrive supports only polling GET EVENT STATUS NOTIFICATION");
+        sb.AppendLine(ftr.Async
+                          ? "\t" + Localization.Drive_supports_polling_and_asynchronous_GET_EVENT_STATUS_NOTIFICATION
+                          : "\t" + Localization.Drive_supports_only_polling_GET_EVENT_STATUS_NOTIFICATION);
 
         if(ftr.OCEvent)
-            sb.AppendLine("\tDrive supports operational change request / notification class events");
+            sb.AppendLine("\t" + Localization.Drive_supports_operational_change_request_notification_class_events);
 
         return sb.ToString();
     }
@@ -3358,51 +3362,53 @@ public static class Features
         Feature_0003 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Removable Medium:");
+        sb.AppendLine(Localization.Features_Prettify_0003_MMC_Removable_Medium);
 
         switch(ftr.LoadingMechanismType)
         {
             case 0:
-                sb.AppendLine("\tDrive uses media caddy");
+                sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_uses_media_caddy);
 
                 break;
             case 1:
-                sb.AppendLine("\tDrive uses a tray");
+                sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_uses_a_tray);
 
                 break;
             case 2:
-                sb.AppendLine("\tDrive is pop-up");
+                sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_is_pop_up);
 
                 break;
             case 4:
-                sb.AppendLine("\tDrive is a changer with individually changeable discs");
+                sb.AppendLine("\t" + Localization.
+                                  Features_Prettify_0003_Drive_is_a_changer_with_individually_changeable_discs);
 
                 break;
             case 5:
-                sb.AppendLine("\tDrive is a changer using cartridges");
+                sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_is_a_changer_using_cartridges);
 
                 break;
             default:
-                sb.AppendFormat("\tDrive uses unknown loading mechanism type {0}", ftr.LoadingMechanismType).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Features_Prettify_0003_Drive_uses_unknown_loading_mechanism_type_0,
+                                ftr.LoadingMechanismType).AppendLine();
 
                 break;
         }
 
         if(ftr.Lock)
-            sb.AppendLine("\tDrive can lock media");
+            sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_can_lock_media);
 
         if(ftr.PreventJumper)
-            sb.AppendLine("\tDrive power ups locked");
+            sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_power_ups_locked);
 
         if(ftr.Eject)
-            sb.AppendLine("\tDrive can eject media");
+            sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_can_eject_media);
 
         if(ftr.Load)
-            sb.AppendLine("\tDrive can load media");
+            sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_can_load_media);
 
         if(ftr.DBML)
-            sb.AppendLine("\tDrive reports Device Busy Class events during medium loading/unloading");
+            sb.AppendLine("\t" + Localization.
+                              Features_Prettify_0003_Drive_reports_Device_Busy_Class_events_during_medium_loading_unloading);
 
         return sb.ToString();
     }
@@ -3415,19 +3421,20 @@ public static class Features
         Feature_0004 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Write Protect:");
+        sb.AppendLine(Localization.MMC_Write_Protect);
 
         if(ftr.DWP)
-            sb.AppendLine("\tDrive supports reading/writing the Disc Write Protect PAC on BD-R/-RE media");
+            sb.AppendLine("\t" + Localization.
+                              Drive_supports_reading_writing_the_Disc_Write_Protect_PAC_on_BD_R_RE_media);
 
         if(ftr.WDCB)
-            sb.AppendLine("\tDrive supports writing the Write Inhibit DCB on DVD+RW media");
+            sb.AppendLine("\t" + Localization.Drive_supports_writing_the_Write_Inhibit_DCB_on_DVD_RW_media);
 
         if(ftr.SPWP)
-            sb.AppendLine("\tDrive supports set/release of PWP status");
+            sb.AppendLine("\t" + Localization.Drive_supports_set_release_of_PWP_status);
 
         if(ftr.SSWPP)
-            sb.AppendLine("\tDrive supports the SWPP bit of the Timeout and Protect mode page");
+            sb.AppendLine("\t" + Localization.Drive_supports_the_SWPP_bit_of_the_Timeout_and_Protect_mode_page);
 
         return sb.ToString();
     }
@@ -3440,28 +3447,29 @@ public static class Features
         Feature_0010 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("MMC Random Readable");
+        sb.Append(Localization.MMC_Random_Readable);
 
         if(ftr.Current)
-            sb.Append(" (current)");
+            sb.Append(Localization.current);
 
         sb.AppendLine(":");
 
         if(ftr.PP)
-            sb.AppendLine("\tDrive shall report Read/Write Error Recovery mode page");
+            sb.AppendLine("\t" + Localization.Drive_shall_report_Read_Write_Error_Recovery_mode_page);
 
         if(ftr.LogicalBlockSize > 0)
-            sb.AppendFormat("\t{0} bytes per logical block", ftr.LogicalBlockSize).AppendLine();
+            sb.AppendFormat("\t" + Localization._0_bytes_per_logical_block, ftr.LogicalBlockSize).AppendLine();
 
         if(ftr.Blocking > 1)
-            sb.AppendFormat("\t{0} logical blocks per media readable unit", ftr.Blocking).AppendLine();
+            sb.AppendFormat("\t" + Localization._0_logical_blocks_per_media_readable_unit, ftr.Blocking).AppendLine();
 
         return sb.ToString();
     }
 
     public static string Prettify_001D(Feature_001D? feature) =>
         !feature.HasValue ? null
-            : "Drive claims capability to read all CD formats according to OSTA Multi-Read Specification\n";
+            : Localization.Drive_claims_capability_to_read_all_CD_formats_according_to_OSTA_Multi_Read_Specification +
+              "\n";
 
     public static string Prettify_001E(Feature_001E? feature)
     {
@@ -3471,21 +3479,21 @@ public static class Features
         Feature_001E ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("MMC CD Read");
+        sb.Append(Localization.MMC_CD_Read);
 
         if(ftr.Current)
-            sb.Append(" (current)");
+            sb.Append(Localization.current);
 
         sb.AppendLine(":");
 
         if(ftr.DAP)
-            sb.AppendLine("\tDrive supports the DAP bit in the READ CD and READ CD MSF commands");
+            sb.AppendLine("\t" + Localization.Drive_supports_the_DAP_bit_in_the_READ_CD_and_READ_CD_MSF_commands);
 
         if(ftr.C2)
-            sb.AppendLine("\tDrive supports C2 Error Pointers");
+            sb.AppendLine("\t" + Localization.Drive_supports_C2_Error_Pointers);
 
         if(ftr.CDText)
-            sb.AppendLine("\tDrive can return CD-Text from Lead-In");
+            sb.AppendLine("\t" + Localization.Drive_can_return_CD_Text_from_Lead_In);
 
         return sb.ToString();
     }
@@ -3498,22 +3506,22 @@ public static class Features
         Feature_001F ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("MMC DVD Read");
+        sb.Append(Localization.MMC_DVD_Read);
 
         if(ftr.Current)
-            sb.Append(" (current)");
+            sb.Append(Localization.current);
 
         sb.AppendLine(":");
-        sb.AppendLine("\tDrive can read DVD media");
+        sb.AppendLine("\t" + Localization.Drive_can_read_DVD_media);
 
         if(ftr.DualR)
-            sb.AppendLine("\tDrive can read DVD-R DL from all recording modes");
+            sb.AppendLine("\t" + Localization.Drive_can_read_DVD_R_DL_from_all_recording_modes);
 
         if(ftr.DualRW)
-            sb.AppendLine("\tDrive can read DVD-RW DL from all recording modes");
+            sb.AppendLine("\t" + Localization.Drive_can_read_DVD_RW_DL_from_all_recording_modes);
 
         if(ftr.MULTI110)
-            sb.AppendLine("\tDrive conforms to DVD Multi Drive Read-only Specifications");
+            sb.AppendLine("\t" + Localization.Drive_conforms_to_DVD_Multi_Drive_Read_only_Specifications);
 
         return sb.ToString();
     }
@@ -3526,24 +3534,24 @@ public static class Features
         Feature_0020 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("MMC Random Writable:");
+        sb.Append(Localization.MMC_Random_Writable);
 
         if(ftr.Current)
-            sb.Append(" (current)");
+            sb.Append(Localization.current);
 
         sb.AppendLine(":");
 
         if(ftr.PP)
-            sb.AppendLine("\tDrive shall report Read/Write Error Recovery mode page");
+            sb.AppendLine("\t" + Localization.Drive_shall_report_Read_Write_Error_Recovery_mode_page);
 
         if(ftr.LogicalBlockSize > 0)
-            sb.AppendFormat("\t{0} bytes per logical block", ftr.LogicalBlockSize).AppendLine();
+            sb.AppendFormat("\t" + Localization._0_bytes_per_logical_block, ftr.LogicalBlockSize).AppendLine();
 
         if(ftr.Blocking > 1)
-            sb.AppendFormat("\t{0} logical blocks per media writable unit", ftr.Blocking).AppendLine();
+            sb.AppendFormat("\t" + Localization._0_logical_blocks_per_media_writable_unit, ftr.Blocking).AppendLine();
 
         if(ftr.LastLBA > 0)
-            sb.AppendFormat("\tLast addressable logical block is {0}", ftr.LastLBA).AppendLine();
+            sb.AppendFormat("\t" + Localization.Last_addressable_logical_block_is_0, ftr.LastLBA).AppendLine();
 
         return sb.ToString();
     }
@@ -3556,11 +3564,11 @@ public static class Features
         Feature_0021 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Incremental Streaming Writable:");
+        sb.AppendLine(Localization.MMC_Incremental_Streaming_Writable);
 
         if(ftr.DataTypeSupported > 0)
         {
-            sb.Append("\tDrive supports data block types:");
+            sb.Append("\t" + Localization.Drive_supports_data_block_types);
 
             if((ftr.DataTypeSupported & 0x0001) == 0x0001)
                 sb.Append(" 0");
@@ -3614,19 +3622,19 @@ public static class Features
         }
 
         if(ftr.TRIO)
-            sb.AppendLine("\tDrive claims support to report Track Resources Information");
+            sb.AppendLine("\t" + Localization.Drive_claims_support_to_report_Track_Resources_Information);
 
         if(ftr.ARSV)
-            sb.AppendLine("\tDrive supports address mode reservation on the RESERVE TRACK command");
+            sb.AppendLine("\t" + Localization.Drive_supports_address_mode_reservation_on_the_RESERVE_TRACK_command);
 
         if(ftr.BUF)
-            sb.AppendLine("\tDrive is capable of zero loss linking");
+            sb.AppendLine("\t" + Localization.Drive_is_capable_of_zero_loss_linking);
 
         return sb.ToString();
     }
 
     public static string Prettify_0022(Feature_0022? feature) =>
-        !feature.HasValue ? null : "Drive supports media that require erasing before writing\n";
+        !feature.HasValue ? null : Localization.Drive_supports_media_that_require_erasing_before_writing + "\n";
 
     public static string Prettify_0023(Feature_0023? feature)
     {
@@ -3636,26 +3644,26 @@ public static class Features
         Feature_0023 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Formattable:");
-        sb.AppendLine("\tDrive can format media into logical blocks");
+        sb.AppendLine(Localization.MMC_Formattable);
+        sb.AppendLine("\t" + Localization.Drive_can_format_media_into_logical_blocks);
 
         if(ftr.RENoSA)
-            sb.AppendLine("\tDrive can format BD-RE with no spares allocated");
+            sb.AppendLine("\t" + Localization.Drive_can_format_BD_RE_with_no_spares_allocated);
 
         if(ftr.Expand)
-            sb.AppendLine("\tDrive can expand the spare area on a formatted BD-RE disc");
+            sb.AppendLine("\t" + Localization.Drive_can_expand_the_spare_area_on_a_formatted_BD_RE_disc);
 
         if(ftr.QCert)
-            sb.AppendLine("\tDrive can format BD-RE discs with quick certification");
+            sb.AppendLine("\t" + Localization.Drive_can_format_BD_RE_discs_with_quick_certification);
 
         if(ftr.Cert)
-            sb.AppendLine("\tDrive can format BD-RE discs with full certification");
+            sb.AppendLine("\t" + Localization.Drive_can_format_BD_RE_discs_with_full_certification);
 
         if(ftr.FRF)
-            sb.AppendLine("\tDrive can fast re-format BD-RE discs");
+            sb.AppendLine("\t" + Localization.Drive_can_fast_re_format_BD_RE_discs);
 
         if(ftr.RRM)
-            sb.AppendLine("\tDrive can format BD-R discs with RRM format");
+            sb.AppendLine("\t" + Localization.Drive_can_format_BD_R_discs_with_RRM_format);
 
         return sb.ToString();
     }
@@ -3668,11 +3676,11 @@ public static class Features
         Feature_0024 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Hardware Defect Management:");
-        sb.AppendLine("\tDrive shall be able to provide a defect-free contiguous address space");
+        sb.AppendLine(Localization.MMC_Hardware_Defect_Management);
+        sb.AppendLine("\t" + Localization.Drive_shall_be_able_to_provide_a_defect_free_contiguous_address_space);
 
         if(ftr.SSA)
-            sb.AppendLine("\tDrive can return Spare Area Information");
+            sb.AppendLine("\t" + Localization.Drive_can_return_Spare_Area_Information);
 
         return sb.ToString();
     }
@@ -3685,28 +3693,28 @@ public static class Features
         Feature_0025 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("MMC Write Once");
+        sb.Append(Localization.MMC_Write_Once);
 
         if(ftr.Current)
-            sb.Append(" (current)");
+            sb.Append(Localization.current);
 
         sb.AppendLine(":");
 
         if(ftr.PP)
-            sb.AppendLine("\tDrive shall report Read/Write Error Recovery mode page");
+            sb.AppendLine("\t" + Localization.Drive_shall_report_Read_Write_Error_Recovery_mode_page);
 
         if(ftr.LogicalBlockSize > 0)
-            sb.AppendFormat("\t{0} bytes per logical block", ftr.LogicalBlockSize).AppendLine();
+            sb.AppendFormat("\t" + Localization._0_bytes_per_logical_block, ftr.LogicalBlockSize).AppendLine();
 
         if(ftr.Blocking > 1)
-            sb.AppendFormat("\t{0} logical blocks per media writable unit", ftr.Blocking).AppendLine();
+            sb.AppendFormat("\t" + Localization._0_logical_blocks_per_media_writable_unit, ftr.Blocking).AppendLine();
 
         return sb.ToString();
     }
 
     public static string Prettify_0026(Feature_0026? feature) =>
         !feature.HasValue ? null
-            : "Drive shall have the ability to overwrite logical blocks only in fixed sets at a time\n";
+            : Localization.Drive_shall_have_the_ability_to_overwrite_logical_blocks_only_in_fixed_sets_at_a_time + "\n";
 
     public static string Prettify_0027(Feature_0027? feature)
     {
@@ -3716,10 +3724,10 @@ public static class Features
         Feature_0027 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("Drive can write High-Speed CD-RW");
+        sb.Append(Localization.Drive_can_write_High_Speed_CD_RW);
 
         if(ftr.Current)
-            sb.AppendLine(" (current)");
+            sb.AppendLine(Localization.current);
         else
             sb.AppendLine();
 
@@ -3736,30 +3744,31 @@ public static class Features
 
         if(ftr.Write &&
            ftr is { DVDPRead: true, DVDPWrite: true })
-            sb.Append("Drive can read and write CD-MRW and DVD+MRW");
+            sb.Append(Localization.Drive_can_read_and_write_CD_MRW_and_DVD_MRW);
         else if(ftr is { DVDPRead: true, DVDPWrite: true })
-            sb.Append("Drive can read and write DVD+MRW");
+            sb.Append(Localization.Drive_can_read_and_write_DVD_MRW);
         else
             switch(ftr.Write)
             {
                 case true when ftr.DVDPRead:
-                    sb.Append("Drive and read DVD+MRW and read and write CD-MRW");
+                    sb.Append(Localization.Drive_and_read_DVD_MRW_and_read_and_write_CD_MRW);
 
                     break;
                 case true:
-                    sb.Append("Drive can read and write CD-MRW");
+                    sb.Append(Localization.Drive_can_read_and_write_CD_MRW);
 
                     break;
                 default:
                 {
-                    sb.Append(ftr.DVDPRead ? "Drive can read CD-MRW and DVD+MRW" : "Drive can read CD-MRW");
+                    sb.Append(ftr.DVDPRead ? Localization.Drive_can_read_CD_MRW_and_DVD_MRW
+                                  : Localization.Drive_can_read_CD_MRW);
 
                     break;
                 }
             }
 
         if(ftr.Current)
-            sb.AppendLine(" (current)");
+            sb.AppendLine(Localization.current);
         else
             sb.AppendLine();
 
@@ -3774,15 +3783,16 @@ public static class Features
         Feature_0029 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Enhanced Defect Reporting Feature:");
+        sb.AppendLine(Localization.MMC_Enhanced_Defect_Reporting_Feature);
 
-        sb.AppendLine(ftr.DRTDM ? "\tDrive supports DRT-DM mode" : "\tDrive supports Persistent-DM mode");
+        sb.AppendLine(ftr.DRTDM ? "\t" + Localization.Drive_supports_DRT_DM_mode
+                          : "\t"       + Localization.Drive_supports_Persistent_DM_mode);
 
         if(ftr.DBICacheZones > 0)
-            sb.AppendFormat("\tDrive has {0} DBI cache zones", ftr.DBICacheZones).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_has_0_DBI_cache_zones, ftr.DBICacheZones).AppendLine();
 
         if(ftr.Entries > 0)
-            sb.AppendFormat("\tDrive has {0} DBI entries", ftr.Entries).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_has_0_DBI_entries, ftr.Entries).AppendLine();
 
         return sb.ToString();
     }
@@ -3797,25 +3807,25 @@ public static class Features
 
         if(ftr.Write)
         {
-            sb.Append("Drive can read and write DVD+RW");
+            sb.Append(Localization.Drive_can_read_and_write_DVD_RW);
 
             if(ftr.Current)
-                sb.AppendLine(" (current)");
+                sb.AppendLine(Localization.current);
             else
                 sb.AppendLine();
 
-            sb.AppendLine(ftr.CloseOnly ? "\tDrive supports only the read compatibility stop"
-                              : "\tDrive supports both forms of background format stopping");
+            sb.AppendLine(ftr.CloseOnly ? "\t" + Localization.Drive_supports_only_the_read_compatibility_stop
+                              : "\t"           + Localization.Drive_supports_both_forms_of_background_format_stopping);
 
             if(ftr.QuickStart)
-                sb.AppendLine("\tDrive can do a quick start formatting");
+                sb.AppendLine("\t" + Localization.Drive_can_do_a_quick_start_formatting);
         }
         else
         {
-            sb.Append("Drive can read DVD+RW");
+            sb.Append(Localization.Drive_can_read_DVD_Plus_RW);
 
             if(ftr.Current)
-                sb.AppendLine(" (current)");
+                sb.AppendLine(Localization.current);
             else
                 sb.AppendLine();
         }
@@ -3833,19 +3843,19 @@ public static class Features
 
         if(ftr.Write)
         {
-            sb.Append("Drive can read and write DVD+R");
+            sb.Append(Localization.Drive_can_read_and_write_DVD_Plus_R);
 
             if(ftr.Current)
-                sb.AppendLine(" (current)");
+                sb.AppendLine(Localization.current);
             else
                 sb.AppendLine();
         }
         else
         {
-            sb.Append("Drive can read DVD+R");
+            sb.Append(Localization.Drive_can_read_DVD_Plus_R);
 
             if(ftr.Current)
-                sb.AppendLine(" (current)");
+                sb.AppendLine(Localization.current);
             else
                 sb.AppendLine();
         }
@@ -3861,20 +3871,21 @@ public static class Features
         Feature_002C ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("MMC Rigid Restricted Overwrite");
-        sb.AppendLine(ftr.Current ? " (current):" : ":");
+        sb.Append(Localization.MMC_Rigid_Restricted_Overwrite);
+        sb.AppendLine(ftr.Current ? $"{Localization.current}:" : ":");
 
         if(ftr.Blank)
-            sb.AppendLine("\tDrive supports the BLANK command");
+            sb.AppendLine("\t" + Localization.Drive_supports_the_BLANK_command);
 
         if(ftr.Intermediate)
-            sb.AppendLine("\tDrive supports writing on an intermediate state session and quick formatting");
+            sb.AppendLine("\t" + Localization.
+                              Drive_supports_writing_on_an_intermediate_state_session_and_quick_formatting);
 
         if(ftr.DSDR)
-            sb.AppendLine("\tDrive can read Defect Status data recorded on the medium");
+            sb.AppendLine("\t" + Localization.Drive_can_read_Defect_Status_data_recorded_on_the_medium);
 
         if(ftr.DSDG)
-            sb.AppendLine("\tDrive can generate Defect Status data during formatting");
+            sb.AppendLine("\t" + Localization.Drive_can_generate_Defect_Status_data_during_formatting);
 
         return sb.ToString();
     }
@@ -3887,32 +3898,32 @@ public static class Features
         Feature_002D ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("Drive can write CDs in Track at Once Mode:");
+        sb.AppendLine(Localization.Drive_can_write_CDs_in_Track_at_Once_Mode);
 
         if(ftr.RWSubchannel)
         {
-            sb.AppendLine("\tDrive can write user provided data in the R-W subchannels");
+            sb.AppendLine("\t" + Localization.Drive_can_write_user_provided_data_in_the_R_W_subchannels);
 
             if(ftr.RWRaw)
-                sb.AppendLine("\tDrive accepts RAW R-W subchannel data");
+                sb.AppendLine("\t" + Localization.Drive_accepts_RAW_R_W_subchannel_data);
 
             if(ftr.RWPack)
-                sb.AppendLine("\tDrive accepts Packed R-W subchannel data");
+                sb.AppendLine("\t" + Localization.Drive_accepts_Packed_R_W_subchannel_data);
         }
 
         if(ftr.CDRW)
-            sb.AppendLine("\tDrive can overwrite a TAO track with another in CD-RWs");
+            sb.AppendLine("\t" + Localization.Drive_can_overwrite_a_TAO_track_with_another_in_CD_RWs);
 
         if(ftr.TestWrite)
-            sb.AppendLine("\tDrive can do a test writing");
+            sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
 
         if(ftr.BUF)
-            sb.AppendLine("\tDrive supports zero loss linking");
+            sb.AppendLine("\t" + Localization.Drive_supports_zero_loss_linking);
 
         if(ftr.DataTypeSupported <= 0)
             return sb.ToString();
 
-        sb.Append("\tDrive supports data block types:");
+        sb.Append("\t" + Localization.Drive_supports_data_block_types);
 
         if((ftr.DataTypeSupported & 0x0001) == 0x0001)
             sb.Append(" 0");
@@ -3978,37 +3989,37 @@ public static class Features
         switch(ftr.SAO)
         {
             case true when !ftr.RAW:
-                sb.AppendLine("Drive can write CDs in Session at Once Mode:");
+                sb.AppendLine(Localization.Drive_can_write_CDs_in_Session_at_Once_Mode);
 
                 break;
             case false when ftr.RAW:
-                sb.AppendLine("Drive can write CDs in raw Mode:");
+                sb.AppendLine(Localization.Drive_can_write_CDs_in_raw_Mode);
 
                 break;
             default:
-                sb.AppendLine("Drive can write CDs in Session at Once and in Raw Modes:");
+                sb.AppendLine(Localization.Drive_can_write_CDs_in_Session_at_Once_and_in_Raw_Modes);
 
                 break;
         }
 
         if(ftr is { RAW: true, RAWMS: true })
-            sb.AppendLine("\tDrive can write multi-session CDs in raw mode");
+            sb.AppendLine("\t" + Localization.Drive_can_write_multi_session_CDs_in_raw_mode);
 
         if(ftr.RW)
-            sb.AppendLine("\tDrive can write user provided data in the R-W subchannels");
+            sb.AppendLine("\t" + Localization.Drive_can_write_user_provided_data_in_the_R_W_subchannels);
 
         if(ftr.CDRW)
-            sb.AppendLine("\tDrive can write CD-RWs");
+            sb.AppendLine("\t" + Localization.Drive_can_write_CD_RWs);
 
         if(ftr.TestWrite)
-            sb.AppendLine("\tDrive can do a test writing");
+            sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
 
         if(ftr.BUF)
-            sb.AppendLine("\tDrive supports zero loss linking");
+            sb.AppendLine("\t" + Localization.Drive_supports_zero_loss_linking);
 
         if(ftr.MaxCueSheet > 0)
-            sb.AppendFormat("\tDrive supports a maximum of {0} bytes in a single cue sheet", ftr.MaxCueSheet).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_supports_a_maximum_of_0_bytes_in_a_single_cue_sheet,
+                            ftr.MaxCueSheet).AppendLine();
 
         return sb.ToString();
     }
@@ -4022,24 +4033,25 @@ public static class Features
         var          sb  = new StringBuilder();
 
         if(ftr is { DVDRW: true, RDL: true })
-            sb.AppendLine("Drive supports writing DVD-R, DVD-RW and DVD-R DL");
+            sb.AppendLine(Localization.Drive_supports_writing_DVD_R_DVD_RW_and_DVD_R_DL);
         else if(ftr.RDL)
-            sb.AppendLine("Drive supports writing DVD-R and DVD-R DL");
+            sb.AppendLine(Localization.Drive_supports_writing_DVD_R_and_DVD_R_DL);
         else if(ftr.DVDRW)
-            sb.AppendLine("Drive supports writing DVD-R and DVD-RW");
+            sb.AppendLine(Localization.Drive_supports_writing_DVD_R_and_DVD_RW);
         else
-            sb.AppendLine("Drive supports writing DVD-R");
+            sb.AppendLine(Localization.Drive_supports_writing_DVD_R);
 
         if(ftr.TestWrite)
-            sb.AppendLine("\tDrive can do a test writing");
+            sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
 
         if(ftr.BUF)
-            sb.AppendLine("\tDrive supports zero loss linking");
+            sb.AppendLine("\t" + Localization.Drive_supports_zero_loss_linking);
 
         return sb.ToString();
     }
 
-    public static string Prettify_0030(Feature_0030? feature) => !feature.HasValue ? null : "Drive can read DDCDs\n";
+    public static string Prettify_0030(Feature_0030? feature) =>
+        !feature.HasValue ? null : Localization.Drive_can_read_DDCDs + "\n";
 
     public static string Prettify_0031(Feature_0031? feature)
     {
@@ -4049,10 +4061,10 @@ public static class Features
         Feature_0031 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("Drive supports writing DDCD-R");
+        sb.AppendLine(Localization.Drive_supports_writing_DDCD_R);
 
         if(ftr.TestWrite)
-            sb.AppendLine("\tDrive can do a test writing");
+            sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
 
         return sb.ToString();
     }
@@ -4065,13 +4077,13 @@ public static class Features
         Feature_0032 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("Drive supports writing DDCD-RW");
+        sb.AppendLine(Localization.Drive_supports_writing_DDCD_RW);
 
         if(ftr.Blank)
-            sb.AppendLine("\tDrive supports the BLANK command");
+            sb.AppendLine("\t" + Localization.Drive_supports_the_BLANK_command);
 
         if(ftr.Intermediate)
-            sb.AppendLine("\tDrive supports quick formatting");
+            sb.AppendLine("\t" + Localization.Drive_supports_quick_formatting);
 
         return sb.ToString();
     }
@@ -4084,19 +4096,19 @@ public static class Features
         Feature_0033 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Layer Jump Recording:");
+        sb.AppendLine(Localization.MMC_Layer_Jump_Recording);
 
         if(ftr.LinkSizes == null)
             return sb.ToString();
 
         foreach(byte link in ftr.LinkSizes)
-            sb.AppendFormat("\tCurrent media has a {0} bytes link available", link).AppendLine();
+            sb.AppendFormat("\t" + Localization.Current_media_has_a_0_bytes_link_available, link).AppendLine();
 
         return sb.ToString();
     }
 
     public static string Prettify_0035(Feature_0035? feature) =>
-        !feature.HasValue ? null : "Drive can stop a long immediate operation\n";
+        !feature.HasValue ? null : Localization.Drive_can_stop_a_long_immediate_operation + "\n";
 
     public static string Prettify_0037(Feature_0037? feature)
     {
@@ -4106,12 +4118,12 @@ public static class Features
         Feature_0037 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("Drive can write CD-RW");
+        sb.AppendLine(Localization.Drive_can_write_CD_RW);
 
         if(ftr.SubtypeSupport <= 0)
             return sb.ToString();
 
-        sb.Append("\tDrive supports CD-RW subtypes");
+        sb.Append("\t" + Localization.Drive_supports_CD_RW_subtypes);
 
         if((ftr.SubtypeSupport & 0x01) == 0x01)
             sb.Append(" 0");
@@ -4143,7 +4155,7 @@ public static class Features
     }
 
     public static string Prettify_0038(Feature_0038? feature) =>
-        !feature.HasValue ? null : "Drive can write BD-R on Pseudo-OVerwrite SRM mode\n";
+        !feature.HasValue ? null : Localization.Drive_can_write_BD_R_on_Pseudo_OVerwrite_SRM_mode + "\n";
 
     public static string Prettify_003A(Feature_003A? feature)
     {
@@ -4155,25 +4167,25 @@ public static class Features
 
         if(ftr.Write)
         {
-            sb.Append("Drive can read and write DVD+RW DL");
+            sb.Append(Localization.Drive_can_read_and_write_DVD_Plus_RW_DL);
 
             if(ftr.Current)
-                sb.AppendLine(" (current)");
+                sb.AppendLine(Localization.current);
             else
                 sb.AppendLine();
 
-            sb.AppendLine(ftr.CloseOnly ? "\tDrive supports only the read compatibility stop"
-                              : "\tDrive supports both forms of background format stopping");
+            sb.AppendLine(ftr.CloseOnly ? "\t" + Localization.Drive_supports_only_the_read_compatibility_stop
+                              : "\t"           + Localization.Drive_supports_both_forms_of_background_format_stopping);
 
             if(ftr.QuickStart)
-                sb.AppendLine("\tDrive can do a quick start formatting");
+                sb.AppendLine("\t" + Localization.Drive_can_do_a_quick_start_formatting);
         }
         else
         {
-            sb.Append("Drive can read DVD+RW DL");
+            sb.Append(Localization.Drive_can_read_DVD_Plus_RW_DL);
 
             if(ftr.Current)
-                sb.AppendLine(" (current)");
+                sb.AppendLine(Localization.current);
             else
                 sb.AppendLine();
         }
@@ -4191,19 +4203,19 @@ public static class Features
 
         if(ftr.Write)
         {
-            sb.Append("Drive can read and write DVD+R DL");
+            sb.Append(Localization.Drive_can_read_and_write_DVD_Plus_R_DL);
 
             if(ftr.Current)
-                sb.AppendLine(" (current)");
+                sb.AppendLine(Localization.current);
             else
                 sb.AppendLine();
         }
         else
         {
-            sb.Append("Drive can read DVD+R DL");
+            sb.Append(Localization.Features_Prettify_003B_Drive_can_read_DVD_Plus_R_DL);
 
             if(ftr.Current)
-                sb.AppendLine(" (current)");
+                sb.AppendLine(Localization.current);
             else
                 sb.AppendLine();
         }
@@ -4219,32 +4231,32 @@ public static class Features
         Feature_0040 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("MMC BD Read");
-        sb.AppendLine(ftr.Current ? " (current):" : ":");
+        sb.Append(Localization.MMC_BD_Read);
+        sb.AppendLine(ftr.Current ? $"{Localization.current}:" : ":");
 
         if(ftr.OldROM)
-            sb.AppendLine("\tDrive can read BD-ROM pre-1.0");
+            sb.AppendLine("\t" + Localization.Drive_can_read_BD_ROM_pre_1_0);
 
         if(ftr.ROM)
-            sb.AppendLine("\tDrive can read BD-ROM Ver.1");
+            sb.AppendLine("\t" + Localization.Drive_can_read_BD_ROM_Ver_1);
 
         if(ftr.OldR)
-            sb.AppendLine("\tDrive can read BD-R pre-1.0");
+            sb.AppendLine("\t" + Localization.Drive_can_read_BD_R_pre_1_0);
 
         if(ftr.R)
-            sb.AppendLine("\tDrive can read BD-R Ver.1");
+            sb.AppendLine("\t" + Localization.Drive_can_read_BD_R_Ver_1);
 
         if(ftr.OldRE)
-            sb.AppendLine("\tDrive can read BD-RE pre-1.0");
+            sb.AppendLine("\t" + Localization.Drive_can_read_BD_RE_pre_1_0);
 
         if(ftr.RE1)
-            sb.AppendLine("\tDrive can read BD-RE Ver.1");
+            sb.AppendLine("\t" + Localization.Drive_can_read_BD_RE_Ver_1);
 
         if(ftr.RE2)
-            sb.AppendLine("\tDrive can read BD-RE Ver.2");
+            sb.AppendLine("\t" + Localization.Drive_can_read_BD_RE_Ver_2);
 
         if(ftr.BCA)
-            sb.AppendLine("\tDrive can read BD's Burst Cutting Area");
+            sb.AppendLine("\t" + Localization.Drive_can_read_BDs_Burst_Cutting_Area);
 
         return sb.ToString();
     }
@@ -4257,33 +4269,35 @@ public static class Features
         Feature_0041 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("MMC BD Write");
-        sb.AppendLine(ftr.Current ? " (current):" : ":");
+        sb.Append(Localization.MMC_BD_Write);
+        sb.AppendLine(ftr.Current ? $"{Localization.current}:" : ":");
 
         if(ftr.OldR)
-            sb.AppendLine("\tDrive can write BD-R pre-1.0");
+            sb.AppendLine("\t" + Localization.Drive_can_write_BD_R_pre_1_0);
 
         if(ftr.R)
-            sb.AppendLine("\tDrive can write BD-R Ver.1");
+            sb.AppendLine("\t" + Localization.Drive_can_write_BD_R_Ver_1);
 
         if(ftr.OldRE)
-            sb.AppendLine("\tDrive can write BD-RE pre-1.0");
+            sb.AppendLine("\t" + Localization.Drive_can_write_BD_RE_pre_1_0);
 
         if(ftr.RE1)
-            sb.AppendLine("\tDrive can write BD-RE Ver.1");
+            sb.AppendLine("\t" + Localization.Drive_can_write_BD_RE_Ver_1);
 
         if(ftr.RE2)
-            sb.AppendLine("\tDrive can write BD-RE Ver.2");
+            sb.AppendLine("\t" + Localization.Drive_can_write_BD_RE_Ver_2);
 
         if(ftr.SVNR)
-            sb.AppendLine("\tDrive supports write without verify requirement");
+            sb.AppendLine("\t" + Localization.Drive_supports_write_without_verify_requirement);
 
         return sb.ToString();
     }
 
     public static string Prettify_0042(Feature_0042? feature) =>
         !feature.HasValue ? null
-            : "Drive is able to detect and report defective writable unit and behave accordingly\n";
+            : Localization.
+                  Features_Prettify_0042_Drive_is_able_to_detect_and_report_defective_writable_unit_and_behave_accordingly +
+              "\n";
 
     public static string Prettify_0050(Feature_0050? feature)
     {
@@ -4296,24 +4310,24 @@ public static class Features
         switch(ftr.HDDVDR)
         {
             case true when ftr.HDDVDRAM:
-                sb.Append("Drive can read HD DVD-ROM, HD DVD-RW, HD DVD-R and HD DVD-RAM");
+                sb.Append(Localization.Drive_can_read_HD_DVD_ROM_HD_DVD_RW_HD_DVD_R_and_HD_DVD_RAM);
 
                 break;
             case true:
-                sb.Append("Drive can read HD DVD-ROM, HD DVD-RW and HD DVD-R");
+                sb.Append(Localization.Drive_can_read_HD_DVD_ROM_HD_DVD_RW_and_HD_DVD_R);
 
                 break;
             default:
             {
-                sb.Append(ftr.HDDVDRAM ? "Drive can read HD DVD-ROM, HD DVD-RW and HD DVD-RAM"
-                              : "Drive can read HD DVD-ROM and HD DVD-RW");
+                sb.Append(ftr.HDDVDRAM ? Localization.Drive_can_read_HD_DVD_ROM_HD_DVD_RW_and_HD_DVD_RAM
+                              : Localization.Drive_can_read_HD_DVD_ROM_and_HD_DVD_RW);
 
                 break;
             }
         }
 
         if(ftr.Current)
-            sb.AppendLine(" (current)");
+            sb.AppendLine(Localization.current);
         else
             sb.AppendLine();
 
@@ -4331,23 +4345,24 @@ public static class Features
         switch(ftr.HDDVDR)
         {
             case true when ftr.HDDVDRAM:
-                sb.Append("Drive can write HD DVD-RW, HD DVD-R and HD DVD-RAM");
+                sb.Append(Localization.Drive_can_write_HD_DVD_RW_HD_DVD_R_and_HD_DVD_RAM);
 
                 break;
             case true:
-                sb.Append("Drive can write HD DVD-RW and HD DVD-R");
+                sb.Append(Localization.Drive_can_write_HD_DVD_RW_and_HD_DVD_R);
 
                 break;
             default:
             {
-                sb.Append(ftr.HDDVDRAM ? "Drive can write HD DVD-RW and HD DVD-RAM" : "Drive can write HD DVD-RW");
+                sb.Append(ftr.HDDVDRAM ? Localization.Drive_can_write_HD_DVD_RW_and_HD_DVD_RAM
+                              : Localization.Drive_can_write_HD_DVD_RW);
 
                 break;
             }
         }
 
         if(ftr.Current)
-            sb.AppendLine(" (current)");
+            sb.AppendLine(Localization.current);
         else
             sb.AppendLine();
 
@@ -4362,21 +4377,23 @@ public static class Features
         Feature_0080 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("Drive is able to access Hybrid discs");
+        sb.Append(Localization.Drive_is_able_to_access_Hybrid_discs);
 
         if(ftr.Current)
-            sb.AppendLine(" (current)");
+            sb.AppendLine(Localization.current);
         else
             sb.AppendLine();
 
         if(ftr.RI)
-            sb.AppendLine("\tDrive is able to maintain the online format layer through reset and power cycling");
+            sb.AppendLine("\t" + Localization.
+                              Drive_is_able_to_maintain_the_online_format_layer_through_reset_and_power_cycling);
 
         return sb.ToString();
     }
 
     public static string Prettify_0100(Feature_0100? feature) =>
-        !feature.HasValue ? null : "Drive is able to perform host and drive directed power management\n";
+        !feature.HasValue ? null
+            : Localization.Drive_is_able_to_perform_host_and_drive_directed_power_management + "\n";
 
     public static string Prettify_0101(Feature_0101? feature)
     {
@@ -4386,10 +4403,10 @@ public static class Features
         Feature_0101 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("Drive supports S.M.A.R.T.");
+        sb.AppendLine(Localization.Drive_supports_SMART);
 
         if(ftr.PP)
-            sb.AppendLine("\tDrive supports the Informational Exceptions Control mode page 1Ch");
+            sb.AppendLine("\t" + Localization.Drive_supports_the_Informational_Exceptions_Control_mode_page_1Ch);
 
         return sb.ToString();
     }
@@ -4402,15 +4419,15 @@ public static class Features
         Feature_0102 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Embedded Changer:");
+        sb.AppendLine(Localization.MMC_Embedded_Changer);
 
         if(ftr.SCC)
-            sb.AppendLine("\tDrive can change disc side");
+            sb.AppendLine("\t" + Localization.Drive_can_change_disc_side);
 
         if(ftr.SDP)
-            sb.AppendLine("\tDrive is able to report slots contents after a reset or change");
+            sb.AppendLine("\t" + Localization.Drive_is_able_to_report_slots_contents_after_a_reset_or_change);
 
-        sb.AppendFormat("\tDrive has {0} slots", ftr.HighestSlotNumber + 1).AppendLine();
+        sb.AppendFormat("\t" + Localization.Drive_has_0_slots, ftr.HighestSlotNumber + 1).AppendLine();
 
         return sb.ToString();
     }
@@ -4423,18 +4440,18 @@ public static class Features
         Feature_0103 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("Drive has an analogue audio output");
+        sb.AppendLine(Localization.Drive_has_an_analogue_audio_output);
 
         if(ftr.Scan)
-            sb.AppendLine("\tDrive supports the SCAN command");
+            sb.AppendLine("\t" + Localization.Drive_supports_the_SCAN_command);
 
         if(ftr.SCM)
-            sb.AppendLine("\tDrive is able to mute channels separately");
+            sb.AppendLine("\t" + Localization.Drive_is_able_to_mute_channels_separately);
 
         if(ftr.SV)
-            sb.AppendLine("\tDrive supports separate volume per channel");
+            sb.AppendLine("\t" + Localization.Drive_supports_separate_volume_per_channel);
 
-        sb.AppendFormat("\tDrive has {0} volume levels", ftr.VolumeLevels + 1).AppendLine();
+        sb.AppendFormat("\t" + Localization.Drive_has_0_volume_levels, ftr.VolumeLevels + 1).AppendLine();
 
         return sb.ToString();
     }
@@ -4447,10 +4464,11 @@ public static class Features
         Feature_0104 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("Drive supports Microcode Upgrade");
+        sb.AppendLine(Localization.Drive_supports_Microcode_Upgrade);
 
         if(ftr.M5)
-            sb.AppendLine("Drive supports validating the 5-bit Mode of the READ BUFFER and WRITE BUFFER commands");
+            sb.AppendLine(Localization.
+                              Drive_supports_validating_the_5_bit_Mode_of_the_READ_BUFFER_and_WRITE_BUFFER_commands);
 
         return sb.ToString();
     }
@@ -4463,15 +4481,15 @@ public static class Features
         Feature_0105 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("Drive supports Timeout & Protect mode page 1Dh");
+        sb.AppendLine(Localization.Drive_supports_Timeout_Protect_mode_page_1Dh);
 
         if(!ftr.Group3)
             return sb.ToString();
 
-        sb.AppendLine("\tDrive supports the Group3 in Timeout & Protect mode page 1Dh");
+        sb.AppendLine("\t" + Localization.Drive_supports_the_Group3_in_Timeout_Protect_mode_page_1Dh);
 
         if(ftr.UnitLength > 0)
-            sb.AppendFormat("\tDrive has {0} increase of Group 3 time unit", ftr.UnitLength).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_has_0_increase_of_Group_3_time_unit, ftr.UnitLength).AppendLine();
 
         return sb.ToString();
     }
@@ -4484,12 +4502,11 @@ public static class Features
         Feature_0106 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendFormat("Drive supports DVD CSS/CPPM version {0}", ftr.CSSVersion);
-
         if(ftr.Current)
-            sb.AppendLine(" and current disc is encrypted");
+            sb.AppendFormat(Localization.Drive_supports_DVD_CSS_CPPM_version_0_and_current_disc_is_encrypted,
+                            ftr.CSSVersion).AppendLine();
         else
-            sb.AppendLine();
+            sb.AppendFormat(Localization.Drive_supports_DVD_CSS_CPPM_version_0, ftr.CSSVersion).AppendLine();
 
         return sb.ToString();
     }
@@ -4502,25 +4519,27 @@ public static class Features
         Feature_0107 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("MMC Real Time Streaming:");
+        sb.AppendLine(Localization.MMC_Real_Time_Streaming_);
 
         if(ftr.SMP)
-            sb.AppendLine("\tDrive supports Set Minimum Performance with the SET STREAMING command");
+            sb.AppendLine("\t" + Localization.Drive_supports_Set_Minimum_Performance_with_the_SET_STREAMING_command);
 
         if(ftr.RBCB)
-            sb.AppendLine("\tDrive supports the block bit in the READ BUFFER CAPACITY command");
+            sb.AppendLine("\t" + Localization.Drive_supports_the_block_bit_in_the_READ_BUFFER_CAPACITY_command);
 
         if(ftr.SCS)
-            sb.AppendLine("\tDrive supports the SET CD SPEED command");
+            sb.AppendLine("\t" + Localization.Drive_supports_the_SET_CD_SPEED_command);
 
         if(ftr.MP2A)
-            sb.AppendLine("\tDrive supports the Write Speed Performance Descriptor Blocks in the MMC mode page 2Ah");
+            sb.AppendLine("\t" + Localization.
+                              Drive_supports_the_Write_Speed_Performance_Descriptor_Blocks_in_the_MMC_mode_page_2Ah);
 
         if(ftr.WSPD)
-            sb.AppendLine("\tDrive supports the Write Speed data of GET PERFORMANCE and the WRC field of SET STREAMING");
+            sb.AppendLine("\t" + Localization.
+                              Drive_supports_the_Write_Speed_data_of_GET_PERFORMANCE_and_the_WRC_field_of_SET_STREAMING);
 
         if(ftr.SW)
-            sb.AppendLine("\tDrive supports stream recording");
+            sb.AppendLine("\t" + Localization.Drive_supports_stream_recording);
 
         return sb.ToString();
     }
@@ -4533,13 +4552,13 @@ public static class Features
         Feature_0108 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendFormat("Drive serial number: {0}", ftr.Serial).AppendLine();
+        sb.AppendFormat(Core.Drive_serial_number_0, ftr.Serial).AppendLine();
 
         return sb.ToString();
     }
 
     public static string Prettify_0109(Feature_0109? feature) =>
-        !feature.HasValue ? null : "Drive is able to read media serial number\n";
+        !feature.HasValue ? null : Localization.Drive_is_able_to_read_media_serial_number + "\n";
 
     public static string Prettify_010A(Feature_010A? feature)
     {
@@ -4553,7 +4572,7 @@ public static class Features
             return sb.ToString();
 
         foreach(uint dcb in ftr.DCBs)
-            sb.AppendFormat("Drive supports DCB {0:X8}h", dcb).AppendLine();
+            sb.AppendFormat(Localization.Drive_supports_DCB_0, dcb).AppendLine();
 
         return sb.ToString();
     }
@@ -4566,12 +4585,11 @@ public static class Features
         Feature_010B ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendFormat("Drive supports DVD CPRM version {0}", ftr.CPRMVersion);
-
         if(ftr.Current)
-            sb.AppendLine(" and current disc is or can be encrypted");
+            sb.AppendFormat(Localization.Drive_supports_DVD_CPRM_version_0_and_current_disc_is_or_can_be_encrypted,
+                            ftr.CPRMVersion).AppendLine();
         else
-            sb.AppendLine();
+            sb.AppendFormat(Localization.Drive_supports_DVD_CPRM_version_0, ftr.CPRMVersion).AppendLine();
 
         return sb.ToString();
     }
@@ -4616,7 +4634,7 @@ public static class Features
             var fwDate = new DateTime(int.Parse(syear), int.Parse(smonth), int.Parse(sday), int.Parse(shour),
                                       int.Parse(sminute), int.Parse(ssecond), DateTimeKind.Utc);
 
-            sb.AppendFormat("Drive firmware is dated {0}", fwDate).AppendLine();
+            sb.AppendFormat(Localization.Drive_firmware_is_dated_0, fwDate).AppendLine();
         }
         #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
         catch
@@ -4636,36 +4654,35 @@ public static class Features
         Feature_010D ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendFormat("Drive supports AACS version {0}", ftr.AACSVersion);
-
         if(ftr.Current)
-            sb.AppendLine(" and current disc is encrypted");
+            sb.AppendFormat(Localization.Drive_supports_AACS_version_0_and_current_disc_is_encrypted, ftr.AACSVersion).
+               AppendLine();
         else
-            sb.AppendLine();
+            sb.AppendFormat(Localization.Drive_supports_AACS_version_0, ftr.AACSVersion).AppendLine();
 
         if(ftr.RDC)
-            sb.AppendLine("\tDrive supports reading the Drive Certificate");
+            sb.AppendLine("\t" + Localization.Drive_supports_reading_the_Drive_Certificate);
 
         if(ftr.RMC)
-            sb.AppendLine("\tDrive supports reading Media Key Block of CPRM");
+            sb.AppendLine("\t" + Localization.Drive_supports_reading_Media_Key_Block_of_CPRM);
 
         if(ftr.WBE)
-            sb.AppendLine("\tDrive supports writing with bus encryption");
+            sb.AppendLine("\t" + Localization.Drive_supports_writing_with_bus_encryption);
 
         if(ftr.BEC)
-            sb.AppendLine("\tDrive supports bus encryption");
+            sb.AppendLine("\t" + Localization.Drive_supports_bus_encryption);
 
         if(ftr.BNG)
         {
-            sb.AppendLine("\tDrive supports generating the binding nonce");
+            sb.AppendLine("\t" + Localization.Drive_supports_generating_the_binding_nonce);
 
             if(ftr.BindNonceBlocks > 0)
-                sb.AppendFormat("\t{0} media blocks are required for the binding nonce", ftr.BindNonceBlocks).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization._0_media_blocks_are_required_for_the_binding_nonce,
+                                ftr.BindNonceBlocks).AppendLine();
         }
 
         if(ftr.AGIDs > 0)
-            sb.AppendFormat("\tDrive supports {0} AGIDs concurrently", ftr.AGIDs).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_supports_0_AGIDs_concurrently, ftr.AGIDs).AppendLine();
 
         return sb.ToString();
     }
@@ -4678,15 +4695,16 @@ public static class Features
         Feature_010E ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.Append("Drive supports DVD-Download");
+        sb.Append(Localization.Drive_supports_DVD_Download);
 
         if(ftr.Current)
-            sb.AppendLine(" (current)");
+            sb.AppendLine(Localization.current);
         else
             sb.AppendLine();
 
         if(ftr.MaxScrambleExtent > 0)
-            sb.AppendFormat("\tMaximum {0} scramble extent information entries", ftr.MaxScrambleExtent).AppendLine();
+            sb.AppendFormat("\t" + Localization.Maximum_0_scramble_extent_information_entries, ftr.MaxScrambleExtent).
+               AppendLine();
 
         return sb.ToString();
     }
@@ -4699,7 +4717,8 @@ public static class Features
         Feature_0110 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine(ftr.Current ? "Drive and currently inserted media support VCPS" : "Drive supports VCPS");
+        sb.AppendLine(ftr.Current ? Localization.Drive_and_currently_inserted_media_support_VCPS
+                          : Localization.Drive_supports_VCPS);
 
         return sb.ToString();
     }
@@ -4712,8 +4731,8 @@ public static class Features
         Feature_0113 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine(ftr.Current ? "Drive and currently inserted media support SecurDisc"
-                          : "Drive supports SecurDisc");
+        sb.AppendLine(ftr.Current ? Localization.Drive_and_currently_inserted_media_support_SecurDisc
+                          : Localization.Drive_supports_SecurDisc);
 
         return sb.ToString();
     }
@@ -4726,25 +4745,25 @@ public static class Features
         Feature_0142 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine("Drive supports the Trusted Computing Group Optical Security Subsystem Class");
+        sb.AppendLine(Localization.Drive_supports_the_Trusted_Computing_Group_Optical_Security_Subsystem_Class);
 
         if(ftr.Current)
-            sb.AppendLine("\tCurrent media is initialized with TCG OSSC");
+            sb.AppendLine("\t" + Localization.Current_media_is_initialized_with_TCG_OSSC);
 
         if(ftr.PSAU)
-            sb.AppendLine("\tDrive supports PSA updates on write-once media");
+            sb.AppendLine("\t" + Localization.Drive_supports_PSA_updates_on_write_once_media);
 
         if(ftr.LOSPB)
-            sb.AppendLine("\tDrive supports linked OSPBs");
+            sb.AppendLine("\t" + Localization.Drive_supports_linked_OSPBs);
 
         if(ftr.ME)
-            sb.AppendLine("\tDrive will only record on the OSSC Disc Format");
+            sb.AppendLine("\t" + Localization.Drive_will_only_record_on_the_OSSC_Disc_Format);
 
         if(ftr.Profiles == null)
             return sb.ToString();
 
         for(int i = 0; i < ftr.Profiles.Length; i++)
-            sb.AppendFormat("\tProfile {0}: {1}", i, ftr.Profiles[i]).AppendLine();
+            sb.AppendFormat("\t" + Localization.Profile_0_1, i, ftr.Profiles[i]).AppendLine();
 
         return sb.ToString();
     }

@@ -112,28 +112,29 @@ public static class DensitySupport
 
         foreach(DensitySupportDescriptor descriptor in decoded.descriptors)
         {
-            sb.AppendFormat("Density \"{0}\" defined by \"{1}\".", descriptor.name, descriptor.organization).
-               AppendLine();
+            sb.AppendFormat(Localization.Density_0_defined_by_1, descriptor.name, descriptor.organization).AppendLine();
 
-            sb.AppendFormat("\tPrimary code: {0:X2}h", descriptor.primaryCode).AppendLine();
+            sb.AppendFormat("\t" + Localization.Primary_code_0, descriptor.primaryCode).AppendLine();
 
             if(descriptor.primaryCode != descriptor.secondaryCode)
-                sb.AppendFormat("\tSecondary code: {0:X2}h", descriptor.secondaryCode).AppendLine();
+                sb.AppendFormat("\t" + Localization.Secondary_code_0, descriptor.secondaryCode).AppendLine();
 
             if(descriptor.writable)
-                sb.AppendLine("\tDrive can write this density");
+                sb.AppendLine("\t" + Localization.Drive_can_write_this_density);
 
             if(descriptor.duplicate)
-                sb.AppendLine("\tThis descriptor is duplicated");
+                sb.AppendLine("\t" + Localization.This_descriptor_is_duplicated);
 
             if(descriptor.defaultDensity)
-                sb.AppendLine("\tThis is the default density on the drive");
+                sb.AppendLine("\t" + Localization.This_is_the_default_density_on_the_drive);
 
-            sb.AppendFormat("\tDensity has {0} bits per mm, with {1} tracks in a {2} mm width tape", descriptor.bpmm,
-                            descriptor.tracks, descriptor.width / (double)10).AppendLine();
+            sb.AppendFormat("\t" + Localization.Density_has_0_bits_per_mm__with_1_tracks_in_a_2_mm_width_tape,
+                            descriptor.bpmm, descriptor.tracks, descriptor.width / (double)10).AppendLine();
 
-            sb.AppendFormat("\tDensity maximum capacity is {0} megabytes", descriptor.capacity).AppendLine();
-            sb.AppendFormat("\tDensity description: {0}", descriptor.description).AppendLine();
+            sb.AppendFormat("\t" + Localization.Density_maximum_capacity_is_0_megabytes, descriptor.capacity).
+               AppendLine();
+
+            sb.AppendFormat("\t" + Localization.Density_description_0, descriptor.description).AppendLine();
             sb.AppendLine();
         }
 
@@ -209,14 +210,14 @@ public static class DensitySupport
 
         foreach(MediaTypeSupportDescriptor descriptor in decoded.descriptors)
         {
-            sb.AppendFormat("Medium type \"{0}\" defined by \"{1}\".", descriptor.name, descriptor.organization).
+            sb.AppendFormat(Localization.Medium_type_0_defined_by_1, descriptor.name, descriptor.organization).
                AppendLine();
 
-            sb.AppendFormat("\tMedium type code: {0:X2}h", descriptor.mediumType).AppendLine();
+            sb.AppendFormat("\t" + Localization.Medium_type_code_0, descriptor.mediumType).AppendLine();
 
             if(descriptor.numberOfCodes > 0)
             {
-                sb.AppendFormat("\tMedium supports following density codes:");
+                sb.AppendFormat("\t" + Localization.Medium_supports_following_density_codes);
 
                 for(int i = 0; i < descriptor.numberOfCodes; i++)
                     sb.AppendFormat(" {0:X2}h", descriptor.densityCodes[i]);
@@ -224,10 +225,10 @@ public static class DensitySupport
                 sb.AppendLine();
             }
 
-            sb.AppendFormat("\tMedium has a nominal length of {0} m in a {1} mm width tape", descriptor.length,
-                            descriptor.width / (double)10).AppendLine();
+            sb.AppendFormat("\t" + Localization.Medium_has_a_nominal_length_of_0_m_in_a_1_mm_width_tape,
+                            descriptor.length, descriptor.width / (double)10).AppendLine();
 
-            sb.AppendFormat("\tMedium description: {0}", descriptor.description).AppendLine();
+            sb.AppendFormat("\t" + Localization.Medium_description_0, descriptor.description).AppendLine();
             sb.AppendLine();
         }
 

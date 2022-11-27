@@ -89,81 +89,97 @@ public static partial class Modes
         ModePage_1C_SFF page = modePage.Value;
         var             sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Timer & Protect page:");
+        sb.AppendLine(Localization.SCSI_Timer_Protect_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.DISP)
-            sb.AppendLine("\tDrive is disabled until power is cycled");
+            sb.AppendLine("\t" + Localization.Drive_is_disabled_until_power_is_cycled);
 
         if(page.SWPP)
-            sb.AppendLine("\tDrive is software write-protected until powered down");
+            sb.AppendLine("\t" + Localization.Drive_is_software_write_protected_until_powered_down);
 
         switch(page.InactivityTimeMultiplier)
         {
             case 0:
-                sb.AppendLine("\tDrive will remain in same status a vendor-specified time after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_a_vendor_specified_time_after_a_seek_read_or_write_operation);
 
                 break;
             case 1:
-                sb.AppendLine("\tDrive will remain in same status 125 ms after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_125_ms_after_a_seek_read_or_write_operation);
 
                 break;
             case 2:
-                sb.AppendLine("\tDrive will remain in same status 250 ms after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_250_ms_after_a_seek_read_or_write_operation);
 
                 break;
             case 3:
-                sb.AppendLine("\tDrive will remain in same status 500 ms after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_500_ms_after_a_seek_read_or_write_operation);
 
                 break;
             case 4:
-                sb.AppendLine("\tDrive will remain in same status 1 second after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_1_second_after_a_seek_read_or_write_operation);
 
                 break;
             case 5:
-                sb.AppendLine("\tDrive will remain in same status 2 seconds after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_2_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 6:
-                sb.AppendLine("\tDrive will remain in same status 4 seconds after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_4_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 7:
-                sb.AppendLine("\tDrive will remain in same status 8 seconds after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_8_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 8:
-                sb.AppendLine("\tDrive will remain in same status 16 seconds after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_16_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 9:
-                sb.AppendLine("\tDrive will remain in same status 32 seconds after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_32_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 10:
-                sb.AppendLine("\tDrive will remain in same status 1 minute after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_1_minute_after_a_seek_read_or_write_operation);
 
                 break;
             case 11:
-                sb.AppendLine("\tDrive will remain in same status 2 minutes after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_2_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 12:
-                sb.AppendLine("\tDrive will remain in same status 4 minutes after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_4_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 13:
-                sb.AppendLine("\tDrive will remain in same status 8 minutes after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_8_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 14:
-                sb.AppendLine("\tDrive will remain in same status 16 minutes after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_16_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 15:
-                sb.AppendLine("\tDrive will remain in same status 32 minutes after a seek, read or write operation");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_same_status_32_minutes_after_a_seek_read_or_write_operation);
 
                 break;
         }

@@ -102,47 +102,47 @@ public static partial class Modes
         ModePage_0F page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Data compression page:");
+        sb.AppendLine(Localization.SCSI_Data_compression_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.DCC)
         {
-            sb.AppendLine("\tDrive supports data compression");
+            sb.AppendLine("\t" + Localization.Drive_supports_data_compression);
 
             if(page.DCE)
             {
-                sb.Append("\tData compression is enabled with ");
+                sb.Append("\t" + Localization.Data_compression_is_enabled_with);
 
                 switch(page.CompressionAlgo)
                 {
                     case 3:
-                        sb.AppendLine("IBM ALDC with 512 byte buffer");
+                        sb.AppendLine(Localization.IBM_ALDC_with_512_byte_buffer);
 
                         break;
                     case 4:
-                        sb.AppendLine("IBM ALDC with 1024 byte buffer");
+                        sb.AppendLine(Localization.IBM_ALDC_with_1024_byte_buffer);
 
                         break;
                     case 5:
-                        sb.AppendLine("IBM ALDC with 2048 byte buffer");
+                        sb.AppendLine(Localization.IBM_ALDC_with_2048_byte_buffer);
 
                         break;
                     case 0x10:
-                        sb.AppendLine("IBM IDRC");
+                        sb.AppendLine(Localization.IBM_IDRC);
 
                         break;
                     case 0x20:
-                        sb.AppendLine("DCLZ");
+                        sb.AppendLine(Localization.DCLZ);
 
                         break;
                     case 0xFF:
-                        sb.AppendLine("an unregistered compression algorithm");
+                        sb.AppendLine(Localization.an_unregistered_compression_algorithm);
 
                         break;
                     default:
-                        sb.AppendFormat("an unknown algorithm coded {0}", page.CompressionAlgo).AppendLine();
+                        sb.AppendFormat(Localization.an_unknown_algorithm_coded_0, page.CompressionAlgo).AppendLine();
 
                         break;
                 }
@@ -150,52 +150,53 @@ public static partial class Modes
 
             if(page.DDE)
             {
-                sb.AppendLine("\tData decompression is enabled");
+                sb.AppendLine("\t" + Localization.Data_decompression_is_enabled);
 
                 if(page.DecompressionAlgo == 0)
-                    sb.AppendLine("\tLast data read was uncompressed");
+                    sb.AppendLine("\t" + Localization.Last_data_read_was_uncompressed);
                 else
                 {
-                    sb.Append("\tLast data read was compressed with ");
+                    sb.Append("\t" + Localization.Last_data_read_was_compressed_with_);
 
                     switch(page.CompressionAlgo)
                     {
                         case 3:
-                            sb.AppendLine("IBM ALDC with 512 byte buffer");
+                            sb.AppendLine(Localization.IBM_ALDC_with_512_byte_buffer);
 
                             break;
                         case 4:
-                            sb.AppendLine("IBM ALDC with 1024 byte buffer");
+                            sb.AppendLine(Localization.IBM_ALDC_with_1024_byte_buffer);
 
                             break;
                         case 5:
-                            sb.AppendLine("IBM ALDC with 2048 byte buffer");
+                            sb.AppendLine(Localization.IBM_ALDC_with_2048_byte_buffer);
 
                             break;
                         case 0x10:
-                            sb.AppendLine("IBM IDRC");
+                            sb.AppendLine(Localization.IBM_IDRC);
 
                             break;
                         case 0x20:
-                            sb.AppendLine("DCLZ");
+                            sb.AppendLine(Localization.DCLZ);
 
                             break;
                         case 0xFF:
-                            sb.AppendLine("an unregistered compression algorithm");
+                            sb.AppendLine(Localization.an_unregistered_compression_algorithm);
 
                             break;
                         default:
-                            sb.AppendFormat("an unknown algorithm coded {0}", page.CompressionAlgo).AppendLine();
+                            sb.AppendFormat(Localization.an_unknown_algorithm_coded_0, page.CompressionAlgo).
+                               AppendLine();
 
                             break;
                     }
                 }
             }
 
-            sb.AppendFormat("\tReport exception on compression is set to {0}", page.RED).AppendLine();
+            sb.AppendFormat("\t" + Localization.Report_exception_on_compression_is_set_to_0, page.RED).AppendLine();
         }
         else
-            sb.AppendLine("\tDrive does not support data compression");
+            sb.AppendLine("\t" + Localization.Drive_does_not_support_data_compression);
 
         return sb.ToString();
     }

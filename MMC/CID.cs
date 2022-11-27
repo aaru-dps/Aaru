@@ -103,58 +103,58 @@ public static partial class Decoders
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("MultiMediaCard Device Identification Register:");
-        sb.AppendFormat("\tManufacturer: {0}", VendorString.Prettify(cid.Manufacturer)).AppendLine();
+        sb.AppendLine(Localization.MultiMediaCard_Device_Identification_Register);
+        sb.AppendFormat("\t" + Localization.Manufacturer_0, VendorString.Prettify(cid.Manufacturer)).AppendLine();
 
         switch(cid.DeviceType)
         {
             case 0:
-                sb.AppendLine("\tRemovable device");
+                sb.AppendLine("\t" + Localization.Removable_device);
 
                 break;
             case 1:
-                sb.AppendLine("\tBGA device");
+                sb.AppendLine("\t" + Localization.BGA_device);
 
                 break;
             case 2:
-                sb.AppendLine("\tPOP device");
+                sb.AppendLine("\t" + Localization.POP_device);
 
                 break;
         }
 
-        sb.AppendFormat("\tApplication ID: {0}", cid.ApplicationID).AppendLine();
-        sb.AppendFormat("\tProduct name: {0}", cid.ProductName).AppendLine();
+        sb.AppendFormat("\t" + Localization.Application_ID_0, cid.ApplicationID).AppendLine();
+        sb.AppendFormat("\t" + Localization.Product_name_0, cid.ProductName).AppendLine();
 
-        sb.AppendFormat("\tProduct revision: {0:X2}.{1:X2}", (cid.ProductRevision & 0xF0) >> 4,
+        sb.AppendFormat("\t" + Localization.Product_revision_0_1, (cid.ProductRevision & 0xF0) >> 4,
                         cid.ProductRevision & 0x0F).AppendLine();
 
-        sb.AppendFormat("\tProduct serial number: {0}", cid.ProductSerialNumber).AppendLine();
+        sb.AppendFormat("\t" + Localization.Product_serial_number_0, cid.ProductSerialNumber).AppendLine();
 
         string year = (cid.ManufacturingDate & 0x0F) switch
         {
-            0  => "1997 or 2013",
-            1  => "1998 or 2014",
-            2  => "1999 or 2015",
-            3  => "2000 or 2016",
-            4  => "2001 or 2017",
-            5  => "2002 or 2018",
-            6  => "2003 or 2019",
-            7  => "2004 or 2020",
-            8  => "2005 or 2021",
-            9  => "2006 or 2022",
-            10 => "2007 or 2023",
-            11 => "2008 or 2024",
-            12 => "2009 or 2025",
+            0  => Localization._1997_or_2013,
+            1  => Localization._1998_or_2014,
+            2  => Localization._1999_or_2015,
+            3  => Localization._2000_or_2016,
+            4  => Localization._2001_or_2017,
+            5  => Localization._2002_or_2018,
+            6  => Localization._2003_or_2019,
+            7  => Localization._2004_or_2020,
+            8  => Localization._2005_or_2021,
+            9  => Localization._2006_or_2022,
+            10 => Localization._2007_or_2023,
+            11 => Localization._2008_or_2024,
+            12 => Localization._2009_or_2025,
             13 => "2010",
             14 => "2011",
             15 => "2012",
             _  => ""
         };
 
-        sb.AppendFormat("\tDevice manufactured month {0} of {1}", (cid.ManufacturingDate & 0xF0) >> 4, year).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Device_manufactured_month_0_of_1, (cid.ManufacturingDate & 0xF0) >> 4,
+                        year).AppendLine();
 
-        sb.AppendFormat("\tCID CRC: 0x{0:X2}", cid.CRC).AppendLine();
+        sb.AppendFormat("\t" + Localization.CID_CRC_0, cid.CRC).AppendLine();
 
         return sb.ToString();
     }

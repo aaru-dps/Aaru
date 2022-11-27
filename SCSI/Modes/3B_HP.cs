@@ -85,24 +85,24 @@ public static partial class Modes
         HP_ModePage_3B page = modePage.Value;
         var            sb   = new StringBuilder();
 
-        sb.AppendLine("HP Serial Number Override Mode Page:");
+        sb.AppendLine(Localization.HP_Serial_Number_Override_Mode_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.MSN)
         {
             case 1:
-                sb.AppendLine("\tSerial number is the manufacturer's default value");
+                sb.AppendLine("\t" + Localization.Serial_number_is_the_manufacturer_default_value);
 
                 break;
             case 3:
-                sb.AppendLine("\tSerial number is not the manufacturer's default value");
+                sb.AppendLine("\t" + Localization.Serial_number_is_not_the_manufacturer_default_value);
 
                 break;
         }
 
-        sb.AppendFormat("\tSerial number: {0}", StringHandlers.CToString(page.SerialNumber)).AppendLine();
+        sb.AppendFormat("\t" + Localization.Serial_number_0, StringHandlers.CToString(page.SerialNumber)).AppendLine();
 
         return sb.ToString();
     }

@@ -122,62 +122,69 @@ public static partial class Modes
         ModePage_02 page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Disconnect-Reconnect mode page:");
+        sb.AppendLine(Localization.SCSI_Disconnect_Reconnect_mode_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.BufferFullRatio > 0)
-            sb.AppendFormat("\t{0} ratio of buffer that shall be full prior to attempting a reselection",
+            sb.AppendFormat("\t" + Localization._0_ratio_of_buffer_that_shall_be_full_prior_to_attempting_a_reselection,
                             page.BufferFullRatio).AppendLine();
 
         if(page.BufferEmptyRatio > 0)
-            sb.AppendFormat("\t{0} ratio of buffer that shall be empty prior to attempting a reselection",
-                            page.BufferEmptyRatio).AppendLine();
+            sb.
+                AppendFormat("\t" + Localization._0_ratio_of_buffer_that_shall_be_empty_prior_to_attempting_a_reselection,
+                             page.BufferEmptyRatio).AppendLine();
 
         if(page.BusInactivityLimit > 0)
-            sb.AppendFormat("\t{0} µs maximum permitted to assert BSY without a REQ/ACK handshake",
+            sb.AppendFormat("\t" + Localization._0_µs_maximum_permitted_to_assert_BSY_without_a_REQ_ACK_handshake,
                             page.BusInactivityLimit * 100).AppendLine();
 
         if(page.DisconnectTimeLimit > 0)
-            sb.AppendFormat("\t{0} µs maximum permitted wait after releasing the bus before attempting reselection",
-                            page.DisconnectTimeLimit * 100).AppendLine();
+            sb.
+                AppendFormat("\t" + Localization._0_µs_maximum_permitted_wait_after_releasing_the_bus_before_attempting_reselection,
+                             page.DisconnectTimeLimit * 100).AppendLine();
 
         if(page.ConnectTimeLimit > 0)
             sb.
-                AppendFormat("\t{0} µs allowed to use the bus before disconnecting, if granted the privilege and not restricted",
+                AppendFormat("\t" + Localization._0_µs_allowed_to_use_the_bus_before_disconnecting_if_granted_the_privilege_and_not_restricted,
                              page.ConnectTimeLimit * 100).AppendLine();
 
         if(page.MaxBurstSize > 0)
-            sb.AppendFormat("\t{0} bytes maximum can be transferred before disconnecting", page.MaxBurstSize * 512).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization._0_bytes_maximum_can_be_transferred_before_disconnecting,
+                            page.MaxBurstSize * 512).AppendLine();
 
         if(page.FirstBurstSize > 0)
-            sb.AppendFormat("\t{0} bytes maximum can be transferred for a command along with the disconnect command",
-                            page.FirstBurstSize * 512).AppendLine();
+            sb.
+                AppendFormat("\t" + Localization._0_bytes_maximum_can_be_transferred_for_a_command_along_with_the_disconnect_command,
+                             page.FirstBurstSize * 512).AppendLine();
 
         if(page.DIMM)
-            sb.AppendLine("\tTarget shall not transfer data for a command during the same interconnect tenancy");
+            sb.AppendLine("\t" + Localization.
+                              Target_shall_not_transfer_data_for_a_command_during_the_same_interconnect_tenancy);
 
         if(page.EMDP)
-            sb.AppendLine("\tTarget is allowed to re-order the data transfer");
+            sb.AppendLine("\t" + Localization.Target_is_allowed_to_reorder_the_data_transfer);
 
         switch(page.DTDC)
         {
             case 0:
-                sb.AppendLine("\tData transfer disconnect control is not used");
+                sb.AppendLine("\t" + Localization.Data_transfer_disconnect_control_is_not_used);
 
                 break;
             case 1:
-                sb.AppendLine("\tAll data for a command shall be transferred within a single interconnect tenancy");
+                sb.AppendLine("\t" + Localization.
+                                  All_data_for_a_command_shall_be_transferred_within_a_single_interconnect_tenancy);
 
                 break;
             case 3:
-                sb.AppendLine("\tAll data and the response for a command shall be transferred within a single interconnect tenancy");
+                sb.AppendLine("\t" + Localization.
+                                  All_data_and_the_response_for_a_command_shall_be_transferred_within_a_single_interconnect_tenancy);
 
                 break;
             default:
-                sb.AppendFormat("\tReserved data transfer disconnect control value {0}", page.DTDC).AppendLine();
+                sb.AppendFormat("\t" + Localization.Reserved_data_transfer_disconnect_control_value_0, page.DTDC).
+                   AppendLine();
 
                 break;
         }

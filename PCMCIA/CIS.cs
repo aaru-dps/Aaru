@@ -129,23 +129,25 @@ public static class CIS
             return null;
 
         var sb = new StringBuilder();
-        sb.AppendLine("PCMCIA Device Geometry Tuples:");
+        sb.AppendLine(Localization.PCMCIA_Device_Geometry_Tuples);
 
         foreach(DeviceGeometry geometry in tuple.Geometries)
         {
-            sb.AppendLine("\tGeometry:");
-            sb.AppendFormat("\t\tDevice width: {0} bits", (1 << (geometry.CardInterface - 1)) * 8).AppendLine();
+            sb.AppendLine("\t" + Localization.Geometry);
 
-            sb.AppendFormat("\t\tErase block = {0} bytes",
+            sb.AppendFormat("\t\t" + Localization.Device_width_0_bits, (1 << (geometry.CardInterface - 1)) * 8).
+               AppendLine();
+
+            sb.AppendFormat("\t\t" + Localization.Erase_block_0_bytes,
                             (1 << (geometry.EraseBlockSize - 1)) * (1 << (geometry.Interleaving - 1))).AppendLine();
 
-            sb.AppendFormat("\t\tRead block = {0} bytes",
+            sb.AppendFormat("\t\t" + Localization.Read_block_0_bytes,
                             (1 << (geometry.ReadBlockSize - 1)) * (1 << (geometry.Interleaving - 1))).AppendLine();
 
-            sb.AppendFormat("\t\tWrite block = {0} bytes",
+            sb.AppendFormat("\t\t" + Localization.Write_block_0_bytes,
                             (1 << (geometry.WriteBlockSize - 1)) * (1 << (geometry.Interleaving - 1))).AppendLine();
 
-            sb.AppendFormat("\t\tPartition alignment = {0} bytes",
+            sb.AppendFormat("\t\t" + Localization.Partition_alignment_0_bytes,
                             (1 << (geometry.EraseBlockSize - 1)) * (1 << (geometry.Interleaving - 1)) *
                             (1 << (geometry.Partitions     - 1))).AppendLine();
         }
@@ -190,9 +192,9 @@ public static class CIS
             return null;
 
         var sb = new StringBuilder();
-        sb.AppendLine("PCMCIA Manufacturer Identification Tuple:");
-        sb.AppendFormat("\tManufacturer ID: {0}", VendorCode.Prettify(tuple.ManufacturerID)).AppendLine();
-        sb.AppendFormat("\tCard ID:D 0x{0:X4}", tuple.CardID).AppendLine();
+        sb.AppendLine(Localization.Manufacturer_Identification_Tuple);
+        sb.AppendFormat("\t" + Localization.Manufacturer_ID_0, VendorCode.Prettify(tuple.ManufacturerID)).AppendLine();
+        sb.AppendFormat("\t" + Localization.Card_ID_0, tuple.CardID).AppendLine();
 
         return sb.ToString();
     }
@@ -280,27 +282,27 @@ public static class CIS
             return null;
 
         var sb = new StringBuilder();
-        sb.AppendLine("PCMCIA Level 1 Version / Product Information Tuple:");
+        sb.AppendLine(Localization.PCMCIA_Level_1_Version_Product_Information_Tuple);
 
-        sb.AppendFormat("\tCard indicates compliance with PC Card Standard Release {0}.{1}", tuple.MajorVersion,
-                        tuple.MinorVersion).AppendLine();
+        sb.AppendFormat("\t" + Localization.Card_indicates_compliance_with_PC_Card_Standard_Release_0_1,
+                        tuple.MajorVersion, tuple.MinorVersion).AppendLine();
 
         if(string.IsNullOrEmpty(tuple.Manufacturer))
-            sb.AppendLine("\tNo manufacturer information string.");
+            sb.AppendLine("\t" + Localization.No_manufacturer_information_string);
         else
-            sb.AppendFormat("\tManufacturer: {0}", tuple.Manufacturer).AppendLine();
+            sb.AppendFormat(Localization.Manufacturer_0, tuple.Manufacturer).AppendLine();
 
         if(string.IsNullOrEmpty(tuple.Product))
-            sb.AppendLine("\tNo product name string.");
+            sb.AppendLine("\t" + Localization.No_product_name_string);
         else
-            sb.AppendFormat("\tProduct name: {0}", tuple.Product).AppendLine();
+            sb.AppendFormat(Localization.Product_name_0, tuple.Product).AppendLine();
 
         if(tuple.AdditionalInformation        == null ||
            tuple.AdditionalInformation.Length == 0)
-            sb.AppendLine("\tNo additional information.");
+            sb.AppendLine("\t" + Localization.No_additional_information);
         else
         {
-            sb.AppendLine("\tAdditional information:");
+            sb.AppendLine("\t" + Localization.Additional_information);
 
             foreach(string info in tuple.AdditionalInformation.Where(info => !string.IsNullOrEmpty(info)))
                 sb.AppendFormat("\t\t{0}", info).AppendLine();

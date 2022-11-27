@@ -112,85 +112,87 @@ public static class Saturn
         var IPBinInformation = new StringBuilder();
 
         IPBinInformation.AppendLine("--------------------------------");
-        IPBinInformation.AppendLine("SEGA IP.BIN INFORMATION:");
+        IPBinInformation.AppendLine(Localization.SEGA_IP_BIN_INFORMATION);
         IPBinInformation.AppendLine("--------------------------------");
 
         // Decoding all data
         CultureInfo provider  = CultureInfo.InvariantCulture;
         var         ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
 
-        IPBinInformation.AppendFormat("Product name: {0}", Encoding.ASCII.GetString(ipbin.product_name)).AppendLine();
+        IPBinInformation.AppendFormat(Localization.Product_name_0, Encoding.ASCII.GetString(ipbin.product_name)).
+                         AppendLine();
 
         IPBinInformation.AppendFormat("Product number: {0}", Encoding.ASCII.GetString(ipbin.product_no)).AppendLine();
 
-        IPBinInformation.AppendFormat("Product version: {0}", Encoding.ASCII.GetString(ipbin.product_version)).
+        IPBinInformation.AppendFormat(Localization.Product_version_0, Encoding.ASCII.GetString(ipbin.product_version)).
                          AppendLine();
 
-        IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
+        IPBinInformation.AppendFormat(Localization.Release_date_0, ipbindate).AppendLine();
 
-        IPBinInformation.AppendFormat("Disc number {0} of {1}", (char)ipbin.disc_no, (char)ipbin.disc_total_nos).
+        IPBinInformation.AppendFormat(Localization.Disc_number_0_of_1, (char)ipbin.disc_no, (char)ipbin.disc_total_nos).
                          AppendLine();
 
-        IPBinInformation.AppendFormat("Peripherals:").AppendLine();
+        IPBinInformation.AppendFormat(Localization.Peripherals).AppendLine();
 
         foreach(byte peripheral in ipbin.peripherals)
             switch((char)peripheral)
             {
                 case 'A':
-                    IPBinInformation.AppendLine("Game supports analog controller.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_analog_controller);
 
                     break;
                 case 'J':
-                    IPBinInformation.AppendLine("Game supports JoyPad.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_JoyPad);
 
                     break;
                 case 'K':
-                    IPBinInformation.AppendLine("Game supports keyboard.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_keyboard);
 
                     break;
                 case 'M':
-                    IPBinInformation.AppendLine("Game supports mouse.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_mouse);
 
                     break;
                 case 'S':
-                    IPBinInformation.AppendLine("Game supports analog steering controller.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_analog_steering_controller);
 
                     break;
                 case 'T':
-                    IPBinInformation.AppendLine("Game supports multitap.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_multitap);
 
                     break;
                 case ' ': break;
                 default:
-                    IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
+                    IPBinInformation.AppendFormat(Localization.Game_supports_unknown_peripheral_0, peripheral).
+                                     AppendLine();
 
                     break;
             }
 
-        IPBinInformation.AppendLine("Regions supported:");
+        IPBinInformation.AppendLine(Localization.Regions_supported);
 
         foreach(byte region in ipbin.region_codes)
             switch((char)region)
             {
                 case 'J':
-                    IPBinInformation.AppendLine("Japanese NTSC.");
+                    IPBinInformation.AppendLine(Localization.Japanese_NTSC);
 
                     break;
                 case 'U':
-                    IPBinInformation.AppendLine("North America NTSC.");
+                    IPBinInformation.AppendLine(Localization.North_America_NTSC);
 
                     break;
                 case 'E':
-                    IPBinInformation.AppendLine("Europe PAL.");
+                    IPBinInformation.AppendLine(Localization.Europe_PAL);
 
                     break;
                 case 'T':
-                    IPBinInformation.AppendLine("Asia NTSC.");
+                    IPBinInformation.AppendLine(Localization.Asia_NTSC);
 
                     break;
                 case ' ': break;
                 default:
-                    IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
+                    IPBinInformation.AppendFormat(Localization.Game_supports_unknown_region_0, region).AppendLine();
 
                     break;
             }

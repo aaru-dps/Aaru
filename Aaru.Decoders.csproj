@@ -50,6 +50,11 @@
     <Compile Include="Bluray\Spare.cs"/>
     <Compile Include="CD\SectorBuilder.cs"/>
     <Compile Include="CD\Subchannel.cs"/>
+    <Compile Include="Localization\Localization.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Localization.resx</DependentUpon>
+    </Compile>
     <Compile Include="SCSI\Inquiry.cs"/>
     <Compile Include="Floppy\Enums.cs"/>
     <Compile Include="Floppy\System3740.cs"/>
@@ -187,6 +192,10 @@
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
       <Link>LICENSE.LGPL</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Localization\Localization.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localization.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

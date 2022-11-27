@@ -93,21 +93,21 @@ public static partial class Modes
         ModePage_00_SFF page = modePage.Value;
         var             sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Drive Operation Mode page:");
+        sb.AppendLine(Localization.SCSI_Drive_Operation_Mode_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.DVW)
-            sb.AppendLine("\tVerifying after writing is disabled");
+            sb.AppendLine("\t" + Localization.Verifying_after_writing_is_disabled);
 
         if(page.DDE)
-            sb.AppendLine("\tDrive will abort when a writing error is detected");
+            sb.AppendLine("\t" + Localization.Drive_will_abort_when_a_writing_error_is_detected);
 
         if(!page.SLM)
             return sb.ToString();
 
-        sb.Append("\tDrive has two LUNs with rewritable being ");
+        sb.Append("\t" + Localization.Drive_has_two_LUNs_with_rewritable_being);
         sb.AppendLine(page.SLR ? "LUN 1" : "LUN 0");
 
         return sb.ToString();

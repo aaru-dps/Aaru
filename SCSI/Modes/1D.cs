@@ -84,31 +84,31 @@ public static partial class Modes
         ModePage_1D page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Medium Configuration Mode Page:");
+        sb.AppendLine(Localization.SCSI_Medium_Configuration_Mode_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.WORMM)
-            sb.AppendLine("\tDrive is operating in WORM mode");
+            sb.AppendLine("\t" + Localization.Drive_is_operating_in_WORM_mode);
 
         switch(page.WormModeLabelRestrictions)
         {
             case 0:
-                sb.AppendLine("\tDrive does not allow any logical blocks to be overwritten");
+                sb.AppendLine("\t" + Localization.Drive_does_not_allow_any_logical_blocks_to_be_overwritten);
 
                 break;
             case 1:
-                sb.AppendLine("\tDrive allows a tape header to be overwritten");
+                sb.AppendLine("\t" + Localization.Drive_allows_a_tape_header_to_be_overwritten);
 
                 break;
             case 2:
-                sb.AppendLine("\tDrive allows all format labels to be overwritten");
+                sb.AppendLine("\t" + Localization.Drive_allows_all_format_labels_to_be_overwritten);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown WORM mode label restrictions code {0}", page.WormModeLabelRestrictions).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_WORM_mode_label_restrictions_code_0,
+                                page.WormModeLabelRestrictions).AppendLine();
 
                 break;
         }
@@ -116,16 +116,18 @@ public static partial class Modes
         switch(page.WormModeFilemarkRestrictions)
         {
             case 2:
-                sb.AppendLine("\tDrive allows any number of filemarks immediately preceding EOD to be overwritten except filemark closes to BOP");
+                sb.AppendLine("\t" +
+                              "Drive allows any number of filemarks immediately preceding EOD to be overwritten except filemark closes to BOP");
 
                 break;
             case 3:
-                sb.AppendLine("\tDrive allows any number of filemarks immediately preceding EOD to be overwritten");
+                sb.AppendLine("\t" +
+                              "Drive allows any number of filemarks immediately preceding EOD to be overwritten");
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown WORM mode filemark restrictions code {0}", page.WormModeLabelRestrictions).
-                   AppendLine();
+                sb.AppendFormat("\t" + "Unknown WORM mode filemark restrictions code {0}",
+                                page.WormModeLabelRestrictions).AppendLine();
 
                 break;
         }

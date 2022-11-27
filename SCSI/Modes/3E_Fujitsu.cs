@@ -112,35 +112,35 @@ public static partial class Modes
         Fujitsu_ModePage_3E page = modePage.Value;
         var                 sb   = new StringBuilder();
 
-        sb.AppendLine("Fujitsu Verify Control Page:");
+        sb.AppendLine(Localization.Fujitsu_Verify_Control_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.audioVisualMode)
-            sb.AppendLine("\tAudio/Visual data support mode is applied");
+            sb.AppendLine("\t" + Localization.Audio_Visual_data_support_mode_is_applied);
 
         if(page.streamingMode)
-            sb.AppendLine("\tTest write operation is restricted during read or write operations.");
+            sb.AppendLine("\t" + Localization.Test_write_operation_is_restricted_during_read_or_write_operations);
 
         switch(page.verifyMode)
         {
             case Fujitsu_VerifyModes.Always:
-                sb.AppendLine("\tAlways apply the verify operation");
+                sb.AppendLine("\t" + Localization.Always_apply_the_verify_operation);
 
                 break;
             case Fujitsu_VerifyModes.Never:
-                sb.AppendLine("\tNever apply the verify operation");
+                sb.AppendLine("\t" + Localization.Never_apply_the_verify_operation);
 
                 break;
             case Fujitsu_VerifyModes.Depends:
-                sb.AppendLine("\tApply the verify operation depending on the condition");
+                sb.AppendLine("\t" + Localization.Apply_the_verify_operation_depending_on_the_condition);
 
                 break;
         }
 
-        sb.AppendFormat("\tThe device type that would be provided in the INQUIRY response is {0}", page.devType).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.The_device_type_that_would_be_provided_in_the_INQUIRY_response_is_0,
+                        page.devType).AppendLine();
 
         return sb.ToString();
     }

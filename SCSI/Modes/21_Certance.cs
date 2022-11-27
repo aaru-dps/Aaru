@@ -94,20 +94,20 @@ public static partial class Modes
         Certance_ModePage_21 page = modePage.Value;
         var                  sb   = new StringBuilder();
 
-        sb.AppendLine("Certance Drive Capabilities Control Mode Page:");
+        sb.AppendLine(Localization.Certance_Drive_Capabilities_Control_Mode_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.OperatingSystemsSupport)
         {
             case 0:
-                sb.AppendLine("\tOperating systems support is standard LTO");
+                sb.AppendLine("\t" + Localization.Operating_systems_support_is_standard_LTO);
 
                 break;
             default:
-                sb.AppendFormat("\tOperating systems support is unknown code {0}", page.OperatingSystemsSupport).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Operating_systems_support_is_unknown_code_0,
+                                page.OperatingSystemsSupport).AppendLine();
 
                 break;
         }
@@ -116,19 +116,20 @@ public static partial class Modes
             switch(page.FirmwareTestControl)
             {
                 case 0:
-                    sb.AppendLine("\tFactory test code is disabled");
+                    sb.AppendLine("\t" + Localization.Factory_test_code_is_disabled);
 
                     break;
                 case 1:
-                    sb.AppendLine("\tFactory test code 1 is disabled");
+                    sb.AppendLine("\t" + Localization.Factory_test_code_1_is_disabled);
 
                     break;
                 case 2:
-                    sb.AppendLine("\tFactory test code 2 is disabled");
+                    sb.AppendLine("\t" + Localization.Factory_test_code_2_is_disabled);
 
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown factory test code {0}", page.FirmwareTestControl).AppendLine();
+                    sb.AppendFormat("\t" + Localization.Unknown_factory_test_code_0, page.FirmwareTestControl).
+                       AppendLine();
 
                     break;
             }
@@ -136,15 +137,16 @@ public static partial class Modes
         switch(page.ExtendedPOSTMode)
         {
             case 0:
-                sb.AppendLine("\tPower-On Self-Test is enabled");
+                sb.AppendLine("\t" + Localization.Power_On_Self_Test_is_enabled);
 
                 break;
             case 1:
-                sb.AppendLine("\tPower-On Self-Test is disable");
+                sb.AppendLine("\t" + Localization.Power_On_Self_Test_is_disable);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown Power-On Self-Test code {0}", page.ExtendedPOSTMode).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_Power_On_Self_Test_code_0, page.ExtendedPOSTMode).
+                   AppendLine();
 
                 break;
         }
@@ -152,48 +154,50 @@ public static partial class Modes
         switch(page.DataCompressionControl)
         {
             case 0:
-                sb.AppendLine("\tCompression is controlled using mode pages 0Fh and 10h");
+                sb.AppendLine("\t" + Localization.Compression_is_controlled_using_mode_pages_0Fh_and_10h);
 
                 break;
             case 1:
-                sb.AppendLine("\tCompression is enabled and not controllable");
+                sb.AppendLine("\t" + Localization.Compression_is_enabled_and_not_controllable);
 
                 break;
             case 2:
-                sb.AppendLine("\tCompression is disabled and not controllable");
+                sb.AppendLine("\t" + Localization.Compression_is_disabled_and_not_controllable);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown compression control code {0}", page.DataCompressionControl).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_compression_control_code_0, page.DataCompressionControl).
+                   AppendLine();
 
                 break;
         }
 
         if(page.HostUnloadOverride)
-            sb.AppendLine("\tSCSI UNLOAD command will not eject the cartridge");
+            sb.AppendLine("\t" + Localization.SCSI_UNLOAD_command_will_not_eject_the_cartridge);
 
-        sb.Append("\tHow should tapes be unloaded in a power cycle, tape incompatibility, firmware download or cleaning end: ");
+        sb.Append("\t" + Localization.
+                      How_should_tapes_be_unloaded_in_a_power_cycle_tape_incompatibility_firmware_download_or_cleaning_end);
 
         switch(page.AutoUnloadMode)
         {
             case 0:
-                sb.AppendLine("\tTape will stay threaded at beginning");
+                sb.AppendLine("\t" + Localization.Tape_will_stay_threaded_at_beginning);
 
                 break;
             case 1:
-                sb.AppendLine("\tTape will be unthreaded");
+                sb.AppendLine("\t" + Localization.Tape_will_be_unthreaded);
 
                 break;
             case 2:
-                sb.AppendLine("\tTape will be unthreaded and unloaded");
+                sb.AppendLine("\t" + Localization.Tape_will_be_unthreaded_and_unloaded);
 
                 break;
             case 3:
-                sb.AppendLine("\tData tapes will be threaded at beginning, rest will be unloaded");
+                sb.AppendLine("\t" + Localization.Data_tapes_will_be_threaded_at_beginning_rest_will_be_unloaded);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown auto unload code {0}", page.AutoUnloadMode).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_auto_unload_code_0, page.AutoUnloadMode).AppendLine();
 
                 break;
         }

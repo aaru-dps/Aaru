@@ -46,6 +46,6 @@ public static class VendorString
         0x07 => "Nokia",
         0x15 => "Samsung",
         0x2C => "extreMEmory",
-        _    => $"Unknown manufacturer ID 0x{mmcVendorId:X2}"
+        _    => string.Format(Localization.Unknown_manufacturer_ID_0, mmcVendorId)
     };
 }

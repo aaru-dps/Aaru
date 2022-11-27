@@ -66,7 +66,8 @@ public static class ATIP
            CDATIPResponse.Length != 28)
         {
             AaruConsole.DebugWriteLine("CD ATIP decoder",
-                                       "Expected CD ATIP size (32 bytes) is not received size ({0} bytes), not decoding",
+                                       Localization.
+                                           Expected_CD_ATIP_size_32_bytes_is_not_received_size_0_bytes_not_decoding,
                                        CDATIPResponse.Length);
 
             return null;
@@ -130,79 +131,80 @@ public static class ATIP
 
         if(response.DDCD)
         {
-            sb.AppendFormat("Indicative Target Writing Power: 0x{0:X2}", response.ITWP).AppendLine();
-            sb.AppendLine(response.DiscType ? "Disc is DDCD-RW" : "Disc is DDCD-R");
+            sb.AppendFormat(Localization.Indicative_Target_Writing_Power_0, response.ITWP).AppendLine();
+            sb.AppendLine(response.DiscType ? Localization.Disc_is_DDCD_RW : Localization.Disc_is_DDCD_R);
 
             switch(response.ReferenceSpeed)
             {
                 case 2:
-                    sb.AppendLine("Reference speed is 4x");
+                    sb.AppendLine(Localization.Reference_speed_is_4x);
 
                     break;
                 case 3:
-                    sb.AppendLine("Reference speed is 8x");
+                    sb.AppendLine(Localization.Reference_speed_is_8x);
 
                     break;
                 default:
-                    sb.AppendFormat("Reference speed set is unknown: {0}", response.ReferenceSpeed).AppendLine();
+                    sb.AppendFormat(Localization.Reference_speed_set_is_unknown_0, response.ReferenceSpeed).
+                       AppendLine();
 
                     break;
             }
 
-            sb.AppendFormat("ATIP Start time of Lead-in: 0x{0:X6}",
+            sb.AppendFormat(Localization.ATIP_Start_time_of_Lead_in_0,
                             (response.LeadInStartMin << 16) + (response.LeadInStartSec << 8) +
                             response.LeadInStartFrame).AppendLine();
 
-            sb.AppendFormat("ATIP Last possible start time of Lead-out: 0x{0:X6}",
+            sb.AppendFormat(Localization.ATIP_Last_possible_start_time_of_Lead_out_0,
                             (response.LeadOutStartMin << 16) + (response.LeadOutStartSec << 8) +
                             response.LeadOutStartFrame).AppendLine();
 
-            sb.AppendFormat("S4 value: 0x{0:X6}",
+            sb.AppendFormat(Localization.S4_value_0,
                             (response.S4Values[0] << 16) + (response.S4Values[1] << 8) + response.S4Values[2]).
                AppendLine();
         }
         else
         {
-            sb.AppendFormat("Indicative Target Writing Power: 0x{0:X2}", response.ITWP & 0x07).AppendLine();
+            sb.AppendFormat(Localization.Indicative_Target_Writing_Power_0, response.ITWP & 0x07).AppendLine();
 
             if(response.DiscType)
             {
                 switch(response.DiscSubType)
                 {
                     case 0:
-                        sb.AppendLine("Disc is CD-RW");
+                        sb.AppendLine(Localization.Disc_is_CD_RW);
 
                         break;
                     case 1:
-                        sb.AppendLine("Disc is High-Speed CD-RW");
+                        sb.AppendLine(Localization.Disc_is_High_Speed_CD_RW);
 
                         break;
                     case 2:
-                        sb.AppendLine("Disc is Ultra-Speed CD-RW");
+                        sb.AppendLine(Localization.Disc_is_Ultra_Speed_CD_RW);
 
                         break;
                     case 3:
-                        sb.AppendLine("Disc is Ultra-Speed+ CD-RW");
+                        sb.AppendLine(Localization.Disc_is_Ultra_Speed_Plus_CD_RW);
 
                         break;
                     case 4:
-                        sb.AppendLine("Disc is medium type B, low beta category (B-) CD-RW");
+                        sb.AppendLine(Localization.Disc_is_medium_type_B_low_beta_category_CD_RW);
 
                         break;
                     case 5:
-                        sb.AppendLine("Disc is medium type B, high beta category (B+) CD-RW");
+                        sb.AppendLine(Localization.Disc_is_medium_type_B_high_beta_category_CD_RW);
 
                         break;
                     case 6:
-                        sb.AppendLine("Disc is medium type C, low beta category (C-) CD-RW");
+                        sb.AppendLine(Localization.Disc_is_medium_type_C_low_beta_category_CD_RW);
 
                         break;
                     case 7:
-                        sb.AppendLine("Disc is medium type C, high beta category (C+) CD-RW");
+                        sb.AppendLine(Localization.Disc_is_medium_type_C_high_beta_category_CD_RW);
 
                         break;
                     default:
-                        sb.AppendFormat("Unknown CD-RW disc subtype: {0}", response.DiscSubType).AppendLine();
+                        sb.AppendFormat(Localization.Unknown_CD_RW_disc_subtype_0, response.DiscSubType).AppendLine();
 
                         break;
                 }
@@ -210,85 +212,86 @@ public static class ATIP
                 switch(response.ReferenceSpeed)
                 {
                     case 1:
-                        sb.AppendLine("Reference speed is 2x");
+                        sb.AppendLine(Localization.Reference_speed_is_2x);
 
                         break;
                     default:
-                        sb.AppendFormat("Reference speed set is unknown: {0}", response.ReferenceSpeed).AppendLine();
+                        sb.AppendFormat(Localization.Reference_speed_set_is_unknown_0, response.ReferenceSpeed).
+                           AppendLine();
 
                         break;
                 }
             }
             else
             {
-                sb.AppendLine("Disc is CD-R");
+                sb.AppendLine(Localization.Disc_is_CD_R);
 
                 switch(response.DiscSubType)
                 {
                     case 0:
-                        sb.AppendLine("Disc is normal speed (CLV) CD-R");
+                        sb.AppendLine(Localization.Disc_is_normal_speed_CLV_CD_R);
 
                         break;
                     case 1:
-                        sb.AppendLine("Disc is high speed (CAV) CD-R");
+                        sb.AppendLine(Localization.Disc_is_high_speed_CAV_CD_R);
 
                         break;
                     case 2:
-                        sb.AppendLine("Disc is medium type A, low beta category (A-) CD-R");
+                        sb.AppendLine(Localization.Disc_is_medium_type_A_low_beta_category_CD_R);
 
                         break;
                     case 3:
-                        sb.AppendLine("Disc is medium type A, high beta category (A+) CD-R");
+                        sb.AppendLine(Localization.Disc_is_medium_type_A_high_beta_category_CD_R);
 
                         break;
                     case 4:
-                        sb.AppendLine("Disc is medium type B, low beta category (B-) CD-R");
+                        sb.AppendLine(Localization.Disc_is_medium_type_B_low_beta_category_CD_R);
 
                         break;
                     case 5:
-                        sb.AppendLine("Disc is medium type B, high beta category (B+) CD-R");
+                        sb.AppendLine(Localization.Disc_is_medium_type__high_beta_category__CD_R);
 
                         break;
                     case 6:
-                        sb.AppendLine("Disc is medium type C, low beta category (C-) CD-R");
+                        sb.AppendLine(Localization.Disc_is_medium_type_C_low_beta_category__CD_R);
 
                         break;
                     case 7:
-                        sb.AppendLine("Disc is medium type C, high beta category (C+) CD-R");
+                        sb.AppendLine(Localization.Disc_is_medium_type_C_high_beta_category__CD_R);
 
                         break;
                     default:
-                        sb.AppendFormat("Unknown CD-R disc subtype: {0}", response.DiscSubType).AppendLine();
+                        sb.AppendFormat(Localization.Unknown_CD_R_disc_subtype_0, response.DiscSubType).AppendLine();
 
                         break;
                 }
             }
 
-            sb.AppendLine(response.URU ? "Disc use is unrestricted" : "Disc use is restricted");
+            sb.AppendLine(response.URU ? Localization.Disc_use_is_unrestricted : Localization.Disc_use_is_restricted);
 
-            sb.AppendFormat("ATIP Start time of Lead-in: {0}:{1:D2}:{2:D2}", response.LeadInStartMin,
+            sb.AppendFormat(Localization.ATIP_Start_time_of_Lead_in_0_1_2, response.LeadInStartMin,
                             response.LeadInStartSec, response.LeadInStartFrame).AppendLine();
 
-            sb.AppendFormat("ATIP Last possible start time of Lead-out: {0}:{1:D2}:{2:D2}", response.LeadOutStartMin,
+            sb.AppendFormat(Localization.ATIP_Last_possible_start_time_of_Lead_out_0_1_2, response.LeadOutStartMin,
                             response.LeadOutStartSec, response.LeadOutStartFrame).AppendLine();
 
             if(response.A1Valid)
-                sb.AppendFormat("A1 value: 0x{0:X6}",
+                sb.AppendFormat(Localization.A1_value_0,
                                 (response.A1Values[0] << 16) + (response.A1Values[1] << 8) + response.A1Values[2]).
                    AppendLine();
 
             if(response.A2Valid)
-                sb.AppendFormat("A2 value: 0x{0:X6}",
+                sb.AppendFormat(Localization.A2_value_0,
                                 (response.A2Values[0] << 16) + (response.A2Values[1] << 8) + response.A2Values[2]).
                    AppendLine();
 
             if(response.A3Valid)
-                sb.AppendFormat("A3 value: 0x{0:X6}",
+                sb.AppendFormat(Localization.A3_value_0,
                                 (response.A3Values[0] << 16) + (response.A3Values[1] << 8) + response.A3Values[2]).
                    AppendLine();
 
             if(response.S4Values != null)
-                sb.AppendFormat("S4 value: 0x{0:X6}",
+                sb.AppendFormat(Localization.S4_value_0,
                                 (response.S4Values[0] << 16) + (response.S4Values[1] << 8) + response.S4Values[2]).
                    AppendLine();
         }
@@ -300,15 +303,15 @@ public static class ATIP
         int frm  = response.LeadInStartFrame - type;
 
         if(response.DiscType)
-            sb.AppendLine("Disc uses phase change");
+            sb.AppendLine(Localization.Disc_uses_phase_change);
         else
-            sb.AppendLine(type < 5 ? "Disc uses long strategy type dye (Cyanine, AZO, etc...)"
-                              : "Disc uses short strategy type dye (Phthalocyanine, etc...)");
+            sb.AppendLine(type < 5 ? Localization.Disc_uses_long_strategy_type_dye_Cyanine_AZO_etc
+                              : Localization.Disc_uses_short_strategy_type_dye_Phthalocyanine_etc);
 
         string manufacturer = ManufacturerFromATIP(response.LeadInStartSec, frm);
 
         if(manufacturer != "")
-            sb.AppendFormat("Disc manufactured by: {0}", manufacturer).AppendLine();
+            sb.AppendFormat(Localization.Disc_manufactured_by_0, manufacturer).AppendLine();
 
         return sb.ToString();
     }

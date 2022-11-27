@@ -80,12 +80,12 @@ public static partial class Modes
         IBM_ModePage_3D page = modePage.Value;
         var             sb   = new StringBuilder();
 
-        sb.AppendLine("IBM LEOT Mode Page:");
+        sb.AppendLine(Localization.IBM_LEOT_Mode_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\t{0} wraps", page.NumberOfWraps).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_wraps, page.NumberOfWraps).AppendLine();
 
         return sb.ToString();
     }

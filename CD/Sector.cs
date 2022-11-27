@@ -294,11 +294,11 @@ public static class Sector
            buffer[9]  != 0xFF ||
            buffer[10] != 0xFF ||
            buffer[11] != 0x00)
-            return "CD sector.";
+            return Localization.CD_sector;
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("CD-ROM sector.");
+        sb.AppendLine(Localization.CD_ROM_sector);
 
         byte min        = buffer[12];
         byte sec        = buffer[13];
@@ -321,24 +321,24 @@ public static class Sector
         if(moreThan90)
             min += 0x90;
 
-        sb.AppendFormat("Position {0:X2}:{1:X2}:{2:X2} (LBA {3})", min, sec, frame, lba).AppendLine();
+        sb.AppendFormat(Localization.Position_0_1_2_LBA_3, min, sec, frame, lba).AppendLine();
 
         switch(buffer[15] & 0x03)
         {
             case 0:
-                sb.AppendLine("Mode 0.");
+                sb.AppendLine(Localization.Mode_0);
 
                 break;
             case 1:
-                sb.AppendLine("Mode 1.");
+                sb.AppendLine(Localization.Mode_1);
 
                 break;
             case 2:
-                sb.AppendLine("Mode 2.");
+                sb.AppendLine(Localization.Mode_2);
 
                 break;
             case 3:
-                sb.AppendLine("Invalid mode 0.");
+                sb.AppendLine(Localization.Invalid_mode_3);
 
                 break;
         }
@@ -346,35 +346,35 @@ public static class Sector
         switch((buffer[15] & 0xE0) >> 5)
         {
             case 0:
-                sb.AppendLine("User data block");
+                sb.AppendLine(Localization.User_data_block);
 
                 break;
             case 1:
-                sb.AppendLine("Fourth run-in block");
+                sb.AppendLine(Localization.Fourth_run_in_block);
 
                 break;
             case 2:
-                sb.AppendLine("Third run-in block");
+                sb.AppendLine(Localization.Third_run_in_block);
 
                 break;
             case 3:
-                sb.AppendLine("Second run-in block");
+                sb.AppendLine(Localization.Second_run_in_block);
 
                 break;
             case 4:
-                sb.AppendLine("First run-in block");
+                sb.AppendLine(Localization.First_run_in_block);
 
                 break;
             case 5:
-                sb.AppendLine("Link block");
+                sb.AppendLine(Localization.Link_block);
 
                 break;
             case 6:
-                sb.AppendLine("Second run-out block");
+                sb.AppendLine(Localization.Second_run_out_block);
 
                 break;
             case 7:
-                sb.AppendLine("First run-out block");
+                sb.AppendLine(Localization.First_run_out_block);
 
                 break;
         }
@@ -395,13 +395,13 @@ public static class Sector
                         break;
                     }
 
-                sb.AppendLine(empty ? "Correct sector contents." : "Incorrect sector contents.");
+                sb.AppendLine(empty ? Localization.Correct_sector_contents : Localization.Incorrect_sector_contents);
 
                 break;
             case 1:
-                sb.AppendLine(correctEdc  == true ? "Correct EDC." : "Incorrect EDC.");
-                sb.AppendLine(correctEccP == true ? "Correct ECC P." : "Incorrect ECC P.");
-                sb.AppendLine(correctEccQ == true ? "Correct ECC Q." : "Incorrect ECC Q.");
+                sb.AppendLine(correctEdc  == true ? Localization.Correct_EDC : Localization.Incorrect_EDC);
+                sb.AppendLine(correctEccP == true ? Localization.Correct_ECC_P : Localization.Incorrect_ECC_P);
+                sb.AppendLine(correctEccQ == true ? Localization.Correct_ECC_Q : Localization.Incorrect_ECC_Q);
 
                 for(int i = 2068; i < 2076; i++)
                     if(buffer[i] != 0x00)
@@ -411,7 +411,7 @@ public static class Sector
                         break;
                     }
 
-                sb.AppendLine(empty ? "Correct zero fill." : "Incorrect zero fill.");
+                sb.AppendLine(empty ? Localization.Correct_zero_fill : Localization.Incorrect_zero_fill);
 
                 break;
             case 2:
@@ -420,48 +420,48 @@ public static class Sector
                    buffer[18] != buffer[22] ||
                    buffer[19] != buffer[23])
                 {
-                    sb.AppendLine("Subheader copies differ.");
-                    sb.AppendLine(correctEdc  == true ? "Correct EDC." : "Incorrect EDC.");
-                    sb.AppendLine(correctEccP == true ? "Correct ECC P." : "Incorrect ECC P.");
-                    sb.AppendLine(correctEccQ == true ? "Correct ECC Q." : "Incorrect ECC Q.");
+                    sb.AppendLine(Localization.Subheader_copies_differ);
+                    sb.AppendLine(correctEdc  == true ? Localization.Correct_EDC : Localization.Incorrect_EDC);
+                    sb.AppendLine(correctEccP == true ? Localization.Correct_ECC_P : Localization.Incorrect_ECC_P);
+                    sb.AppendLine(correctEccQ == true ? Localization.Correct_ECC_Q : Localization.Incorrect_ECC_Q);
 
                     break;
                 }
 
-                sb.AppendFormat("File number: {0}", buffer[16]).AppendLine();
-                sb.AppendFormat("Channel number: {0}", buffer[17]).AppendLine();
-                sb.AppendFormat("Coding information number: {0}", buffer[19]).AppendLine();
+                sb.AppendFormat(Localization.File_number_0, buffer[16]).AppendLine();
+                sb.AppendFormat(Localization.Channel_number_0, buffer[17]).AppendLine();
+                sb.AppendFormat(Localization.Coding_information_number_0, buffer[19]).AppendLine();
 
                 if((buffer[18] & 0x80) == 0x80)
-                    sb.AppendLine("End of file.");
+                    sb.AppendLine(Localization.End_of_file);
 
                 if((buffer[18] & 0x40) == 0x40)
-                    sb.AppendLine("Real-time block.");
+                    sb.AppendLine(Localization.Real_time_block);
 
-                sb.AppendLine((buffer[18] & 0x20) == 0x20 ? "Form 2." : "Form 1.");
+                sb.AppendLine((buffer[18] & 0x20) == 0x20 ? Localization.Form_2 : Localization.Form_1);
 
                 if((buffer[18] & 0x10) == 0x10)
-                    sb.AppendLine("Trigger block.");
+                    sb.AppendLine(Localization.Trigger_block);
 
                 if((buffer[18] & 0x08) == 0x08)
-                    sb.AppendLine("Data block.");
+                    sb.AppendLine(Localization.Data_block);
 
                 if((buffer[18] & 0x04) == 0x04)
-                    sb.AppendLine("Audio block.");
+                    sb.AppendLine(Localization.Audio_block);
 
                 if((buffer[18] & 0x02) == 0x02)
-                    sb.AppendLine("Video block.");
+                    sb.AppendLine(Localization.Video_block);
 
                 if((buffer[18] & 0x01) == 0x01)
-                    sb.AppendLine("End of record.");
+                    sb.AppendLine(Localization.End_of_record);
 
                 if((buffer[18] & 0x20) != 0x20)
                 {
-                    sb.AppendLine(correctEccP == true ? "Correct ECC P." : "Incorrect ECC P.");
-                    sb.AppendLine(correctEccQ == true ? "Correct ECC Q." : "Incorrect ECC Q.");
+                    sb.AppendLine(correctEccP == true ? Localization.Correct_ECC_P : Localization.Incorrect_ECC_P);
+                    sb.AppendLine(correctEccQ == true ? Localization.Correct_ECC_Q : Localization.Incorrect_ECC_Q);
                 }
 
-                sb.AppendLine(correctEdc == true ? "Correct EDC." : "Incorrect EDC.");
+                sb.AppendLine(correctEdc == true ? Localization.Correct_EDC : Localization.Incorrect_EDC);
 
                 break;
         }

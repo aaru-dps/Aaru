@@ -30,6 +30,7 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
@@ -74,7 +75,8 @@ public static class PMA
         if(decoded.DataLength + 2 != CDPMAResponse.Length)
         {
             AaruConsole.DebugWriteLine("CD PMA decoder",
-                                       "Expected CD PMA size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                       Localization.
+                                           Expected_CD_PMA_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
                                        decoded.DataLength + 2, CDPMAResponse.Length);
 
             return null;
@@ -111,17 +113,19 @@ public static class PMA
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
     #endif
+
+        List<string> tracks;
 
         foreach(CDPMADescriptors descriptor in response.PMADescriptors)
         {
         #if DEBUG
             if(descriptor.Reserved != 0)
-                sb.AppendFormat("Reserved = 0x{0:X2}", descriptor.Reserved).AppendLine();
+                sb.AppendFormat(Localization.Reserved_equals_0_X2, descriptor.Reserved).AppendLine();
         #endif
 
             switch(descriptor.ADR)
@@ -129,49 +133,87 @@ public static class PMA
                 case 1:
                     if(descriptor.POINT > 0)
                     {
-                        sb.AppendFormat("Track {0}", descriptor.POINT);
-
                         switch((TocControl)(descriptor.CONTROL & 0x0D))
                         {
                             case TocControl.TwoChanNoPreEmph:
-                                sb.Append(" (Stereo audio track with no pre-emphasis)");
+                                if(descriptor.PHOUR > 0)
+                                    sb.AppendFormat(Localization.Track_0_Stereo_audio_track_with_no_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
+                                else
+                                    sb.AppendFormat(Localization.Track_0_Stereo_audio_track_with_no_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
 
                                 break;
                             case TocControl.TwoChanPreEmph:
-                                sb.Append(" (Stereo audio track with 50/15 μs pre-emphasis)");
+                                if(descriptor.PHOUR > 0)
+                                    sb.AppendFormat(Localization.Track_0_Stereo_audio_track_with_50_15_s_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
+                                else
+                                    sb.AppendFormat(Localization.Track_0_Stereo_audio_track_with_50_15_us_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
 
                                 break;
                             case TocControl.FourChanNoPreEmph:
-                                sb.Append(" (Quadraphonic audio track with no pre-emphasis)");
+                                if(descriptor.PHOUR > 0)
+                                    sb.AppendFormat(Localization.Track_0_Quadraphonic_audio_track_with_no_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
+                                else
+                                    sb.AppendFormat(Localization.Track_0_Quadraphonic_audio_track_with_no_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
 
                                 break;
                             case TocControl.FourChanPreEmph:
-                                sb.Append(" (Quadraphonic audio track with 50/15 μs pre-emphasis)");
+                                if(descriptor.PHOUR > 0)
+                                    sb.AppendFormat(Localization.Track_0_Quadraphonic_audio_track_with_50_15_us_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
+                                else
+                                    sb.AppendFormat(Localization.Track_0_Quadraphonic_audio_track_with_50_15_us_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
 
                                 break;
                             case TocControl.DataTrack:
-                                sb.Append(" (Data track, recorded uninterrupted)");
+                                if(descriptor.PHOUR > 0)
+                                    sb.AppendFormat(Localization.Track_0_Data_track_recorded_uninterrupted_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
+                                else
+                                    sb.AppendFormat(Localization.Track_0_Data_track_recorded_uninterrupted_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
 
                                 break;
                             case TocControl.DataTrackIncremental:
-                                sb.Append(" (Data track, recorded incrementally)");
+                                if(descriptor.PHOUR > 0)
+                                    sb.AppendFormat(Localization.Track_0_Data_track_recorded_incrementally_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
+                                else
+                                    sb.AppendFormat(Localization.Track_0_Data_track_recorded_incrementally_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
 
                                 break;
                         }
-
-                        if(descriptor.PHOUR > 0)
-                            sb.AppendFormat(" starts at {3}:{0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC,
-                                            descriptor.PFRAME, descriptor.PHOUR);
-                        else
-                            sb.AppendFormat(" starts at {0:D2}:{1:D2}:{2:D2}", descriptor.PMIN, descriptor.PSEC,
-                                            descriptor.PFRAME);
-
-                        if(descriptor.PHOUR > 0)
-                            sb.AppendFormat(" and ends at {3}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec,
-                                            descriptor.Frame, descriptor.HOUR);
-                        else
-                            sb.AppendFormat(" and ends at {0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec,
-                                            descriptor.Frame);
 
                         sb.AppendLine();
                     }
@@ -181,109 +223,97 @@ public static class PMA
                     break;
                 case 2:
                     uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
-                    sb.AppendFormat("Disc ID: {0:X6}", id & 0x00FFFFFF).AppendLine();
+                    sb.AppendFormat(Localization.Disc_ID_0_X6, id & 0x00FFFFFF).AppendLine();
 
                     break;
                 case 3:
-                    sb.AppendFormat("Skip track assignment {0} says that tracks ", descriptor.POINT);
+                    tracks = new List<string>();
 
                     if(descriptor.Min > 0)
-                        sb.AppendFormat("{0} ", descriptor.Min);
+                        tracks.Add($"{descriptor.Min}");
 
                     if(descriptor.Sec > 0)
-                        sb.AppendFormat("{0} ", descriptor.Sec);
+                        tracks.Add($"{descriptor.Sec}");
 
                     if(descriptor.Frame > 0)
-                        sb.AppendFormat("{0} ", descriptor.Frame);
+                        tracks.Add($"{descriptor.Frame}");
 
                     if(descriptor.PMIN > 0)
-                        sb.AppendFormat("{0} ", descriptor.PMIN);
+                        tracks.Add($"{descriptor.PMIN}");
 
                     if(descriptor.PSEC > 0)
-                        sb.AppendFormat("{0} ", descriptor.PSEC);
+                        tracks.Add($"{descriptor.PSEC}");
 
                     if(descriptor.PFRAME > 0)
-                        sb.AppendFormat("{0} ", descriptor.PFRAME);
+                        tracks.Add($"{descriptor.PFRAME}");
 
-                    sb.AppendLine("should be skipped");
+                    sb.AppendFormat(Localization.Skip_track_assignment_0_says_that_tracks_1_should_be_skipped,
+                                    descriptor.POINT, string.Join(' ', tracks));
 
                     break;
                 case 4:
-                    sb.AppendFormat("Unskip track assignment {0} says that tracks ", descriptor.POINT);
+                    tracks = new List<string>();
 
                     if(descriptor.Min > 0)
-                        sb.AppendFormat("{0} ", descriptor.Min);
+                        tracks.Add($"{descriptor.Min}");
 
                     if(descriptor.Sec > 0)
-                        sb.AppendFormat("{0} ", descriptor.Sec);
+                        tracks.Add($"{descriptor.Sec}");
 
                     if(descriptor.Frame > 0)
-                        sb.AppendFormat("{0} ", descriptor.Frame);
+                        tracks.Add($"{descriptor.Frame}");
 
                     if(descriptor.PMIN > 0)
-                        sb.AppendFormat("{0} ", descriptor.PMIN);
+                        tracks.Add($"{descriptor.PMIN}");
 
                     if(descriptor.PSEC > 0)
-                        sb.AppendFormat("{0} ", descriptor.PSEC);
+                        tracks.Add($"{descriptor.PSEC}");
 
                     if(descriptor.PFRAME > 0)
-                        sb.AppendFormat("{0} ", descriptor.PFRAME);
+                        tracks.Add($"{descriptor.PFRAME}");
 
-                    sb.AppendLine("should not be skipped");
+                    sb.AppendFormat(Localization.Unskip_track_assignment_0_says_that_tracks_1_should_not_be_skipped,
+                                    descriptor.POINT, string.Join(' ', tracks));
 
                     break;
                 case 5:
-                    sb.AppendFormat("Skip time interval assignment {0} says that from ", descriptor.POINT);
-
                     if(descriptor.PHOUR > 0)
-                        sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.PHOUR);
-                    else
-                        sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME);
-
-                    if(descriptor.PHOUR > 0)
-                        sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec, descriptor.Frame,
+                        sb.AppendFormat(Localization.Skip_time_interval_assignment_0_says_that_from_4_1_2_3_to_8_5_6_7_should_be_skipped,
+                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                        descriptor.PHOUR, descriptor.Min, descriptor.Sec, descriptor.Frame,
                                         descriptor.HOUR);
                     else
-                        sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec, descriptor.Frame);
-
-                    sb.AppendLine("should be skipped");
+                        sb.AppendFormat(Localization.Skip_time_interval_assignment_0_says_that_from_1_2_3_to_4_5_6_should_be_skipped,
+                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                        descriptor.Min, descriptor.Sec, descriptor.Frame);
 
                     break;
                 case 6:
-                    sb.AppendFormat("Unskip time interval assignment {0} says that from ", descriptor.POINT);
-
                     if(descriptor.PHOUR > 0)
-                        sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.PHOUR);
-                    else
-                        sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} to ", descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME);
-
-                    if(descriptor.PHOUR > 0)
-                        sb.AppendFormat("{3}:{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec, descriptor.Frame,
+                        sb.AppendFormat(Localization.Unskip_time_interval_assignment_0_says_that_from_4_1_2_3_to_8_5_6_7_should_not_be_skipped,
+                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                        descriptor.PHOUR, descriptor.Min, descriptor.Sec, descriptor.Frame,
                                         descriptor.HOUR);
                     else
-                        sb.AppendFormat("{0:D2}:{1:D2}:{2:D2} ", descriptor.Min, descriptor.Sec, descriptor.Frame);
-
-                    sb.AppendLine("should not be skipped");
+                        sb.AppendFormat(Localization.Unskip_time_interval_assignment_0_says_that_from_1_2_3_to_4_5_6_should_not_be_skipped,
+                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                        descriptor.Min, descriptor.Sec, descriptor.Frame);
 
                     break;
                 default:
 
-                    sb.AppendFormat("ADR = {0}", descriptor.ADR).AppendLine();
-                    sb.AppendFormat("CONTROL = {0}", descriptor.CONTROL).AppendLine();
-                    sb.AppendFormat("TNO = {0}", descriptor.TNO).AppendLine();
-                    sb.AppendFormat("POINT = {0}", descriptor.POINT).AppendLine();
-                    sb.AppendFormat("Min = {0}", descriptor.Min).AppendLine();
-                    sb.AppendFormat("Sec = {0}", descriptor.Sec).AppendLine();
-                    sb.AppendFormat("Frame = {0}", descriptor.Frame).AppendLine();
-                    sb.AppendFormat("HOUR = {0}", descriptor.HOUR).AppendLine();
-                    sb.AppendFormat("PHOUR = {0}", descriptor.PHOUR).AppendLine();
-                    sb.AppendFormat("PMIN = {0}", descriptor.PMIN).AppendLine();
-                    sb.AppendFormat("PSEC = {0}", descriptor.PSEC).AppendLine();
-                    sb.AppendFormat("PFRAME = {0}", descriptor.PFRAME).AppendLine();
+                    sb.AppendLine($"ADR = {descriptor.ADR}");
+                    sb.AppendLine($"CONTROL = {descriptor.CONTROL}");
+                    sb.AppendLine($"TNO = {descriptor.TNO}");
+                    sb.AppendLine($"POINT = {descriptor.POINT}");
+                    sb.AppendLine($"Min = {descriptor.Min}");
+                    sb.AppendLine($"Sec = {descriptor.Sec}");
+                    sb.AppendLine($"Frame = {descriptor.Frame}");
+                    sb.AppendLine($"HOUR = {descriptor.HOUR}");
+                    sb.AppendLine($"PHOUR = {descriptor.PHOUR}");
+                    sb.AppendLine($"PMIN = {descriptor.PMIN}");
+                    sb.AppendLine($"PSEC = {descriptor.PSEC}");
+                    sb.AppendLine($"PFRAME = {descriptor.PFRAME}");
 
                     break;
             }

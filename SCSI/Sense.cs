@@ -362,8 +362,10 @@ public static class Sense
             return null;
 
         return sense.Value.AddressValid
-                   ? $"Error class {sense.Value.ErrorClass} type {sense.Value.ErrorType} happened on block {
-                       sense.Value.LBA}\n" : $"Error class {sense.Value.ErrorClass} type {sense.Value.ErrorType}\n";
+                   ? string.Format(Localization.Error_class_0_type_1_happened_on_block_2 + "\n", sense.Value.ErrorClass,
+                                   sense.Value.ErrorType, sense.Value.LBA)
+                   : string.Format(Localization.Error_class_0_type_1 + "\n", sense.Value.ErrorClass,
+                                   sense.Value.ErrorType);
     }
 
     public static string PrettifySense(FixedSense? sense)
@@ -375,22 +377,22 @@ public static class Sense
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("SCSI SENSE: {0}", GetSenseKey(decoded.SenseKey)).AppendLine();
+        sb.AppendFormat(Localization.SCSI_SENSE_0, GetSenseKey(decoded.SenseKey)).AppendLine();
 
         if(decoded.SegmentNumber > 0)
-            sb.AppendFormat("On segment {0}", decoded.SegmentNumber).AppendLine();
+            sb.AppendFormat(Localization.On_segment_0, decoded.SegmentNumber).AppendLine();
 
         if(decoded.Filemark)
-            sb.AppendLine("Filemark or setmark found");
+            sb.AppendLine(Localization.Filemark_or_setmark_found);
 
         if(decoded.EOM)
-            sb.AppendLine("End-of-medium/partition found");
+            sb.AppendLine(Localization.End_of_medium_partition_found);
 
         if(decoded.ILI)
-            sb.AppendLine("Incorrect length indicator");
+            sb.AppendLine(Localization.Incorrect_length_indicator);
 
         if(decoded.InformationValid)
-            sb.AppendFormat("On logical block {0}", decoded.Information).AppendLine();
+            sb.AppendFormat(Localization.On_logical_block_0, decoded.Information).AppendLine();
 
         if(decoded.AdditionalLength < 6)
             return sb.ToString();
@@ -407,28 +409,28 @@ public static class Sense
         {
             case SenseKeys.IllegalRequest:
             {
-                sb.AppendLine((decoded.SenseKeySpecific & 0x400000) == 0x400000 ? "Illegal field in CDB"
-                                  : "Illegal field in data parameters");
+                sb.AppendLine((decoded.SenseKeySpecific & 0x400000) == 0x400000 ? Localization.Illegal_field_in_CDB
+                                  : Localization.Illegal_field_in_data_parameters);
 
                 if((decoded.SenseKeySpecific & 0x200000) == 0x200000)
-                    sb.AppendFormat("Invalid value in bit {0} in field {1} of CDB",
+                    sb.AppendFormat(Localization.Invalid_value_in_bit_0_in_field_1_of_CDB,
                                     (decoded.SenseKeySpecific & 0x70000) >> 16, decoded.SenseKeySpecific & 0xFFFF).
                        AppendLine();
                 else
-                    sb.AppendFormat("Invalid value in field {0} of CDB", decoded.SenseKeySpecific & 0xFFFF).
+                    sb.AppendFormat(Localization.Invalid_value_in_field_0_of_CDB, decoded.SenseKeySpecific & 0xFFFF).
                        AppendLine();
             }
 
                 break;
             case SenseKeys.NotReady:
-                sb.AppendFormat("Format progress {0:P}", (double)(decoded.SenseKeySpecific & 0xFFFF) / 65536).
+                sb.AppendFormat(Localization.Format_progress_0, (double)(decoded.SenseKeySpecific & 0xFFFF) / 65536).
                    AppendLine();
 
                 break;
             case SenseKeys.RecoveredError:
             case SenseKeys.HardwareError:
             case SenseKeys.MediumError:
-                sb.AppendFormat("Actual retry count is {0}", decoded.SenseKeySpecific & 0xFFFF).AppendLine();
+                sb.AppendFormat(Localization.Actual_retry_count_is_0, decoded.SenseKeySpecific & 0xFFFF).AppendLine();
 
                 break;
         }
@@ -445,7 +447,7 @@ public static class Sense
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("SCSI SENSE: {0}", GetSenseKey(decoded.SenseKey)).AppendLine();
+        sb.AppendFormat(Localization.SCSI_SENSE_0, GetSenseKey(decoded.SenseKey)).AppendLine();
         sb.AppendLine(GetSenseDescription(decoded.ASC, decoded.ASCQ));
 
         if(decoded.Descriptors       == null ||
@@ -588,7 +590,8 @@ public static class Sense
 
     public static void DecodeDescriptor0D(byte[] descriptor) => throw new NotImplementedException("Check SBC-3");
 
-    public static string PrettifyDescriptor00(ulong information) => $"On logical block {information}\n";
+    public static string PrettifyDescriptor00(ulong information) =>
+        string.Format(Localization.Sense_PrettifyDescriptor00_On_logical_block_0 + "\n", information);
 
     public static string PrettifyDescriptor00(byte[] descriptor) =>
         PrettifyDescriptor00(DecodeDescriptor00(descriptor));
@@ -1991,10 +1994,11 @@ public static class Sense
         }
 
         return ASC >= 0x80
-                   ? ASCQ >= 0x80 ? $"VENDOR-SPECIFIC ASC {ASC:X2}h WITH VENDOR-SPECIFIC ASCQ {ASCQ:X2}h"
-                         : $"VENDOR-SPECIFIC ASC {ASC:X2}h WITH ASCQ {ASCQ:X2}h"
+                   ? ASCQ >= 0x80
+                         ? string.Format(Localization.VENDOR_SPECIFIC_ASC_0_WITH_VENDOR_SPECIFIC_ASCQ_1, ASC, ASCQ)
+                         : string.Format(Localization.VENDOR_SPECIFIC_ASC_0_WITH_ASCQ_1, ASC, ASCQ)
                    : ASCQ >= 0x80
-                       ? $"ASC {ASC:X2}h WITH VENDOR-SPECIFIC ASCQ {ASCQ:X2}h"
-                       : $"ASC {ASC:X2}h WITH ASCQ {ASCQ:X2}h";
+                       ? string.Format(Localization.ASC_0_WITH_VENDOR_SPECIFIC_ASCQ_1, ASC, ASCQ)
+                       : string.Format(Localization.ASC_0_WITH_ASCQ_1, ASC, ASCQ);
     }
 }

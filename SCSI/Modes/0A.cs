@@ -183,77 +183,83 @@ public static partial class Modes
         ModePage_0A page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Control mode page:");
+        sb.AppendLine(Localization.SCSI_Control_mode_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.RLEC)
-            sb.AppendLine("\tIf set, target shall report log exception conditions");
+            sb.AppendLine("\t" + Localization.If_set_target_shall_report_log_exception_conditions);
 
         if(page.DQue)
-            sb.AppendLine("\tTagged queuing is disabled");
+            sb.AppendLine("\t" + Localization.Tagged_queuing_is_disabled);
 
         if(page.EECA)
-            sb.AppendLine("\tExtended Contingent Allegiance is enabled");
+            sb.AppendLine("\t" + Localization.Extended_Contingent_Allegiance_is_enabled);
 
         if(page.RAENP)
-            sb.AppendLine("\tTarget may issue an asynchronous event notification upon completing its initialization");
+            sb.AppendLine("\t" + Localization.
+                              Target_may_issue_an_asynchronous_event_notification_upon_completing_its_initialization);
 
         if(page.UAAENP)
-            sb.AppendLine("\tTarget may issue an asynchronous event notification instead of a unit attention condition");
+            sb.AppendLine("\t" + Localization.
+                              Target_may_issue_an_asynchronous_event_notification_instead_of_a_unit_attention_condition);
 
         if(page.EAENP)
-            sb.AppendLine("\tTarget may issue an asynchronous event notification instead of a deferred error");
+            sb.AppendLine("\t" + Localization.
+                              Target_may_issue_an_asynchronous_event_notification_instead_of_a_deferred_error);
 
         if(page.GLTSD)
-            sb.AppendLine("\tGlobal logging target save disabled");
+            sb.AppendLine("\t" + Localization.Global_logging_target_save_disabled);
 
         if(page.RAC)
-            sb.AppendLine("\tCHECK CONDITION should be reported rather than a long busy condition");
+            sb.AppendLine("\t" + Localization.CHECK_CONDITION_should_be_reported_rather_than_a_long_busy_condition);
 
         if(page.SWP)
-            sb.AppendLine("\tSoftware write protect is active");
+            sb.AppendLine("\t" + Localization.Software_write_protect_is_active);
 
         if(page.TAS)
-            sb.AppendLine("\tTasks aborted by other initiator's actions should be terminated with TASK ABORTED");
+            sb.AppendLine("\t" + Localization.
+                              Tasks_aborted_by_other_initiator_s_actions_should_be_terminated_with_TASK_ABORTED);
 
         if(page.TMF_ONLY)
-            sb.AppendLine("\tAll tasks received in nexus with ACA ACTIVE is set and an ACA condition is established shall terminate");
+            sb.AppendLine("\t" + Localization.
+                              All_tasks_received_in_nexus_with_ACA_ACTIVE_is_set_and_an_ACA_condition_is_established_shall_terminate);
 
         if(page.D_SENSE)
-            sb.AppendLine("\tDevice shall return descriptor format sense data when returning sense data in the same transactions as a CHECK CONDITION");
+            sb.AppendLine("\t" + Localization.
+                              Device_shall_return_descriptor_format_sense_data_when_returning_sense_data_in_the_same_transactions_as_a_CHECK_CONDITION);
 
         if(page.ATO)
-            sb.AppendLine("\tLOGICAL BLOCK APPLICATION TAG should not be modified");
+            sb.AppendLine("\t" + Localization.LOGICAL_BLOCK_APPLICATION_TAG_should_not_be_modified);
 
         if(page.DPICZ)
-            sb.AppendLine("\tProtector information checking is disabled");
+            sb.AppendLine("\t" + Localization.Protector_information_checking_is_disabled);
 
         if(page.NUAR)
-            sb.AppendLine("\tNo unit attention on release");
+            sb.AppendLine("\t" + Localization.No_unit_attention_on_release);
 
         if(page.ATMPE)
-            sb.AppendLine("\tApplication Tag mode page is enabled");
+            sb.AppendLine("\t" + Localization.Application_Tag_mode_page_is_enabled);
 
         if(page.RWWP)
-            sb.AppendLine("\tAbort any write command without protection information");
+            sb.AppendLine("\t" + Localization.Abort_any_write_command_without_protection_information);
 
         if(page.SBLP)
-            sb.AppendLine("\tSupports block lengths and protection information");
+            sb.AppendLine("\t" + Localization.Supports_block_lengths_and_protection_information);
 
         switch(page.TST)
         {
             case 0:
-                sb.AppendLine("\tThe logical unit maintains one task set for all nexuses");
+                sb.AppendLine("\t" + Localization.The_logical_unit_maintains_one_task_set_for_all_nexuses);
 
                 break;
             case 1:
-                sb.AppendLine("\tThe logical unit maintains separate task sets for each nexus");
+                sb.AppendLine("\t" + Localization.The_logical_unit_maintains_separate_task_sets_for_each_nexus);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown Task set type {0}", page.TST).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_Task_set_type_0, page.TST).AppendLine();
 
                 break;
         }
@@ -261,15 +267,16 @@ public static partial class Modes
         switch(page.QueueAlgorithm)
         {
             case 0:
-                sb.AppendLine("\tCommands should be sent strictly ordered");
+                sb.AppendLine("\t" + Localization.Commands_should_be_sent_strictly_ordered);
 
                 break;
             case 1:
-                sb.AppendLine("\tCommands can be reordered in any manner");
+                sb.AppendLine("\t" + Localization.Commands_can_be_reordered_in_any_manner);
 
                 break;
             default:
-                sb.AppendFormat("\tUnknown Queue Algorithm Modifier {0}", page.QueueAlgorithm).AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_Queue_Algorithm_Modifier_0, page.QueueAlgorithm).
+                   AppendLine();
 
                 break;
         }
@@ -277,19 +284,22 @@ public static partial class Modes
         switch(page.QErr)
         {
             case 0:
-                sb.AppendLine("\tIf ACA is established, the task set commands shall resume after it is cleared, otherwise they shall terminate with CHECK CONDITION");
+                sb.AppendLine("\t" + Localization.
+                                  If_ACA_is_established_the_task_set_commands_shall_resume_after_it_is_cleared_otherwise_they_shall_terminate_with_CHECK_CONDITION);
 
                 break;
             case 1:
-                sb.AppendLine("\tAll the affected commands in the task set shall be aborted when CHECK CONDITION is returned");
+                sb.AppendLine("\t" + Localization.
+                                  All_the_affected_commands_in_the_task_set_shall_be_aborted_when_CHECK_CONDITION_is_returned);
 
                 break;
             case 3:
-                sb.AppendLine("\tAffected commands in the task set belonging with the CHECK CONDITION nexus shall be aborted");
+                sb.AppendLine("\t" + Localization.
+                                  Affected_commands_in_the_task_set_belonging_with_the_CHECK_CONDITION_nexus_shall_be_aborted);
 
                 break;
             default:
-                sb.AppendLine("\tReserved QErr value 2 is set");
+                sb.AppendLine("\t" + Localization.Reserved_QErr_value_2_is_set);
 
                 break;
         }
@@ -297,19 +307,21 @@ public static partial class Modes
         switch(page.UA_INTLCK_CTRL)
         {
             case 0:
-                sb.AppendLine("\tLUN shall clear unit attention condition reported in the same nexus");
+                sb.AppendLine("\t" + Localization.LUN_shall_clear_unit_attention_condition_reported_in_the_same_nexus);
 
                 break;
             case 2:
-                sb.AppendLine("\tLUN shall not clear unit attention condition reported in the same nexus");
+                sb.AppendLine("\t" + Localization.
+                                  LUN_shall_not_clear_unit_attention_condition_reported_in_the_same_nexus);
 
                 break;
             case 3:
-                sb.AppendLine("\tLUN shall not clear unit attention condition reported in the same nexus and shall establish a unit attention condition for the initiator");
+                sb.AppendLine("\t" + Localization.
+                                  LUN_shall_not_clear_unit_attention_condition_reported_in_the_same_nexus_and_shall_establish_a_unit_attention_condition_for_the_initiator);
 
                 break;
             default:
-                sb.AppendLine("\tReserved UA_INTLCK_CTRL value 1 is set");
+                sb.AppendLine("\t" + Localization.Reserved_UA_INTLCK_CTRL_value_1_is_set);
 
                 break;
         }
@@ -317,36 +329,39 @@ public static partial class Modes
         switch(page.AutoloadMode)
         {
             case 0:
-                sb.AppendLine("\tOn medium insertion, it shall be loaded for full access");
+                sb.AppendLine("\t" + Localization.On_medium_insertion_it_shall_be_loaded_for_full_access);
 
                 break;
             case 1:
-                sb.AppendLine("\tOn medium insertion, it shall be loaded for auxiliary memory access only");
+                sb.AppendLine("\t" + Localization.
+                                  On_medium_insertion_it_shall_be_loaded_for_auxiliary_memory_access_only);
 
                 break;
             case 2:
-                sb.AppendLine("\tOn medium insertion, it shall not be loaded");
+                sb.AppendLine("\t" + Localization.On_medium_insertion_it_shall_not_be_loaded);
 
                 break;
             default:
-                sb.AppendFormat("\tReserved autoload mode {0} set", page.AutoloadMode).AppendLine();
+                sb.AppendFormat("\t" + Localization.Reserved_autoload_mode_0_set, page.AutoloadMode).AppendLine();
 
                 break;
         }
 
         if(page.ReadyAENHoldOffPeriod > 0)
-            sb.AppendFormat("\t{0} ms before attempting asynchronous event notifications after initialization",
-                            page.ReadyAENHoldOffPeriod).AppendLine();
+            sb.
+                AppendFormat("\t" + Localization._0_ms_before_attempting_asynchronous_event_notifications_after_initialization,
+                             page.ReadyAENHoldOffPeriod).AppendLine();
 
         if(page.BusyTimeoutPeriod > 0)
             if(page.BusyTimeoutPeriod == 0xFFFF)
-                sb.AppendLine("\tThere is no limit on the maximum time that is allowed to remain busy");
+                sb.AppendLine("\t" + Localization.There_is_no_limit_on_the_maximum_time_that_is_allowed_to_remain_busy);
             else
-                sb.AppendFormat("\tA maximum of {0} ms are allowed to remain busy", page.BusyTimeoutPeriod * 100).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.A_maximum_of_0_ms_are_allowed_to_remain_busy,
+                                page.BusyTimeoutPeriod * 100).AppendLine();
 
         if(page.ExtendedSelfTestCompletionTime > 0)
-            sb.AppendFormat("\t{0} seconds to complete extended self-test", page.ExtendedSelfTestCompletionTime);
+            sb.AppendFormat("\t" + Localization._0_seconds_to_complete_extended_self_test,
+                            page.ExtendedSelfTestCompletionTime);
 
         return sb.ToString();
     }
@@ -414,31 +429,32 @@ public static partial class Modes
         ModePage_0A_S01 page = modePage.Value;
         var             sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Control extension page:");
+        sb.AppendLine(Localization.SCSI_Control_extension_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.TCMOS)
         {
-            sb.Append("\tTimestamp can be initialized by methods outside of the SCSI standards");
-
             if(page.SCSIP)
-                sb.Append(", but SCSI's SET TIMESTAMP shall take precedence over them");
-
-            sb.AppendLine();
+                sb.AppendLine("\t" + Localization.
+                                  S01_Timestamp_can_be_initialized_by_methods_outside_of_the_SCSI_standards_but_SCSI_SET_TIMESTAMP_shall_take_precedence_over_them);
+            else
+                sb.AppendLine("\t" + Localization.
+                                  Timestamp_can_be_initialized_by_methods_outside_of_the_SCSI_standards);
         }
 
         if(page.IALUAE)
-            sb.AppendLine("\tImplicit Asymmetric Logical Unit Access is enabled");
+            sb.AppendLine("\t" + Localization.Implicit_Asymmetric_Logical_Unit_Access_is_enabled);
 
-        sb.AppendFormat("\tInitial priority is {0}", page.InitialPriority).AppendLine();
+        sb.AppendFormat("\t" + Localization.Initial_priority_is_0, page.InitialPriority).AppendLine();
 
         if(page.DLC)
-            sb.AppendLine("\tDevice will not degrade performance to extend its life");
+            sb.AppendLine("\t" + Localization.Device_will_not_degrade_performance_to_extend_its_life);
 
         if(page.MaximumSenseLength > 0)
-            sb.AppendFormat("\tMaximum sense data would be {0} bytes", page.MaximumSenseLength).AppendLine();
+            sb.AppendFormat("\t" + Localization.Maximum_sense_data_would_be_0_bytes, page.MaximumSenseLength).
+               AppendLine();
 
         return sb.ToString();
     }

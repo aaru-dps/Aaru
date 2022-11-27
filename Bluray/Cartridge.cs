@@ -92,7 +92,8 @@ public static class Cartridge
         if(CSResponse.Length != 8)
         {
             AaruConsole.DebugWriteLine("BD Cartridge Status decoder",
-                                       "Found incorrect Blu-ray Cartridge Status size ({0} bytes)", CSResponse.Length);
+                                       Localization.Found_incorrect_Blu_ray_Cartridge_Status_size_0_bytes,
+                                       CSResponse.Length);
 
             return null;
         }
@@ -126,47 +127,47 @@ public static class Cartridge
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
 
         if(response.Reserved3 != 0)
-            sb.AppendFormat("Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
+            sb.AppendFormat(Localization.Reserved3_equals_0_X8, response.Reserved3).AppendLine();
 
         if(response.Reserved4 != 0)
-            sb.AppendFormat("Reserved4 = 0x{0:X8}", response.Reserved4).AppendLine();
+            sb.AppendFormat(Localization.Reserved4_equals_0_X8, response.Reserved4).AppendLine();
 
         if(response.Reserved5 != 0)
-            sb.AppendFormat("Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
+            sb.AppendFormat(Localization.Reserved5_equals_0_X8, response.Reserved5).AppendLine();
 
         if(response.Reserved6 != 0)
-            sb.AppendFormat("Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
+            sb.AppendFormat(Localization.Reserved6_equals_0_X8, response.Reserved6).AppendLine();
 
         if(response.Reserved7 != 0)
-            sb.AppendFormat("Reserved7 = 0x{0:X8}", response.Reserved7).AppendLine();
+            sb.AppendFormat(Localization.Reserved7_equals_0_X8, response.Reserved7).AppendLine();
     #endif
 
         if(response.Cartridge)
         {
-            sb.AppendLine("Media is inserted in a cartridge");
+            sb.AppendLine(Localization.Media_is_inserted_in_a_cartridge);
 
             if(response.OUT)
-                sb.AppendLine("Media has been taken out, or inserted in, the cartridge");
+                sb.AppendLine(Localization.Media_has_been_taken_out_or_inserted_in_the_cartridge);
 
             if(response.CWP)
-                sb.AppendLine("Media is write protected");
+                sb.AppendLine(Localization.Media_is_write_protected);
         }
         else
         {
-            sb.AppendLine("Media is not in a cartridge");
+            sb.AppendLine(Localization.Media_is_not_in_a_cartridge);
 
         #if DEBUG
             if(response.OUT)
-                sb.AppendLine("Media has out bit marked, shouldn't");
+                sb.AppendLine(Localization.Media_has_out_bit_marked_shouldnt);
 
             if(response.CWP)
-                sb.AppendLine("Media has write protection bit marked, shouldn't");
+                sb.AppendLine(Localization.Media_has_write_protection_bit_marked_shouldnt);
         #endif
         }
 

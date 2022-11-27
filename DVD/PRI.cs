@@ -137,46 +137,51 @@ public static class PRI
 
         if((decoded.DiscApplicationCode & 0x40) > 0)
         {
-            sb.AppendLine("Disc for unrestricted use.");
+            sb.AppendLine(Localization.Disc_for_unrestricted_use);
 
             if((decoded.DiscApplicationCode & 0x3F) > 0)
-                sb.AppendFormat("Invalid purpose field with value {0}", decoded.DiscApplicationCode & 0x3F).
+                sb.AppendFormat(Localization.Invalid_purpose_field_with_value_0, decoded.DiscApplicationCode & 0x3F).
                    AppendLine();
             else
-                sb.AppendLine("Consumer purpose disc for use in consumer purpose drives");
+                sb.AppendLine(Localization.Consumer_purpose_disc_for_use_in_consumer_purpose_drives);
         }
         else
         {
-            sb.AppendLine("Disc for restricted use.");
+            sb.AppendLine(Localization.Disc_for_restricted_use);
 
             if((decoded.DiscApplicationCode & 0x3F) > 0)
-                sb.AppendFormat("Disc for use in special drives according with purpose value {0}",
+                sb.AppendFormat(Localization.Disc_for_use_in_special_drives_according_with_purpose_value_0,
                                 decoded.DiscApplicationCode & 0x3F).AppendLine();
             else
-                sb.AppendLine("General purpose disc for use in general purpose drives");
+                sb.AppendLine(Localization.General_purpose_disc_for_use_in_general_purpose_drives);
         }
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x80) > 0 ? "Disc track pitch is 0,74 μm" : "Unknown track pitch");
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x80) > 0 ? Localization.Disc_track_pitch_is_0_74_μm
+                          : Localization.Unknown_track_pitch);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x40) > 0 ? "Reference velocity is 3,49 m/s"
-                          : "Unknown reference velocity");
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x40) > 0 ? Localization.Reference_velocity_is_3_49_m_s
+                          : Localization.Unknown_reference_velocity);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x20) > 0 ? "Disc has 80mm diameter" : "Disc has 120mm diameter");
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x20) > 0 ? Localization.Disc_has_80mm_diameter
+                          : Localization.Disc_has_120mm_diameter);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x10) > 0 ? "Disc reflectivity is between 18% and 30%"
-                          : "Disc reflectivity is between 45% and 85%");
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x10) > 0 ? Localization.Disc_reflectivity_is_between_18_and_30
+                          : Localization.Disc_reflectivity_is_between_45_and_85);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x04) > 0 ? "Dye is organic" : "Dye is phase change");
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x04) > 0 ? Localization.Dye_is_organic
+                          : Localization.Dye_is_phase_change);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x02) > 0 ? "Disc is RW (rewritable)" : "Disc is R (recordable)");
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x02) > 0 ? Localization.Disc_is_RW_rewritable
+                          : Localization.Disc_is_R_recordable);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x01) > 0 ? "Wavelength is 650nm" : "Unknown wavelength");
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x01) > 0 ? Localization.Wavelength_is_650nm
+                          : Localization.Unknown_wavelength);
 
-        sb.AppendFormat("Last writable ECC block address: 0x{0:X6}", decoded.LastAddressOfDataRecordableArea).
+        sb.AppendFormat(Localization.Last_writable_ECC_block_address_0_X6_, decoded.LastAddressOfDataRecordableArea).
            AppendLine();
 
         if(decoded.PartVersion > 0)
-            sb.AppendFormat("Part version {0}", decoded.PartVersion).AppendLine();
+            sb.AppendFormat(Localization.Part_version_0, decoded.PartVersion).AppendLine();
 
         bool rw = (decoded.DiscPhysicalCode & 0x02) > 0;
 
@@ -204,10 +209,10 @@ public static class PRI
                     _  => 0
                 };
 
-                sb.AppendFormat("Recommended recording power is {0} mW", recordingPower).AppendLine();
+                sb.AppendFormat(Localization.Recommended_recording_power_is_0_mW, recordingPower).AppendLine();
             }
             else
-                sb.AppendLine("Recording power is not specified");
+                sb.AppendLine(Localization.Recording_power_is_not_specified);
 
             if((decoded.WaveLengthCode & 0xF) > 0)
             {
@@ -231,10 +236,10 @@ public static class PRI
                     _  => 0
                 };
 
-                sb.AppendFormat("Recommended erasing power ratio is {0} ε", erasingPower).AppendLine();
+                sb.AppendFormat(Localization.Recommended_erasing_power_ratio_is_0, erasingPower).AppendLine();
             }
             else
-                sb.AppendLine("Erasing power ratio is not specified");
+                sb.AppendLine(Localization.Erasing_power_ratio_is_not_specified);
         }
         else
         {
@@ -258,7 +263,7 @@ public static class PRI
                     _  => 0
                 };
 
-                sb.AppendFormat("Recommended recording power is {0} mW", recordingPower).AppendLine();
+                sb.AppendFormat(Localization.Recommended_recording_power_is_0_mW, recordingPower).AppendLine();
             }
 
             if(decoded.WaveLengthCode > 0)
@@ -284,11 +289,12 @@ public static class PRI
                     _  => 0
                 };
 
-                sb.AppendFormat("Recommended recording power is {0} mW", wavelength).AppendLine();
+                sb.AppendFormat(Localization.Recommended_recording_power_is_0_mW, wavelength).AppendLine();
             }
         }
 
-        sb.AppendFormat("Disc manufacturer is {0}", ManufacturerFromPrePit(decoded.ManufacturerId)).AppendLine();
+        sb.AppendFormat(Localization.Disc_manufacturer_is_0, ManufacturerFromPrePit(decoded.ManufacturerId)).
+           AppendLine();
 
         return sb.ToString();
     }

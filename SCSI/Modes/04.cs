@@ -111,44 +111,46 @@ public static partial class Modes
         ModePage_04 page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Rigid disk drive geometry page:");
+        sb.AppendLine(Localization.SCSI_Rigid_disk_drive_geometry_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\t{0} heads", page.Heads).AppendLine();
-        sb.AppendFormat("\t{0} cylinders", page.Cylinders).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_heads, page.Heads).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_cylinders, page.Cylinders).AppendLine();
 
         if(page.WritePrecompCylinder < page.Cylinders)
-            sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).AppendLine();
+            sb.AppendFormat("\t" + Localization.Write_pre_compensation_starts_at_cylinder_0, page.WritePrecompCylinder).
+               AppendLine();
 
         if(page.WriteReduceCylinder < page.Cylinders)
-            sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).AppendLine();
+            sb.AppendFormat("\t" + Localization.Write_current_reduction_starts_at_cylinder_0, page.WriteReduceCylinder).
+               AppendLine();
 
         if(page.DriveStepRate > 0)
-            sb.AppendFormat("\tDrive steps in {0} ns", (uint)page.DriveStepRate * 100).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_steps_in_0_ns, (uint)page.DriveStepRate * 100).AppendLine();
 
-        sb.AppendFormat("\tHeads park in cylinder {0}", page.LandingCylinder).AppendLine();
+        sb.AppendFormat("\t" + Localization.Heads_park_in_cylinder_0, page.LandingCylinder).AppendLine();
 
         if(page.MediumRotationRate > 0)
-            sb.AppendFormat("\tMedium rotates at {0} rpm", page.MediumRotationRate).AppendLine();
+            sb.AppendFormat("\t" + Localization.Medium_rotates_at_0_rpm, page.MediumRotationRate).AppendLine();
 
         switch(page.RPL)
         {
             case 0:
-                sb.AppendLine("\tSpindle synchronization is disable or unsupported");
+                sb.AppendLine("\t" + Localization.Spindle_synchronization_is_disable_or_unsupported);
 
                 break;
             case 1:
-                sb.AppendLine("\tTarget operates as a synchronized-spindle slave");
+                sb.AppendLine("\t" + Localization.Target_operates_as_a_synchronized_spindle_slave);
 
                 break;
             case 2:
-                sb.AppendLine("\tTarget operates as a synchronized-spindle master");
+                sb.AppendLine("\t" + Localization.Target_operates_as_a_synchronized_spindle_master);
 
                 break;
             case 3:
-                sb.AppendLine("\tTarget operates as a synchronized-spindle master control");
+                sb.AppendLine("\t" + Localization.Target_operates_as_a_synchronized_spindle_master_control);
 
                 break;
         }

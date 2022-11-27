@@ -85,31 +85,31 @@ public static class Cartridge
         var          sb      = new StringBuilder();
 
         if(decoded.PWP)
-            sb.AppendLine("Disc surface is set to write protected status");
+            sb.AppendLine(Localization.Disc_surface_is_set_to_write_protected_status);
 
         if(decoded.Cartridge)
         {
-            sb.AppendLine("Disc comes in a cartridge");
+            sb.AppendLine(Localization.Disc_comes_in_a_cartridge);
 
             if(decoded.OUT)
-                sb.AppendLine("Disc has been extracted from the cartridge");
+                sb.AppendLine(Localization.Disc_has_been_extracted_from_the_cartridge);
 
             if(decoded.CWP)
-                sb.AppendLine("Cartridge is set to write protected");
+                sb.AppendLine(Localization.Cartridge_is_set_to_write_protected);
         }
 
         switch(decoded.DiscType)
         {
             case 0:
-                sb.AppendLine("Disc shall not be written without a cartridge");
+                sb.AppendLine(Localization.Disc_shall_not_be_written_without_a_cartridge);
 
                 break;
             case 0x10:
-                sb.AppendLine("Disc may be written without a cartridge");
+                sb.AppendLine(Localization.Disc_may_be_written_without_a_cartridge);
 
                 break;
             default:
-                sb.AppendFormat("Unknown disc type id {0}", decoded.DiscType).AppendLine();
+                sb.AppendFormat(Localization.Unknown_disc_type_id_0, decoded.DiscType).AppendLine();
 
                 break;
         }
@@ -121,15 +121,16 @@ public static class Cartridge
         {
             case 0: break;
             case 1:
-                sb.AppendLine("Disc is write inhibited because it has been extracted from the cartridge");
+                sb.AppendLine(Localization.Disc_is_write_inhibited_because_it_has_been_extracted_from_the_cartridge);
 
                 break;
             case 0xFF:
-                sb.AppendLine("Disc is write inhibited for an unspecified reason");
+                sb.AppendLine(Localization.Disc_is_write_inhibited_for_an_unspecified_reason);
 
                 break;
             default:
-                sb.AppendFormat("Disc has unknown reason {0} for write inhibition", decoded.RAMSWI).AppendLine();
+                sb.AppendFormat(Localization.Disc_has_unknown_reason_0_for_write_inhibition, decoded.RAMSWI).
+                   AppendLine();
 
                 break;
         }

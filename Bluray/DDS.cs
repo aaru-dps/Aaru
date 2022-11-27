@@ -132,7 +132,8 @@ public static class DDS
 
         if(decoded.Signature != DDSIdentifier)
         {
-            AaruConsole.DebugWriteLine("BD DDS decoder", "Found incorrect DDS signature (0x{0:X4})", decoded.Signature);
+            AaruConsole.DebugWriteLine("BD DDS decoder", Localization.Found_incorrect_DDS_signature_0,
+                                       decoded.Signature);
 
             return null;
         }
@@ -173,50 +174,50 @@ public static class DDS
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("DDS Format: 0x{0:X2}", response.Format).AppendLine();
-        sb.AppendFormat("DDS has ben updated {0} times", response.UpdateCount).AppendLine();
-        sb.AppendFormat("First PSN of Drive Area: 0x{0:X8}", response.DriveAreaPSN).AppendLine();
-        sb.AppendFormat("First PSN of Defect List: 0x{0:X8}", response.DefectListPSN).AppendLine();
-        sb.AppendFormat("PSN of User Data Area's LSN 0: 0x{0:X8}", response.PSNofLSNZero).AppendLine();
-        sb.AppendFormat("Last User Data Area's LSN 0: 0x{0:X8}", response.LastUserAreaLSN).AppendLine();
-        sb.AppendFormat("ISA0 size: {0}", response.ISA0).AppendLine();
-        sb.AppendFormat("OSA size: {0}", response.OSA).AppendLine();
-        sb.AppendFormat("ISA1 size: {0}", response.ISA1).AppendLine();
-        sb.AppendFormat("Spare Area Full Flags: 0x{0:X2}", response.SpareAreaFullFlags).AppendLine();
-        sb.AppendFormat("Disc Type Specific Field 1: 0x{0:X2}", response.DiscTypeSpecificField1).AppendLine();
-        sb.AppendFormat("Disc Type Specific Field 2: 0x{0:X8}", response.DiscTypeSpecificField2).AppendLine();
-        sb.AppendFormat("Blu-ray DDS Status Bits in hex follows:");
+        sb.AppendFormat(Localization.DDS_Format_0, response.Format).AppendLine();
+        sb.AppendFormat(Localization.DDS_has_ben_updated_0_times, response.UpdateCount).AppendLine();
+        sb.AppendFormat(Localization.First_PSN_of_Drive_Area_0, response.DriveAreaPSN).AppendLine();
+        sb.AppendFormat(Localization.First_PSN_of_Defect_List_0, response.DefectListPSN).AppendLine();
+        sb.AppendFormat(Localization.PSN_of_User_Data_Areas_LSN_0_0, response.PSNofLSNZero).AppendLine();
+        sb.AppendFormat(Localization.Last_User_Data_Areas_LSN_0_0, response.LastUserAreaLSN).AppendLine();
+        sb.AppendFormat(Localization.ISA0_size_0, response.ISA0).AppendLine();
+        sb.AppendFormat(Localization.OSA_size_0, response.OSA).AppendLine();
+        sb.AppendFormat(Localization.ISA1_size_0, response.ISA1).AppendLine();
+        sb.AppendFormat(Localization.Spare_Area_Full_Flags_0, response.SpareAreaFullFlags).AppendLine();
+        sb.AppendFormat(Localization.Disc_Type_Specific_Field_1_0, response.DiscTypeSpecificField1).AppendLine();
+        sb.AppendFormat(Localization.Disc_Type_Specific_Field_2_0, response.DiscTypeSpecificField2).AppendLine();
+        sb.AppendFormat(Localization.Blu_ray_DDS_Status_Bits_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.StatusBits, 80));
-        sb.AppendFormat("Blu-ray DDS Disc Type Specific Data in hex follows:");
+        sb.AppendFormat(Localization.Blu_ray_DDS_Disc_Type_Specific_Data_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DiscTypeSpecificData, 80));
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
 
         if(response.Reserved3 != 0)
-            sb.AppendFormat("Reserved3 = 0x{0:X2}", response.Reserved3).AppendLine();
+            sb.AppendFormat(Localization.Reserved_3_equals_0_X2, response.Reserved3).AppendLine();
 
         if(response.Reserved4 != 0)
-            sb.AppendFormat("Reserved4 = 0x{0:X16}", response.Reserved4).AppendLine();
+            sb.AppendFormat(Localization.Reserved4_equals_0_X16, response.Reserved4).AppendLine();
 
         if(response.Reserved5 != 0)
-            sb.AppendFormat("Reserved5 = 0x{0:X8}", response.Reserved5).AppendLine();
+            sb.AppendFormat(Localization.Reserved5_equals_0_X8, response.Reserved5).AppendLine();
 
         if(response.Reserved6 != 0)
-            sb.AppendFormat("Reserved6 = 0x{0:X8}", response.Reserved6).AppendLine();
+            sb.AppendFormat(Localization.Reserved6_equals_0_X8, response.Reserved6).AppendLine();
 
         if(response.Reserved7 != 0)
-            sb.AppendFormat("Reserved7 = 0x{0:X2}", response.Reserved7).AppendLine();
+            sb.AppendFormat(Localization.Reserved7_equals_0_X2, response.Reserved7).AppendLine();
 
         if(response.Reserved8 != 0)
-            sb.AppendFormat("Reserved8 = 0x{0:X2}", response.Reserved8).AppendLine();
+            sb.AppendFormat(Localization.Reserved8_equals_0_X2, response.Reserved8).AppendLine();
 
         if(response.Reserved9 != 0)
-            sb.AppendFormat("Reserved9 = 0x{0:X8}", response.Reserved9).AppendLine();
+            sb.AppendFormat(Localization.Reserved9_equals_0_X8, response.Reserved9).AppendLine();
     #endif
 
         return sb.ToString();

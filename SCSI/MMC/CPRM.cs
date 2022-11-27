@@ -83,12 +83,12 @@ public static class CPRM
 
     #if DEBUG
         if(response.Reserved != 0)
-            sb.AppendFormat("Reserved = 0x{0:X2}", response.Reserved).AppendLine();
+            sb.AppendFormat(Localization.Reserved_equals_0_X2, response.Reserved).AppendLine();
     #endif
-        sb.AppendFormat("Total number of CPRM Media Key Blocks available to transfer: {0}", response.TotalPacks).
-           AppendLine();
+        sb.AppendFormat(Localization.Total_number_of_CPRM_Media_Key_Blocks_available_to_transfer_0,
+                        response.TotalPacks).AppendLine();
 
-        sb.AppendFormat("CPRM Media Key Blocks in hex follows:");
+        sb.AppendFormat(Localization.CPRM_Media_Key_Blocks_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MKBPackData, 80));
 
         return sb.ToString();

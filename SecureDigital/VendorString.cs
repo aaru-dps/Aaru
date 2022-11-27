@@ -45,6 +45,6 @@ public static class VendorString
         0x03 => "Sandisk",
         0x27 => "CnMemory",
         0xAA => "QEMU",
-        _    => $"Unknown manufacturer ID 0x{sdVendorId:X2}"
+        _    => string.Format(Localization.Unknown_manufacturer_ID_0, sdVendorId)
     };
 }

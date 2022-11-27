@@ -76,7 +76,7 @@ public static class BCA
 
         if(BCAResponse.Length != 68)
         {
-            AaruConsole.DebugWriteLine("BD BCA decoder", "Found incorrect Blu-ray BCA size ({0} bytes)",
+            AaruConsole.DebugWriteLine("BD BCA decoder", Localization.Found_incorrect_Blu_ray_BCA_size_0_bytes,
                                        BCAResponse.Length);
 
             return null;
@@ -106,13 +106,13 @@ public static class BCA
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
     #endif
 
-        sb.AppendFormat("Blu-ray Burst Cutting Area in hex follows:");
+        sb.AppendFormat(Localization.Blu_ray_Burst_Cutting_Area_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.BCA, 80));
 
         return sb.ToString();

@@ -115,50 +115,59 @@ public static partial class Decoders
             return null;
 
         var sb = new StringBuilder();
-        sb.AppendLine("SecureDigital Device Configuration Register:");
+        sb.AppendLine(Localization.SecureDigital_Device_Configuration_Register);
 
         if(scr.Structure != 0)
-            sb.AppendFormat("\tUnknown register version {0}", scr.Structure).AppendLine();
+            sb.AppendFormat("\t" + Localization.Unknown_register_version_0, scr.Structure).AppendLine();
 
         switch(scr.Spec)
         {
             case 0 when scr.Spec3 == false && scr.Spec4 == false && scr.SpecX == 0:
-                sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 1.0x");
+                sb.AppendLine("\t" + Localization.
+                                  Device_follows_SecureDigital_Physical_Layer_Specification_version_1_0x);
 
                 break;
             case 1 when scr.Spec3 == false && scr.Spec4 == false && scr.SpecX == 0:
-                sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 1.10");
+                sb.AppendLine("\t" + Localization.
+                                  Device_follows_SecureDigital_Physical_Layer_Specification_version_1_10);
 
                 break;
             case 2 when scr.Spec3 == false && scr.Spec4 == false && scr.SpecX == 0:
-                sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 2.00");
+                sb.AppendLine("\t" + Localization.
+                                  Device_follows_SecureDigital_Physical_Layer_Specification_version_2_00);
 
                 break;
             case 2 when scr.Spec3 && scr.Spec4 == false && scr.SpecX == 0:
-                sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 3.0x");
+                sb.AppendLine("\t" + Localization.
+                                  Device_follows_SecureDigital_Physical_Layer_Specification_version_3_0x);
 
                 break;
             case 2 when scr.Spec3 && scr.Spec4 && scr.SpecX == 0:
-                sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 4.xx");
+                sb.AppendLine("\t" + Localization.
+                                  Device_follows_SecureDigital_Physical_Layer_Specification_version_4_xx);
 
                 break;
             case 2 when scr.Spec3:
                 switch(scr.SpecX)
                 {
                     case 1:
-                        sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 5.xx");
+                        sb.AppendLine("\t" + Localization.
+                                          Device_follows_SecureDigital_Physical_Layer_Specification_version_5_xx);
 
                         break;
                     case 2:
-                        sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 6.xx");
+                        sb.AppendLine("\t" + Localization.
+                                          Device_follows_SecureDigital_Physical_Layer_Specification_version_6_xx);
 
                         break;
                     case 3:
-                        sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 7.xx");
+                        sb.AppendLine("\t" + Localization.
+                                          Device_follows_SecureDigital_Physical_Layer_Specification_version_7_xx);
 
                         break;
                     case 4:
-                        sb.AppendLine("\tDevice follows SecureDigital Physical Layer Specification version 8.xx");
+                        sb.AppendLine("\t" + Localization.
+                                          Device_follows_SecureDigital_Physical_Layer_Specification_version_8_xx);
 
                         break;
                 }
@@ -166,7 +175,7 @@ public static partial class Decoders
                 break;
             default:
                 sb.
-                    AppendFormat("\tDevice follows SecureDigital Physical Layer Specification with unknown version {0}.{1}.{2}.{3}",
+                    AppendFormat("\t" + Localization.Device_follows_SecureDigital_Physical_Layer_Specification_with_unknown_version_0_1_2_3,
                                  scr.Spec, scr.Spec3, scr.Spec4, scr.SpecX).AppendLine();
 
                 break;
@@ -175,51 +184,52 @@ public static partial class Decoders
         switch(scr.Security)
         {
             case 0:
-                sb.AppendLine("\tDevice does not support CPRM");
+                sb.AppendLine("\t" + Localization.Device_does_not_support_CPRM);
 
                 break;
             case 1:
-                sb.AppendLine("\tDevice does not use CPRM");
+                sb.AppendLine("\t" + Localization.Device_does_not_use_CPRM);
 
                 break;
             case 2:
-                sb.AppendLine("\tDevice uses CPRM according to specification version 1.01");
+                sb.AppendLine("\t" + Localization.Device_uses_CPRM_according_to_specification_version_1_01);
 
                 break;
             case 3:
-                sb.AppendLine("\tDevice uses CPRM according to specification version 2.00");
+                sb.AppendLine("\t" + Localization.Device_uses_CPRM_according_to_specification_version_2_00);
 
                 break;
             case 4:
-                sb.AppendLine("\tDevice uses CPRM according to specification version 3.xx");
+                sb.AppendLine("\t" + Localization.Device_uses_CPRM_according_to_specification_version_3_xx);
 
                 break;
             default:
-                sb.AppendFormat("\tDevice uses unknown CPRM specification with code {0}", scr.Security).AppendLine();
+                sb.AppendFormat("\t" + Localization.Device_uses_unknown_CPRM_specification_with_code_0, scr.Security).
+                   AppendLine();
 
                 break;
         }
 
         if(scr.BusWidth.HasFlag(BusWidth.OneBit))
-            sb.AppendLine("\tDevice supports 1-bit data bus");
+            sb.AppendLine("\t" + Localization.Device_supports_1_bit_data_bus);
 
         if(scr.BusWidth.HasFlag(BusWidth.FourBit))
-            sb.AppendLine("\tDevice supports 4-bit data bus");
+            sb.AppendLine("\t" + Localization.Device_supports_4_bit_data_bus);
 
         if(scr.ExtendedSecurity != 0)
-            sb.AppendLine("\tDevice supports extended security");
+            sb.AppendLine("\t" + Localization.Device_supports_extended_security);
 
         if(scr.CommandSupport.HasFlag(CommandSupport.ExtensionRegisterMultiBlock))
-            sb.AppendLine("\tDevice supports extension register multi-block commands");
+            sb.AppendLine("\t" + Localization.Device_supports_extension_register_multi_block_commands);
 
         if(scr.CommandSupport.HasFlag(CommandSupport.ExtensionRegisterSingleBlock))
-            sb.AppendLine("\tDevice supports extension register single-block commands");
+            sb.AppendLine("\t" + Localization.Device_supports_extension_register_single_block_commands);
 
         if(scr.CommandSupport.HasFlag(CommandSupport.SetBlockCount))
-            sb.AppendLine("\tDevice supports set block count command");
+            sb.AppendLine("\t" + Localization.Device_supports_set_block_count_command);
 
         if(scr.CommandSupport.HasFlag(CommandSupport.SpeedClassControl))
-            sb.AppendLine("\tDevice supports speed class control command");
+            sb.AppendLine("\t" + Localization.Device_supports_speed_class_control_command);
 
         return sb.ToString();
     }

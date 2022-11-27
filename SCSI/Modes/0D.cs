@@ -88,84 +88,89 @@ public static partial class Modes
         ModePage_0D page = modePage.Value;
         var         sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI CD-ROM parameters page:");
+        sb.AppendLine(Localization.SCSI_CD_ROM_parameters_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.InactivityTimerMultiplier)
         {
             case 0:
-                sb.AppendLine("\tDrive will remain in track hold state a vendor-specified time after a seek or read");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_track_hold_state_a_vendor_specified_time_after_a_seek_or_read);
 
                 break;
             case 1:
-                sb.AppendLine("\tDrive will remain in track hold state 125 ms after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_125_ms_after_a_seek_or_read);
 
                 break;
             case 2:
-                sb.AppendLine("\tDrive will remain in track hold state 250 ms after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_250_ms_after_a_seek_or_read);
 
                 break;
             case 3:
-                sb.AppendLine("\tDrive will remain in track hold state 500 ms after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_500_ms_after_a_seek_or_read);
 
                 break;
             case 4:
-                sb.AppendLine("\tDrive will remain in track hold state 1 second after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_1_second_after_a_seek_or_read);
 
                 break;
             case 5:
-                sb.AppendLine("\tDrive will remain in track hold state 2 seconds after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_2_seconds_after_a_seek_or_read);
 
                 break;
             case 6:
-                sb.AppendLine("\tDrive will remain in track hold state 4 seconds after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_4_seconds_after_a_seek_or_read);
 
                 break;
             case 7:
-                sb.AppendLine("\tDrive will remain in track hold state 8 seconds after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_8_seconds_after_a_seek_or_read);
 
                 break;
             case 8:
-                sb.AppendLine("\tDrive will remain in track hold state 16 seconds after a seek or read");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_track_hold_state_16_seconds_after_a_seek_or_read);
 
                 break;
             case 9:
-                sb.AppendLine("\tDrive will remain in track hold state 32 seconds after a seek or read");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_track_hold_state_32_seconds_after_a_seek_or_read);
 
                 break;
             case 10:
-                sb.AppendLine("\tDrive will remain in track hold state 1 minute after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_1_minute_after_a_seek_or_read);
 
                 break;
             case 11:
-                sb.AppendLine("\tDrive will remain in track hold state 2 minutes after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_2_minutes_after_a_seek_or_read);
 
                 break;
             case 12:
-                sb.AppendLine("\tDrive will remain in track hold state 4 minutes after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_4_minutes_after_a_seek_or_read);
 
                 break;
             case 13:
-                sb.AppendLine("\tDrive will remain in track hold state 8 minutes after a seek or read");
+                sb.AppendLine("\t" + Localization.Drive_will_remain_in_track_hold_state_8_minutes_after_a_seek_or_read);
 
                 break;
             case 14:
-                sb.AppendLine("\tDrive will remain in track hold state 16 minutes after a seek or read");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_track_hold_state_16_minutes_after_a_seek_or_read);
 
                 break;
             case 15:
-                sb.AppendLine("\tDrive will remain in track hold state 32 minutes after a seek or read");
+                sb.AppendLine("\t" + Localization.
+                                  Drive_will_remain_in_track_hold_state_32_minutes_after_a_seek_or_read);
 
                 break;
         }
 
         if(page.SecondsPerMinute > 0)
-            sb.AppendFormat("\tEach minute has {0} seconds", page.SecondsPerMinute).AppendLine();
+            sb.AppendFormat("\t" + Localization.Each_minute_has_0_seconds, page.SecondsPerMinute).AppendLine();
 
         if(page.FramesPerSecond > 0)
-            sb.AppendFormat("\tEach second has {0} frames", page.FramesPerSecond).AppendLine();
+            sb.AppendFormat("\t" + Localization.Each_second_has_0_frames, page.FramesPerSecond).AppendLine();
 
         return sb.ToString();
     }

@@ -83,12 +83,12 @@ public static class AACS
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
     #endif
-        sb.AppendFormat("AACS Volume Identifier in hex follows:");
+        sb.AppendFormat(Localization.AACS_Volume_Identifier_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VolumeIdentifier, 80));
 
         return sb.ToString();
@@ -130,12 +130,12 @@ public static class AACS
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
     #endif
-        sb.AppendFormat("AACS Media Serial Number in hex follows:");
+        sb.AppendFormat(Localization.AACS_Media_Serial_Number_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaSerialNumber, 80));
 
         return sb.ToString();
@@ -177,12 +177,12 @@ public static class AACS
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
     #endif
-        sb.AppendFormat("AACS Media Identifier in hex follows:");
+        sb.AppendFormat(Localization.AACS_Media_Identifier_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaIdentifier, 80));
 
         return sb.ToString();
@@ -224,11 +224,12 @@ public static class AACS
 
     #if DEBUG
         if(response.Reserved != 0)
-            sb.AppendFormat("Reserved = 0x{0:X2}", response.Reserved).AppendLine();
+            sb.AppendFormat(Localization.Reserved_equals_0_X2, response.Reserved).AppendLine();
     #endif
-        sb.AppendFormat("Total number of media key blocks available to transfer {0}", response.TotalPacks).AppendLine();
+        sb.AppendFormat(Localization.Total_number_of_media_key_blocks_available_to_transfer_0, response.TotalPacks).
+           AppendLine();
 
-        sb.AppendFormat("AACS Media Key Blocks in hex follows:");
+        sb.AppendFormat(Localization.AACS_Media_Key_Blocks_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaKeyBlockPacks, 80));
 
         return sb.ToString();
@@ -270,12 +271,12 @@ public static class AACS
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
     #endif
-        sb.AppendFormat("AACS Data Keys in hex follows:");
+        sb.AppendFormat(Localization.AACS_Data_Keys_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DataKeys, 80));
 
         return sb.ToString();
@@ -326,13 +327,13 @@ public static class AACS
         var sb = new StringBuilder();
 
         if(response.MaxLBAExtents == 0)
-            sb.AppendLine(response.DataLength > 2 ? "Drive can store 256 LBA Extents"
-                              : "Drive cannot store LBA Extents");
+            sb.AppendLine(response.DataLength > 2 ? Localization.Drive_can_store_256_LBA_Extents
+                              : Localization.Drive_cannot_store_LBA_Extents);
         else
-            sb.AppendFormat("Drive can store {0} LBA Extents", response.MaxLBAExtents).AppendLine();
+            sb.AppendFormat(Localization.Drive_can_store_0_LBA_Extents, response.MaxLBAExtents).AppendLine();
 
         for(int i = 0; i < response.Extents.Length; i++)
-            sb.AppendFormat("LBA Extent {0} starts at LBA {1} and goes for {2} sectors", i,
+            sb.AppendFormat(Localization.LBA_Extent_0_starts_at_LBA_1_and_goes_for_2_sectors, i,
                             response.Extents[i].StartLBA, response.Extents[i].LBACount);
 
         return sb.ToString();

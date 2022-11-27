@@ -37,6 +37,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Aaru.Console;
+using Aaru.Localization;
 
 namespace Aaru.Decoders.Floppy;
 
@@ -268,7 +269,7 @@ public static class Apple2
                 if(data[position]     == 0xD5 &&
                    data[position + 1] == 0xAA)
                 {
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Prologue found at {0}", position);
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Prologue_found_at_0, position);
 
                     // Epilogue not in correct position
                     if(data[position + 11] != 0xDE ||
@@ -306,23 +307,23 @@ public static class Apple2
                         }
                     };
 
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Volume {0}",
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Volume_0,
                                                (((sector.addressField.volume[0] & 0x55) << 1) |
                                                 (sector.addressField.volume[1] & 0x55)) & 0xFF);
 
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Track {0}",
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Core.Track_0,
                                                (((sector.addressField.track[0] & 0x55) << 1) |
                                                 (sector.addressField.track[1] & 0x55)) & 0xFF);
 
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Sector {0}",
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Sector_0,
                                                (((sector.addressField.sector[0] & 0x55) << 1) |
                                                 (sector.addressField.sector[1] & 0x55)) & 0xFF);
 
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Checksum {0}",
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Checksum_0,
                                                (((sector.addressField.checksum[0] & 0x55) << 1) |
                                                 (sector.addressField.checksum[1] & 0x55)) & 0xFF);
 
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Epilogue {0:X2}{1:X2}{2:X2}",
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Epilogue_0_1_2,
                                                sector.addressField.epilogue[0], sector.addressField.epilogue[1],
                                                sector.addressField.epilogue[2]);
 
@@ -351,10 +352,10 @@ public static class Apple2
                     sector.innerGap  = gaps.ToArray();
                     sector.dataField = new RawDataField();
 
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Inner gap has {0} bytes",
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Inner_gap_has_0_bytes,
                                                sector.innerGap.Length);
 
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Prologue found at {0}", position);
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Prologue_found_at_0, position);
                     sector.dataField.prologue    =  new byte[3];
                     sector.dataField.prologue[0] =  data[position];
                     sector.dataField.prologue[1] =  data[position + 1];
@@ -377,7 +378,7 @@ public static class Apple2
 
                     sector.dataField.data = gaps.ToArray();
 
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Data has {0} bytes",
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Data_has_0_bytes,
                                                sector.dataField.data.Length);
 
                     sector.dataField.checksum    = data[position];
@@ -408,8 +409,11 @@ public static class Apple2
 
                     // Return current position to be able to read separate sectors
                     endOffset = position;
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Got {0} bytes of gap", sector.gap.Length);
-                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Finished sector at {0}", position);
+
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Got_0_bytes_of_gap,
+                                               sector.gap.Length);
+
+                    AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Finished_sector_at_0, position);
 
                     return sector;
                 }
@@ -519,7 +523,7 @@ public static class Apple2
                 break;
             }
 
-            AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Adding sector {0} of track {1}",
+            AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", Localization.Adding_sector_0_of_track_1,
                                        (((sector.addressField.sector[0] & 0x55) << 1) |
                                         (sector.addressField.sector[1] & 0x55)) & 0xFF,
                                        (((sector.addressField.track[0] & 0x55) << 1) |

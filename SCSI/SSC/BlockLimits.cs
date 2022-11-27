@@ -33,6 +33,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Aaru.Localization;
 
 namespace Aaru.Decoders.SCSI.SSC;
 
@@ -61,19 +62,19 @@ public static class BlockLimits
         var sb = new StringBuilder();
 
         if(decoded.Value.maxBlockLen == decoded.Value.minBlockLen)
-            sb.AppendFormat("Device's block size is fixed at {0} bytes", decoded.Value.minBlockLen).AppendLine();
+            sb.AppendFormat(Core.Device_block_size_is_fixed_at_0_bytes, decoded.Value.minBlockLen).AppendLine();
         else
         {
             if(decoded.Value.maxBlockLen > 0)
-                sb.AppendFormat("Device's maximum block size is {0} bytes", decoded.Value.maxBlockLen).AppendLine();
+                sb.AppendFormat(Core.Device_maximum_block_size_is_0_bytes, decoded.Value.maxBlockLen).AppendLine();
             else
-                sb.AppendLine("Device does not specify a maximum block size");
+                sb.AppendLine(Core.Device_does_not_specify_a_maximum_block_size);
 
-            sb.AppendFormat("Device's minimum block size is {0} bytes", decoded.Value.minBlockLen).AppendLine();
+            sb.AppendFormat(Core.Device_minimum_block_size_is_0_bytes, decoded.Value.minBlockLen).AppendLine();
 
             if(decoded.Value.granularity > 0)
-                sb.AppendFormat("Device's needs a block size granularity of 2^{0} ({1}) bytes",
-                                decoded.Value.granularity, Math.Pow(2, decoded.Value.granularity)).AppendLine();
+                sb.AppendFormat(Core.Device_needs_a_block_size_granularity_of_pow_0_1_bytes, decoded.Value.granularity,
+                                Math.Pow(2, decoded.Value.granularity)).AppendLine();
         }
 
         return sb.ToString();

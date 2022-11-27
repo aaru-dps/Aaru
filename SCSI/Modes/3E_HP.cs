@@ -82,15 +82,16 @@ public static partial class Modes
         HP_ModePage_3E page = modePage.Value;
         var            sb   = new StringBuilder();
 
-        sb.AppendLine("HP CD-ROM Emulation/Disaster Recovery Mode Page:");
+        sb.AppendLine(Localization.HP_CD_ROM_Emulation_Disaster_Recovery_Mode_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendLine(page.CDmode ? "\tDrive is emulating a CD-ROM drive" : "\tDrive is not emulating a CD-ROM drive");
+        sb.AppendLine(page.CDmode ? "\t" + Localization.Drive_is_emulating_a_CD_ROM_drive
+                          : "\t"         + Localization.Drive_is_not_emulating_a_CD_ROM_drive);
 
         if(page.NonAuto)
-            sb.AppendLine("\tDrive will not exit emulation automatically");
+            sb.AppendLine("\t" + Localization.Drive_will_not_exit_emulation_automatically);
 
         return sb.ToString();
     }

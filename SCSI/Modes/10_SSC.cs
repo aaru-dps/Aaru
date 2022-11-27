@@ -170,71 +170,72 @@ public static partial class Modes
         ModePage_10_SSC page = modePage.Value;
         var             sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Device configuration page:");
+        sb.AppendLine(Localization.SCSI_Device_configuration_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\tActive format: {0}", page.ActiveFormat).AppendLine();
-        sb.AppendFormat("\tActive partition: {0}", page.ActivePartition).AppendLine();
+        sb.AppendFormat("\t" + Localization.Active_format_0, page.ActiveFormat).AppendLine();
+        sb.AppendFormat("\t" + Localization.Active_partition_0, page.ActivePartition).AppendLine();
 
-        sb.AppendFormat("\tWrite buffer shall have a full ratio of {0} before being flushed to medium",
+        sb.AppendFormat("\t" + Localization.Write_buffer_shall_have_a_full_ratio_of_0_before_being_flushed_to_medium,
                         page.WriteBufferFullRatio).AppendLine();
 
-        sb.AppendFormat("\tRead buffer shall have an empty ratio of {0} before more data is read from medium",
-                        page.ReadBufferEmptyRatio).AppendLine();
+        sb.
+            AppendFormat("\t" + Localization.Read_buffer_shall_have_an_empty_ratio_of_0_before_more_data_is_read_from_medium,
+                         page.ReadBufferEmptyRatio).AppendLine();
 
         sb.
-            AppendFormat("\tDrive will delay {0} ms before buffered data is forcefully written to the medium even before buffer is full",
+            AppendFormat("\t" + Localization.Drive_will_delay_0_ms_before_buffered_data_is_forcefully_written_to_the_medium_even_before_buffer_is_full,
                          page.WriteDelayTime * 100).AppendLine();
 
         if(page.DBR)
         {
-            sb.AppendLine("\tDrive supports recovering data from buffer");
+            sb.AppendLine("\t" + Localization.Drive_supports_recovering_data_from_buffer);
 
-            sb.AppendLine(page.RBO ? "\tRecovered buffer data comes in LIFO order"
-                              : "\tRecovered buffer data comes in FIFO order");
+            sb.AppendLine(page.RBO ? "\t" + Localization.Recovered_buffer_data_comes_in_LIFO_order
+                              : "\t"      + Localization.Recovered_buffer_data_comes_in_FIFO_order);
         }
 
         if(page.BIS)
-            sb.AppendLine("\tMedium supports block IDs");
+            sb.AppendLine("\t" + Localization.Medium_supports_block_IDs);
 
         if(page.RSmk)
-            sb.AppendLine("\tDrive reports setmarks");
+            sb.AppendLine("\t" + Localization.Drive_reports_setmarks);
 
         switch(page.SOCF)
         {
             case 0:
-                sb.AppendLine("\tDrive will pre-read until buffer is full");
+                sb.AppendLine("\t" + Localization.Drive_will_pre_read_until_buffer_is_full);
 
                 break;
             case 1:
-                sb.AppendLine("\tDrive will pre-read until one filemark is detected");
+                sb.AppendLine("\t" + Localization.Drive_will_pre_read_until_one_filemark_is_detected);
 
                 break;
             case 2:
-                sb.AppendLine("\tDrive will pre-read until two filemark is detected");
+                sb.AppendLine("\t" + Localization.Drive_will_pre_read_until_two_filemark_is_detected);
 
                 break;
             case 3:
-                sb.AppendLine("\tDrive will pre-read until three filemark is detected");
+                sb.AppendLine("\t" + Localization.Drive_will_pre_read_until_three_filemark_is_detected);
 
                 break;
         }
 
         if(page.REW)
         {
-            sb.AppendLine("\tDrive reports early warnings");
+            sb.AppendLine("\t" + Localization.Drive_reports_early_warnings);
 
             if(page.SEW)
-                sb.AppendLine("\tDrive will synchronize buffer to medium on early warnings");
+                sb.AppendLine("\t" + Localization.Drive_will_synchronize_buffer_to_medium_on_early_warnings);
         }
 
         switch(page.GapSize)
         {
             case 0: break;
             case 1:
-                sb.AppendLine("\tInter-block gap is long enough to support update in place");
+                sb.AppendLine("\t" + Localization.Inter_block_gap_is_long_enough_to_support_update_in_place);
 
                 break;
             case 2:
@@ -251,59 +252,60 @@ public static partial class Modes
             case 13:
             case 14:
             case 15:
-                sb.AppendFormat("\tInter-block gap is {0} times the device's defined gap size", page.GapSize).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Inter_block_gap_is_0_times_the_device_defined_gap_size,
+                                page.GapSize).AppendLine();
 
                 break;
             default:
-                sb.AppendFormat("\tInter-block gap is unknown value {0}", page.GapSize).AppendLine();
+                sb.AppendFormat("\t" + Localization.Inter_block_gap_is_unknown_value_0, page.GapSize).AppendLine();
 
                 break;
         }
 
         if(page.EEG)
-            sb.AppendLine("\tDrive generates end-of-data");
+            sb.AppendLine("\t" + Localization.Drive_generates_end_of_data);
 
         switch(page.SelectedCompression)
         {
             case 0:
-                sb.AppendLine("\tDrive does not use compression");
+                sb.AppendLine("\t" + Localization.Drive_does_not_use_compression);
 
                 break;
             case 1:
-                sb.AppendLine("\tDrive uses default compression");
+                sb.AppendLine("\t" + Localization.Drive_uses_default_compression);
 
                 break;
             default:
-                sb.AppendFormat("\tDrive uses unknown compression {0}", page.SelectedCompression).AppendLine();
+                sb.AppendFormat("\t" + Localization.Drive_uses_unknown_compression_0, page.SelectedCompression).
+                   AppendLine();
 
                 break;
         }
 
         if(page.SWP)
-            sb.AppendLine("\tSoftware write protect is enabled");
+            sb.AppendLine("\t" + Localization.Software_write_protect_is_enabled);
 
         if(page.ASOCWP)
-            sb.AppendLine("\tAssociated write protect is enabled");
+            sb.AppendLine("\t" + Localization.Associated_write_protect_is_enabled);
 
         if(page.PERSWP)
-            sb.AppendLine("\tPersistent write protect is enabled");
+            sb.AppendLine("\t" + Localization.Persistent_write_protect_is_enabled);
 
         if(page.PRMWP)
-            sb.AppendLine("\tPermanent write protect is enabled");
+            sb.AppendLine("\t" + Localization.Permanent_write_protect_is_enabled);
 
         if(page.BAML)
-            sb.AppendLine(page.BAM ? "\tDrive operates using explicit address mode"
-                              : "\tDrive operates using implicit address mode");
+            sb.AppendLine(page.BAM ? "\t" + Localization.Drive_operates_using_explicit_address_mode
+                              : "\t"      + Localization.Drive_operates_using_implicit_address_mode);
 
         switch(page.RewindOnReset)
         {
             case 1:
-                sb.AppendLine("\tDrive shall position to beginning of default data partition on reset");
+                sb.AppendLine("\t" + Localization.Drive_shall_position_to_beginning_of_default_data_partition_on_reset);
 
                 break;
             case 2:
-                sb.AppendLine("\tDrive shall maintain its position on reset");
+                sb.AppendLine("\t" + Localization.Drive_shall_maintain_its_position_on_reset);
 
                 break;
         }
@@ -311,17 +313,17 @@ public static partial class Modes
         switch(page.WTRE)
         {
             case 1:
-                sb.AppendLine("\tDrive will do nothing on WORM tampered medium");
+                sb.AppendLine("\t" + Localization.Drive_will_do_nothing_on_WORM_tampered_medium);
 
                 break;
             case 2:
-                sb.AppendLine("\tDrive will return CHECK CONDITION on WORM tampered medium");
+                sb.AppendLine("\t" + Localization.Drive_will_return_CHECK_CONDITION_on_WORM_tampered_medium);
 
                 break;
         }
 
         if(page.OIR)
-            sb.AppendLine("\tDrive will only respond to commands if it has received a reservation");
+            sb.AppendLine("\t" + Localization.Drive_will_only_respond_to_commands_if_it_has_received_a_reservation);
 
         return sb.ToString();
     }

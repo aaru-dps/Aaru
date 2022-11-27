@@ -36,6 +36,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Console;
+using Aaru.Localization;
 using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Decoders.Sega;
@@ -132,7 +133,7 @@ public static class CD
         var IPBinInformation = new StringBuilder();
 
         IPBinInformation.AppendLine("--------------------------------");
-        IPBinInformation.AppendLine("SEGA IP.BIN INFORMATION:");
+        IPBinInformation.AppendLine(Localization.SEGA_IP_BIN_INFORMATION);
         IPBinInformation.AppendLine("--------------------------------");
 
         // Decoding all data
@@ -172,119 +173,124 @@ public static class CD
         }
         */
 
-        IPBinInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(ipbin.volume_name)).AppendLine();
+        IPBinInformation.AppendFormat(Core.Volume_name_0, Encoding.ASCII.GetString(ipbin.volume_name)).AppendLine();
 
         //IPBinInformation.AppendFormat("Volume version: {0}", Encoding.ASCII.GetString(ipbin.volume_version)).AppendLine();
         //IPBinInformation.AppendFormat("{0}", Encoding.ASCII.GetString(ipbin.volume_type)).AppendLine();
-        IPBinInformation.AppendFormat("System name: {0}", Encoding.ASCII.GetString(ipbin.system_name)).AppendLine();
+        IPBinInformation.AppendFormat(Localization.System_name_0, Encoding.ASCII.GetString(ipbin.system_name)).
+                         AppendLine();
 
         //IPBinInformation.AppendFormat("System version: {0}", Encoding.ASCII.GetString(ipbin.system_version)).AppendLine();
-        IPBinInformation.AppendFormat("Initial program address: 0x{0:X8}", ipbin.ip_address).AppendLine();
-        IPBinInformation.AppendFormat("Initial program load size: {0} bytes", ipbin.ip_loadsize).AppendLine();
+        IPBinInformation.AppendFormat(Localization.Initial_program_address_0, ipbin.ip_address).AppendLine();
+        IPBinInformation.AppendFormat(Localization.Initial_program_load_size_0, ipbin.ip_loadsize).AppendLine();
 
-        IPBinInformation.AppendFormat("Initial program entry address: 0x{0:X8}", ipbin.ip_entry_address).AppendLine();
+        IPBinInformation.AppendFormat(Localization.Initial_program_entry_address_0, ipbin.ip_entry_address).
+                         AppendLine();
 
-        IPBinInformation.AppendFormat("Initial program work RAM: {0} bytes", ipbin.ip_work_ram_size).AppendLine();
-        IPBinInformation.AppendFormat("System program address: 0x{0:X8}", ipbin.sp_address).AppendLine();
-        IPBinInformation.AppendFormat("System program load size: {0} bytes", ipbin.sp_loadsize).AppendLine();
+        IPBinInformation.AppendFormat(Localization.Initial_program_work_RAM_0, ipbin.ip_work_ram_size).AppendLine();
+        IPBinInformation.AppendFormat(Localization.System_program_address_0, ipbin.sp_address).AppendLine();
+        IPBinInformation.AppendFormat(Localization.System_program_load_size_0, ipbin.sp_loadsize).AppendLine();
 
-        IPBinInformation.AppendFormat("System program entry address: 0x{0:X8}", ipbin.sp_entry_address).AppendLine();
+        IPBinInformation.AppendFormat(Localization.System_program_entry_address_0, ipbin.sp_entry_address).AppendLine();
 
-        IPBinInformation.AppendFormat("System program work RAM: {0} bytes", ipbin.sp_work_ram_size).AppendLine();
+        IPBinInformation.AppendFormat(Localization.System_program_work_RAM_0, ipbin.sp_work_ram_size).AppendLine();
 
         if(ipbindate != DateTime.MinValue)
-            IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
+            IPBinInformation.AppendFormat(Localization.Release_date_0, ipbindate).AppendLine();
 
         //IPBinInformation.AppendFormat("Release date (other format): {0}", Encoding.ASCII.GetString(release_date2)).AppendLine();
-        IPBinInformation.AppendFormat("Hardware ID: {0}", Encoding.ASCII.GetString(ipbin.hardware_id)).AppendLine();
-
-        IPBinInformation.AppendFormat("Developer code: {0}", Encoding.ASCII.GetString(ipbin.developer_code)).
+        IPBinInformation.AppendFormat(Localization.Hardware_ID_0, Encoding.ASCII.GetString(ipbin.hardware_id)).
                          AppendLine();
 
-        IPBinInformation.AppendFormat("Domestic title: {0}", Encoding.ASCII.GetString(ipbin.domestic_title)).
+        IPBinInformation.AppendFormat(Localization.Developer_code_0, Encoding.ASCII.GetString(ipbin.developer_code)).
                          AppendLine();
 
-        IPBinInformation.AppendFormat("Overseas title: {0}", Encoding.ASCII.GetString(ipbin.overseas_title)).
+        IPBinInformation.AppendFormat(Localization.Domestic_title_0, Encoding.ASCII.GetString(ipbin.domestic_title)).
                          AppendLine();
 
-        IPBinInformation.AppendFormat("Product code: {0}", Encoding.ASCII.GetString(ipbin.product_code)).AppendLine();
+        IPBinInformation.AppendFormat(Localization.Overseas_title_0, Encoding.ASCII.GetString(ipbin.overseas_title)).
+                         AppendLine();
 
-        IPBinInformation.AppendFormat("Peripherals:").AppendLine();
+        IPBinInformation.AppendFormat(Localization.Product_code_0, Encoding.ASCII.GetString(ipbin.product_code)).
+                         AppendLine();
+
+        IPBinInformation.AppendFormat(Localization.Peripherals).AppendLine();
 
         foreach(byte peripheral in ipbin.peripherals)
             switch((char)peripheral)
             {
                 case 'A':
-                    IPBinInformation.AppendLine("Game supports analog controller.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_analog_controller);
 
                     break;
                 case 'B':
-                    IPBinInformation.AppendLine("Game supports trackball.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_trackball);
 
                     break;
                 case 'G':
-                    IPBinInformation.AppendLine("Game supports light gun.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_light_gun);
 
                     break;
                 case 'J':
-                    IPBinInformation.AppendLine("Game supports JoyPad.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_JoyPad);
 
                     break;
                 case 'K':
-                    IPBinInformation.AppendLine("Game supports keyboard.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_keyboard);
 
                     break;
                 case 'M':
-                    IPBinInformation.AppendLine("Game supports mouse.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_mouse);
 
                     break;
                 case 'O':
-                    IPBinInformation.AppendLine("Game supports Master System's JoyPad.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_Master_System_JoyPad);
 
                     break;
                 case 'P':
-                    IPBinInformation.AppendLine("Game supports printer interface.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_printer_interface);
 
                     break;
                 case 'R':
-                    IPBinInformation.AppendLine("Game supports serial (RS-232C) interface.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_serial_RS_232C_interface);
 
                     break;
                 case 'T':
-                    IPBinInformation.AppendLine("Game supports tablet interface.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_tablet_interface);
 
                     break;
                 case 'V':
-                    IPBinInformation.AppendLine("Game supports paddle controller.");
+                    IPBinInformation.AppendLine(Localization.Game_supports_paddle_controller);
 
                     break;
                 case ' ': break;
                 default:
-                    IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
+                    IPBinInformation.AppendFormat(Localization.Game_supports_unknown_peripheral_0, peripheral).
+                                     AppendLine();
 
                     break;
             }
 
-        IPBinInformation.AppendLine("Regions supported:");
+        IPBinInformation.AppendLine(Localization.Regions_supported);
 
         foreach(byte region in ipbin.region_codes)
             switch((char)region)
             {
                 case 'J':
-                    IPBinInformation.AppendLine("Japanese NTSC.");
+                    IPBinInformation.AppendLine(Localization.Japanese_NTSC);
 
                     break;
                 case 'U':
-                    IPBinInformation.AppendLine("USA NTSC.");
+                    IPBinInformation.AppendLine(Localization.USA_NTSC);
 
                     break;
                 case 'E':
-                    IPBinInformation.AppendLine("Europe PAL.");
+                    IPBinInformation.AppendLine(Localization.Europe_PAL);
 
                     break;
                 case ' ': break;
                 default:
-                    IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
+                    IPBinInformation.AppendFormat(Localization.Game_supports_unknown_region_0, region).AppendLine();
 
                     break;
             }

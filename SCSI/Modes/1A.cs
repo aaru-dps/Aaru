@@ -138,45 +138,47 @@ public static partial class Modes
         sb.AppendLine("SCSI Power condition page:");
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page is { Standby  : true, StandbyTimer  : > 0 } ||
            page is { Standby_Y: true, StandbyTimer_Y: > 0 })
         {
             if(page is { Standby: true, StandbyTimer: > 0 })
-                sb.AppendFormat("\tStandby timer Z is set to {0} ms", page.StandbyTimer * 100).AppendLine();
+                sb.AppendFormat("\t" + "Standby timer Z is set to {0} ms", page.StandbyTimer * 100).AppendLine();
 
             if(page is { Standby_Y: true, StandbyTimer_Y: > 0 })
-                sb.AppendFormat("\tStandby timer Y is set to {0} ms", page.StandbyTimer_Y * 100).AppendLine();
+                sb.AppendFormat("\t" + "Standby timer Y is set to {0} ms", page.StandbyTimer_Y * 100).AppendLine();
         }
         else
-            sb.AppendLine("\tDrive will not enter standby mode");
+            sb.AppendLine("\t" + "Drive will not enter standby mode");
 
         if(page is { Idle  : true, IdleTimer  : > 0 } ||
            page is { Idle_B: true, IdleTimer_B: > 0 } ||
            page is { Idle_C: true, IdleTimer_C: > 0 })
         {
             if(page is { Idle: true, IdleTimer: > 0 })
-                sb.AppendFormat("\tIdle timer A is set to {0} ms", page.IdleTimer * 100).AppendLine();
+                sb.AppendFormat("\t" + "Idle timer A is set to {0} ms", page.IdleTimer * 100).AppendLine();
 
             if(page is { Idle_B: true, IdleTimer_B: > 0 })
-                sb.AppendFormat("\tIdle timer B is set to {0} ms", page.IdleTimer_B * 100).AppendLine();
+                sb.AppendFormat("\t" + "Idle timer B is set to {0} ms", page.IdleTimer_B * 100).AppendLine();
 
             if(page is { Idle_C: true, IdleTimer_C: > 0 })
-                sb.AppendFormat("\tIdle timer C is set to {0} ms", page.IdleTimer_C * 100).AppendLine();
+                sb.AppendFormat("\t" + "Idle timer C is set to {0} ms", page.IdleTimer_C * 100).AppendLine();
         }
         else
-            sb.AppendLine("\tDrive will not enter idle mode");
+            sb.AppendLine("\t" + "Drive will not enter idle mode");
 
         switch(page.PM_BG_Precedence)
         {
             case 0: break;
             case 1:
-                sb.AppendLine("\tPerforming background functions take precedence over maintaining low power conditions");
+                sb.AppendLine("\t" +
+                              "Performing background functions take precedence over maintaining low power conditions");
 
                 break;
             case 2:
-                sb.AppendLine("\tMaintaining low power conditions take precedence over performing background functions");
+                sb.AppendLine("\t" +
+                              "Maintaining low power conditions take precedence over performing background functions");
 
                 break;
         }
@@ -234,28 +236,29 @@ public static partial class Modes
         ModePage_1A_S01 page = modePage.Value;
         var             sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Power Consumption page:");
+        sb.AppendLine(Localization.SCSI_Power_Consumption_page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.ActiveLevel)
         {
             case 0:
-                sb.AppendFormat("\tDevice power consumption is dictated by identifier {0} of Power Consumption VPD",
-                                page.PowerConsumptionIdentifier).AppendLine();
+                sb.
+                    AppendFormat("\t" + Localization.Device_power_consumption_is_dictated_by_identifier_0_of_Power_Consumption_VPD,
+                                 page.PowerConsumptionIdentifier).AppendLine();
 
                 break;
             case 1:
-                sb.AppendLine("\tDevice is in highest relative power consumption level");
+                sb.AppendLine("\t" + Localization.Device_is_in_highest_relative_power_consumption_level);
 
                 break;
             case 2:
-                sb.AppendLine("\tDevice is in intermediate relative power consumption level");
+                sb.AppendLine("\t" + Localization.Device_is_in_intermediate_relative_power_consumption_level);
 
                 break;
             case 3:
-                sb.AppendLine("\tDevice is in lowest relative power consumption level");
+                sb.AppendLine("\t" + Localization.Device_is_in_lowest_relative_power_consumption_level);
 
                 break;
         }

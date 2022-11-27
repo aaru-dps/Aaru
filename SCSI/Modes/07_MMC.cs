@@ -85,30 +85,34 @@ public static partial class Modes
         ModePage_07_MMC page = modePage.Value;
         var             sb   = new StringBuilder();
 
-        sb.AppendLine("SCSI Verify error recovery page for MultiMedia Devices:");
+        sb.AppendLine(Localization.SCSI_Verify_error_recovery_page_for_MultiMedia_Devices);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.VerifyRetryCount > 0)
-            sb.AppendFormat("\tDrive will repeat verify operations {0} times", page.VerifyRetryCount).AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_will_repeat_verify_operations_0_times, page.VerifyRetryCount).
+               AppendLine();
 
-        const string AllUsed              = "\tAll available recovery procedures will be used.\n";
-        const string CIRCRetriesUsed      = "\tOnly retries and CIRC are used.\n";
-        const string RetriesUsed          = "\tOnly retries are used.\n";
-        const string RecoveredNotReported = "\tRecovered errors will not be reported.\n";
-        const string RecoveredReported    = "\tRecovered errors will be reported.\n";
-        const string RecoveredAbort       = "\tRecovered errors will be reported and aborted with CHECK CONDITION.\n";
-        const string UnrecECCAbort        = "\tUnrecovered ECC errors will return CHECK CONDITION.";
-        const string UnrecCIRCAbort       = "\tUnrecovered CIRC errors will return CHECK CONDITION.";
-        const string UnrecECCNotAbort     = "\tUnrecovered ECC errors will not abort the transfer.";
-        const string UnrecCIRCNotAbort    = "\tUnrecovered CIRC errors will not abort the transfer.";
+        string AllUsed              = "\t" + Localization.All_available_recovery_procedures_will_be_used + "\n";
+        string CIRCRetriesUsed      = "\t" + Localization.Only_retries_and_CIRC_are_used                 + "\n";
+        string RetriesUsed          = "\t" + Localization.Only_retries_are_used                          + "\n";
+        string RecoveredNotReported = "\t" + Localization.Recovered_errors_will_not_be_reported          + "\n";
+        string RecoveredReported    = "\t" + Localization.Recovered_errors_will_be_reported              + "\n";
 
-        const string UnrecECCAbortData =
-            "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
+        string RecoveredAbort = "\t" + Localization.Recovered_errors_will_be_reported_and_aborted_with_CHECK_CONDITION +
+                                "\n";
 
-        const string UnrecCIRCAbortData =
-            "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";
+        string UnrecECCAbort     = "\t" + Localization.Unrecovered_ECC_errors_will_return_CHECK_CONDITION;
+        string UnrecCIRCAbort    = "\t" + Localization.Unrecovered_CIRC_errors_will_return_CHECK_CONDITION;
+        string UnrecECCNotAbort  = "\t" + Localization.Unrecovered_ECC_errors_will_not_abort_the_transfer;
+        string UnrecCIRCNotAbort = "\t" + Localization.Unrecovered_CIRC_errors_will_not_abort_the_transfer;
+
+        string UnrecECCAbortData =
+            "\t" + Localization.Unrecovered_ECC_errors_will_return_CHECK_CONDITION_and_the_uncorrected_data;
+
+        string UnrecCIRCAbortData =
+            "\t" + Localization.Unrecovered_CIRC_errors_will_return_CHECK_CONDITION_and_the_uncorrected_data;
 
         switch(page.Parameter)
         {
@@ -181,7 +185,7 @@ public static partial class Modes
             case 0x34: goto case 0x14;
             case 0x35: goto case 0x15;
             default:
-                sb.AppendFormat("Unknown recovery parameter 0x{0:X2}", page.Parameter).AppendLine();
+                sb.AppendFormat(Localization.Unknown_recovery_parameter_0, page.Parameter).AppendLine();
 
                 break;
         }

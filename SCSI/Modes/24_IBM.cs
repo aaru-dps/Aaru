@@ -86,21 +86,21 @@ public static partial class Modes
         IBM_ModePage_24 page = modePage.Value;
         var             sb   = new StringBuilder();
 
-        sb.AppendLine("IBM Vendor-Specific Control Mode Page:");
+        sb.AppendLine(Localization.IBM_Vendor_Specific_Control_Mode_Page);
 
         if(page.PS)
-            sb.AppendLine("\tParameters can be saved");
+            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\tVendor-specific mode control: {0}", page.ModeControl);
-        sb.AppendFormat("\tVendor-specific velocity setting: {0}", page.VelocitySetting);
+        sb.AppendFormat("\t" + Localization.Vendor_specific_mode_control_0, page.ModeControl);
+        sb.AppendFormat("\t" + Localization.Vendor_specific_velocity_setting_0, page.VelocitySetting);
 
         if(!page.EncryptionCapable)
             return sb.ToString();
 
-        sb.AppendLine("\tDrive supports encryption");
+        sb.AppendLine("\t" + Localization.Drive_supports_encryption);
 
         if(page.EncryptionEnabled)
-            sb.AppendLine("\tDrive has encryption enabled");
+            sb.AppendLine("\t" + Localization.Drive_has_encryption_enabled);
 
         return sb.ToString();
     }

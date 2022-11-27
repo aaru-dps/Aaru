@@ -80,7 +80,8 @@ public static class Spare
         if(SAIResponse.Length != 16)
         {
             AaruConsole.DebugWriteLine("BD Spare Area Information decoder",
-                                       "Found incorrect Blu-ray Spare Area Information size ({0} bytes)",
+                                       Localization.
+                                           Spare_Decode_Found_incorrect_Blu_ray_Spare_Area_Information_size_0_bytes,
                                        SAIResponse.Length);
 
             return null;
@@ -110,16 +111,16 @@ public static class Spare
 
     #if DEBUG
         if(response.Reserved1 != 0)
-            sb.AppendFormat("Reserved1 = 0x{0:X2}", response.Reserved1).AppendLine();
+            sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
-            sb.AppendFormat("Reserved2 = 0x{0:X2}", response.Reserved2).AppendLine();
+            sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
 
         if(response.Reserved3 != 0)
-            sb.AppendFormat("Reserved3 = 0x{0:X8}", response.Reserved3).AppendLine();
+            sb.AppendFormat(Localization.Reserved3_equals_0_X8, response.Reserved3).AppendLine();
     #endif
-        sb.AppendFormat("{0} free spare blocks", response.FreeSpareBlocks).AppendLine();
-        sb.AppendFormat("{0} allocated spare blocks", response.AllocatedSpareBlocks).AppendLine();
+        sb.AppendFormat(Localization._0_free_spare_blocks, response.FreeSpareBlocks).AppendLine();
+        sb.AppendFormat(Localization._0_allocated_spare_blocks, response.AllocatedSpareBlocks).AppendLine();
 
         return sb.ToString();
     }
