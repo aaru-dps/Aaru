@@ -47,7 +47,7 @@ public interface IFilesystem
 {
     /// <summary>Defines the encoding used to interpret strings in the filesystem</summary>
     Encoding Encoding { get; }
-    /// <summary>Plugin name.</summary>
+    /// <summary>Plugin name (translatable).</summary>
     string Name { get; }
     /// <summary>Plugin UUID.</summary>
     Guid Id { get; }
