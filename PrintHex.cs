@@ -56,7 +56,7 @@ public static class PrintHex
 
         // TODO: Color list
         // TODO: Allow to change width
-        string str          = "Offset";
+        string str          = Localization.Offset;
         int    rows         = array.Length / width;
         int    last         = array.Length % width;
         int    offsetLength = $"{array.Length:X}".Length;

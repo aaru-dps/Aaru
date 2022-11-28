@@ -49,7 +49,7 @@ public static partial class ArrayHelpers
         ArgumentNullException.ThrowIfNull(destinationArray);
 
         if(value.Length > destinationArray.Length)
-            throw new ArgumentException("Length of value array must not be more than length of destination");
+            throw new ArgumentException(Localization.Length_of_value_array_must_not_be_more_than_length_of_destination);
 
         // set the initial array value
         Array.Copy(value, destinationArray, value.Length);
