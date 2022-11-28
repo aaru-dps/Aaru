@@ -49,16 +49,18 @@ public sealed class BFS : IFilesystem
 {
     const uint BFS_MAGIC = 0x1BADFACE;
 
+    const string FS_TYPE = "bfs";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "UNIX Boot filesystem";
+    public string Name => Localization.BFS_Name;
     /// <inheritdoc />
     public Guid Id => new("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -116,17 +118,17 @@ public sealed class BFS : IFilesystem
         AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_fsname: 0x{0}", bfsSb.s_fsname);
         AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_volume: 0x{0}", bfsSb.s_volume);
 
-        sb.AppendLine("UNIX Boot filesystem");
+        sb.AppendLine(Localization.UNIX_Boot_Filesystem);
 
-        sb.AppendFormat("Volume goes from byte {0} to byte {1}, for {2} bytes", bfsSb.s_start, bfsSb.s_end,
+        sb.AppendFormat(Localization.Volume_goes_from_byte_0_to_byte_1_for_2_bytes, bfsSb.s_start, bfsSb.s_end,
                         bfsSb.s_end - bfsSb.s_start).AppendLine();
 
-        sb.AppendFormat("Filesystem name: {0}", bfsSb.s_fsname).AppendLine();
-        sb.AppendFormat("Volume name: {0}", bfsSb.s_volume).AppendLine();
+        sb.AppendFormat(Localization.Filesystem_name_0, bfsSb.s_fsname).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, bfsSb.s_volume).AppendLine();
 
         XmlFsType = new FileSystemType
         {
-            Type        = "BFS",
+            Type        = FS_TYPE,
             VolumeName  = bfsSb.s_volume,
             ClusterSize = imagePlugin.Info.SectorSize,
             Clusters    = partition.End - partition.Start + 1

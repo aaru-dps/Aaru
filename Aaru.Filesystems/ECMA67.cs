@@ -46,6 +46,7 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem described in ECMA-67</summary>
 public sealed class ECMA67 : IFilesystem
 {
+    const string FS_TYPE = "ecma67";
     readonly byte[] _magic =
     {
         0x56, 0x4F, 0x4C
@@ -54,13 +55,13 @@ public sealed class ECMA67 : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "ECMA-67";
+    public string Name => Localization.ECMA67_Name;
     /// <inheritdoc />
     public Guid Id => new("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -98,14 +99,16 @@ public sealed class ECMA67 : IFilesystem
 
         VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
 
-        sbInformation.AppendLine("ECMA-67");
+        sbInformation.AppendLine(Localization.ECMA_67);
 
-        sbInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(vol.volumeIdentifier)).AppendLine();
-        sbInformation.AppendFormat("Volume owner: {0}", Encoding.ASCII.GetString(vol.owner)).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_name_0, Encoding.ASCII.GetString(vol.volumeIdentifier)).
+                      AppendLine();
+
+        sbInformation.AppendFormat(Localization.Volume_owner_0, Encoding.ASCII.GetString(vol.owner)).AppendLine();
 
         XmlFsType = new FileSystemType
         {
-            Type        = "ECMA-67",
+            Type        = FS_TYPE,
             ClusterSize = 256,
             Clusters    = partition.End - partition.Start + 1,
             VolumeName  = Encoding.ASCII.GetString(vol.volumeIdentifier)

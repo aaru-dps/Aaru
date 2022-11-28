@@ -71,7 +71,7 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
     /// <inheritdoc />
     public Guid Id => new("d812f4d3-c357-400d-90fd-3b22ef786aa8");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions =>

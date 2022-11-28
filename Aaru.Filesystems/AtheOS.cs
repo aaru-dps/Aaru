@@ -62,11 +62,11 @@ public sealed class AtheOS : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "AtheOS Filesystem";
+    public string Name => Localization.AtheOS_Name;
     /// <inheritdoc />
     public Guid Id => new("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -123,51 +123,51 @@ public sealed class AtheOS : IFilesystem
 
         SuperBlock afsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
 
-        sb.AppendLine("Atheos filesystem");
+        sb.AppendLine(Localization.Atheos_filesystem);
 
         if(afsSb.flags == 1)
-            sb.AppendLine("Filesystem is read-only");
+            sb.AppendLine(Localization.Filesystem_is_read_only);
 
-        sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afsSb.name, Encoding)).AppendLine();
-        sb.AppendFormat("{0} bytes per block", afsSb.block_size).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(afsSb.name, Encoding)).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block, afsSb.block_size).AppendLine();
 
-        sb.AppendFormat("{0} blocks in volume ({1} bytes)", afsSb.num_blocks, afsSb.num_blocks * afsSb.block_size).
+        sb.AppendFormat(Localization._0_blocks_in_volume_1_bytes, afsSb.num_blocks,
+                        afsSb.num_blocks * afsSb.block_size).AppendLine();
+
+        sb.AppendFormat(Localization._0_used_blocks_1_bytes, afsSb.used_blocks, afsSb.used_blocks * afsSb.block_size).
            AppendLine();
 
-        sb.AppendFormat("{0} used blocks ({1} bytes)", afsSb.used_blocks, afsSb.used_blocks * afsSb.block_size).
-           AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_i_node, afsSb.inode_size).AppendLine();
 
-        sb.AppendFormat("{0} bytes per i-node", afsSb.inode_size).AppendLine();
-
-        sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", afsSb.blocks_per_ag,
+        sb.AppendFormat(Localization._0_blocks_per_allocation_group_1_bytes, afsSb.blocks_per_ag,
                         afsSb.blocks_per_ag * afsSb.block_size).AppendLine();
 
-        sb.AppendFormat("{0} allocation groups in volume", afsSb.num_ags).AppendLine();
+        sb.AppendFormat(Localization._0_allocation_groups_in_volume, afsSb.num_ags).AppendLine();
 
-        sb.AppendFormat("Journal resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+        sb.AppendFormat(Localization.Journal_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
                         afsSb.log_blocks_start, afsSb.log_blocks_ag, afsSb.log_blocks_len,
                         afsSb.log_blocks_len * afsSb.block_size).AppendLine();
 
-        sb.AppendFormat("Journal starts in byte {0} and has {1} bytes in {2} blocks", afsSb.log_start, afsSb.log_size,
-                        afsSb.log_valid_blocks).AppendLine();
+        sb.AppendFormat(Localization.Journal_starts_in_byte_0_and_has_1_bytes_in_2_blocks, afsSb.log_start,
+                        afsSb.log_size, afsSb.log_valid_blocks).AppendLine();
 
         sb.
-            AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+            AppendFormat(Localization.Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
                          afsSb.root_dir_start, afsSb.root_dir_ag, afsSb.root_dir_len,
                          afsSb.root_dir_len * afsSb.block_size).AppendLine();
 
         sb.
-            AppendFormat("Directory containing files scheduled for deletion's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+            AppendFormat(Localization.Directory_containing_files_scheduled_for_deletion_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
                          afsSb.deleted_start, afsSb.deleted_ag, afsSb.deleted_len,
                          afsSb.deleted_len * afsSb.block_size).AppendLine();
 
         sb.
-            AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+            AppendFormat(Localization.Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
                          afsSb.indices_start, afsSb.indices_ag, afsSb.indices_len,
                          afsSb.indices_len * afsSb.block_size).AppendLine();
 
-        sb.AppendFormat("{0} blocks for bootloader ({1} bytes)", afsSb.boot_size, afsSb.boot_size * afsSb.block_size).
-           AppendLine();
+        sb.AppendFormat(Localization._0_blocks_for_bootloader_1_bytes, afsSb.boot_size,
+                        afsSb.boot_size * afsSb.block_size).AppendLine();
 
         information = sb.ToString();
 
@@ -178,10 +178,12 @@ public sealed class AtheOS : IFilesystem
             Dirty                 = false,
             FreeClusters          = (ulong)(afsSb.num_blocks - afsSb.used_blocks),
             FreeClustersSpecified = true,
-            Type                  = "AtheOS filesystem",
+            Type                  = FS_TYPE,
             VolumeName            = StringHandlers.CToString(afsSb.name, Encoding)
         };
     }
+
+    const string FS_TYPE = "atheos";
 
     /// <summary>Be superblock</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

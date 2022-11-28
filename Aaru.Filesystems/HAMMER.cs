@@ -57,16 +57,18 @@ public sealed class HAMMER : IFilesystem
     const uint  HAMMER_VOLHDR_SIZE      = 1928;
     const int   HAMMER_BIGBLOCK_SIZE    = 8192 * 1024;
 
+    const string FS_TYPE = "hammer";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "HAMMER Filesystem";
+    public string Name => Localization.HAMMER_Name;
     /// <inheritdoc />
     public Guid Id => new("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -113,40 +115,42 @@ public sealed class HAMMER : IFilesystem
                                     ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)
                                     : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
-        sb.AppendLine("HAMMER filesystem");
+        sb.AppendLine(Localization.HAMMER_filesystem);
 
-        sb.AppendFormat("Volume version: {0}", superBlock.vol_version).AppendLine();
+        sb.AppendFormat(Localization.Volume_version_0, superBlock.vol_version).AppendLine();
 
-        sb.AppendFormat("Volume {0} of {1} on this filesystem", superBlock.vol_no + 1, superBlock.vol_count).
+        sb.AppendFormat(Localization.Volume_0_of_1_on_this_filesystem, superBlock.vol_no + 1, superBlock.vol_count).
            AppendLine();
 
-        sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(superBlock.vol_label, Encoding)).AppendLine();
-        sb.AppendFormat("Volume serial: {0}", superBlock.vol_fsid).AppendLine();
-        sb.AppendFormat("Filesystem type: {0}", superBlock.vol_fstype).AppendLine();
-        sb.AppendFormat("Boot area starts at {0}", superBlock.vol_bot_beg).AppendLine();
-        sb.AppendFormat("Memory log starts at {0}", superBlock.vol_mem_beg).AppendLine();
-        sb.AppendFormat("First volume buffer starts at {0}", superBlock.vol_buf_beg).AppendLine();
-        sb.AppendFormat("Volume ends at {0}", superBlock.vol_buf_end).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(superBlock.vol_label, Encoding)).
+           AppendLine();
+
+        sb.AppendFormat(Localization.Volume_serial_0, superBlock.vol_fsid).AppendLine();
+        sb.AppendFormat(Localization.Filesystem_type_0, superBlock.vol_fstype).AppendLine();
+        sb.AppendFormat(Localization.Boot_area_starts_at_0, superBlock.vol_bot_beg).AppendLine();
+        sb.AppendFormat(Localization.Memory_log_starts_at_0, superBlock.vol_mem_beg).AppendLine();
+        sb.AppendFormat(Localization.First_volume_buffer_starts_at_0, superBlock.vol_buf_beg).AppendLine();
+        sb.AppendFormat(Localization.Volume_ends_at_0, superBlock.vol_buf_end).AppendLine();
 
         XmlFsType = new FileSystemType
         {
             Clusters     = partition.Size / HAMMER_BIGBLOCK_SIZE,
             ClusterSize  = HAMMER_BIGBLOCK_SIZE,
             Dirty        = false,
-            Type         = "HAMMER",
+            Type         = FS_TYPE,
             VolumeName   = StringHandlers.CToString(superBlock.vol_label, Encoding),
             VolumeSerial = superBlock.vol_fsid.ToString()
         };
 
         if(superBlock.vol_no == superBlock.vol_rootvol)
         {
-            sb.AppendFormat("Filesystem contains {0} \"big-blocks\" ({1} bytes)", superBlock.vol0_stat_bigblocks,
+            sb.AppendFormat(Localization.Filesystem_contains_0_big_blocks_1_bytes, superBlock.vol0_stat_bigblocks,
                             superBlock.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
 
-            sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)", superBlock.vol0_stat_freebigblocks,
+            sb.AppendFormat(Localization.Filesystem_has_0_big_blocks_free_1_bytes, superBlock.vol0_stat_freebigblocks,
                             superBlock.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
 
-            sb.AppendFormat("Filesystem has {0} inode used", superBlock.vol0_stat_inodes).AppendLine();
+            sb.AppendFormat(Localization.Filesystem_has_0_inodes_used, superBlock.vol0_stat_inodes).AppendLine();
 
             XmlFsType.Clusters              = (ulong)superBlock.vol0_stat_bigblocks;
             XmlFsType.FreeClusters          = (ulong)superBlock.vol0_stat_freebigblocks;

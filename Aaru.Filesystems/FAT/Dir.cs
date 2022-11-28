@@ -247,7 +247,7 @@ public sealed partial class FAT
                 if(name      == "" &&
                    extension == "")
                 {
-                    AaruConsole.DebugWriteLine("FAT filesystem", "Found empty filename in {0}", path);
+                    AaruConsole.DebugWriteLine("FAT filesystem", Localization.Found_empty_filename_in_0, path);
 
                     if(!_debug ||
                        dirent is { size: > 0, start_cluster: 0 })

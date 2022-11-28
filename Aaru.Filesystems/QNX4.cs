@@ -59,11 +59,11 @@ public sealed class QNX4 : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "QNX4 Plugin";
+    public string Name => Localization.QNX4_Name;
     /// <inheritdoc />
     public Guid Id => new("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -196,11 +196,13 @@ public sealed class QNX4 : IFilesystem
         AaruConsole.DebugWriteLine("QNX4 plugin", "qnxSb.altBoot.di_status = {0}", qnxSb.altBoot.di_status);
         */
 
-        information = $"QNX4 filesystem\nCreated on {DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime)}\n";
+        information = Localization.QNX4_filesystem + "\n" +
+                      string.Format(Localization.Created_on_0,
+                                    DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime)) + "\n";
 
         XmlFsType = new FileSystemType
         {
-            Type                      = "QNX4 filesystem",
+            Type                      = FS_TYPE,
             Clusters                  = partition.Length,
             ClusterSize               = 512,
             CreationDate              = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime),
@@ -211,6 +213,8 @@ public sealed class QNX4 : IFilesystem
 
         XmlFsType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
     }
+
+    const string FS_TYPE = "qnx4";
 
     struct Extent
     {

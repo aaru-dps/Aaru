@@ -63,7 +63,7 @@ public sealed partial class XboxFatPlugin
         if(imagePlugin.Info.SectorSize < 512)
             return ErrorNumber.InvalidArgument;
 
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading superblock");
+        AaruConsole.DebugWriteLine("Xbox FAT plugin", Localization.Reading_superblock);
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
@@ -82,7 +82,8 @@ public sealed partial class XboxFatPlugin
             return ErrorNumber.InvalidArgument;
 
         AaruConsole.DebugWriteLine("Xbox FAT plugin",
-                                   _littleEndian ? "Filesystem is little endian" : "Filesystem is big endian");
+                                   _littleEndian ? Localization.Filesystem_is_little_endian
+                                       : Localization.Filesystem_is_big_endian);
 
         int logicalSectorsPerPhysicalSectors = partition.Offset == 0 && _littleEndian ? 8 : 1;
 
@@ -95,7 +96,7 @@ public sealed partial class XboxFatPlugin
 
         XmlFsType = new FileSystemType
         {
-            Type = "FATX filesystem",
+            Type = Localization.FATX_filesystem,
             ClusterSize = (uint)(_superblock.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
                                  imagePlugin.Info.SectorSize),
             VolumeName   = volumeLabel,
@@ -137,7 +138,7 @@ public sealed partial class XboxFatPlugin
 
         if(_statfs.Blocks > MAX_XFAT16_CLUSTERS)
         {
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading FAT32");
+            AaruConsole.DebugWriteLine("Xbox FAT plugin", Localization.Reading_FAT32);
 
             fatSize = (uint)((_statfs.Blocks + 1) * sizeof(uint) / imagePlugin.Info.SectorSize);
 
@@ -151,14 +152,14 @@ public sealed partial class XboxFatPlugin
 
             fatSize = (uint)(fatClusters * 4096 / imagePlugin.Info.SectorSize);
 
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
+            AaruConsole.DebugWriteLine("Xbox FAT plugin", Localization.FAT_is_0_sectors, fatSize);
 
             errno = imagePlugin.ReadSectors(_fatStartSector, fatSize, out buffer);
 
             if(errno != ErrorNumber.NoError)
                 return errno;
 
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "Casting FAT");
+            AaruConsole.DebugWriteLine("Xbox FAT plugin", Localization.Casting_FAT);
             _fat32 = MemoryMarshal.Cast<byte, uint>(buffer).ToArray();
 
             if(!_littleEndian)
@@ -172,7 +173,7 @@ public sealed partial class XboxFatPlugin
         }
         else
         {
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading FAT16");
+            AaruConsole.DebugWriteLine("Xbox FAT plugin", Localization.Reading_FAT16);
 
             fatSize = (uint)((_statfs.Blocks + 1) * sizeof(ushort) / imagePlugin.Info.SectorSize);
 
@@ -186,14 +187,14 @@ public sealed partial class XboxFatPlugin
 
             fatSize = (uint)(fatClusters * 4096 / imagePlugin.Info.SectorSize);
 
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
+            AaruConsole.DebugWriteLine("Xbox FAT plugin", Localization.FAT_is_0_sectors, fatSize);
 
             errno = imagePlugin.ReadSectors(_fatStartSector, fatSize, out buffer);
 
             if(errno != ErrorNumber.NoError)
                 return errno;
 
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "Casting FAT");
+            AaruConsole.DebugWriteLine("Xbox FAT plugin", Localization.Casting_FAT);
             _fat16 = MemoryMarshal.Cast<byte, ushort>(buffer).ToArray();
 
             if(!_littleEndian)
@@ -222,7 +223,7 @@ public sealed partial class XboxFatPlugin
 
         byte[] rootDirectoryBuffer = new byte[_bytesPerCluster * rootDirectoryClusters.Length];
 
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading root directory");
+        AaruConsole.DebugWriteLine("Xbox FAT plugin", Localization.Reading_root_directory);
 
         for(int i = 0; i < rootDirectoryClusters.Length; i++)
         {

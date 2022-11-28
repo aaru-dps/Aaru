@@ -48,16 +48,17 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem used in 8-bit Commodore microcomputers</summary>
 public sealed class CBM : IFilesystem
 {
+    const string FS_TYPE = "cbmfs";
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
-    public string Name => "Commodore file system";
+    public string Name => Localization.CBM_Name;
     /// <inheritdoc />
     public Guid Id => new("D104744E-A376-450C-BAC0-1347C93F983B");
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -114,11 +115,11 @@ public sealed class CBM : IFilesystem
 
         var sbInformation = new StringBuilder();
 
-        sbInformation.AppendLine("Commodore file system");
+        sbInformation.AppendLine(Localization.Commodore_file_system);
 
         XmlFsType = new FileSystemType
         {
-            Type        = "Commodore file system",
+            Type        = FS_TYPE,
             Clusters    = imagePlugin.Info.Sectors,
             ClusterSize = 256
         };
@@ -132,27 +133,28 @@ public sealed class CBM : IFilesystem
 
             Header cbmHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
-            sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmHdr.directoryTrack,
+            sbInformation.AppendFormat(Localization.Directory_starts_at_track_0_sector_1, cbmHdr.directoryTrack,
                                        cbmHdr.directorySector).AppendLine();
 
-            sbInformation.AppendFormat("Disk DOS Version: {0}", Encoding.ASCII.GetString(new[]
+            sbInformation.AppendFormat(Localization.Disk_DOS_Version_0, Encoding.ASCII.GetString(new[]
             {
                 cbmHdr.diskDosVersion
             })).AppendLine();
 
-            sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new[]
+            sbInformation.AppendFormat(Localization.DOS_Version_0, Encoding.ASCII.GetString(new[]
             {
                 cbmHdr.dosVersion
             })).AppendLine();
 
-            sbInformation.AppendFormat("Disk Version: {0}", Encoding.ASCII.GetString(new[]
+            sbInformation.AppendFormat(Localization.Disk_Version_0, Encoding.ASCII.GetString(new[]
             {
                 cbmHdr.diskVersion
             })).AppendLine();
 
-            sbInformation.AppendFormat("Disk ID: {0}", cbmHdr.diskId).AppendLine();
+            sbInformation.AppendFormat(Localization.Disk_ID_0, cbmHdr.diskId).AppendLine();
 
-            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmHdr.name, Encoding)).AppendLine();
+            sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmHdr.name, Encoding)).
+                          AppendLine();
 
             XmlFsType.VolumeName   = StringHandlers.CToString(cbmHdr.name, Encoding);
             XmlFsType.VolumeSerial = $"{cbmHdr.diskId}";
@@ -166,20 +168,21 @@ public sealed class CBM : IFilesystem
 
             BAM cbmBam = Marshal.ByteArrayToStructureLittleEndian<BAM>(sector);
 
-            sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmBam.directoryTrack,
+            sbInformation.AppendFormat(Localization.Directory_starts_at_track_0_sector_1, cbmBam.directoryTrack,
                                        cbmBam.directorySector).AppendLine();
 
-            sbInformation.AppendFormat("Disk DOS type: {0}",
+            sbInformation.AppendFormat(Localization.Disk_DOS_type_0,
                                        Encoding.ASCII.GetString(BitConverter.GetBytes(cbmBam.dosType))).AppendLine();
 
-            sbInformation.AppendFormat("DOS Version: {0}", Encoding.ASCII.GetString(new[]
+            sbInformation.AppendFormat(Localization.DOS_Version_0, Encoding.ASCII.GetString(new[]
             {
                 cbmBam.dosVersion
             })).AppendLine();
 
-            sbInformation.AppendFormat("Disk ID: {0}", cbmBam.diskId).AppendLine();
+            sbInformation.AppendFormat(Localization.Disk_ID_0, cbmBam.diskId).AppendLine();
 
-            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(cbmBam.name, Encoding)).AppendLine();
+            sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmBam.name, Encoding)).
+                          AppendLine();
 
             XmlFsType.VolumeName   = StringHandlers.CToString(cbmBam.name, Encoding);
             XmlFsType.VolumeSerial = $"{cbmBam.diskId}";

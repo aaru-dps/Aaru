@@ -49,16 +49,17 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the DEC RT-11 filesystem</summary>
 public sealed class RT11 : IFilesystem
 {
+    const string FS_TYPE = "rt11";
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "RT-11 file system";
+    public string Name => Localization.RT11_Name;
     /// <inheritdoc />
     public Guid Id => new("DB3E2F98-8F98-463C-8126-E937843DA024");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -110,21 +111,22 @@ public sealed class RT11 : IFilesystem
         for(int i = 0; i < 512; i += 2)
             check += BitConverter.ToUInt16(hbSector, i);
 
-        sb.AppendFormat("Volume format is {0}", StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII)).
+        sb.AppendFormat(Localization.Volume_format_is_0,
+                        StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII)).AppendLine();
+
+        sb.AppendFormat(Localization._0_sectors_per_cluster_1_bytes, homeblock.cluster, homeblock.cluster * 512).
            AppendLine();
 
-        sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512).AppendLine();
-
-        sb.AppendFormat("First directory segment starts at block {0}", homeblock.rootBlock).AppendLine();
-        sb.AppendFormat("Volume owner is \"{0}\"", Encoding.GetString(homeblock.ownername).TrimEnd()).AppendLine();
-        sb.AppendFormat("Volume label: \"{0}\"", Encoding.GetString(homeblock.volname).TrimEnd()).AppendLine();
-        sb.AppendFormat("Checksum: 0x{0:X4} (calculated 0x{1:X4})", homeblock.checksum, check).AppendLine();
+        sb.AppendFormat(Localization.First_directory_segment_starts_at_block_0, homeblock.rootBlock).AppendLine();
+        sb.AppendFormat(Localization.Volume_owner_is_0, Encoding.GetString(homeblock.ownername).TrimEnd()).AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0, Encoding.GetString(homeblock.volname).TrimEnd()).AppendLine();
+        sb.AppendFormat(Localization.Checksum_0_calculated_1, homeblock.checksum, check).AppendLine();
 
         imagePlugin.ReadSector(0, out byte[] bootBlock);
 
         XmlFsType = new FileSystemType
         {
-            Type        = "RT-11",
+            Type        = FS_TYPE,
             ClusterSize = (uint)(homeblock.cluster * 512),
             Clusters    = homeblock.cluster,
             VolumeName  = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),

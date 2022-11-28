@@ -105,7 +105,7 @@ public sealed partial class CPM
                         _workingDefinition.side1.sectorIds.Length + _workingDefinition.side2.sectorIds.Length;
 
                 // TODO: Implement CYLINDERS ordering
-                AaruConsole.DebugWriteLine("CP/M Plugin", "CYLINDERS ordering not yet implemented.");
+                AaruConsole.DebugWriteLine("CP/M Plugin", Localization.CYLINDERS_ordering_not_yet_implemented);
 
                 return ErrorNumber.NotImplemented;
             }
@@ -115,7 +115,8 @@ public sealed partial class CPM
                     0)
             {
                 AaruConsole.DebugWriteLine("CP/M Plugin",
-                                           "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
+                                           Localization.
+                                               Dont_know_how_to_handle_COLUMBIA_ordering_not_proceeding_with_this_definition);
 
                 return ErrorNumber.NotImplemented;
             }
@@ -124,14 +125,15 @@ public sealed partial class CPM
             else if(string.Compare(_workingDefinition.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) == 0)
             {
                 AaruConsole.DebugWriteLine("CP/M Plugin",
-                                           "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
+                                           Localization.
+                                               Don_know_how_to_handle_EAGLE_ordering_not_proceeding_with_this_definition);
 
                 return ErrorNumber.NotImplemented;
             }
             else
             {
                 AaruConsole.DebugWriteLine("CP/M Plugin",
-                                           "Unknown order type \"{0}\", not proceeding with this definition.",
+                                           Localization.Unknown_order_type_0_not_proceeding_with_this_definition,
                                            _workingDefinition.order);
 
                 return ErrorNumber.NotSupported;
@@ -144,7 +146,7 @@ public sealed partial class CPM
         if(_workingDefinition.sides                                                                       == 1 ||
            string.Compare(_workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
         {
-            AaruConsole.DebugWriteLine("CP/M Plugin", "Deinterleaving whole volume.");
+            AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Deinterleaving_whole_volume);
 
             for(int p = 0; p <= (int)(partition.End - partition.Start); p++)
             {
@@ -169,7 +171,7 @@ public sealed partial class CPM
         int                       sectorsPerBlock  = 0;
         Dictionary<ulong, byte[]> allocationBlocks = new();
 
-        AaruConsole.DebugWriteLine("CP/M Plugin", "Creating allocation blocks.");
+        AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Creating_allocation_blocks);
 
         // For each volume sector
         for(ulong a = 0; a < (ulong)deinterleavedSectors.Count; a++)
@@ -204,7 +206,7 @@ public sealed partial class CPM
                 allocationBlocks.Add(blockNo++, sector);
         }
 
-        AaruConsole.DebugWriteLine("CP/M Plugin", "Reading directory.");
+        AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Reading_directory);
 
         int dirOff;
         int dirSectors = (_dpb.drm + 1) * 32 / _workingDefinition.bytesPerSector;
@@ -243,7 +245,7 @@ public sealed partial class CPM
         _labelUpdateDate   = null;
         _passwordCache     = new Dictionary<string, byte[]>();
 
-        AaruConsole.DebugWriteLine("CP/M Plugin", "Traversing directory.");
+        AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Traversing_directory);
 
         // For each directory entry
         for(int dOff = 0; dOff < directory.Length; dOff += 32)
@@ -777,7 +779,7 @@ public sealed partial class CPM
         _cpmStat.Files          = (ulong)_fileCache.Count;
         _cpmStat.FreeBlocks     = _cpmStat.Blocks - (ulong)usedBlocks;
         _cpmStat.PluginId       = Id;
-        _cpmStat.Type           = "CP/M filesystem";
+        _cpmStat.Type           = FS_TYPE;
 
         // Generate XML info
         XmlFsType = new FileSystemType
@@ -788,7 +790,7 @@ public sealed partial class CPM
             FilesSpecified        = true,
             FreeClusters          = _cpmStat.FreeBlocks,
             FreeClustersSpecified = true,
-            Type                  = "CP/M filesystem"
+            Type                  = FS_TYPE
         };
 
         if(_labelCreationDate != null)

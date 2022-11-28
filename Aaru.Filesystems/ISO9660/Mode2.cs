@@ -71,17 +71,20 @@ public sealed partial class ISO9660
                 switch(data.Length)
                 {
                     case 2048:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 0/1 / Mode 2 Form 1",
+                        AaruConsole.DebugWriteLine("ISO9660 Plugin",
+                                                   Localization.tor_Sector_0_Cooked_Mode_zero_one_Mode_two_Form_one,
                                                    realSector);
 
                         break;
                     case 2324:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 2 Form 2", realSector);
+                        AaruConsole.DebugWriteLine("ISO9660 Plugin", Localization.tor_Sector_0_Cooked_Mode_two_Form_two,
+                                                   realSector);
 
                         break;
                     case 2336:
                         AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                   "Sector {0}, Cooked, Mode 2 Form {1}, File Number {2}, Channel Number {3}, Submode {4}, Coding Information {5}",
+                                                   Localization.
+                                                       tor_Sector_0_Cooked_Mode_two_Form_1_File_Number_2_Channel_Number_3_Submode_4_Coding_Information_5,
                                                    realSector,
                                                    ((Mode2Submode)data[2]).HasFlag(Mode2Submode.Form2) ? 2 : 1, data[0],
                                                    data[1], (Mode2Submode)data[2], data[3]);
@@ -90,17 +93,18 @@ public sealed partial class ISO9660
                     case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
                                    data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
                                    data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Raw, Audio", realSector);
+                        AaruConsole.DebugWriteLine("ISO9660 Plugin", Localization.tor_Sector_0_Raw_Audio, realSector);
 
                         break;
                     case 2352 when data[15] != 2:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode {4}",
+                        AaruConsole.DebugWriteLine("ISO9660 Plugin", Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
                                                    realSector, data[12], data[13], data[14], data[15]);
 
                         break;
                     case 2352:
                         AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                   "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode 2 Form {4}, File Number {5}, Channel Number {6}, Submode {7}, Coding Information {8}",
+                                                   Localization.
+                                                       tor_Sector_0_1_2_3_Raw_Mode_two_Form_4_File_Number_5_Channel_Number_6_Submode_7_Coding_Information_8,
                                                    realSector, data[12], data[13], data[14],
                                                    ((Mode2Submode)data[18]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
                                                    data[16], data[17], (Mode2Submode)data[18], data[19]);
@@ -142,18 +146,20 @@ public sealed partial class ISO9660
                     switch(data.Length)
                     {
                         case 2048:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 0/1 / Mode 2 Form 1",
+                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
+                                                       Localization.tor_Sector_0_Cooked_Mode_zero_one_Mode_two_Form_one,
                                                        dstSector);
 
                             break;
                         case 2324:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 2 Form 2",
-                                                       dstSector);
+                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
+                                                       Localization.tor_Sector_0_Cooked_Mode_two_Form_two, dstSector);
 
                             break;
                         case 2336:
                             AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                       "Sector {0}, Cooked, Mode 2 Form {1}, File Number {2}, Channel Number {3}, Submode {4}, Coding Information {5}",
+                                                       Localization.
+                                                           tor_Sector_0_Cooked_Mode_two_Form_1_File_Number_2_Channel_Number_3_Submode_4_Coding_Information_5,
                                                        dstSector,
                                                        ((Mode2Submode)data[2]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
                                                        data[0], data[1], (Mode2Submode)data[2], data[3]);
@@ -162,18 +168,19 @@ public sealed partial class ISO9660
                         case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
                                        data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
                                        data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Raw, Audio", dstSector);
+                            AaruConsole.DebugWriteLine("ISO9660 Plugin", Localization.tor_Sector_0_Raw_Audio,
+                                                       dstSector);
 
                             break;
                         case 2352 when data[15] != 2:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                       "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode {4}", dstSector,
-                                                       data[12], data[13], data[14], data[15]);
+                            AaruConsole.DebugWriteLine("ISO9660 Plugin", Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
+                                                       dstSector, data[12], data[13], data[14], data[15]);
 
                             break;
                         case 2352:
                             AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                       "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode 2 Form {4}, File Number {5}, Channel Number {6}, Submode {7}, Coding Information {8}",
+                                                       Localization.
+                                                           tor_Sector_0_1_2_3_Raw_Mode_two_Form_4_File_Number_5_Channel_Number_6_Submode_7_Coding_Information_8,
                                                        dstSector, data[12], data[13], data[14],
                                                        ((Mode2Submode)data[18]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
                                                        data[16], data[17], (Mode2Submode)data[18], data[19]);

@@ -301,7 +301,7 @@ public sealed partial class CPM
                             _workingDefinition.skew = 2;
                             _workingDefinition.sofs = 0;
 
-                            AaruConsole.DebugWriteLine("CP/M Plugin", "Found Amstrad superblock.");
+                            AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Found_Amstrad_superblock);
                         }
                     }
                 }
@@ -369,7 +369,7 @@ public sealed partial class CPM
                             imagePlugin.ReadSectors(firstDirectorySector + partition.Start, directoryLength,
                                                     out directory);
 
-                            AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
+                            AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Found_CPM_86_hard_disk_superblock);
 
                             // Build a CP/M disk definition
                             _workingDefinition = new CpmDefinition
@@ -889,7 +889,7 @@ public sealed partial class CPM
                         imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength,
                                                 out directory);
 
-                        AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
+                        AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Found_CPM_86_floppy_identifier);
                     }
                 }
             }
@@ -899,7 +899,7 @@ public sealed partial class CPM
             {
                 if(CheckDir(directory))
                 {
-                    AaruConsole.DebugWriteLine("CP/M Plugin", "First directory block seems correct.");
+                    AaruConsole.DebugWriteLine("CP/M Plugin", Localization.First_directory_block_seems_correct);
 
                     return true;
                 }
@@ -911,13 +911,13 @@ public sealed partial class CPM
             if(!_cpmFound)
             {
                 // Load all definitions
-                AaruConsole.DebugWriteLine("CP/M Plugin", "Trying to load definitions.");
+                AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Trying_to_load_definitions);
 
                 if(LoadDefinitions()                      &&
                    _definitions?.definitions      != null &&
                    _definitions.definitions.Count > 0)
                 {
-                    AaruConsole.DebugWriteLine("CP/M Plugin", "Trying all known definitions.");
+                    AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Trying_all_known_definitions);
 
                     foreach(CpmDefinition def in from def in _definitions.definitions let sectors =
                                                      (ulong)(def.cylinders * def.sides * def.sectorsPerTrack)
@@ -925,7 +925,7 @@ public sealed partial class CPM
                                                        def.bytesPerSector == imagePlugin.Info.SectorSize select def)
                     {
                         // Definition seems to describe current disk, at least, same number of volume sectors and bytes per sector
-                        AaruConsole.DebugWriteLine("CP/M Plugin", "Trying definition \"{0}\"", def.comment);
+                        AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Trying_definition_0, def.comment);
                         ulong offset;
 
                         if(def.sofs != 0)
@@ -977,7 +977,8 @@ public sealed partial class CPM
                                                    StringComparison.InvariantCultureIgnoreCase) == 0)
                             {
                                 AaruConsole.DebugWriteLine("CP/M Plugin",
-                                                           "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
+                                                           Localization.
+                                                               Dont_know_how_to_handle_COLUMBIA_ordering_not_proceeding_with_this_definition);
 
                                 continue;
                             }
@@ -987,14 +988,16 @@ public sealed partial class CPM
                                     0)
                             {
                                 AaruConsole.DebugWriteLine("CP/M Plugin",
-                                                           "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
+                                                           Localization.
+                                                               Don_know_how_to_handle_EAGLE_ordering_not_proceeding_with_this_definition);
 
                                 continue;
                             }
                             else
                             {
                                 AaruConsole.DebugWriteLine("CP/M Plugin",
-                                                           "Unknown order type \"{0}\", not proceeding with this definition.",
+                                                           Localization.
+                                                               Unknown_order_type_0_not_proceeding_with_this_definition,
                                                            def.order);
 
                                 continue;
@@ -1021,7 +1024,8 @@ public sealed partial class CPM
 
                         if(def.evenOdd)
                             AaruConsole.DebugWriteLine("CP/M Plugin",
-                                                       "Definition contains EVEN-ODD field, with unknown meaning, detection may be wrong.");
+                                                       Localization.
+                                                           Definition_contains_EVEN_ODD_field_with_unknown_meaning_detection_may_be_wrong);
 
                         // Complement of the directory bytes if needed
                         if(def.complement)
@@ -1031,7 +1035,7 @@ public sealed partial class CPM
                         // Check the directory
                         if(CheckDir(directory))
                         {
-                            AaruConsole.DebugWriteLine("CP/M Plugin", "Definition \"{0}\" has a correct directory",
+                            AaruConsole.DebugWriteLine("CP/M Plugin", Localization.Definition_0_has_a_correct_directory,
                                                        def.comment);
 
                             // Build a Disc Parameter Block
@@ -1146,23 +1150,23 @@ public sealed partial class CPM
             return;
 
         var sb = new StringBuilder();
-        sb.AppendLine("CP/M filesystem");
+        sb.AppendLine(Localization.CPM_filesystem);
 
         if(!string.IsNullOrEmpty(_workingDefinition.comment))
-            sb.AppendFormat("Identified as {0}", _workingDefinition.comment).AppendLine();
+            sb.AppendFormat(Localization.Identified_as_0, _workingDefinition.comment).AppendLine();
 
-        sb.AppendFormat("Volume block is {0} bytes", 128 << _dpb.bsh).AppendLine();
+        sb.AppendFormat(Localization.Volume_block_is_0_bytes, 128 << _dpb.bsh).AppendLine();
 
         if(_dpb.dsm > 0)
-            sb.AppendFormat("Volume contains {0} blocks ({1} bytes)", _dpb.dsm, _dpb.dsm * (128 << _dpb.bsh)).
+            sb.AppendFormat(Localization.Volume_contains_0_blocks_1_bytes, _dpb.dsm, _dpb.dsm * (128 << _dpb.bsh)).
                AppendLine();
 
-        sb.AppendFormat("Volume contains {0} directory entries", _dpb.drm + 1).AppendLine();
+        sb.AppendFormat(Localization.Volume_contains_0_directory_entries, _dpb.drm + 1).AppendLine();
 
         if(_workingDefinition.sofs > 0)
-            sb.AppendFormat("Volume reserves {0} sectors for system", _workingDefinition.sofs).AppendLine();
+            sb.AppendFormat(Localization.Volume_reserves_0_sectors_for_system, _workingDefinition.sofs).AppendLine();
         else
-            sb.AppendFormat("Volume reserves {1} tracks ({0} sectors) for system",
+            sb.AppendFormat(Localization.Volume_reserves_1_tracks_0_sectors_for_system,
                             _workingDefinition.ofs * _workingDefinition.sectorsPerTrack, _workingDefinition.ofs).
                AppendLine();
 
@@ -1171,7 +1175,7 @@ public sealed partial class CPM
             int interleaveSide1 = _workingDefinition.side1.sectorIds[1] - _workingDefinition.side1.sectorIds[0];
 
             if(interleaveSide1 > 1)
-                sb.AppendFormat("Side 0 uses {0}:1 software interleaving", interleaveSide1).AppendLine();
+                sb.AppendFormat(Localization.Side_zero_uses_0_one_software_interleaving, interleaveSide1).AppendLine();
         }
 
         if(_workingDefinition.sides == 2)
@@ -1181,28 +1185,30 @@ public sealed partial class CPM
                 int interleaveSide2 = _workingDefinition.side2.sectorIds[1] - _workingDefinition.side2.sectorIds[0];
 
                 if(interleaveSide2 > 1)
-                    sb.AppendFormat("Side 1 uses {0}:1 software interleaving", interleaveSide2).AppendLine();
+                    sb.AppendFormat(Localization.Side_one_uses_0_one_software_interleaving, interleaveSide2).
+                       AppendLine();
             }
 
             switch(_workingDefinition.order)
             {
                 case "SIDES":
-                    sb.AppendLine("Head changes after each whole track");
+                    sb.AppendLine(Localization.Head_changes_after_each_whole_track);
 
                     break;
                 case "CYLINDERS":
-                    sb.AppendLine("Head changes after whole side");
+                    sb.AppendLine(Localization.Head_changes_after_whole_side);
 
                     break;
                 default:
-                    sb.AppendFormat("Unknown how {0} side ordering works", _workingDefinition.order).AppendLine();
+                    sb.AppendFormat(Localization.Unknown_how_0_side_ordering_works, _workingDefinition.order).
+                       AppendLine();
 
                     break;
             }
         }
 
         if(_workingDefinition.skew > 0)
-            sb.AppendFormat("Device uses {0}:1 hardware interleaving", _workingDefinition.skew).AppendLine();
+            sb.AppendFormat(Localization.Device_uses_0_one_hardware_interleaving, _workingDefinition.skew).AppendLine();
 
         if(_workingDefinition.sofs > 0)
             sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H SOFS {7}", _dpb.bsh,
@@ -1214,19 +1220,21 @@ public sealed partial class CPM
                AppendLine();
 
         if(_label != null)
-            sb.AppendFormat("Volume label {0}", _label).AppendLine();
+            sb.AppendFormat(Localization.Volume_label_0, _label).AppendLine();
 
         if(_standardTimestamps)
-            sb.AppendLine("Volume uses standard CP/M timestamps");
+            sb.AppendLine(Localization.Volume_uses_standard_CPM_timestamps);
 
         if(_thirdPartyTimestamps)
-            sb.AppendLine("Volume uses third party timestamps");
+            sb.AppendLine(Localization.Volume_uses_third_party_timestamps);
 
         if(_labelCreationDate != null)
-            sb.AppendFormat("Volume created on {0}", DateHandlers.CpmToDateTime(_labelCreationDate)).AppendLine();
+            sb.AppendFormat(Localization.Volume_created_on_0, DateHandlers.CpmToDateTime(_labelCreationDate)).
+               AppendLine();
 
         if(_labelUpdateDate != null)
-            sb.AppendFormat("Volume updated on {0}", DateHandlers.CpmToDateTime(_labelUpdateDate)).AppendLine();
+            sb.AppendFormat(Localization.Volume_updated_on_0, DateHandlers.CpmToDateTime(_labelUpdateDate)).
+               AppendLine();
 
         XmlFsType             =  new FileSystemType();
         XmlFsType.Bootable    |= _workingDefinition.sofs > 0 || _workingDefinition.ofs > 0;
@@ -1249,7 +1257,7 @@ public sealed partial class CPM
             XmlFsType.ModificationDateSpecified = true;
         }
 
-        XmlFsType.Type       = "CP/M";
+        XmlFsType.Type       = FS_TYPE;
         XmlFsType.VolumeName = _label;
 
         information = sb.ToString();

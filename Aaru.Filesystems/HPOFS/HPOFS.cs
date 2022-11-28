@@ -48,9 +48,9 @@ public sealed partial class HPOFS : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "High Performance Optical File System";
+    public string Name => Localization.HPOFS_Name;
     /// <inheritdoc />
     public Guid Id => new("1b72dcd5-d031-4757-8a9f-8d2fb18c59e2");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 }

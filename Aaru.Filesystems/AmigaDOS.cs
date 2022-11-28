@@ -55,16 +55,21 @@ public sealed class AmigaDOSPlugin : IFilesystem
     const uint TYPE_HEADER  = 2;
     const uint SUBTYPE_ROOT = 1;
 
+    const string FS_TYPE_OFS  = "aofs";
+    const string FS_TYPE_FFS  = "affs";
+    const string FS_TYPE_OFS2 = "aofs2";
+    const string FS_TYPE_FFS2 = "affs2";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
-    public string Name => "Amiga DOS filesystem";
+    public string Name => Localization.AmigaDOSPlugin_Name;
     /// <inheritdoc />
     public Guid Id => new("3c882400-208c-427d-a086-9119852a1bc7");
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -118,7 +123,7 @@ public sealed class AmigaDOSPlugin : IFilesystem
         if(bsum == bblk.checksum)
         {
             bRootPtr = bblk.root_ptr + partition.Start;
-            AaruConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", bRootPtr);
+            AaruConsole.DebugWriteLine("AmigaDOS plugin", Localization.Bootblock_points_to_0_as_Rootblock, bRootPtr);
         }
 
         ulong[] rootPtrs =
@@ -134,7 +139,7 @@ public sealed class AmigaDOSPlugin : IFilesystem
         // So to handle even number of sectors
         foreach(ulong rootPtr in rootPtrs.Where(rootPtr => rootPtr < partition.End && rootPtr >= partition.Start))
         {
-            AaruConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
+            AaruConsole.DebugWriteLine("AmigaDOS plugin", Localization.Searching_for_Rootblock_in_sector_0, rootPtr);
 
             errno = imagePlugin.ReadSector(rootPtr, out sector);
 
@@ -211,7 +216,7 @@ public sealed class AmigaDOSPlugin : IFilesystem
         if(bsum == bootBlk.checksum)
         {
             bRootPtr = bootBlk.root_ptr + partition.Start;
-            AaruConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", bRootPtr);
+            AaruConsole.DebugWriteLine("AmigaDOS plugin", Localization.Bootblock_points_to_0_as_Rootblock, bRootPtr);
         }
 
         ulong[] rootPtrs =
@@ -231,7 +236,7 @@ public sealed class AmigaDOSPlugin : IFilesystem
         // So to handle even number of sectors
         foreach(ulong rootPtr in rootPtrs.Where(rootPtr => rootPtr < partition.End && rootPtr >= partition.Start))
         {
-            AaruConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
+            AaruConsole.DebugWriteLine("AmigaDOS plugin", Localization.Searching_for_Rootblock_in_sector_0, rootPtr);
 
             errno = imagePlugin.ReadSector(rootPtr, out rootBlockSector);
 
@@ -300,91 +305,92 @@ public sealed class AmigaDOSPlugin : IFilesystem
         switch(bootBlk.diskType & 0xFF)
         {
             case 0:
-                sbInformation.Append("Amiga Original File System");
-                XmlFsType.Type = "Amiga OFS";
+                sbInformation.Append(Localization.Amiga_Original_File_System);
+                XmlFsType.Type = FS_TYPE_OFS;
 
                 break;
             case 1:
-                sbInformation.Append("Amiga Fast File System");
-                XmlFsType.Type = "Amiga FFS";
+                sbInformation.Append(Localization.Amiga_Fast_File_System);
+                XmlFsType.Type = FS_TYPE_FFS;
 
                 break;
             case 2:
-                sbInformation.Append("Amiga Original File System with international characters");
-                XmlFsType.Type = "Amiga OFS";
+                sbInformation.Append(Localization.Amiga_Original_File_System_with_international_characters);
+                XmlFsType.Type = FS_TYPE_OFS;
 
                 break;
             case 3:
-                sbInformation.Append("Amiga Fast File System with international characters");
-                XmlFsType.Type = "Amiga FFS";
+                sbInformation.Append(Localization.Amiga_Fast_File_System_with_international_characters);
+                XmlFsType.Type = FS_TYPE_FFS;
 
                 break;
             case 4:
-                sbInformation.Append("Amiga Original File System with directory cache");
-                XmlFsType.Type = "Amiga OFS";
+                sbInformation.Append(Localization.Amiga_Original_File_System_with_directory_cache);
+                XmlFsType.Type = FS_TYPE_OFS;
 
                 break;
             case 5:
-                sbInformation.Append("Amiga Fast File System with directory cache");
-                XmlFsType.Type = "Amiga FFS";
+                sbInformation.Append(Localization.Amiga_Fast_File_System_with_directory_cache);
+                XmlFsType.Type = FS_TYPE_FFS;
 
                 break;
             case 6:
-                sbInformation.Append("Amiga Original File System with long filenames");
-                XmlFsType.Type = "Amiga OFS2";
+                sbInformation.Append(Localization.Amiga_Original_File_System_with_long_filenames);
+                XmlFsType.Type = FS_TYPE_OFS2;
 
                 break;
             case 7:
-                sbInformation.Append("Amiga Fast File System with long filenames");
-                XmlFsType.Type = "Amiga FFS2";
+                sbInformation.Append(Localization.Amiga_Fast_File_System_with_long_filenames);
+                XmlFsType.Type = FS_TYPE_FFS2;
 
                 break;
         }
 
         if((bootBlk.diskType & 0x6D754600) == 0x6D754600)
-            sbInformation.Append(", with multi-user patches");
+            sbInformation.Append(Localization.with_multi_user_patches);
 
         sbInformation.AppendLine();
 
-        sbInformation.AppendFormat("Volume name: {0}", diskName).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_name_0, diskName).AppendLine();
 
         if(bootBlk.checksum == bsum)
         {
             var sha1Ctx = new Sha1Context();
             sha1Ctx.Update(bootBlk.bootCode);
-            sbInformation.AppendLine("Volume is bootable");
-            sbInformation.AppendFormat("Boot code SHA1 is {0}", sha1Ctx.End()).AppendLine();
+            sbInformation.AppendLine(Localization.Volume_is_bootable);
+            sbInformation.AppendFormat(Localization.Boot_code_SHA1_0, sha1Ctx.End()).AppendLine();
         }
 
         if(rootBlk.bitmapFlag == 0xFFFFFFFF)
-            sbInformation.AppendLine("Volume bitmap is valid");
+            sbInformation.AppendLine(Localization.Volume_bitmap_is_valid);
 
         if(rootBlk.bitmapExtensionBlock != 0x00000000 &&
            rootBlk.bitmapExtensionBlock != 0xFFFFFFFF)
-            sbInformation.AppendFormat("Bitmap extension at block {0}", rootBlk.bitmapExtensionBlock).AppendLine();
+            sbInformation.AppendFormat(Localization.Bitmap_extension_at_block_0, rootBlk.bitmapExtensionBlock).
+                          AppendLine();
 
         if((bootBlk.diskType & 0xFF) == 4 ||
            (bootBlk.diskType & 0xFF) == 5)
-            sbInformation.AppendFormat("Directory cache starts at block {0}", rootBlk.extension).AppendLine();
+            sbInformation.AppendFormat(Localization.Directory_cache_starts_at_block_0, rootBlk.extension).AppendLine();
 
         ulong blocks = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / blockSize;
 
-        sbInformation.AppendFormat("Volume block size is {0} bytes", blockSize).AppendLine();
-        sbInformation.AppendFormat("Volume has {0} blocks", blocks).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_block_size_is_0_bytes, blockSize).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_blocks, blocks).AppendLine();
 
-        sbInformation.AppendFormat("Volume created on {0}",
+        sbInformation.AppendFormat(Localization.Volume_created_on_0,
                                    DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks)).
                       AppendLine();
 
-        sbInformation.AppendFormat("Volume last modified on {0}",
+        sbInformation.AppendFormat(Localization.Volume_last_modified_on_0,
                                    DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks)).
                       AppendLine();
 
-        sbInformation.AppendFormat("Volume root directory last modified on on {0}",
+        sbInformation.AppendFormat(Localization.Volume_root_directory_last_modified_on_0,
                                    DateHandlers.AmigaToDateTime(rootBlk.rDays, rootBlk.rMins, rootBlk.rTicks)).
                       AppendLine();
 
-        sbInformation.AppendFormat("Root block checksum is 0x{0:X8}", rootBlk.checksum).AppendLine();
+        sbInformation.AppendFormat(Localization.Root_block_checksum_is_0, rootBlk.checksum).AppendLine();
         information = sbInformation.ToString();
 
         XmlFsType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);

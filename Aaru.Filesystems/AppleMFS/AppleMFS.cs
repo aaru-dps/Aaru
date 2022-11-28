@@ -65,13 +65,13 @@ public sealed partial class AppleMFS : IReadOnlyFilesystem
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
-    public string Name => "Apple Macintosh File System";
+    public string Name => Localization.AppleMFS_Name;
     /// <inheritdoc />
     public Guid Id => new("36405F8D-0D26-4066-6538-5DBF5D065C3A");
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     // TODO: Implement Finder namespace (requires decoding Desktop database)
     /// <inheritdoc />

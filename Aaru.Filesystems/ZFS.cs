@@ -86,11 +86,11 @@ public sealed class ZFS : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "ZFS Filesystem Plugin";
+    public string Name => Localization.ZFS_Name;
     /// <inheritdoc />
     public Guid Id => new("0750014F-A714-4692-A369-E23F6EC3659C");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -127,6 +127,8 @@ public sealed class ZFS : IFilesystem
 
         return magic is ZEC_MAGIC or ZEC_CIGAM;
     }
+
+    const string FS_TYPE = "zfs";
 
     /// <inheritdoc />
     public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
@@ -172,7 +174,7 @@ public sealed class ZFS : IFilesystem
         }
 
         var sb = new StringBuilder();
-        sb.AppendLine("ZFS filesystem");
+        sb.AppendLine(Localization.ZFS_filesystem);
 
         errno = imagePlugin.ReadSectors(partition.Start + nvlistOff, nvlistLen, out byte[] nvlist);
 
@@ -186,7 +188,7 @@ public sealed class ZFS : IFilesystem
 
         XmlFsType = new FileSystemType
         {
-            Type = "ZFS filesystem"
+            Type = FS_TYPE
         };
 
         if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj))
@@ -582,7 +584,7 @@ public sealed class ZFS : IFilesystem
         {
             if(item.elements == 0)
             {
-                sb.AppendFormat("{0} is not set", item.name).AppendLine();
+                sb.AppendFormat(Localization._0_is_not_set, item.name).AppendLine();
 
                 continue;
             }
@@ -703,17 +705,18 @@ public sealed class ZFS : IFilesystem
                         sb.AppendFormat("{0} =\n{1}", item.name, PrintNvList((Dictionary<string, NVS_Item>)item.value)).
                            AppendLine();
                     else
-                        sb.AppendFormat("{0} = {1} elements nvlist[], unable to print", item.name, item.elements).
-                           AppendLine();
+                        sb.AppendFormat(Localization._0_equals_1_elements_nvlist_array_unable_to_print, item.name,
+                                        item.elements).AppendLine();
 
                     break;
                 default:
                     if(item.elements > 1)
                         for(int i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = Unknown data type {2}", item.name, i, item.dataType).
+                            sb.AppendFormat(Localization._0_1_equals_unknown_data_type_2, item.name, i, item.dataType).
                                AppendLine();
                     else
-                        sb.AppendFormat("{0} = Unknown data type {1}", item.name, item.dataType).AppendLine();
+                        sb.AppendFormat(Localization._0_equals_unknown_data_type_1, item.name, item.dataType).
+                           AppendLine();
 
                     break;
             }

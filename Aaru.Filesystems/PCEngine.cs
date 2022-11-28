@@ -43,16 +43,17 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the PC-Engine CD file headers</summary>
 public sealed class PCEnginePlugin : IFilesystem
 {
+    const string FS_TYPE = "pcengine";
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "PC Engine CD Plugin";
+    public string Name => Localization.PCEnginePlugin_Name;
     /// <inheritdoc />
     public Guid Id => new("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -79,7 +80,7 @@ public sealed class PCEnginePlugin : IFilesystem
 
         XmlFsType = new FileSystemType
         {
-            Type        = "PC Engine filesystem",
+            Type        = FS_TYPE,
             Clusters    = (partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048,
             ClusterSize = 2048
         };

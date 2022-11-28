@@ -50,16 +50,18 @@ public sealed class VxFS : IFilesystem
     const uint VXFS_MAGIC = 0xA501FCF5;
     const uint VXFS_BASE = 0x400;
 
+    const string FS_TYPE = "vxfs";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Veritas filesystem";
+    public string Name => Localization.VxFS_Name;
     /// <inheritdoc />
     public Guid Id => new("EC372605-7687-453C-8BEA-7E0DFF79CB03");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -94,32 +96,34 @@ public sealed class VxFS : IFilesystem
 
         var sbInformation = new StringBuilder();
 
-        sbInformation.AppendLine("Veritas file system");
+        sbInformation.AppendLine(Localization.Veritas_file_system);
 
-        sbInformation.AppendFormat("Volume version {0}", vxSb.vs_version).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_version_0, vxSb.vs_version).AppendLine();
 
-        sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname, Encoding)).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(vxSb.vs_fname, Encoding)).
+                      AppendLine();
 
-        sbInformation.AppendFormat("Volume has {0} blocks of {1} bytes each", vxSb.vs_bsize, vxSb.vs_size).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each, vxSb.vs_bsize, vxSb.vs_size).
+                      AppendLine();
 
-        sbInformation.AppendFormat("Volume has {0} inodes per block", vxSb.vs_inopb).AppendLine();
-        sbInformation.AppendFormat("Volume has {0} free inodes", vxSb.vs_ifree).AppendLine();
-        sbInformation.AppendFormat("Volume has {0} free blocks", vxSb.vs_free).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_inodes_per_block, vxSb.vs_inopb).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_free_inodes, vxSb.vs_ifree).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_free_blocks, vxSb.vs_free).AppendLine();
 
-        sbInformation.AppendFormat("Volume created on {0}",
+        sbInformation.AppendFormat(Localization.Volume_created_on_0,
                                    DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).AppendLine();
 
-        sbInformation.AppendFormat("Volume last modified on {0}",
+        sbInformation.AppendFormat(Localization.Volume_last_modified_on_0,
                                    DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime)).AppendLine();
 
         if(vxSb.vs_clean != 0)
-            sbInformation.AppendLine("Volume is dirty");
+            sbInformation.AppendLine(Localization.Volume_is_dirty);
 
         information = sbInformation.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type                      = "Veritas file system",
+            Type                      = FS_TYPE,
             CreationDate              = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
             CreationDateSpecified     = true,
             ModificationDate          = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),

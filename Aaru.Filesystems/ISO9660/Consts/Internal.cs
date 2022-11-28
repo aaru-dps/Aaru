@@ -47,4 +47,8 @@ public sealed partial class ISO9660
         Normal, Vms, Joliet,
         Rrip, Romeo
     }
+
+    const string FS_TYPE_HSF = "hfs";
+    const string FS_TYPE_CDI = "cdi";
+    const string FS_TYPE_ISO = "iso9660";
 }

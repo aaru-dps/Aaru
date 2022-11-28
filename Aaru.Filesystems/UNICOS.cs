@@ -62,16 +62,18 @@ public sealed class UNICOS : IFilesystem
     const ulong UNICOS_MAGIC  = 0x6e6331667331636e;
     const ulong UNICOS_SECURE = 0xcd076d1771d670cd;
 
+    const string FS_TYPE = "unicos";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "UNICOS Filesystem Plugin";
+    public string Name => Localization.UNICOS_Name;
     /// <inheritdoc />
     public Guid Id => new("61712F04-066C-44D5-A2A0-1E44C66B33F0");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -97,7 +99,7 @@ public sealed class UNICOS : IFilesystem
 
         Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-        AaruConsole.DebugWriteLine("UNICOS plugin", "magic = 0x{0:X16} (expected 0x{1:X16})", unicosSb.s_magic,
+        AaruConsole.DebugWriteLine("UNICOS plugin", Localization.magic_equals_0_expected_1, unicosSb.s_magic,
                                    UNICOS_MAGIC);
 
         return unicosSb.s_magic == UNICOS_MAGIC;
@@ -132,29 +134,31 @@ public sealed class UNICOS : IFilesystem
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("UNICOS filesystem");
+        sb.AppendLine(Localization.UNICOS_filesystem);
 
         if(unicosSb.s_secure == UNICOS_SECURE)
-            sb.AppendLine("Volume is secure");
+            sb.AppendLine(Localization.Volume_is_secure);
 
-        sb.AppendFormat("Volume contains {0} partitions", unicosSb.s_npart).AppendLine();
-        sb.AppendFormat("{0} bytes per sector", unicosSb.s_iounit).AppendLine();
-        sb.AppendLine("4096 bytes per block");
-        sb.AppendFormat("{0} data blocks in volume", unicosSb.s_fsize).AppendLine();
-        sb.AppendFormat("Root resides on inode {0}", unicosSb.s_root).AppendLine();
-        sb.AppendFormat("{0} inodes in volume", unicosSb.s_isize).AppendLine();
-        sb.AppendFormat("Volume last updated on {0}", DateHandlers.UnixToDateTime(unicosSb.s_time)).AppendLine();
+        sb.AppendFormat(Localization.Volume_contains_0_partitions, unicosSb.s_npart).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector, unicosSb.s_iounit).AppendLine();
+        sb.AppendLine(Localization._4096_bytes_per_block);
+        sb.AppendFormat(Localization._0_data_blocks_in_volume, unicosSb.s_fsize).AppendLine();
+        sb.AppendFormat(Localization.Root_resides_on_inode_0, unicosSb.s_root).AppendLine();
+        sb.AppendFormat(Localization._0_inodes_in_volume, unicosSb.s_isize).AppendLine();
+
+        sb.AppendFormat(Localization.Volume_last_updated_on_0, DateHandlers.UnixToDateTime(unicosSb.s_time)).
+           AppendLine();
 
         if(unicosSb.s_error > 0)
-            sb.AppendFormat("Volume is dirty, error code = 0x{0:X16}", unicosSb.s_error).AppendLine();
+            sb.AppendFormat(Localization.Volume_is_dirty_error_code_equals_0, unicosSb.s_error).AppendLine();
 
-        sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(unicosSb.s_fname, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(unicosSb.s_fname, Encoding)).AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type                      = "UNICOS filesystem",
+            Type                      = FS_TYPE,
             ClusterSize               = 4096,
             Clusters                  = (ulong)unicosSb.s_fsize,
             VolumeName                = StringHandlers.CToString(unicosSb.s_fname, Encoding),

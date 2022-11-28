@@ -68,11 +68,11 @@ public sealed class BeFS : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Be Filesystem";
+    public string Name => Localization.BeFS_Name;
     /// <inheritdoc />
     public Guid Id => new("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -170,7 +170,7 @@ public sealed class BeFS : IFilesystem
         besb = littleEndian ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)
                    : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
-        sb.AppendLine(littleEndian ? "Little-endian BeFS" : "Big-endian BeFS");
+        sb.AppendLine(littleEndian ? Localization.Little_endian_BeFS : Localization.Big_endian_BeFS);
 
         if(besb.magic1                != BEFS_MAGIC1 ||
            besb.fs_byte_order         != BEFS_ENDIAN ||
@@ -180,65 +180,69 @@ public sealed class BeFS : IFilesystem
            besb.indices_len           != 1           ||
            1 << (int)besb.block_shift != besb.block_size)
         {
-            sb.AppendLine("Superblock seems corrupt, following information may be incorrect");
-            sb.AppendFormat("Magic 1: 0x{0:X8} (Should be 0x42465331)", besb.magic1).AppendLine();
-            sb.AppendFormat("Magic 2: 0x{0:X8} (Should be 0xDD121031)", besb.magic2).AppendLine();
-            sb.AppendFormat("Magic 3: 0x{0:X8} (Should be 0x15B6830E)", besb.magic3).AppendLine();
+            sb.AppendLine(Localization.Superblock_seems_corrupt_following_information_may_be_incorrect);
+            sb.AppendFormat(Localization.Magic_one_0_Should_be_0x42465331, besb.magic1).AppendLine();
+            sb.AppendFormat(Localization.Magic_two_0_Should_be_0xDD121031, besb.magic2).AppendLine();
+            sb.AppendFormat(Localization.Magic_three_0_Should_be_0x15B6830E, besb.magic3).AppendLine();
 
-            sb.AppendFormat("Filesystem endianness: 0x{0:X8} (Should be 0x42494745)", besb.fs_byte_order).AppendLine();
+            sb.AppendFormat(Localization.Filesystem_endianness_0_Should_be_0x42494745, besb.fs_byte_order).AppendLine();
 
-            sb.AppendFormat("Root folder's i-node size: {0} blocks (Should be 1)", besb.root_dir_len).AppendLine();
-            sb.AppendFormat("Indices' i-node size: {0} blocks (Should be 1)", besb.indices_len).AppendLine();
+            sb.AppendFormat(Localization.Root_folder_i_node_size_0_blocks_Should_be_one, besb.root_dir_len).
+               AppendLine();
 
-            sb.AppendFormat("1 << block_shift == block_size => 1 << {0} == {1} (Should be {2})", besb.block_shift,
-                            1 << (int)besb.block_shift, besb.block_size).AppendLine();
+            sb.AppendFormat(Localization.Indices_i_node_size_0_blocks_Should_be_one, besb.indices_len).AppendLine();
+
+            sb.AppendFormat(Localization.blockshift_0_1_should_be_2, besb.block_shift, 1 << (int)besb.block_shift,
+                            besb.block_size).AppendLine();
         }
 
         switch(besb.flags)
         {
             case BEFS_CLEAN:
-                sb.AppendLine(besb.log_start == besb.log_end ? "Filesystem is clean" : "Filesystem is dirty");
+                sb.AppendLine(besb.log_start == besb.log_end ? Localization.Filesystem_is_clean
+                                  : Localization.Filesystem_is_dirty);
 
                 break;
             case BEFS_DIRTY:
-                sb.AppendLine("Filesystem is dirty");
+                sb.AppendLine(Localization.Filesystem_is_dirty);
 
                 break;
             default:
-                sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
+                sb.AppendFormat(Localization.Unknown_flags_0_X8, besb.flags).AppendLine();
 
                 break;
         }
 
-        sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(besb.name, Encoding)).AppendLine();
-        sb.AppendFormat("{0} bytes per block", besb.block_size).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(besb.name, Encoding)).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block, besb.block_size).AppendLine();
 
-        sb.AppendFormat("{0} blocks in volume ({1} bytes)", besb.num_blocks, besb.num_blocks * besb.block_size).
+        sb.AppendFormat(Localization._0_blocks_in_volume_1_bytes, besb.num_blocks, besb.num_blocks * besb.block_size).
            AppendLine();
 
-        sb.AppendFormat("{0} used blocks ({1} bytes)", besb.used_blocks, besb.used_blocks * besb.block_size).
+        sb.AppendFormat(Localization._0_used_blocks_1_bytes, besb.used_blocks, besb.used_blocks * besb.block_size).
            AppendLine();
 
-        sb.AppendFormat("{0} bytes per i-node", besb.inode_size).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_i_node, besb.inode_size).AppendLine();
 
-        sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", besb.blocks_per_ag,
+        sb.AppendFormat(Localization._0_blocks_per_allocation_group_1_bytes, besb.blocks_per_ag,
                         besb.blocks_per_ag * besb.block_size).AppendLine();
 
-        sb.AppendFormat("{0} allocation groups in volume", besb.num_ags).AppendLine();
+        sb.AppendFormat(Localization._0_allocation_groups_in_volume, besb.num_ags).AppendLine();
 
-        sb.AppendFormat("Journal resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+        sb.AppendFormat(Localization.Journal_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
                         besb.log_blocks_start, besb.log_blocks_ag, besb.log_blocks_len,
                         besb.log_blocks_len * besb.block_size).AppendLine();
 
-        sb.AppendFormat("Journal starts in byte {0} and ends in byte {1}", besb.log_start, besb.log_end).AppendLine();
+        sb.AppendFormat(Localization.Journal_starts_in_byte_0_and_ends_in_byte_1, besb.log_start, besb.log_end).
+           AppendLine();
 
         sb.
-            AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+            AppendFormat(Localization.Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
                          besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len, besb.root_dir_len * besb.block_size).
             AppendLine();
 
         sb.
-            AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+            AppendFormat(Localization.Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
                          besb.indices_start, besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size).
             AppendLine();
 
@@ -251,10 +255,12 @@ public sealed class BeFS : IFilesystem
             Dirty                 = besb.flags == BEFS_DIRTY,
             FreeClusters          = (ulong)(besb.num_blocks - besb.used_blocks),
             FreeClustersSpecified = true,
-            Type                  = "BeFS",
+            Type                  = FS_TYPE,
             VolumeName            = StringHandlers.CToString(besb.name, Encoding)
         };
     }
+
+    const string FS_TYPE = "befs";
 
     /// <summary>Be superblock</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

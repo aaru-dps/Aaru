@@ -68,17 +68,20 @@ public sealed class MinixFS : IFilesystem
     const ushort MINIX2_CIGAM2 = 0x7824;
     /// <summary>Minix v3, 60 char filenames</summary>
     const ushort MINIX3_CIGAM = 0x5A4D;
+    const string FS_TYPE_V1 = "minix";
+    const string FS_TYPE_V2 = "minix2";
+    const string FS_TYPE_V3 = "minix3";
 
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Minix Filesystem";
+    public string Name => Localization.MinixFS_Name;
     /// <inheritdoc />
     public Guid Id => new("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -167,19 +170,19 @@ public sealed class MinixFS : IFilesystem
             {
                 case MINIX3_MAGIC:
                 case MINIX3_CIGAM:
-                    minixVersion   = "Minix v3 filesystem";
-                    XmlFsType.Type = "Minix v3";
+                    minixVersion   = Localization.Minix_v3_filesystem;
+                    XmlFsType.Type = FS_TYPE_V3;
 
                     break;
                 case MINIX2_MAGIC:
                 case MINIX2_CIGAM:
-                    minixVersion   = "Minix 3 v2 filesystem";
-                    XmlFsType.Type = "Minix 3 v2";
+                    minixVersion   = Localization.Minix_3_v2_filesystem;
+                    XmlFsType.Type = FS_TYPE_V3;
 
                     break;
                 default:
-                    minixVersion   = "Minix 3 v1 filesystem";
-                    XmlFsType.Type = "Minix 3 v1";
+                    minixVersion   = Localization.Minix_3_v1_filesystem;
+                    XmlFsType.Type = FS_TYPE_V3;
 
                     break;
             }
@@ -194,58 +197,58 @@ public sealed class MinixFS : IFilesystem
             {
                 case MINIX_MAGIC:
                     filenamesize   = 14;
-                    minixVersion   = "Minix v1 filesystem";
+                    minixVersion   = Localization.Minix_v1_filesystem;
                     littleEndian   = true;
-                    XmlFsType.Type = "Minix v1";
+                    XmlFsType.Type = FS_TYPE_V1;
 
                     break;
                 case MINIX_MAGIC2:
                     filenamesize   = 30;
-                    minixVersion   = "Minix v1 filesystem";
+                    minixVersion   = Localization.Minix_v1_filesystem;
                     littleEndian   = true;
-                    XmlFsType.Type = "Minix v1";
+                    XmlFsType.Type = FS_TYPE_V1;
 
                     break;
                 case MINIX2_MAGIC:
                     filenamesize   = 14;
-                    minixVersion   = "Minix v2 filesystem";
+                    minixVersion   = Localization.Minix_v2_filesystem;
                     littleEndian   = true;
-                    XmlFsType.Type = "Minix v2";
+                    XmlFsType.Type = FS_TYPE_V2;
 
                     break;
                 case MINIX2_MAGIC2:
                     filenamesize   = 30;
-                    minixVersion   = "Minix v2 filesystem";
+                    minixVersion   = Localization.Minix_v2_filesystem;
                     littleEndian   = true;
-                    XmlFsType.Type = "Minix v2";
+                    XmlFsType.Type = FS_TYPE_V2;
 
                     break;
                 case MINIX_CIGAM:
                     filenamesize   = 14;
-                    minixVersion   = "Minix v1 filesystem";
+                    minixVersion   = Localization.Minix_v1_filesystem;
                     littleEndian   = false;
-                    XmlFsType.Type = "Minix v1";
+                    XmlFsType.Type = FS_TYPE_V1;
 
                     break;
                 case MINIX_CIGAM2:
                     filenamesize   = 30;
-                    minixVersion   = "Minix v1 filesystem";
+                    minixVersion   = Localization.Minix_v1_filesystem;
                     littleEndian   = false;
-                    XmlFsType.Type = "Minix v1";
+                    XmlFsType.Type = FS_TYPE_V1;
 
                     break;
                 case MINIX2_CIGAM:
                     filenamesize   = 14;
-                    minixVersion   = "Minix v2 filesystem";
+                    minixVersion   = Localization.Minix_v2_filesystem;
                     littleEndian   = false;
-                    XmlFsType.Type = "Minix v2";
+                    XmlFsType.Type = FS_TYPE_V2;
 
                     break;
                 case MINIX2_CIGAM2:
                     filenamesize   = 30;
-                    minixVersion   = "Minix v2 filesystem";
+                    minixVersion   = Localization.Minix_v2_filesystem;
                     littleEndian   = false;
-                    XmlFsType.Type = "Minix v2";
+                    XmlFsType.Type = FS_TYPE_V2;
 
                     break;
                 default: return;
@@ -262,27 +265,29 @@ public sealed class MinixFS : IFilesystem
                 mnxSb.s_blocksize = 1024;
 
             sb.AppendLine(minixVersion);
-            sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
+            sb.AppendFormat(Localization._0_chars_in_filename, filenamesize).AppendLine();
 
             if(mnxSb.s_zones > 0) // On V2
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024).AppendLine();
+                sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, mnxSb.s_zones, mnxSb.s_zones * 1024).
+                   AppendLine();
             else
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024).AppendLine();
+                sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, mnxSb.s_nzones, mnxSb.s_nzones * 1024).
+                   AppendLine();
 
-            sb.AppendFormat("{0} bytes/block", mnxSb.s_blocksize).AppendLine();
-            sb.AppendFormat("{0} inodes on volume", mnxSb.s_ninodes).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_block, mnxSb.s_blocksize).AppendLine();
+            sb.AppendFormat(Localization._0_inodes_on_volume, mnxSb.s_ninodes).AppendLine();
 
-            sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnxSb.s_imap_blocks,
+            sb.AppendFormat(Localization._0_blocks_on_inode_map_1_bytes, mnxSb.s_imap_blocks,
                             mnxSb.s_imap_blocks * mnxSb.s_blocksize).AppendLine();
 
-            sb.AppendFormat("{0} blocks on zone map ({1} bytes)", mnxSb.s_zmap_blocks,
+            sb.AppendFormat(Localization._0_blocks_on_zone_map_1_bytes, mnxSb.s_zmap_blocks,
                             mnxSb.s_zmap_blocks * mnxSb.s_blocksize).AppendLine();
 
-            sb.AppendFormat("First data zone: {0}", mnxSb.s_firstdatazone).AppendLine();
+            sb.AppendFormat(Localization.First_data_zone_0, mnxSb.s_firstdatazone).AppendLine();
 
             //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
-            sb.AppendFormat("{0} bytes maximum per file", mnxSb.s_max_size).AppendLine();
-            sb.AppendFormat("On-disk filesystem version: {0}", mnxSb.s_disk_version).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_maximum_per_file, mnxSb.s_max_size).AppendLine();
+            sb.AppendFormat(Localization.On_disk_filesystem_version_0, mnxSb.s_disk_version).AppendLine();
 
             XmlFsType.ClusterSize = mnxSb.s_blocksize;
             XmlFsType.Clusters    = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
@@ -293,26 +298,28 @@ public sealed class MinixFS : IFilesystem
                                    : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(minixSbSector);
 
             sb.AppendLine(minixVersion);
-            sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
+            sb.AppendFormat(Localization._0_chars_in_filename, filenamesize).AppendLine();
 
             if(mnxSb.s_zones > 0) // On V2
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024).AppendLine();
+                sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, mnxSb.s_zones, mnxSb.s_zones * 1024).
+                   AppendLine();
             else
-                sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024).AppendLine();
+                sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, mnxSb.s_nzones, mnxSb.s_nzones * 1024).
+                   AppendLine();
 
-            sb.AppendFormat("{0} inodes on volume", mnxSb.s_ninodes).AppendLine();
+            sb.AppendFormat(Localization._0_inodes_on_volume, mnxSb.s_ninodes).AppendLine();
 
-            sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnxSb.s_imap_blocks, mnxSb.s_imap_blocks * 1024).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_on_inode_map_1_bytes, mnxSb.s_imap_blocks,
+                            mnxSb.s_imap_blocks * 1024).AppendLine();
 
-            sb.AppendFormat("{0} blocks on zone map ({1} bytes)", mnxSb.s_zmap_blocks, mnxSb.s_zmap_blocks * 1024).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_on_zone_map_1_bytes, mnxSb.s_zmap_blocks,
+                            mnxSb.s_zmap_blocks * 1024).AppendLine();
 
-            sb.AppendFormat("First data zone: {0}", mnxSb.s_firstdatazone).AppendLine();
+            sb.AppendFormat(Localization.First_data_zone_0, mnxSb.s_firstdatazone).AppendLine();
 
             //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
-            sb.AppendFormat("{0} bytes maximum per file", mnxSb.s_max_size).AppendLine();
-            sb.AppendFormat("Filesystem state: {0:X4}", mnxSb.s_state).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_maximum_per_file, mnxSb.s_max_size).AppendLine();
+            sb.AppendFormat(Localization.Filesystem_state_0, mnxSb.s_state).AppendLine();
             XmlFsType.ClusterSize = 1024;
             XmlFsType.Clusters    = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
         }

@@ -36,6 +36,9 @@ namespace Aaru.Filesystems;
 
 public sealed partial class CPM
 {
+    // Do not translate
+    const string FS_TYPE = "cpmfs";
+
     /// <summary>Enumerates the format identification byte used by CP/M-86</summary>
     enum FormatByte : byte
     {

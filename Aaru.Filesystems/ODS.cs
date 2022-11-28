@@ -56,16 +56,17 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of DEC's On-Disk Structure, aka the ODS filesystem</summary>
 public sealed class ODS : IFilesystem
 {
+    const string FS_TYPE = "files11";
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Files-11 On-Disk Structure";
+    public string Name => Localization.ODS_Name;
     /// <inheritdoc />
     public Guid Id => new("de20633c-8021-4384-aeb0-83b0df14491f");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -85,7 +86,7 @@ public sealed class ODS : IFilesystem
         Array.Copy(hbSector, 0x1F0, magicB, 0, 12);
         string magic = Encoding.ASCII.GetString(magicB);
 
-        AaruConsole.DebugWriteLine("Files-11 plugin", "magic: \"{0}\"", magic);
+        AaruConsole.DebugWriteLine("Files-11 plugin", Localization.magic_0, magic);
 
         if(magic is "DECFILE11A  " or "DECFILE11B  ")
             return true;
@@ -105,7 +106,7 @@ public sealed class ODS : IFilesystem
         Array.Copy(hbSector, 0x3F0, magicB, 0, 12);
         magic = Encoding.ASCII.GetString(magicB);
 
-        AaruConsole.DebugWriteLine("Files-11 plugin", "unaligned magic: \"{0}\"", magic);
+        AaruConsole.DebugWriteLine("Files-11 plugin", Localization.unaligned_magic_0, magic);
 
         return magic is "DECFILE11A  " or "DECFILE11B  ";
     }
@@ -151,89 +152,93 @@ public sealed class ODS : IFilesystem
         if((homeblock.struclev & 0xFF00)              != 0x0200 ||
            (homeblock.struclev & 0xFF)                != 1      ||
            StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
-            sb.AppendLine("The following information may be incorrect for this volume.");
+            sb.AppendLine(Localization.The_following_information_may_be_incorrect_for_this_volume);
 
         if(homeblock.resfiles < 5 ||
            homeblock.devtype  != 0)
-            sb.AppendLine("This volume may be corrupted.");
+            sb.AppendLine(Localization.This_volume_may_be_corrupted);
 
-        sb.AppendFormat("Volume format is {0}", StringHandlers.SpacePaddedToString(homeblock.format, Encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_format_is_0,
+                        StringHandlers.SpacePaddedToString(homeblock.format, Encoding)).AppendLine();
 
-        sb.AppendFormat("Volume is Level {0} revision {1}", (homeblock.struclev & 0xFF00) >> 8,
+        sb.AppendFormat(Localization.Volume_is_Level_0_revision_1, (homeblock.struclev & 0xFF00) >> 8,
                         homeblock.struclev & 0xFF).AppendLine();
 
-        sb.AppendFormat("Lowest structure in the volume is Level {0}, revision {1}",
+        sb.AppendFormat(Localization.Lowest_structure_in_the_volume_is_Level_0_revision_1,
                         (homeblock.lowstruclev & 0xFF00) >> 8, homeblock.lowstruclev & 0xFF).AppendLine();
 
-        sb.AppendFormat("Highest structure in the volume is Level {0}, revision {1}",
+        sb.AppendFormat(Localization.Highest_structure_in_the_volume_is_Level_0_revision_1,
                         (homeblock.highstruclev & 0xFF00) >> 8, homeblock.highstruclev & 0xFF).AppendLine();
 
-        sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512).AppendLine();
-
-        sb.AppendFormat("This home block is on sector {0} (VBN {1})", homeblock.homelbn, homeblock.homevbn).
+        sb.AppendFormat(Localization._0_sectors_per_cluster_1_bytes, homeblock.cluster, homeblock.cluster * 512).
            AppendLine();
 
-        sb.AppendFormat("Secondary home block is on sector {0} (VBN {1})", homeblock.alhomelbn, homeblock.alhomevbn).
+        sb.AppendFormat(Localization.This_home_block_is_on_sector_0_VBN_1, homeblock.homelbn, homeblock.homevbn).
            AppendLine();
 
-        sb.AppendFormat("Volume bitmap starts in sector {0} (VBN {1})", homeblock.ibmaplbn, homeblock.ibmapvbn).
+        sb.AppendFormat(Localization.Secondary_home_block_is_on_sector_0_VBN_1, homeblock.alhomelbn,
+                        homeblock.alhomevbn).AppendLine();
+
+        sb.AppendFormat(Localization.Volume_bitmap_starts_in_sector_0_VBN_1, homeblock.ibmaplbn, homeblock.ibmapvbn).
            AppendLine();
 
-        sb.AppendFormat("Volume bitmap runs for {0} sectors ({1} bytes)", homeblock.ibmapsize,
+        sb.AppendFormat(Localization.Volume_bitmap_runs_for_0_sectors_1_bytes, homeblock.ibmapsize,
                         homeblock.ibmapsize * 512).AppendLine();
 
-        sb.AppendFormat("Backup INDEXF.SYS;1 is in sector {0} (VBN {1})", homeblock.altidxlbn, homeblock.altidxvbn).
+        sb.AppendFormat(Localization.Backup_INDEXF_SYS_is_in_sector_0_VBN_1, homeblock.altidxlbn, homeblock.altidxvbn).
            AppendLine();
 
-        sb.AppendFormat("{0} maximum files on the volume", homeblock.maxfiles).AppendLine();
-        sb.AppendFormat("{0} reserved files", homeblock.resfiles).AppendLine();
+        sb.AppendFormat(Localization._0_maximum_files_on_the_volume, homeblock.maxfiles).AppendLine();
+        sb.AppendFormat(Localization._0_reserved_files, homeblock.resfiles).AppendLine();
 
         if(homeblock is { rvn: > 0, setcount: > 0 } &&
            StringHandlers.CToString(homeblock.strucname) != "            ")
-            sb.AppendFormat("Volume is {0} of {1} in set \"{2}\".", homeblock.rvn, homeblock.setcount,
+            sb.AppendFormat(Localization.Volume_is_0_of_1_in_set_2, homeblock.rvn, homeblock.setcount,
                             StringHandlers.SpacePaddedToString(homeblock.strucname, Encoding)).AppendLine();
 
-        sb.AppendFormat("Volume owner is \"{0}\" (ID 0x{1:X8})",
+        sb.AppendFormat(Localization.Volume_owner_is_0_ID_1,
                         StringHandlers.SpacePaddedToString(homeblock.ownername, Encoding), homeblock.volowner).
            AppendLine();
 
-        sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.SpacePaddedToString(homeblock.volname, Encoding)).
+        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(homeblock.volname, Encoding)).
            AppendLine();
 
-        sb.AppendFormat("Drive serial number: 0x{0:X8}", homeblock.serialnum).AppendLine();
-        sb.AppendFormat("Volume was created on {0}", DateHandlers.VmsToDateTime(homeblock.credate)).AppendLine();
+        sb.AppendFormat(Localization.Drive_serial_number_0, homeblock.serialnum).AppendLine();
+
+        sb.AppendFormat(Localization.Volume_was_created_on_0, DateHandlers.VmsToDateTime(homeblock.credate)).
+           AppendLine();
 
         if(homeblock.revdate > 0)
-            sb.AppendFormat("Volume was last modified on {0}", DateHandlers.VmsToDateTime(homeblock.revdate)).
+            sb.AppendFormat(Localization.Volume_was_last_modified_on_0, DateHandlers.VmsToDateTime(homeblock.revdate)).
                AppendLine();
 
         if(homeblock.copydate > 0)
-            sb.AppendFormat("Volume copied on {0}", DateHandlers.VmsToDateTime(homeblock.copydate)).AppendLine();
+            sb.AppendFormat(Localization.Volume_copied_on_0, DateHandlers.VmsToDateTime(homeblock.copydate)).
+               AppendLine();
 
-        sb.AppendFormat("Checksums: 0x{0:X4} and 0x{1:X4}", homeblock.checksum1, homeblock.checksum2).AppendLine();
-        sb.AppendLine("Flags:");
-        sb.AppendFormat("Window: {0}", homeblock.window).AppendLine();
-        sb.AppendFormat("Cached directories: {0}", homeblock.lru_lim).AppendLine();
-        sb.AppendFormat("Default allocation: {0} blocks", homeblock.extend).AppendLine();
+        sb.AppendFormat(Localization.Checksums_0_and_1, homeblock.checksum1, homeblock.checksum2).AppendLine();
+        sb.AppendLine(Localization.Flags);
+        sb.AppendFormat(Localization.Window_0, homeblock.window).AppendLine();
+        sb.AppendFormat(Localization.Cached_directories_0, homeblock.lru_lim).AppendLine();
+        sb.AppendFormat(Localization.Default_allocation_0_blocks, homeblock.extend).AppendLine();
 
         if((homeblock.volchar & 0x01) == 0x01)
-            sb.AppendLine("Readings should be verified");
+            sb.AppendLine(Localization.Readings_should_be_verified);
 
         if((homeblock.volchar & 0x02) == 0x02)
-            sb.AppendLine("Writings should be verified");
+            sb.AppendLine(Localization.Writings_should_be_verified);
 
         if((homeblock.volchar & 0x04) == 0x04)
-            sb.AppendLine("Files should be erased or overwritten when deleted");
+            sb.AppendLine(Localization.Files_should_be_erased_or_overwritten_when_deleted);
 
         if((homeblock.volchar & 0x08) == 0x08)
-            sb.AppendLine("Highwater mark is to be disabled");
+            sb.AppendLine(Localization.Highwater_mark_is_to_be_disabled);
 
         if((homeblock.volchar & 0x10) == 0x10)
-            sb.AppendLine("Classification checks are enabled");
+            sb.AppendLine(Localization.Classification_checks_are_enabled);
 
-        sb.AppendLine("Volume permissions (r = read, w = write, c = create, d = delete)");
-        sb.AppendLine("System, owner, group, world");
+        sb.AppendLine(Localization.Volume_permissions_r_read_w_write_c_create_d_delete);
+        sb.AppendLine(Localization.System_owner_group_world);
 
         // System
         sb.Append((homeblock.protect & 0x1000) == 0x1000 ? "-" : "r");
@@ -261,14 +266,14 @@ public sealed class ODS : IFilesystem
 
         sb.AppendLine();
 
-        sb.AppendLine("Unknown structures:");
-        sb.AppendFormat("Security mask: 0x{0:X8}", homeblock.sec_mask).AppendLine();
-        sb.AppendFormat("File protection: 0x{0:X4}", homeblock.fileprot).AppendLine();
-        sb.AppendFormat("Record protection: 0x{0:X4}", homeblock.recprot).AppendLine();
+        sb.AppendLine(Localization.Unknown_structures);
+        sb.AppendFormat(Localization.Security_mask_0, homeblock.sec_mask).AppendLine();
+        sb.AppendFormat(Localization.File_protection_0, homeblock.fileprot).AppendLine();
+        sb.AppendFormat(Localization.Record_protection_0, homeblock.recprot).AppendLine();
 
         XmlFsType = new FileSystemType
         {
-            Type         = "FILES-11",
+            Type         = FS_TYPE,
             ClusterSize  = (uint)(homeblock.cluster * 512),
             Clusters     = partition.Size / (ulong)(homeblock.cluster * 512),
             VolumeName   = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),

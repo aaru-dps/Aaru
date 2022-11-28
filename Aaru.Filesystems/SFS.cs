@@ -51,16 +51,18 @@ public sealed class SFS : IFilesystem
     /// <summary>Identifier for SFS v2</summary>
     const uint SFS2_MAGIC = 0x53465302;
 
+    const string FS_TYPE = "sfs";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "SmartFileSystem";
+    public string Name => Localization.SFS_Name;
     /// <inheritdoc />
     public Guid Id => new("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -92,39 +94,40 @@ public sealed class SFS : IFilesystem
 
         var sbInformation = new StringBuilder();
 
-        sbInformation.AppendLine("SmartFileSystem");
+        sbInformation.AppendLine(Localization.SmartFileSystem);
 
-        sbInformation.AppendFormat("Volume version {0}", rootBlock.version).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_version_0, rootBlock.version).AppendLine();
 
-        sbInformation.AppendFormat("Volume starts on device byte {0} and ends on byte {1}", rootBlock.firstbyte,
+        sbInformation.AppendFormat(Localization.Volume_starts_on_device_byte_0_and_ends_on_byte_1, rootBlock.firstbyte,
                                    rootBlock.lastbyte).AppendLine();
 
-        sbInformation.
-            AppendFormat("Volume has {0} blocks of {1} bytes each", rootBlock.totalblocks, rootBlock.blocksize).
-            AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each, rootBlock.totalblocks,
+                                   rootBlock.blocksize).AppendLine();
 
-        sbInformation.AppendFormat("Volume created on {0}",
+        sbInformation.AppendFormat(Localization.Volume_created_on_0,
                                    DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8)).AppendLine();
 
-        sbInformation.AppendFormat("Bitmap starts in block {0}", rootBlock.bitmapbase).AppendLine();
+        sbInformation.AppendFormat(Localization.Bitmap_starts_in_block_0, rootBlock.bitmapbase).AppendLine();
 
-        sbInformation.AppendFormat("Admin space container starts in block {0}", rootBlock.adminspacecontainer).
+        sbInformation.AppendFormat(Localization.Admin_space_container_starts_in_block_0, rootBlock.adminspacecontainer).
                       AppendLine();
 
-        sbInformation.AppendFormat("Root object container starts in block {0}", rootBlock.rootobjectcontainer).
+        sbInformation.AppendFormat(Localization.Root_object_container_starts_in_block_0, rootBlock.rootobjectcontainer).
                       AppendLine();
 
-        sbInformation.AppendFormat("Root node of the extent B-tree resides in block {0}", rootBlock.extentbnoderoot).
-                      AppendLine();
+        sbInformation.
+            AppendFormat(Localization.Root_node_of_the_extent_B_tree_resides_in_block_0, rootBlock.extentbnoderoot).
+            AppendLine();
 
-        sbInformation.AppendFormat("Root node of the object B-tree resides in block {0}", rootBlock.objectnoderoot).
-                      AppendLine();
+        sbInformation.
+            AppendFormat(Localization.Root_node_of_the_object_B_tree_resides_in_block_0, rootBlock.objectnoderoot).
+            AppendLine();
 
         if(rootBlock.bits.HasFlag(Flags.CaseSensitive))
-            sbInformation.AppendLine("Volume is case sensitive");
+            sbInformation.AppendLine(Localization.Volume_is_case_sensitive);
 
         if(rootBlock.bits.HasFlag(Flags.RecycledFolder))
-            sbInformation.AppendLine("Volume moves deleted files to a recycled folder");
+            sbInformation.AppendLine(Localization.Volume_moves_deleted_files_to_a_recycled_folder);
 
         information = sbInformation.ToString();
 
@@ -134,7 +137,7 @@ public sealed class SFS : IFilesystem
             CreationDateSpecified = true,
             Clusters              = rootBlock.totalblocks,
             ClusterSize           = rootBlock.blocksize,
-            Type                  = "SmartFileSystem"
+            Type                  = FS_TYPE
         };
     }
 

@@ -49,12 +49,14 @@ namespace Aaru.Filesystems;
 public sealed class ReFS : IFilesystem
 {
     const uint FSRS = 0x53525346;
+
+    const string FS_TYPE = "refs";
     readonly byte[] _signature =
     {
         0x52, 0x65, 0x46, 0x53, 0x00, 0x00, 0x00, 0x00
     };
     /// <inheritdoc />
-    public string Name => "Resilient File System plugin";
+    public string Name => Localization.ReFS_Name;
     /// <inheritdoc />
     public Guid Id => new("37766C4E-EBF5-4113-A712-B758B756ABD6");
     /// <inheritdoc />
@@ -62,7 +64,7 @@ public sealed class ReFS : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -147,20 +149,20 @@ public sealed class ReFS : IFilesystem
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("Microsoft Resilient File System");
-        sb.AppendFormat("Volume uses {0} bytes per sector", vhdr.bytesPerSector).AppendLine();
+        sb.AppendLine(Localization.Microsoft_Resilient_File_System);
+        sb.AppendFormat(Localization.Volume_uses_0_bytes_per_sector, vhdr.bytesPerSector).AppendLine();
 
-        sb.AppendFormat("Volume uses {0} sectors per cluster ({1} bytes)", vhdr.sectorsPerCluster,
+        sb.AppendFormat(Localization.Volume_uses_0_sectors_per_cluster_1_bytes, vhdr.sectorsPerCluster,
                         vhdr.sectorsPerCluster * vhdr.bytesPerSector).AppendLine();
 
-        sb.AppendFormat("Volume has {0} sectors ({1} bytes)", vhdr.sectors, vhdr.sectors * vhdr.bytesPerSector).
+        sb.AppendFormat(Localization.Volume_has_0_sectors_1_bytes, vhdr.sectors, vhdr.sectors * vhdr.bytesPerSector).
            AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type        = "Resilient File System",
+            Type        = FS_TYPE,
             ClusterSize = vhdr.bytesPerSector * vhdr.sectorsPerCluster,
             Clusters    = vhdr.sectors        / vhdr.sectorsPerCluster
         };

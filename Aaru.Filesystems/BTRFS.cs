@@ -49,16 +49,18 @@ public sealed class BTRFS : IFilesystem
     /// <summary>BTRFS magic "_BHRfS_M"</summary>
     const ulong BTRFS_MAGIC = 0x4D5F53665248425F;
 
+    const string FS_TYPE = "btrfs";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "B-tree file system";
+    public string Name => Localization.BTRFS_Name;
     /// <inheritdoc />
     public Guid Id => new("C904CF15-5222-446B-B7DB-02EAC5D781B3");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -175,27 +177,27 @@ public sealed class BTRFS : IFilesystem
         AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.uuid = {0}", btrfsSb.dev_item.uuid);
         AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.label = {0}", btrfsSb.label);
 
-        sbInformation.AppendLine("B-tree filesystem");
-        sbInformation.AppendFormat("UUID: {0}", btrfsSb.uuid).AppendLine();
-        sbInformation.AppendFormat("This superblock resides on physical block {0}", btrfsSb.pba).AppendLine();
-        sbInformation.AppendFormat("Root tree starts at LBA {0}", btrfsSb.root_lba).AppendLine();
-        sbInformation.AppendFormat("Chunk tree starts at LBA {0}", btrfsSb.chunk_lba).AppendLine();
-        sbInformation.AppendFormat("Log tree starts at LBA {0}", btrfsSb.log_lba).AppendLine();
+        sbInformation.AppendLine(Localization.B_tree_filesystem);
+        sbInformation.AppendFormat(Localization.UUID_0, btrfsSb.uuid).AppendLine();
+        sbInformation.AppendFormat(Localization.This_superblock_resides_on_physical_block_0, btrfsSb.pba).AppendLine();
+        sbInformation.AppendFormat(Localization.Root_tree_starts_at_LBA_0, btrfsSb.root_lba).AppendLine();
+        sbInformation.AppendFormat(Localization.Chunk_tree_starts_at_LBA_0, btrfsSb.chunk_lba).AppendLine();
+        sbInformation.AppendFormat(Localization.Log_tree_starts_at_LBA_0, btrfsSb.log_lba).AppendLine();
 
-        sbInformation.AppendFormat("Volume has {0} bytes spanned in {1} devices", btrfsSb.total_bytes,
+        sbInformation.AppendFormat(Localization.Volume_has_0_bytes_spanned_in_1_devices, btrfsSb.total_bytes,
                                    btrfsSb.num_devices).AppendLine();
 
-        sbInformation.AppendFormat("Volume has {0} bytes used", btrfsSb.bytes_used).AppendLine();
-        sbInformation.AppendFormat("{0} bytes/sector", btrfsSb.sectorsize).AppendLine();
-        sbInformation.AppendFormat("{0} bytes/node", btrfsSb.nodesize).AppendLine();
-        sbInformation.AppendFormat("{0} bytes/leaf", btrfsSb.leafsize).AppendLine();
-        sbInformation.AppendFormat("{0} bytes/stripe", btrfsSb.stripesize).AppendLine();
-        sbInformation.AppendFormat("Flags: 0x{0:X}", btrfsSb.flags).AppendLine();
-        sbInformation.AppendFormat("Compatible flags: 0x{0:X}", btrfsSb.compat_flags).AppendLine();
-        sbInformation.AppendFormat("Read-only compatible flags: 0x{0:X}", btrfsSb.compat_ro_flags).AppendLine();
-        sbInformation.AppendFormat("Incompatible flags: 0x{0:X}", btrfsSb.incompat_flags).AppendLine();
-        sbInformation.AppendFormat("Device's UUID: {0}", btrfsSb.dev_item.uuid).AppendLine();
-        sbInformation.AppendFormat("Volume label: {0}", btrfsSb.label).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_bytes_used, btrfsSb.bytes_used).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_sector, btrfsSb.sectorsize).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_node, btrfsSb.nodesize).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_leaf, btrfsSb.leafsize).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_stripe, btrfsSb.stripesize).AppendLine();
+        sbInformation.AppendFormat(Localization.Flags_0, btrfsSb.flags).AppendLine();
+        sbInformation.AppendFormat(Localization.Compatible_flags_0, btrfsSb.compat_flags).AppendLine();
+        sbInformation.AppendFormat(Localization.Read_only_compatible_flags_0, btrfsSb.compat_ro_flags).AppendLine();
+        sbInformation.AppendFormat(Localization.Incompatible_flags_0, btrfsSb.incompat_flags).AppendLine();
+        sbInformation.AppendFormat(Localization.Device_UUID_0, btrfsSb.dev_item.uuid).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_label_0, btrfsSb.label).AppendLine();
 
         information = sbInformation.ToString();
 
@@ -207,7 +209,7 @@ public sealed class BTRFS : IFilesystem
             VolumeName            = btrfsSb.label,
             VolumeSerial          = $"{btrfsSb.uuid}",
             VolumeSetIdentifier   = $"{btrfsSb.dev_item.device_uuid}",
-            Type                  = Name
+            Type                  = FS_TYPE
         };
 
         XmlFsType.FreeClusters = XmlFsType.Clusters - (btrfsSb.bytes_used / btrfsSb.sectorsize);

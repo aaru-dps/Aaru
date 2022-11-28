@@ -66,11 +66,11 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "FATX Filesystem Plugin";
+    public string Name => Localization.XboxFatPlugin_Name;
     /// <inheritdoc />
     public Guid Id => new("ED27A721-4A17-4649-89FD-33633B46E228");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public ErrorNumber ListXAttr(string path, out List<string> xattrs)

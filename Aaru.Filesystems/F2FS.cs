@@ -62,11 +62,11 @@ public sealed class F2FS : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "F2FS Plugin";
+    public string Name => Localization.F2FS_Name;
     /// <inheritdoc />
     public Guid Id => new("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -135,36 +135,36 @@ public sealed class F2FS : IFilesystem
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("F2FS filesystem");
-        sb.AppendFormat("Version {0}.{1}", f2fsSb.major_ver, f2fsSb.minor_ver).AppendLine();
-        sb.AppendFormat("{0} bytes per sector", 1 << (int)f2fsSb.log_sectorsize).AppendLine();
+        sb.AppendLine(Localization.F2FS_filesystem);
+        sb.AppendFormat(Localization.Version_0_1, f2fsSb.major_ver, f2fsSb.minor_ver).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector, 1 << (int)f2fsSb.log_sectorsize).AppendLine();
 
-        sb.AppendFormat("{0} sectors ({1} bytes) per block", 1 << (int)f2fsSb.log_sectors_per_block,
-                        1                                      << (int)f2fsSb.log_blocksize).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_1_bytes_per_block, 1 << (int)f2fsSb.log_sectors_per_block,
+                        1                                            << (int)f2fsSb.log_blocksize).AppendLine();
 
-        sb.AppendFormat("{0} blocks per segment", f2fsSb.log_blocks_per_seg).AppendLine();
-        sb.AppendFormat("{0} blocks in volume", f2fsSb.block_count).AppendLine();
-        sb.AppendFormat("{0} segments per section", f2fsSb.segs_per_sec).AppendLine();
-        sb.AppendFormat("{0} sections per zone", f2fsSb.secs_per_zone).AppendLine();
-        sb.AppendFormat("{0} sections", f2fsSb.section_count).AppendLine();
-        sb.AppendFormat("{0} segments", f2fsSb.segment_count).AppendLine();
-        sb.AppendFormat("Root directory resides on inode {0}", f2fsSb.root_ino).AppendLine();
-        sb.AppendFormat("Volume UUID: {0}", f2fsSb.uuid).AppendLine();
+        sb.AppendFormat(Localization._0_blocks_per_segment, f2fsSb.log_blocks_per_seg).AppendLine();
+        sb.AppendFormat(Localization._0_blocks_in_volume, f2fsSb.block_count).AppendLine();
+        sb.AppendFormat(Localization._0_segments_per_section, f2fsSb.segs_per_sec).AppendLine();
+        sb.AppendFormat(Localization._0_sections_per_zone, f2fsSb.secs_per_zone).AppendLine();
+        sb.AppendFormat(Localization._0_sections, f2fsSb.section_count).AppendLine();
+        sb.AppendFormat(Localization._0_segments, f2fsSb.segment_count).AppendLine();
+        sb.AppendFormat(Localization.Root_directory_resides_on_inode_0, f2fsSb.root_ino).AppendLine();
+        sb.AppendFormat(Localization.Volume_UUID_0, f2fsSb.uuid).AppendLine();
 
-        sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true)).
+        sb.AppendFormat(Localization.Volume_name_0,
+                        StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true)).AppendLine();
+
+        sb.AppendFormat(Localization.Volume_last_mounted_on_kernel_version_0, StringHandlers.CToString(f2fsSb.version)).
            AppendLine();
 
-        sb.AppendFormat("Volume last mounted on kernel version: {0}", StringHandlers.CToString(f2fsSb.version)).
-           AppendLine();
-
-        sb.AppendFormat("Volume created on kernel version: {0}", StringHandlers.CToString(f2fsSb.init_version)).
+        sb.AppendFormat(Localization.Volume_created_on_kernel_version_0, StringHandlers.CToString(f2fsSb.init_version)).
            AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type                   = "F2FS filesystem",
+            Type                   = FS_TYPE,
             SystemIdentifier       = Encoding.ASCII.GetString(f2fsSb.version),
             Clusters               = f2fsSb.block_count,
             ClusterSize            = (uint)(1 << (int)f2fsSb.log_blocksize),
@@ -173,6 +173,8 @@ public sealed class F2FS : IFilesystem
             VolumeSerial           = f2fsSb.uuid.ToString()
         };
     }
+
+    const string FS_TYPE = "f2fs";
 
     [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
     readonly struct Superblock

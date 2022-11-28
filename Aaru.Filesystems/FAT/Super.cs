@@ -97,7 +97,7 @@ public sealed partial class FAT
             default: return ErrorNumber.InvalidArgument;
         }
 
-        AaruConsole.DebugWriteLine("FAT plugin", "Reading BPB");
+        AaruConsole.DebugWriteLine("FAT plugin", Localization.Reading_BPB);
 
         uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
 
@@ -166,7 +166,7 @@ public sealed partial class FAT
                     fat32Bpb.sptrk     /= 4;
                 }
 
-                XmlFsType.Type = fat32Bpb.version != 0 ? "FAT+" : "FAT32";
+                XmlFsType.Type = fat32Bpb.version != 0 ? FS_TYPE_FAT_PLUS : FS_TYPE_FAT32;
 
                 if(fat32Bpb.oem_name != null &&
                    (fat32Bpb.oem_name[5] != 0x49 || fat32Bpb.oem_name[6] != 0x48 || fat32Bpb.oem_name[7] != 0x43))
@@ -377,9 +377,9 @@ public sealed partial class FAT
             }
 
             if(_fat12)
-                XmlFsType.Type = "FAT12";
+                XmlFsType.Type = FS_TYPE_FAT12;
             else if(_fat16)
-                XmlFsType.Type = "FAT16";
+                XmlFsType.Type = FS_TYPE_FAT16;
 
             if(bpbKind == BpbKind.Atari)
             {
@@ -702,7 +702,7 @@ public sealed partial class FAT
             if(name      == "" &&
                extension == "")
             {
-                AaruConsole.DebugWriteLine("FAT filesystem", "Found empty filename in root directory");
+                AaruConsole.DebugWriteLine("FAT filesystem", Localization.Found_empty_filename_in_root_directory);
 
                 if(!_debug ||
                    entry is { size: > 0, start_cluster: 0 })
@@ -773,49 +773,15 @@ public sealed partial class FAT
 
         switch(bpbKind)
         {
-            case BpbKind.Hardcoded:
-                _statfs.Type = $"Microsoft FAT{(_fat16 ? "16" : "12")}";
-
-                break;
-            case BpbKind.Atari:
-                _statfs.Type = $"Atari FAT{(_fat16 ? "16" : "12")}";
-
-                break;
-            case BpbKind.Msx:
-                _statfs.Type = $"MSX FAT{(_fat16 ? "16" : "12")}";
-
-                break;
-            case BpbKind.Dos2:
-            case BpbKind.Dos3:
-            case BpbKind.Dos32:
-            case BpbKind.Dos33:
-            case BpbKind.ShortExtended:
-            case BpbKind.Extended:
-                _statfs.Type = $"Microsoft FAT{(_fat16 ? "16" : "12")}";
-
-                break;
             case BpbKind.ShortFat32:
             case BpbKind.LongFat32:
-                _statfs.Type = XmlFsType.Type == "FAT+" ? "FAT+" : "Microsoft FAT32";
+                _statfs.Type = XmlFsType.Type == FS_TYPE_FAT_PLUS ? FS_TYPE_FAT_PLUS : FS_TYPE_FAT32;
 
                 break;
-            case BpbKind.Andos:
-                _statfs.Type = $"ANDOS FAT{(_fat16 ? "16" : "12")}";
+            default:
+                _statfs.Type = _fat16 ? FS_TYPE_FAT16 : FS_TYPE_FAT12;
 
                 break;
-            case BpbKind.Apricot:
-                _statfs.Type = $"Apricot FAT{(_fat16 ? "16" : "12")}";
-
-                break;
-            case BpbKind.DecRainbow:
-                _statfs.Type = $"DEC FAT{(_fat16 ? "16" : "12")}";
-
-                break;
-            case BpbKind.Human:
-                _statfs.Type = $"Human68k FAT{(_fat16 ? "16" : "12")}";
-
-                break;
-            default: throw new ArgumentOutOfRangeException();
         }
 
         _bytesPerCluster = _sectorsPerCluster * imagePlugin.Info.SectorSize;
@@ -827,7 +793,7 @@ public sealed partial class FAT
 
         if(_fat12)
         {
-            AaruConsole.DebugWriteLine("FAT plugin", "Reading FAT12");
+            AaruConsole.DebugWriteLine("FAT plugin", Localization.Reading_FAT12);
 
             errno = imagePlugin.ReadSectors(_fatFirstSector, _sectorsPerFat, out byte[] fatBytes);
 
@@ -880,14 +846,14 @@ public sealed partial class FAT
         }
         else if(_fat16)
         {
-            AaruConsole.DebugWriteLine("FAT plugin", "Reading FAT16");
+            AaruConsole.DebugWriteLine("FAT plugin", Localization.Reading_FAT16);
 
             errno = imagePlugin.ReadSectors(_fatFirstSector, _sectorsPerFat, out byte[] fatBytes);
 
             if(errno != ErrorNumber.NoError)
                 return errno;
 
-            AaruConsole.DebugWriteLine("FAT plugin", "Casting FAT");
+            AaruConsole.DebugWriteLine("FAT plugin", Localization.Casting_FAT);
             firstFatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
 
             errno = imagePlugin.ReadSectors(_fatFirstSector + _sectorsPerFat, _sectorsPerFat, out fatBytes);
@@ -895,7 +861,7 @@ public sealed partial class FAT
             if(errno != ErrorNumber.NoError)
                 return errno;
 
-            AaruConsole.DebugWriteLine("FAT plugin", "Casting FAT");
+            AaruConsole.DebugWriteLine("FAT plugin", Localization.Casting_FAT);
             secondFatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
 
             if(firstFatEntries.Any(entry => entry < FAT16_RESERVED && entry > _statfs.Blocks))

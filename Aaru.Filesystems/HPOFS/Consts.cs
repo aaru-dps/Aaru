@@ -46,4 +46,7 @@ public sealed partial class HPOFS
     {
         0x56, 0x4F, 0x4C, 0x49, 0x4E, 0x46, 0x4F, 0x20
     };
+
+    // Do not translate
+    const string FS_TYPE = "hpofs";
 }

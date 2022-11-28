@@ -89,11 +89,11 @@ public sealed class ProDOSPlugin : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Apple ProDOS filesystem";
+    public string Name => Localization.ProDOSPlugin_Name;
     /// <inheritdoc />
     public Guid Id => new("43874265-7B8A-4739-BCF7-07F80D5932BF");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -250,8 +250,8 @@ public sealed class ProDOSPlugin : IFilesystem
             AaruConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp = 0x{0:X8}", tempTimestamp);
 
             AaruConsole.DebugWriteLine("ProDOS plugin",
-                                       "Datetime field year {0}, month {1}, day {2}, hour {3}, minute {4}.", year,
-                                       month, day, hour, minute);
+                                       Localization.Datetime_field_year_0_month_1_day_2_hour_3_minute_4, year, month,
+                                       day, hour, minute);
 
             rootDirectoryKeyBlock.header.creation_time = new DateTime(year, month, day, hour, minute, 0);
             dateCorrect                                = true;
@@ -272,64 +272,71 @@ public sealed class ProDOSPlugin : IFilesystem
         rootDirectoryKeyBlock.header.total_blocks    = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x29);
 
         if(apmFromHddOnCd)
-            sbInformation.AppendLine("ProDOS uses 512 bytes/sector while devices uses 2048 bytes/sector.").AppendLine();
+            sbInformation.AppendLine(Localization.ProDOS_uses_512_bytes_sector_while_devices_uses_2048_bytes_sector).
+                          AppendLine();
 
         if(rootDirectoryKeyBlock.header.version     != VERSION1 ||
            rootDirectoryKeyBlock.header.min_version != VERSION1)
         {
-            sbInformation.AppendLine("Warning! Detected unknown ProDOS version ProDOS filesystem.");
-            sbInformation.AppendLine("All of the following information may be incorrect");
+            sbInformation.AppendLine(Localization.Warning_Detected_unknown_ProDOS_version_ProDOS_filesystem);
+            sbInformation.AppendLine(Localization.All_of_the_following_information_may_be_incorrect);
         }
 
         if(rootDirectoryKeyBlock.header.version == VERSION1)
-            sbInformation.AppendLine("ProDOS version 1 used to create this volume.");
+            sbInformation.AppendLine(Localization.ProDOS_version_one_used_to_create_this_volume);
         else
-            sbInformation.AppendFormat("Unknown ProDOS version with field {0} used to create this volume.",
+            sbInformation.AppendFormat(Localization.Unknown_ProDOS_version_with_field_0_used_to_create_this_volume,
                                        rootDirectoryKeyBlock.header.version).AppendLine();
 
         if(rootDirectoryKeyBlock.header.min_version == VERSION1)
-            sbInformation.AppendLine("ProDOS version 1 at least required for reading this volume.");
+            sbInformation.AppendLine(Localization.ProDOS_version_one_at_least_required_for_reading_this_volume);
         else
             sbInformation.
-                AppendFormat("Unknown ProDOS version with field {0} is at least required for reading this volume.",
+                AppendFormat(Localization.Unknown_ProDOS_version_with_field_0_is_at_least_required_for_reading_this_volume,
                              rootDirectoryKeyBlock.header.min_version).AppendLine();
 
-        sbInformation.AppendFormat("Volume name is {0}", rootDirectoryKeyBlock.header.volume_name).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_name_is_0, rootDirectoryKeyBlock.header.volume_name).
+                      AppendLine();
 
         if(dateCorrect)
-            sbInformation.AppendFormat("Volume created on {0}", rootDirectoryKeyBlock.header.creation_time).
+            sbInformation.AppendFormat(Localization.Volume_created_on_0, rootDirectoryKeyBlock.header.creation_time).
                           AppendLine();
 
-        sbInformation.AppendFormat("{0} bytes per directory entry", rootDirectoryKeyBlock.header.entry_length).
+        sbInformation.
+            AppendFormat(Localization._0_bytes_per_directory_entry, rootDirectoryKeyBlock.header.entry_length).
+            AppendLine();
+
+        sbInformation.
+            AppendFormat(Localization._0_entries_per_directory_block, rootDirectoryKeyBlock.header.entries_per_block).
+            AppendLine();
+
+        sbInformation.AppendFormat(Localization._0_files_in_root_directory, rootDirectoryKeyBlock.header.file_count).
                       AppendLine();
 
-        sbInformation.AppendFormat("{0} entries per directory block", rootDirectoryKeyBlock.header.entries_per_block).
+        sbInformation.AppendFormat(Localization._0_blocks_in_volume, rootDirectoryKeyBlock.header.total_blocks).
                       AppendLine();
 
-        sbInformation.AppendFormat("{0} files in root directory", rootDirectoryKeyBlock.header.file_count).AppendLine();
-
-        sbInformation.AppendFormat("{0} blocks in volume", rootDirectoryKeyBlock.header.total_blocks).AppendLine();
-
-        sbInformation.AppendFormat("Bitmap starts at block {0}", rootDirectoryKeyBlock.header.bit_map_pointer).
+        sbInformation.AppendFormat(Localization.Bitmap_starts_at_block_0, rootDirectoryKeyBlock.header.bit_map_pointer).
                       AppendLine();
 
         if((rootDirectoryKeyBlock.header.access & READ_ATTRIBUTE) == READ_ATTRIBUTE)
-            sbInformation.AppendLine("Volume can be read");
+            sbInformation.AppendLine(Localization.Volume_can_be_read);
 
         if((rootDirectoryKeyBlock.header.access & WRITE_ATTRIBUTE) == WRITE_ATTRIBUTE)
-            sbInformation.AppendLine("Volume can be written");
+            sbInformation.AppendLine(Localization.Volume_can_be_written);
 
         if((rootDirectoryKeyBlock.header.access & RENAME_ATTRIBUTE) == RENAME_ATTRIBUTE)
-            sbInformation.AppendLine("Volume can be renamed");
+            sbInformation.AppendLine(Localization.Volume_can_be_renamed);
 
         if((rootDirectoryKeyBlock.header.access & DESTROY_ATTRIBUTE) == DESTROY_ATTRIBUTE)
-            sbInformation.AppendLine("Volume can be destroyed");
+            sbInformation.AppendLine(Localization.Volume_can_be_destroyed);
 
         if((rootDirectoryKeyBlock.header.access & BACKUP_ATTRIBUTE) == BACKUP_ATTRIBUTE)
-            sbInformation.AppendLine("Volume must be backed up");
+            sbInformation.AppendLine(Localization.Volume_must_be_backed_up);
 
+        // TODO: Fix mask
         if((rootDirectoryKeyBlock.header.access & RESERVED_ATTRIBUTE_MASK) != 0)
-            AaruConsole.DebugWriteLine("ProDOS plugin", "Reserved attributes are set: {0:X2}",
+            AaruConsole.DebugWriteLine("ProDOS plugin", Localization.Reserved_attributes_are_set_0,
                                        rootDirectoryKeyBlock.header.access);
 
         information = sbInformation.ToString();
@@ -340,7 +347,7 @@ public sealed class ProDOSPlugin : IFilesystem
             Files          = rootDirectoryKeyBlock.header.file_count,
             FilesSpecified = true,
             Clusters       = rootDirectoryKeyBlock.header.total_blocks,
-            Type           = "ProDOS"
+            Type           = FS_TYPE
         };
 
         XmlFsType.ClusterSize = (uint)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
@@ -352,6 +359,8 @@ public sealed class ProDOSPlugin : IFilesystem
         XmlFsType.CreationDate          = rootDirectoryKeyBlock.header.creation_time;
         XmlFsType.CreationDateSpecified = true;
     }
+
+    const string FS_TYPE = "prodos";
 
     /// <summary>ProDOS directory entry, decoded structure</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]

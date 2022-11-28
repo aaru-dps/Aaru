@@ -140,7 +140,7 @@ public sealed partial class PascalPlugin
             ClusterSize    = _device.Info.SectorSize,
             Files          = (ulong)_mountedVolEntry.Files,
             FilesSpecified = true,
-            Type           = "UCSD Pascal",
+            Type           = FS_TYPE,
             VolumeName     = StringHandlers.PascalToString(_mountedVolEntry.VolumeName, Encoding)
         };
 
@@ -168,7 +168,7 @@ public sealed partial class PascalPlugin
             Files          = (ulong)_mountedVolEntry.Files,
             FreeBlocks     = 0,
             PluginId       = Id,
-            Type           = "UCSD Pascal"
+            Type           = FS_TYPE
         };
 
         stat.FreeBlocks = (ulong)(_mountedVolEntry.Blocks - (_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock));

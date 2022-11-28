@@ -179,35 +179,38 @@ public sealed partial class HPOFS
         AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.filler is empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(vib.filler));
 
-        sb.AppendLine("High Performance Optical File System");
-        sb.AppendFormat("OEM name: {0}", StringHandlers.SpacePaddedToString(bpb.oem_name)).AppendLine();
-        sb.AppendFormat("{0} bytes per sector", bpb.bps).AppendLine();
-        sb.AppendFormat("{0} sectors per cluster", bpb.spc).AppendLine();
-        sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();
-        sb.AppendFormat("{0} sectors per track", bpb.sptrk).AppendLine();
-        sb.AppendFormat("{0} heads", bpb.heads).AppendLine();
-        sb.AppendFormat("{0} sectors hidden before BPB", bpb.hsectors).AppendLine();
-        sb.AppendFormat("{0} sectors on volume ({1} bytes)", mib.sectors, mib.sectors * bpb.bps).AppendLine();
-        sb.AppendFormat("BIOS Drive Number: 0x{0:X2}", bpb.drive_no).AppendLine();
-        sb.AppendFormat("Serial number: 0x{0:X8}", mib.serial).AppendLine();
+        sb.AppendLine(Localization.HPOFS_Name);
+        sb.AppendFormat(Localization.OEM_name_0, StringHandlers.SpacePaddedToString(bpb.oem_name)).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector, bpb.bps).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_per_cluster, bpb.spc).AppendLine();
+        sb.AppendFormat(Localization.Media_descriptor_0, bpb.media).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_per_track, bpb.sptrk).AppendLine();
+        sb.AppendFormat(Localization._0_heads, bpb.heads).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_hidden_before_BPB, bpb.hsectors).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, mib.sectors, mib.sectors * bpb.bps).AppendLine();
+        sb.AppendFormat(Localization.BIOS_drive_number_0, bpb.drive_no).AppendLine();
+        sb.AppendFormat(Localization.Serial_number_0, mib.serial).AppendLine();
 
-        sb.AppendFormat("Volume label: {0}", StringHandlers.SpacePaddedToString(mib.volumeLabel, Encoding)).
+        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(mib.volumeLabel, Encoding)).
            AppendLine();
 
-        sb.AppendFormat("Volume comment: {0}", StringHandlers.SpacePaddedToString(mib.comment, Encoding)).AppendLine();
-
-        sb.AppendFormat("Volume owner: {0}", StringHandlers.SpacePaddedToString(vib.owner, Encoding)).AppendLine();
-
-        sb.AppendFormat("Volume created on {0}", DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime)).
+        sb.AppendFormat(Localization.Volume_comment_0, StringHandlers.SpacePaddedToString(mib.comment, Encoding)).
            AppendLine();
 
-        sb.AppendFormat("Volume uses {0} codepage {1}",
-                        mib.codepageType is > 0 and < 3 ? mib.codepageType == 2 ? "EBCDIC" : "ASCII" : "Unknown",
-                        mib.codepage).AppendLine();
+        sb.AppendFormat(Localization.Volume_owner_0, StringHandlers.SpacePaddedToString(vib.owner, Encoding)).
+           AppendLine();
 
-        sb.AppendFormat("RPS level: {0}", mib.rps).AppendLine();
-        sb.AppendFormat("Filesystem version: {0}.{1}", mib.major, mib.minor).AppendLine();
-        sb.AppendFormat("Volume can be filled up to {0}%", vib.percentFull).AppendLine();
+        sb.AppendFormat(Localization.Volume_created_on_0,
+                        DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime)).AppendLine();
+
+        sb.AppendFormat(Localization.Volume_uses_0_codepage_1,
+                        mib.codepageType is > 0 and < 3
+                            ? mib.codepageType == 2 ? Localization.EBCDIC : Localization.ASCII
+                            : Localization.Unknown_codepage, mib.codepage).AppendLine();
+
+        sb.AppendFormat(Localization.RPS_level_0, mib.rps).AppendLine();
+        sb.AppendFormat(Localization.Filesystem_version_0_1, mib.major, mib.minor).AppendLine();
+        sb.AppendFormat(Localization.Volume_can_be_filled_up_to_0, vib.percentFull).AppendLine();
 
         XmlFsType = new FileSystemType
         {
@@ -216,7 +219,7 @@ public sealed partial class HPOFS
             CreationDate           = DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime),
             CreationDateSpecified  = true,
             DataPreparerIdentifier = StringHandlers.SpacePaddedToString(vib.owner, Encoding),
-            Type                   = "HPOFS",
+            Type                   = FS_TYPE,
             VolumeName             = StringHandlers.SpacePaddedToString(mib.volumeLabel, Encoding),
             VolumeSerial           = $"{mib.serial:X8}",
             SystemIdentifier       = StringHandlers.SpacePaddedToString(bpb.oem_name)

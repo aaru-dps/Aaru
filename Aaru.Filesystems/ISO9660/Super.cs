@@ -135,10 +135,10 @@ public sealed partial class ISO9660
 
         while(true)
         {
-            AaruConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
+            AaruConsole.DebugWriteLine("ISO9660 plugin", Localization.Processing_VD_loop_no_0, counter);
 
             // Seek to Volume Descriptor
-            AaruConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.Start);
+            AaruConsole.DebugWriteLine("ISO9660 plugin", Localization.Reading_sector_0, 16 + counter + partition.Start);
             errno = imagePlugin.ReadSector(16 + counter + partition.Start, out byte[] vdSectorTmp);
 
             if(errno != ErrorNumber.NoError)
@@ -215,7 +215,7 @@ public sealed partial class ISO9660
                                 jolietvd = svd;
                             else
                                 AaruConsole.DebugWriteLine("ISO9660 plugin",
-                                                           "Found unknown supplementary volume descriptor");
+                                                           Localization.Found_unknown_supplementary_volume_descriptor);
 
                         if(_debug)
                             svdSectors.Add(16 + counter + partition.Start);
@@ -258,7 +258,7 @@ public sealed partial class ISO9660
            hsvd == null &&
            fsvd == null)
         {
-            AaruConsole.ErrorWriteLine("ERROR: Could not find primary volume descriptor");
+            AaruConsole.ErrorWriteLine(Localization.ERROR_Could_not_find_primary_volume_descriptor);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -294,7 +294,7 @@ public sealed partial class ISO9660
             if(errno != ErrorNumber.NoError)
                 pathTableData = null;
 
-            fsFormat = "High Sierra Format";
+            fsFormat = FS_TYPE_HSF;
 
             pathTableMsbLocation = hsvd.Value.mandatory_path_table_msb;
             pathTableLsbLocation = hsvd.Value.mandatory_path_table_lsb;
@@ -308,7 +308,7 @@ public sealed partial class ISO9660
             if(errno != ErrorNumber.NoError)
                 pathTableData = null;
 
-            fsFormat = "CD-i";
+            fsFormat = FS_TYPE_CDI;
 
             pathTableMsbLocation = fsvd.Value.path_table_addr;
 
@@ -325,7 +325,7 @@ public sealed partial class ISO9660
             if(errno != ErrorNumber.NoError)
                 pathTableData = null;
 
-            fsFormat = "ISO9660";
+            fsFormat = FS_TYPE_ISO;
 
             pathTableMsbLocation = pvd.Value.type_m_path_table;
             pathTableLsbLocation = pvd.Value.type_l_path_table;
@@ -368,7 +368,8 @@ public sealed partial class ISO9660
                rootLocation       != _pathTable[0].Extent)
             {
                 AaruConsole.DebugWriteLine("ISO9660 plugin",
-                                           "Path table and PVD do not point to the same location for the root directory!");
+                                           Localization.
+                                               Path_table_and_PVD_do_not_point_to_the_same_location_for_the_root_directory);
 
                 errno = ReadSector(rootLocation, out byte[] firstRootSector);
 
@@ -397,7 +398,8 @@ public sealed partial class ISO9660
                 if(pvdWrongRoot)
                 {
                     AaruConsole.DebugWriteLine("ISO9660 plugin",
-                                               "PVD does not point to correct root directory, checking path table...");
+                                               Localization.
+                                                   PVD_does_not_point_to_correct_root_directory_checking_path_table);
 
                     bool pathTableWrongRoot = false;
 
@@ -424,7 +426,7 @@ public sealed partial class ISO9660
 
                     if(pathTableWrongRoot)
                     {
-                        AaruConsole.ErrorWriteLine("Cannot find root directory...");
+                        AaruConsole.ErrorWriteLine(Localization.Cannot_find_root_directory);
 
                         return ErrorNumber.InvalidArgument;
                     }

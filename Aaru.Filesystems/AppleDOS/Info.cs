@@ -83,20 +83,21 @@ public sealed partial class AppleDOS
 
         _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
-        sb.AppendLine("Apple DOS File System");
+        sb.AppendLine(Localization.AppleDOS_Name);
         sb.AppendLine();
 
-        sb.AppendFormat("Catalog starts at sector {0} of track {1}", _vtoc.catalogSector, _vtoc.catalogTrack).
+        sb.AppendFormat(Localization.Catalog_starts_at_sector_0_of_track_1, _vtoc.catalogSector, _vtoc.catalogTrack).
            AppendLine();
 
-        sb.AppendFormat("File system initialized by DOS release {0}", _vtoc.dosRelease).AppendLine();
-        sb.AppendFormat("Disk volume number {0}", _vtoc.volumeNumber).AppendLine();
-        sb.AppendFormat("Sectors allocated at most in track {0}", _vtoc.lastAllocatedSector).AppendLine();
-        sb.AppendFormat("{0} tracks in volume", _vtoc.tracks).AppendLine();
-        sb.AppendFormat("{0} sectors per track", _vtoc.sectorsPerTrack).AppendLine();
-        sb.AppendFormat("{0} bytes per sector", _vtoc.bytesPerSector).AppendLine();
+        sb.AppendFormat(Localization.File_system_initialized_by_DOS_release_0, _vtoc.dosRelease).AppendLine();
+        sb.AppendFormat(Localization.Disk_volume_number_0, _vtoc.volumeNumber).AppendLine();
+        sb.AppendFormat(Localization.Sectors_allocated_at_most_in_track_0, _vtoc.lastAllocatedSector).AppendLine();
+        sb.AppendFormat(Localization._0_tracks_in_volume, _vtoc.tracks).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_per_track, _vtoc.sectorsPerTrack).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector, _vtoc.bytesPerSector).AppendLine();
 
-        sb.AppendFormat("Track allocation is {0}", _vtoc.allocationDirection > 0 ? "forward" : "reverse").AppendLine();
+        sb.AppendLine(_vtoc.allocationDirection > 0 ? Localization.Track_allocation_is_forward
+                          : Localization.Track_allocation_is_reverse);
 
         information = sb.ToString();
 
@@ -105,7 +106,7 @@ public sealed partial class AppleDOS
             Bootable    = true,
             Clusters    = imagePlugin.Info.Sectors,
             ClusterSize = imagePlugin.Info.SectorSize,
-            Type        = "Apple DOS"
+            Type        = FS_TYPE
         };
     }
 }

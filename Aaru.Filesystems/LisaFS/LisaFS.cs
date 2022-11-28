@@ -61,7 +61,7 @@ public sealed partial class LisaFS : IReadOnlyFilesystem
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     // TODO: Implement Lisa 7/7 namespace (needs decoding {!CATALOG} file)
     /// <inheritdoc />

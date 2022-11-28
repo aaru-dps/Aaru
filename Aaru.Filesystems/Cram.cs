@@ -59,11 +59,11 @@ public sealed class Cram : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Cram filesystem";
+    public string Name => Localization.Cram_Name;
     /// <inheritdoc />
     public Guid Id => new("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -111,20 +111,23 @@ public sealed class Cram : IFilesystem
 
         var sbInformation = new StringBuilder();
 
-        sbInformation.AppendLine("Cram file system");
-        sbInformation.AppendLine(littleEndian ? "Little-endian" : "Big-endian");
-        sbInformation.AppendFormat("Volume edition {0}", crSb.edition).AppendLine();
-        sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(crSb.name, Encoding)).AppendLine();
-        sbInformation.AppendFormat("Volume has {0} bytes", crSb.size).AppendLine();
-        sbInformation.AppendFormat("Volume has {0} blocks", crSb.blocks).AppendLine();
-        sbInformation.AppendFormat("Volume has {0} files", crSb.files).AppendLine();
+        sbInformation.AppendLine(Localization.Cram_file_system);
+        sbInformation.AppendLine(littleEndian ? Localization.Little_endian : Localization.Big_endian);
+        sbInformation.AppendFormat(Localization.Volume_edition_0, crSb.edition).AppendLine();
+
+        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(crSb.name, Encoding)).
+                      AppendLine();
+
+        sbInformation.AppendFormat(Localization.Volume_has_0_bytes, crSb.size).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_blocks, crSb.blocks).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_files, crSb.files).AppendLine();
 
         information = sbInformation.ToString();
 
         XmlFsType = new FileSystemType
         {
             VolumeName            = StringHandlers.CToString(crSb.name, Encoding),
-            Type                  = "Cram file system",
+            Type                  = FS_TYPE,
             Clusters              = crSb.blocks,
             Files                 = crSb.files,
             FilesSpecified        = true,
@@ -132,6 +135,8 @@ public sealed class Cram : IFilesystem
             FreeClustersSpecified = true
         };
     }
+
+    const string FS_TYPE = "cramfs";
 
     enum CramCompression : ushort
     {

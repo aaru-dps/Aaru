@@ -82,16 +82,18 @@ public sealed class Locus : IFilesystem
     const uint LOCUS_MAGIC_OLD = 0xFFEEDDCC;
     const uint LOCUS_CIGAM_OLD = 0xCCDDEEFF;
 
+    const string FS_TYPE = "locus";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Locus Filesystem Plugin";
+    public string Name => Localization.Locus_Name;
     /// <inheritdoc />
     public Guid Id => new("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -119,7 +121,7 @@ public sealed class Locus : IFilesystem
 
             Superblock locusSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-            AaruConsole.DebugWriteLine("Locus plugin", "magic at {1} = 0x{0:X8}", locusSb.s_magic, location);
+            AaruConsole.DebugWriteLine("Locus plugin", Localization.magic_at_1_equals_0, locusSb.s_magic, location);
 
             if(locusSb.s_magic is LOCUS_MAGIC or LOCUS_CIGAM or LOCUS_MAGIC_OLD or LOCUS_CIGAM_OLD)
                 return true;
@@ -177,7 +179,8 @@ public sealed class Locus : IFilesystem
 
         var sb = new StringBuilder();
 
-        sb.AppendLine(locusSb.s_magic == LOCUS_MAGIC_OLD ? "Locus filesystem (old)" : "Locus filesystem");
+        sb.AppendLine(locusSb.s_magic == LOCUS_MAGIC_OLD ? Localization.Locus_filesystem_old
+                          : Localization.Locus_filesystem);
 
         int blockSize = locusSb.s_version == Version.SB_SB4096 ? 4096 : 1024;
 
@@ -209,65 +212,66 @@ public sealed class Locus : IFilesystem
         AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_fmod = {0}", locusSb.s_fmod);
         AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_version = {0}", locusSb.s_version);
 
-        sb.AppendFormat("Superblock last modified on {0}", DateHandlers.UnixToDateTime(locusSb.s_time)).AppendLine();
-
-        sb.AppendFormat("Volume has {0} blocks of {1} bytes each (total {2} bytes)", locusSb.s_fsize, blockSize,
-                        locusSb.s_fsize * blockSize).AppendLine();
-
-        sb.AppendFormat("{0} blocks free ({1} bytes)", locusSb.s_tfree, locusSb.s_tfree * blockSize).AppendLine();
-        sb.AppendFormat("I-node list uses {0} blocks", locusSb.s_isize).AppendLine();
-        sb.AppendFormat("{0} free inodes", locusSb.s_tinode).AppendLine();
-        sb.AppendFormat("Next free inode search will start at inode {0}", locusSb.s_lasti).AppendLine();
-
-        sb.AppendFormat("There are an estimate of {0} free inodes before next search start", locusSb.s_nbehind).
+        sb.AppendFormat(Localization.Superblock_last_modified_on_0, DateHandlers.UnixToDateTime(locusSb.s_time)).
            AppendLine();
 
+        sb.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each_total_2_bytes, locusSb.s_fsize, blockSize,
+                        locusSb.s_fsize * blockSize).AppendLine();
+
+        sb.AppendFormat(Localization._0_blocks_free_1_bytes, locusSb.s_tfree, locusSb.s_tfree * blockSize).AppendLine();
+        sb.AppendFormat(Localization.Inode_list_uses_0_blocks, locusSb.s_isize).AppendLine();
+        sb.AppendFormat(Localization._0_free_inodes, locusSb.s_tinode).AppendLine();
+        sb.AppendFormat(Localization.Next_free_inode_search_will_start_at_inode_0, locusSb.s_lasti).AppendLine();
+
+        sb.AppendFormat(Localization.There_are_an_estimate_of_0_free_inodes_before_next_search_start,
+                        locusSb.s_nbehind).AppendLine();
+
         if(locusSb.s_flags.HasFlag(Flags.SB_RDONLY))
-            sb.AppendLine("Read-only volume");
+            sb.AppendLine(Localization.Read_only_volume);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_CLEAN))
-            sb.AppendLine("Clean volume");
+            sb.AppendLine(Localization.Clean_volume);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_DIRTY))
-            sb.AppendLine("Dirty volume");
+            sb.AppendLine(Localization.Dirty_volume);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_RMV))
-            sb.AppendLine("Removable volume");
+            sb.AppendLine(Localization.Removable_volume);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_PRIMPACK))
-            sb.AppendLine("This is the primary pack");
+            sb.AppendLine(Localization.This_is_the_primary_pack);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_REPLTYPE))
-            sb.AppendLine("Replicated volume");
+            sb.AppendLine(Localization.Replicated_volume);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_USER))
-            sb.AppendLine("User replicated volume");
+            sb.AppendLine(Localization.User_replicated_volume);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_BACKBONE))
-            sb.AppendLine("Backbone volume");
+            sb.AppendLine(Localization.Backbone_volume);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_NFS))
-            sb.AppendLine("NFS volume");
+            sb.AppendLine(Localization.NFS_volume);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_BYHAND))
-            sb.AppendLine("Volume inhibits automatic fsck");
+            sb.AppendLine(Localization.Volume_inhibits_automatic_fsck);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_NOSUID))
-            sb.AppendLine("Set-uid/set-gid is disabled");
+            sb.AppendLine(Localization.Set_uid_set_gid_is_disabled);
 
         if(locusSb.s_flags.HasFlag(Flags.SB_SYNCW))
-            sb.AppendLine("Volume uses synchronous writes");
+            sb.AppendLine(Localization.Volume_uses_synchronous_writes);
 
-        sb.AppendFormat("Volume label: {0}", s_fsmnt).AppendLine();
-        sb.AppendFormat("Physical volume name: {0}", s_fpack).AppendLine();
-        sb.AppendFormat("Global File System number: {0}", locusSb.s_gfs).AppendLine();
-        sb.AppendFormat("Global File System pack number {0}", locusSb.s_gfspack).AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0, s_fsmnt).AppendLine();
+        sb.AppendFormat(Localization.Physical_volume_name_0, s_fpack).AppendLine();
+        sb.AppendFormat(Localization.Global_File_System_number_0, locusSb.s_gfs).AppendLine();
+        sb.AppendFormat(Localization.Global_File_System_pack_number_0, locusSb.s_gfspack).AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type        = "Locus filesystem",
+            Type        = FS_TYPE,
             ClusterSize = (uint)blockSize,
             Clusters    = (ulong)locusSb.s_fsize,
 

@@ -51,16 +51,18 @@ public sealed class NILFS2 : IFilesystem
     const ushort NILFS2_MAGIC        = 0x3434;
     const uint   NILFS2_SUPER_OFFSET = 1024;
 
+    const string FS_TYPE = "nilfs2";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "NILFS2 Plugin";
+    public string Name => Localization.NILFS2_Name;
     /// <inheritdoc />
     public Guid Id => new("35224226-C5CC-48B5-8FFD-3781E91E86B6");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -128,32 +130,38 @@ public sealed class NILFS2 : IFilesystem
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("NILFS2 filesystem");
-        sb.AppendFormat("Version {0}.{1}", nilfsSb.rev_level, nilfsSb.minor_rev_level).AppendLine();
-        sb.AppendFormat("{0} bytes per block", 1 << (int)(nilfsSb.log_block_size + 10)).AppendLine();
-        sb.AppendFormat("{0} bytes in volume", nilfsSb.dev_size).AppendLine();
-        sb.AppendFormat("{0} blocks per segment", nilfsSb.blocks_per_segment).AppendLine();
-        sb.AppendFormat("{0} segments", nilfsSb.nsegments).AppendLine();
+        sb.AppendLine(Localization.NILFS2_filesystem);
+        sb.AppendFormat(Localization.Version_0_1, nilfsSb.rev_level, nilfsSb.minor_rev_level).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block, 1 << (int)(nilfsSb.log_block_size + 10)).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_in_volume, nilfsSb.dev_size).AppendLine();
+        sb.AppendFormat(Localization._0_blocks_per_segment, nilfsSb.blocks_per_segment).AppendLine();
+        sb.AppendFormat(Localization._0_segments, nilfsSb.nsegments).AppendLine();
 
         if(nilfsSb.creator_os == 0)
-            sb.AppendLine("Filesystem created on Linux");
+            sb.AppendLine(Localization.Filesystem_created_on_Linux);
         else
-            sb.AppendFormat("Creator OS code: {0}", nilfsSb.creator_os).AppendLine();
+            sb.AppendFormat(Localization.Creator_OS_code_0, nilfsSb.creator_os).AppendLine();
 
-        sb.AppendFormat("{0} bytes per inode", nilfsSb.inode_size).AppendLine();
-        sb.AppendFormat("Volume UUID: {0}", nilfsSb.uuid).AppendLine();
-        sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(nilfsSb.volume_name, Encoding)).AppendLine();
-        sb.AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime)).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_inode, nilfsSb.inode_size).AppendLine();
+        sb.AppendFormat(Localization.Volume_UUID_0, nilfsSb.uuid).AppendLine();
 
-        sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.mtime)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(nilfsSb.volume_name, Encoding)).
+           AppendLine();
 
-        sb.AppendFormat("Volume last written on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime)).AppendLine();
+        sb.AppendFormat(Localization.Volume_created_on_0, DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime)).
+           AppendLine();
+
+        sb.AppendFormat(Localization.Volume_last_mounted_on_0, DateHandlers.UnixUnsignedToDateTime(nilfsSb.mtime)).
+           AppendLine();
+
+        sb.AppendFormat(Localization.Volume_last_written_on_0, DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime)).
+           AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type                      = "NILFS2 filesystem",
+            Type                      = FS_TYPE,
             ClusterSize               = (uint)(1 << (int)(nilfsSb.log_block_size + 10)),
             VolumeName                = StringHandlers.CToString(nilfsSb.volume_name, Encoding),
             VolumeSerial              = nilfsSb.uuid.ToString(),

@@ -77,11 +77,11 @@ public sealed class SysVfs : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "UNIX System V filesystem";
+    public string Name => Localization.SysVfs_Name;
     /// <inheritdoc />
     public Guid Id => new("9B8D016A-8561-400E-A12A-A198283C211D");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -189,6 +189,12 @@ public sealed class SysVfs : IFilesystem
 
         return false;
     }
+
+    const string FS_TYPE_XENIX    = "xenixfs";
+    const string FS_TYPE_SVR4     = "sysv_r4";
+    const string FS_TYPE_SVR2     = "sysv_r2";
+    const string FS_TYPE_COHERENT = "coherent";
+    const string FS_TYPE_UNIX7    = "unix7fs";
 
     /// <inheritdoc />
     public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
@@ -452,30 +458,30 @@ public sealed class SysVfs : IFilesystem
             }
 
             uint bs = 512;
-            sb.AppendLine("XENIX filesystem");
-            XmlFsType.Type = "XENIX fs";
+            sb.AppendLine(Localization.XENIX_filesystem);
+            XmlFsType.Type = FS_TYPE_XENIX;
 
             switch(xnx_sb.s_type)
             {
                 case 1:
-                    sb.AppendLine("512 bytes per block");
+                    sb.AppendLine(Localization._512_bytes_per_block);
                     XmlFsType.ClusterSize = 512;
 
                     break;
                 case 2:
-                    sb.AppendLine("1024 bytes per block");
+                    sb.AppendLine(Localization._1024_bytes_per_block);
                     bs                    = 1024;
                     XmlFsType.ClusterSize = 1024;
 
                     break;
                 case 3:
-                    sb.AppendLine("2048 bytes per block");
+                    sb.AppendLine(Localization._2048_bytes_per_block);
                     bs                    = 2048;
                     XmlFsType.ClusterSize = 2048;
 
                     break;
                 default:
-                    sb.AppendFormat("Unknown s_type value: 0x{0:X8}", xnx_sb.s_type).AppendLine();
+                    sb.AppendFormat(Localization.Unknown_s_type_value_0, xnx_sb.s_type).AppendLine();
 
                     break;
             }
@@ -484,44 +490,49 @@ public sealed class SysVfs : IFilesystem
             {
                 if(bs != 2048)
                     sb.
-                        AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
+                        AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_sector,
                                      bs, 2048).AppendLine();
             }
             else
             {
                 if(bs != imagePlugin.Info.SectorSize)
                     sb.
-                        AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
+                        AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_sector,
                                      bs, imagePlugin.Info.SectorSize).AppendLine();
             }
 
-            sb.AppendFormat("{0} zones on volume ({1} bytes)", xnx_sb.s_fsize, xnx_sb.s_fsize * bs).AppendLine();
+            sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, xnx_sb.s_fsize, xnx_sb.s_fsize * bs).AppendLine();
 
-            sb.AppendFormat("{0} free zones on volume ({1} bytes)", xnx_sb.s_tfree, xnx_sb.s_tfree * bs).AppendLine();
-
-            sb.AppendFormat("{0} free blocks on list ({1} bytes)", xnx_sb.s_nfree, xnx_sb.s_nfree * bs).AppendLine();
-
-            sb.AppendFormat("{0} blocks per cylinder ({1} bytes)", xnx_sb.s_cylblks, xnx_sb.s_cylblks * bs).
+            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, xnx_sb.s_tfree, xnx_sb.s_tfree * bs).
                AppendLine();
 
-            sb.AppendFormat("{0} blocks per gap ({1} bytes)", xnx_sb.s_gapblks, xnx_sb.s_gapblks * bs).AppendLine();
-            sb.AppendFormat("First data zone: {0}", xnx_sb.s_isize).AppendLine();
-            sb.AppendFormat("{0} free inodes on volume", xnx_sb.s_tinode).AppendLine();
-            sb.AppendFormat("{0} free inodes on list", xnx_sb.s_ninode).AppendLine();
+            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, xnx_sb.s_nfree, xnx_sb.s_nfree * bs).
+               AppendLine();
+
+            sb.AppendFormat(Localization._0_blocks_per_cylinder_1_bytes, xnx_sb.s_cylblks, xnx_sb.s_cylblks * bs).
+               AppendLine();
+
+            sb.AppendFormat(Localization._0_blocks_per_gap_1_bytes, xnx_sb.s_gapblks, xnx_sb.s_gapblks * bs).
+               AppendLine();
+
+            sb.AppendFormat(Localization.First_data_zone_0, xnx_sb.s_isize).AppendLine();
+            sb.AppendFormat(Localization._0_free_inodes_on_volume, xnx_sb.s_tinode).AppendLine();
+            sb.AppendFormat(Localization._0_free_inodes_on_list, xnx_sb.s_ninode).AppendLine();
 
             if(xnx_sb.s_flock > 0)
-                sb.AppendLine("Free block list is locked");
+                sb.AppendLine(Localization.Free_block_list_is_locked);
 
             if(xnx_sb.s_ilock > 0)
-                sb.AppendLine("inode cache is locked");
+                sb.AppendLine(Localization.inode_cache_is_locked);
 
             if(xnx_sb.s_fmod > 0)
-                sb.AppendLine("Superblock is being modified");
+                sb.AppendLine(Localization.Superblock_is_being_modified);
 
             if(xnx_sb.s_ronly > 0)
-                sb.AppendLine("Volume is mounted read-only");
+                sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
-            sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixToDateTime(xnx_sb.s_time)).AppendLine();
+            sb.AppendFormat(Localization.Superblock_last_updated_on_0, DateHandlers.UnixToDateTime(xnx_sb.s_time)).
+               AppendLine();
 
             if(xnx_sb.s_time != 0)
             {
@@ -529,15 +540,15 @@ public sealed class SysVfs : IFilesystem
                 XmlFsType.ModificationDateSpecified = true;
             }
 
-            sb.AppendFormat("Volume name: {0}", xnx_sb.s_fname).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, xnx_sb.s_fname).AppendLine();
             XmlFsType.VolumeName = xnx_sb.s_fname;
-            sb.AppendFormat("Pack name: {0}", xnx_sb.s_fpack).AppendLine();
+            sb.AppendFormat(Localization.Pack_name_0, xnx_sb.s_fpack).AppendLine();
 
             if(xnx_sb.s_clean == 0x46)
-                sb.AppendLine("Volume is clean");
+                sb.AppendLine(Localization.Volume_is_clean);
             else
             {
-                sb.AppendLine("Volume is dirty");
+                sb.AppendLine(Localization.Volume_is_dirty);
                 XmlFsType.Dirty = true;
             }
         }
@@ -578,7 +589,7 @@ public sealed class SysVfs : IFilesystem
 
                     break;
                 default:
-                    sb.AppendFormat("Unknown s_type value: 0x{0:X8}", sysv_sb.s_type).AppendLine();
+                    sb.AppendFormat(Localization.Unknown_s_type_value_0, sysv_sb.s_type).AppendLine();
 
                     break;
             }
@@ -613,8 +624,8 @@ public sealed class SysVfs : IFilesystem
                 sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, Encoding);
                 Array.Copy(sb_sector, 0x1BC + offset, sysv_strings, 0, 6);
                 sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, Encoding);
-                sb.AppendLine("System V Release 4 filesystem");
-                XmlFsType.Type = "SVR4 fs";
+                sb.AppendLine(Localization.System_V_Release_4_filesystem);
+                XmlFsType.Type = FS_TYPE_SVR4;
             }
             else
             {
@@ -639,8 +650,8 @@ public sealed class SysVfs : IFilesystem
                 sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, Encoding);
                 Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
                 sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, Encoding);
-                sb.AppendLine("System V Release 2 filesystem");
-                XmlFsType.Type = "SVR2 fs";
+                sb.AppendLine(Localization.System_V_Release_2_filesystem);
+                XmlFsType.Type = FS_TYPE_SVR2;
             }
 
             if(bigEndian)
@@ -660,38 +671,43 @@ public sealed class SysVfs : IFilesystem
                 sysv_sb.s_tinode  = Swapping.Swap(sysv_sb.s_tinode);
             }
 
-            sb.AppendFormat("{0} bytes per block", bs).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_block, bs).AppendLine();
 
             XmlFsType.Clusters = sysv_sb.s_fsize;
-            sb.AppendFormat("{0} zones on volume ({1} bytes)", sysv_sb.s_fsize, sysv_sb.s_fsize * bs).AppendLine();
 
-            sb.AppendFormat("{0} free zones on volume ({1} bytes)", sysv_sb.s_tfree, sysv_sb.s_tfree * bs).AppendLine();
-
-            sb.AppendFormat("{0} free blocks on list ({1} bytes)", sysv_sb.s_nfree, sysv_sb.s_nfree * bs).AppendLine();
-
-            sb.AppendFormat("{0} blocks per cylinder ({1} bytes)", sysv_sb.s_cylblks, sysv_sb.s_cylblks * bs).
+            sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, sysv_sb.s_fsize, sysv_sb.s_fsize * bs).
                AppendLine();
 
-            sb.AppendFormat("{0} blocks per gap ({1} bytes)", sysv_sb.s_gapblks, sysv_sb.s_gapblks * bs).AppendLine();
+            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, sysv_sb.s_tfree, sysv_sb.s_tfree * bs).
+               AppendLine();
 
-            sb.AppendFormat("First data zone: {0}", sysv_sb.s_isize).AppendLine();
-            sb.AppendFormat("{0} free inodes on volume", sysv_sb.s_tinode).AppendLine();
-            sb.AppendFormat("{0} free inodes on list", sysv_sb.s_ninode).AppendLine();
+            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, sysv_sb.s_nfree, sysv_sb.s_nfree * bs).
+               AppendLine();
+
+            sb.AppendFormat(Localization._0_blocks_per_cylinder_1_bytes, sysv_sb.s_cylblks, sysv_sb.s_cylblks * bs).
+               AppendLine();
+
+            sb.AppendFormat(Localization._0_blocks_per_gap_1_bytes, sysv_sb.s_gapblks, sysv_sb.s_gapblks * bs).
+               AppendLine();
+
+            sb.AppendFormat(Localization.First_data_zone_0, sysv_sb.s_isize).AppendLine();
+            sb.AppendFormat(Localization._0_free_inodes_on_volume, sysv_sb.s_tinode).AppendLine();
+            sb.AppendFormat(Localization._0_free_inodes_on_list, sysv_sb.s_ninode).AppendLine();
 
             if(sysv_sb.s_flock > 0)
-                sb.AppendLine("Free block list is locked");
+                sb.AppendLine(Localization.Free_block_list_is_locked);
 
             if(sysv_sb.s_ilock > 0)
-                sb.AppendLine("inode cache is locked");
+                sb.AppendLine(Localization.inode_cache_is_locked);
 
             if(sysv_sb.s_fmod > 0)
-                sb.AppendLine("Superblock is being modified");
+                sb.AppendLine(Localization.Superblock_is_being_modified);
 
             if(sysv_sb.s_ronly > 0)
-                sb.AppendLine("Volume is mounted read-only");
+                sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
-            sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time)).
-               AppendLine();
+            sb.AppendFormat(Localization.Superblock_last_updated_on_0,
+                            DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time)).AppendLine();
 
             if(sysv_sb.s_time != 0)
             {
@@ -699,15 +715,15 @@ public sealed class SysVfs : IFilesystem
                 XmlFsType.ModificationDateSpecified = true;
             }
 
-            sb.AppendFormat("Volume name: {0}", sysv_sb.s_fname).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, sysv_sb.s_fname).AppendLine();
             XmlFsType.VolumeName = sysv_sb.s_fname;
-            sb.AppendFormat("Pack name: {0}", sysv_sb.s_fpack).AppendLine();
+            sb.AppendFormat(Localization.Pack_name_0, sysv_sb.s_fpack).AppendLine();
 
             if(sysv_sb.s_state == 0x7C269D38 - sysv_sb.s_time)
-                sb.AppendLine("Volume is clean");
+                sb.AppendLine(Localization.Volume_is_clean);
             else
             {
-                sb.AppendLine("Volume is dirty");
+                sb.AppendLine(Localization.Volume_is_dirty);
                 XmlFsType.Dirty = true;
             }
         }
@@ -740,40 +756,43 @@ public sealed class SysVfs : IFilesystem
             Array.Copy(sb_sector, 0x1EA, coh_strings, 0, 6);
             coh_sb.s_fpack = StringHandlers.CToString(coh_strings, Encoding);
 
-            XmlFsType.Type        = "Coherent fs";
+            XmlFsType.Type        = FS_TYPE_COHERENT;
             XmlFsType.ClusterSize = 512;
             XmlFsType.Clusters    = coh_sb.s_fsize;
 
-            sb.AppendLine("Coherent UNIX filesystem");
+            sb.AppendLine(Localization.Coherent_UNIX_filesystem);
 
             if(imagePlugin.Info.SectorSize != 512)
-                sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
-                                512, 2048).AppendLine();
+                sb.
+                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_sector,
+                                 512, 2048).AppendLine();
 
-            sb.AppendFormat("{0} zones on volume ({1} bytes)", coh_sb.s_fsize, coh_sb.s_fsize * 512).AppendLine();
+            sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, coh_sb.s_fsize, coh_sb.s_fsize * 512).AppendLine();
 
-            sb.AppendFormat("{0} free zones on volume ({1} bytes)", coh_sb.s_tfree, coh_sb.s_tfree * 512).AppendLine();
+            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, coh_sb.s_tfree, coh_sb.s_tfree * 512).
+               AppendLine();
 
-            sb.AppendFormat("{0} free blocks on list ({1} bytes)", coh_sb.s_nfree, coh_sb.s_nfree * 512).AppendLine();
+            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, coh_sb.s_nfree, coh_sb.s_nfree * 512).
+               AppendLine();
 
-            sb.AppendFormat("First data zone: {0}", coh_sb.s_isize).AppendLine();
-            sb.AppendFormat("{0} free inodes on volume", coh_sb.s_tinode).AppendLine();
-            sb.AppendFormat("{0} free inodes on list", coh_sb.s_ninode).AppendLine();
+            sb.AppendFormat(Localization.First_data_zone_0, coh_sb.s_isize).AppendLine();
+            sb.AppendFormat(Localization._0_free_inodes_on_volume, coh_sb.s_tinode).AppendLine();
+            sb.AppendFormat(Localization._0_free_inodes_on_list, coh_sb.s_ninode).AppendLine();
 
             if(coh_sb.s_flock > 0)
-                sb.AppendLine("Free block list is locked");
+                sb.AppendLine(Localization.Free_block_list_is_locked);
 
             if(coh_sb.s_ilock > 0)
-                sb.AppendLine("inode cache is locked");
+                sb.AppendLine(Localization.inode_cache_is_locked);
 
             if(coh_sb.s_fmod > 0)
-                sb.AppendLine("Superblock is being modified");
+                sb.AppendLine(Localization.Superblock_is_being_modified);
 
             if(coh_sb.s_ronly > 0)
-                sb.AppendLine("Volume is mounted read-only");
+                sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
-            sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time)).
-               AppendLine();
+            sb.AppendFormat(Localization.Superblock_last_updated_on_0,
+                            DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time)).AppendLine();
 
             if(coh_sb.s_time != 0)
             {
@@ -781,9 +800,9 @@ public sealed class SysVfs : IFilesystem
                 XmlFsType.ModificationDateSpecified = true;
             }
 
-            sb.AppendFormat("Volume name: {0}", coh_sb.s_fname).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, coh_sb.s_fname).AppendLine();
             XmlFsType.VolumeName = coh_sb.s_fname;
-            sb.AppendFormat("Pack name: {0}", coh_sb.s_fpack).AppendLine();
+            sb.AppendFormat(Localization.Pack_name_0, coh_sb.s_fpack).AppendLine();
         }
 
         if(sys7th)
@@ -814,38 +833,42 @@ public sealed class SysVfs : IFilesystem
             Array.Copy(sb_sector, 0x1B2, sys7_strings, 0, 6);
             v7_sb.s_fpack = StringHandlers.CToString(sys7_strings, Encoding);
 
-            XmlFsType.Type        = "UNIX 7th Edition fs";
+            XmlFsType.Type        = FS_TYPE_UNIX7;
             XmlFsType.ClusterSize = 512;
             XmlFsType.Clusters    = v7_sb.s_fsize;
-            sb.AppendLine("UNIX 7th Edition filesystem");
+            sb.AppendLine(Localization.UNIX_7th_Edition_filesystem);
 
             if(imagePlugin.Info.SectorSize != 512)
-                sb.AppendFormat("WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector",
-                                512, 2048).AppendLine();
+                sb.
+                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_sector,
+                                 512, 2048).AppendLine();
 
-            sb.AppendFormat("{0} zones on volume ({1} bytes)", v7_sb.s_fsize, v7_sb.s_fsize * 512).AppendLine();
+            sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, v7_sb.s_fsize, v7_sb.s_fsize * 512).AppendLine();
 
-            sb.AppendFormat("{0} free zones on volume ({1} bytes)", v7_sb.s_tfree, v7_sb.s_tfree * 512).AppendLine();
+            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, v7_sb.s_tfree, v7_sb.s_tfree * 512).
+               AppendLine();
 
-            sb.AppendFormat("{0} free blocks on list ({1} bytes)", v7_sb.s_nfree, v7_sb.s_nfree * 512).AppendLine();
-            sb.AppendFormat("First data zone: {0}", v7_sb.s_isize).AppendLine();
-            sb.AppendFormat("{0} free inodes on volume", v7_sb.s_tinode).AppendLine();
-            sb.AppendFormat("{0} free inodes on list", v7_sb.s_ninode).AppendLine();
+            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, v7_sb.s_nfree, v7_sb.s_nfree * 512).
+               AppendLine();
+
+            sb.AppendFormat(Localization.First_data_zone_0, v7_sb.s_isize).AppendLine();
+            sb.AppendFormat(Localization._0_free_inodes_on_volume, v7_sb.s_tinode).AppendLine();
+            sb.AppendFormat(Localization._0_free_inodes_on_list, v7_sb.s_ninode).AppendLine();
 
             if(v7_sb.s_flock > 0)
-                sb.AppendLine("Free block list is locked");
+                sb.AppendLine(Localization.Free_block_list_is_locked);
 
             if(v7_sb.s_ilock > 0)
-                sb.AppendLine("inode cache is locked");
+                sb.AppendLine(Localization.inode_cache_is_locked);
 
             if(v7_sb.s_fmod > 0)
-                sb.AppendLine("Superblock is being modified");
+                sb.AppendLine(Localization.Superblock_is_being_modified);
 
             if(v7_sb.s_ronly > 0)
-                sb.AppendLine("Volume is mounted read-only");
+                sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
-            sb.AppendFormat("Superblock last updated on {0}", DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time)).
-               AppendLine();
+            sb.AppendFormat(Localization.Superblock_last_updated_on_0,
+                            DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time)).AppendLine();
 
             if(v7_sb.s_time != 0)
             {
@@ -853,9 +876,9 @@ public sealed class SysVfs : IFilesystem
                 XmlFsType.ModificationDateSpecified = true;
             }
 
-            sb.AppendFormat("Volume name: {0}", v7_sb.s_fname).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, v7_sb.s_fname).AppendLine();
             XmlFsType.VolumeName = v7_sb.s_fname;
-            sb.AppendFormat("Pack name: {0}", v7_sb.s_fpack).AppendLine();
+            sb.AppendFormat(Localization.Pack_name_0, v7_sb.s_fpack).AppendLine();
         }
 
         information = sb.ToString();

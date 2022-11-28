@@ -50,16 +50,18 @@ public sealed class Squash : IFilesystem
     const uint SQUASH_MAGIC = 0x73717368;
     const uint SQUASH_CIGAM = 0x68737173;
 
+    const string FS_TYPE = "squashfs";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Squash filesystem";
+    public string Name => Localization.Squash_Name;
     /// <inheritdoc />
     public Guid Id => new("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -107,46 +109,48 @@ public sealed class Squash : IFilesystem
 
         var sbInformation = new StringBuilder();
 
-        sbInformation.AppendLine("Squash file system");
-        sbInformation.AppendLine(littleEndian ? "Little-endian" : "Big-endian");
-        sbInformation.AppendFormat("Volume version {0}.{1}", sqSb.s_major, sqSb.s_minor).AppendLine();
-        sbInformation.AppendFormat("Volume has {0} bytes", sqSb.bytes_used).AppendLine();
-        sbInformation.AppendFormat("Volume has {0} bytes per block", sqSb.block_size).AppendLine();
+        sbInformation.AppendLine(Localization.Squash_file_system);
+        sbInformation.AppendLine(littleEndian ? Localization.Little_endian : Localization.Big_endian);
+        sbInformation.AppendFormat(Localization.Volume_version_0_1, sqSb.s_major, sqSb.s_minor).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_bytes, sqSb.bytes_used).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_bytes_per_block, sqSb.block_size).AppendLine();
 
-        sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time)).
-                      AppendLine();
+        sbInformation.
+            AppendFormat(Localization.Volume_created_on_0, DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time)).
+            AppendLine();
 
-        sbInformation.AppendFormat("Volume has {0} inodes", sqSb.inodes).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_inodes, sqSb.inodes).AppendLine();
 
         switch(sqSb.compression)
         {
             case (ushort)SquashCompression.Lz4:
-                sbInformation.AppendLine("Volume is compressed using LZ4");
+                sbInformation.AppendLine(Localization.Volume_is_compressed_using_LZ4);
 
                 break;
             case (ushort)SquashCompression.Lzo:
-                sbInformation.AppendLine("Volume is compressed using LZO");
+                sbInformation.AppendLine(Localization.Volume_is_compressed_using_LZO);
 
                 break;
             case (ushort)SquashCompression.Lzma:
-                sbInformation.AppendLine("Volume is compressed using LZMA");
+                sbInformation.AppendLine(Localization.Volume_is_compressed_using_LZMA);
 
                 break;
             case (ushort)SquashCompression.Xz:
-                sbInformation.AppendLine("Volume is compressed using XZ");
+                sbInformation.AppendLine(Localization.Volume_is_compressed_using_XZ);
 
                 break;
             case (ushort)SquashCompression.Zlib:
-                sbInformation.AppendLine("Volume is compressed using GZIP");
+                sbInformation.AppendLine(Localization.Volume_is_compressed_using_GZIP);
 
                 break;
             case (ushort)SquashCompression.Zstd:
-                sbInformation.AppendLine("Volume is compressed using Zstandard");
+                sbInformation.AppendLine(Localization.Volume_is_compressed_using_Zstandard);
 
                 break;
             default:
-                sbInformation.AppendFormat("Volume is compressed using unknown algorithm {0}", sqSb.compression).
-                              AppendLine();
+                sbInformation.
+                    AppendFormat(Localization.Volume_is_compressed_using_unknown_algorithm_0, sqSb.compression).
+                    AppendLine();
 
                 break;
         }
@@ -155,7 +159,7 @@ public sealed class Squash : IFilesystem
 
         XmlFsType = new FileSystemType
         {
-            Type = "Squash file system",
+            Type = FS_TYPE,
             CreationDate = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),
             CreationDateSpecified = true,
             Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / sqSb.block_size,

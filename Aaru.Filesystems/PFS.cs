@@ -59,16 +59,18 @@ public sealed class PFS : IFilesystem
     /// <summary>Identifier for multi-user PFS</summary>
     const uint MUPFS_DISK = 0x6D755046;
 
+    const string FS_TYPE = "pfs";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Professional File System";
+    public string Name => Localization.PFS_Name;
     /// <inheritdoc />
     public Guid Id => new("68DE769E-D957-406A-8AE4-3781CA8CDA77");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -105,40 +107,43 @@ public sealed class PFS : IFilesystem
         {
             case AFS_DISK:
             case MUAF_DISK:
-                sbInformation.Append("Professional File System v1");
-                XmlFsType.Type = "PFS v1";
+                sbInformation.Append(Localization.Professional_File_System_v1);
+                XmlFsType.Type = FS_TYPE;
 
                 break;
             case PFS2_DISK:
-                sbInformation.Append("Professional File System v2");
-                XmlFsType.Type = "PFS v2";
+                sbInformation.Append(Localization.Professional_File_System_v2);
+                XmlFsType.Type = FS_TYPE;
 
                 break;
             case PFS_DISK:
             case MUPFS_DISK:
-                sbInformation.Append("Professional File System v3");
-                XmlFsType.Type = "PFS v3";
+                sbInformation.Append(Localization.Professional_File_System_v3);
+                XmlFsType.Type = FS_TYPE;
 
                 break;
         }
 
         if(rootBlock.diskType is MUAF_DISK or MUPFS_DISK)
-            sbInformation.Append(", with multi-user support");
+            sbInformation.Append(Localization.with_multi_user_support);
 
         sbInformation.AppendLine();
 
-        sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname, Encoding)).
-                      AppendLine();
+        sbInformation.
+            AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(rootBlock.diskname, Encoding)).
+            AppendLine();
 
-        sbInformation.AppendFormat("Volume has {0} free sectors of {1}", rootBlock.blocksfree, rootBlock.diskSize).
-                      AppendLine();
+        sbInformation.
+            AppendFormat(Localization.Volume_has_0_free_sectors_of_1, rootBlock.blocksfree, rootBlock.diskSize).
+            AppendLine();
 
-        sbInformation.AppendFormat("Volume created on {0}",
+        sbInformation.AppendFormat(Localization.Volume_created_on_0,
                                    DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute,
                                                                 rootBlock.creationtick)).AppendLine();
 
         if(rootBlock.extension > 0)
-            sbInformation.AppendFormat("Root block extension resides at block {0}", rootBlock.extension).AppendLine();
+            sbInformation.AppendFormat(Localization.Root_block_extension_resides_at_block_0, rootBlock.extension).
+                          AppendLine();
 
         information = sbInformation.ToString();
 

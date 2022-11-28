@@ -48,4 +48,7 @@ public sealed partial class AppleMFS
     const int BMAP_FREE = 0;
     const int BMAP_LAST = 1;
     const int BMAP_DIR  = 0xFFF;
+
+    // Do not translate
+    const string FS_TYPE = "mfs";
 }

@@ -61,7 +61,7 @@ public sealed partial class LisaFS
             // However with some effort the code may be modified to ignore them.
             if(_device.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true)
             {
-                AaruConsole.DebugWriteLine("LisaFS plugin", "Underlying device does not support Lisa tags");
+                AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Underlying_device_does_not_support_Lisa_tags);
 
                 return ErrorNumber.InOutError;
             }
@@ -69,7 +69,7 @@ public sealed partial class LisaFS
             // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
             if(_device.Info.Sectors < 800)
             {
-                AaruConsole.DebugWriteLine("LisaFS plugin", "Device is too small");
+                AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Device_is_too_small);
 
                 return ErrorNumber.InOutError;
             }
@@ -87,7 +87,7 @@ public sealed partial class LisaFS
 
                 DecodeTag(tag, out LisaTag.PriamTag searchTag);
 
-                AaruConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
+                AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Sector_0_file_ID_1, i, searchTag.FileId);
 
                 if(_volumePrefix    == _device.Info.Sectors &&
                    searchTag.FileId == FILEID_LOADER_SIGNED)
@@ -194,7 +194,7 @@ public sealed partial class LisaFS
                    _mddf.blocksize        < _device.Info.SectorSize                             ||
                    _mddf.datasize         != _device.Info.SectorSize)
                 {
-                    AaruConsole.DebugWriteLine("LisaFS plugin", "Incorrect MDDF found");
+                    AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Incorrect_MDDF_found);
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -203,19 +203,20 @@ public sealed partial class LisaFS
                 switch(_mddf.fsversion)
                 {
                     case LISA_V1:
-                        AaruConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v1");
+                        AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Mounting_LisaFS_v1);
 
                         break;
                     case LISA_V2:
-                        AaruConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v2");
+                        AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Mounting_LisaFS_v2);
 
                         break;
                     case LISA_V3:
-                        AaruConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v3");
+                        AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Mounting_LisaFS_v3);
 
                         break;
                     default:
-                        AaruConsole.ErrorWriteLine("Cannot mount LisaFS version {0}", _mddf.fsversion.ToString());
+                        AaruConsole.ErrorWriteLine(Localization.Cannot_mount_LisaFS_version_0,
+                                                   _mddf.fsversion.ToString());
 
                         return ErrorNumber.NotSupported;
                 }
@@ -243,7 +244,7 @@ public sealed partial class LisaFS
 
                 if(error != ErrorNumber.NoError)
                 {
-                    AaruConsole.ErrorWriteLine("Error {0} reading S-Records file.", error);
+                    AaruConsole.ErrorWriteLine(Localization.Error_0_reading_S_Records_file, error);
 
                     return error;
                 }
@@ -260,7 +261,7 @@ public sealed partial class LisaFS
 
                 if(error != ErrorNumber.NoError)
                 {
-                    AaruConsole.DebugWriteLine("LisaFS plugin", "Cannot read Catalog File, error {0}",
+                    AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Cannot_read_Catalog_File_error_0,
                                                error.ToString());
 
                     _mounted = false;
@@ -275,7 +276,7 @@ public sealed partial class LisaFS
 
                     if(error != ErrorNumber.NoError)
                     {
-                        AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot blocks");
+                        AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Unable_to_read_boot_blocks);
                         _mounted = false;
 
                         return error;
@@ -285,7 +286,7 @@ public sealed partial class LisaFS
 
                     if(error != ErrorNumber.NoError)
                     {
-                        AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot loader");
+                        AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Unable_to_read_boot_loader);
                         _mounted = false;
 
                         return error;
@@ -295,7 +296,7 @@ public sealed partial class LisaFS
 
                     if(error != ErrorNumber.NoError)
                     {
-                        AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read MDDF");
+                        AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Unable_to_read_MDDF);
                         _mounted = false;
 
                         return error;
@@ -305,7 +306,7 @@ public sealed partial class LisaFS
 
                     if(error != ErrorNumber.NoError)
                     {
-                        AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read volume bitmap");
+                        AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Unable_to_read_volume_bitmap);
                         _mounted = false;
 
                         return error;
@@ -315,7 +316,7 @@ public sealed partial class LisaFS
 
                     if(error != ErrorNumber.NoError)
                     {
-                        AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read S-Records file");
+                        AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Unable_to_read_S_Records_file);
                         _mounted = false;
 
                         return error;
@@ -345,20 +346,20 @@ public sealed partial class LisaFS
                 XmlFsType.FilesSpecified        = true;
                 XmlFsType.FreeClusters          = _mddf.freecount;
                 XmlFsType.FreeClustersSpecified = true;
-                XmlFsType.Type                  = "LisaFS";
+                XmlFsType.Type                  = FS_TYPE;
                 XmlFsType.VolumeName            = _mddf.volname;
                 XmlFsType.VolumeSerial          = $"{_mddf.volid:X16}";
 
                 return ErrorNumber.NoError;
             }
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", "Not a Lisa filesystem");
+            AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Not_a_Lisa_filesystem);
 
             return ErrorNumber.NotSupported;
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine("Exception {0}, {1}, {2}", ex.Message, ex.InnerException, ex.StackTrace);
+            AaruConsole.ErrorWriteLine(Localization.Exception_0_1_2, ex.Message, ex.InnerException, ex.StackTrace);
 
             return ErrorNumber.InOutError;
         }

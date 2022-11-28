@@ -50,16 +50,18 @@ public sealed class QNX6 : IFilesystem
     const uint QNX6_BOOT_BLOCKS_SIZE = 0x2000;
     const uint QNX6_MAGIC            = 0x68191122;
 
+    const string FS_TYPE = "qnx6";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "QNX6 Plugin";
+    public string Name => Localization.QNX6_Name;
     /// <inheritdoc />
     public Guid Id => new("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -120,19 +122,19 @@ public sealed class QNX6 : IFilesystem
 
         if(audi)
         {
-            sb.AppendLine("QNX6 (Audi) filesystem");
-            sb.AppendFormat("Checksum: 0x{0:X8}", audiSb.checksum).AppendLine();
-            sb.AppendFormat("Serial: 0x{0:X16}", audiSb.checksum).AppendLine();
-            sb.AppendFormat("{0} bytes per block", audiSb.blockSize).AppendLine();
-            sb.AppendFormat("{0} inodes free of {1}", audiSb.freeInodes, audiSb.numInodes).AppendLine();
+            sb.AppendLine(Localization.QNX6_Audi_filesystem);
+            sb.AppendFormat(Localization.Checksum_0_X8, audiSb.checksum).AppendLine();
+            sb.AppendFormat(Localization.Serial_0_X16, audiSb.checksum).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_block, audiSb.blockSize).AppendLine();
+            sb.AppendFormat(Localization._0_inodes_free_of_1, audiSb.freeInodes, audiSb.numInodes).AppendLine();
 
-            sb.AppendFormat("{0} blocks ({1} bytes) free of {2} ({3} bytes)", audiSb.freeBlocks,
+            sb.AppendFormat(Localization._0_blocks_1_bytes_free_of_2_3_bytes, audiSb.freeBlocks,
                             audiSb.freeBlocks * audiSb.blockSize, audiSb.numBlocks,
                             audiSb.numBlocks  * audiSb.blockSize).AppendLine();
 
             XmlFsType = new FileSystemType
             {
-                Type                  = "QNX6 (Audi) filesystem",
+                Type                  = FS_TYPE,
                 Clusters              = audiSb.numBlocks,
                 ClusterSize           = audiSb.blockSize,
                 Bootable              = true,
@@ -150,26 +152,26 @@ public sealed class QNX6 : IFilesystem
             return;
         }
 
-        sb.AppendLine("QNX6 filesystem");
-        sb.AppendFormat("Checksum: 0x{0:X8}", qnxSb.checksum).AppendLine();
-        sb.AppendFormat("Serial: 0x{0:X16}", qnxSb.checksum).AppendLine();
-        sb.AppendFormat("Created on {0}", DateHandlers.UnixUnsignedToDateTime(qnxSb.ctime)).AppendLine();
-        sb.AppendFormat("Last mounted on {0}", DateHandlers.UnixUnsignedToDateTime(qnxSb.atime)).AppendLine();
-        sb.AppendFormat("Flags: 0x{0:X8}", qnxSb.flags).AppendLine();
-        sb.AppendFormat("Version1: 0x{0:X4}", qnxSb.version1).AppendLine();
-        sb.AppendFormat("Version2: 0x{0:X4}", qnxSb.version2).AppendLine();
+        sb.AppendLine(Localization.QNX6_filesystem);
+        sb.AppendFormat(Localization.Checksum_0_X8, qnxSb.checksum).AppendLine();
+        sb.AppendFormat(Localization.Serial_0_X16, qnxSb.checksum).AppendLine();
+        sb.AppendFormat(Localization.Created_on_0, DateHandlers.UnixUnsignedToDateTime(qnxSb.ctime)).AppendLine();
+        sb.AppendFormat(Localization.Last_mounted_on_0, DateHandlers.UnixUnsignedToDateTime(qnxSb.atime)).AppendLine();
+        sb.AppendFormat(Localization.Flags_0_X8, qnxSb.flags).AppendLine();
+        sb.AppendFormat(Localization.Version1_0_X4, qnxSb.version1).AppendLine();
+        sb.AppendFormat(Localization.Version2_0_X4, qnxSb.version2).AppendLine();
 
         //sb.AppendFormat("Volume ID: \"{0}\"", CurrentEncoding.GetString(qnxSb.volumeid)).AppendLine();
-        sb.AppendFormat("{0} bytes per block", qnxSb.blockSize).AppendLine();
-        sb.AppendFormat("{0} inodes free of {1}", qnxSb.freeInodes, qnxSb.numInodes).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block, qnxSb.blockSize).AppendLine();
+        sb.AppendFormat(Localization._0_inodes_free_of_1, qnxSb.freeInodes, qnxSb.numInodes).AppendLine();
 
-        sb.AppendFormat("{0} blocks ({1} bytes) free of {2} ({3} bytes)", qnxSb.freeBlocks,
+        sb.AppendFormat(Localization._0_blocks_1_bytes_free_of_2_3_bytes, qnxSb.freeBlocks,
                         qnxSb.freeBlocks * qnxSb.blockSize, qnxSb.numBlocks, qnxSb.numBlocks * qnxSb.blockSize).
            AppendLine();
 
         XmlFsType = new FileSystemType
         {
-            Type                      = "QNX6 filesystem",
+            Type                      = FS_TYPE,
             Clusters                  = qnxSb.numBlocks,
             ClusterSize               = qnxSb.blockSize,
             Bootable                  = true,

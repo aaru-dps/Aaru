@@ -48,16 +48,18 @@ namespace Aaru.Filesystems;
 public sealed class PCFX : IFilesystem
 {
     const string IDENTIFIER = "PC-FX:Hu_CD-ROM ";
+
+    const string FS_TYPE = "pcfx";
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "PC-FX Plugin";
+    public string Name => Localization.PCFX_Name;
     /// <inheritdoc />
     public Guid Id => new("8BC27CCE-D9E9-48F8-BA93-C66A86EB565A");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -107,28 +109,28 @@ public sealed class PCFX : IFilesystem
         }
 
         var sb = new StringBuilder();
-        sb.AppendLine("PC-FX executable:");
-        sb.AppendFormat("Identifier: {0}", StringHandlers.CToString(header.signature, Encoding)).AppendLine();
-        sb.AppendFormat("Copyright: {0}", StringHandlers.CToString(header.copyright, Encoding)).AppendLine();
-        sb.AppendFormat("Title: {0}", StringHandlers.CToString(header.title, Encoding)).AppendLine();
-        sb.AppendFormat("Maker ID: {0}", StringHandlers.CToString(header.makerId, Encoding)).AppendLine();
-        sb.AppendFormat("Maker name: {0}", StringHandlers.CToString(header.makerName, Encoding)).AppendLine();
-        sb.AppendFormat("Volume number: {0}", header.volumeNumber).AppendLine();
-        sb.AppendFormat("Country code: {0}", header.country).AppendLine();
-        sb.AppendFormat("Version: {0}.{1}", header.minorVersion, header.majorVersion).AppendLine();
+        sb.AppendLine(Localization.PC_FX_executable);
+        sb.AppendFormat(Localization.Identifier_0, StringHandlers.CToString(header.signature, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Copyright_0, StringHandlers.CToString(header.copyright, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Title_0, StringHandlers.CToString(header.title, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Maker_ID_0, StringHandlers.CToString(header.makerId, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Maker_name_0, StringHandlers.CToString(header.makerName, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_number_0, header.volumeNumber).AppendLine();
+        sb.AppendFormat(Localization.Country_code_0, header.country).AppendLine();
+        sb.AppendFormat(Localization.Version_0_1, header.minorVersion, header.majorVersion).AppendLine();
 
         if(date != null)
-            sb.AppendFormat("Dated {0}", dateTime).AppendLine();
+            sb.AppendFormat(Localization.Dated_0, dateTime).AppendLine();
 
-        sb.AppendFormat("Load {0} sectors from sector {1}", header.loadCount, header.loadOffset).AppendLine();
+        sb.AppendFormat(Localization.Load_0_sectors_from_sector_1, header.loadCount, header.loadOffset).AppendLine();
 
-        sb.AppendFormat("Load at 0x{0:X8} and jump to 0x{1:X8}", header.loadAddress, header.entryPoint).AppendLine();
+        sb.AppendFormat(Localization.Load_at_0_and_jump_to_1, header.loadAddress, header.entryPoint).AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type                  = "PC-FX",
+            Type                  = FS_TYPE,
             Clusters              = partition.Length,
             ClusterSize           = 2048,
             Bootable              = true,

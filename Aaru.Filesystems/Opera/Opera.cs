@@ -57,11 +57,11 @@ public sealed partial class OperaFS : IReadOnlyFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Opera Filesystem Plugin";
+    public string Name => Localization.OperaFS_Name;
     /// <inheritdoc />
     public Guid Id => new("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public ErrorNumber ListXAttr(string path, out List<string> xattrs)

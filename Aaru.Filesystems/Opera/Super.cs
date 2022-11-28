@@ -76,7 +76,7 @@ public sealed partial class OperaFS
 
         XmlFsType = new FileSystemType
         {
-            Type         = "Opera",
+            Type         = FS_TYPE,
             VolumeName   = StringHandlers.CToString(sb.volume_label, Encoding),
             ClusterSize  = sb.block_size,
             Clusters     = sb.block_count,
@@ -95,7 +95,7 @@ public sealed partial class OperaFS
                 Serial32 = sb.volume_id
             },
             PluginId = Id,
-            Type     = "Opera"
+            Type     = FS_TYPE
         };
 
         _image = imagePlugin;

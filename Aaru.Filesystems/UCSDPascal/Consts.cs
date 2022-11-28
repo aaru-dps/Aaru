@@ -59,4 +59,6 @@ public sealed partial class PascalPlugin
         /// <summary>Security, not used</summary>
         Secure
     }
+
+    const string FS_TYPE = "ucsd";
 }

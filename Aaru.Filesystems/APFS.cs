@@ -55,11 +55,11 @@ public sealed class APFS : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Apple File System";
+    public string Name => Localization.APFS_Name;
     /// <inheritdoc />
     public Guid Id => new("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -116,12 +116,12 @@ public sealed class APFS : IFilesystem
         if(nxSb.magic != APFS_CONTAINER_MAGIC)
             return;
 
-        sbInformation.AppendLine("Apple File System");
+        sbInformation.AppendLine(Localization.Apple_File_System);
         sbInformation.AppendLine();
-        sbInformation.AppendFormat("{0} bytes per block", nxSb.blockSize).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_per_block, nxSb.blockSize).AppendLine();
 
-        sbInformation.AppendFormat("Container has {0} bytes in {1} blocks", nxSb.containerBlocks * nxSb.blockSize,
-                                   nxSb.containerBlocks).AppendLine();
+        sbInformation.AppendFormat(Localization.Container_has_0_bytes_in_1_blocks,
+                                   nxSb.containerBlocks * nxSb.blockSize, nxSb.containerBlocks).AppendLine();
 
         information = sbInformation.ToString();
 
@@ -130,9 +130,11 @@ public sealed class APFS : IFilesystem
             Bootable    = false,
             Clusters    = nxSb.containerBlocks,
             ClusterSize = nxSb.blockSize,
-            Type        = "Apple File System"
+            Type        = FS_TYPE
         };
     }
+
+    const string FS_TYPE = "apfs";
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ContainerSuperBlock

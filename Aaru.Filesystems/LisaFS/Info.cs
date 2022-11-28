@@ -68,7 +68,7 @@ public sealed partial class LisaFS
 
             DecodeTag(tag, out LisaTag.PriamTag searchTag);
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
+            AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Sector_0_file_ID_1, i, searchTag.FileId);
 
             if(beforeMddf       == -1 &&
                searchTag.FileId == FILEID_LOADER_SIGNED)
@@ -92,7 +92,7 @@ public sealed partial class LisaFS
                 datasize                     = BigEndianBitConverter.ToUInt16(sector, 0x7E)
             };
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", "Current sector = {0}", i);
+            AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Current_sector_0, i);
             AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.mddf_block = {0}", infoMddf.mddf_block);
             AaruConsole.DebugWriteLine("LisaFS plugin", "Disk size = {0} sectors", imagePlugin.Info.Sectors);
             AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size = {0} sectors", infoMddf.vol_size);
@@ -155,7 +155,7 @@ public sealed partial class LisaFS
 
             DecodeTag(tag, out LisaTag.PriamTag searchTag);
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
+            AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Sector_0_file_ID_1, i, searchTag.FileId);
 
             if(beforeMddf       == -1 &&
                searchTag.FileId == FILEID_LOADER_SIGNED)
@@ -330,55 +330,55 @@ public sealed partial class LisaFS
 
                     break;
                 default:
-                    sb.AppendFormat("Unknown LisaFS version {0}", infoMddf.fsversion).AppendLine();
+                    sb.AppendFormat(Localization.Unknown_LisaFS_version_0, infoMddf.fsversion).AppendLine();
 
                     break;
             }
 
-            sb.AppendFormat("Volume name: \"{0}\"", infoMddf.volname).AppendLine();
-            sb.AppendFormat("Volume password: \"{0}\"", infoMddf.password).AppendLine();
-            sb.AppendFormat("Volume ID: 0x{0:X16}", infoMddf.volid).AppendLine();
-            sb.AppendFormat("Backup volume ID: 0x{0:X16}", infoMddf.backup_volid).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, infoMddf.volname).AppendLine();
+            sb.AppendFormat(Localization.Volume_password_0, infoMddf.password).AppendLine();
+            sb.AppendFormat(Localization.Volume_ID_0_X16, infoMddf.volid).AppendLine();
+            sb.AppendFormat(Localization.Backup_volume_ID_0, infoMddf.backup_volid).AppendLine();
 
-            sb.AppendFormat("Master copy ID: 0x{0:X8}", infoMddf.master_copy_id).AppendLine();
+            sb.AppendFormat(Localization.Master_copy_ID_0, infoMddf.master_copy_id).AppendLine();
 
-            sb.AppendFormat("Volume is number {0} of {1}", infoMddf.volnum, infoMddf.vol_sequence).AppendLine();
+            sb.AppendFormat(Localization.Volume_is_number_0_of_1, infoMddf.volnum, infoMddf.vol_sequence).AppendLine();
 
-            sb.AppendFormat("Serial number of Lisa computer that created this volume: {0}", infoMddf.machine_id).
-               AppendLine();
+            sb.AppendFormat(Localization.Serial_number_of_Lisa_computer_that_created_this_volume_0,
+                            infoMddf.machine_id).AppendLine();
 
-            sb.AppendFormat("Serial number of Lisa computer that can use this volume's software {0}",
+            sb.AppendFormat(Localization.Serial_number_of_Lisa_computer_that_can_use_this_volume_software_0,
                             infoMddf.serialization).AppendLine();
 
-            sb.AppendFormat("Volume created on {0}", infoMddf.dtvc).AppendLine();
-            sb.AppendFormat("Some timestamp, says {0}", infoMddf.dtcc).AppendLine();
-            sb.AppendFormat("Volume backed up on {0}", infoMddf.dtvb).AppendLine();
-            sb.AppendFormat("Volume scavenged on {0}", infoMddf.dtvs).AppendLine();
-            sb.AppendFormat("MDDF is in block {0}", infoMddf.mddf_block + beforeMddf).AppendLine();
-            sb.AppendFormat("There are {0} reserved blocks before volume", beforeMddf).AppendLine();
-            sb.AppendFormat("{0} blocks minus one", infoMddf.volsize_minus_one).AppendLine();
+            sb.AppendFormat(Localization.Volume_created_on_0, infoMddf.dtvc).AppendLine();
+            sb.AppendFormat(Localization.Volume_catalog_created_on_0, infoMddf.dtcc).AppendLine();
+            sb.AppendFormat(Localization.Volume_backed_up_on_0, infoMddf.dtvb).AppendLine();
+            sb.AppendFormat(Localization.Volume_scavenged_on_0, infoMddf.dtvs).AppendLine();
+            sb.AppendFormat(Localization.MDDF_is_in_block_0, infoMddf.mddf_block + beforeMddf).AppendLine();
+            sb.AppendFormat(Localization.There_are_0_reserved_blocks_before_volume, beforeMddf).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_minus_one, infoMddf.volsize_minus_one).AppendLine();
 
-            sb.AppendFormat("{0} blocks minus one minus MDDF offset", infoMddf.volsize_minus_mddf_minus_one).
+            sb.AppendFormat(Localization._0_blocks_minus_one_minus_MDDF_offset, infoMddf.volsize_minus_mddf_minus_one).
                AppendLine();
 
-            sb.AppendFormat("{0} blocks in volume", infoMddf.vol_size).AppendLine();
-            sb.AppendFormat("{0} bytes per sector (uncooked)", infoMddf.blocksize).AppendLine();
-            sb.AppendFormat("{0} bytes per sector", infoMddf.datasize).AppendLine();
-            sb.AppendFormat("{0} blocks per cluster", infoMddf.clustersize).AppendLine();
-            sb.AppendFormat("{0} blocks in filesystem", infoMddf.fs_size).AppendLine();
-            sb.AppendFormat("{0} files in volume", infoMddf.filecount).AppendLine();
-            sb.AppendFormat("{0} blocks free", infoMddf.freecount).AppendLine();
-            sb.AppendFormat("{0} bytes in LisaInfo", infoMddf.label_size).AppendLine();
-            sb.AppendFormat("Filesystem overhead: {0}", infoMddf.fs_overhead).AppendLine();
-            sb.AppendFormat("Scavenger result code: 0x{0:X8}", infoMddf.result_scavenge).AppendLine();
-            sb.AppendFormat("Boot code: 0x{0:X8}", infoMddf.boot_code).AppendLine();
-            sb.AppendFormat("Boot environment:  0x{0:X8}", infoMddf.boot_environ).AppendLine();
-            sb.AppendFormat("Overmount stamp: 0x{0:X16}", infoMddf.overmount_stamp).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_in_volume, infoMddf.vol_size).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_sector_uncooked, infoMddf.blocksize).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_sector, infoMddf.datasize).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_per_cluster, infoMddf.clustersize).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_in_filesystem, infoMddf.fs_size).AppendLine();
+            sb.AppendFormat(Localization._0_files_in_volume, infoMddf.filecount).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_free, infoMddf.freecount).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_in_LisaInfo, infoMddf.label_size).AppendLine();
+            sb.AppendFormat(Localization.Filesystem_overhead_0, infoMddf.fs_overhead).AppendLine();
+            sb.AppendFormat(Localization.Scavenger_result_code_0, infoMddf.result_scavenge).AppendLine();
+            sb.AppendFormat(Localization.Boot_code_0, infoMddf.boot_code).AppendLine();
+            sb.AppendFormat(Localization.Boot_environment_0, infoMddf.boot_environ).AppendLine();
+            sb.AppendFormat(Localization.Overmount_stamp_0, infoMddf.overmount_stamp).AppendLine();
 
-            sb.AppendFormat("S-Records start at {0} and spans for {1} blocks",
+            sb.AppendFormat(Localization.S_Records_start_at_0_and_spans_for_1_blocks,
                             infoMddf.srec_ptr + infoMddf.mddf_block + beforeMddf, infoMddf.srec_len).AppendLine();
 
-            sb.AppendLine(infoMddf.vol_left_mounted == 0 ? "Volume is clean" : "Volume is dirty");
+            sb.AppendLine(infoMddf.vol_left_mounted == 0 ? Localization.Volume_is_clean : Localization.Volume_is_dirty);
 
             information = sb.ToString();
 
@@ -404,7 +404,7 @@ public sealed partial class LisaFS
             XmlFsType.FilesSpecified        = true;
             XmlFsType.FreeClusters          = infoMddf.freecount;
             XmlFsType.FreeClustersSpecified = true;
-            XmlFsType.Type                  = "LisaFS";
+            XmlFsType.Type                  = FS_TYPE;
             XmlFsType.VolumeName            = infoMddf.volname;
             XmlFsType.VolumeSerial          = $"{infoMddf.volid:X16}";
 

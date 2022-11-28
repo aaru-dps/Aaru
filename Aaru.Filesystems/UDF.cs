@@ -62,11 +62,11 @@ public sealed class UDF : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Universal Disk Format";
+    public string Name => Localization.UDF_Name;
     /// <inheritdoc />
     public Guid Id => new("83976FEC-A91B-464B-9293-56C719461BAB");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -228,7 +228,7 @@ public sealed class UDF : IFilesystem
 
         var sbInformation = new StringBuilder();
 
-        sbInformation.AppendLine("Universal Disk Format");
+        sbInformation.AppendLine(Localization.Universal_Disk_Format);
 
         var anchor = new AnchorVolumeDescriptorPointer();
 
@@ -349,48 +349,49 @@ public sealed class UDF : IFilesystem
         else
             lvid = new LogicalVolumeIntegrityDescriptor();
 
-        sbInformation.AppendFormat("Volume is number {0} of {1}", pvd.volumeSequenceNumber,
+        sbInformation.AppendFormat(Localization.Volume_is_number_0_of_1, pvd.volumeSequenceNumber,
                                    pvd.maximumVolumeSequenceNumber).AppendLine();
 
-        sbInformation.AppendFormat("Volume set identifier: {0}",
+        sbInformation.AppendFormat(Localization.Volume_set_identifier_0,
                                    StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier)).AppendLine();
 
-        sbInformation.AppendFormat("Volume name: {0}", StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier)).
+        sbInformation.
+            AppendFormat(Localization.Volume_name_0, StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier)).
+            AppendLine();
+
+        sbInformation.AppendFormat(Localization.Volume_uses_0_bytes_per_block, lvd.logicalBlockSize).AppendLine();
+
+        sbInformation.AppendFormat(Localization.Volume_was_last_written_in_0, EcmaToDateTime(lvid.recordingDateTime)).
                       AppendLine();
 
-        sbInformation.AppendFormat("Volume uses {0} bytes per block", lvd.logicalBlockSize).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_contains_0_partitions, lvid.numberOfPartitions).AppendLine();
 
-        sbInformation.AppendFormat("Volume was last written in {0}", EcmaToDateTime(lvid.recordingDateTime)).
-                      AppendLine();
+        sbInformation.
+            AppendFormat(Localization.Volume_contains_0_files_and_1_directories, lvidiu.files, lvidiu.directories).
+            AppendLine();
 
-        sbInformation.AppendFormat("Volume contains {0} partitions", lvid.numberOfPartitions).AppendLine();
-
-        sbInformation.AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories).
-                      AppendLine();
-
-        sbInformation.AppendFormat("Volume conforms to {0}",
+        sbInformation.AppendFormat(Localization.Volume_conforms_to_0,
                                    Encoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000')).AppendLine();
 
-        sbInformation.AppendFormat("Volume was last written by: {0}",
+        sbInformation.AppendFormat(Localization.Volume_was_last_written_by_0,
                                    Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')).
                       AppendLine();
 
-        sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be read",
+        sbInformation.AppendFormat(Localization.Volume_requires_UDF_version_0_1_to_be_read,
                                    Convert.ToInt32($"{(lvidiu.minimumReadUDF & 0xFF00) >> 8}", 10),
                                    Convert.ToInt32($"{lvidiu.minimumReadUDF & 0xFF}", 10)).AppendLine();
 
-        sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be written to",
+        sbInformation.AppendFormat(Localization.Volume_requires_UDF_version_0_1_to_be_written_to,
                                    Convert.ToInt32($"{(lvidiu.minimumWriteUDF & 0xFF00) >> 8}", 10),
                                    Convert.ToInt32($"{lvidiu.minimumWriteUDF & 0xFF}", 10)).AppendLine();
 
-        sbInformation.AppendFormat("Volume cannot be written by any UDF version higher than {0}.{1:X2}",
+        sbInformation.AppendFormat(Localization.Volume_cannot_be_written_by_any_UDF_version_higher_than_0_1,
                                    Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10),
                                    Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10)).AppendLine();
 
         XmlFsType = new FileSystemType
         {
-            Type = $"UDF v{Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10)}.{
-                Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10):X2}",
+            Type                      = FS_TYPE,
             ApplicationIdentifier     = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
             ClusterSize               = lvd.logicalBlockSize,
             ModificationDate          = EcmaToDateTime(lvid.recordingDateTime),
@@ -408,6 +409,8 @@ public sealed class UDF : IFilesystem
 
         information = sbInformation.ToString();
     }
+
+    const string FS_TYPE = "udf";
 
     static DateTime EcmaToDateTime(Timestamp timestamp) => DateHandlers.EcmaToDateTime(timestamp.typeAndZone,
         timestamp.year, timestamp.month, timestamp.day, timestamp.hour, timestamp.minute, timestamp.second,

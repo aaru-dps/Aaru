@@ -42,27 +42,29 @@ namespace Aaru.Filesystems;
 /// <summary>Implements the Apple DOS 3 filesystem</summary>
 public sealed partial class AppleDOS : IReadOnlyFilesystem
 {
-    bool        _debug;
-    IMediaImage _device;
-    bool        _mounted;
-    int         _sectorsPerTrack;
-    ulong       _start;
-    ulong       _totalFileEntries;
-    bool        _track1UsedByFiles;
-    bool        _track2UsedByFiles;
-    uint        _usedSectors;
-    Vtoc        _vtoc;
+    // Do not translate
+    const string FS_TYPE = "appledos";
+    bool         _debug;
+    IMediaImage  _device;
+    bool         _mounted;
+    int          _sectorsPerTrack;
+    ulong        _start;
+    ulong        _totalFileEntries;
+    bool         _track1UsedByFiles;
+    bool         _track2UsedByFiles;
+    uint         _usedSectors;
+    Vtoc         _vtoc;
 
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Apple DOS File System";
+    public string Name => Localization.AppleDOS_Name;
     /// <inheritdoc />
     public Guid Id => new("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions =>

@@ -63,11 +63,11 @@ public sealed class exFAT : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Microsoft Extended File Allocation Table";
+    public string Name => Localization.exFAT_Name;
     /// <inheritdoc />
     public Guid Id => new("8271D088-1533-4CB3-AC28-D802B68BB95C");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -119,39 +119,39 @@ public sealed class exFAT : IFilesystem
 
         ChecksumSector chksector = Marshal.ByteArrayToStructureLittleEndian<ChecksumSector>(chkSector);
 
-        sb.AppendLine("Microsoft exFAT");
-        sb.AppendFormat("Partition offset: {0}", vbr.offset).AppendLine();
+        sb.AppendLine(Localization.Microsoft_exFAT);
+        sb.AppendFormat(Localization.Partition_offset_0, vbr.offset).AppendLine();
 
-        sb.AppendFormat("Volume has {0} sectors of {1} bytes each for a total of {2} bytes", vbr.sectors,
+        sb.AppendFormat(Localization.Volume_has_0_sectors_of_1_bytes_each_for_a_total_of_2_bytes, vbr.sectors,
                         1 << vbr.sectorShift, vbr.sectors * (ulong)(1 << vbr.sectorShift)).AppendLine();
 
-        sb.AppendFormat("Volume uses clusters of {0} sectors ({1} bytes) each", 1 << vbr.clusterShift,
+        sb.AppendFormat(Localization.Volume_uses_clusters_of_0_sectors_1_bytes_each, 1 << vbr.clusterShift,
                         (1 << vbr.sectorShift) * (1 << vbr.clusterShift)).AppendLine();
 
-        sb.AppendFormat("First FAT starts at sector {0} and runs for {1} sectors", vbr.fatOffset, vbr.fatLength).
+        sb.AppendFormat(Localization.First_FAT_starts_at_sector_0_and_runs_for_1_sectors, vbr.fatOffset, vbr.fatLength).
            AppendLine();
 
-        sb.AppendFormat("Volume uses {0} FATs", vbr.fats).AppendLine();
+        sb.AppendFormat(Localization.Volume_uses_0_FATs, vbr.fats).AppendLine();
 
-        sb.AppendFormat("Cluster heap starts at sector {0}, contains {1} clusters and is {2}% used",
+        sb.AppendFormat(Localization.Cluster_heap_starts_at_sector_0_contains_1_clusters_and_is_2_used,
                         vbr.clusterHeapOffset, vbr.clusterHeapLength, vbr.heapUsage).AppendLine();
 
-        sb.AppendFormat("Root directory starts at cluster {0}", vbr.rootDirectoryCluster).AppendLine();
+        sb.AppendFormat(Localization.Root_directory_starts_at_cluster_0, vbr.rootDirectoryCluster).AppendLine();
 
-        sb.AppendFormat("Filesystem revision is {0}.{1:D2}", (vbr.revision & 0xFF00) >> 8, vbr.revision & 0xFF).
+        sb.AppendFormat(Localization.Filesystem_revision_is_0_1, (vbr.revision & 0xFF00) >> 8, vbr.revision & 0xFF).
            AppendLine();
 
-        sb.AppendFormat("Volume serial number: {0:X8}", vbr.volumeSerial).AppendLine();
-        sb.AppendFormat("BIOS drive is {0:X2}h", vbr.drive).AppendLine();
+        sb.AppendFormat(Localization.Volume_serial_number_0_X8, vbr.volumeSerial).AppendLine();
+        sb.AppendFormat(Localization.BIOS_drive_is_0, vbr.drive).AppendLine();
 
         if(vbr.flags.HasFlag(VolumeFlags.SecondFatActive))
-            sb.AppendLine("2nd FAT is in use");
+            sb.AppendLine(Localization.Second_FAT_is_in_use);
 
         if(vbr.flags.HasFlag(VolumeFlags.VolumeDirty))
-            sb.AppendLine("Volume is dirty");
+            sb.AppendLine(Localization.Volume_is_dirty);
 
         if(vbr.flags.HasFlag(VolumeFlags.MediaFailure))
-            sb.AppendLine("Underlying media presented errors");
+            sb.AppendLine(Localization.Underlying_media_presented_errors);
 
         int count = 1;
 
@@ -159,31 +159,40 @@ public sealed class exFAT : IFilesystem
         {
             if(parameter.OemParameterType == _oemFlashParameterGuid)
             {
-                sb.AppendFormat("OEM Parameters {0}:", count).AppendLine();
-                sb.AppendFormat("\t{0} bytes in erase block", parameter.eraseBlockSize).AppendLine();
-                sb.AppendFormat("\t{0} bytes per page", parameter.pageSize).AppendLine();
-                sb.AppendFormat("\t{0} spare blocks", parameter.spareBlocks).AppendLine();
-                sb.AppendFormat("\t{0} nanoseconds random access time", parameter.randomAccessTime).AppendLine();
-                sb.AppendFormat("\t{0} nanoseconds program time", parameter.programTime).AppendLine();
-                sb.AppendFormat("\t{0} nanoseconds read cycle time", parameter.readCycleTime).AppendLine();
-                sb.AppendFormat("\t{0} nanoseconds write cycle time", parameter.writeCycleTime).AppendLine();
+                sb.AppendFormat(Localization.OEM_Parameters_0, count).AppendLine();
+                sb.AppendFormat("\t" + Localization._0_bytes_in_erase_block, parameter.eraseBlockSize).AppendLine();
+                sb.AppendFormat("\t" + Localization._0_bytes_per_page, parameter.pageSize).AppendLine();
+                sb.AppendFormat("\t" + Localization._0_spare_blocks, parameter.spareBlocks).AppendLine();
+
+                sb.AppendFormat("\t" + Localization._0_nanoseconds_random_access_time, parameter.randomAccessTime).
+                   AppendLine();
+
+                sb.AppendFormat("\t" + Localization._0_nanoseconds_program_time, parameter.programTime).AppendLine();
+
+                sb.AppendFormat("\t" + Localization._0_nanoseconds_read_cycle_time, parameter.readCycleTime).
+                   AppendLine();
+
+                sb.AppendFormat("\t" + Localization._0_nanoseconds_write_cycle_time, parameter.writeCycleTime).
+                   AppendLine();
             }
             else if(parameter.OemParameterType != Guid.Empty)
-                sb.AppendFormat("Found unknown parameter type {0}", parameter.OemParameterType).AppendLine();
+                sb.AppendFormat(Localization.Found_unknown_parameter_type_0, parameter.OemParameterType).AppendLine();
 
             count++;
         }
 
-        sb.AppendFormat("Checksum 0x{0:X8}", chksector.checksum[0]).AppendLine();
+        sb.AppendFormat(Localization.Checksum_0_X8, chksector.checksum[0]).AppendLine();
 
         XmlFsType.ClusterSize  = (uint)((1 << vbr.sectorShift) * (1 << vbr.clusterShift));
         XmlFsType.Clusters     = vbr.clusterHeapLength;
         XmlFsType.Dirty        = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
-        XmlFsType.Type         = "exFAT";
+        XmlFsType.Type         = FS_TYPE;
         XmlFsType.VolumeSerial = $"{vbr.volumeSerial:X8}";
 
         information = sb.ToString();
     }
+
+    const string FS_TYPE = "exfat";
 
     [Flags]
     enum VolumeFlags : ushort

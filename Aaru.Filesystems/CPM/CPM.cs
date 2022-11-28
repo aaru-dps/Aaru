@@ -86,11 +86,11 @@ public sealed partial class CPM : IReadOnlyFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "CP/M File System";
+    public string Name => Localization.CPM_Name;
     /// <inheritdoc />
     public Guid Id => new("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions =>

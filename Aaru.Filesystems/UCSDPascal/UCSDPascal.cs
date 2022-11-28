@@ -57,13 +57,13 @@ public sealed partial class PascalPlugin : IReadOnlyFilesystem
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
-    public string Name => "U.C.S.D. Pascal filesystem";
+    public string Name => Localization.PascalPlugin_Name;
     /// <inheritdoc />
     public Guid Id => new("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public ErrorNumber ListXAttr(string path, out List<string> xattrs)

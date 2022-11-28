@@ -72,11 +72,11 @@ public sealed partial class FAT : IReadOnlyFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Microsoft File Allocation Table";
+    public string Name => Localization.FAT_Name;
     /// <inheritdoc />
     public Guid Id => new("33513B2C-0D26-0D2D-32C3-79D8611158E0");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
@@ -86,19 +86,19 @@ public sealed partial class FAT : IReadOnlyFilesystem
     public Dictionary<string, string> Namespaces => new()
     {
         {
-            "dos", "DOS (8.3 all uppercase)"
+            "dos", Localization.DOS_8_3_all_uppercase
         },
         {
-            "nt", "Windows NT (8.3 mixed case)"
+            "nt", Localization.Windows_NT_8_3_mixed_case
         },
         {
-            "os2", "OS/2 .LONGNAME extended attribute"
+            "os2", Localization.OS2_LONGNAME_extended_attribute
         },
         {
-            "ecs", "Use LFN when available with fallback to .LONGNAME (default)"
+            "ecs", Localization.Use_LFN_when_available_with_fallback_to_LONGNAME_default
         },
         {
-            "lfn", "Long file names"
+            "lfn", Localization.Long_file_names
         }
     };
 

@@ -220,4 +220,9 @@ public sealed partial class FAT
         /// <summary>FAT32.IFS &gt;= 0.97 indicator for critical EAs present</summary>
         CriticalEa = 0x80
     }
+
+    const string FS_TYPE_FAT_PLUS = "fatplus";
+    const string FS_TYPE_FAT32    = "fat32";
+    const string FS_TYPE_FAT16    = "fat16";
+    const string FS_TYPE_FAT12    = "fat12";
 }

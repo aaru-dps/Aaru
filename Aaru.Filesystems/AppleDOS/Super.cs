@@ -56,21 +56,21 @@ public sealed partial class AppleDOS
         if(_device.Info.Sectors != 455 &&
            _device.Info.Sectors != 560)
         {
-            AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
+            AaruConsole.DebugWriteLine("Apple DOS plugin", Localization.Incorrect_device_size);
 
             return ErrorNumber.InOutError;
         }
 
         if(_start > 0)
         {
-            AaruConsole.DebugWriteLine("Apple DOS plugin", "Partitions are not supported.");
+            AaruConsole.DebugWriteLine("Apple DOS plugin", Localization.Partitions_are_not_supported);
 
             return ErrorNumber.InOutError;
         }
 
         if(_device.Info.SectorSize != 256)
         {
-            AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
+            AaruConsole.DebugWriteLine("Apple DOS plugin", Localization.Incorrect_sector_size);
 
             return ErrorNumber.InOutError;
         }
@@ -93,7 +93,7 @@ public sealed partial class AppleDOS
 
         if(error != ErrorNumber.NoError)
         {
-            AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable to read catalog.");
+            AaruConsole.DebugWriteLine("Apple DOS plugin", Localization.Unable_to_read_catalog);
 
             return error;
         }
@@ -102,7 +102,7 @@ public sealed partial class AppleDOS
 
         if(error != ErrorNumber.NoError)
         {
-            AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable cache all files.");
+            AaruConsole.DebugWriteLine("Apple DOS plugin", Localization.Unable_cache_all_files);
 
             return error;
         }
@@ -116,7 +116,7 @@ public sealed partial class AppleDOS
             Files                 = (ulong)_catalogCache.Count,
             FilesSpecified        = true,
             FreeClustersSpecified = true,
-            Type                  = "Apple DOS"
+            Type                  = FS_TYPE
         };
 
         XmlFsType.FreeClusters = XmlFsType.Clusters - _usedSectors;
@@ -152,7 +152,7 @@ public sealed partial class AppleDOS
             FilenameLength = 30,
             Files          = (ulong)_catalogCache.Count,
             PluginId       = Id,
-            Type           = "Apple DOS"
+            Type           = FS_TYPE
         };
 
         stat.FreeFiles  = _totalFileEntries - stat.Files;

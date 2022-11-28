@@ -59,6 +59,9 @@ public sealed partial class XboxFatPlugin
     const ushort FAT16_RESERVED      = 0xFFF0;
     const ushort FAT_RESERVED        = 1;
 
+    // Do not translate
+    const string FS_TYPE = "fatx";
+
     [Flags]
     enum Attributes : byte
     {

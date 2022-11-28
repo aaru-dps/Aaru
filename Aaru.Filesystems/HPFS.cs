@@ -48,16 +48,17 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of IBM's High Performance File System (HPFS)</summary>
 public sealed class HPFS : IFilesystem
 {
+    const string FS_TYPE = "hpfs";
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "OS/2 High Performance File System";
+    public string Name => Localization.HPFS_Name;
     /// <inheritdoc />
     public Guid Id => new("33513B2C-f590-4acb-8bf2-0b1d5e19dec5");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -117,123 +118,124 @@ public sealed class HPFS : IFilesystem
            sp.magic1                             != 0xF9911849 ||
            sp.magic2                             != 0xFA5229C5)
         {
-            sb.AppendLine("This may not be HPFS, following information may be not correct.");
-            sb.AppendFormat("File system type: \"{0}\" (Should be \"HPFS    \")", bpb.fs_type).AppendLine();
-            sb.AppendFormat("Superblock magic1: 0x{0:X8} (Should be 0xF995E849)", hpfsSb.magic1).AppendLine();
-            sb.AppendFormat("Superblock magic2: 0x{0:X8} (Should be 0xFA53E9C5)", hpfsSb.magic2).AppendLine();
-            sb.AppendFormat("Spareblock magic1: 0x{0:X8} (Should be 0xF9911849)", sp.magic1).AppendLine();
-            sb.AppendFormat("Spareblock magic2: 0x{0:X8} (Should be 0xFA5229C5)", sp.magic2).AppendLine();
+            sb.AppendLine(Localization.This_may_not_be_HPFS_following_information_may_be_not_correct);
+            sb.AppendFormat(Localization.File_system_type_0_Should_be_HPFS, bpb.fs_type).AppendLine();
+            sb.AppendFormat(Localization.Superblock_magic1_0_Should_be_0xF995E849, hpfsSb.magic1).AppendLine();
+            sb.AppendFormat(Localization.Superblock_magic2_0_Should_be_0xFA53E9C5, hpfsSb.magic2).AppendLine();
+            sb.AppendFormat(Localization.Spareblock_magic1_0_Should_be_0xF9911849, sp.magic1).AppendLine();
+            sb.AppendFormat(Localization.Spareblock_magic2_0_Should_be_0xFA5229C5, sp.magic2).AppendLine();
         }
 
-        sb.AppendFormat("OEM name: {0}", StringHandlers.CToString(bpb.oem_name)).AppendLine();
-        sb.AppendFormat("{0} bytes per sector", bpb.bps).AppendLine();
+        sb.AppendFormat(Localization.OEM_name_0, StringHandlers.CToString(bpb.oem_name)).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector, bpb.bps).AppendLine();
 
         //          sb.AppendFormat("{0} sectors per cluster", hpfs_bpb.spc).AppendLine();
         //          sb.AppendFormat("{0} reserved sectors", hpfs_bpb.rsectors).AppendLine();
         //          sb.AppendFormat("{0} FATs", hpfs_bpb.fats_no).AppendLine();
         //          sb.AppendFormat("{0} entries on root directory", hpfs_bpb.root_ent).AppendLine();
         //          sb.AppendFormat("{0} mini sectors on volume", hpfs_bpb.sectors).AppendLine();
-        sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();
+        sb.AppendFormat(Localization.Media_descriptor_0, bpb.media).AppendLine();
 
         //          sb.AppendFormat("{0} sectors per FAT", hpfs_bpb.spfat).AppendLine();
         //          sb.AppendFormat("{0} sectors per track", hpfs_bpb.sptrk).AppendLine();
         //          sb.AppendFormat("{0} heads", hpfs_bpb.heads).AppendLine();
-        sb.AppendFormat("{0} sectors hidden before BPB", bpb.hsectors).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_hidden_before_BPB, bpb.hsectors).AppendLine();
 
-        sb.AppendFormat("{0} sectors on volume ({1} bytes)", hpfsSb.sectors, hpfsSb.sectors * bpb.bps).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, hpfsSb.sectors, hpfsSb.sectors * bpb.bps).
+           AppendLine();
 
         //          sb.AppendFormat("{0} sectors on volume ({1} bytes)", hpfs_bpb.big_sectors, hpfs_bpb.big_sectors * hpfs_bpb.bps).AppendLine();
-        sb.AppendFormat("BIOS Drive Number: 0x{0:X2}", bpb.drive_no).AppendLine();
-        sb.AppendFormat("NT Flags: 0x{0:X2}", bpb.nt_flags).AppendLine();
-        sb.AppendFormat("Signature: 0x{0:X2}", bpb.signature).AppendLine();
-        sb.AppendFormat("Serial number: 0x{0:X8}", bpb.serial_no).AppendLine();
-        sb.AppendFormat("Volume label: {0}", StringHandlers.CToString(bpb.volume_label, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.BIOS_drive_number_0, bpb.drive_no).AppendLine();
+        sb.AppendFormat(Localization.NT_Flags_0, bpb.nt_flags).AppendLine();
+        sb.AppendFormat(Localization.Signature_0, bpb.signature).AppendLine();
+        sb.AppendFormat(Localization.Serial_number_0, bpb.serial_no).AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(bpb.volume_label, Encoding)).AppendLine();
 
         //          sb.AppendFormat("Filesystem type: \"{0}\"", hpfs_bpb.fs_type).AppendLine();
 
         DateTime lastChk   = DateHandlers.UnixToDateTime(hpfsSb.last_chkdsk);
         DateTime lastOptim = DateHandlers.UnixToDateTime(hpfsSb.last_optim);
 
-        sb.AppendFormat("HPFS version: {0}", hpfsSb.version).AppendLine();
-        sb.AppendFormat("Functional version: {0}", hpfsSb.func_version).AppendLine();
-        sb.AppendFormat("Sector of root directory FNode: {0}", hpfsSb.root_fnode).AppendLine();
-        sb.AppendFormat("{0} sectors are marked bad", hpfsSb.badblocks).AppendLine();
-        sb.AppendFormat("Sector of free space bitmaps: {0}", hpfsSb.bitmap_lsn).AppendLine();
-        sb.AppendFormat("Sector of bad blocks list: {0}", hpfsSb.badblock_lsn).AppendLine();
+        sb.AppendFormat(Localization.HPFS_version_0, hpfsSb.version).AppendLine();
+        sb.AppendFormat(Localization.Functional_version_0, hpfsSb.func_version).AppendLine();
+        sb.AppendFormat(Localization.Sector_of_root_directory_FNode_0, hpfsSb.root_fnode).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_are_marked_bad, hpfsSb.badblocks).AppendLine();
+        sb.AppendFormat(Localization.Sector_of_free_space_bitmaps_0, hpfsSb.bitmap_lsn).AppendLine();
+        sb.AppendFormat(Localization.Sector_of_bad_blocks_list_0, hpfsSb.badblock_lsn).AppendLine();
 
         if(hpfsSb.last_chkdsk > 0)
-            sb.AppendFormat("Date of last integrity check: {0}", lastChk).AppendLine();
+            sb.AppendFormat(Localization.Date_of_last_integrity_check_0, lastChk).AppendLine();
         else
-            sb.AppendLine("Filesystem integrity has never been checked");
+            sb.AppendLine(Localization.Filesystem_integrity_has_never_been_checked);
 
         if(hpfsSb.last_optim > 0)
-            sb.AppendFormat("Date of last optimization {0}", lastOptim).AppendLine();
+            sb.AppendFormat(Localization.Date_of_last_optimization_0, lastOptim).AppendLine();
         else
-            sb.AppendLine("Filesystem has never been optimized");
+            sb.AppendLine(Localization.Filesystem_has_never_been_optimized);
 
-        sb.AppendFormat("Directory band has {0} sectors", hpfsSb.dband_sectors).AppendLine();
-        sb.AppendFormat("Directory band starts at sector {0}", hpfsSb.dband_start).AppendLine();
-        sb.AppendFormat("Directory band ends at sector {0}", hpfsSb.dband_last).AppendLine();
-        sb.AppendFormat("Sector of directory band bitmap: {0}", hpfsSb.dband_bitmap).AppendLine();
-        sb.AppendFormat("Sector of ACL directory: {0}", hpfsSb.acl_start).AppendLine();
+        sb.AppendFormat(Localization.Directory_band_has_0_sectors, hpfsSb.dband_sectors).AppendLine();
+        sb.AppendFormat(Localization.Directory_band_starts_at_sector_0, hpfsSb.dband_start).AppendLine();
+        sb.AppendFormat(Localization.Directory_band_ends_at_sector_0, hpfsSb.dband_last).AppendLine();
+        sb.AppendFormat(Localization.Sector_of_directory_band_bitmap_0, hpfsSb.dband_bitmap).AppendLine();
+        sb.AppendFormat(Localization.Sector_of_ACL_directory_0, hpfsSb.acl_start).AppendLine();
 
-        sb.AppendFormat("Sector of Hotfix directory: {0}", sp.hotfix_start).AppendLine();
-        sb.AppendFormat("{0} used Hotfix entries", sp.hotfix_used).AppendLine();
-        sb.AppendFormat("{0} total Hotfix entries", sp.hotfix_entries).AppendLine();
-        sb.AppendFormat("{0} free spare DNodes", sp.spare_dnodes_free).AppendLine();
-        sb.AppendFormat("{0} total spare DNodes", sp.spare_dnodes).AppendLine();
-        sb.AppendFormat("Sector of codepage directory: {0}", sp.codepage_lsn).AppendLine();
-        sb.AppendFormat("{0} codepages used in the volume", sp.codepages).AppendLine();
-        sb.AppendFormat("SuperBlock CRC32: {0:X8}", sp.sb_crc32).AppendLine();
-        sb.AppendFormat("SpareBlock CRC32: {0:X8}", sp.sp_crc32).AppendLine();
+        sb.AppendFormat(Localization.Sector_of_Hotfix_directory_0, sp.hotfix_start).AppendLine();
+        sb.AppendFormat(Localization._0_used_Hotfix_entries, sp.hotfix_used).AppendLine();
+        sb.AppendFormat(Localization._0_total_Hotfix_entries, sp.hotfix_entries).AppendLine();
+        sb.AppendFormat(Localization._0_free_spare_DNodes, sp.spare_dnodes_free).AppendLine();
+        sb.AppendFormat(Localization._0_total_spare_DNodes, sp.spare_dnodes).AppendLine();
+        sb.AppendFormat(Localization.Sector_of_codepage_directory_0, sp.codepage_lsn).AppendLine();
+        sb.AppendFormat(Localization._0_codepages_used_in_the_volume, sp.codepages).AppendLine();
+        sb.AppendFormat(Localization.SuperBlock_CRC32_0, sp.sb_crc32).AppendLine();
+        sb.AppendFormat(Localization.SpareBlock_CRC32_0, sp.sp_crc32).AppendLine();
 
-        sb.AppendLine("Flags:");
-        sb.AppendLine((sp.flags1 & 0x01) == 0x01 ? "Filesystem is dirty." : "Filesystem is clean.");
+        sb.AppendLine(Localization.Flags);
+        sb.AppendLine((sp.flags1 & 0x01) == 0x01 ? Localization.Filesystem_is_dirty : Localization.Filesystem_is_clean);
 
         if((sp.flags1 & 0x02) == 0x02)
-            sb.AppendLine("Spare directory blocks are in use");
+            sb.AppendLine(Localization.Spare_directory_blocks_are_in_use);
 
         if((sp.flags1 & 0x04) == 0x04)
-            sb.AppendLine("Hotfixes are in use");
+            sb.AppendLine(Localization.Hotfixes_are_in_use);
 
         if((sp.flags1 & 0x08) == 0x08)
-            sb.AppendLine("Disk contains bad sectors");
+            sb.AppendLine(Localization.Disk_contains_bad_sectors);
 
         if((sp.flags1 & 0x10) == 0x10)
-            sb.AppendLine("Disk has a bad bitmap");
+            sb.AppendLine(Localization.Disk_has_a_bad_bitmap);
 
         if((sp.flags1 & 0x20) == 0x20)
-            sb.AppendLine("Filesystem was formatted fast");
+            sb.AppendLine(Localization.Filesystem_was_formatted_fast);
 
         if((sp.flags1 & 0x40) == 0x40)
-            sb.AppendLine("Unknown flag 0x40 on flags1 is active");
+            sb.AppendLine(Localization.Unknown_flag_0x40_on_flags1_is_active);
 
         if((sp.flags1 & 0x80) == 0x80)
-            sb.AppendLine("Filesystem has been mounted by an old IFS");
+            sb.AppendLine(Localization.Filesystem_has_been_mounted_by_an_old_IFS);
 
         if((sp.flags2 & 0x01) == 0x01)
-            sb.AppendLine("Install DASD limits");
+            sb.AppendLine(Localization.Install_DASD_limits);
 
         if((sp.flags2 & 0x02) == 0x02)
-            sb.AppendLine("Resync DASD limits");
+            sb.AppendLine(Localization.Resync_DASD_limits);
 
         if((sp.flags2 & 0x04) == 0x04)
-            sb.AppendLine("DASD limits are operational");
+            sb.AppendLine(Localization.DASD_limits_are_operational);
 
         if((sp.flags2 & 0x08) == 0x08)
-            sb.AppendLine("Multimedia is active");
+            sb.AppendLine(Localization.Multimedia_is_active);
 
         if((sp.flags2 & 0x10) == 0x10)
-            sb.AppendLine("DCE ACLs are active");
+            sb.AppendLine(Localization.DCE_ACLs_are_active);
 
         if((sp.flags2 & 0x20) == 0x20)
-            sb.AppendLine("DASD limits are dirty");
+            sb.AppendLine(Localization.DASD_limits_are_dirty);
 
         if((sp.flags2 & 0x40) == 0x40)
-            sb.AppendLine("Unknown flag 0x40 on flags2 is active");
+            sb.AppendLine(Localization.Unknown_flag_0x40_on_flags2_is_active);
 
         if((sp.flags2 & 0x80) == 0x80)
-            sb.AppendLine("Unknown flag 0x80 on flags2 is active");
+            sb.AppendLine(Localization.Unknown_flag_0x80_on_flags2_is_active);
 
         XmlFsType = new FileSystemType();
 
@@ -245,14 +247,14 @@ public sealed class HPFS : IFilesystem
         {
             XmlFsType.Bootable = true;
             string bootChk = Sha1Context.Data(bpb.boot_code, out byte[] _);
-            sb.AppendLine("Volume is bootable");
-            sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
+            sb.AppendLine(Localization.Volume_is_bootable);
+            sb.AppendFormat(Localization.Boot_code_SHA1_0, bootChk).AppendLine();
         }
 
         XmlFsType.Dirty            |= (sp.flags1 & 0x01) == 0x01;
         XmlFsType.Clusters         =  hpfsSb.sectors;
         XmlFsType.ClusterSize      =  bpb.bps;
-        XmlFsType.Type             =  "HPFS";
+        XmlFsType.Type             =  FS_TYPE;
         XmlFsType.VolumeName       =  StringHandlers.CToString(bpb.volume_label, Encoding);
         XmlFsType.VolumeSerial     =  $"{bpb.serial_no:X8}";
         XmlFsType.SystemIdentifier =  StringHandlers.CToString(bpb.oem_name);

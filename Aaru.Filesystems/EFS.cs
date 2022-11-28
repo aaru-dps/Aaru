@@ -51,16 +51,18 @@ public sealed class EFS : IFilesystem
     const uint EFS_MAGIC     = 0x00072959;
     const uint EFS_MAGIC_NEW = 0x0007295A;
 
+    const string FS_TYPE = "efs";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Extent File System Plugin";
+    public string Name => Localization.EFS_Name;
     /// <inheritdoc />
     public Guid Id => new("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -90,8 +92,8 @@ public sealed class EFS : IFilesystem
 
             Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-            AaruConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
-                                       0x200, sb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
+            AaruConsole.DebugWriteLine("EFS plugin", Localization.magic_at_0_equals_1_expected_2_or_3, 0x200,
+                                       sb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
 
             if(sb.sb_magic is EFS_MAGIC or EFS_MAGIC_NEW)
                 return true;
@@ -113,8 +115,8 @@ public sealed class EFS : IFilesystem
 
             Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-            AaruConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
-                                       sb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
+            AaruConsole.DebugWriteLine("EFS plugin", Localization.magic_at_0_equals_1_expected_2_or_3, 1, sb.sb_magic,
+                                       EFS_MAGIC, EFS_MAGIC_NEW);
 
             if(sb.sb_magic is EFS_MAGIC or EFS_MAGIC_NEW)
                 return true;
@@ -156,8 +158,8 @@ public sealed class EFS : IFilesystem
 
             efsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-            AaruConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
-                                       0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
+            AaruConsole.DebugWriteLine("EFS plugin", Localization.magic_at_0_X3_equals_1_expected_2_or_3, 0x200,
+                                       efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
         }
         else
         {
@@ -176,7 +178,7 @@ public sealed class EFS : IFilesystem
 
             efsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-            AaruConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
+            AaruConsole.DebugWriteLine("EFS plugin", Localization.magic_at_0_equals_1_expected_2_or_3, 1,
                                        efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
         }
 
@@ -186,44 +188,44 @@ public sealed class EFS : IFilesystem
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("SGI extent filesystem");
+        sb.AppendLine(Localization.SGI_extent_filesystem);
 
         if(efsSb.sb_magic == EFS_MAGIC_NEW)
-            sb.AppendLine("New version");
+            sb.AppendLine(Localization.New_version);
 
-        sb.AppendFormat("Filesystem size: {0} basic blocks", efsSb.sb_size).AppendLine();
-        sb.AppendFormat("First cylinder group starts at block {0}", efsSb.sb_firstcg).AppendLine();
-        sb.AppendFormat("Cylinder group size: {0} basic blocks", efsSb.sb_cgfsize).AppendLine();
-        sb.AppendFormat("{0} inodes per cylinder group", efsSb.sb_cgisize).AppendLine();
-        sb.AppendFormat("{0} sectors per track", efsSb.sb_sectors).AppendLine();
-        sb.AppendFormat("{0} heads per cylinder", efsSb.sb_heads).AppendLine();
-        sb.AppendFormat("{0} cylinder groups", efsSb.sb_ncg).AppendLine();
-        sb.AppendFormat("Volume created on {0}", DateHandlers.UnixToDateTime(efsSb.sb_time)).AppendLine();
-        sb.AppendFormat("{0} bytes on bitmap", efsSb.sb_bmsize).AppendLine();
-        sb.AppendFormat("{0} free blocks", efsSb.sb_tfree).AppendLine();
-        sb.AppendFormat("{0} free inodes", efsSb.sb_tinode).AppendLine();
+        sb.AppendFormat(Localization.Filesystem_size_0_basic_blocks, efsSb.sb_size).AppendLine();
+        sb.AppendFormat(Localization.First_cylinder_group_starts_at_block_0, efsSb.sb_firstcg).AppendLine();
+        sb.AppendFormat(Localization.Cylinder_group_size_0_basic_blocks, efsSb.sb_cgfsize).AppendLine();
+        sb.AppendFormat(Localization._0_inodes_per_cylinder_group, efsSb.sb_cgisize).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_per_track, efsSb.sb_sectors).AppendLine();
+        sb.AppendFormat(Localization._0_heads_per_cylinder, efsSb.sb_heads).AppendLine();
+        sb.AppendFormat(Localization._0_cylinder_groups, efsSb.sb_ncg).AppendLine();
+        sb.AppendFormat(Localization.Volume_created_on_0, DateHandlers.UnixToDateTime(efsSb.sb_time)).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_on_bitmap, efsSb.sb_bmsize).AppendLine();
+        sb.AppendFormat(Localization._0_free_blocks, efsSb.sb_tfree).AppendLine();
+        sb.AppendFormat(Localization._0_free_inodes, efsSb.sb_tinode).AppendLine();
 
         if(efsSb.sb_bmblock > 0)
-            sb.AppendFormat("Bitmap resides at block {0}", efsSb.sb_bmblock).AppendLine();
+            sb.AppendFormat(Localization.Bitmap_resides_at_block_0, efsSb.sb_bmblock).AppendLine();
 
         if(efsSb.sb_replsb > 0)
-            sb.AppendFormat("Replacement superblock resides at block {0}", efsSb.sb_replsb).AppendLine();
+            sb.AppendFormat(Localization.Replacement_superblock_resides_at_block_0, efsSb.sb_replsb).AppendLine();
 
         if(efsSb.sb_lastinode > 0)
-            sb.AppendFormat("Last inode allocated: {0}", efsSb.sb_lastinode).AppendLine();
+            sb.AppendFormat(Localization.Last_inode_allocated_0, efsSb.sb_lastinode).AppendLine();
 
         if(efsSb.sb_dirty > 0)
-            sb.AppendLine("Volume is dirty");
+            sb.AppendLine(Localization.Volume_is_dirty);
 
-        sb.AppendFormat("Checksum: 0x{0:X8}", efsSb.sb_checksum).AppendLine();
-        sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(efsSb.sb_fname, Encoding)).AppendLine();
-        sb.AppendFormat("Volume pack: {0}", StringHandlers.CToString(efsSb.sb_fpack, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Checksum_0_X8, efsSb.sb_checksum).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(efsSb.sb_fname, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_pack_0, StringHandlers.CToString(efsSb.sb_fpack, Encoding)).AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type                  = "Extent File System",
+            Type                  = FS_TYPE,
             ClusterSize           = 512,
             Clusters              = (ulong)efsSb.sb_size,
             FreeClusters          = (ulong)efsSb.sb_tfree,

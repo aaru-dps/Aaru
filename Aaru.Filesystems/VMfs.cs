@@ -58,11 +58,11 @@ public sealed class VMfs : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "VMware filesystem";
+    public string Name => Localization.VMfs_Name;
     /// <inheritdoc />
     public Guid Id => new("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -85,6 +85,8 @@ public sealed class VMfs : IFilesystem
         return magic == VMFS_MAGIC;
     }
 
+    const string FS_TYPE = "vmfs";
+
     /// <inheritdoc />
     public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
@@ -100,32 +102,32 @@ public sealed class VMfs : IFilesystem
 
         var sbInformation = new StringBuilder();
 
-        sbInformation.AppendLine("VMware file system");
+        sbInformation.AppendLine(Localization.VMware_file_system);
 
         uint ctimeSecs     = (uint)(volInfo.ctime / 1000000);
         uint ctimeNanoSecs = (uint)(volInfo.ctime % 1000000);
         uint mtimeSecs     = (uint)(volInfo.mtime / 1000000);
         uint mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
 
-        sbInformation.AppendFormat("Volume version {0}", volInfo.version).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_version_0, volInfo.version).AppendLine();
 
-        sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name, Encoding)).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(volInfo.name, Encoding)).
+                      AppendLine();
 
-        sbInformation.AppendFormat("Volume size {0} bytes", volInfo.size * 256).AppendLine();
-        sbInformation.AppendFormat("Volume UUID {0}", volInfo.uuid).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_size_0_bytes, volInfo.size * 256).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_UUID_0, volInfo.uuid).AppendLine();
 
-        sbInformation.
-            AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs)).
-            AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_created_on_0,
+                                   DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs)).AppendLine();
 
-        sbInformation.AppendFormat("Volume last modified on {0}",
+        sbInformation.AppendFormat(Localization.Volume_last_modified_on_0,
                                    DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs)).AppendLine();
 
         information = sbInformation.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type                      = "VMware file system",
+            Type                      = FS_TYPE,
             CreationDate              = DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs),
             CreationDateSpecified     = true,
             ModificationDate          = DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),

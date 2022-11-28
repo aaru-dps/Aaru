@@ -47,16 +47,17 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Solar OS filesystem</summary>
 public sealed class SolarFS : IFilesystem
 {
+    const string FS_TYPE = "solarfs";
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Solar_OS filesystem";
+    public string Name => Localization.SolarFS_Name;
     /// <inheritdoc />
     public Guid Id => new("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -144,35 +145,35 @@ public sealed class SolarFS : IFilesystem
         AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.vol_name: \"{0}\"", bpb.vol_name);
         AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.fs_type: \"{0}\"", bpb.fs_type);
 
-        sb.AppendLine("Solar_OS filesystem");
-        sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();
-        sb.AppendFormat("{0} bytes per sector", bpb.bps).AppendLine();
+        sb.AppendLine(Localization.Solar_OS_filesystem);
+        sb.AppendFormat(Localization.Media_descriptor_0, bpb.media).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector, bpb.bps).AppendLine();
 
         if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
         {
             if(bpb.bps != imagePlugin.Info.SectorSize)
                 sb.
-                    AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
+                    AppendFormat(Localization.WARNING_Filesystem_describes_a_0_bytes_sector_while_device_describes_a_1_bytes_sector,
                                  bpb.bps, 2048).AppendLine();
         }
         else if(bpb.bps != imagePlugin.Info.SectorSize)
             sb.
-                AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
+                AppendFormat(Localization.WARNING_Filesystem_describes_a_0_bytes_sector_while_device_describes_a_1_bytes_sector,
                              bpb.bps, imagePlugin.Info.SectorSize).AppendLine();
 
-        sb.AppendFormat("{0} sectors on volume ({1} bytes)", bpb.sectors, bpb.sectors * bpb.bps).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, bpb.sectors, bpb.sectors * bpb.bps).AppendLine();
 
         if(bpb.sectors > imagePlugin.Info.Sectors)
-            sb.AppendFormat("WARNING: Filesystem describes a {0} sectors volume, bigger than device ({1} sectors)",
+            sb.AppendFormat(Localization.WARNING_Filesystem_describes_a_0_sectors_volume_bigger_than_device_1_sectors,
                             bpb.sectors, imagePlugin.Info.Sectors);
 
-        sb.AppendFormat("{0} heads", bpb.heads).AppendLine();
-        sb.AppendFormat("{0} sectors per track", bpb.sptrk).AppendLine();
-        sb.AppendFormat("Volume name: {0}", bpb.vol_name).AppendLine();
+        sb.AppendFormat(Localization._0_heads, bpb.heads).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_per_track, bpb.sptrk).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, bpb.vol_name).AppendLine();
 
         XmlFsType = new FileSystemType
         {
-            Type        = "SolarFS",
+            Type        = FS_TYPE,
             Clusters    = bpb.sectors,
             ClusterSize = bpb.bps,
             VolumeName  = bpb.vol_name

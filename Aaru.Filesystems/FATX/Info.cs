@@ -88,28 +88,28 @@ public sealed partial class XboxFatPlugin
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("FATX filesystem");
+        sb.AppendLine(Localization.FATX_filesystem);
 
-        sb.AppendFormat("{0} logical sectors ({1} bytes) per physical sector", logicalSectorsPerPhysicalSectors,
+        sb.AppendFormat(Localization._0_logical_sectors_1_bytes_per_physical_sector, logicalSectorsPerPhysicalSectors,
                         logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).AppendLine();
 
-        sb.AppendFormat("{0} sectors ({1} bytes) per cluster", fatxSb.sectorsPerCluster,
+        sb.AppendFormat(Localization._0_sectors_1_bytes_per_cluster, fatxSb.sectorsPerCluster,
                         fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).
            AppendLine();
 
-        sb.AppendFormat("Root directory starts on cluster {0}", fatxSb.rootDirectoryCluster).AppendLine();
+        sb.AppendFormat(Localization.Root_directory_starts_on_cluster_0, fatxSb.rootDirectoryCluster).AppendLine();
 
         string volumeLabel = StringHandlers.CToString(fatxSb.volumeLabel,
                                                       bigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode, true);
 
-        sb.AppendFormat("Volume label: {0}", volumeLabel).AppendLine();
-        sb.AppendFormat("Volume serial: {0:X8}", fatxSb.id).AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0, volumeLabel).AppendLine();
+        sb.AppendFormat(Localization.Volume_serial_0_X8, fatxSb.id).AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type = "FATX filesystem",
+            Type = FS_TYPE,
             ClusterSize = (uint)(fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
                                  imagePlugin.Info.SectorSize),
             VolumeName   = volumeLabel,

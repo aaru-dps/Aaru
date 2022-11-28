@@ -53,16 +53,18 @@ public sealed class Fossil : IFilesystem
     // Fossil header starts at 128KiB
     const ulong HEADER_POS = 128 * 1024;
 
+    const string FS_TYPE = "fossil";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Fossil Filesystem Plugin";
+    public string Name => Localization.Fossil_Name;
     /// <inheritdoc />
     public Guid Id => new("932BF104-43F6-494F-973C-45EF58A51DA9");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -79,8 +81,7 @@ public sealed class Fossil : IFilesystem
 
         Header hdr = Marshal.ByteArrayToStructureBigEndian<Header>(sector);
 
-        AaruConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
-                                   FOSSIL_HDR_MAGIC);
+        AaruConsole.DebugWriteLine("Fossil plugin", Localization.magic_at_0_expected_1, hdr.magic, FOSSIL_HDR_MAGIC);
 
         return hdr.magic == FOSSIL_HDR_MAGIC;
     }
@@ -104,24 +105,23 @@ public sealed class Fossil : IFilesystem
 
         Header hdr = Marshal.ByteArrayToStructureBigEndian<Header>(sector);
 
-        AaruConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
-                                   FOSSIL_HDR_MAGIC);
+        AaruConsole.DebugWriteLine("Fossil plugin", Localization.magic_at_0_expected_1, hdr.magic, FOSSIL_HDR_MAGIC);
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("Fossil");
-        sb.AppendFormat("Filesystem version {0}", hdr.version).AppendLine();
-        sb.AppendFormat("{0} bytes per block", hdr.blockSize).AppendLine();
-        sb.AppendFormat("Superblock resides in block {0}", hdr.super).AppendLine();
-        sb.AppendFormat("Labels resides in block {0}", hdr.label).AppendLine();
-        sb.AppendFormat("Data starts at block {0}", hdr.data).AppendLine();
-        sb.AppendFormat("Volume has {0} blocks", hdr.end).AppendLine();
+        sb.AppendLine(Localization.Fossil_filesystem);
+        sb.AppendFormat(Localization.Filesystem_version_0, hdr.version).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block, hdr.blockSize).AppendLine();
+        sb.AppendFormat(Localization.Superblock_resides_in_block_0, hdr.super).AppendLine();
+        sb.AppendFormat(Localization.Labels_resides_in_block_0, hdr.label).AppendLine();
+        sb.AppendFormat(Localization.Data_starts_at_block_0, hdr.data).AppendLine();
+        sb.AppendFormat(Localization.Volume_has_0_blocks, hdr.end).AppendLine();
 
         ulong sbLocation = (hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize)) + partition.Start;
 
         XmlFsType = new FileSystemType
         {
-            Type        = "Fossil filesystem",
+            Type        = FS_TYPE,
             ClusterSize = hdr.blockSize,
             Clusters    = hdr.end
         };
@@ -131,18 +131,17 @@ public sealed class Fossil : IFilesystem
             imagePlugin.ReadSector(sbLocation, out sector);
             SuperBlock fsb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sector);
 
-            AaruConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic,
-                                       FOSSIL_SB_MAGIC);
+            AaruConsole.DebugWriteLine("Fossil plugin", Localization.magic_0_expected_1, fsb.magic, FOSSIL_SB_MAGIC);
 
             if(fsb.magic == FOSSIL_SB_MAGIC)
             {
-                sb.AppendFormat("Epoch low {0}", fsb.epochLow).AppendLine();
-                sb.AppendFormat("Epoch high {0}", fsb.epochHigh).AppendLine();
-                sb.AppendFormat("Next QID {0}", fsb.qid).AppendLine();
-                sb.AppendFormat("Active root block {0}", fsb.active).AppendLine();
-                sb.AppendFormat("Next root block {0}", fsb.next).AppendLine();
-                sb.AppendFormat("Current root block {0}", fsb.current).AppendLine();
-                sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.CToString(fsb.name, Encoding)).AppendLine();
+                sb.AppendFormat(Localization.Epoch_low_0, fsb.epochLow).AppendLine();
+                sb.AppendFormat(Localization.Epoch_high_0, fsb.epochHigh).AppendLine();
+                sb.AppendFormat(Localization.Next_QID_0, fsb.qid).AppendLine();
+                sb.AppendFormat(Localization.Active_root_block_0, fsb.active).AppendLine();
+                sb.AppendFormat(Localization.Next_root_block_0, fsb.next).AppendLine();
+                sb.AppendFormat(Localization.Current_root_block_0, fsb.current).AppendLine();
+                sb.AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(fsb.name, Encoding)).AppendLine();
                 XmlFsType.VolumeName = StringHandlers.CToString(fsb.name, Encoding);
             }
         }

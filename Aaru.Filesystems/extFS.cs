@@ -52,16 +52,18 @@ public sealed class extFS : IFilesystem
     /// <summary>ext superblock magic</summary>
     const ushort EXT_MAGIC = 0x137D;
 
+    const string FS_TYPE = "ext";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
-    public string Name => "Linux extended Filesystem";
+    public string Name => Localization.extFS_Name;
     /// <inheritdoc />
     public Guid Id => new("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -130,22 +132,22 @@ public sealed class extFS : IFilesystem
             maxsize       = BitConverter.ToUInt32(sbSector, 0x020)
         };
 
-        sb.AppendLine("ext filesystem");
-        sb.AppendFormat("{0} zones on volume", extSb.zones);
-        sb.AppendFormat("{0} free blocks ({1} bytes)", extSb.freecountblk, extSb.freecountblk * 1024);
+        sb.AppendLine(Localization.ext_filesystem);
+        sb.AppendFormat(Localization._0_zones_on_volume, extSb.zones);
+        sb.AppendFormat(Localization._0_free_blocks_1_bytes, extSb.freecountblk, extSb.freecountblk * 1024);
 
-        sb.AppendFormat("{0} inodes on volume, {1} free ({2}%)", extSb.inodes, extSb.freecountind,
+        sb.AppendFormat(Localization._0_inodes_on_volume_1_free_2, extSb.inodes, extSb.freecountind,
                         extSb.freecountind * 100 / extSb.inodes);
 
-        sb.AppendFormat("First free inode is {0}", extSb.firstfreeind);
-        sb.AppendFormat("First free block is {0}", extSb.firstfreeblk);
-        sb.AppendFormat("First data zone is {0}", extSb.firstdatazone);
-        sb.AppendFormat("Log zone size: {0}", extSb.logzonesize);
-        sb.AppendFormat("Max zone size: {0}", extSb.maxsize);
+        sb.AppendFormat(Localization.First_free_inode_is_0, extSb.firstfreeind);
+        sb.AppendFormat(Localization.First_free_block_is_0, extSb.firstfreeblk);
+        sb.AppendFormat(Localization.First_data_zone_is_0, extSb.firstdatazone);
+        sb.AppendFormat(Localization.Log_zone_size_0, extSb.logzonesize);
+        sb.AppendFormat(Localization.Max_zone_size_0, extSb.maxsize);
 
         XmlFsType = new FileSystemType
         {
-            Type                  = "ext",
+            Type                  = FS_TYPE,
             FreeClusters          = extSb.freecountblk,
             FreeClustersSpecified = true,
             ClusterSize           = 1024,

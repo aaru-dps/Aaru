@@ -204,7 +204,7 @@ public sealed partial class AppleMFS
         XmlFsType.FilesSpecified        = true;
         XmlFsType.FreeClusters          = _volMdb.drFreeBks;
         XmlFsType.FreeClustersSpecified = true;
-        XmlFsType.Type                  = "MFS";
+        XmlFsType.Type                  = FS_TYPE;
         XmlFsType.VolumeName            = _volMdb.drVN;
 
         return ErrorNumber.NoError;
@@ -232,7 +232,7 @@ public sealed partial class AppleMFS
             Files          = _volMdb.drNmFls,
             FreeBlocks     = _volMdb.drFreeBks,
             PluginId       = Id,
-            Type           = "Apple MFS"
+            Type           = FS_TYPE
         };
 
         stat.FreeFiles = uint.MaxValue - stat.Files;

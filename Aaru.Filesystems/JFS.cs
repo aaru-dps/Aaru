@@ -52,16 +52,18 @@ public sealed class JFS : IFilesystem
     const uint JFS_BOOT_BLOCKS_SIZE = 0x8000;
     const uint JFS_MAGIC            = 0x3153464A;
 
+    const string FS_TYPE = "jfs";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "JFS Plugin";
+    public string Name => Localization.JFS_Name;
     /// <inheritdoc />
     public Guid Id => new("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -101,96 +103,96 @@ public sealed class JFS : IFilesystem
 
         SuperBlock jfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
-        sb.AppendLine("JFS filesystem");
-        sb.AppendFormat("Version {0}", jfsSb.s_version).AppendLine();
-        sb.AppendFormat("{0} blocks of {1} bytes", jfsSb.s_size, jfsSb.s_bsize).AppendLine();
-        sb.AppendFormat("{0} blocks per allocation group", jfsSb.s_agsize).AppendLine();
+        sb.AppendLine(Localization.JFS_filesystem);
+        sb.AppendFormat(Localization.Version_0, jfsSb.s_version).AppendLine();
+        sb.AppendFormat(Localization._0_blocks_of_1_bytes, jfsSb.s_size, jfsSb.s_bsize).AppendLine();
+        sb.AppendFormat(Localization._0_blocks_per_allocation_group, jfsSb.s_agsize).AppendLine();
 
         if(jfsSb.s_flags.HasFlag(Flags.Unicode))
-            sb.AppendLine("Volume uses Unicode for directory entries");
+            sb.AppendLine(Localization.Volume_uses_Unicode_for_directory_entries);
 
         if(jfsSb.s_flags.HasFlag(Flags.RemountRO))
-            sb.AppendLine("Volume remounts read-only on error");
+            sb.AppendLine(Localization.Volume_remounts_read_only_on_error);
 
         if(jfsSb.s_flags.HasFlag(Flags.Continue))
-            sb.AppendLine("Volume continues on error");
+            sb.AppendLine(Localization.Volume_continues_on_error);
 
         if(jfsSb.s_flags.HasFlag(Flags.Panic))
-            sb.AppendLine("Volume panics on error");
+            sb.AppendLine(Localization.Volume_panics_on_error);
 
         if(jfsSb.s_flags.HasFlag(Flags.UserQuota))
-            sb.AppendLine("Volume has user quotas enabled");
+            sb.AppendLine(Localization.Volume_has_user_quotas_enabled);
 
         if(jfsSb.s_flags.HasFlag(Flags.GroupQuota))
-            sb.AppendLine("Volume has group quotas enabled");
+            sb.AppendLine(Localization.Volume_has_group_quotas_enabled);
 
         if(jfsSb.s_flags.HasFlag(Flags.NoJournal))
-            sb.AppendLine("Volume is not using any journal");
+            sb.AppendLine(Localization.Volume_is_not_using_any_journal);
 
         if(jfsSb.s_flags.HasFlag(Flags.Discard))
-            sb.AppendLine("Volume sends TRIM/UNMAP commands to underlying device");
+            sb.AppendLine(Localization.Volume_sends_TRIM_UNMAP_commands_to_underlying_device);
 
         if(jfsSb.s_flags.HasFlag(Flags.GroupCommit))
-            sb.AppendLine("Volume commits in groups of 1");
+            sb.AppendLine(Localization.Volume_commits_in_groups_of_1);
 
         if(jfsSb.s_flags.HasFlag(Flags.LazyCommit))
-            sb.AppendLine("Volume commits lazy");
+            sb.AppendLine(Localization.Volume_commits_lazy);
 
         if(jfsSb.s_flags.HasFlag(Flags.Temporary))
-            sb.AppendLine("Volume does not commit to log");
+            sb.AppendLine(Localization.Volume_does_not_commit_to_log);
 
         if(jfsSb.s_flags.HasFlag(Flags.InlineLog))
-            sb.AppendLine("Volume has log withing itself");
+            sb.AppendLine(Localization.Volume_has_log_withing_itself);
 
         if(jfsSb.s_flags.HasFlag(Flags.InlineMoving))
-            sb.AppendLine("Volume has log withing itself and is moving it out");
+            sb.AppendLine(Localization.Volume_has_log_withing_itself_and_is_moving_it_out);
 
         if(jfsSb.s_flags.HasFlag(Flags.BadSAIT))
-            sb.AppendLine("Volume has bad current secondary ait");
+            sb.AppendLine(Localization.Volume_has_bad_current_secondary_ait);
 
         if(jfsSb.s_flags.HasFlag(Flags.Sparse))
-            sb.AppendLine("Volume supports sparse files");
+            sb.AppendLine(Localization.Volume_supports_sparse_files);
 
         if(jfsSb.s_flags.HasFlag(Flags.DASDEnabled))
-            sb.AppendLine("Volume has DASD limits enabled");
+            sb.AppendLine(Localization.Volume_has_DASD_limits_enabled);
 
         if(jfsSb.s_flags.HasFlag(Flags.DASDPrime))
-            sb.AppendLine("Volume primes DASD on boot");
+            sb.AppendLine(Localization.Volume_primes_DASD_on_boot);
 
         if(jfsSb.s_flags.HasFlag(Flags.SwapBytes))
-            sb.AppendLine("Volume is in a big-endian system");
+            sb.AppendLine(Localization.Volume_is_in_a_big_endian_system);
 
         if(jfsSb.s_flags.HasFlag(Flags.DirIndex))
-            sb.AppendLine("Volume has persistent indexes");
+            sb.AppendLine(Localization.Volume_has_persistent_indexes);
 
         if(jfsSb.s_flags.HasFlag(Flags.Linux))
-            sb.AppendLine("Volume supports Linux");
+            sb.AppendLine(Localization.Volume_supports_Linux);
 
         if(jfsSb.s_flags.HasFlag(Flags.DFS))
-            sb.AppendLine("Volume supports DCE DFS LFS");
+            sb.AppendLine(Localization.Volume_supports_DCE_DFS_LFS);
 
         if(jfsSb.s_flags.HasFlag(Flags.OS2))
-            sb.AppendLine("Volume supports OS/2, and is case insensitive");
+            sb.AppendLine(Localization.Volume_supports_OS2_and_is_case_insensitive);
 
         if(jfsSb.s_flags.HasFlag(Flags.AIX))
-            sb.AppendLine("Volume supports AIX");
+            sb.AppendLine(Localization.Volume_supports_AIX);
 
         if(jfsSb.s_state != 0)
-            sb.AppendLine("Volume is dirty");
+            sb.AppendLine(Localization.Volume_is_dirty);
 
-        sb.AppendFormat("Volume was last updated on {0}",
+        sb.AppendFormat(Localization.Volume_was_last_updated_on_0_,
                         DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec)).AppendLine();
 
         if(jfsSb.s_version == 1)
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(jfsSb.s_fpack, Encoding)).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(jfsSb.s_fpack, Encoding)).AppendLine();
         else
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(jfsSb.s_label, Encoding)).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(jfsSb.s_label, Encoding)).AppendLine();
 
-        sb.AppendFormat("Volume UUID: {0}", jfsSb.s_uuid).AppendLine();
+        sb.AppendFormat(Localization.Volume_UUID_0, jfsSb.s_uuid).AppendLine();
 
         XmlFsType = new FileSystemType
         {
-            Type = "JFS filesystem",
+            Type = FS_TYPE,
             Clusters = jfsSb.s_size,
             ClusterSize = jfsSb.s_bsize,
             Bootable = true,

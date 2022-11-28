@@ -47,16 +47,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Apple Hierarchical File System Plus (HFS+)</summary>
 public sealed class AppleHFSPlus : IFilesystem
 {
+    const string FS_TYPE_HFSP = "hfsplus";
+    const string FS_TYPE_HFSX = "hfsx";
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Apple HFS+ filesystem";
+    public string Name => Localization.AppleHFSPlus_Name;
     /// <inheritdoc />
     public Guid Id => new("36405F8D-0D26-6EBE-436F-62F0586B4F08");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -181,17 +183,17 @@ public sealed class AppleHFSPlus : IFilesystem
         switch(vh.signature)
         {
             case 0x482B:
-                sb.AppendLine("HFS+ filesystem.");
+                sb.AppendLine(Localization.HFS_filesystem);
 
                 break;
             case 0x4858:
-                sb.AppendLine("HFSX filesystem.");
+                sb.AppendLine(Localization.HFSX_filesystem);
 
                 break;
         }
 
         if(wrapped)
-            sb.AppendLine("Volume is wrapped inside an HFS volume.");
+            sb.AppendLine(Localization.Volume_is_wrapped_inside_an_HFS_volume);
 
         byte[] tmp = new byte[0x400];
         Array.Copy(vhSector, 0x400, tmp, 0, 0x400);
@@ -201,76 +203,80 @@ public sealed class AppleHFSPlus : IFilesystem
 
         if(vh.version is 4 or 5)
         {
-            sb.AppendFormat("Filesystem version is {0}.", vh.version).AppendLine();
+            sb.AppendFormat(Localization.Filesystem_version_is_0, vh.version).AppendLine();
 
             if((vh.attributes & 0x80) == 0x80)
-                sb.AppendLine("Volume is locked on hardware.");
+                sb.AppendLine(Localization.Volume_is_locked_on_hardware);
 
             if((vh.attributes & 0x100) == 0x100)
-                sb.AppendLine("Volume is unmounted.");
+                sb.AppendLine(Localization.Volume_is_unmounted);
 
             if((vh.attributes & 0x200) == 0x200)
-                sb.AppendLine("There are bad blocks in the extents file.");
+                sb.AppendLine(Localization.There_are_bad_blocks_in_the_extents_file);
 
             if((vh.attributes & 0x400) == 0x400)
-                sb.AppendLine("Volume does not require cache.");
+                sb.AppendLine(Localization.Volume_does_not_require_cache);
 
             if((vh.attributes & 0x800) == 0x800)
-                sb.AppendLine("Volume state is inconsistent.");
+                sb.AppendLine(Localization.Volume_state_is_inconsistent);
 
             if((vh.attributes & 0x1000) == 0x1000)
-                sb.AppendLine("CNIDs are reused.");
+                sb.AppendLine(Localization.There_are_reused_CNIDs);
 
             if((vh.attributes & 0x2000) == 0x2000)
-                sb.AppendLine("Volume is journaled.");
+                sb.AppendLine(Localization.Volume_is_journaled);
 
             if((vh.attributes & 0x8000) == 0x8000)
-                sb.AppendLine("Volume is locked on software.");
+                sb.AppendLine(Localization.Volume_is_locked_on_software);
 
-            sb.AppendFormat("Implementation that last mounted the volume: \"{0}\".",
+            sb.AppendFormat(Localization.Implementation_that_last_mounted_the_volume_0,
                             Encoding.ASCII.GetString(vh.lastMountedVersion)).AppendLine();
 
             if((vh.attributes & 0x2000) == 0x2000)
-                sb.AppendFormat("Journal starts at allocation block {0}.", vh.journalInfoBlock).AppendLine();
+                sb.AppendFormat(Localization.Journal_starts_at_allocation_block_0, vh.journalInfoBlock).AppendLine();
 
-            sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(vh.createDate)).AppendLine();
-            sb.AppendFormat("Last modification date: {0}", DateHandlers.MacToDateTime(vh.modifyDate)).AppendLine();
+            sb.AppendFormat(Localization.Creation_date_0, DateHandlers.MacToDateTime(vh.createDate)).AppendLine();
 
-            if(vh.backupDate > 0)
-                sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(vh.backupDate)).AppendLine();
-            else
-                sb.AppendLine("Volume has never been backed up");
+            sb.AppendFormat(Localization.Last_modification_date_0, DateHandlers.MacToDateTime(vh.modifyDate)).
+               AppendLine();
 
             if(vh.backupDate > 0)
-                sb.AppendFormat("Last check date: {0}", DateHandlers.MacToDateTime(vh.checkedDate)).AppendLine();
+                sb.AppendFormat(Localization.Last_backup_date_0, DateHandlers.MacToDateTime(vh.backupDate)).
+                   AppendLine();
             else
-                sb.AppendLine("Volume has never been checked up");
+                sb.AppendLine(Localization.Volume_has_never_been_backed_up);
 
-            sb.AppendFormat("{0} files on volume.", vh.fileCount).AppendLine();
-            sb.AppendFormat("{0} folders on volume.", vh.folderCount).AppendLine();
-            sb.AppendFormat("{0} bytes per allocation block.", vh.blockSize).AppendLine();
-            sb.AppendFormat("{0} allocation blocks.", vh.totalBlocks).AppendLine();
-            sb.AppendFormat("{0} free blocks.", vh.freeBlocks).AppendLine();
-            sb.AppendFormat("Next allocation block: {0}.", vh.nextAllocation).AppendLine();
-            sb.AppendFormat("Resource fork clump size: {0} bytes.", vh.rsrcClumpSize).AppendLine();
-            sb.AppendFormat("Data fork clump size: {0} bytes.", vh.dataClumpSize).AppendLine();
-            sb.AppendFormat("Next unused CNID: {0}.", vh.nextCatalogID).AppendLine();
-            sb.AppendFormat("Volume has been mounted writable {0} times.", vh.writeCount).AppendLine();
-            sb.AppendFormat("Allocation File is {0} bytes.", vh.allocationFile_logicalSize).AppendLine();
-            sb.AppendFormat("Extents File is {0} bytes.", vh.extentsFile_logicalSize).AppendLine();
-            sb.AppendFormat("Catalog File is {0} bytes.", vh.catalogFile_logicalSize).AppendLine();
-            sb.AppendFormat("Attributes File is {0} bytes.", vh.attributesFile_logicalSize).AppendLine();
-            sb.AppendFormat("Startup File is {0} bytes.", vh.startupFile_logicalSize).AppendLine();
-            sb.AppendLine("Finder info:");
-            sb.AppendFormat("CNID of bootable system's directory: {0}", vh.drFndrInfo0).AppendLine();
-            sb.AppendFormat("CNID of first-run application's directory: {0}", vh.drFndrInfo1).AppendLine();
-            sb.AppendFormat("CNID of previously opened directory: {0}", vh.drFndrInfo2).AppendLine();
-            sb.AppendFormat("CNID of bootable Mac OS 8 or 9 directory: {0}", vh.drFndrInfo3).AppendLine();
-            sb.AppendFormat("CNID of bootable Mac OS X directory: {0}", vh.drFndrInfo5).AppendLine();
+            if(vh.backupDate > 0)
+                sb.AppendFormat(Localization.Last_check_date_0, DateHandlers.MacToDateTime(vh.checkedDate)).
+                   AppendLine();
+            else
+                sb.AppendLine(Localization.Volume_has_never_been_checked_up);
+
+            sb.AppendFormat(Localization._0_files_on_volume, vh.fileCount).AppendLine();
+            sb.AppendFormat(Localization._0_folders_on_volume, vh.folderCount).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_allocation_block, vh.blockSize).AppendLine();
+            sb.AppendFormat(Localization._0_allocation_blocks, vh.totalBlocks).AppendLine();
+            sb.AppendFormat(Localization._0_free_blocks, vh.freeBlocks).AppendLine();
+            sb.AppendFormat(Localization.Next_allocation_block_0, vh.nextAllocation).AppendLine();
+            sb.AppendFormat(Localization.Resource_fork_clump_size_0_bytes, vh.rsrcClumpSize).AppendLine();
+            sb.AppendFormat(Localization.Data_fork_clump_size_0_bytes, vh.dataClumpSize).AppendLine();
+            sb.AppendFormat(Localization.Next_unused_CNID_0, vh.nextCatalogID).AppendLine();
+            sb.AppendFormat(Localization.Volume_has_been_mounted_writable_0_times, vh.writeCount).AppendLine();
+            sb.AppendFormat(Localization.Allocation_File_is_0_bytes, vh.allocationFile_logicalSize).AppendLine();
+            sb.AppendFormat(Localization.Extents_File_is_0_bytes, vh.extentsFile_logicalSize).AppendLine();
+            sb.AppendFormat(Localization.Catalog_File_is_0_bytes, vh.catalogFile_logicalSize).AppendLine();
+            sb.AppendFormat(Localization.Attributes_File_is_0_bytes, vh.attributesFile_logicalSize).AppendLine();
+            sb.AppendFormat(Localization.Startup_File_is_0_bytes, vh.startupFile_logicalSize).AppendLine();
+            sb.AppendLine(Localization.Finder_info);
+            sb.AppendFormat(Localization.CNID_of_bootable_system_directory_0, vh.drFndrInfo0).AppendLine();
+            sb.AppendFormat(Localization.CNID_of_first_run_application_directory_0, vh.drFndrInfo1).AppendLine();
+            sb.AppendFormat(Localization.CNID_of_previously_opened_directory_0, vh.drFndrInfo2).AppendLine();
+            sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_8_or_9_directory_0, vh.drFndrInfo3).AppendLine();
+            sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_X_directory_0, vh.drFndrInfo5).AppendLine();
 
             if(vh.drFndrInfo6 != 0 &&
                vh.drFndrInfo7 != 0)
-                sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", vh.drFndrInfo6, vh.drFndrInfo7).AppendLine();
+                sb.AppendFormat(Localization.Mac_OS_X_Volume_ID_0_1, vh.drFndrInfo6, vh.drFndrInfo7).AppendLine();
 
             XmlFsType = new FileSystemType();
 
@@ -304,8 +310,8 @@ public sealed class AppleHFSPlus : IFilesystem
 
             XmlFsType.Type = vh.signature switch
             {
-                0x482B => "HFS+",
-                0x4858 => "HFSX",
+                0x482B => FS_TYPE_HFSP,
+                0x4858 => FS_TYPE_HFSX,
                 _      => XmlFsType.Type
             };
 
@@ -317,8 +323,8 @@ public sealed class AppleHFSPlus : IFilesystem
         }
         else
         {
-            sb.AppendFormat("Filesystem version is {0}.", vh.version).AppendLine();
-            sb.AppendLine("This version is not supported yet.");
+            sb.AppendFormat(Localization.Filesystem_version_is_0, vh.version).AppendLine();
+            sb.AppendLine(Localization.This_version_is_not_supported_yet);
         }
 
         information = sb.ToString();

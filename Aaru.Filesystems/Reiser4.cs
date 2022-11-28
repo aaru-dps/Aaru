@@ -49,6 +49,8 @@ public sealed class Reiser4 : IFilesystem
 {
     const uint REISER4_SUPER_OFFSET = 0x10000;
 
+    const string FS_TYPE = "reiser4";
+
     readonly byte[] _magic =
     {
         0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
@@ -59,11 +61,11 @@ public sealed class Reiser4 : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Reiser4 Filesystem Plugin";
+    public string Name => Localization.Reiser4_Name;
     /// <inheritdoc />
     public Guid Id => new("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -131,17 +133,17 @@ public sealed class Reiser4 : IFilesystem
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("Reiser 4 filesystem");
-        sb.AppendFormat("{0} bytes per block", reiserSb.blocksize).AppendLine();
-        sb.AppendFormat("Volume disk format: {0}", reiserSb.diskformat).AppendLine();
-        sb.AppendFormat("Volume UUID: {0}", reiserSb.uuid).AppendLine();
-        sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(reiserSb.label, Encoding)).AppendLine();
+        sb.AppendLine(Localization.Reiser_4_filesystem);
+        sb.AppendFormat(Localization._0_bytes_per_block, reiserSb.blocksize).AppendLine();
+        sb.AppendFormat(Localization.Volume_disk_format_0, reiserSb.diskformat).AppendLine();
+        sb.AppendFormat(Localization.Volume_UUID_0, reiserSb.uuid).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(reiserSb.label, Encoding)).AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type         = "Reiser 4 filesystem",
+            Type         = FS_TYPE,
             ClusterSize  = reiserSb.blocksize,
             Clusters     = (partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize,
             VolumeName   = StringHandlers.CToString(reiserSb.label, Encoding),

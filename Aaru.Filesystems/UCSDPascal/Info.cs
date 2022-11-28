@@ -184,17 +184,19 @@ public sealed partial class PascalPlugin
         if(volEntry.Files < 0)
             return;
 
-        sbInformation.AppendFormat("Volume record spans from block {0} to block {1}", volEntry.FirstBlock,
+        sbInformation.AppendFormat(Localization.Volume_record_spans_from_block_0_to_block_1, volEntry.FirstBlock,
                                    volEntry.LastBlock).AppendLine();
 
-        sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(volEntry.VolumeName, Encoding)).
-                      AppendLine();
+        sbInformation.
+            AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(volEntry.VolumeName, Encoding)).
+            AppendLine();
 
-        sbInformation.AppendFormat("Volume has {0} blocks", volEntry.Blocks).AppendLine();
-        sbInformation.AppendFormat("Volume has {0} files", volEntry.Files).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_blocks, volEntry.Blocks).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_files, volEntry.Files).AppendLine();
 
-        sbInformation.AppendFormat("Volume last booted at {0}", DateHandlers.UcsdPascalToDateTime(volEntry.LastBoot)).
-                      AppendLine();
+        sbInformation.
+            AppendFormat(Localization.Volume_last_booted_at_0, DateHandlers.UcsdPascalToDateTime(volEntry.LastBoot)).
+            AppendLine();
 
         information = sbInformation.ToString();
 
@@ -207,7 +209,7 @@ public sealed partial class PascalPlugin
             ClusterSize    = imagePlugin.Info.SectorSize,
             Files          = (ulong)volEntry.Files,
             FilesSpecified = true,
-            Type           = "UCSD Pascal",
+            Type           = FS_TYPE,
             VolumeName     = StringHandlers.PascalToString(volEntry.VolumeName, Encoding)
         };
     }

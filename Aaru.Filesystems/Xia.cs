@@ -62,11 +62,11 @@ public sealed class Xia : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Xia filesystem";
+    public string Name => Localization.Xia_Name;
     /// <inheritdoc />
     public Guid Id => new("169E1DE5-24F2-4EF6-A04D-A4B2CA66DE9D");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -90,6 +90,8 @@ public sealed class Xia : IFilesystem
         return supblk.s_magic == XIAFS_SUPER_MAGIC;
     }
 
+    const string FS_TYPE = "xia";
+
     /// <inheritdoc />
     public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
     {
@@ -111,38 +113,38 @@ public sealed class Xia : IFilesystem
 
         SuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
 
-        sb.AppendFormat("{0} bytes per zone", supblk.s_zone_size).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_zone, supblk.s_zone_size).AppendLine();
 
-        sb.AppendFormat("{0} zones in volume ({1} bytes)", supblk.s_nzones, supblk.s_nzones * supblk.s_zone_size).
+        sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, supblk.s_nzones, supblk.s_nzones * supblk.s_zone_size).
            AppendLine();
 
-        sb.AppendFormat("{0} inodes", supblk.s_ninodes).AppendLine();
+        sb.AppendFormat(Localization._0_inodes, supblk.s_ninodes).AppendLine();
 
-        sb.AppendFormat("{0} data zones ({1} bytes)", supblk.s_ndatazones, supblk.s_ndatazones * supblk.s_zone_size).
+        sb.AppendFormat(Localization._0_data_zones_1_bytes, supblk.s_ndatazones,
+                        supblk.s_ndatazones * supblk.s_zone_size).AppendLine();
+
+        sb.AppendFormat(Localization._0_imap_zones_1_bytes, supblk.s_imap_zones,
+                        supblk.s_imap_zones * supblk.s_zone_size).AppendLine();
+
+        sb.AppendFormat(Localization._0_zmap_zones_1_bytes, supblk.s_zmap_zones,
+                        supblk.s_zmap_zones * supblk.s_zone_size).AppendLine();
+
+        sb.AppendFormat(Localization.First_data_zone_0, supblk.s_firstdatazone).AppendLine();
+
+        sb.AppendFormat(Localization.Maximum_filesize_is_0_bytes_1_MiB, supblk.s_max_size, supblk.s_max_size / 1048576).
            AppendLine();
 
-        sb.AppendFormat("{0} imap zones ({1} bytes)", supblk.s_imap_zones, supblk.s_imap_zones * supblk.s_zone_size).
-           AppendLine();
-
-        sb.AppendFormat("{0} zmap zones ({1} bytes)", supblk.s_zmap_zones, supblk.s_zmap_zones * supblk.s_zone_size).
-           AppendLine();
-
-        sb.AppendFormat("First data zone: {0}", supblk.s_firstdatazone).AppendLine();
-
-        sb.AppendFormat("Maximum filesize is {0} bytes ({1} MiB)", supblk.s_max_size, supblk.s_max_size / 1048576).
-           AppendLine();
-
-        sb.AppendFormat("{0} zones reserved for kernel images ({1} bytes)", supblk.s_kernzones,
+        sb.AppendFormat(Localization._0_zones_reserved_for_kernel_images_1_bytes, supblk.s_kernzones,
                         supblk.s_kernzones * supblk.s_zone_size).AppendLine();
 
-        sb.AppendFormat("First kernel zone: {0}", supblk.s_firstkernzone).AppendLine();
+        sb.AppendFormat(Localization.First_kernel_zone_0, supblk.s_firstkernzone).AppendLine();
 
         XmlFsType = new FileSystemType
         {
             Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment),
             Clusters    = supblk.s_nzones,
             ClusterSize = supblk.s_zone_size,
-            Type        = "Xia filesystem"
+            Type        = FS_TYPE
         };
 
         information = sb.ToString();

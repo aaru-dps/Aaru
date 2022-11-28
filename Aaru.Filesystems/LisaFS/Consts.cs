@@ -110,4 +110,6 @@ public sealed partial class LisaFS
         /// <summary>Erased?</summary>
         KilledObject = 15
     }
+
+    const string FS_TYPE = "lisafs";
 }

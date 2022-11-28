@@ -66,16 +66,18 @@ public sealed class AcornADFS : IFilesystem
     /// <summary>Old directory format magic number, "Hugo"</summary>
     const uint OLD_DIR_MAGIC = 0x6F677548;
 
+    const string FS_TYPE = "adfs";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
-    public string Name => "Acorn Advanced Disc Filing System";
+    public string Name => Localization.AcornADFS_Name;
     /// <inheritdoc />
     public Guid Id => new("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     // TODO: BBC Master hard disks are untested...
     /// <inheritdoc />
@@ -362,7 +364,7 @@ public sealed class AcornADFS : IFilesystem
                     Bootable    = oldMap1.boot != 0, // Or not?
                     Clusters    = bytes / imagePlugin.Info.SectorSize,
                     ClusterSize = imagePlugin.Info.SectorSize,
-                    Type        = "Acorn Advanced Disc Filing System"
+                    Type        = FS_TYPE
                 };
 
                 if(ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
@@ -446,18 +448,18 @@ public sealed class AcornADFS : IFilesystem
                     }
                 }
 
-                sbInformation.AppendLine("Acorn Advanced Disc Filing System");
+                sbInformation.AppendLine(Localization.Acorn_Advanced_Disc_Filing_System);
                 sbInformation.AppendLine();
-                sbInformation.AppendFormat("{0} bytes per sector", imagePlugin.Info.SectorSize).AppendLine();
-                sbInformation.AppendFormat("Volume has {0} bytes", bytes).AppendLine();
+                sbInformation.AppendFormat(Localization._0_bytes_per_sector, imagePlugin.Info.SectorSize).AppendLine();
+                sbInformation.AppendFormat(Localization.Volume_has_0_bytes, bytes).AppendLine();
 
-                sbInformation.AppendFormat("Volume name: {0}", StringHandlers.CToString(namebytes, Encoding)).
+                sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(namebytes, Encoding)).
                               AppendLine();
 
                 if(oldMap1.discId > 0)
                 {
                     XmlFsType.VolumeSerial = $"{oldMap1.discId:X4}";
-                    sbInformation.AppendFormat("Volume ID: {0:X4}", oldMap1.discId).AppendLine();
+                    sbInformation.AppendFormat(Localization.Volume_ID_0_X4, oldMap1.discId).AppendLine();
                 }
 
                 if(!ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
@@ -565,34 +567,34 @@ public sealed class AcornADFS : IFilesystem
 
         XmlFsType = new FileSystemType();
 
-        sbInformation.AppendLine("Acorn Advanced Disc Filing System");
+        sbInformation.AppendLine(Localization.Acorn_Advanced_Disc_Filing_System);
         sbInformation.AppendLine();
-        sbInformation.AppendFormat("Version {0}", drSb.format_version).AppendLine();
-        sbInformation.AppendFormat("{0} bytes per sector", 1 << drSb.log2secsize).AppendLine();
-        sbInformation.AppendFormat("{0} sectors per track", drSb.spt).AppendLine();
-        sbInformation.AppendFormat("{0} heads", drSb.heads).AppendLine();
-        sbInformation.AppendFormat("Density code: {0}", drSb.density).AppendLine();
-        sbInformation.AppendFormat("Skew: {0}", drSb.skew).AppendLine();
-        sbInformation.AppendFormat("Boot option: {0}", drSb.bootoption).AppendLine();
+        sbInformation.AppendFormat(Localization.Version_0, drSb.format_version).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_per_sector, 1 << drSb.log2secsize).AppendLine();
+        sbInformation.AppendFormat(Localization._0_sectors_per_track, drSb.spt).AppendLine();
+        sbInformation.AppendFormat(Localization._0_heads, drSb.heads).AppendLine();
+        sbInformation.AppendFormat(Localization.Density_code_0, drSb.density).AppendLine();
+        sbInformation.AppendFormat(Localization.Skew_0, drSb.skew).AppendLine();
+        sbInformation.AppendFormat(Localization.Boot_option_0, drSb.bootoption).AppendLine();
 
         // TODO: What the hell is this field refering to?
-        sbInformation.AppendFormat("Root starts at frag {0}", drSb.root).AppendLine();
+        sbInformation.AppendFormat(Localization.Root_starts_at_frag_0, drSb.root).AppendLine();
 
         //sbInformation.AppendFormat("Root is {0} bytes long", drSb.root_size).AppendLine();
-        sbInformation.AppendFormat("Volume has {0} bytes in {1} zones", bytes, zones).AppendLine();
-        sbInformation.AppendFormat("Volume flags: 0x{0:X4}", drSb.flags).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_bytes_in_1_zones, bytes, zones).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_flags_0_X4, drSb.flags).AppendLine();
 
         if(drSb.disc_id > 0)
         {
             XmlFsType.VolumeSerial = $"{drSb.disc_id:X4}";
-            sbInformation.AppendFormat("Volume ID: {0:X4}", drSb.disc_id).AppendLine();
+            sbInformation.AppendFormat(Localization.Volume_ID_0_X4, drSb.disc_id).AppendLine();
         }
 
         if(!ArrayHelpers.ArrayIsNullOrEmpty(drSb.disc_name))
         {
             string discname = StringHandlers.CToString(drSb.disc_name, Encoding);
             XmlFsType.VolumeName = discname;
-            sbInformation.AppendFormat("Volume name: {0}", discname).AppendLine();
+            sbInformation.AppendFormat(Localization.Volume_name_0, discname).AppendLine();
         }
 
         information = sbInformation.ToString();
@@ -600,7 +602,7 @@ public sealed class AcornADFS : IFilesystem
         XmlFsType.Bootable    |= drSb.bootoption != 0; // Or not?
         XmlFsType.Clusters    =  bytes / (ulong)(1 << drSb.log2secsize);
         XmlFsType.ClusterSize =  (uint)(1 << drSb.log2secsize);
-        XmlFsType.Type        =  "Acorn Advanced Disc Filing System";
+        XmlFsType.Type        =  FS_TYPE;
     }
 
     static byte AcornMapChecksum(byte[] data, int length)

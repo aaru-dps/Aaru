@@ -46,16 +46,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem used by Nintendo Gamecube and Wii discs</summary>
 public sealed class NintendoPlugin : IFilesystem
 {
+    const string FS_TYPE_NGC = "ngcfs";
+    const string FS_TYPE_WII = "wiifs";
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Nintendo optical filesystems";
+    public string Name => Localization.NintendoPlugin_Name;
     /// <inheritdoc />
     public Guid Id => new("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -260,142 +262,140 @@ public sealed class NintendoPlugin : IFilesystem
         AaruConsole.DebugWriteLine("Nintendo plugin", "australiaAge = {0}", fields.AustraliaAge);
         AaruConsole.DebugWriteLine("Nintendo plugin", "koreaAge = {0}", fields.KoreaAge);
 
-        sbInformation.AppendLine("Nintendo optical filesystem");
-        sbInformation.AppendLine(wii ? "Nintendo Wii Optical Disc" : "Nintendo GameCube Optical Disc");
-        sbInformation.AppendFormat("Disc ID is {0}", fields.DiscId).AppendLine();
-        sbInformation.AppendFormat("Disc is a {0} disc", DiscTypeToString(fields.DiscType)).AppendLine();
-        sbInformation.AppendFormat("Disc region is {0}", RegionCodeToString(fields.RegionCode)).AppendLine();
-        sbInformation.AppendFormat("Published by {0}", PublisherCodeToString(fields.PublisherCode)).AppendLine();
+        sbInformation.AppendLine(Localization.Nintendo_optical_filesystem);
+
+        sbInformation.AppendLine(wii ? Localization.Nintendo_Wii_Optical_Disc
+                                     : Localization.Nintendo_GameCube_Optical_Disc);
+
+        sbInformation.AppendFormat(Localization.Disc_ID_is_0, fields.DiscId).AppendLine();
+        sbInformation.AppendFormat(Localization.Disc_is_a_0_disc, DiscTypeToString(fields.DiscType)).AppendLine();
+        sbInformation.AppendFormat(Localization.Disc_region_is_0, RegionCodeToString(fields.RegionCode)).AppendLine();
+
+        sbInformation.AppendFormat(Localization.Published_by_0, PublisherCodeToString(fields.PublisherCode)).
+                      AppendLine();
 
         if(fields.DiscNumber > 0)
-            sbInformation.AppendFormat("Disc number {0} of a multi-disc set", fields.DiscNumber + 1).AppendLine();
-
-        if(fields.Streaming)
-            sbInformation.AppendLine("Disc is prepared for audio streaming");
-
-        if(fields.StreamBufferSize > 0)
-            sbInformation.AppendFormat("Audio streaming buffer size is {0} bytes", fields.StreamBufferSize).
+            sbInformation.AppendFormat(Localization.Disc_number_0_of_a_multi_disc_set, fields.DiscNumber + 1).
                           AppendLine();
 
-        sbInformation.AppendFormat("Title: {0}", fields.Title).AppendLine();
+        if(fields.Streaming)
+            sbInformation.AppendLine(Localization.Disc_is_prepared_for_audio_streaming);
+
+        if(fields.StreamBufferSize > 0)
+            sbInformation.AppendFormat(Localization.Audio_streaming_buffer_size_is_0_bytes, fields.StreamBufferSize).
+                          AppendLine();
+
+        sbInformation.AppendFormat(Localization.Title_0, fields.Title).AppendLine();
 
         if(wii)
         {
             for(int i = 0; i < fields.FirstPartitions.Length; i++)
-                sbInformation.AppendFormat("First {0} partition starts at sector {1}",
+                sbInformation.AppendFormat(Localization.First_0_partition_starts_at_sector_1,
                                            PartitionTypeToString(fields.FirstPartitions[i].Type),
                                            fields.FirstPartitions[i].Offset / 2048).AppendLine();
 
             for(int i = 0; i < fields.SecondPartitions.Length; i++)
-                sbInformation.AppendFormat("Second {0} partition starts at sector {1}",
+                sbInformation.AppendFormat(Localization.Second_0_partition_starts_at_sector_1,
                                            PartitionTypeToString(fields.SecondPartitions[i].Type),
                                            fields.SecondPartitions[i].Offset / 2048).AppendLine();
 
             for(int i = 0; i < fields.ThirdPartitions.Length; i++)
-                sbInformation.AppendFormat("Third {0} partition starts at sector {1}",
+                sbInformation.AppendFormat(Localization.Third_0_partition_starts_at_sector_1,
                                            PartitionTypeToString(fields.ThirdPartitions[i].Type),
                                            fields.ThirdPartitions[i].Offset / 2048).AppendLine();
 
             for(int i = 0; i < fields.FourthPartitions.Length; i++)
-                sbInformation.AppendFormat("Fourth {0} partition starts at sector {1}",
+                sbInformation.AppendFormat(Localization.Fourth_0_partition_starts_at_sector_1,
                                            PartitionTypeToString(fields.FourthPartitions[i].Type),
                                            fields.FourthPartitions[i].Offset / 2048).AppendLine();
 
             //                sbInformation.AppendFormat("Region byte is {0}", fields.region).AppendLine();
             if((fields.JapanAge & 0x80) != 0x80)
-                sbInformation.AppendFormat("Japan age rating is {0}", fields.JapanAge).AppendLine();
+                sbInformation.AppendFormat(Localization.Japan_age_rating_is_0, fields.JapanAge).AppendLine();
 
             if((fields.UsaAge & 0x80) != 0x80)
-                sbInformation.AppendFormat("ESRB age rating is {0}", fields.UsaAge).AppendLine();
+                sbInformation.AppendFormat(Localization.ESRB_age_rating_is_0, fields.UsaAge).AppendLine();
 
             if((fields.GermanAge & 0x80) != 0x80)
-                sbInformation.AppendFormat("German age rating is {0}", fields.GermanAge).AppendLine();
+                sbInformation.AppendFormat(Localization.German_age_rating_is_0, fields.GermanAge).AppendLine();
 
             if((fields.PegiAge & 0x80) != 0x80)
-                sbInformation.AppendFormat("PEGI age rating is {0}", fields.PegiAge).AppendLine();
+                sbInformation.AppendFormat(Localization.PEGI_age_rating_is_0, fields.PegiAge).AppendLine();
 
             if((fields.FinlandAge & 0x80) != 0x80)
-                sbInformation.AppendFormat("Finland age rating is {0}", fields.FinlandAge).AppendLine();
+                sbInformation.AppendFormat(Localization.Finland_age_rating_is_0, fields.FinlandAge).AppendLine();
 
             if((fields.PortugalAge & 0x80) != 0x80)
-                sbInformation.AppendFormat("Portugal age rating is {0}", fields.PortugalAge).AppendLine();
+                sbInformation.AppendFormat(Localization.Portugal_age_rating_is_0, fields.PortugalAge).AppendLine();
 
             if((fields.UkAge & 0x80) != 0x80)
-                sbInformation.AppendFormat("UK age rating is {0}", fields.UkAge).AppendLine();
+                sbInformation.AppendFormat(Localization.UK_age_rating_is_0, fields.UkAge).AppendLine();
 
             if((fields.AustraliaAge & 0x80) != 0x80)
-                sbInformation.AppendFormat("Australia age rating is {0}", fields.AustraliaAge).AppendLine();
+                sbInformation.AppendFormat(Localization.Australia_age_rating_is_0, fields.AustraliaAge).AppendLine();
 
             if((fields.KoreaAge & 0x80) != 0x80)
-                sbInformation.AppendFormat("Korea age rating is {0}", fields.KoreaAge).AppendLine();
+                sbInformation.AppendFormat(Localization.Korea_age_rating_is_0, fields.KoreaAge).AppendLine();
         }
         else
-            sbInformation.AppendFormat("FST starts at {0} and has {1} bytes", fields.FstOff, fields.FstSize).
+            sbInformation.AppendFormat(Localization.FST_starts_at_0_and_has_1_bytes, fields.FstOff, fields.FstSize).
                           AppendLine();
 
         information            = sbInformation.ToString();
         XmlFsType.Bootable     = true;
         XmlFsType.Clusters     = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048;
         XmlFsType.ClusterSize  = 2048;
-        XmlFsType.Type         = wii ? "Nintendo Wii filesystem" : "Nintendo Gamecube filesystem";
+        XmlFsType.Type         = wii ? FS_TYPE_WII : FS_TYPE_NGC;
         XmlFsType.VolumeName   = fields.Title;
         XmlFsType.VolumeSerial = fields.DiscId;
     }
 
-    static string DiscTypeToString(string discType)
+    static string DiscTypeToString(string discType) => discType switch
     {
-        switch(discType)
-        {
-            case "C": return "Commodore 64 Virtual Console";
-            case "D": return "Demo";
-            case "E": return "Neo-Geo Virtual Console";
-            case "F": return "NES Virtual Console";
-            case "G": return "Gamecube";
-            case "H": return "Wii channel";
-            case "J": return "Super Nintendo Virtual Console";
-            case "L": return "Master System Virtual Console";
-            case "M": return "Megadrive Virtual Console";
-            case "N": return "Nintendo 64 Virtual Console";
-            case "P": return "Promotional or TurboGrafx Virtual Console";
-            case "Q": return "TurboGrafx CD Virtual Console";
-            case "R":
-            case "S": return "Wii";
-            case "U": return "Utility";
-            case "W": return "WiiWare";
-            case "X": return "MSX Virtual Console or WiiWare demo";
-            case "0":
-            case "1": return "Diagnostic";
-            case "4": return "Wii Backup";
-            case "_": return "WiiFit";
-        }
+        "C" => Localization.Commodore_64_Virtual_Console,
+        "D" => Localization.Demo,
+        "E" => Localization.Neo_Geo_Virtual_Console,
+        "F" => Localization.NES_Virtual_Console,
+        "G" => Localization.Gamecube,
+        "H" => Localization.Wii_channel,
+        "J" => Localization.Super_Nintendo_Virtual_Console,
+        "L" => Localization.Master_System_Virtual_Console,
+        "M" => Localization.Megadrive_Virtual_Console,
+        "N" => Localization.Nintendo_64_Virtual_Console,
+        "P" => Localization.Promotional_or_TurboGrafx_Virtual_Console,
+        "Q" => Localization.TurboGrafx_CD_Virtual_Console,
+        "R" => Localization.Wii,
+        "S" => Localization.Wii,
+        "U" => Localization.Utility,
+        "W" => Localization.WiiWare,
+        "X" => Localization.MSX_Virtual_Console_or_WiiWare_demo,
+        "0" => Localization.Diagnostic,
+        "1" => Localization.Diagnostic,
+        "4" => Localization.Wii_Backup,
+        "_" => Localization.WiiFit,
+        _   => string.Format(Localization.unknown_type_0, discType)
+    };
 
-        return $"unknown type '{discType}'";
-    }
-
-    static string RegionCodeToString(string regionCode)
+    static string RegionCodeToString(string regionCode) => regionCode switch
     {
-        switch(regionCode)
-        {
-            case "A": return "any region";
-            case "D": return "Germany";
-            case "N":
-            case "E": return "USA";
-            case "F": return "France";
-            case "I": return "Italy";
-            case "J": return "Japan";
-            case "K":
-            case "Q": return "Korea";
-            case "L":
-            case "M":
-            case "P": return "PAL";
-            case "R": return "Russia";
-            case "S": return "Spain";
-            case "T": return "Taiwan";
-            case "U": return "Australia";
-        }
-
-        return $"unknown code '{regionCode}'";
-    }
+        "A" => Localization.NintendoPlugin_RegionCodeToString_any_region,
+        "D" => Localization.NintendoPlugin_RegionCodeToString_Germany,
+        "N" => Localization.NintendoPlugin_RegionCodeToString_USA,
+        "E" => Localization.NintendoPlugin_RegionCodeToString_USA,
+        "F" => Localization.NintendoPlugin_RegionCodeToString_France,
+        "I" => Localization.NintendoPlugin_RegionCodeToString_Italy,
+        "J" => Localization.NintendoPlugin_RegionCodeToString_Japan,
+        "K" => Localization.NintendoPlugin_RegionCodeToString_Korea,
+        "Q" => Localization.NintendoPlugin_RegionCodeToString_Korea,
+        "L" => Localization.NintendoPlugin_RegionCodeToString_PAL,
+        "M" => Localization.NintendoPlugin_RegionCodeToString_PAL,
+        "P" => Localization.NintendoPlugin_RegionCodeToString_PAL,
+        "R" => Localization.NintendoPlugin_RegionCodeToString_Russia,
+        "S" => Localization.NintendoPlugin_RegionCodeToString_Spain,
+        "T" => Localization.NintendoPlugin_RegionCodeToString_Taiwan,
+        "U" => Localization.NintendoPlugin_RegionCodeToString_Australia,
+        _   => string.Format(Localization.NintendoPlugin_RegionCodeToString_unknown_region_code_0, regionCode)
+    };
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     static string PublisherCodeToString(string publisherCode) => publisherCode switch
@@ -421,15 +421,15 @@ public sealed class NintendoPlugin : IFilesystem
         "4Q" => "Disney Interactive",
         "GD" => "Square Enix",
         "7D" => "Sierra",
-        _    => $"Unknown publisher '{publisherCode}'"
+        _    => string.Format(Localization.Unknown_publisher_0, publisherCode)
     };
 
     static string PartitionTypeToString(uint type) => type switch
     {
-        0 => "data",
-        1 => "update",
-        2 => "channel",
-        _ => $"unknown type {type}"
+        0 => Localization.data,
+        1 => Localization.update,
+        2 => Localization.channel,
+        _ => string.Format(Localization.unknown_partition_type_0, type)
     };
 
     struct NintendoFields

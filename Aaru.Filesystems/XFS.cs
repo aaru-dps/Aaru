@@ -49,16 +49,18 @@ public sealed class XFS : IFilesystem
 {
     const uint XFS_MAGIC = 0x58465342;
 
+    const string FS_TYPE = "xfs";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "XFS Filesystem Plugin";
+    public string Name => Localization.XFS_Name;
     /// <inheritdoc />
     public Guid Id => new("1D8CD8B8-27E6-410F-9973-D16409225FBA");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -93,7 +95,7 @@ public sealed class XFS : IFilesystem
 
                 Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-                AaruConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})", location,
+                AaruConsole.DebugWriteLine("XFS plugin", Localization.magic_at_0_X3_equals_1_expected_2, location,
                                            xfsSb.magicnum, XFS_MAGIC);
 
                 if(xfsSb.magicnum == XFS_MAGIC)
@@ -123,7 +125,7 @@ public sealed class XFS : IFilesystem
 
                 Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-                AaruConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
+                AaruConsole.DebugWriteLine("XFS plugin", Localization.magic_at_0_equals_1_expected_2, location,
                                            xfsSb.magicnum, XFS_MAGIC);
 
                 if(xfsSb.magicnum == XFS_MAGIC)
@@ -169,7 +171,7 @@ public sealed class XFS : IFilesystem
 
                 xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-                AaruConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})", location,
+                AaruConsole.DebugWriteLine("XFS plugin", Localization.magic_at_0_X3_equals_1_expected_2, location,
                                            xfsSb.magicnum, XFS_MAGIC);
 
                 if(xfsSb.magicnum == XFS_MAGIC)
@@ -196,7 +198,7 @@ public sealed class XFS : IFilesystem
 
                 xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-                AaruConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
+                AaruConsole.DebugWriteLine("XFS plugin", Localization.magic_at_0_equals_1_expected_2, location,
                                            xfsSb.magicnum, XFS_MAGIC);
 
                 if(xfsSb.magicnum == XFS_MAGIC)
@@ -208,27 +210,27 @@ public sealed class XFS : IFilesystem
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("XFS filesystem");
-        sb.AppendFormat("Filesystem version {0}", xfsSb.version & 0xF).AppendLine();
-        sb.AppendFormat("{0} bytes per sector", xfsSb.sectsize).AppendLine();
-        sb.AppendFormat("{0} bytes per block", xfsSb.blocksize).AppendLine();
-        sb.AppendFormat("{0} bytes per inode", xfsSb.inodesize).AppendLine();
-        sb.AppendFormat("{0} data blocks in volume, {1} free", xfsSb.dblocks, xfsSb.fdblocks).AppendLine();
-        sb.AppendFormat("{0} blocks per allocation group", xfsSb.agblocks).AppendLine();
-        sb.AppendFormat("{0} allocation groups in volume", xfsSb.agcount).AppendLine();
-        sb.AppendFormat("{0} inodes in volume, {1} free", xfsSb.icount, xfsSb.ifree).AppendLine();
+        sb.AppendLine(Localization.XFS_filesystem);
+        sb.AppendFormat(Localization.Filesystem_version_0, xfsSb.version & 0xF).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector, xfsSb.sectsize).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block, xfsSb.blocksize).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_inode, xfsSb.inodesize).AppendLine();
+        sb.AppendFormat(Localization._0_data_blocks_in_volume_1_free, xfsSb.dblocks, xfsSb.fdblocks).AppendLine();
+        sb.AppendFormat(Localization._0_blocks_per_allocation_group, xfsSb.agblocks).AppendLine();
+        sb.AppendFormat(Localization._0_allocation_groups_in_volume, xfsSb.agcount).AppendLine();
+        sb.AppendFormat(Localization._0_inodes_in_volume_1_free, xfsSb.icount, xfsSb.ifree).AppendLine();
 
         if(xfsSb.inprogress > 0)
-            sb.AppendLine("fsck in progress");
+            sb.AppendLine(Localization.fsck_in_progress);
 
-        sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(xfsSb.fname, Encoding)).AppendLine();
-        sb.AppendFormat("Volume UUID: {0}", xfsSb.uuid).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(xfsSb.fname, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_UUID_0, xfsSb.uuid).AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type                  = "XFS filesystem",
+            Type                  = FS_TYPE,
             ClusterSize           = xfsSb.blocksize,
             Clusters              = xfsSb.dblocks,
             FreeClusters          = xfsSb.fdblocks,

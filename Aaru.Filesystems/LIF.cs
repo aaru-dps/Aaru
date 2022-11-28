@@ -50,16 +50,18 @@ public sealed class LIF : IFilesystem
 {
     const uint LIF_MAGIC = 0x8000;
 
+    const string FS_TYPE = "hplif";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "HP Logical Interchange Format Plugin";
+    public string Name => Localization.LIF_Name;
     /// <inheritdoc />
     public Guid Id => new("41535647-77A5-477B-9206-DA727ACDC704");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -73,7 +75,7 @@ public sealed class LIF : IFilesystem
             return false;
 
         SystemBlock lifSb = Marshal.ByteArrayToStructureBigEndian<SystemBlock>(sector);
-        AaruConsole.DebugWriteLine("LIF plugin", "magic 0x{0:X8} (expected 0x{1:X8})", lifSb.magic, LIF_MAGIC);
+        AaruConsole.DebugWriteLine("LIF plugin", Localization.magic_0_expected_1, lifSb.magic, LIF_MAGIC);
 
         return lifSb.magic == LIF_MAGIC;
     }
@@ -99,24 +101,24 @@ public sealed class LIF : IFilesystem
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("HP Logical Interchange Format");
-        sb.AppendFormat("Directory starts at cluster {0}", lifSb.directoryStart).AppendLine();
-        sb.AppendFormat("LIF identifier: {0}", lifSb.lifId).AppendLine();
-        sb.AppendFormat("Directory size: {0} clusters", lifSb.directorySize).AppendLine();
-        sb.AppendFormat("LIF version: {0}", lifSb.lifVersion).AppendLine();
+        sb.AppendLine(Localization.HP_Logical_Interchange_Format);
+        sb.AppendFormat(Localization.Directory_starts_at_cluster_0, lifSb.directoryStart).AppendLine();
+        sb.AppendFormat(Localization.LIF_identifier_0, lifSb.lifId).AppendLine();
+        sb.AppendFormat(Localization.Directory_size_0_clusters, lifSb.directorySize).AppendLine();
+        sb.AppendFormat(Localization.LIF_version_0, lifSb.lifVersion).AppendLine();
 
         // How is this related to volume size? I have only CDs to test and makes no sense there
-        sb.AppendFormat("{0} tracks", lifSb.tracks).AppendLine();
-        sb.AppendFormat("{0} heads", lifSb.heads).AppendLine();
-        sb.AppendFormat("{0} sectors", lifSb.sectors).AppendLine();
-        sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(lifSb.volumeLabel, Encoding)).AppendLine();
-        sb.AppendFormat("Volume created on {0}", DateHandlers.LifToDateTime(lifSb.creationDate)).AppendLine();
+        sb.AppendFormat(Localization._0_tracks, lifSb.tracks).AppendLine();
+        sb.AppendFormat(Localization._0_heads, lifSb.heads).AppendLine();
+        sb.AppendFormat(Localization._0_sectors, lifSb.sectors).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(lifSb.volumeLabel, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_created_on_0, DateHandlers.LifToDateTime(lifSb.creationDate)).AppendLine();
 
         information = sb.ToString();
 
         XmlFsType = new FileSystemType
         {
-            Type                  = "HP Logical Interchange Format",
+            Type                  = FS_TYPE,
             ClusterSize           = 256,
             Clusters              = partition.Size / 256,
             CreationDate          = DateHandlers.LifToDateTime(lifSb.creationDate),

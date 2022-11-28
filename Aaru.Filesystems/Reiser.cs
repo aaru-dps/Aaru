@@ -49,6 +49,8 @@ public sealed class Reiser : IFilesystem
 {
     const uint REISER_SUPER_OFFSET = 0x10000;
 
+    const string FS_TYPE = "reiserfs";
+
     readonly byte[] _magic35 =
     {
         0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x46, 0x73, 0x00, 0x00
@@ -67,11 +69,11 @@ public sealed class Reiser : IFilesystem
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "Reiser Filesystem Plugin";
+    public string Name => Localization.Reiser_Name;
     /// <inheritdoc />
     public Guid Id => new("1D8CD8B8-27E6-410F-9973-D16409225FBA");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -143,46 +145,41 @@ public sealed class Reiser : IFilesystem
         var sb = new StringBuilder();
 
         if(_magic35.SequenceEqual(reiserSb.magic))
-            sb.AppendLine("Reiser 3.5 filesystem");
+            sb.AppendLine(Localization.Reiser_3_5_filesystem);
         else if(_magic36.SequenceEqual(reiserSb.magic))
-            sb.AppendLine("Reiser 3.6 filesystem");
+            sb.AppendLine(Localization.Reiser_3_6_filesystem);
         else if(_magicJr.SequenceEqual(reiserSb.magic))
-            sb.AppendLine("Reiser Jr. filesystem");
+            sb.AppendLine(Localization.Reiser_Jr_filesystem);
 
-        sb.AppendFormat("Volume has {0} blocks with {1} blocks free", reiserSb.block_count, reiserSb.free_blocks).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_has_0_blocks_with_1_blocks_free, reiserSb.block_count,
+                        reiserSb.free_blocks).AppendLine();
 
-        sb.AppendFormat("{0} bytes per block", reiserSb.blocksize).AppendLine();
-        sb.AppendFormat("Root directory resides on block {0}", reiserSb.root_block).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block, reiserSb.blocksize).AppendLine();
+        sb.AppendFormat(Localization.Root_directory_resides_on_block_0, reiserSb.root_block).AppendLine();
 
         if(reiserSb.umount_state == 2)
-            sb.AppendLine("Volume has not been cleanly umounted");
+            sb.AppendLine(Localization.Volume_has_not_been_cleanly_umounted);
 
-        sb.AppendFormat("Volume last checked on {0}", DateHandlers.UnixUnsignedToDateTime(reiserSb.last_check)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_last_checked_on_0,
+                        DateHandlers.UnixUnsignedToDateTime(reiserSb.last_check)).AppendLine();
 
         if(reiserSb.version >= 2)
         {
-            sb.AppendFormat("Volume UUID: {0}", reiserSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", Encoding.GetString(reiserSb.label)).AppendLine();
+            sb.AppendFormat(Localization.Volume_UUID_0, reiserSb.uuid).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, Encoding.GetString(reiserSb.label)).AppendLine();
         }
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType();
-
-        if(_magic35.SequenceEqual(reiserSb.magic))
-            XmlFsType.Type = "Reiser 3.5 filesystem";
-        else if(_magic36.SequenceEqual(reiserSb.magic))
-            XmlFsType.Type = "Reiser 3.6 filesystem";
-        else if(_magicJr.SequenceEqual(reiserSb.magic))
-            XmlFsType.Type = "Reiser Jr. filesystem";
-
-        XmlFsType.ClusterSize           = reiserSb.blocksize;
-        XmlFsType.Clusters              = reiserSb.block_count;
-        XmlFsType.FreeClusters          = reiserSb.free_blocks;
-        XmlFsType.FreeClustersSpecified = true;
-        XmlFsType.Dirty                 = reiserSb.umount_state == 2;
+        XmlFsType = new FileSystemType
+        {
+            Type                  = FS_TYPE,
+            ClusterSize           = reiserSb.blocksize,
+            Clusters              = reiserSb.block_count,
+            FreeClusters          = reiserSb.free_blocks,
+            FreeClustersSpecified = true,
+            Dirty                 = reiserSb.umount_state == 2
+        };
 
         if(reiserSb.version < 2)
             return;

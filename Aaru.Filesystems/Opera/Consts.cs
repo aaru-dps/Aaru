@@ -55,4 +55,6 @@ public sealed partial class OperaFS
         File             = 2, Special            = 6, Directory = 7,
         LastEntryInBlock = 0x40000000, LastEntry = 0x80000000
     }
+
+    const string FS_TYPE = "opera";
 }

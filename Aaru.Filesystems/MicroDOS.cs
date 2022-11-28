@@ -54,16 +54,18 @@ public sealed class MicroDOS : IFilesystem
     const ushort MAGIC  = 0xA72E;
     const ushort MAGIC2 = 0x530C;
 
+    const string FS_TYPE = "microdos";
+
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Name => "MicroDOS file system";
+    public string Name => Localization.MicroDOS_Name;
     /// <inheritdoc />
     public Guid Id => new("9F9A364A-1A27-48A3-B730-7A7122000324");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -99,18 +101,18 @@ public sealed class MicroDOS : IFilesystem
 
         Block0 block0 = Marshal.ByteArrayToStructureLittleEndian<Block0>(bk0);
 
-        sb.AppendLine("MicroDOS filesystem");
-        sb.AppendFormat("Volume has {0} blocks ({1} bytes)", block0.blocks, block0.blocks * 512).AppendLine();
+        sb.AppendLine(Localization.MicroDOS_filesystem);
+        sb.AppendFormat(Localization.Volume_has_0_blocks_1_bytes, block0.blocks, block0.blocks * 512).AppendLine();
 
-        sb.AppendFormat("Volume has {0} blocks used ({1} bytes)", block0.usedBlocks, block0.usedBlocks * 512).
+        sb.AppendFormat(Localization.Volume_has_0_blocks_used_1_bytes, block0.usedBlocks, block0.usedBlocks * 512).
            AppendLine();
 
-        sb.AppendFormat("Volume contains {0} files", block0.files).AppendLine();
-        sb.AppendFormat("First used block is {0}", block0.firstUsedBlock).AppendLine();
+        sb.AppendFormat(Localization.Volume_contains_0_files, block0.files).AppendLine();
+        sb.AppendFormat(Localization.First_used_block_is_0, block0.firstUsedBlock).AppendLine();
 
         XmlFsType = new FileSystemType
         {
-            Type                  = "MicroDOS",
+            Type                  = FS_TYPE,
             ClusterSize           = 512,
             Clusters              = block0.blocks,
             Files                 = block0.files,

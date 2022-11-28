@@ -49,6 +49,7 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the AO-DOS filesystem</summary>
 public sealed class AODOS : IFilesystem
 {
+    const string FS_TYPE = "aodos";
     readonly byte[] _identifier =
     {
         0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20
@@ -56,13 +57,13 @@ public sealed class AODOS : IFilesystem
     /// <inheritdoc />
     public FileSystemType XmlFsType { get; private set; }
     /// <inheritdoc />
-    public string Name => "Alexander Osipov DOS file system";
+    public string Name => Localization.AODOS_Name;
     /// <inheritdoc />
     public Guid Id => new("668E5039-9DDD-442A-BE1B-A315D6E38E26");
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -104,11 +105,11 @@ public sealed class AODOS : IFilesystem
 
         var sbInformation = new StringBuilder();
 
-        sbInformation.AppendLine("Alexander Osipov DOS file system");
+        sbInformation.AppendLine(Localization.Alexander_Osipov_DOS_file_system);
 
         XmlFsType = new FileSystemType
         {
-            Type                  = "Alexander Osipov DOS file system",
+            Type                  = FS_TYPE,
             Clusters              = imagePlugin.Info.Sectors,
             ClusterSize           = imagePlugin.Info.SectorSize,
             Files                 = bb.files,
@@ -119,10 +120,11 @@ public sealed class AODOS : IFilesystem
             Bootable              = true
         };
 
-        sbInformation.AppendFormat("{0} files on volume", bb.files).AppendLine();
-        sbInformation.AppendFormat("{0} used sectors on volume", bb.usedSectors).AppendLine();
+        sbInformation.AppendFormat(Localization._0_files_on_volume, bb.files).AppendLine();
+        sbInformation.AppendFormat(Localization._0_used_sectors_on_volume, bb.usedSectors).AppendLine();
 
-        sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(bb.volumeLabel, Encoding)).AppendLine();
+        sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(bb.volumeLabel, Encoding)).
+                      AppendLine();
 
         information = sbInformation.ToString();
     }
