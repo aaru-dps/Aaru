@@ -48,11 +48,11 @@ public sealed class GZip : IFilter
     Stream _zStream;
 
     /// <inheritdoc />
-    public string Name => "GZip";
+    public string Name => Localization.GZip_Name;
     /// <inheritdoc />
     public Guid Id => new("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()

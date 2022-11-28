@@ -56,11 +56,11 @@ public sealed class PcExchange : IFilter
     string       _rsrcPath;
 
     /// <inheritdoc />
-    public string Name => "PCExchange";
+    public string Name => Localization.PcExchange_Name;
     /// <inheritdoc />
     public Guid Id => new("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close() {}

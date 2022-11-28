@@ -81,11 +81,11 @@ public sealed class AppleDouble : IFilter
     Entry  _rsrcFork;
 
     /// <inheritdoc />
-    public string Name => "AppleDouble";
+    public string Name => Localization.AppleDouble_Name;
     /// <inheritdoc />
     public Guid Id => new("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close() {}

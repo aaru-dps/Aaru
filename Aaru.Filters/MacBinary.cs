@@ -55,11 +55,11 @@ public sealed class MacBinary : IFilter
     Stream     _stream;
 
     /// <inheritdoc />
-    public string Name => "MacBinary";
+    public string Name => Localization.MacBinary_Name;
     /// <inheritdoc />
     public Guid Id => new("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()

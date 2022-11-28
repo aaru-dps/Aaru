@@ -47,11 +47,11 @@ public class BZip2 : IFilter
     Stream _innerStream;
 
     /// <inheritdoc />
-    public string Name => "BZip2";
+    public string Name => Localization.BZip2_Name;
     /// <inheritdoc />
     public Guid Id => new("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()

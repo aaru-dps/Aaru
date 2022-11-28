@@ -44,11 +44,11 @@ public sealed class ZZZNoFilter : IFilter
     Stream _dataStream;
 
     /// <inheritdoc />
-    public string Name => "No filter";
+    public string Name => Localization.ZZZNoFilter_Name;
     /// <inheritdoc />
     public Guid Id => new("12345678-AAAA-BBBB-CCCC-123456789000");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()

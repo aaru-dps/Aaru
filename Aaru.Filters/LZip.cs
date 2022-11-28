@@ -48,11 +48,11 @@ public sealed class LZip : IFilter
     Stream _innerStream;
 
     /// <inheritdoc />
-    public string Name => "LZip";
+    public string Name => Localization.LZip_Name;
     /// <inheritdoc />
     public Guid Id => new("09D715E9-20C0-48B1-A8D9-D8897CEC57C9");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()

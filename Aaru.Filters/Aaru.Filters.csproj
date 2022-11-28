@@ -43,6 +43,12 @@
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Authors.cs"/>
+    <Compile Include="Localization\Localization.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Localization.resx</DependentUpon>
+    </Compile>
     <Compile Include="OffsetStream.cs"/>
     <Compile Include="Register.cs"/>
     <Compile Include="SplitJoinStream.cs"/>
@@ -60,6 +66,10 @@
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
       <Link>LICENSE.LGPL</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Localization\Localization.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localization.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

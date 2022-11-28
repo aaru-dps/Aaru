@@ -47,11 +47,11 @@ public sealed class XZ : IFilter
     Stream _innerStream;
 
     /// <inheritdoc />
-    public string Name => "XZ";
+    public string Name => Localization.XZ_Name;
     /// <inheritdoc />
     public Guid Id => new("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()

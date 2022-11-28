@@ -46,7 +46,7 @@ public class SplitJoinStream : Stream
         set
         {
             if(value >= _streamLength)
-                throw new IOException("Cannot set position past stream end.");
+                throw new IOException(Localization.Cannot_set_position_past_stream_end);
 
             _position = value;
         }
@@ -61,10 +61,10 @@ public class SplitJoinStream : Stream
     public void Add(Stream stream)
     {
         if(!stream.CanSeek)
-            throw new ArgumentException("Non-seekable streams are not supported");
+            throw new ArgumentException(Localization.Non_seekable_streams_are_not_supported);
 
         if(!stream.CanRead)
-            throw new ArgumentException("Non-readable streams are not supported");
+            throw new ArgumentException(Localization.Non_readable_streams_are_not_supported);
 
         _baseStreams[_streamLength] =  stream;
         _streamLength               += stream.Length;
@@ -259,12 +259,12 @@ public class SplitJoinStream : Stream
     /// <inheritdoc />
     public override IAsyncResult
         BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state) =>
-        throw new NotSupportedException("Asynchronous I/O is not supported.");
+        throw new NotSupportedException(Localization.Asynchronous_IO_is_not_supported);
 
     /// <inheritdoc />
     public override IAsyncResult
         BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state) =>
-        throw new NotSupportedException("Asynchronous I/O is not supported.");
+        throw new NotSupportedException(Localization.Asynchronous_IO_is_not_supported);
 
     /// <inheritdoc />
     public override void Close()
@@ -278,11 +278,11 @@ public class SplitJoinStream : Stream
 
     /// <inheritdoc />
     public override int EndRead(IAsyncResult asyncResult) =>
-        throw new NotSupportedException("Asynchronous I/O is not supported.");
+        throw new NotSupportedException(Localization.Asynchronous_IO_is_not_supported);
 
     /// <inheritdoc />
     public override void EndWrite(IAsyncResult asyncResult) =>
-        throw new NotSupportedException("Asynchronous I/O is not supported.");
+        throw new NotSupportedException(Localization.Asynchronous_IO_is_not_supported);
 
     /// <inheritdoc />
     public override int ReadByte()
@@ -302,7 +302,7 @@ public class SplitJoinStream : Stream
     }
 
     /// <inheritdoc />
-    public override void WriteByte(byte value) => throw new ReadOnlyException("This stream is read-only");
+    public override void WriteByte(byte value) => throw new ReadOnlyException(Localization.This_stream_is_read_only);
 
     /// <inheritdoc />
     public override void Flush() {}
@@ -342,21 +342,21 @@ public class SplitJoinStream : Stream
         {
             case SeekOrigin.Begin:
                 if(offset >= _streamLength)
-                    throw new IOException("Cannot seek past stream end.");
+                    throw new IOException(Localization.Cannot_seek_past_stream_end);
 
                 _position = offset;
 
                 break;
             case SeekOrigin.End:
                 if(_position - offset < 0)
-                    throw new IOException("Cannot seek before stream start.");
+                    throw new IOException(Localization.Cannot_seek_before_stream_start);
 
                 _position -= offset;
 
                 break;
             default:
                 if(_position + offset >= _streamLength)
-                    throw new IOException("Cannot seek past stream end.");
+                    throw new IOException(Localization.Cannot_seek_past_stream_end);
 
                 _position += offset;
 
@@ -367,9 +367,9 @@ public class SplitJoinStream : Stream
     }
 
     /// <inheritdoc />
-    public override void SetLength(long value) => throw new ReadOnlyException("This stream is read-only");
+    public override void SetLength(long value) => throw new ReadOnlyException(Localization.This_stream_is_read_only);
 
     /// <inheritdoc />
     public override void Write(byte[] buffer, int offset, int count) =>
-        throw new ReadOnlyException("This stream is read-only");
+        throw new ReadOnlyException(Localization.This_stream_is_read_only);
 }

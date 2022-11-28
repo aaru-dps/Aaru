@@ -213,14 +213,14 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
         {
             case SeekOrigin.Begin:
                 if(offset < 0)
-                    throw new IOException("Cannot seek before stream start.");
+                    throw new IOException(Localization.Cannot_seek_before_stream_start);
 
                 SetPosition(offset);
 
                 break;
             case SeekOrigin.End:
                 if(offset > 0)
-                    throw new IOException("Cannot seek after stream end.");
+                    throw new IOException(Localization.Cannot_seek_after_stream_end);
 
                 if(_streamLength == 0)
                     CalculateLength();

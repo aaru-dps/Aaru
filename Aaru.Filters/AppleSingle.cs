@@ -83,11 +83,11 @@ public sealed class AppleSingle : IFilter
     Stream _stream;
 
     /// <inheritdoc />
-    public string Name => "AppleSingle";
+    public string Name => Localization.AppleSingle_Name;
     /// <inheritdoc />
     public Guid Id => new("A69B20E8-F4D3-42BB-BD2B-4A7263394A05");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()
