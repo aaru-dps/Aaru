@@ -44,13 +44,13 @@ public sealed partial class WCDiskImage
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "d2f disk image";
+    public string Name => Localization.WCDiskImage_Name;
     /// <inheritdoc />
     public Guid Id => new("DDE01493-BCA2-41C2-A269-7E56D3716D2F");
     /// <inheritdoc />
-    public string Author => "Michael Drüing";
+    public string Author => Authors.MichaelDruing;
     /// <inheritdoc />
-    public string Format => "d2f disk image";
+    public string Format => Localization.WCDiskImage_Name;
     /// <inheritdoc />
     public List<DumpHardwareType> DumpHardware => null;
     /// <inheritdoc />

@@ -43,11 +43,11 @@ public sealed partial class Nero
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Nero Burning ROM image";
+    public string Name => Localization.Nero_Name;
     /// <inheritdoc />
     public Guid Id => new("D160F9FF-5941-43FC-B037-AD81DD141F05");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Nero Burning ROM";
     /// <inheritdoc />

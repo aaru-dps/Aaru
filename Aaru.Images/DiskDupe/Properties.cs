@@ -41,11 +41,11 @@ namespace Aaru.DiscImages;
 public sealed partial class DiskDupe
 {
     /// <inheritdoc />
-    public string Name => "DiskDupe DDI Disk Image";
+    public string Name => Localization.DiskDupe_Name;
     /// <inheritdoc />
     public Guid Id => new("5439B4A2-5F38-33A7-B8DC-3910D296B3DD");
     /// <inheritdoc />
-    public string Author => "Michael Drüing";
+    public string Author => Authors.MichaelDruing;
     /// <inheritdoc />
     public string Format => "DDI disk image";
     /// <inheritdoc />

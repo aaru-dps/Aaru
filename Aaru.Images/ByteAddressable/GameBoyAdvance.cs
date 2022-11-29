@@ -21,7 +21,7 @@ public class GameBoyAdvance : IByteAddressableImage
     ImageInfo _imageInfo;
     bool      _opened;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
@@ -33,7 +33,7 @@ public class GameBoyAdvance : IByteAddressableImage
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Nintendo Game Boy Advance";
+    public string Name => Localization.GameBoyAdvance_Name;
 
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
@@ -95,14 +95,14 @@ public class GameBoyAdvance : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("Name: {0}", _imageInfo.MediaTitle).AppendLine();
+        sb.AppendFormat(Localization.Name_0, _imageInfo.MediaTitle).AppendLine();
 
-        sb.AppendFormat("Device type: {0}", header.DeviceType).AppendLine();
-        sb.AppendFormat("Console type: {0}", header.UnitCode).AppendLine();
-        sb.AppendFormat("Product code: AGB-{0}", StringHandlers.CToString(header.Code)).AppendLine();
-        sb.AppendFormat("Maker code: {0}", StringHandlers.CToString(header.Maker)).AppendLine();
-        sb.AppendFormat("Revision: {0}", header.Revision).AppendLine();
-        sb.AppendFormat("Header checksum: 0x{0:X2}", header.ComplementCheck).AppendLine();
+        sb.AppendFormat(Localization.Device_type_0, header.DeviceType).AppendLine();
+        sb.AppendFormat(Localization.Console_type_0, header.UnitCode).AppendLine();
+        sb.AppendFormat(Localization.Product_code_AGB_0, StringHandlers.CToString(header.Code)).AppendLine();
+        sb.AppendFormat(Localization.Maker_code_0, StringHandlers.CToString(header.Maker)).AppendLine();
+        sb.AppendFormat(Localization.Revision_0, header.Revision).AppendLine();
+        sb.AppendFormat(Localization.Header_checksum_0, header.ComplementCheck).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -141,14 +141,14 @@ public class GameBoyAdvance : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -180,14 +180,14 @@ public class GameBoyAdvance : IByteAddressableImage
     {
         if(_opened)
         {
-            ErrorMessage = "Cannot create an opened image";
+            ErrorMessage = Localization.Cannot_create_an_opened_image;
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(mediaType != MediaType.GameBoyAdvanceGamePak)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return ErrorNumber.NotSupported;
         }
@@ -204,7 +204,7 @@ public class GameBoyAdvance : IByteAddressableImage
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return ErrorNumber.InOutError;
         }
@@ -224,7 +224,7 @@ public class GameBoyAdvance : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
@@ -258,14 +258,14 @@ public class GameBoyAdvance : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -290,21 +290,21 @@ public class GameBoyAdvance : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -330,14 +330,14 @@ public class GameBoyAdvance : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
@@ -372,21 +372,21 @@ public class GameBoyAdvance : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -412,28 +412,28 @@ public class GameBoyAdvance : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }

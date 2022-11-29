@@ -41,7 +41,7 @@ namespace Aaru.DiscImages;
 public sealed partial class DiscJuggler
 {
     /// <inheritdoc />
-    public string Name => "DiscJuggler";
+    public string Name => Localization.DiscJuggler_Name;
     /// <inheritdoc />
     public Guid Id => new("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
     /// <inheritdoc />
@@ -49,7 +49,7 @@ public sealed partial class DiscJuggler
     /// <inheritdoc />
     public string Format => "DiscJuggler";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public List<Partition> Partitions { get; private set; }
     /// <inheritdoc />

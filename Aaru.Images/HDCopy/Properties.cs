@@ -44,11 +44,11 @@ public sealed partial class HdCopy
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "HD-Copy disk image";
+    public string Name => Localization.HdCopy_Name;
     /// <inheritdoc />
     public Guid Id => new("8D57483F-71A5-42EC-9B87-66AEC439C792");
     /// <inheritdoc />
-    public string Author => "Michael Drüing";
+    public string Author => Authors.MichaelDruing;
     /// <inheritdoc />
     public string Format => "HD-Copy image";
     /// <inheritdoc />

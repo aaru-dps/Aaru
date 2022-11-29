@@ -86,7 +86,7 @@ public sealed partial class Gdi
                     if(int.TryParse(line, out _))
                         continue;
 
-                    AaruConsole.ErrorWriteLine("Not a correct Dreamcast GDI image");
+                    AaruConsole.ErrorWriteLine(Localization.Not_a_correct_Dreamcast_GDI_image);
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -95,13 +95,14 @@ public sealed partial class Gdi
 
                 if(!trackMatch.Success)
                 {
-                    AaruConsole.ErrorWriteLine($"Unknown line \"{line}\" at line {lineNumber}");
+                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unknown_line_0_at_line_1, line, lineNumber));
 
                     return ErrorNumber.InvalidArgument;
                 }
 
                 AaruConsole.DebugWriteLine("GDI plugin",
-                                           "Found track {0} starts at {1} flags {2} type {3} file {4} offset {5} at line {6}",
+                                           Localization.
+                                               Found_track_0_starts_at_1_flags_2_type_3_file_4_offset_5_at_line_6,
                                            trackMatch.Groups["track"].Value, trackMatch.Groups["start"].Value,
                                            trackMatch.Groups["flags"].Value, trackMatch.Groups["type"].Value,
                                            trackMatch.Groups["filename"].Value, trackMatch.Groups["offset"].Value,
@@ -139,7 +140,7 @@ public sealed partial class Gdi
 
                 if((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) % currentTrack.Bps != 0)
                 {
-                    AaruConsole.ErrorWriteLine("Track size not a multiple of sector size");
+                    AaruConsole.ErrorWriteLine(Localization.Track_size_not_a_multiple_of_sector_size);
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -208,53 +209,66 @@ public sealed partial class Gdi
             _discImage.Disktype = MediaType.GDROM;
 
             // DEBUG information
-            AaruConsole.DebugWriteLine("GDI plugin", "Disc image parsing results");
+            AaruConsole.DebugWriteLine("GDI plugin", Localization.Disc_image_parsing_results);
 
-            AaruConsole.DebugWriteLine("GDI plugin", "Session information:");
-            AaruConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} sessions", _discImage.Sessions.Count);
+            AaruConsole.DebugWriteLine("GDI plugin", Localization.Session_information);
+
+            AaruConsole.DebugWriteLine("GDI plugin", "\t" + Localization.Disc_contains_0_sessions,
+                                       _discImage.Sessions.Count);
 
             for(int i = 0; i < _discImage.Sessions.Count; i++)
             {
-                AaruConsole.DebugWriteLine("GDI plugin", "\tSession {0} information:", i + 1);
+                AaruConsole.DebugWriteLine("GDI plugin", "\t" + Localization.Session_0_information, i + 1);
 
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\tStarting track: {0}", _discImage.Sessions[i].StartTrack);
+                AaruConsole.DebugWriteLine("GDI plugin", "\t\t" + Localization.Starting_track_0,
+                                           _discImage.Sessions[i].StartTrack);
 
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\tStarting sector: {0}",
+                AaruConsole.DebugWriteLine("GDI plugin", "\t\t" + Localization.Starting_sector_0,
                                            _discImage.Sessions[i].StartSector);
 
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\tEnding track: {0}", _discImage.Sessions[i].EndTrack);
+                AaruConsole.DebugWriteLine("GDI plugin", "\t\t" + Localization.Ending_track_0,
+                                           _discImage.Sessions[i].EndTrack);
 
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\tEnding sector: {0}", _discImage.Sessions[i].EndSector);
+                AaruConsole.DebugWriteLine("GDI plugin", "\t\t" + Localization.Ending_sector_0,
+                                           _discImage.Sessions[i].EndSector);
             }
 
-            AaruConsole.DebugWriteLine("GDI plugin", "Track information:");
-            AaruConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} tracks", _discImage.Tracks.Count);
+            AaruConsole.DebugWriteLine("GDI plugin", Localization.Track_information);
+
+            AaruConsole.DebugWriteLine("GDI plugin", "\t" + Localization.Disc_contains_0_tracks,
+                                       _discImage.Tracks.Count);
 
             for(int i = 0; i < _discImage.Tracks.Count; i++)
             {
-                AaruConsole.DebugWriteLine("GDI plugin", "\tTrack {0} information:", _discImage.Tracks[i].Sequence);
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\t{0} bytes per sector", _discImage.Tracks[i].Bps);
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\tPregap: {0} sectors", _discImage.Tracks[i].Pregap);
+                AaruConsole.DebugWriteLine("GDI plugin", "\t" + Localization.Track_0_information,
+                                           _discImage.Tracks[i].Sequence);
+
+                AaruConsole.DebugWriteLine("GDI plugin", "\t\t" + Localization._0_bytes_per_sector,
+                                           _discImage.Tracks[i].Bps);
+
+                AaruConsole.DebugWriteLine("GDI plugin", "\t\t" + Localization.Pregap_0_sectors,
+                                           _discImage.Tracks[i].Pregap);
 
                 if((_discImage.Tracks[i].Flags & 0x8) == 0x8)
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack is flagged as quadraphonic");
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\t" + Localization.Track_is_flagged_as_quadraphonic);
 
                 if((_discImage.Tracks[i].Flags & 0x4) == 0x4)
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack is data");
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\t" + Localization.Track_is_data);
 
                 if((_discImage.Tracks[i].Flags & 0x2) == 0x2)
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack allows digital copy");
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\t" + Localization.Track_allows_digital_copy);
 
                 if((_discImage.Tracks[i].Flags & 0x1) == 0x1)
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack has pre-emphasis applied");
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\t" + Localization.Track_has_pre_emphasis_applied);
 
                 AaruConsole.DebugWriteLine("GDI plugin",
-                                           "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
+                                           "\t\t" + Localization.
+                                               Track_resides_in_file_0_type_defined_as_1_starting_at_byte_2,
                                            _discImage.Tracks[i].TrackFilter, _discImage.Tracks[i].TrackType,
                                            _discImage.Tracks[i].Offset);
             }
 
-            AaruConsole.DebugWriteLine("GDI plugin", "Building offset map");
+            AaruConsole.DebugWriteLine("GDI plugin", Localization.Building_offset_map);
 
             Partitions = new List<Partition>();
             ulong byteOffset = 0;
@@ -264,7 +278,7 @@ public sealed partial class Gdi
                 if(_discImage.Tracks[i].Sequence == 1 &&
                    i                             != 0)
                 {
-                    AaruConsole.ErrorWriteLine("Unordered tracks");
+                    AaruConsole.ErrorWriteLine(Localization.Unordered_tracks);
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -272,7 +286,7 @@ public sealed partial class Gdi
                 // Index 01
                 var partition = new Partition
                 {
-                    Description = $"Track {_discImage.Tracks[i].Sequence}.",
+                    Description = string.Format(Localization.Track_0, _discImage.Tracks[i].Sequence),
                     Name        = null,
                     Start       = _discImage.Tracks[i].StartSector,
                     Size        = _discImage.Tracks[i].Sectors * _discImage.Tracks[i].Bps,
@@ -318,7 +332,7 @@ public sealed partial class Gdi
 
             _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-            AaruConsole.VerboseWriteLine("GDI image describes a disc of type {0}", _imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine(Localization.GDI_image_describes_a_disc_of_type_0, _imageInfo.MediaType);
 
             _sectorBuilder = new SectorBuilder();
 
@@ -326,8 +340,8 @@ public sealed partial class Gdi
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.BasePath);
-            AaruConsole.ErrorWriteLine("Exception: {0}", ex);
+            AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, imageFilter.BasePath);
+            AaruConsole.ErrorWriteLine(Localization.Exception_0, ex);
 
             return ErrorNumber.UnexpectedException;
         }

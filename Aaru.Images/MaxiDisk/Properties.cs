@@ -44,9 +44,9 @@ public sealed partial class MaxiDisk
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
-    public string Name => "MAXI Disk image";
+    public string Name => Localization.MaxiDisk_Name;
     /// <inheritdoc />
     public Guid Id => new("D27D924A-7034-466E-ADE1-B81EF37E469E");
     /// <inheritdoc />

@@ -54,14 +54,14 @@ public sealed partial class CdrWin
             {
                 if(!bool.TryParse(tmpValue, out _separateTracksWriting))
                 {
-                    ErrorMessage = "Invalid value for split option";
+                    ErrorMessage = Localization.Invalid_value_for_split_option;
 
                     return false;
                 }
 
                 if(_separateTracksWriting)
                 {
-                    ErrorMessage = "Separate tracks not yet implemented";
+                    ErrorMessage = Localization.Separate_tracks_not_yet_implemented;
 
                     return false;
                 }
@@ -72,7 +72,7 @@ public sealed partial class CdrWin
 
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -93,7 +93,7 @@ public sealed partial class CdrWin
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return false;
         }
@@ -127,7 +127,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -148,7 +148,7 @@ public sealed partial class CdrWin
 
                 return true;
             default:
-                ErrorMessage = $"Unsupported media tag {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_media_tag_0, tag);
 
                 return false;
         }
@@ -159,7 +159,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -169,7 +169,7 @@ public sealed partial class CdrWin
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -178,21 +178,21 @@ public sealed partial class CdrWin
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(track.BytesPerSector != track.RawBytesPerSector)
         {
-            ErrorMessage = "Invalid write mode for this sector";
+            ErrorMessage = Localization.Invalid_write_mode_for_this_sector;
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -211,7 +211,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -221,7 +221,7 @@ public sealed partial class CdrWin
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -230,28 +230,28 @@ public sealed partial class CdrWin
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(track.BytesPerSector != track.RawBytesPerSector)
         {
-            ErrorMessage = "Invalid write mode for this sector";
+            ErrorMessage = Localization.Invalid_write_mode_for_this_sector;
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -270,7 +270,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -280,7 +280,7 @@ public sealed partial class CdrWin
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -289,14 +289,14 @@ public sealed partial class CdrWin
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -315,7 +315,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -325,7 +325,7 @@ public sealed partial class CdrWin
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -334,21 +334,21 @@ public sealed partial class CdrWin
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -367,7 +367,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -375,7 +375,7 @@ public sealed partial class CdrWin
         if(tracks       == null ||
            tracks.Count == 0)
         {
-            ErrorMessage = "Invalid tracks sent";
+            ErrorMessage = Localization.Invalid_tracks_sent;
 
             return false;
         }
@@ -420,7 +420,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -592,7 +592,7 @@ public sealed partial class CdrWin
     /// <inheritdoc />
     public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -602,7 +602,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -612,7 +612,7 @@ public sealed partial class CdrWin
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -623,7 +623,7 @@ public sealed partial class CdrWin
             {
                 if(data.Length != 1)
                 {
-                    ErrorMessage = "Incorrect data size for track flags";
+                    ErrorMessage = Localization.Incorrect_data_size_for_track_flags;
 
                     return false;
                 }
@@ -640,7 +640,7 @@ public sealed partial class CdrWin
                 return true;
             }
             default:
-                ErrorMessage = $"Unsupported tag type {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_tag_type_0, tag);
 
                 return false;
         }

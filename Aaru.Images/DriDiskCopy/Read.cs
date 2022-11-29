@@ -83,8 +83,8 @@ public sealed partial class DriDiskCopy
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
-        AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "Image application = {0} version {1}", _imageInfo.Application,
-                                   _imageInfo.ApplicationVersion);
+        AaruConsole.DebugWriteLine("DRI DiskCopy plugin", Localization.Image_application_0_version_1,
+                                   _imageInfo.Application, _imageInfo.ApplicationVersion);
 
         // Correct some incorrect data in images of NEC 2HD disks
         if(_imageInfo is { Cylinders: 77, Heads: 2 } and { SectorsPerTrack: 16, SectorSize: 512 } &&
@@ -116,7 +116,7 @@ public sealed partial class DriDiskCopy
 
         _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-        AaruConsole.VerboseWriteLine("Digital Research DiskCopy image contains a disk of type {0}",
+        AaruConsole.VerboseWriteLine(Localization.Digital_Research_DiskCopy_image_contains_a_disk_of_type_0,
                                      _imageInfo.MediaType);
 
         return ErrorNumber.NoError;

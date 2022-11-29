@@ -21,7 +21,7 @@ public class AtariLynx : IByteAddressableImage
     ImageInfo _imageInfo;
     bool      _opened;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
@@ -33,7 +33,7 @@ public class AtariLynx : IByteAddressableImage
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Atari Lynx";
+    public string Name => Localization.AtariLynx_Name;
 
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
@@ -104,16 +104,16 @@ public class AtariLynx : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("Name: {0}", _imageInfo.MediaTitle).AppendLine();
-        sb.AppendFormat("Manufacturer: {0}", _imageInfo.MediaManufacturer).AppendLine();
+        sb.AppendFormat(Localization.Name_0, _imageInfo.MediaTitle).AppendLine();
+        sb.AppendFormat(Localization.Manufacturer_0, _imageInfo.MediaManufacturer).AppendLine();
 
-        sb.AppendFormat("Bank 0 size: {0} pages ({1} bytes)", header.Bank0Length, header.Bank0Length * 65536).
+        sb.AppendFormat(Localization.Bank_zero_size_0_pages_1_bytes, header.Bank0Length, header.Bank0Length * 65536).
            AppendLine();
 
-        sb.AppendFormat("Bank 1 size: {0} pages ({1} bytes)", header.Bank1Length, header.Bank1Length * 65536).
+        sb.AppendFormat(Localization.Bank_one_size_0_pages_1_bytes, header.Bank1Length, header.Bank1Length * 65536).
            AppendLine();
 
-        sb.AppendFormat("Rotation: {0}", header.Rotation).AppendLine();
+        sb.AppendFormat(Localization.Rotation_0, header.Rotation).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -152,14 +152,14 @@ public class AtariLynx : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -205,14 +205,14 @@ public class AtariLynx : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -234,14 +234,14 @@ public class AtariLynx : IByteAddressableImage
     {
         if(_opened)
         {
-            ErrorMessage = "Cannot create an opened image";
+            ErrorMessage = Localization.Cannot_create_an_opened_image;
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(mediaType != MediaType.AtariLynxCard)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return ErrorNumber.NotSupported;
         }
@@ -258,7 +258,7 @@ public class AtariLynx : IByteAddressableImage
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return ErrorNumber.InOutError;
         }
@@ -278,7 +278,7 @@ public class AtariLynx : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
@@ -312,14 +312,14 @@ public class AtariLynx : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -344,21 +344,21 @@ public class AtariLynx : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -384,14 +384,14 @@ public class AtariLynx : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
@@ -421,21 +421,21 @@ public class AtariLynx : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -461,28 +461,28 @@ public class AtariLynx : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }

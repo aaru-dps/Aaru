@@ -90,20 +90,21 @@ public sealed partial class Vdi
 
         if(_vHdr.imageType != VdiImageType.Normal)
         {
-            AaruConsole.ErrorWriteLine($"Support for image type {_vHdr.imageType} not yet implemented");
+            AaruConsole.ErrorWriteLine(string.Format(Localization.Support_for_image_type_0_not_yet_implemented,
+                                                     _vHdr.imageType));
 
             return ErrorNumber.InvalidArgument;
         }
 
         DateTime start = DateTime.UtcNow;
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
+        AaruConsole.DebugWriteLine("VirtualBox plugin", Localization.Reading_Image_Block_Map);
         stream.Seek(_vHdr.offsetBlocks, SeekOrigin.Begin);
         byte[] ibmB = new byte[_vHdr.blocks * 4];
         stream.EnsureRead(ibmB, 0, ibmB.Length);
         _ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
         DateTime end = DateTime.UtcNow;
 
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map took {0} ms",
+        AaruConsole.DebugWriteLine("VirtualBox plugin", Localization.Reading_Image_Block_Map_took_0_ms,
                                    (end - start).TotalMilliseconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();

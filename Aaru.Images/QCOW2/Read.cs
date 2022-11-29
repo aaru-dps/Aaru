@@ -86,8 +86,9 @@ public sealed partial class Qcow2
 
             if((_qHdr.features & QCOW_FEATURE_MASK) != 0)
             {
-                AaruConsole.ErrorWriteLine($"Unknown incompatible features {_qHdr.features & QCOW_FEATURE_MASK
-                    :X} enabled, not proceeding.");
+                AaruConsole.
+                    ErrorWriteLine(string.Format(Localization.Unknown_incompatible_features_0_enabled_not_proceeding,
+                                                 _qHdr.features & QCOW_FEATURE_MASK));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -95,14 +96,14 @@ public sealed partial class Qcow2
 
         if(_qHdr.size <= 1)
         {
-            AaruConsole.ErrorWriteLine("Image size is too small");
+            AaruConsole.ErrorWriteLine(Localization.Image_size_is_too_small);
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(_qHdr.cluster_bits is < 9 or > 16)
         {
-            AaruConsole.ErrorWriteLine("Cluster size must be between 512 bytes and 64 Kbytes");
+            AaruConsole.ErrorWriteLine(Localization.Cluster_size_must_be_between_512_bytes_and_64_Kbytes);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -110,18 +111,18 @@ public sealed partial class Qcow2
         switch(_qHdr.crypt_method)
         {
             case > QCOW_ENCRYPTION_AES:
-                AaruConsole.ErrorWriteLine("Invalid encryption method");
+                AaruConsole.ErrorWriteLine(Localization.Invalid_encryption_method);
 
                 return ErrorNumber.InvalidArgument;
             case > QCOW_ENCRYPTION_NONE:
-                AaruConsole.ErrorWriteLine("AES encrypted images not yet supported");
+                AaruConsole.ErrorWriteLine(Localization.AES_encrypted_images_not_yet_supported);
 
                 return ErrorNumber.NotImplemented;
         }
 
         if(_qHdr.backing_file_offset != 0)
         {
-            AaruConsole.ErrorWriteLine("Differencing images not yet supported");
+            AaruConsole.ErrorWriteLine(Localization.Differencing_images_not_yet_supported);
 
             return ErrorNumber.NotImplemented;
         }
@@ -141,7 +142,7 @@ public sealed partial class Qcow2
         stream.Seek((long)_qHdr.l1_table_offset, SeekOrigin.Begin);
         stream.EnsureRead(l1TableB, 0, (int)_qHdr.l1_size * 8);
         _l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
-        AaruConsole.DebugWriteLine("QCOW plugin", "Reading L1 table");
+        AaruConsole.DebugWriteLine("QCOW plugin", Localization.Reading_L1_table);
 
         for(long i = 0; i < _l1Table.LongLength; i++)
             _l1Table[i] = Swapping.Swap(_l1Table[i]);
@@ -223,8 +224,8 @@ public sealed partial class Qcow2
         if((long)l1Off >= _l1Table.LongLength)
         {
             AaruConsole.DebugWriteLine("QCOW2 plugin",
-                                       $"Trying to read past L1 table, position {l1Off} of a max {_l1Table.LongLength
-                                       }");
+                                       string.Format(Localization.Trying_to_read_past_L1_table_position_0_of_a_max_1,
+                                                     l1Off, _l1Table.LongLength));
 
             return ErrorNumber.InvalidArgument;
         }
@@ -242,7 +243,7 @@ public sealed partial class Qcow2
             _imageStream.Seek((long)(_l1Table[l1Off] & QCOW_FLAGS_MASK), SeekOrigin.Begin);
             byte[] l2TableB = new byte[_l2Size * 8];
             _imageStream.EnsureRead(l2TableB, 0, _l2Size * 8);
-            AaruConsole.DebugWriteLine("QCOW plugin", "Reading L2 table #{0}", l1Off);
+            AaruConsole.DebugWriteLine("QCOW plugin", Localization.Reading_L2_table_0, l1Off);
             l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
 
             for(long i = 0; i < l2Table.LongLength; i++)

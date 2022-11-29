@@ -132,7 +132,7 @@ public sealed partial class BlindWrite5
             var decoded2A = ModePage_2A.Decode(_mode2A);
 
             if(decoded2A is not null)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "mode page 2A: {0}",
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.mode_page_2A_0,
                                            Modes.PrettifyModePage_2A(decoded2A));
             else
                 _mode2A = null;
@@ -157,7 +157,7 @@ public sealed partial class BlindWrite5
             PMA.CDPMA? decodedPma = PMA.Decode(_pma);
 
             if(decodedPma.HasValue)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "PMA: {0}", PMA.Prettify(decodedPma));
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.PMA_0, PMA.Prettify(decodedPma));
             else
                 _pma = null;
         }
@@ -203,7 +203,7 @@ public sealed partial class BlindWrite5
             PFI.PhysicalFormatInformation? decodedPfi = PFI.Decode(_pfi, MediaType.DVDROM);
 
             if(decodedPfi.HasValue)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "PFI: {0}", PFI.Prettify(decodedPfi));
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.PFI_0, PFI.Prettify(decodedPfi));
             else
             {
                 _pfi = null;
@@ -235,7 +235,7 @@ public sealed partial class BlindWrite5
         {
             stream.EnsureRead(_discInformation, 0, _discInformation.Length);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Disc information: {0}",
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Disc_information_0,
                                        PrintHex.ByteArrayToHexArrayString(_discInformation, 40));
         }
         else
@@ -251,7 +251,7 @@ public sealed partial class BlindWrite5
         byte[] dataPathBytes = new byte[dataPathLen];
         stream.EnsureRead(dataPathBytes, 0, dataPathBytes.Length);
         _dataPath = Encoding.Unicode.GetString(dataPathBytes);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Data path: {0}", _dataPath);
+        AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Data_path_0, _dataPath);
 
         _dataFiles = new List<DataFile>();
 
@@ -450,10 +450,10 @@ public sealed partial class BlindWrite5
         stream.EnsureRead(footer, 0, footer.Length);
 
         if(_bw5Footer.SequenceEqual(footer))
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Correctly arrived end of image");
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Correctly_arrived_end_of_image);
         else
-            AaruConsole.
-                ErrorWriteLine("BlindWrite5 image ends after expected position. Probably new version with different data. Errors may occur.");
+            AaruConsole.ErrorWriteLine(Localization.
+                                           BlindWrite5_image_ends_after_expected_position_Probably_new_version_with_different_data_Errors_may_occur);
 
         _filePaths = new List<DataFileCharacteristics>();
 
@@ -563,7 +563,7 @@ public sealed partial class BlindWrite5
                                 }
                                 else
                                 {
-                                    AaruConsole.ErrorWriteLine("Cannot find data file {0}", dataFile.Filename);
+                                    AaruConsole.ErrorWriteLine(Localization.Cannot_find_data_file_0, dataFile.Filename);
 
                                     continue;
                                 }
@@ -587,7 +587,8 @@ public sealed partial class BlindWrite5
 
                         break;
                     default:
-                        AaruConsole.ErrorWriteLine("BlindWrite5 found unknown subchannel size: {0}", sectorSize - 2352);
+                        AaruConsole.ErrorWriteLine(Localization.BlindWrite5_found_unknown_subchannel_size_0,
+                                                   sectorSize - 2352);
 
                         return ErrorNumber.NotSupported;
                 }
@@ -620,7 +621,7 @@ public sealed partial class BlindWrite5
         _trackFlags        = new Dictionary<uint, byte>();
         _imageInfo.Sectors = 0;
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Building maps");
+        AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Building_maps);
 
         foreach(SessionDescriptor ses in _bwSessions)
         {
@@ -748,7 +749,7 @@ public sealed partial class BlindWrite5
                         break;
                 }
 
-                track.Description = $"Track {trk.point}";
+                track.Description = string.Format(Localization.Track_0, trk.point);
                 track.StartSector = (ulong)(trk.startLba + trk.pregap);
                 track.EndSector   = (ulong)(trk.sectors + trk.startLba) - 1;
 
@@ -929,7 +930,7 @@ public sealed partial class BlindWrite5
                     }
                     else
                     {
-                        AaruConsole.ErrorWriteLine("Could not find image for track {0}", trk.point);
+                        AaruConsole.ErrorWriteLine(Localization.Could_not_find_image_for_track_0, trk.point);
 
                         return ErrorNumber.NoSuchFile;
                     }
@@ -951,7 +952,7 @@ public sealed partial class BlindWrite5
                     }
                     catch(Exception)
                     {
-                        AaruConsole.ErrorWriteLine("Could not find image for track {0}", trk.point);
+                        AaruConsole.ErrorWriteLine(Localization.Could_not_find_image_for_track_0, trk.point);
 
                         return ErrorNumber.NoSuchFile;
                     }
@@ -1014,7 +1015,7 @@ public sealed partial class BlindWrite5
 
                 if(track.Filter is null)
                 {
-                    AaruConsole.ErrorWriteLine("Could not find image for track {0}", trk.point);
+                    AaruConsole.ErrorWriteLine(Localization.Could_not_find_image_for_track_0, trk.point);
 
                     return ErrorNumber.NoSuchFile;
                 }
@@ -1066,41 +1067,54 @@ public sealed partial class BlindWrite5
             track.Session = trackSession.Sequence;
         }
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "printing track map");
+        AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.printing_track_map);
 
         foreach(Track track in Tracks)
         {
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Partition sequence: {0}", track.Sequence);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Partition_sequence_0, track.Sequence);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition description: {0}", track.Description);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Track_description_0,
+                                       track.Description);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition type: {0}", track.Type);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Track_type_0, track.Type);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting sector: {0}", track.StartSector);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Track_starting_sector_0,
+                                       track.StartSector);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition ending sector: {0}", track.EndSector);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Track_ending_sector_0,
+                                       track.EndSector);
         }
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "printing partition map");
+        AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.printing_partition_map);
 
         foreach(Partition partition in Partitions)
         {
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Partition sequence: {0}", partition.Sequence);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition name: {0}", partition.Name);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition description: {0}", partition.Description);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition type: {0}", partition.Type);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting sector: {0}", partition.Start);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition sectors: {0}", partition.Length);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting offset: {0}", partition.Offset);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition size in bytes: {0}", partition.Size);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Partition_sequence_0, partition.Sequence);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_name_0, partition.Name);
+
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_description_0,
+                                       partition.Description);
+
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_type_0, partition.Type);
+
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_starting_sector_0,
+                                       partition.Start);
+
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_sectors_0, partition.Length);
+
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_starting_offset_0,
+                                       partition.Offset);
+
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_size_in_bytes_0,
+                                       partition.Size);
         }
 
         if(!isDvd)
         {
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Rebuilding TOC");
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Rebuilding_TOC);
 
             _fullToc = fullTocStream.ToArray();
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "TOC len {0}", _fullToc.Length);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.TOC_len_0, _fullToc.Length);
 
             _fullToc[0] = firstSession;
             _fullToc[1] = lastSession;
@@ -1300,7 +1314,7 @@ public sealed partial class BlindWrite5
             // Wxripper unlock
             _imageInfo.MediaType = MediaType.XGD3;
 
-        AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.BlindWrite_image_describes_a_disc_of_type_0, _imageInfo.MediaType);
 
         if(_header.profile is ProfileNumber.CDR or ProfileNumber.CDRW or ProfileNumber.CDROM)
             return ErrorNumber.NoError;

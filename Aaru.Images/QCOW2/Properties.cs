@@ -45,11 +45,11 @@ public sealed partial class Qcow2
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "QEMU Copy-On-Write disk image v2";
+    public string Name => Localization.Qcow2_Name;
     /// <inheritdoc />
     public Guid Id => new("F20107CB-95B3-4398-894B-975261F1E8C5");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "QEMU Copy-On-Write";
     /// <inheritdoc />

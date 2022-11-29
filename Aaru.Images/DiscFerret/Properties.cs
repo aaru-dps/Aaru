@@ -40,7 +40,7 @@ namespace Aaru.DiscImages;
 public sealed partial class DiscFerret
 {
     /// <inheritdoc />
-    public string Name => "DiscFerret";
+    public string Name => Localization.DiscFerret_Name;
     /// <inheritdoc />
     public Guid Id => new("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
     /// <inheritdoc />
@@ -48,7 +48,7 @@ public sealed partial class DiscFerret
     /// <inheritdoc />
     public string Format => "DiscFerret";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public List<DumpHardwareType> DumpHardware => null;
     /// <inheritdoc />

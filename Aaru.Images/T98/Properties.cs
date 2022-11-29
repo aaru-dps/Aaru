@@ -42,13 +42,13 @@ namespace Aaru.DiscImages;
 public sealed partial class T98
 {
     /// <inheritdoc />
-    public string Name => "T98 Hard Disk Image";
+    public string Name => Localization.T98_Name;
     /// <inheritdoc />
     public Guid Id => new("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "T98 disk image";
     /// <inheritdoc />

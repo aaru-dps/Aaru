@@ -44,11 +44,11 @@ public sealed partial class Blu
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Basic Lisa Utility";
+    public string Name => Localization.Blu_Name;
     /// <inheritdoc />
     public Guid Id => new("A153E2F8-4235-432D-9A7F-20807B0BCD74");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Basic Lisa Utility";
     /// <inheritdoc />

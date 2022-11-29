@@ -74,7 +74,8 @@ public sealed partial class Dim
             case DiskType.Hd2:
                 if(diskSize % (2 * 8 * 1024) != 0)
                 {
-                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 8 * 1024));
+                    AaruConsole.ErrorWriteLine(Localization.DIM_shows_unknown_image_with_0_tracks,
+                                               diskSize / (2 * 8 * 1024));
 
                     return ErrorNumber.NotSupported;
                 }
@@ -90,7 +91,8 @@ public sealed partial class Dim
             case DiskType.Hs2:
                 if(diskSize % (2 * 9 * 512) != 0)
                 {
-                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 9 * 512));
+                    AaruConsole.ErrorWriteLine(Localization.DIM_shows_unknown_image_with_0_tracks,
+                                               diskSize / (2 * 9 * 512));
 
                     return ErrorNumber.NotSupported;
                 }
@@ -106,7 +108,8 @@ public sealed partial class Dim
             case DiskType.Hc2:
                 if(diskSize % (2 * 15 * 512) != 0)
                 {
-                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 15 * 512));
+                    AaruConsole.ErrorWriteLine(Localization.DIM_shows_unknown_image_with_0_tracks,
+                                               diskSize / (2 * 15 * 512));
 
                     return ErrorNumber.NotSupported;
                 }
@@ -122,7 +125,8 @@ public sealed partial class Dim
             case DiskType.Hde2:
                 if(diskSize % (2 * 9 * 512) != 0)
                 {
-                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 9 * 512));
+                    AaruConsole.ErrorWriteLine(Localization.DIM_shows_unknown_image_with_0_tracks,
+                                               diskSize / (2 * 9 * 512));
 
                     return ErrorNumber.NotSupported;
                 }
@@ -138,7 +142,8 @@ public sealed partial class Dim
             case DiskType.Hq2:
                 if(diskSize % (2 * 18 * 512) != 0)
                 {
-                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 18 * 512));
+                    AaruConsole.ErrorWriteLine(Localization.DIM_shows_unknown_image_with_0_tracks,
+                                               diskSize / (2 * 18 * 512));
 
                     return ErrorNumber.NotSupported;
                 }
@@ -168,7 +173,8 @@ public sealed partial class Dim
                 }
                 else
                 {
-                    AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 26 * 256));
+                    AaruConsole.ErrorWriteLine(Localization.DIM_shows_unknown_image_with_0_tracks,
+                                               diskSize / (2 * 26 * 256));
 
                     return ErrorNumber.NotSupported;
                 }
@@ -177,10 +183,10 @@ public sealed partial class Dim
             default: return ErrorNumber.InvalidArgument;
         }
 
-        AaruConsole.VerboseWriteLine("DIM image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.DIM_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
-            AaruConsole.VerboseWriteLine("DIM comments: {0}", _imageInfo.Comments);
+            AaruConsole.VerboseWriteLine(Localization.DIM_comments_0, _imageInfo.Comments);
 
         _dimImageFilter = imageFilter;
 

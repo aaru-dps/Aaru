@@ -43,11 +43,11 @@ public sealed partial class TeleDisk
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "Sydex TeleDisk";
+    public string Name => Localization.TeleDisk_Name;
     /// <inheritdoc />
     public Guid Id => new("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Sydex TeleDisk";
     /// <inheritdoc />

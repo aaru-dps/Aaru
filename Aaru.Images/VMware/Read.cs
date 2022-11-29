@@ -84,7 +84,7 @@ public sealed partial class VMware
             if(_vmEHdr.descriptorOffset == 0 ||
                _vmEHdr.descriptorSize   == 0)
             {
-                AaruConsole.ErrorWriteLine("Please open VMDK descriptor.");
+                AaruConsole.ErrorWriteLine(Localization.Please_open_VMDK_descriptor);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -110,7 +110,7 @@ public sealed partial class VMware
 
             if(!_ddfMagicBytes.SequenceEqual(ddfMagic))
             {
-                AaruConsole.ErrorWriteLine("Not a descriptor.");
+                AaruConsole.ErrorWriteLine(Localization.Not_a_descriptor);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -280,7 +280,7 @@ public sealed partial class VMware
 
         if(_extents.Count == 0)
         {
-            AaruConsole.ErrorWriteLine("Did not find any extent");
+            AaruConsole.ErrorWriteLine(Localization.Did_not_find_any_extent);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -305,12 +305,11 @@ public sealed partial class VMware
             case VMFS_TYPE_RDMP:      //"vmfsRDMP";
             case VMFS_TYPE_RDMP_OLD:  //"vmfsPassthroughRawDeviceMap";
             case VMFS_TYPE_RAW:       //"vmfsRaw";
-                AaruConsole.
-                    ErrorWriteLine("Raw device image files are not supported, try accessing the device directly.");
+                AaruConsole.ErrorWriteLine(Localization.Raw_device_image_files_are_not_supported);
 
                 return ErrorNumber.NotSupported;
             default:
-                AaruConsole.ErrorWriteLine($"Dunno how to handle \"{_imageType}\" extents.");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Dunno_how_to_handle_0_extents, _imageType));
 
                 return ErrorNumber.InvalidArgument;
         }
@@ -321,14 +320,14 @@ public sealed partial class VMware
         {
             if(extent.Filter == null)
             {
-                AaruConsole.ErrorWriteLine($"Extent file {extent.Filename} not found.");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Extent_file_0_not_found, extent.Filename));
 
                 return ErrorNumber.NoSuchFile;
             }
 
             if(extent.Access == "NOACCESS")
             {
-                AaruConsole.ErrorWriteLine("Cannot access NOACCESS extents ;).");
+                AaruConsole.ErrorWriteLine(Localization.Cannot_access_NOACCESS_extents);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -341,7 +340,7 @@ public sealed partial class VMware
 
             if(extentStream.Length < SECTOR_SIZE)
             {
-                AaruConsole.ErrorWriteLine($"Extent {extent.Filename} is too small.");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Extent_0_is_too_small, extent.Filename));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -352,15 +351,16 @@ public sealed partial class VMware
 
             if(extentHdr.magic != VMWARE_EXTENT_MAGIC)
             {
-                AaruConsole.ErrorWriteLine($"{extent.Filter} is not an VMware extent.");
+                AaruConsole.ErrorWriteLine(string.Format(Localization._0_is_not_an_VMware_extent, extent.Filter));
 
                 return ErrorNumber.InvalidArgument;
             }
 
             if(extentHdr.capacity < extent.Sectors)
             {
-                AaruConsole.ErrorWriteLine($"Extent contains incorrect number of sectors, {extentHdr.capacity}. {
-                    extent.Sectors} were expected");
+                AaruConsole.
+                    ErrorWriteLine(string.Format(Localization.Extent_contains_incorrect_number_of_sectors_0_1_were_expected,
+                                                 extentHdr.capacity, extent.Sectors));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -368,7 +368,7 @@ public sealed partial class VMware
             // TODO: Support compressed extents
             if(extentHdr.compression != COMPRESSION_NONE)
             {
-                AaruConsole.ErrorWriteLine("Compressed extents are not yet supported.");
+                AaruConsole.ErrorWriteLine(Localization.Compressed_extents_are_not_yet_supported);
 
                 return ErrorNumber.NotImplemented;
             }
@@ -387,8 +387,8 @@ public sealed partial class VMware
            !vmEHdrSet &&
            !cowD)
         {
-            AaruConsole.
-                ErrorWriteLine("There are sparse extents but there is no header to find the grain tables, cannot proceed.");
+            AaruConsole.ErrorWriteLine(Localization.
+                                           There_are_sparse_extents_but_there_is_no_header_to_find_the_grain_tables_cannot_proceed);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -482,24 +482,24 @@ public sealed partial class VMware
             if(grains    == 0 ||
                gdEntries == 0)
             {
-                AaruConsole.ErrorWriteLine("Some error occurred setting GD sizes");
+                AaruConsole.ErrorWriteLine(Localization.Some_error_occurred_setting_GD_sizes);
 
                 return ErrorNumber.InOutError;
             }
 
-            AaruConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables", _imageInfo.Sectors,
-                                       grains, gdEntries);
+            AaruConsole.DebugWriteLine("VMware plugin", Localization._0_sectors_in_1_grains_in_2_tables,
+                                       _imageInfo.Sectors, grains, gdEntries);
 
             Stream gdStream = _gdFilter.GetDataForkStream();
 
             gdStream.Seek(gdOffset * SECTOR_SIZE, SeekOrigin.Begin);
 
-            AaruConsole.DebugWriteLine("VMware plugin", "Reading grain directory");
+            AaruConsole.DebugWriteLine("VMware plugin", Localization.Reading_grain_directory);
             byte[] gdBytes = new byte[gdEntries * 4];
             gdStream.EnsureRead(gdBytes, 0, gdBytes.Length);
             Span<uint> gd = MemoryMarshal.Cast<byte, uint>(gdBytes);
 
-            AaruConsole.DebugWriteLine("VMware plugin", "Reading grain tables");
+            AaruConsole.DebugWriteLine("VMware plugin", Localization.Reading_grain_tables);
             uint currentGrain = 0;
             _gTable = new uint[grains];
 
@@ -534,7 +534,7 @@ public sealed partial class VMware
 
             if(parentFilter == null)
             {
-                AaruConsole.ErrorWriteLine($"Cannot find parent \"{_parentName}\".");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Cannot_find_parent_0, _parentName));
 
                 return ErrorNumber.NoSuchFile;
             }
@@ -544,7 +544,8 @@ public sealed partial class VMware
 
             if(parentError != ErrorNumber.NoError)
             {
-                AaruConsole.ErrorWriteLine($"Error {parentError} opening parent \"{_parentName}\".");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Error_0_opening_parent_1, parentError,
+                                                         _parentName));
 
                 return parentError;
             }

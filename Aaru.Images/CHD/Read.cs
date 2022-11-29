@@ -102,7 +102,7 @@ public sealed partial class Chd
                                            ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentmd5) ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV1.parentmd5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
                 DateTime start = DateTime.UtcNow;
 
                 _hunkTable = new ulong[hdrV1.totalhunks];
@@ -129,7 +129,7 @@ public sealed partial class Chd
                 }
 
                 DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
 
                 _imageInfo.MediaType    = MediaType.GENERIC_HDD;
                 _imageInfo.Sectors      = hdrV1.hunksize * hdrV1.totalhunks;
@@ -176,7 +176,7 @@ public sealed partial class Chd
 
                 AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.seclen = {0}", hdrV2.seclen);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
                 DateTime start = DateTime.UtcNow;
 
                 _hunkTable = new ulong[hdrV2.totalhunks];
@@ -204,7 +204,7 @@ public sealed partial class Chd
                 }
 
                 DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
 
                 _imageInfo.MediaType    = MediaType.GENERIC_HDD;
                 _imageInfo.Sectors      = hdrV2.hunksize * hdrV2.totalhunks;
@@ -255,14 +255,14 @@ public sealed partial class Chd
                                            ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentsha1) ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV3.parentsha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
                 DateTime start = DateTime.UtcNow;
 
                 _hunkMap = new byte[hdrV3.totalhunks * 16];
                 stream.EnsureRead(_hunkMap, 0, _hunkMap.Length);
 
                 DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
 
                 nextMetaOff = hdrV3.metaoffset;
 
@@ -303,14 +303,14 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.rawsha1 = {0}",
                                            ArrayHelpers.ByteArrayToHex(hdrV4.rawsha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
                 DateTime start = DateTime.UtcNow;
 
                 _hunkMap = new byte[hdrV4.totalhunks * 16];
                 stream.EnsureRead(_hunkMap, 0, _hunkMap.Length);
 
                 DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
 
                 nextMetaOff = hdrV4.metaoffset;
 
@@ -328,7 +328,7 @@ public sealed partial class Chd
             case 5:
             {
                 // TODO: Check why reading is misaligned
-                AaruConsole.ErrorWriteLine("CHD version 5 is not yet supported.");
+                AaruConsole.ErrorWriteLine(Localization.CHD_version_5_is_not_yet_supported);
 
                 return ErrorNumber.NotImplemented;
 
@@ -369,7 +369,7 @@ public sealed partial class Chd
                 // TODO: Implement compressed CHD v5
                 if(hdrV5.compressor0 == 0)
                 {
-                    AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
+                    AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
                     DateTime start = DateTime.UtcNow;
 
                     _hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
@@ -401,11 +401,11 @@ public sealed partial class Chd
                     }
 
                     DateTime end = DateTime.UtcNow;
-                    AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                    AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
                 }
                 else
                 {
-                    AaruConsole.ErrorWriteLine("Cannot read compressed CHD version 5");
+                    AaruConsole.ErrorWriteLine(Localization.Cannot_read_compressed_CHD_version_5);
 
                     return ErrorNumber.NotSupported;
                 }
@@ -427,7 +427,7 @@ public sealed partial class Chd
             }
 
             default:
-                AaruConsole.ErrorWriteLine($"Unsupported CHD version {version}");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_CHD_version_0, version));
 
                 return ErrorNumber.NotSupported;
         }
@@ -440,7 +440,7 @@ public sealed partial class Chd
             _swapAudio = false;
             _tracks    = new Dictionary<uint, Track>();
 
-            AaruConsole.DebugWriteLine("CHD plugin", "Reading metadata.");
+            AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_metadata);
 
             ulong currentSector = 0;
             uint  currentTrack  = 1;
@@ -454,7 +454,7 @@ public sealed partial class Chd
                 byte[]         meta   = new byte[header.flagsAndLength & 0xFFFFFF];
                 stream.EnsureRead(meta, 0, meta.Length);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "Found metadata \"{0}\"",
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Found_metadata_0_,
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(header.tag)));
 
                 switch(header.tag)
@@ -463,8 +463,8 @@ public sealed partial class Chd
                     case HARD_DISK_METADATA:
                         if(_isCdrom || _isGdrom)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a hard disk and a C/GD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization.
+                                                           Image_cannot_be_a_hard_disk_and_a_CGD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
@@ -488,16 +488,16 @@ public sealed partial class Chd
                     case CDROM_OLD_METADATA:
                         if(_isHdd)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization.
+                                                           Image_cannot_be_a_hard_disk_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
 
                         if(_isGdrom)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization.
+                                                           Image_cannot_be_a_GD_ROM_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
@@ -571,7 +571,8 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported track type {chdTrack.type}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_track_type_0,
+                                                                             chdTrack.type));
 
                                     return ErrorNumber.NotSupported;
                                 }
@@ -597,13 +598,14 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported subchannel type {chdTrack.type}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_subchannel_type_0,
+                                                                             chdTrack.type));
 
                                     return ErrorNumber.NotSupported;
                                 }
                             }
 
-                            aaruTrack.Description = $"Track {i + 1}";
+                            aaruTrack.Description = string.Format(Localization.Track_0, i + 1);
                             aaruTrack.EndSector   = currentSector + chdTrack.frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
@@ -628,16 +630,16 @@ public sealed partial class Chd
                     case CDROM_TRACK_METADATA:
                         if(_isHdd)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization.
+                                                           Image_cannot_be_a_hard_disk_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
 
                         if(_isGdrom)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization.
+                                                           Image_cannot_be_a_GD_ROM_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
@@ -657,7 +659,7 @@ public sealed partial class Chd
 
                             if(trackNo != currentTrack)
                             {
-                                AaruConsole.ErrorWriteLine("Unsorted tracks, cannot proceed.");
+                                AaruConsole.ErrorWriteLine(Localization.Unsorted_tracks_cannot_proceed);
 
                                 return ErrorNumber.NotSupported;
                             }
@@ -717,7 +719,8 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported track type {tracktype}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_track_type_0,
+                                                                             tracktype));
 
                                     return ErrorNumber.NotSupported;
                                 }
@@ -743,13 +746,14 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported subchannel type {subtype}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_subchannel_type_0,
+                                                                             subtype));
 
                                     return ErrorNumber.NotSupported;
                                 }
                             }
 
-                            aaruTrack.Description = $"Track {trackNo}";
+                            aaruTrack.Description = string.Format(Localization.Track_0, trackNo);
                             aaruTrack.EndSector   = currentSector + frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
@@ -773,16 +777,16 @@ public sealed partial class Chd
                     case CDROM_TRACK_METADATA2:
                         if(_isHdd)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization.
+                                                           Image_cannot_be_a_hard_disk_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
 
                         if(_isGdrom)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization.
+                                                           Image_cannot_be_a_GD_ROM_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
@@ -816,7 +820,7 @@ public sealed partial class Chd
 
                             if(trackNo != currentTrack)
                             {
-                                AaruConsole.ErrorWriteLine("Unsorted tracks, cannot proceed.");
+                                AaruConsole.ErrorWriteLine(Localization.Unsorted_tracks_cannot_proceed);
 
                                 return ErrorNumber.NotSupported;
                             }
@@ -876,7 +880,8 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported track type {trackType}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_track_type_0,
+                                                                             trackType));
 
                                     return ErrorNumber.NotSupported;
                                 }
@@ -902,13 +907,14 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported subchannel type {subtype}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_subchannel_type_0,
+                                                                             subtype));
 
                                     return ErrorNumber.NotSupported;
                                 }
                             }
 
-                            aaruTrack.Description = $"Track {trackNo}";
+                            aaruTrack.Description = string.Format(Localization.Track_0, trackNo);
                             aaruTrack.EndSector   = currentSector + frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
@@ -957,16 +963,16 @@ public sealed partial class Chd
                     case GDROM_METADATA:
                         if(_isHdd)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a hard disk and a GD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization.
+                                                           Image_cannot_be_a_hard_disk_and_a_GD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
 
                         if(_isCdrom)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a CD-ROM and a GD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization.
+                                                           Image_cannot_be_a_CD_ROM_and_a_GD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
@@ -993,7 +999,7 @@ public sealed partial class Chd
 
                             if(trackNo != currentTrack)
                             {
-                                AaruConsole.ErrorWriteLine("Unsorted tracks, cannot proceed.");
+                                AaruConsole.ErrorWriteLine(Localization.Unsorted_tracks_cannot_proceed);
 
                                 return ErrorNumber.NotSupported;
                             }
@@ -1053,7 +1059,8 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported track type {trackType}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_track_type_0,
+                                                                             trackType));
 
                                     return ErrorNumber.NotSupported;
                                 }
@@ -1079,13 +1086,14 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported subchannel type {subtype}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_subchannel_type_0,
+                                                                             subtype));
 
                                     return ErrorNumber.NotSupported;
                                 }
                             }
 
-                            aaruTrack.Description = $"Track {trackNo}";
+                            aaruTrack.Description = string.Format(Localization.Track_0, trackNo);
                             aaruTrack.EndSector   = currentSector + frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
@@ -1200,7 +1208,7 @@ public sealed partial class Chd
             }
             else
             {
-                AaruConsole.ErrorWriteLine("Image does not represent a known media, aborting");
+                AaruConsole.ErrorWriteLine(Localization.Image_does_not_represent_a_known_media_aborting);
 
                 return ErrorNumber.NotSupported;
             }

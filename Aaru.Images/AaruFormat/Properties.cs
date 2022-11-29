@@ -60,13 +60,13 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Aaru Format";
+    public string Name => Localization.AaruFormat_Name;
     /// <inheritdoc />
     public Guid Id => new("49360069-1784-4A2F-B723-0C844D610B0A");
     /// <inheritdoc />
     public string Format => "Aaru";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public List<Partition> Partitions { get; private set; }
     /// <inheritdoc />
@@ -88,17 +88,19 @@ public sealed partial class AaruFormat
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
         ("sectors_per_block", typeof(uint),
-         "How many sectors to store per block (will be rounded to next power of two)", 4096U),
-        ("dictionary", typeof(uint), "Size, in bytes, of the LZMA dictionary", (uint)(1 << 25)),
+         Localization.How_many_sectors_to_store_per_block_will_be_rounded_to_next_power_of_two, 4096U),
+        ("dictionary", typeof(uint), Localization.Size_in_bytes_of_the_LZMA_dictionary, (uint)(1 << 25)),
         ("max_ddt_size", typeof(uint),
-         "Maximum size, in mebibytes, for in-memory DDT. If image needs a bigger one, it will be on-disk", 256U),
-        ("md5", typeof(bool), "Calculate and store MD5 of image's user data", false),
-        ("sha1", typeof(bool), "Calculate and store SHA1 of image's user data", false),
-        ("sha256", typeof(bool), "Calculate and store SHA256 of image's user data", false),
-        ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data", false),
+         Localization.Maximum_size_in_mebibytes_for_in_memory_DDT_If_image_needs_a_bigger_one_it_will_be_on_disk, 256U),
+        ("md5", typeof(bool), Localization.Calculate_and_store_MD5_of_image_user_data, false),
+        ("sha1", typeof(bool), Localization.Calculate_and_store_SHA1_of_image_user_data, false),
+        ("sha256", typeof(bool), Localization.Calculate_and_store_SHA256_of_image_user_data, false),
+        ("spamsum", typeof(bool), Localization.Calculate_and_store_SpamSum_of_image_user_data, false),
         ("deduplicate", typeof(bool),
-         "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default", true),
-        ("compress", typeof(bool), "Compress user data blocks. Other blocks will always be compressed", (object)true)
+         Localization.Store_only_unique_sectors_This_consumes_more_memory_and_is_slower_but_its_enabled_by_default,
+         true),
+        ("compress", typeof(bool), Localization.Compress_user_data_blocks_Other_blocks_will_always_be_compressed,
+         (object)true)
     };
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]

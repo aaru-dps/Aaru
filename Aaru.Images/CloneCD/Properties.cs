@@ -58,13 +58,13 @@ public sealed partial class CloneCd
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "CloneCD";
+    public string Name => Localization.CloneCd_Name;
     /// <inheritdoc />
     public Guid Id => new("EE9C2975-2E79-427A-8EE9-F86F19165784");
     /// <inheritdoc />
     public string Format => "CloneCD";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public List<Partition> Partitions { get; private set; }
     /// <inheritdoc />

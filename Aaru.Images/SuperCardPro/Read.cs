@@ -97,7 +97,8 @@ public sealed partial class SuperCardPro
 
             if(!trk.Signature.SequenceEqual(_trkSignature))
             {
-                AaruConsole.DebugWriteLine("SuperCardPro plugin", "Track header at {0} contains incorrect signature.",
+                AaruConsole.DebugWriteLine("SuperCardPro plugin",
+                                           Localization.Track_header_at_0_contains_incorrect_signature,
                                            Header.offsets[t]);
 
                 continue;
@@ -105,13 +106,13 @@ public sealed partial class SuperCardPro
 
             if(trk.TrackNumber != t)
             {
-                AaruConsole.DebugWriteLine("SuperCardPro plugin", "Track number at {0} should be {1} but is {2}.",
+                AaruConsole.DebugWriteLine("SuperCardPro plugin", Localization.Track_number_at_0_should_be_1_but_is_2,
                                            Header.offsets[t], t, trk.TrackNumber);
 
                 continue;
             }
 
-            AaruConsole.DebugWriteLine("SuperCardPro plugin", "Found track {0} at {1}.", t, Header.offsets[t]);
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", Localization.Found_track_0_at_1, t, Header.offsets[t]);
 
             for(byte r = 0; r < Header.revolutions; r++)
             {
@@ -142,7 +143,8 @@ public sealed partial class SuperCardPro
                 {
                     _scpStream.Seek(-Marshal.SizeOf<Footer>(), SeekOrigin.Current);
 
-                    AaruConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", _scpStream.Position);
+                    AaruConsole.DebugWriteLine("SuperCardPro plugin", Localization.Found_footer_at_0,
+                                               _scpStream.Position);
 
                     byte[] ftr = new byte[Marshal.SizeOf<Footer>()];
                     _scpStream.EnsureRead(ftr, 0, Marshal.SizeOf<Footer>());
@@ -250,7 +252,7 @@ public sealed partial class SuperCardPro
             _imageInfo.Version              = "1.5";
         }
 
-        AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
+        AaruConsole.ErrorWriteLine(Localization.Flux_decoding_is_not_yet_implemented);
 
         return ErrorNumber.NotImplemented;
     }

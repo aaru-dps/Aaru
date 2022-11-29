@@ -76,12 +76,12 @@ public sealed partial class Udif
 
             if(_footer.signature != UDIF_SIGNATURE)
             {
-                AaruConsole.ErrorWriteLine("Unable to find UDIF signature.");
+                AaruConsole.ErrorWriteLine(Localization.Unable_to_find_UDIF_signature);
 
                 return ErrorNumber.InvalidArgument;
             }
 
-            AaruConsole.VerboseWriteLine("Found obsolete UDIF format.");
+            AaruConsole.VerboseWriteLine(Localization.Found_obsolete_UDIF_format);
         }
 
         AaruConsole.DebugWriteLine("UDIF plugin", "footer.signature = 0x{0:X8}", _footer.signature);
@@ -128,7 +128,7 @@ public sealed partial class Udif
         if(_footer.plistLen    == 0 &&
            _footer.rsrcForkLen != 0)
         {
-            AaruConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
+            AaruConsole.DebugWriteLine("UDIF plugin", Localization.Reading_resource_fork);
             byte[] rsrcB = new byte[_footer.rsrcForkLen];
             stream.Seek((long)_footer.rsrcForkOff, SeekOrigin.Begin);
             stream.EnsureRead(rsrcB, 0, rsrcB.Length);
@@ -137,8 +137,7 @@ public sealed partial class Udif
 
             if(!rsrc.ContainsKey(BLOCK_OS_TYPE))
             {
-                AaruConsole.
-                    ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                AaruConsole.ErrorWriteLine(Localization.Image_resource_fork_doesnt_contain_UDIF_block_chunks);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -147,16 +146,14 @@ public sealed partial class Udif
 
             if(blkxRez == null)
             {
-                AaruConsole.
-                    ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                AaruConsole.ErrorWriteLine(Localization.Image_resource_fork_doesnt_contain_UDIF_block_chunks);
 
                 return ErrorNumber.InvalidArgument;
             }
 
             if(blkxRez.GetIds().Length == 0)
             {
-                AaruConsole.
-                    ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                AaruConsole.ErrorWriteLine(Localization.Image_resource_fork_doesnt_contain_UDIF_block_chunks);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -170,24 +167,24 @@ public sealed partial class Udif
         }
         else if(_footer.plistLen != 0)
         {
-            AaruConsole.DebugWriteLine("UDIF plugin", "Reading property list.");
+            AaruConsole.DebugWriteLine("UDIF plugin", Localization.Reading_property_list);
             byte[] plistB = new byte[_footer.plistLen];
             stream.Seek((long)_footer.plistOff, SeekOrigin.Begin);
             stream.EnsureRead(plistB, 0, plistB.Length);
 
-            AaruConsole.DebugWriteLine("UDIF plugin", "Parsing property list.");
+            AaruConsole.DebugWriteLine("UDIF plugin", Localization.Parsing_property_list);
             var plist = (NSDictionary)XmlPropertyListParser.Parse(plistB);
 
             if(plist == null)
             {
-                AaruConsole.ErrorWriteLine("Could not parse property list.");
+                AaruConsole.ErrorWriteLine(Localization.Could_not_parse_property_list);
 
                 return ErrorNumber.InOutError;
             }
 
             if(!plist.TryGetValue(RESOURCE_FORK_KEY, out NSObject rsrcObj))
             {
-                AaruConsole.ErrorWriteLine("Could not retrieve resource fork.");
+                AaruConsole.ErrorWriteLine(Localization.Could_not_retrieve_resource_fork);
 
                 return ErrorNumber.InOutError;
             }
@@ -196,7 +193,7 @@ public sealed partial class Udif
 
             if(!rsrc.TryGetValue(BLOCK_KEY, out NSObject blkxObj))
             {
-                AaruConsole.ErrorWriteLine("Could not retrieve block chunks array.");
+                AaruConsole.ErrorWriteLine(Localization.Could_not_retrieve_block_chunks_array);
 
                 return ErrorNumber.InOutError;
             }
@@ -207,14 +204,14 @@ public sealed partial class Udif
             {
                 if(!part.TryGetValue("Name", out _))
                 {
-                    AaruConsole.ErrorWriteLine("Could not retrieve Name");
+                    AaruConsole.ErrorWriteLine(Localization.Could_not_retrieve_Name);
 
                     return ErrorNumber.InOutError;
                 }
 
                 if(!part.TryGetValue("Data", out NSObject dataObj))
                 {
-                    AaruConsole.ErrorWriteLine("Could not retrieve Data");
+                    AaruConsole.ErrorWriteLine(Localization.Could_not_retrieve_Data);
 
                     return ErrorNumber.InOutError;
                 }
@@ -234,12 +231,12 @@ public sealed partial class Udif
         {
             if(imageFilter.ResourceForkLength == 0)
             {
-                AaruConsole.ErrorWriteLine("This image needs the resource fork to work.");
+                AaruConsole.ErrorWriteLine(Localization.This_image_needs_the_resource_fork_to_work);
 
                 return ErrorNumber.InvalidArgument;
             }
 
-            AaruConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
+            AaruConsole.DebugWriteLine("UDIF plugin", Localization.Reading_resource_fork);
             Stream rsrcStream = imageFilter.GetResourceForkStream();
 
             byte[] rsrcB = new byte[rsrcStream.Length];
@@ -250,8 +247,7 @@ public sealed partial class Udif
 
             if(!rsrc.ContainsKey(BLOCK_OS_TYPE))
             {
-                AaruConsole.
-                    ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                AaruConsole.ErrorWriteLine(Localization.Image_resource_fork_doesnt_contain_UDIF_block_chunks);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -260,16 +256,14 @@ public sealed partial class Udif
 
             if(blkxRez == null)
             {
-                AaruConsole.
-                    ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                AaruConsole.ErrorWriteLine(Localization.Image_resource_fork_doesnt_contain_UDIF_block_chunks);
 
                 return ErrorNumber.InvalidArgument;
             }
 
             if(blkxRez.GetIds().Length == 0)
             {
-                AaruConsole.
-                    ErrorWriteLine("Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.");
+                AaruConsole.ErrorWriteLine(Localization.Image_resource_fork_doesnt_contain_UDIF_block_chunks);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -324,14 +318,14 @@ public sealed partial class Udif
         else
             _imageInfo.Application = "DiskCopy";
 
-        AaruConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", _imageInfo.Application,
+        AaruConsole.DebugWriteLine("UDIF plugin", Localization.Image_application_0_version_1, _imageInfo.Application,
                                    _imageInfo.ApplicationVersion);
 
         _imageInfo.Sectors = 0;
 
         if(blkxList.Count == 0)
         {
-            AaruConsole.ErrorWriteLine("Could not retrieve block chunks. Please fill an issue and send it to us.");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_retrieve_block_chunks);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -400,22 +394,22 @@ public sealed partial class Udif
 
                     // TODO: Handle compressed chunks
                     case CHUNK_TYPE_KENCODE:
-                        AaruConsole.ErrorWriteLine("Chunks compressed with KenCode are not yet supported.");
+                        AaruConsole.ErrorWriteLine(Localization.Chunks_compressed_with_KenCode_are_not_yet_supported);
 
                         return ErrorNumber.NotImplemented;
                     case CHUNK_TYPE_LZH:
-                        AaruConsole.ErrorWriteLine("Chunks compressed with LZH are not yet supported.");
+                        AaruConsole.ErrorWriteLine(Localization.Chunks_compressed_with_LZH_are_not_yet_supported);
 
                         return ErrorNumber.NotImplemented;
                     case CHUNK_TYPE_LZFSE when !LZFSE.IsSupported:
-                        AaruConsole.ErrorWriteLine("Chunks compressed with lzfse are not yet supported.");
+                        AaruConsole.ErrorWriteLine(Localization.Chunks_compressed_with_lzfse_are_not_yet_supported);
 
                         return ErrorNumber.NotImplemented;
                 }
 
                 if(bChnk.type is > CHUNK_TYPE_NOCOPY and < CHUNK_TYPE_COMMNT or > CHUNK_TYPE_LZMA and < CHUNK_TYPE_END)
                 {
-                    AaruConsole.ErrorWriteLine($"Unsupported chunk type 0x{bChnk.type:X8} found");
+                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_chunk_type_0_found, bChnk.type));
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -564,7 +558,7 @@ public sealed partial class Udif
                 }
                 catch(ZlibException)
                 {
-                    AaruConsole.WriteLine("zlib exception on chunk starting at sector {0}", readChunk.sector);
+                    AaruConsole.WriteLine(Localization.zlib_exception_on_chunk_starting_at_sector_0, readChunk.sector);
 
                     throw;
                 }

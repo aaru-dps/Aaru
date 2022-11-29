@@ -48,7 +48,7 @@ public sealed partial class RayDim
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Ray Arachelian's Disk IMage";
     /// <inheritdoc />

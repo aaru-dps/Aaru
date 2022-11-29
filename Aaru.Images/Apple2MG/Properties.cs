@@ -45,11 +45,11 @@ public sealed partial class Apple2Mg
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "Apple 2IMG";
+    public string Name => Localization.Apple2Mg_Name;
     /// <inheritdoc />
     public Guid Id => new("CBAF8824-BA5F-415F-953A-19A03519B2D1");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Apple 2IMG";
 

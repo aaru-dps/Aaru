@@ -58,11 +58,11 @@ public sealed partial class Alcohol120
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Alcohol 120% Media Descriptor Structure";
+    public string Name => Localization.Alcohol120_Name;
     /// <inheritdoc />
     public Guid Id => new("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public string Format => "Alcohol 120% Media Descriptor Structure";

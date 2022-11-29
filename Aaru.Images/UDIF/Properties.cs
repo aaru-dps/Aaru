@@ -45,11 +45,11 @@ public sealed partial class Udif
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "Apple Universal Disk Image Format";
+    public string Name => Localization.Udif_Name;
     /// <inheritdoc />
     public Guid Id => new("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Apple Universal Disk Image Format";
     /// <inheritdoc />

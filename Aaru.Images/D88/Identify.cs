@@ -92,7 +92,7 @@ public sealed partial class D88
                 return false;
         }
 
-        AaruConsole.DebugWriteLine("D88 plugin", "{0} tracks", counter);
+        AaruConsole.DebugWriteLine("D88 plugin", Localization._0_tracks, counter);
 
         return counter > 0;
     }

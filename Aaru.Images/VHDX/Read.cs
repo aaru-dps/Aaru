@@ -76,7 +76,7 @@ public sealed partial class Vhdx
 
             if(_vHdr.Signature != VHDX_HEADER_SIG)
             {
-                AaruConsole.ErrorWriteLine("VHDX header not found");
+                AaruConsole.ErrorWriteLine(Localization.VHDX_header_not_found);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -96,7 +96,7 @@ public sealed partial class Vhdx
 
             if(_vRegHdr.signature != VHDX_REGION_SIG)
             {
-                AaruConsole.ErrorWriteLine("VHDX region table not found");
+                AaruConsole.ErrorWriteLine(Localization.VHDX_region_table_not_found);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -116,8 +116,9 @@ public sealed partial class Vhdx
                 _metadataOffset = (long)_vRegs[i].offset;
             else if((_vRegs[i].flags & REGION_FLAGS_REQUIRED) == REGION_FLAGS_REQUIRED)
             {
-                AaruConsole.ErrorWriteLine($"Found unsupported and required region Guid {_vRegs[i].guid
-                }, not proceeding with image.");
+                AaruConsole.
+                    ErrorWriteLine(string.Format(Localization.Found_unsupported_and_required_region_Guid_0_not_proceeding_with_image,
+                                                 _vRegs[i].guid));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -125,14 +126,14 @@ public sealed partial class Vhdx
 
         if(_batOffset == 0)
         {
-            AaruConsole.ErrorWriteLine("BAT not found, cannot continue.");
+            AaruConsole.ErrorWriteLine(Localization.BAT_not_found_cannot_continue);
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(_metadataOffset == 0)
         {
-            AaruConsole.ErrorWriteLine("Metadata not found, cannot continue.");
+            AaruConsole.ErrorWriteLine(Localization.Metadata_not_found_cannot_continue);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -166,8 +167,9 @@ public sealed partial class Vhdx
                 parentOff = _vMets[i].offset;
             else if((_vMets[i].flags & METADATA_FLAGS_REQUIRED) == METADATA_FLAGS_REQUIRED)
             {
-                AaruConsole.ErrorWriteLine($"Found unsupported and required metadata Guid {_vMets[i].itemId
-                }, not proceeding with image.");
+                AaruConsole.
+                    ErrorWriteLine(string.Format(Localization.Found_unsupported_and_required_metadata_Guid_0_not_proceeding_with_image,
+                                                 _vMets[i].itemId));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -189,7 +191,7 @@ public sealed partial class Vhdx
         }
         else
         {
-            AaruConsole.ErrorWriteLine("File parameters not found.");
+            AaruConsole.ErrorWriteLine(Localization.File_parameters_not_found);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -203,7 +205,7 @@ public sealed partial class Vhdx
         }
         else
         {
-            AaruConsole.ErrorWriteLine("Virtual disk size not found.");
+            AaruConsole.ErrorWriteLine(Localization.Virtual_disk_size_not_found);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -225,7 +227,7 @@ public sealed partial class Vhdx
         }
         else
         {
-            AaruConsole.ErrorWriteLine("Logical sector size not found.");
+            AaruConsole.ErrorWriteLine(Localization.Logical_sector_size_not_found);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -239,7 +241,7 @@ public sealed partial class Vhdx
         }
         else
         {
-            AaruConsole.ErrorWriteLine("Physical sector size not found.");
+            AaruConsole.ErrorWriteLine(Localization.Physical_sector_size_not_found);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -254,8 +256,9 @@ public sealed partial class Vhdx
 
             if(_vParHdr.locatorType != _parentTypeVhdxGuid)
             {
-                AaruConsole.ErrorWriteLine($"Found unsupported and required parent locator type {_vParHdr.locatorType
-                }, not proceeding with image.");
+                AaruConsole.
+                    ErrorWriteLine(string.Format(Localization.Found_unsupported_and_required_parent_locator_type_0_not_proceeding_with_image,
+                                                 _vParHdr.locatorType));
 
                 return ErrorNumber.NotSupported;
             }
@@ -271,7 +274,7 @@ public sealed partial class Vhdx
         }
         else if((_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
         {
-            AaruConsole.ErrorWriteLine("Parent locator not found.");
+            AaruConsole.ErrorWriteLine(Localization.Parent_locator_not_found);
 
             return ErrorNumber.NoSuchFile;
         }
@@ -363,7 +366,7 @@ public sealed partial class Vhdx
 
             if(!parentWorks)
             {
-                AaruConsole.ErrorWriteLine("Image is differential but parent cannot be opened.");
+                AaruConsole.ErrorWriteLine(Localization.Image_is_differential_but_parent_cannot_be_opened);
 
                 return ErrorNumber.InOutError;
             }
@@ -393,7 +396,7 @@ public sealed partial class Vhdx
         else
             batEntries = (long)(_dataBlocks + ((_dataBlocks - 1) / (ulong)_chunkRatio));
 
-        AaruConsole.DebugWriteLine("VHDX plugin", "Reading BAT");
+        AaruConsole.DebugWriteLine("VHDX plugin", Localization.Reading_BAT);
 
         long readChunks = 0;
         _blockAllocationTable = new ulong[_dataBlocks];
@@ -420,7 +423,7 @@ public sealed partial class Vhdx
 
         if(_hasParent)
         {
-            AaruConsole.DebugWriteLine("VHDX plugin", "Reading Sector Bitmap");
+            AaruConsole.DebugWriteLine("VHDX plugin", Localization.Reading_Sector_Bitmap);
 
             var sectorBmpMs = new MemoryStream();
 
@@ -441,8 +444,10 @@ public sealed partial class Vhdx
                     default:
                         if((pt & BAT_FLAGS_MASK) != 0)
                         {
-                            AaruConsole.ErrorWriteLine($"Unsupported sector bitmap block flags (0x{pt & BAT_FLAGS_MASK
-                                :X16}) found, not proceeding.");
+                            AaruConsole.
+                                ErrorWriteLine(string.
+                                                   Format(Localization.Unsupported_sector_bitmap_block_flags_0_found_not_proceeding,
+                                                          pt & BAT_FLAGS_MASK));
 
                             return ErrorNumber.InvalidArgument;
                         }

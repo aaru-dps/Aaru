@@ -59,13 +59,13 @@ public sealed partial class CdrWin
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "CDRWin cuesheet";
+    public string Name => Localization.CdrWin_Name;
     /// <inheritdoc />
     public Guid Id => new("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
     /// <inheritdoc />
     public string Format => "CDRWin CUESheet";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public List<Partition> Partitions { get; private set; }
 
@@ -195,7 +195,7 @@ public sealed partial class CdrWin
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
-        ("separate", typeof(bool), "Write each track to a separate file.", (object)false)
+        ("separate", typeof(bool), Localization.Write_each_track_to_a_separate_file, (object)false)
     };
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]

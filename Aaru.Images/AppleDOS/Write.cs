@@ -48,7 +48,7 @@ public sealed partial class AppleDos
     {
         if(sectorSize != 256)
         {
-            ErrorMessage = "Unsupported sector size";
+            ErrorMessage = Localization.Unsupported_sector_size;
 
             return false;
         }
@@ -56,7 +56,7 @@ public sealed partial class AppleDos
         if(mediaType != MediaType.Apple32SS &&
            mediaType != MediaType.Apple33SS)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -64,7 +64,7 @@ public sealed partial class AppleDos
         if((mediaType == MediaType.Apple32SS && sectors != 455) ||
            (mediaType == MediaType.Apple33SS && sectors != 560))
         {
-            ErrorMessage = "Incorrect number of sectors for media";
+            ErrorMessage = Localization.Incorrect_number_of_sectors_for_media;
 
             return false;
         }
@@ -82,7 +82,7 @@ public sealed partial class AppleDos
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return false;
         }
@@ -106,7 +106,7 @@ public sealed partial class AppleDos
     /// <inheritdoc />
     public bool WriteMediaTag(byte[] data, MediaTagType tag)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -119,21 +119,21 @@ public sealed partial class AppleDos
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length % _imageInfo.SectorSize != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress + length > _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
@@ -148,7 +148,7 @@ public sealed partial class AppleDos
     /// <inheritdoc />
     public bool WriteSectorLong(byte[] data, ulong sectorAddress)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -156,7 +156,7 @@ public sealed partial class AppleDos
     /// <inheritdoc />
     public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -166,7 +166,7 @@ public sealed partial class AppleDos
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -216,7 +216,7 @@ public sealed partial class AppleDos
     /// <inheritdoc />
     public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -224,7 +224,7 @@ public sealed partial class AppleDos
     /// <inheritdoc />
     public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }

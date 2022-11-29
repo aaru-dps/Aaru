@@ -44,17 +44,17 @@ public sealed partial class DiskCopy42
     /// <inheritdoc />
     public ImageInfo Info => imageInfo;
     /// <inheritdoc />
-    public string Name => "Apple DiskCopy 4.2";
+    public string Name => Localization.DiskCopy42_Name;
     /// <inheritdoc />
     public Guid Id => new("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public List<DumpHardwareType> DumpHardware => null;
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
-    public string Format => "Apple DiskCopy 4.2";
+    public string Format => Localization.DiskCopy42_Name;
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
     /// <inheritdoc />
@@ -71,7 +71,7 @@ public sealed partial class DiskCopy42
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
-        ("macosx", typeof(bool), "Use Mac OS X format byte", (object)false)
+        ("macosx", typeof(bool), Localization.Use_Mac_OS_X_format_byte, (object)false)
     };
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]

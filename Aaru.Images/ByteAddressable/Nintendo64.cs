@@ -57,7 +57,7 @@ public class Nintendo64 : IByteAddressableImage
     bool      _littleEndian;
     bool      _opened;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
@@ -73,7 +73,7 @@ public class Nintendo64 : IByteAddressableImage
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Nintendo 64";
+    public string Name => Localization.Nintendo64_Name;
 
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
@@ -212,13 +212,13 @@ public class Nintendo64 : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("Name: {0}", _imageInfo.MediaTitle).AppendLine();
-        sb.AppendFormat("Region: {0}", DecodeCountryCode(header.CountryCode)).AppendLine();
-        sb.AppendFormat("Cartridge ID: {0}", _imageInfo.MediaPartNumber).AppendLine();
-        sb.AppendFormat("Cartridge type: {0}", (char)header.CartridgeType).AppendLine();
-        sb.AppendFormat("Version: {0}.{1}", (header.Version / 10) + 1, header.Version % 10).AppendLine();
-        sb.AppendFormat("CRC1: 0x{0:X8}", header.Crc1).AppendLine();
-        sb.AppendFormat("CRC2: 0x{0:X8}", header.Crc2).AppendLine();
+        sb.AppendFormat(Localization.Name_0, _imageInfo.MediaTitle).AppendLine();
+        sb.AppendFormat(Localization.Region_0, DecodeCountryCode(header.CountryCode)).AppendLine();
+        sb.AppendFormat(Localization.Cartridge_ID_0, _imageInfo.MediaPartNumber).AppendLine();
+        sb.AppendFormat(Localization.Cartridge_type_0, (char)header.CartridgeType).AppendLine();
+        sb.AppendFormat(Localization.Version_0_1, (header.Version / 10) + 1, header.Version % 10).AppendLine();
+        sb.AppendFormat(Localization.CRC1_0, header.Crc1).AppendLine();
+        sb.AppendFormat(Localization.CRC2_0, header.Crc2).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -234,14 +234,14 @@ public class Nintendo64 : IByteAddressableImage
     {
         if(_opened)
         {
-            ErrorMessage = "Cannot create an opened image";
+            ErrorMessage = Localization.Cannot_create_an_opened_image;
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(mediaType != MediaType.N64GamePak)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return ErrorNumber.NotSupported;
         }
@@ -263,7 +263,7 @@ public class Nintendo64 : IByteAddressableImage
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return ErrorNumber.InOutError;
         }
@@ -284,7 +284,7 @@ public class Nintendo64 : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
@@ -585,14 +585,14 @@ public class Nintendo64 : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -617,21 +617,21 @@ public class Nintendo64 : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -657,14 +657,14 @@ public class Nintendo64 : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
@@ -701,21 +701,21 @@ public class Nintendo64 : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -741,28 +741,28 @@ public class Nintendo64 : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -814,14 +814,14 @@ public class Nintendo64 : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -860,27 +860,27 @@ public class Nintendo64 : IByteAddressableImage
 
     static string DecodeCountryCode(byte countryCode) => countryCode switch
     {
-        0x37 => "Beta",
-        0x41 => "Asia (NTSC)",
-        0x42 => "Brazil",
-        0x43 => "China",
-        0x44 => "Germany",
-        0x45 => "North America",
-        0x46 => "France",
-        0x47 => "Gateway 64 (NTSC)",
-        0x48 => "Netherlands",
-        0x49 => "Italy",
-        0x4A => "Japan",
-        0x4B => "Korea",
-        0x4C => "Gateway 64 (PAL)",
-        0x4E => "Canada",
-        0x50 => "Europe",
-        0x53 => "Spain",
-        0x55 => "Australia",
-        0x57 => "Scandinavia",
-        0x58 => "Europe",
-        0x59 => "Europe",
-        _    => "Unknown"
+        0x37 => Localization.Beta,
+        0x41 => Localization.Asia_NTSC,
+        0x42 => Localization.Brazil,
+        0x43 => Localization.China,
+        0x44 => Localization.Germany,
+        0x45 => Localization.North_America,
+        0x46 => Localization.France,
+        0x47 => Localization.Gateway_64_NTSC,
+        0x48 => Localization.Netherlands,
+        0x49 => Localization.Italy,
+        0x4A => Localization.Japan,
+        0x4B => Localization.Korea,
+        0x4C => Localization.Gateway_64_PAL,
+        0x4E => Localization.Canada,
+        0x50 => Localization.Europe,
+        0x53 => Localization.Spain,
+        0x55 => Localization.Australia,
+        0x57 => Localization.Scandinavia,
+        0x58 => Localization.Europe,
+        0x59 => Localization.Europe,
+        _    => Localization.Unknown_country
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]

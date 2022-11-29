@@ -97,7 +97,7 @@ public sealed partial class SaveDskF
                 _calculatedChk += (uint)b;
         } while(b >= 0);
 
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "Calculated checksum = 0x{0:X8}, {1}", _calculatedChk,
+        AaruConsole.DebugWriteLine("SaveDskF plugin", Localization.Calculated_checksum_equals_0_X8_1, _calculatedChk,
                                    _calculatedChk == _header.checksum);
 
         _imageInfo.Application          = "SaveDskF";
@@ -113,15 +113,15 @@ public sealed partial class SaveDskF
 
         _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-        AaruConsole.VerboseWriteLine("SaveDskF image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.SaveDskF_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
-            AaruConsole.VerboseWriteLine("SaveDskF comments: {0}", _imageInfo.Comments);
+            AaruConsole.VerboseWriteLine(Localization.SaveDskF_comments_0, _imageInfo.Comments);
 
         // TODO: Support compressed images
         if(_header.magic == SDF_MAGIC_COMPRESSED)
         {
-            AaruConsole.ErrorWriteLine("Compressed SaveDskF images are not supported.");
+            AaruConsole.ErrorWriteLine(Localization.Compressed_SaveDskF_images_are_not_supported);
 
             return ErrorNumber.NotSupported;
         }

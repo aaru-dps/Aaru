@@ -228,7 +228,8 @@ public sealed partial class DiscJuggler
 
                         track.Description = Encoding.Default.GetString(textBlk, 0, bLen);
 
-                        AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tTrack title = {0}", track.Description);
+                        AaruConsole.DebugWriteLine("DiscJuggler plugin", "\t" + Localization.Track_title_0,
+                                                   track.Description);
                     }
                 }
 
@@ -390,7 +391,7 @@ public sealed partial class DiscJuggler
 
                                 break;
                             default:
-                                AaruConsole.ErrorWriteLine($"Unknown read mode {readMode}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Unknown_read_mode_0, readMode));
 
                                 return ErrorNumber.InvalidArgument;
                         }
@@ -418,7 +419,9 @@ public sealed partial class DiscJuggler
 
                                 break;
                             case 1:
-                                AaruConsole.ErrorWriteLine($"Invalid read mode {readMode} for this track");
+                                AaruConsole.
+                                    ErrorWriteLine(string.Format(Localization.Invalid_read_mode_0_for_this_track,
+                                                                 readMode));
 
                                 return ErrorNumber.InvalidArgument;
                             case 2:
@@ -509,7 +512,7 @@ public sealed partial class DiscJuggler
 
                                 break;
                             default:
-                                AaruConsole.ErrorWriteLine($"Unknown read mode {readMode}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Unknown_read_mode_0, readMode));
 
                                 return ErrorNumber.InvalidArgument;
                         }
@@ -527,7 +530,9 @@ public sealed partial class DiscJuggler
                         switch(readMode)
                         {
                             case 0:
-                                AaruConsole.ErrorWriteLine($"Invalid read mode {readMode} for this track");
+                                AaruConsole.
+                                    ErrorWriteLine(string.Format(Localization.Invalid_read_mode_0_for_this_track,
+                                                                 readMode));
 
                                 return ErrorNumber.InvalidArgument;
                             case 1:
@@ -592,14 +597,14 @@ public sealed partial class DiscJuggler
 
                                 break;
                             default:
-                                AaruConsole.ErrorWriteLine($"Unknown read mode {readMode}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Unknown_read_mode_0, readMode));
 
                                 return ErrorNumber.InvalidArgument;
                         }
 
                         break;
                     default:
-                        AaruConsole.ErrorWriteLine($"Unknown track mode {trackMode}");
+                        AaruConsole.ErrorWriteLine(string.Format(Localization.Unknown_track_mode_0, trackMode));
 
                         return ErrorNumber.InvalidArgument;
                 }
@@ -661,7 +666,7 @@ public sealed partial class DiscJuggler
         // Skip unknown
         position += 16;
 
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", "Current position = {0}", position);
+        AaruConsole.DebugWriteLine("DiscJuggler plugin", Localization.Current_position_equals_0, position);
         byte[] filenameB = new byte[descriptor[position]];
         position++;
         Array.Copy(descriptor, position, filenameB, 0, filenameB.Length);
@@ -713,7 +718,7 @@ public sealed partial class DiscJuggler
         // Skip unknown
         position += 12;
 
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", "End position = {0}", position);
+        AaruConsole.DebugWriteLine("DiscJuggler plugin", Localization.End_position_equals_0, position);
 
         _imageInfo.MediaType = DecodeCdiMediumType(mediumType);
 

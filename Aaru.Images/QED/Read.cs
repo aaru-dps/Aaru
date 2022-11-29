@@ -72,50 +72,50 @@ public sealed partial class Qed
 
         if(_qHdr.image_size <= 1)
         {
-            AaruConsole.ErrorWriteLine("Image size is too small");
+            AaruConsole.ErrorWriteLine(Localization.Image_size_is_too_small);
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(!IsPowerOfTwo(_qHdr.cluster_size))
         {
-            AaruConsole.ErrorWriteLine("Cluster size must be a power of 2");
+            AaruConsole.ErrorWriteLine(Localization.Cluster_size_must_be_a_power_of_2);
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(_qHdr.cluster_size is < 4096 or > 67108864)
         {
-            AaruConsole.ErrorWriteLine("Cluster size must be between 4 Kbytes and 64 Mbytes");
+            AaruConsole.ErrorWriteLine(Localization.Cluster_size_must_be_between_4_Kbytes_and_64_Mbytes);
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(!IsPowerOfTwo(_qHdr.table_size))
         {
-            AaruConsole.ErrorWriteLine("Table size must be a power of 2");
+            AaruConsole.ErrorWriteLine(Localization.Table_size_must_be_a_power_of_2);
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(_qHdr.table_size is < 1 or > 16)
         {
-            AaruConsole.ErrorWriteLine("Table size must be between 1 and 16 clusters");
+            AaruConsole.ErrorWriteLine(Localization.Table_size_must_be_between_1_and_16_clusters);
 
             return ErrorNumber.InvalidArgument;
         }
 
         if((_qHdr.features & QED_FEATURE_MASK) > 0)
         {
-            AaruConsole.ErrorWriteLine($"Image uses unknown incompatible features {_qHdr.features & QED_FEATURE_MASK
-                :X}");
+            AaruConsole.ErrorWriteLine(string.Format(Localization.Image_uses_unknown_incompatible_features_0,
+                                                     _qHdr.features & QED_FEATURE_MASK));
 
             return ErrorNumber.InvalidArgument;
         }
 
         if((_qHdr.features & QED_FEATURE_BACKING_FILE) == QED_FEATURE_BACKING_FILE)
         {
-            AaruConsole.ErrorWriteLine("Differencing images not yet supported");
+            AaruConsole.ErrorWriteLine(Localization.Differencing_images_not_yet_supported);
 
             return ErrorNumber.NotImplemented;
         }
@@ -129,7 +129,7 @@ public sealed partial class Qed
         byte[] l1TableB = new byte[_tableSize * 8];
         stream.Seek((long)_qHdr.l1_table_offset, SeekOrigin.Begin);
         stream.EnsureRead(l1TableB, 0, (int)_tableSize * 8);
-        AaruConsole.DebugWriteLine("QED plugin", "Reading L1 table");
+        AaruConsole.DebugWriteLine("QED plugin", Localization.Reading_L1_table);
         _l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
 
         _l1Mask = 0;
@@ -204,8 +204,8 @@ public sealed partial class Qed
         if((long)l1Off >= _l1Table.LongLength)
         {
             AaruConsole.DebugWriteLine("QED plugin",
-                                       $"Trying to read past L1 table, position {l1Off} of a max {_l1Table.LongLength
-                                       }");
+                                       string.Format(Localization.Trying_to_read_past_L1_table_position_0_of_a_max_1,
+                                                     l1Off, _l1Table.LongLength));
 
             return ErrorNumber.InvalidArgument;
         }
@@ -223,7 +223,7 @@ public sealed partial class Qed
             _imageStream.Seek((long)_l1Table[l1Off], SeekOrigin.Begin);
             byte[] l2TableB = new byte[_tableSize * 8];
             _imageStream.EnsureRead(l2TableB, 0, (int)_tableSize * 8);
-            AaruConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
+            AaruConsole.DebugWriteLine("QED plugin", Localization.Reading_L2_table_0, l1Off);
             l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
 
             if(_l2TableCache.Count >= _maxL2TableCache)

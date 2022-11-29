@@ -42,13 +42,13 @@ public sealed partial class Ndif
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Apple New Disk Image Format";
+    public string Name => Localization.Ndif_Name;
     /// <inheritdoc />
     public Guid Id => new("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
     /// <inheritdoc />
     public string Format => "Apple New Disk Image Format";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public List<DumpHardwareType> DumpHardware => null;
     /// <inheritdoc />

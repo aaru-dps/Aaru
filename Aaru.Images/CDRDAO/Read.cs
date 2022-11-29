@@ -129,7 +129,7 @@ public sealed partial class Cdrdao
 
                 if(!matchDiskType.Success)
                 {
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Not a CDRDAO TOC or TOC type not in line {0}.",
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Not_a_CDRDAO_TOC_or_TOC_type_not_in_line_0,
                                                lineNumber);
 
                     return ErrorNumber.InvalidArgument;
@@ -183,14 +183,14 @@ public sealed partial class Cdrdao
                     if(matchComment.Groups["comment"].Value.StartsWith(" Track ", StringComparison.Ordinal))
                         continue;
 
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found comment \"{1}\" at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_comment_1_at_line_0, lineNumber,
                                                matchComment.Groups["comment"].Value.Trim());
 
                     commentBuilder.AppendLine(matchComment.Groups["comment"].Value.Trim());
                 }
                 else if(matchDiskType.Success)
                 {
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1} at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_1_at_line_0, lineNumber,
                                                matchDiskType.Groups["type"].Value);
 
                     _discimage.Disktypestr = matchDiskType.Groups["type"].Value;
@@ -206,7 +206,7 @@ public sealed partial class Cdrdao
                 }
                 else if(matchMcn.Success)
                 {
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found CATALOG \"{1}\" at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_CATALOG_1_at_line_0, lineNumber,
                                                matchMcn.Groups["catalog"].Value);
 
                     _discimage.Mcn = matchMcn.Groups["catalog"].Value;
@@ -215,11 +215,11 @@ public sealed partial class Cdrdao
                 {
                     if(matchTrack.Groups["subchan"].Value == "")
                         AaruConsole.DebugWriteLine("CDRDAO plugin",
-                                                   "Found TRACK type \"{1}\" with no subchannel at line {0}",
+                                                   Localization.Found_TRACK_type_1_with_no_subchannel_at_line_0,
                                                    lineNumber, matchTrack.Groups["type"].Value);
                     else
                         AaruConsole.DebugWriteLine("CDRDAO plugin",
-                                                   "Found TRACK type \"{1}\" subchannel {2} at line {0}", lineNumber,
+                                                   Localization.Found_TRACK_type_1_subchannel_2_at_line_0, lineNumber,
                                                    matchTrack.Groups["type"].Value, matchTrack.Groups["subchan"].Value);
 
                     if(inTrack)
@@ -268,7 +268,8 @@ public sealed partial class Cdrdao
                             break;
                         default:
                         {
-                            AaruConsole.ErrorWriteLine($"Track mode {matchTrack.Groups["type"].Value} is unsupported");
+                            AaruConsole.ErrorWriteLine(string.Format(Localization.Track_mode_0_is_unsupported,
+                                                                     matchTrack.Groups["type"].Value));
 
                             return ErrorNumber.NotSupported;
                         }
@@ -286,8 +287,9 @@ public sealed partial class Cdrdao
                             break;
                         default:
                         {
-                            AaruConsole.ErrorWriteLine($"Track subchannel mode {matchTrack.Groups["subchan"].Value
-                            } is unsupported");
+                            AaruConsole.
+                                ErrorWriteLine(string.Format(Localization.Track_subchannel_mode_0_is_unsupported,
+                                                             matchTrack.Groups["subchan"].Value));
 
                             return ErrorNumber.NotSupported;
                         }
@@ -300,28 +302,28 @@ public sealed partial class Cdrdao
                 }
                 else if(matchCopy.Success)
                 {
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1} COPY at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_1_COPY_at_line_0, lineNumber,
                                                matchCopy.Groups["no"].Value);
 
                     currentTrack.FlagDcp |= inTrack && matchCopy.Groups["no"].Value == "";
                 }
                 else if(matchEmphasis.Success)
                 {
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1} PRE_EMPHASIS at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_1_PRE_EMPHASIS_at_line_0, lineNumber,
                                                matchEmphasis.Groups["no"].Value);
 
                     currentTrack.FlagPre |= inTrack && matchEmphasis.Groups["no"].Value == "";
                 }
                 else if(matchStereo.Success)
                 {
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1}_CHANNEL_AUDIO at line {0}", lineNumber,
-                                               matchStereo.Groups["num"].Value);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_1_CHANNEL_AUDIO_at_line_0,
+                                               lineNumber, matchStereo.Groups["num"].Value);
 
                     currentTrack.Flag4Ch |= inTrack && matchStereo.Groups["num"].Value == "FOUR";
                 }
                 else if(matchIsrc.Success)
                 {
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found ISRC \"{1}\" at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_ISRC_1_at_line_0, lineNumber,
                                                matchIsrc.Groups["isrc"].Value);
 
                     if(inTrack)
@@ -329,7 +331,7 @@ public sealed partial class Cdrdao
                 }
                 else if(matchIndex.Success)
                 {
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found INDEX \"{1}\" at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_INDEX_1_at_line_0, lineNumber,
                                                matchIndex.Groups["address"].Value);
 
                     string[] lengthString = matchFile.Groups["length"].Value.Split(':');
@@ -341,7 +343,7 @@ public sealed partial class Cdrdao
                 }
                 else if(matchPregap.Success)
                 {
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found START \"{1}\" at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_START_1_at_line_0, lineNumber,
                                                matchPregap.Groups["address"].Value);
 
                     currentTrack.Indexes.Add(0, currentTrack.StartSector);
@@ -358,7 +360,7 @@ public sealed partial class Cdrdao
                 }
                 else if(matchZeroPregap.Success)
                 {
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found PREGAP \"{1}\" at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_PREGAP_1_at_line_0, lineNumber,
                                                matchZeroPregap.Groups["length"].Value);
 
                     currentTrack.Indexes.Add(0, currentTrack.StartSector);
@@ -368,10 +370,10 @@ public sealed partial class Cdrdao
                                           (ulong.Parse(lengthString[1]) * 75)      + ulong.Parse(lengthString[2]);
                 }
                 else if(matchZeroData.Success)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found ZERO \"{1}\" at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_ZERO_1_at_line_0, lineNumber,
                                                matchZeroData.Groups["length"].Value);
                 else if(matchZeroAudio.Success)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Found SILENCE \"{1}\" at line {0}", lineNumber,
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_SILENCE_1_at_line_0, lineNumber,
                                                matchZeroAudio.Groups["length"].Value);
                 else
                 {
@@ -379,8 +381,8 @@ public sealed partial class Cdrdao
 
                     if(matchAudioFile.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found AUDIOFILE \"{1}\" at line {0}", lineNumber,
-                                                   matchAudioFile.Groups["filename"].Value);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_AUDIOFILE_1_at_line_0,
+                                                   lineNumber, matchAudioFile.Groups["filename"].Value);
 
                         filtersList = new FiltersList();
 
@@ -422,7 +424,7 @@ public sealed partial class Cdrdao
                     }
                     else if(matchFile.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found DATAFILE \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_DATAFILE_1_at_line_0, lineNumber,
                                                    matchFile.Groups["filename"].Value);
 
                         filtersList = new FiltersList();
@@ -453,7 +455,7 @@ public sealed partial class Cdrdao
                     }
                     else if(matchTitle.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found TITLE \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_TITLE_1_at_line_0, lineNumber,
                                                    matchTitle.Groups["title"].Value);
 
                         if(inTrack)
@@ -463,8 +465,8 @@ public sealed partial class Cdrdao
                     }
                     else if(matchPerformer.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found PERFORMER \"{1}\" at line {0}", lineNumber,
-                                                   matchPerformer.Groups["performer"].Value);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_PERFORMER_1_at_line_0,
+                                                   lineNumber, matchPerformer.Groups["performer"].Value);
 
                         if(inTrack)
                             currentTrack.Performer = matchPerformer.Groups["performer"].Value;
@@ -473,8 +475,8 @@ public sealed partial class Cdrdao
                     }
                     else if(matchSongwriter.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found SONGWRITER \"{1}\" at line {0}", lineNumber,
-                                                   matchSongwriter.Groups["songwriter"].Value);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_SONGWRITER_1_at_line_0,
+                                                   lineNumber, matchSongwriter.Groups["songwriter"].Value);
 
                         if(inTrack)
                             currentTrack.Songwriter = matchSongwriter.Groups["songwriter"].Value;
@@ -483,7 +485,7 @@ public sealed partial class Cdrdao
                     }
                     else if(matchComposer.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found COMPOSER \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_COMPOSER_1_at_line_0, lineNumber,
                                                    matchComposer.Groups["composer"].Value);
 
                         if(inTrack)
@@ -493,7 +495,7 @@ public sealed partial class Cdrdao
                     }
                     else if(matchArranger.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found ARRANGER \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_ARRANGER_1_at_line_0, lineNumber,
                                                    matchArranger.Groups["arranger"].Value);
 
                         if(inTrack)
@@ -503,7 +505,7 @@ public sealed partial class Cdrdao
                     }
                     else if(matchMessage.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found MESSAGE \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_MESSAGE_1_at_line_0, lineNumber,
                                                    matchMessage.Groups["message"].Value);
 
                         if(inTrack)
@@ -513,7 +515,7 @@ public sealed partial class Cdrdao
                     }
                     else if(matchDiscId.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found DISC_ID \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_DISC_ID_1_at_line_0, lineNumber,
                                                    matchDiscId.Groups["discid"].Value);
 
                         if(!inTrack)
@@ -521,7 +523,7 @@ public sealed partial class Cdrdao
                     }
                     else if(matchUpc.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found UPC_EAN \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Found_UPC_EAN_1_at_line_0, lineNumber,
                                                    matchUpc.Groups["catalog"].Value);
 
                         if(!inTrack)
@@ -560,125 +562,139 @@ public sealed partial class Cdrdao
             _discimage.Comment = commentBuilder.ToString();
 
             // DEBUG information
-            AaruConsole.DebugWriteLine("CDRDAO plugin", "Disc image parsing results");
-            AaruConsole.DebugWriteLine("CDRDAO plugin", "Disc CD-TEXT:");
+            AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Disc_image_parsing_results);
+            AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Disc_CD_TEXT);
 
             if(_discimage.Arranger == null)
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tArranger is not set.");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Arranger_is_not_set);
             else
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tArranger: {0}", _discimage.Arranger);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Arranger_0, _discimage.Arranger);
 
             if(_discimage.Composer == null)
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComposer is not set.");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Composer_is_not_set);
             else
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComposer: {0}", _discimage.Composer);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Composer_0, _discimage.Composer);
 
             if(_discimage.Performer == null)
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPerformer is not set.");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Performer_is_not_set);
             else
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPerformer: {0}", _discimage.Performer);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Performer_0, _discimage.Performer);
 
             if(_discimage.Songwriter == null)
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tSongwriter is not set.");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Songwriter_is_not_set);
             else
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tSongwriter: {0}", _discimage.Songwriter);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Songwriter_0, _discimage.Songwriter);
 
             if(_discimage.Title == null)
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tTitle is not set.");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Title_is_not_set);
             else
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tTitle: {0}", _discimage.Title);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Title_0, _discimage.Title);
 
-            AaruConsole.DebugWriteLine("CDRDAO plugin", "Disc information:");
-            AaruConsole.DebugWriteLine("CDRDAO plugin", "\tGuessed disk type: {0}", _discimage.Disktype);
+            AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Disc_information);
+            AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Guessed_disk_type_0, _discimage.Disktype);
 
             if(_discimage.Barcode == null)
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tBarcode not set.");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Barcode_not_set);
             else
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tBarcode: {0}", _discimage.Barcode);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Barcode_0, _discimage.Barcode);
 
             if(_discimage.DiskId == null)
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc ID not set.");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Disc_ID_not_set);
             else
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc ID: {0}", _discimage.DiskId);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Disc_ID_0, _discimage.DiskId);
 
             if(_discimage.Mcn == null)
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tMCN not set.");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.MCN_not_set);
             else
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tMCN: {0}", _discimage.Mcn);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.MCN_0, _discimage.Mcn);
 
             if(string.IsNullOrEmpty(_discimage.Comment))
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComment not set.");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Comment_not_set);
             else
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComment: \"{0}\"", _discimage.Comment);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Comment_0, _discimage.Comment);
 
-            AaruConsole.DebugWriteLine("CDRDAO plugin", "Track information:");
-            AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc contains {0} tracks", _discimage.Tracks.Count);
+            AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Track_information);
+
+            AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Disc_contains_0_tracks,
+                                       _discimage.Tracks.Count);
 
             for(int i = 0; i < _discimage.Tracks.Count; i++)
             {
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tTrack {0} information:", _discimage.Tracks[i].Sequence);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Track_0_information,
+                                           _discimage.Tracks[i].Sequence);
 
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t{0} bytes per sector", _discimage.Tracks[i].Bps);
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPregap: {0} sectors", _discimage.Tracks[i].Pregap);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization._0_bytes_per_sector,
+                                           _discimage.Tracks[i].Bps);
 
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tData: {0} sectors starting at sector {1}",
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Pregap_0_sectors,
+                                           _discimage.Tracks[i].Pregap);
+
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Data_0_sectors_starting_at_sector_1,
                                            _discimage.Tracks[i].Sectors, _discimage.Tracks[i].StartSector);
 
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPostgap: {0} sectors", _discimage.Tracks[i].Postgap);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Postgap_0_sectors,
+                                           _discimage.Tracks[i].Postgap);
 
                 if(_discimage.Tracks[i].Flag4Ch)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack is flagged as quadraphonic");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Track_is_flagged_as_quadraphonic);
 
                 if(_discimage.Tracks[i].FlagDcp)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack allows digital copy");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Track_allows_digital_copy);
 
                 if(_discimage.Tracks[i].FlagPre)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack has pre-emphasis applied");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Track_has_pre_emphasis_applied);
 
                 AaruConsole.DebugWriteLine("CDRDAO plugin",
-                                           "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
+                                           "\t\t" + Localization.
+                                               Track_resides_in_file_0_type_defined_as_1_starting_at_byte_2,
                                            _discimage.Tracks[i].Trackfile.Datafilter.Filename,
                                            _discimage.Tracks[i].Trackfile.Filetype,
                                            _discimage.Tracks[i].Trackfile.Offset);
 
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tIndexes:");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Indexes);
 
                 foreach(KeyValuePair<int, ulong> kvp in _discimage.Tracks[i].Indexes)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t\tIndex {0} starts at sector {1}", kvp.Key,
-                                               kvp.Value);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t\t" + Localization.Index_0_starts_at_sector_1,
+                                               kvp.Key, kvp.Value);
 
                 if(_discimage.Tracks[i].Isrc == null)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tISRC is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.ISRC_is_not_set);
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tISRC: {0}", _discimage.Tracks[i].Isrc);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.ISRC_0,
+                                               _discimage.Tracks[i].Isrc);
 
                 if(_discimage.Tracks[i].Arranger == null)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tArranger is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Arranger_is_not_set);
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tArranger: {0}", _discimage.Tracks[i].Arranger);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Arranger_0,
+                                               _discimage.Tracks[i].Arranger);
 
                 if(_discimage.Tracks[i].Composer == null)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tComposer is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Composer_is_not_set);
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tComposer: {0}", _discimage.Tracks[i].Composer);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Composer_0,
+                                               _discimage.Tracks[i].Composer);
 
                 if(_discimage.Tracks[i].Performer == null)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPerformer is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Performer_is_not_set);
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPerformer: {0}", _discimage.Tracks[i].Performer);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Performer_0,
+                                               _discimage.Tracks[i].Performer);
 
                 if(_discimage.Tracks[i].Songwriter == null)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tSongwriter is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Songwriter_is_not_set);
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tSongwriter: {0}", _discimage.Tracks[i].Songwriter);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Songwriter_0,
+                                               _discimage.Tracks[i].Songwriter);
 
                 if(_discimage.Tracks[i].Title == null)
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTitle is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Title_is_not_set);
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTitle: {0}", _discimage.Tracks[i].Title);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t" + Localization.Title_0,
+                                               _discimage.Tracks[i].Title);
             }
 
-            AaruConsole.DebugWriteLine("CDRDAO plugin", "Building offset map");
+            AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Building_offset_map);
 
             Partitions = new List<Partition>();
             _offsetmap = new Dictionary<uint, ulong>();
@@ -691,7 +707,7 @@ public sealed partial class Cdrdao
                 if(_discimage.Tracks[i].Sequence == 1 &&
                    i                             != 0)
                 {
-                    AaruConsole.ErrorWriteLine("Unordered tracks");
+                    AaruConsole.ErrorWriteLine(Localization.Unordered_tracks);
 
                     return ErrorNumber.NotSupported;
                 }
@@ -699,7 +715,7 @@ public sealed partial class Cdrdao
                 // Index 01
                 var partition = new Partition
                 {
-                    Description = $"Track {_discimage.Tracks[i].Sequence}.",
+                    Description = string.Format(Localization.Track_0, _discimage.Tracks[i].Sequence),
                     Name        = _discimage.Tracks[i].Title,
                     Start       = _discimage.Tracks[i].StartSector,
                     Size        = _discimage.Tracks[i].Sectors * _discimage.Tracks[i].Bps,
@@ -729,18 +745,28 @@ public sealed partial class Cdrdao
             }
 
             // Print partition map
-            AaruConsole.DebugWriteLine("CDRDAO plugin", "printing partition map");
+            AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.printing_partition_map);
 
             foreach(Partition partition in Partitions)
             {
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "Partition sequence: {0}", partition.Sequence);
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition name: {0}", partition.Name);
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition description: {0}", partition.Description);
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition type: {0}", partition.Type);
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition starting sector: {0}", partition.Start);
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition sectors: {0}", partition.Length);
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition starting offset: {0}", partition.Offset);
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition size in bytes: {0}", partition.Size);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", Localization.Partition_sequence_0, partition.Sequence);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Partition_name_0, partition.Name);
+
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Partition_description_0,
+                                           partition.Description);
+
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Partition_type_0, partition.Type);
+
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Partition_starting_sector_0,
+                                           partition.Start);
+
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Partition_sectors_0, partition.Length);
+
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Partition_starting_offset_0,
+                                           partition.Offset);
+
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\t" + Localization.Partition_size_in_bytes_0,
+                                           partition.Size);
             }
 
             foreach(CdrdaoTrack track in _discimage.Tracks)
@@ -847,10 +873,10 @@ public sealed partial class Cdrdao
 
             _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-            AaruConsole.VerboseWriteLine("CDRDAO image describes a disc of type {0}", _imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine(Localization.CDRDAO_image_describes_a_disc_of_type_0, _imageInfo.MediaType);
 
             if(!string.IsNullOrEmpty(_imageInfo.Comments))
-                AaruConsole.VerboseWriteLine("CDRDAO comments: {0}", _imageInfo.Comments);
+                AaruConsole.VerboseWriteLine(Localization.CDRDAO_comments_0, _imageInfo.Comments);
 
             _sectorBuilder = new SectorBuilder();
 
@@ -858,8 +884,8 @@ public sealed partial class Cdrdao
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter);
-            AaruConsole.ErrorWriteLine("Exception: {0}", ex);
+            AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, imageFilter);
+            AaruConsole.ErrorWriteLine(Localization.Exception_0, ex);
 
             return ErrorNumber.UnexpectedException;
         }

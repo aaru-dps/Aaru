@@ -57,13 +57,13 @@ public sealed partial class Cdrdao
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "CDRDAO tocfile";
+    public string Name => Localization.Cdrdao_Name;
     /// <inheritdoc />
     public Guid Id => new("04D7BA12-1BE8-44D4-97A4-1B48A505463E");
     /// <inheritdoc />
     public string Format => "CDRDAO tocfile";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public List<Partition> Partitions { get; private set; }
 
@@ -191,7 +191,7 @@ public sealed partial class Cdrdao
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
-        ("separate", typeof(bool), "Write each track to a separate file.", (object)false)
+        ("separate", typeof(bool), Localization.Write_each_track_to_a_separate_file, (object)false)
     };
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]

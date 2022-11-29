@@ -43,9 +43,9 @@ public sealed partial class KryoFlux
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
-    public string Name => "KryoFlux STREAM";
+    public string Name => Localization.KryoFlux_Name;
     /// <inheritdoc />
     public Guid Id => new("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
     /// <inheritdoc />

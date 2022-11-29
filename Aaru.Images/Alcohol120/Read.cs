@@ -225,8 +225,8 @@ public sealed partial class Alcohol120
 
                 if(track is { point: 1, startLba: > 0 })
                 {
-                    AaruConsole.
-                        ErrorWriteLine("The disc this image represents contained a hidden track in the first pregap, that this image format cannot store. This dump is therefore, incorrect.");
+                    AaruConsole.ErrorWriteLine(Localization.
+                                                   The_disc_this_image_represents_contained_a_hidden_track_in_the_first_pregap_that_this_image_format_cannot_store_This_dump_is_therefore_incorrect);
 
                     track1Index1   = track.startLba;
                     track.startLba = 0;
@@ -499,7 +499,7 @@ public sealed partial class Alcohol120
             {
                 var partition = new Partition
                 {
-                    Description = $"Track {trk.point}.",
+                    Description = string.Format(Localization.Track_0, trk.point),
                     Start       = trk.startLba,
                     Size        = extra.sectors * trk.sectorSize,
                     Length      = extra.sectors,
@@ -594,32 +594,41 @@ public sealed partial class Alcohol120
                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
         }
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "printing partition map");
+        AaruConsole.DebugWriteLine("Alcohol 120% plugin", Localization.printing_partition_map);
 
         foreach(Partition partition in Partitions)
         {
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "Partition sequence: {0}", partition.Sequence);
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition name: {0}", partition.Name);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", Localization.Partition_sequence_0, partition.Sequence);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_name_0, partition.Name);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition description: {0}", partition.Description);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_description_0,
+                                       partition.Description);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition type: {0}", partition.Type);
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition starting sector: {0}", partition.Start);
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition sectors: {0}", partition.Length);
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition starting offset: {0}", partition.Offset);
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition size in bytes: {0}", partition.Size);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_type_0, partition.Type);
+
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_starting_sector_0,
+                                       partition.Start);
+
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_sectors_0,
+                                       partition.Length);
+
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_starting_offset_0,
+                                       partition.Offset);
+
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_size_in_bytes_0,
+                                       partition.Size);
         }
 
         _imageInfo.Application = "Alcohol 120%";
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "Data filename: {0}", alcFile);
+        AaruConsole.DebugWriteLine("Alcohol 120% plugin", Localization.Data_filename_0, alcFile);
 
         var filtersList = new FiltersList();
         _alcImage = filtersList.GetFilter(alcFile);
 
         if(_alcImage == null)
         {
-            AaruConsole.ErrorWriteLine("Cannot open data file");
+            AaruConsole.ErrorWriteLine(Localization.Cannot_open_data_file);
 
             return ErrorNumber.NoSuchFile;
         }
@@ -632,7 +641,7 @@ public sealed partial class Alcohol120
 
         if(!_isDvd)
         {
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "Rebuilding TOC");
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", Localization.Rebuilding_TOC);
             byte firstSession = byte.MaxValue;
             byte lastSession  = 0;
             var  tocMs        = new MemoryStream();
@@ -679,11 +688,11 @@ public sealed partial class Alcohol120
             // Wxripper unlock
             _imageInfo.MediaType = MediaType.XGD3;
 
-        AaruConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.Alcohol_120_image_describes_a_disc_of_type_0, _imageInfo.MediaType);
 
         if(oldIncorrectImage)
-            AaruConsole.
-                WriteLine("Incorrect Alcohol 120% image created by an old version of Aaru. Convert image to correct it.");
+            AaruConsole.WriteLine(Localization.
+                                      Incorrect_Alcohol_120_image_created_by_an_old_version_of_Aaru_Convert_image_to_correct_it);
 
         return ErrorNumber.NoError;
     }

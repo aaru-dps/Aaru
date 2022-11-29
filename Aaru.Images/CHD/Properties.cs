@@ -44,13 +44,13 @@ public sealed partial class Chd
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "MAME Compressed Hunks of Data";
+    public string Name => Localization.Chd_Name;
     /// <inheritdoc />
     public Guid Id => new("0D50233A-08BD-47D4-988B-27EAA0358597");
     /// <inheritdoc />
     public string Format => "Compressed Hunks of Data";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public List<Partition> Partitions => _isHdd ? null : _partitions;

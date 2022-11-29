@@ -44,11 +44,11 @@ public sealed partial class BlindWrite4
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "BlindWrite 4";
+    public string Name => Localization.BlindWrite4_Name;
     /// <inheritdoc />
     public Guid Id => new("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "BlindWrite 4 TOC file";
 

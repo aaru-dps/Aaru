@@ -71,7 +71,7 @@ public sealed partial class Partimage
         // TODO: Support multifile volumes
         if(_cVolumeHeader.volumeNumber > 0)
         {
-            AaruConsole.ErrorWriteLine("Support for multiple volumes not supported");
+            AaruConsole.ErrorWriteLine(Localization.Support_for_multiple_volumes_not_supported);
 
             return ErrorNumber.NotImplemented;
         }
@@ -206,7 +206,7 @@ public sealed partial class Partimage
         // partimage 0.6.1 does not support them either
         if(_cMainHeader.dwEncryptAlgo != PEncryption.None)
         {
-            AaruConsole.ErrorWriteLine("Encrypted images are currently not supported.");
+            AaruConsole.ErrorWriteLine(Localization.Encrypted_images_are_currently_not_supported);
 
             return ErrorNumber.NotImplemented;
         }
@@ -222,7 +222,7 @@ public sealed partial class Partimage
 
             if(!magic.Equals(MAGIC_BEGIN_MBRBACKUP))
             {
-                AaruConsole.ErrorWriteLine("Cannot find MBRs");
+                AaruConsole.ErrorWriteLine(Localization.Cannot_find_MBRs);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -239,7 +239,7 @@ public sealed partial class Partimage
 
         if(!magic.Equals(MAGIC_BEGIN_LOCALHEADER))
         {
-            AaruConsole.ErrorWriteLine("Cannot find local header");
+            AaruConsole.ErrorWriteLine(Localization.Cannot_find_local_header);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -272,7 +272,7 @@ public sealed partial class Partimage
 
         if(!magic.Equals(MAGIC_BEGIN_BITMAP))
         {
-            AaruConsole.ErrorWriteLine("Cannot find bitmap");
+            AaruConsole.ErrorWriteLine(Localization.Cannot_find_bitmap);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -286,7 +286,7 @@ public sealed partial class Partimage
 
         if(!magic.Equals(MAGIC_BEGIN_INFO))
         {
-            AaruConsole.ErrorWriteLine("Cannot find info block");
+            AaruConsole.ErrorWriteLine(Localization.Cannot_find_info_block);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -300,7 +300,7 @@ public sealed partial class Partimage
 
         if(!magic.Equals(MAGIC_BEGIN_DATABLOCKS))
         {
-            AaruConsole.ErrorWriteLine("Cannot find data blocks");
+            AaruConsole.ErrorWriteLine(Localization.Cannot_find_data_blocks);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -318,12 +318,13 @@ public sealed partial class Partimage
 
         if(!magic.Equals(MAGIC_BEGIN_TAIL))
         {
-            AaruConsole.ErrorWriteLine("Cannot find tail. Multiple volumes are not supported or image is corrupt.");
+            AaruConsole.ErrorWriteLine(Localization.
+                                           Cannot_find_tail_Multiple_volumes_are_not_supported_or_image_is_corrupt);
 
             return ErrorNumber.InvalidArgument;
         }
 
-        AaruConsole.DebugWriteLine("Partimage plugin", "Filling extents");
+        AaruConsole.DebugWriteLine("Partimage plugin", Localization.Filling_extents);
         DateTime start = DateTime.Now;
         _extents    = new ExtentsULong();
         _extentsOff = new Dictionary<ulong, ulong>();
@@ -356,7 +357,8 @@ public sealed partial class Partimage
 
         DateTime end = DateTime.Now;
 
-        AaruConsole.DebugWriteLine("Partimage plugin", "Took {0} seconds to fill extents", (end - start).TotalSeconds);
+        AaruConsole.DebugWriteLine("Partimage plugin", Localization.Took_0_seconds_to_fill_extents,
+                                   (end - start).TotalSeconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 

@@ -89,7 +89,9 @@ public sealed partial class TeleDisk
         AaruConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}", _header.DosAllocation);
         AaruConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}", _header.Sides);
         AaruConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}", _header.Crc);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCrc);
+
+        AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.calculated_header_crc_equals_0_X4,
+                                   calculatedHeaderCrc);
 
         // We need more checks as the magic is too simply.
         // This may deny legal images
@@ -98,7 +100,9 @@ public sealed partial class TeleDisk
         if(_header.Crc != calculatedHeaderCrc)
         {
             _aDiskCrcHasFailed = true;
-            AaruConsole.DebugWriteLine("TeleDisk plugin", "Calculated CRC does not coincide with stored one.");
+
+            AaruConsole.DebugWriteLine("TeleDisk plugin",
+                                       Localization.Calculated_CRC_does_not_coincide_with_stored_one);
         }
 
         if(_header.Sequence != 0x00)
@@ -169,9 +173,9 @@ public sealed partial class TeleDisk
 
             ushort cmtcrc = TeleDiskCrc(0, commentBlockForCrc);
 
-            AaruConsole.DebugWriteLine("TeleDisk plugin", "Comment header");
+            AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.Comment_header);
             AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.crc = 0x{0:X4}", _commentHeader.Crc);
-            AaruConsole.DebugWriteLine("TeleDisk plugin", "\tCalculated CRC = 0x{0:X4}", cmtcrc);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "\t" + Localization.Calculated_CRC_equals_0_X4, cmtcrc);
 
             AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.length = {0} bytes", _commentHeader.Length);
 
@@ -192,7 +196,7 @@ public sealed partial class TeleDisk
 
             _imageInfo.Comments = Encoding.ASCII.GetString(_commentBlock);
 
-            AaruConsole.DebugWriteLine("TeleDisk plugin", "Comment");
+            AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.Comment);
             AaruConsole.DebugWriteLine("TeleDisk plugin", "{0}", _imageInfo.Comments);
 
             _imageInfo.CreationTime = new DateTime(_commentHeader.Year + 1900, _commentHeader.Month + 1,
@@ -205,10 +209,12 @@ public sealed partial class TeleDisk
 
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}", _imageInfo.CreationTime);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", _imageInfo.LastModificationTime);
+        AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.Image_created_on_0, _imageInfo.CreationTime);
 
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "Parsing image");
+        AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.Image_modified_on_0,
+                                   _imageInfo.LastModificationTime);
+
+        AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.Parsing_image);
 
         _totalDiskSize       = 0;
         _imageInfo.ImageSize = 0;
@@ -281,7 +287,7 @@ public sealed partial class TeleDisk
         if(totalCylinders <= 0 ||
            totalHeads     <= 0)
         {
-            AaruConsole.ErrorWriteLine("No cylinders or heads found");
+            AaruConsole.ErrorWriteLine(Localization.No_cylinders_or_heads_found);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -351,7 +357,7 @@ public sealed partial class TeleDisk
         uint[][] spts = new uint[totalCylinders][];
 
         AaruConsole.DebugWriteLine("TeleDisk plugin",
-                                   "Found {0} cylinders and {1} heads with a maximum sector number of {2}",
+                                   Localization.Found_0_cylinders_and_1_heads_with_a_maximum_sector_number_of_2,
                                    totalCylinders, totalHeads, maxSector);
 
         // Create heads
@@ -383,22 +389,24 @@ public sealed partial class TeleDisk
 
             byte tdTrackCalculatedCrc = (byte)(TeleDiskCrc(0, tdTrackForCrc) & 0xFF);
 
-            AaruConsole.DebugWriteLine("TeleDisk plugin", "Track follows");
-            AaruConsole.DebugWriteLine("TeleDisk plugin", "\tTrack cylinder: {0}\t", teleDiskTrack.Cylinder);
-            AaruConsole.DebugWriteLine("TeleDisk plugin", "\tTrack head: {0}\t", teleDiskTrack.Head);
-            AaruConsole.DebugWriteLine("TeleDisk plugin", "\tSectors in track: {0}\t", teleDiskTrack.Sectors);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.Track_follows);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "\t" + Localization.Track_cylinder_0, teleDiskTrack.Cylinder);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "\t" + Localization.Track_head_0, teleDiskTrack.Head);
 
-            AaruConsole.DebugWriteLine("TeleDisk plugin", "\tTrack header CRC: 0x{0:X2} (calculated 0x{1:X2})\t",
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "\t" + Localization.Sectors_in_track_0,
+                                       teleDiskTrack.Sectors);
+
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "\t" + Localization.Track_header_CRC_0_X2_calculated_1_X2,
                                        teleDiskTrack.Crc, tdTrackCalculatedCrc);
 
             _aDiskCrcHasFailed |= tdTrackCalculatedCrc != teleDiskTrack.Crc;
 
             if(teleDiskTrack.Sectors == 0xFF) // End of disk image
             {
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "End of disk image arrived");
+                AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.End_of_disk_image_arrived);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes", totalSectors,
-                                           _totalDiskSize);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.Total_of_0_data_sectors_for_1_bytes,
+                                           totalSectors, _totalDiskSize);
 
                 break;
             }
@@ -417,19 +425,24 @@ public sealed partial class TeleDisk
                 teleDiskSector.Flags        = (byte)stream.ReadByte();
                 teleDiskSector.Crc          = (byte)stream.ReadByte();
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tSector follows");
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t" + Localization.Sector_follows);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark cylinder: {0}", teleDiskSector.Cylinder);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\t" + Localization.AddressMark_cylinder_0,
+                                           teleDiskSector.Cylinder);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark head: {0}", teleDiskSector.Head);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\t" + Localization.AddressMark_head_0,
+                                           teleDiskSector.Head);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark sector number: {0}",
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\t" + Localization.AddressMark_sector_number_0,
                                            teleDiskSector.SectorNumber);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector size: {0}", teleDiskSector.SectorSize);
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector flags: 0x{0:X2}", teleDiskSector.Flags);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\t" + Localization.Sector_size_0,
+                                           teleDiskSector.SectorSize);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}",
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\t" + Localization.Sector_flags_0_X2,
+                                           teleDiskSector.Flags);
+
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\t" + Localization.Sector_CRC_plus_headers_0_X2,
                                            teleDiskSector.Crc);
 
                 uint lba = (uint)((teleDiskSector.Cylinder * _header.Sides * _imageInfo.SectorsPerTrack) +
@@ -447,10 +460,10 @@ public sealed partial class TeleDisk
                     byte[] data = new byte[teleDiskData.DataSize];
                     stream.EnsureRead(data, 0, teleDiskData.DataSize);
 
-                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\t" + Localization.Data_size_in_image_0,
                                                teleDiskData.DataSize);
 
-                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\t" + Localization.Data_encoding_0_X2,
                                                teleDiskData.DataEncoding);
 
                     ErrorNumber errno = DecodeTeleDiskData(teleDiskSector.SectorSize, teleDiskData.DataEncoding, data,
@@ -464,7 +477,8 @@ public sealed partial class TeleDisk
                     if(tdSectorCalculatedCrc != teleDiskSector.Crc)
                     {
                         AaruConsole.DebugWriteLine("TeleDisk plugin",
-                                                   "Sector {0}:{3}:{4} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}",
+                                                   Localization.
+                                                       Sector_0_3_4_calculated_CRC_1_X2_differs_from_stored_CRC_2_X2,
                                                    teleDiskTrack.Cylinder, tdSectorCalculatedCrc, teleDiskSector.Crc,
                                                    teleDiskTrack.Cylinder, teleDiskSector.SectorNumber);
 
@@ -475,7 +489,7 @@ public sealed partial class TeleDisk
                 else
                     decodedData = new byte[128 << teleDiskSector.SectorSize];
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", lba);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\t" + Localization.LBA_0, lba);
 
                 if((teleDiskSector.Flags & FLAGS_SECTOR_NO_ID) == FLAGS_SECTOR_NO_ID)
                     continue;
@@ -483,8 +497,10 @@ public sealed partial class TeleDisk
                 if(_sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] != null)
                     AaruConsole.DebugWriteLine("TeleDisk plugin",
                                                (teleDiskSector.Flags & FLAGS_SECTOR_DUPLICATE) == FLAGS_SECTOR_DUPLICATE
-                                                   ? "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so"
-                                                   : "\t\tSector {0} on cylinder {1} head {2} is duplicate, but is not marked so",
+                                                   ? "\t\t" + Localization.
+                                                         Sector_0_on_cylinder_1_head_2_is_duplicate_and_marked_so
+                                                   : "\t\t" + Localization.
+                                                         Sector_0_on_cylinder_1_head_2_is_duplicate_but_is_not_marked_so,
                                                teleDiskSector.SectorNumber, teleDiskSector.Cylinder,
                                                teleDiskSector.Head);
                 else
@@ -521,10 +537,10 @@ public sealed partial class TeleDisk
 
         _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-        AaruConsole.VerboseWriteLine("TeleDisk image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.TeleDisk_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
-            AaruConsole.VerboseWriteLine("TeleDisk comments: {0}", _imageInfo.Comments);
+            AaruConsole.VerboseWriteLine(Localization.TeleDisk_comments_0, _imageInfo.Comments);
 
         _inStream.Dispose();
         stream.Dispose();

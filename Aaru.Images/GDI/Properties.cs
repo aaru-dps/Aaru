@@ -43,13 +43,13 @@ namespace Aaru.DiscImages;
 public sealed partial class Gdi
 {
     /// <inheritdoc />
-    public string Name => "Dreamcast GDI image";
+    public string Name => Localization.Gdi_Name;
     /// <inheritdoc />
     public Guid Id => new("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Dreamcast GDI image";
 

@@ -47,7 +47,7 @@ public sealed partial class ZZZRawImage
     public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreDataTracks |
                                                            OpticalImageCapabilities.CanStoreCookedData;
     /// <inheritdoc />
-    public string Name => "Raw Disk Image";
+    public string Name => Localization.ZZZRawImage_Name;
 
     // Non-random UUID to recognize this specific plugin
     /// <inheritdoc />
@@ -55,7 +55,7 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Raw disk image (sector by sector copy)";
 

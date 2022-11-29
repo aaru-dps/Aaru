@@ -45,11 +45,11 @@ public sealed partial class Vdi
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "VirtualBox Disk Image";
+    public string Name => Localization.Vdi_Name;
     /// <inheritdoc />
     public Guid Id => new("E314DE35-C103-48A3-AD36-990F68523C46");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "VDI";
     /// <inheritdoc />

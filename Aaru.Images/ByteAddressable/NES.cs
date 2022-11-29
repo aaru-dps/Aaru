@@ -36,7 +36,7 @@ public class Nes : IByteAddressableImage
     byte          _submapper;
     bool          _trainer;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
@@ -48,7 +48,7 @@ public class Nes : IByteAddressableImage
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "iNES";
+    public string Name => Localization.Nes_Name;
 
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
@@ -178,32 +178,32 @@ public class Nes : IByteAddressableImage
 
         StringBuilder sb = new();
 
-        sb.AppendFormat("PRG ROM size: {0} bytes", _prgLen).AppendLine();
-        sb.AppendFormat("CHR ROM size: {0} bytes", _chrLen).AppendLine();
-        sb.AppendFormat("Trainer size: {0} bytes", trainerLen).AppendLine();
-        sb.AppendFormat("Mapper: {0}", _nesHeaderInfo.Mapper).AppendLine();
+        sb.AppendFormat(Localization.PRG_ROM_size_0_bytes, _prgLen).AppendLine();
+        sb.AppendFormat(Localization.CHR_ROM_size_0_bytes, _chrLen).AppendLine();
+        sb.AppendFormat(Localization.Trainer_size_0_bytes, trainerLen).AppendLine();
+        sb.AppendFormat(Localization.Mapper_0, _nesHeaderInfo.Mapper).AppendLine();
 
         if(_nesHeaderInfo.BatteryPresent)
-            sb.AppendLine("Has battery backed RAM");
+            sb.AppendLine(Localization.Has_battery_backed_RAM);
 
         if(_nesHeaderInfo.FourScreenMode)
-            sb.AppendLine("Uses four-screen VRAM");
+            sb.AppendLine(Localization.Uses_four_screen_VRAM);
         else if(_nesHeaderInfo.NametableMirroring)
-            sb.AppendLine("Uses vertical mirroring");
+            sb.AppendLine(Localization.Uses_vertical_mirroring);
         else
-            sb.AppendLine("Uses horizontal mirroring");
+            sb.AppendLine(Localization.Uses_horizontal_mirroring);
 
         switch(_nesHeaderInfo.ConsoleType)
         {
             // TODO: Proper media types
             case NesConsoleType.Vs:
-                sb.AppendLine("VS Unisystem game");
+                sb.AppendLine(Localization.VS_Unisystem_game);
 
                 break;
             case NesConsoleType.Playchoice:
-                sb.AppendLine("PlayChoice-10 game");
-                sb.AppendFormat("INST-ROM size: {0} bytes", _instRomLen & 0xF).AppendLine();
-                sb.AppendFormat("PROM size: 0x{0} bytes", _promLen).AppendLine();
+                sb.AppendLine(Localization.PlayChoice_10_game);
+                sb.AppendFormat(Localization.INST_ROM_size_0_bytes, _instRomLen & 0xF).AppendLine();
+                sb.AppendFormat(Localization.PROM_size_0_bytes, _promLen).AppendLine();
 
                 break;
 
@@ -212,40 +212,40 @@ public class Nes : IByteAddressableImage
                 switch(_nesHeaderInfo.ExtendedConsoleType)
                 {
                     case NesExtendedConsoleType.Vs:
-                        sb.AppendLine("VS Unisystem game");
+                        sb.AppendLine(Localization.VS_Unisystem_game);
 
                         break;
 
                     case NesExtendedConsoleType.Normal: break;
                     case NesExtendedConsoleType.Playchoice:
-                        sb.AppendLine("PlayChoice-10 game");
-                        sb.AppendFormat("INST-ROM size: {0} bytes", _instRomLen & 0xF).AppendLine();
-                        sb.AppendFormat("PROM size: 0x{0} bytes", _promLen).AppendLine();
+                        sb.AppendLine(Localization.PlayChoice_10_game);
+                        sb.AppendFormat(Localization.INST_ROM_size_0_bytes, _instRomLen & 0xF).AppendLine();
+                        sb.AppendFormat(Localization.PROM_size_0_bytes, _promLen).AppendLine();
 
                         break;
                     case NesExtendedConsoleType.VT01_Monochrome:
                     case NesExtendedConsoleType.VT01:
-                        sb.AppendLine("V.R. Technology VT01");
+                        sb.AppendLine(Localization.VR_Technology_VT01);
 
                         break;
                     case NesExtendedConsoleType.VT02:
-                        sb.AppendLine("V.R. Technology VT02");
+                        sb.AppendLine(Localization.VR_Technology_VT02);
 
                         break;
                     case NesExtendedConsoleType.VT03:
-                        sb.AppendLine("V.R. Technology VT03");
+                        sb.AppendLine(Localization.VR_Technology_VT03);
 
                         break;
                     case NesExtendedConsoleType.VT09:
-                        sb.AppendLine("V.R. Technology VT09");
+                        sb.AppendLine(Localization.VR_Technology_VT09);
 
                         break;
                     case NesExtendedConsoleType.VT32:
-                        sb.AppendLine("V.R. Technology VT32");
+                        sb.AppendLine(Localization.VR_Technology_VT32);
 
                         break;
                     case NesExtendedConsoleType.VT369:
-                        sb.AppendLine("V.R. Technology VT369");
+                        sb.AppendLine(Localization.VR_Technology_VT369);
 
                         break;
                 }
@@ -291,14 +291,14 @@ public class Nes : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -406,7 +406,7 @@ public class Nes : IByteAddressableImage
     {
         if(_opened)
         {
-            ErrorMessage = "Cannot create an opened image";
+            ErrorMessage = Localization.Cannot_create_an_opened_image;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -414,7 +414,7 @@ public class Nes : IByteAddressableImage
         if(mediaType != MediaType.FamicomGamePak &&
            mediaType != MediaType.NESGamePak)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return ErrorNumber.NotSupported;
         }
@@ -431,7 +431,7 @@ public class Nes : IByteAddressableImage
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return ErrorNumber.InOutError;
         }
@@ -452,7 +452,7 @@ public class Nes : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
@@ -579,14 +579,14 @@ public class Nes : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -611,21 +611,21 @@ public class Nes : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -651,14 +651,14 @@ public class Nes : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
@@ -771,21 +771,21 @@ public class Nes : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -811,28 +811,28 @@ public class Nes : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }

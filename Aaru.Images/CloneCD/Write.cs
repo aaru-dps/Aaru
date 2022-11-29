@@ -53,7 +53,7 @@ public sealed partial class CloneCd
     {
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -76,7 +76,7 @@ public sealed partial class CloneCd
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return false;
         }
@@ -96,7 +96,7 @@ public sealed partial class CloneCd
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -112,7 +112,7 @@ public sealed partial class CloneCd
 
                 return true;
             default:
-                ErrorMessage = $"Unsupported media tag {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_media_tag_0, tag);
 
                 return false;
         }
@@ -123,13 +123,13 @@ public sealed partial class CloneCd
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         // TODO: Implement ECC generation
-        ErrorMessage = "This format requires sectors to be raw. Generating ECC is not yet implemented";
+        ErrorMessage = Localization.This_format_requires_sectors_to_be_raw_Generating_ECC_is_not_yet_implemented;
 
         return false;
     }
@@ -139,13 +139,13 @@ public sealed partial class CloneCd
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         // TODO: Implement ECC generation
-        ErrorMessage = "This format requires sectors to be raw. Generating ECC is not yet implemented";
+        ErrorMessage = Localization.This_format_requires_sectors_to_be_raw_Generating_ECC_is_not_yet_implemented;
 
         return false;
     }
@@ -155,7 +155,7 @@ public sealed partial class CloneCd
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -164,14 +164,14 @@ public sealed partial class CloneCd
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -190,7 +190,7 @@ public sealed partial class CloneCd
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -199,21 +199,21 @@ public sealed partial class CloneCd
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -265,7 +265,7 @@ public sealed partial class CloneCd
 
                     break;
                 default:
-                    ErrorMessage = $"Unsupported subchannel type {newTrack.SubchannelType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_subchannel_type_0, newTrack.SubchannelType);
 
                     return false;
             }
@@ -288,7 +288,7 @@ public sealed partial class CloneCd
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -351,8 +351,8 @@ public sealed partial class CloneCd
 
                     break;
                 default:
-                    ErrorMessage = $"Unexpected first session track type {firstSessionTrack?.Type.ToString() ?? "null"
-                    }";
+                    ErrorMessage = string.Format(Localization.Unexpected_first_session_track_type_0,
+                                                 firstSessionTrack?.Type.ToString() ?? "null");
 
                     return false;
             }
@@ -410,7 +410,7 @@ public sealed partial class CloneCd
     /// <inheritdoc />
     public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -420,7 +420,7 @@ public sealed partial class CloneCd
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -429,7 +429,7 @@ public sealed partial class CloneCd
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -440,7 +440,7 @@ public sealed partial class CloneCd
             {
                 if(data.Length != 1)
                 {
-                    ErrorMessage = "Incorrect data size for track flags";
+                    ErrorMessage = Localization.Incorrect_data_size_for_track_flags;
 
                     return false;
                 }
@@ -453,15 +453,16 @@ public sealed partial class CloneCd
             {
                 if(track.SubchannelType == 0)
                 {
-                    ErrorMessage = $"Trying to write subchannel to track {track.Sequence
-                    }, that does not have subchannel";
+                    ErrorMessage =
+                        string.Format(Localization.Trying_to_write_subchannel_to_track_0_that_does_not_have_subchannel,
+                                      track.Sequence);
 
                     return false;
                 }
 
                 if(data.Length != 96)
                 {
-                    ErrorMessage = "Incorrect data size for subchannel";
+                    ErrorMessage = Localization.Incorrect_data_size_for_subchannel;
 
                     return false;
                 }
@@ -474,7 +475,8 @@ public sealed partial class CloneCd
                     }
                     catch(IOException e)
                     {
-                        ErrorMessage = $"Could not create subchannel file, exception {e.Message}";
+                        ErrorMessage = string.Format(Localization.Could_not_create_subchannel_file_exception_0,
+                                                     e.Message);
 
                         return false;
                     }
@@ -487,7 +489,7 @@ public sealed partial class CloneCd
                 return true;
             }
             default:
-                ErrorMessage = $"Unsupported tag type {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_tag_type_0, tag);
 
                 return false;
         }
@@ -498,7 +500,7 @@ public sealed partial class CloneCd
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -507,7 +509,7 @@ public sealed partial class CloneCd
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -520,15 +522,16 @@ public sealed partial class CloneCd
             {
                 if(track.SubchannelType == 0)
                 {
-                    ErrorMessage = $"Trying to write subchannel to track {track.Sequence
-                    }, that does not have subchannel";
+                    ErrorMessage =
+                        string.Format(Localization.Trying_to_write_subchannel_to_track_0_that_does_not_have_subchannel,
+                                      track.Sequence);
 
                     return false;
                 }
 
                 if(data.Length % 96 != 0)
                 {
-                    ErrorMessage = "Incorrect data size for subchannel";
+                    ErrorMessage = Localization.Incorrect_data_size_for_subchannel;
 
                     return false;
                 }
@@ -541,7 +544,8 @@ public sealed partial class CloneCd
                     }
                     catch(IOException e)
                     {
-                        ErrorMessage = $"Could not create subchannel file, exception {e.Message}";
+                        ErrorMessage = string.Format(Localization.Could_not_create_subchannel_file_exception_0,
+                                                     e.Message);
 
                         return false;
                     }
@@ -554,7 +558,7 @@ public sealed partial class CloneCd
                 return true;
             }
             default:
-                ErrorMessage = $"Unsupported tag type {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_tag_type_0, tag);
 
                 return false;
         }

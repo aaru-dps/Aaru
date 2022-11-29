@@ -65,7 +65,9 @@ public sealed partial class Apple2Mg
         if(_imageHeader.DataSize == 0x00800C00)
         {
             _imageHeader.DataSize = 0x000C8000;
-            AaruConsole.DebugWriteLine("2MG plugin", "Detected incorrect endian on data size field, correcting.");
+
+            AaruConsole.DebugWriteLine("2MG plugin",
+                                       Localization.Detected_incorrect_endian_on_data_size_field_correcting);
         }
 
         AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
@@ -188,7 +190,7 @@ public sealed partial class Apple2Mg
             CREATOR_CIDER   => "CiderPress",
             CREATOR_DIC     => "DiscImageChef",
             CREATOR_AARU    => "Aaru",
-            _               => $"Unknown creator code \"{Encoding.ASCII.GetString(creator)}\""
+            _               => string.Format(Localization.Unknown_creator_code_0, Encoding.ASCII.GetString(creator))
         };
 
         _imageInfo.Version = _imageHeader.Version.ToString();
@@ -212,10 +214,10 @@ public sealed partial class Apple2Mg
 
         _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-        AaruConsole.VerboseWriteLine("2MG image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization._2MG_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
-            AaruConsole.VerboseWriteLine("2MG comments: {0}", _imageInfo.Comments);
+            AaruConsole.VerboseWriteLine(Localization._2MG_comments_0, _imageInfo.Comments);
 
         switch(_imageInfo.MediaType)
         {

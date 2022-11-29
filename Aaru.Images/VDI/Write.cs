@@ -52,21 +52,21 @@ public sealed partial class Vdi
     {
         if(sectorSize != 512)
         {
-            ErrorMessage = "Unsupported sector size";
+            ErrorMessage = Localization.Unsupported_sector_size;
 
             return false;
         }
 
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
 
         if(sectors * sectorSize / DEFAULT_BLOCK_SIZE > uint.MaxValue)
         {
-            ErrorMessage = "Too many sectors for selected cluster size";
+            ErrorMessage = Localization.Too_many_sectors_for_selected_cluster_size;
 
             return false;
         }
@@ -84,7 +84,7 @@ public sealed partial class Vdi
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return false;
         }
@@ -132,7 +132,7 @@ public sealed partial class Vdi
     /// <inheritdoc />
     public bool WriteMediaTag(byte[] data, MediaTagType tag)
     {
-        ErrorMessage = "Writing media tags is not supported.";
+        ErrorMessage = Localization.Writing_media_tags_is_not_supported;
 
         return false;
     }
@@ -142,21 +142,21 @@ public sealed partial class Vdi
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length != _imageInfo.SectorSize)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress >= _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
@@ -195,21 +195,21 @@ public sealed partial class Vdi
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length % _imageInfo.SectorSize != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress + length > _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
@@ -235,7 +235,7 @@ public sealed partial class Vdi
     /// <inheritdoc />
     public bool WriteSectorLong(byte[] data, ulong sectorAddress)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -243,7 +243,7 @@ public sealed partial class Vdi
     /// <inheritdoc />
     public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -253,7 +253,7 @@ public sealed partial class Vdi
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -327,7 +327,7 @@ public sealed partial class Vdi
     /// <inheritdoc />
     public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -335,7 +335,7 @@ public sealed partial class Vdi
     /// <inheritdoc />
     public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }

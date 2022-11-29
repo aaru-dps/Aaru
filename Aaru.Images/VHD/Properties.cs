@@ -45,11 +45,11 @@ public sealed partial class Vhd
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "VirtualPC";
+    public string Name => Localization.Vhd_Name;
     /// <inheritdoc />
     public Guid Id => new("8014d88f-64cd-4484-9441-7635c632958a");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public string Format => _thisFooter.DiskType switch

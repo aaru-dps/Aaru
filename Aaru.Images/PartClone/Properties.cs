@@ -40,13 +40,13 @@ namespace Aaru.DiscImages;
 public sealed partial class PartClone
 {
     /// <inheritdoc />
-    public string Name => "PartClone disk image";
+    public string Name => Localization.PartClone_Name;
     /// <inheritdoc />
     public Guid Id => new("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "PartClone";
     /// <inheritdoc />

@@ -53,7 +53,7 @@ public sealed partial class Alcohol120
     {
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -76,7 +76,7 @@ public sealed partial class Alcohol120
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return false;
         }
@@ -144,7 +144,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -154,7 +154,8 @@ public sealed partial class Alcohol120
             case MediaTagType.CD_FullTOC:
                 if(_isDvd)
                 {
-                    ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_media_tag_0_for_medium_type_1, tag,
+                                                 _imageInfo.MediaType);
 
                     return false;
                 }
@@ -165,7 +166,8 @@ public sealed partial class Alcohol120
             case MediaTagType.DVD_PFI:
                 if(!_isDvd)
                 {
-                    ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_media_tag_0_for_medium_type_1, tag,
+                                                 _imageInfo.MediaType);
 
                     return false;
                 }
@@ -176,7 +178,8 @@ public sealed partial class Alcohol120
             case MediaTagType.DVD_DMI:
                 if(!_isDvd)
                 {
-                    ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_media_tag_0_for_medium_type_1, tag,
+                                                 _imageInfo.MediaType);
 
                     return false;
                 }
@@ -187,7 +190,8 @@ public sealed partial class Alcohol120
             case MediaTagType.DVD_BCA:
                 if(!_isDvd)
                 {
-                    ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_media_tag_0_for_medium_type_1, tag,
+                                                 _imageInfo.MediaType);
 
                     return false;
                 }
@@ -196,7 +200,7 @@ public sealed partial class Alcohol120
 
                 return true;
             default:
-                ErrorMessage = $"Unsupported media tag {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_media_tag_0, tag);
 
                 return false;
         }
@@ -207,7 +211,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -217,28 +221,28 @@ public sealed partial class Alcohol120
 
         if(!_isDvd)
         {
-            ErrorMessage = "Cannot write non-long sectors to CD images.";
+            ErrorMessage = Localization.Cannot_write_non_long_sectors_to_CD_images;
 
             return false;
         }
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         if(track.BytesPerSector != track.RawBytesPerSector)
         {
-            ErrorMessage = "Invalid write mode for this sector";
+            ErrorMessage = Localization.Invalid_write_mode_for_this_sector;
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -257,14 +261,14 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(!_isDvd)
         {
-            ErrorMessage = "Cannot write non-long sectors to CD images.";
+            ErrorMessage = Localization.Cannot_write_non_long_sectors_to_CD_images;
 
             return false;
         }
@@ -274,28 +278,28 @@ public sealed partial class Alcohol120
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         if(track.BytesPerSector != track.RawBytesPerSector)
         {
-            ErrorMessage = "Invalid write mode for this sector";
+            ErrorMessage = Localization.Invalid_write_mode_for_this_sector;
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -328,7 +332,7 @@ public sealed partial class Alcohol120
 
                 return true;
             default:
-                ErrorMessage = "Invalid subchannel mode for this sector";
+                ErrorMessage = Localization.Invalid_subchannel_mode_for_this_sector;
 
                 return false;
         }
@@ -339,7 +343,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -349,14 +353,14 @@ public sealed partial class Alcohol120
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -377,7 +381,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -387,21 +391,21 @@ public sealed partial class Alcohol120
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -471,7 +475,7 @@ public sealed partial class Alcohol120
 
                     break;
                 default:
-                    ErrorMessage = $"Unsupported subchannel type {track.SubchannelType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_subchannel_type_0, track.SubchannelType);
 
                     return false;
             }
@@ -492,7 +496,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -1031,7 +1035,7 @@ public sealed partial class Alcohol120
     /// <inheritdoc />
     public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -1041,7 +1045,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -1051,7 +1055,7 @@ public sealed partial class Alcohol120
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -1062,7 +1066,7 @@ public sealed partial class Alcohol120
             {
                 if(data.Length != 1)
                 {
-                    ErrorMessage = "Incorrect data size for track flags";
+                    ErrorMessage = Localization.Incorrect_data_size_for_track_flags;
 
                     return false;
                 }
@@ -1075,15 +1079,16 @@ public sealed partial class Alcohol120
             {
                 if(track.SubchannelType == 0)
                 {
-                    ErrorMessage = $"Trying to write subchannel to track {track.Sequence
-                    }, that does not have subchannel";
+                    ErrorMessage =
+                        string.Format(Localization.Trying_to_write_subchannel_to_track_0_that_does_not_have_subchannel,
+                                      track.Sequence);
 
                     return false;
                 }
 
                 if(data.Length != 96)
                 {
-                    ErrorMessage = "Incorrect data size for subchannel";
+                    ErrorMessage = Localization.Incorrect_data_size_for_subchannel;
 
                     return false;
                 }
@@ -1097,7 +1102,7 @@ public sealed partial class Alcohol120
                 return true;
             }
             default:
-                ErrorMessage = $"Unsupported tag type {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_tag_type_0, tag);
 
                 return false;
         }
@@ -1108,7 +1113,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -1118,7 +1123,7 @@ public sealed partial class Alcohol120
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -1130,15 +1135,16 @@ public sealed partial class Alcohol120
             {
                 if(track.SubchannelType == 0)
                 {
-                    ErrorMessage = $"Trying to write subchannel to track {track.Sequence
-                    }, that does not have subchannel";
+                    ErrorMessage =
+                        string.Format(Localization.Trying_to_write_subchannel_to_track_0_that_does_not_have_subchannel,
+                                      track.Sequence);
 
                     return false;
                 }
 
                 if(data.Length % 96 != 0)
                 {
-                    ErrorMessage = "Incorrect data size for subchannel";
+                    ErrorMessage = Localization.Incorrect_data_size_for_subchannel;
 
                     return false;
                 }
@@ -1155,7 +1161,7 @@ public sealed partial class Alcohol120
                 return true;
             }
             default:
-                ErrorMessage = $"Unsupported tag type {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_tag_type_0, tag);
 
                 return false;
         }

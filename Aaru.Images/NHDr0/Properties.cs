@@ -42,13 +42,13 @@ namespace Aaru.DiscImages;
 public sealed partial class Nhdr0
 {
     /// <inheritdoc />
-    public string Name => "T98-Next NHD r0 Disk Image";
+    public string Name => Localization.Nhdr0_Name;
     /// <inheritdoc />
     public Guid Id => new("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "NHDr0 disk image";
     /// <inheritdoc />

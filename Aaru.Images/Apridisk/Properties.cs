@@ -45,11 +45,11 @@ public sealed partial class Apridisk
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "ACT Apricot Disk Image";
+    public string Name => Localization.Apridisk_Name;
     /// <inheritdoc />
     public Guid Id => new("43408CF3-6DB3-449F-A779-2B0E497C5B14");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "ACT Apricot disk image";
 
@@ -78,7 +78,7 @@ public sealed partial class Apridisk
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
-        ("compress", typeof(bool), "Enable Apridisk compression.", (object)false)
+        ("compress", typeof(bool), Localization.Enable_Apridisk_compression, (object)false)
     };
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]

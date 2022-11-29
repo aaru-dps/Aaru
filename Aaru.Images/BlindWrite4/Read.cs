@@ -433,13 +433,13 @@ public sealed partial class BlindWrite4
                 if(_dataFilter != null)
                     break;
 
-                AaruConsole.ErrorWriteLine($"Data file {_header.DataFile} not found");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Data_file_0_not_found, _header.DataFile));
 
                 return ErrorNumber.NoSuchFile;
             }
         else
         {
-            AaruConsole.ErrorWriteLine("Unable to find data file");
+            AaruConsole.ErrorWriteLine(Localization.Unable_to_find_data_file);
 
             return ErrorNumber.NoSuchFile;
         }
@@ -782,10 +782,10 @@ public sealed partial class BlindWrite4
 
         _imageInfo.Comments = _header.Comments;
 
-        AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.BlindWrite_image_describes_a_disc_of_type_0, _imageInfo.MediaType);
 
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
-            AaruConsole.VerboseWriteLine("BlindWrite comments: {0}", _imageInfo.Comments);
+            AaruConsole.VerboseWriteLine(Localization.BlindWrite_comments_0, _imageInfo.Comments);
 
         return ErrorNumber.NoError;
     }

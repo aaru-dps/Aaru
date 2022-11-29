@@ -71,7 +71,7 @@ public sealed partial class PartClone
         AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.usedBlocks = {0}", _pHdr.usedBlocks);
 
         _byteMap = new byte[_pHdr.totalBlocks];
-        AaruConsole.DebugWriteLine("PartClone plugin", "Reading bytemap {0} bytes", _byteMap.Length);
+        AaruConsole.DebugWriteLine("PartClone plugin", Localization.Reading_bytemap_0_bytes, _byteMap.Length);
         stream.EnsureRead(_byteMap, 0, _byteMap.Length);
 
         byte[] bitmagic = new byte[8];
@@ -81,7 +81,7 @@ public sealed partial class PartClone
 
         if(!_biTmAgIc.SequenceEqual(bitmagic))
         {
-            AaruConsole.ErrorWriteLine("Could not find partclone BiTmAgIc, not continuing...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_find_partclone_BiTmAgIc_not_continuing);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -89,7 +89,7 @@ public sealed partial class PartClone
         _dataOff = stream.Position;
         AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.dataOff = {0}", _dataOff);
 
-        AaruConsole.DebugWriteLine("PartClone plugin", "Filling extents");
+        AaruConsole.DebugWriteLine("PartClone plugin", Localization.Filling_extents);
         DateTime start = DateTime.Now;
         _extents    = new ExtentsULong();
         _extentsOff = new Dictionary<ulong, ulong>();
@@ -122,7 +122,8 @@ public sealed partial class PartClone
 
         DateTime end = DateTime.Now;
 
-        AaruConsole.DebugWriteLine("PartClone plugin", "Took {0} seconds to fill extents", (end - start).TotalSeconds);
+        AaruConsole.DebugWriteLine("PartClone plugin", Localization.Took_0_seconds_to_fill_extents,
+                                   (end - start).TotalSeconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 

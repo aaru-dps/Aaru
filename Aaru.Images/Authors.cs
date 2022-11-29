@@ -1,15 +1,11 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Properties.cs
+// Filename       : Authors.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disk image plugins.
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Contains properties for Spectrum FDI disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,27 +26,13 @@
 // Copyright © 2011-2022 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using Aaru.CommonTypes.Structs;
-using Schemas;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.DiscImages;
 
-public sealed partial class UkvFdi
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+static class Authors
 {
-    /// <inheritdoc />
-    public string Name => Localization.UkvFdi_Name;
-    /// <inheritdoc />
-    public Guid Id => new("DADFC9B2-67C1-42A3-B124-825528163FC0");
-    /// <inheritdoc />
-    public string Format => "Spectrum floppy disk image";
-    /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
-    /// <inheritdoc />
-    public ImageInfo Info => _imageInfo;
-    /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
-    /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    internal const string MichaelDruing = "Michael Drüing";
+    internal const string NataliaPortillo = "Natalia Portillo";
 }

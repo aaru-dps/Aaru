@@ -72,7 +72,7 @@ public sealed partial class Parallels
         _extended = _extMagic.SequenceEqual(_pHdr.magic);
         AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", _extended);
 
-        AaruConsole.DebugWriteLine("Parallels plugin", "Reading BAT");
+        AaruConsole.DebugWriteLine("Parallels plugin", Localization.Reading_BAT);
         _bat = new uint[_pHdr.bat_entries];
         byte[] batB = new byte[_pHdr.bat_entries * 4];
         stream.EnsureRead(batB, 0, batB.Length);

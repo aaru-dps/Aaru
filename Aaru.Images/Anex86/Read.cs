@@ -62,7 +62,7 @@ public sealed partial class Anex86
         if(_imageInfo.MediaType == MediaType.Unknown)
             _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-        AaruConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", _imageInfo.MediaType);
+        AaruConsole.DebugWriteLine("Anex86 plugin", Localization.MediaType_0, _imageInfo.MediaType);
 
         _imageInfo.ImageSize            = (ulong)_header.dskSize;
         _imageInfo.CreationTime         = imageFilter.CreationTime;

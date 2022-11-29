@@ -40,7 +40,7 @@ namespace Aaru.DiscImages;
 public sealed partial class D88
 {
     /// <inheritdoc />
-    public string Name => "D88 Disk Image";
+    public string Name => Localization.D88_Name;
     /// <inheritdoc />
     public Guid Id => new("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
     /// <inheritdoc />
@@ -48,7 +48,7 @@ public sealed partial class D88
     /// <inheritdoc />
     public string Format => "D88 disk image";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public List<DumpHardwareType> DumpHardware => null;
     /// <inheritdoc />

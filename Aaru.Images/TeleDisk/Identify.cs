@@ -80,7 +80,9 @@ public sealed partial class TeleDisk
         AaruConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}", _header.DosAllocation);
         AaruConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}", _header.Sides);
         AaruConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}", _header.Crc);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCrc);
+
+        AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.calculated_header_crc_equals_0_X4,
+                                   calculatedHeaderCrc);
 
         // We need more checks as the magic is too simply.
         // This may deny legal images

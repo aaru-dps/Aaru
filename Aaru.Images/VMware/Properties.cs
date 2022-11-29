@@ -45,11 +45,11 @@ public sealed partial class VMware
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "VMware disk image";
+    public string Name => Localization.VMware_Name;
     /// <inheritdoc />
     public Guid Id => new("E314DE35-C103-48A3-AD36-990F68523C46");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "VMware";
     /// <inheritdoc />
@@ -70,11 +70,10 @@ public sealed partial class VMware
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
-        ("adapter_type", typeof(string), "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.",
-         "ide"),
-        ("hwversion", typeof(uint), "VDMK hardware version.", 4),
-        ("sparse", typeof(bool), "Use sparse extents.", false),
-        ("split", typeof(bool), "Split data file at 2GiB.", (object)false)
+        ("adapter_type", typeof(string), Localization.Type_of_adapter_type, "ide"),
+        ("hwversion", typeof(uint), Localization.VDMK_hardware_version, 4),
+        ("sparse", typeof(bool), Localization.VMware_SupportedOptions_Use_sparse_extents, false),
+        ("split", typeof(bool), Localization.Split_data_file_at_2GiB, (object)false)
     };
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]

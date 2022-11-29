@@ -79,7 +79,8 @@ public sealed partial class DiscFerret
 
             if(stream.Position + blockHeader.length > stream.Length)
             {
-                AaruConsole.DebugWriteLine("DiscFerret plugin", "Invalid track block found at {0}", thisOffset);
+                AaruConsole.DebugWriteLine("DiscFerret plugin", Localization.Invalid_track_block_found_at_0,
+                                           thisOffset);
 
                 break;
             }
@@ -119,7 +120,7 @@ public sealed partial class DiscFerret
         _imageInfo.Application        = "DiscFerret";
         _imageInfo.ApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
 
-        AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
+        AaruConsole.ErrorWriteLine(Localization.Flux_decoding_is_not_yet_implemented);
 
         return ErrorNumber.NotImplemented;
     }

@@ -40,13 +40,13 @@ namespace Aaru.DiscImages;
 public sealed partial class Imd
 {
     /// <inheritdoc />
-    public string Name => "Dunfield's IMD";
+    public string Name => Localization.Imd_Name;
     /// <inheritdoc />
     public Guid Id => new("0D67162E-38A3-407D-9B1A-CF40080A48CB");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "IMageDisk";
     /// <inheritdoc />

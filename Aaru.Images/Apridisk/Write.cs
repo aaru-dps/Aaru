@@ -51,7 +51,7 @@ public sealed partial class Apridisk
     {
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -69,7 +69,7 @@ public sealed partial class Apridisk
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return false;
         }
@@ -83,7 +83,7 @@ public sealed partial class Apridisk
     /// <inheritdoc />
     public bool WriteMediaTag(byte[] data, MediaTagType tag)
     {
-        ErrorMessage = "Writing media tags is not supported.";
+        ErrorMessage = Localization.Writing_media_tags_is_not_supported;
 
         return false;
     }
@@ -95,21 +95,21 @@ public sealed partial class Apridisk
 
         if(cylinder >= _sectorsData.Length)
         {
-            ErrorMessage = "Sector address not found";
+            ErrorMessage = Localization.Sector_address_not_found;
 
             return false;
         }
 
         if(head >= _sectorsData[cylinder].Length)
         {
-            ErrorMessage = "Sector address not found";
+            ErrorMessage = Localization.Sector_address_not_found;
 
             return false;
         }
 
         if(sector > _sectorsData[cylinder][head].Length)
         {
-            ErrorMessage = "Sector address not found";
+            ErrorMessage = Localization.Sector_address_not_found;
 
             return false;
         }
@@ -128,21 +128,21 @@ public sealed partial class Apridisk
 
             if(cylinder >= _sectorsData.Length)
             {
-                ErrorMessage = "Sector address not found";
+                ErrorMessage = Localization.Sector_address_not_found;
 
                 return false;
             }
 
             if(head >= _sectorsData[cylinder].Length)
             {
-                ErrorMessage = "Sector address not found";
+                ErrorMessage = Localization.Sector_address_not_found;
 
                 return false;
             }
 
             if(sector > _sectorsData[cylinder][head].Length)
             {
-                ErrorMessage = "Sector address not found";
+                ErrorMessage = Localization.Sector_address_not_found;
 
                 return false;
             }
@@ -156,7 +156,7 @@ public sealed partial class Apridisk
     /// <inheritdoc />
     public bool WriteSectorLong(byte[] data, ulong sectorAddress)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -164,7 +164,7 @@ public sealed partial class Apridisk
     /// <inheritdoc />
     public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -274,21 +274,21 @@ public sealed partial class Apridisk
     {
         if(cylinders > ushort.MaxValue)
         {
-            ErrorMessage = "Too many cylinders";
+            ErrorMessage = Localization.Too_many_cylinders;
 
             return false;
         }
 
         if(heads > byte.MaxValue)
         {
-            ErrorMessage = "Too many heads";
+            ErrorMessage = Localization.Too_many_heads;
 
             return false;
         }
 
         if(sectorsPerTrack > byte.MaxValue)
         {
-            ErrorMessage = "Too many sectors per track";
+            ErrorMessage = Localization.Too_many_sectors_per_track;
 
             return false;
         }
@@ -313,7 +313,7 @@ public sealed partial class Apridisk
     /// <inheritdoc />
     public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -321,7 +321,7 @@ public sealed partial class Apridisk
     /// <inheritdoc />
     public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }

@@ -43,11 +43,11 @@ public sealed partial class Vhdx
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "Microsoft VHDX";
+    public string Name => Localization.Vhdx_Name;
     /// <inheritdoc />
     public Guid Id => new("536B141B-D09C-4799-AB70-34631286EB9D");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "VHDX";
     /// <inheritdoc />

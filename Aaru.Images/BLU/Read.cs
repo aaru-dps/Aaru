@@ -144,7 +144,7 @@ public sealed partial class Blu
         if(_bptag > 0)
             _imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
 
-        AaruConsole.VerboseWriteLine("BLU image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.BLU_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         return ErrorNumber.NoError;
     }

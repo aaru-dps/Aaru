@@ -82,9 +82,9 @@ public sealed partial class Cpcdsk
             return ErrorNumber.InvalidArgument;
 
         _extended = string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) == 0;
-        AaruConsole.DebugWriteLine("CPCDSK plugin", "Extended = {0}", _extended);
+        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.Extended_equals_0, _extended);
 
-        AaruConsole.DebugWriteLine("CPCDSK plugin", "magic = \"{0}\"", magic);
+        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.magic_equals_0_quoted, magic);
 
         AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"", StringHandlers.CToString(header.magic));
 
@@ -100,7 +100,7 @@ public sealed partial class Cpcdsk
             for(int i = 0; i < header.tracks; i++)
             {
                 for(int j = 0; j < header.sides; j++)
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "Track {0} Side {1} size = {2}", i, j,
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.Track_0_Side_1_size_equals_2, i, j,
                                                header.tracksizeTable[(i * header.sides) + j] * 256);
             }
 
@@ -131,7 +131,7 @@ public sealed partial class Cpcdsk
                 if(string.Compare(TRACK_ID, Encoding.ASCII.GetString(trackInfo.magic),
                                   StringComparison.InvariantCultureIgnoreCase) != 0)
                 {
-                    AaruConsole.ErrorWriteLine("Not the expected track info.");
+                    AaruConsole.ErrorWriteLine(Localization.Not_the_expected_track_info);
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -262,9 +262,9 @@ public sealed partial class Cpcdsk
             }
         }
 
-        AaruConsole.DebugWriteLine("CPCDSK plugin", "Read {0} sectors", _sectors.Count);
-        AaruConsole.DebugWriteLine("CPCDSK plugin", "Read {0} tracks", readtracks);
-        AaruConsole.DebugWriteLine("CPCDSK plugin", "All tracks are same size? {0}", allTracksSameSize);
+        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.Read_0_sectors, _sectors.Count);
+        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.Read_0_tracks, readtracks);
+        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.All_tracks_are_same_size_0, allTracksSameSize);
 
         _imageInfo.Application          = StringHandlers.CToString(header.creator);
         _imageInfo.CreationTime         = imageFilter.CreationTime;

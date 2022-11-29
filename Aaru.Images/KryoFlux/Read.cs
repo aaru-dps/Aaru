@@ -95,7 +95,8 @@ public sealed partial class KryoFlux
                     if(head == 0)
                     {
                         AaruConsole.DebugWriteLine("KryoFlux plugin",
-                                                   "Cannot find cyl 0 hd 0, supposing only top head was dumped");
+                                                   Localization.
+                                                       Cannot_find_cyl_0_hd_0_supposing_only_top_head_was_dumped);
 
                         topHead = true;
                         heads   = 1;
@@ -104,7 +105,8 @@ public sealed partial class KryoFlux
                     }
 
                     AaruConsole.DebugWriteLine("KryoFlux plugin",
-                                               "Cannot find cyl 0 hd 1, supposing only bottom head was dumped");
+                                               Localization.
+                                                   Cannot_find_cyl_0_hd_1_supposing_only_bottom_head_was_dumped);
 
                     heads = 1;
 
@@ -112,14 +114,17 @@ public sealed partial class KryoFlux
                 }
                 else if(cylinder == 1)
                 {
-                    AaruConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 1, supposing double stepping");
+                    AaruConsole.DebugWriteLine("KryoFlux plugin",
+                                               Localization.Cannot_find_cyl_1_supposing_double_stepping);
+
                     step = 2;
 
                     continue;
                 }
                 else
                 {
-                    AaruConsole.DebugWriteLine("KryoFlux plugin", "Arrived end of disk at cylinder {0}", cylinder);
+                    AaruConsole.DebugWriteLine("KryoFlux plugin", Localization.Arrived_end_of_disk_at_cylinder_0,
+                                               cylinder);
 
                     break;
                 }
@@ -212,7 +217,8 @@ public sealed partial class KryoFlux
                             var blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
                                                               blockTime.Hour, blockTime.Minute, blockTime.Second);
 
-                            AaruConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
+                            AaruConsole.DebugWriteLine("KryoFlux plugin", Localization.Found_timestamp_0,
+                                                       blockTimestamp);
 
                             if(blockTimestamp < Info.CreationTime)
                                 _imageInfo.CreationTime = blockTimestamp;
@@ -250,7 +256,7 @@ public sealed partial class KryoFlux
         _imageInfo.Heads     = heads;
         _imageInfo.Cylinders = (uint)(tracks.Count / heads);
 
-        AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
+        AaruConsole.ErrorWriteLine(Localization.Flux_decoding_is_not_yet_implemented);
 
         return ErrorNumber.NotImplemented;
     }

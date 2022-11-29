@@ -151,10 +151,10 @@ public sealed partial class CopyQm
 
         _headerChecksumOk = ((-1 * sum) & 0xFF) == _header.headerChecksum;
 
-        AaruConsole.DebugWriteLine("CopyQM plugin", "Calculated header checksum = 0x{0:X2}, {1}", (-1 * sum) & 0xFF,
-                                   _headerChecksumOk);
+        AaruConsole.DebugWriteLine("CopyQM plugin", Localization.Calculated_header_checksum_equals_0_X2_1,
+                                   (-1 * sum) & 0xFF, _headerChecksumOk);
 
-        AaruConsole.DebugWriteLine("CopyQM plugin", "Calculated data CRC = 0x{0:X8}, {1}", _calculatedDataCrc,
+        AaruConsole.DebugWriteLine("CopyQM plugin", Localization.Calculated_data_CRC_equals_0_X8_1, _calculatedDataCrc,
                                    _calculatedDataCrc == _header.crc);
 
         _imageInfo.Application          = "CopyQM";
@@ -190,10 +190,10 @@ public sealed partial class CopyQm
 
         _decodedImage.Close();
 
-        AaruConsole.VerboseWriteLine("CopyQM image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.CopyQM_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
-            AaruConsole.VerboseWriteLine("CopyQM comments: {0}", _imageInfo.Comments);
+            AaruConsole.VerboseWriteLine(Localization.CopyQM_comments_0, _imageInfo.Comments);
 
         _imageInfo.Heads           = _header.heads;
         _imageInfo.Cylinders       = _header.totalCylinders;

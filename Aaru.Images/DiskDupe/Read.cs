@@ -55,7 +55,7 @@ public sealed partial class DiskDupe
             return ErrorNumber.InvalidArgument;
 
         AaruConsole.DebugWriteLine("DiskDupe Plugin",
-                                   "Detected DiskDupe DDI image with {0} tracks and {1} sectors per track.",
+                                   Localization.Detected_DiskDupe_DDI_image_with_0_tracks_and_1_sectors_per_track,
                                    _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].spt);
 
         _imageInfo.Cylinders       = _diskTypes[fHeader.diskType].cyl;

@@ -390,7 +390,7 @@ public sealed partial class ZZZRawImage
                 if(filter is null)
                     continue;
 
-                AaruConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
+                AaruConsole.DebugWriteLine("ZZZRawImage Plugin", Localization.Found_media_tag_0, sidecar.tag);
                 byte[] data = new byte[filter.DataForkLength];
                 filter.GetDataForkStream().EnsureRead(data, 0, data.Length);
                 _mediaTags.Add(sidecar.tag, data);
@@ -1115,7 +1115,7 @@ public sealed partial class ZZZRawImage
             _imageInfo.HasPartitions = true;
         }
 
-        AaruConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.Raw_disk_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
 

@@ -45,7 +45,9 @@ public sealed partial class AaruFormat
     public bool? VerifyMediaImage()
     {
         // This will traverse all blocks and check their CRC64 without uncompressing them
-        AaruConsole.DebugWriteLine("Aaru Format plugin", "Checking index integrity at {0}", _header.indexOffset);
+        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Checking_index_integrity_at_0,
+                                   _header.indexOffset);
+
         _imageStream.Position = (long)_header.indexOffset;
 
         _structureBytes = new byte[Marshal.SizeOf<IndexHeader>()];
@@ -54,13 +56,13 @@ public sealed partial class AaruFormat
 
         if(idxHeader.identifier != BlockType.Index)
         {
-            AaruConsole.DebugWriteLine("Aaru Format plugin", "Incorrect index identifier");
+            AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Incorrect_index_identifier);
 
             return false;
         }
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries", _header.indexOffset,
-                                   idxHeader.entries);
+        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Index_at_0_contains_1_entries,
+                                   _header.indexOffset, idxHeader.entries);
 
         _structureBytes = new byte[Marshal.SizeOf<IndexEntry>() * idxHeader.entries];
         _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
@@ -68,7 +70,7 @@ public sealed partial class AaruFormat
 
         if(BitConverter.ToUInt64(verifyCrc, 0) != idxHeader.crc64)
         {
-            AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected index CRC {0:X16} but got {1:X16}",
+            AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Expected_index_CRC_0_X16_but_got_1_X16,
                                        idxHeader.crc64, BitConverter.ToUInt64(verifyCrc, 0));
 
             return false;
@@ -85,8 +87,8 @@ public sealed partial class AaruFormat
             IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(_structureBytes);
 
             AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                       "Block type {0} with data type {1} is indexed to be at {2}", entry.blockType,
-                                       entry.dataType, entry.offset);
+                                       Localization.Block_type_0_with_data_type_1_is_indexed_to_be_at_2,
+                                       entry.blockType, entry.dataType, entry.offset);
 
             vrIndex.Add(entry);
         }
@@ -111,8 +113,9 @@ public sealed partial class AaruFormat
                     crcVerify = new Crc64Context();
                     readBytes = 0;
 
-                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Verifying data block type {0} at position {1}",
-                                               entry.dataType, entry.offset);
+                    AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                               Localization.Verifying_data_block_type_0_at_position_1, entry.dataType,
+                                               entry.offset);
 
                     while(readBytes + verifySize < blockHeader.cmpLength)
                     {
@@ -130,7 +133,8 @@ public sealed partial class AaruFormat
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != blockHeader.cmpCrc64)
                     {
-                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected block CRC {0:X16} but got {1:X16}",
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                   Localization.Expected_block_CRC_0_X16_but_got_1_X16,
                                                    blockHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
 
                         return false;
@@ -146,8 +150,8 @@ public sealed partial class AaruFormat
                     readBytes = 0;
 
                     AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                               "Verifying deduplication table type {0} at position {1}", entry.dataType,
-                                               entry.offset);
+                                               Localization.Verifying_deduplication_table_type_0_at_position_1,
+                                               entry.dataType, entry.offset);
 
                     while(readBytes + verifySize < ddtHeader.cmpLength)
                     {
@@ -165,7 +169,7 @@ public sealed partial class AaruFormat
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != ddtHeader.cmpCrc64)
                     {
-                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected DDT CRC {0:X16} but got {1:X16}",
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Expected_DDT_CRC_0_but_got_1,
                                                    ddtHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
 
                         return false;
@@ -177,7 +181,7 @@ public sealed partial class AaruFormat
                     _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     TracksHeader trkHeader = Marshal.SpanToStructureLittleEndian<TracksHeader>(_structureBytes);
 
-                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Track block at {0} contains {1} entries",
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Track_block_at_0_contains_1_entries,
                                                _header.indexOffset, trkHeader.entries);
 
                     _structureBytes = new byte[Marshal.SizeOf<TrackEntry>() * trkHeader.entries];
@@ -186,15 +190,17 @@ public sealed partial class AaruFormat
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != trkHeader.crc64)
                     {
-                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected index CRC {0:X16} but got {1:X16}",
-                                                   trkHeader.crc64, BitConverter.ToUInt64(verifyCrc, 0));
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                   Localization.Expected_index_CRC_0_X16_but_got_1_X16, trkHeader.crc64,
+                                                   BitConverter.ToUInt64(verifyCrc, 0));
 
                         return false;
                     }
 
                     break;
                 default:
-                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Ignored field type {0}", entry.blockType);
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Ignored_field_type_0,
+                                               entry.blockType);
 
                     break;
             }

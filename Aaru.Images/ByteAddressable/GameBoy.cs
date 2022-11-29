@@ -21,7 +21,7 @@ public class GameBoy : IByteAddressableImage
     ImageInfo _imageInfo;
     bool      _opened;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
@@ -33,7 +33,7 @@ public class GameBoy : IByteAddressableImage
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Nintendo Game Boy";
+    public string Name => Localization.GameBoy_Name;
 
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
@@ -99,30 +99,32 @@ public class GameBoy : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("Name: {0}", _imageInfo.MediaTitle).AppendLine();
+        sb.AppendFormat(Localization.Name_0, _imageInfo.MediaTitle).AppendLine();
 
         if((header.Name[^1] & 0xC0) == 0xC0)
-            sb.AppendLine("Requires Game Boy Color");
+            sb.AppendLine(Localization.Requires_Game_Boy_Color);
         else
         {
             if((header.Name[^1] & 0xC0) == 0xC0)
-                sb.AppendLine("Contains features for Game Boy Color");
+                sb.AppendLine(Localization.Contains_features_for_Game_Boy_Color);
 
             if(header.Sgb == 0x03)
-                sb.AppendLine("Contains features for Super Game Boy");
+                sb.AppendLine(Localization.Contains_features_for_Super_Game_Boy);
         }
 
-        sb.AppendFormat("Region: {0}", header.Country == 0 ? "Japan" : "World").AppendLine();
-        sb.AppendFormat("Cartridge type: {0}", DecodeCartridgeType(header.RomType)).AppendLine();
-        sb.AppendFormat("ROM size: {0} bytes", DecodeRomSize(header.RomSize)).AppendLine();
+        sb.AppendFormat(Localization.Region_0, header.Country == 0 ? Localization.Japan : Localization.World).
+           AppendLine();
+
+        sb.AppendFormat(Localization.Cartridge_type_0, DecodeCartridgeType(header.RomType)).AppendLine();
+        sb.AppendFormat(Localization.ROM_size_0_bytes, DecodeRomSize(header.RomSize)).AppendLine();
 
         if(header.SramSize > 0)
-            sb.AppendFormat("Save RAM size: {0} bytes", DecodeSaveRamSize(header.SramSize)).AppendLine();
+            sb.AppendFormat(Localization.Save_RAM_size_0_bytes, DecodeSaveRamSize(header.SramSize)).AppendLine();
 
-        sb.AppendFormat("Licensee: {0}", DecodeLicensee(header.Licensee, header.LicenseeNew)).AppendLine();
-        sb.AppendFormat("Revision: {0}", header.Revision).AppendLine();
-        sb.AppendFormat("Header checksum: 0x{0:X2}", header.HeaderChecksum).AppendLine();
-        sb.AppendFormat("Checksum: 0x{0:X4}", header.Checksum).AppendLine();
+        sb.AppendFormat(Localization.Licensee_0, DecodeLicensee(header.Licensee, header.LicenseeNew)).AppendLine();
+        sb.AppendFormat(Localization.Revision_0, header.Revision).AppendLine();
+        sb.AppendFormat(Localization.Header_checksum_0, header.HeaderChecksum).AppendLine();
+        sb.AppendFormat(Localization.Checksum_0_X4, header.Checksum).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -161,14 +163,14 @@ public class GameBoy : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -200,14 +202,14 @@ public class GameBoy : IByteAddressableImage
     {
         if(_opened)
         {
-            ErrorMessage = "Cannot create an opened image";
+            ErrorMessage = Localization.Cannot_create_an_opened_image;
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(mediaType != MediaType.GameBoyGamePak)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return ErrorNumber.NotSupported;
         }
@@ -224,7 +226,7 @@ public class GameBoy : IByteAddressableImage
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return ErrorNumber.InOutError;
         }
@@ -244,7 +246,7 @@ public class GameBoy : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
@@ -522,14 +524,14 @@ public class GameBoy : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -554,21 +556,21 @@ public class GameBoy : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -594,14 +596,14 @@ public class GameBoy : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
@@ -641,21 +643,21 @@ public class GameBoy : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -681,28 +683,28 @@ public class GameBoy : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -729,7 +731,7 @@ public class GameBoy : IByteAddressableImage
         if(headerLicensee != 0x33)
             return headerLicensee switch
             {
-                0x00 => "none",
+                0x00 => Localization.none_licensee,
                 0x01 => "nintendo",
                 0x08 => "capcom",
                 0x09 => "hot-b",
@@ -750,7 +752,7 @@ public class GameBoy : IByteAddressableImage
                 0x30 => "infogrames",
                 0x31 => "nintendo",
                 0x32 => "bandai",
-                0x33 => "'''GBC - see above'''",
+                0x33 => Localization.GBC_see_above,
                 0x34 => "konami",
                 0x35 => "hector",
                 0x38 => "Capcom",
@@ -877,14 +879,14 @@ public class GameBoy : IByteAddressableImage
                 0xF0 => "a wave",
                 0xF3 => "extreme entertainment",
                 0xFF => "ljn",
-                _    => "Unknown"
+                _    => Localization.Unknown_licensee
             };
 
         string licenseeNew = StringHandlers.CToString(headerLicenseeNew);
 
         return licenseeNew switch
         {
-            "00" => "none",
+            "00" => Localization.none_licensee,
             "01" => "Nintendo R&D1",
             "08" => "Capcom",
             "13" => "Electronic Arts",
@@ -945,7 +947,7 @@ public class GameBoy : IByteAddressableImage
             "97" => "Kaneko",
             "99" => "Pack in soft",
             "A4" => "Konami",
-            _    => "Unknown"
+            _    => Localization.Unknown_licensee
         };
     }
 
@@ -979,35 +981,35 @@ public class GameBoy : IByteAddressableImage
 
     static string DecodeCartridgeType(byte headerRomType) => headerRomType switch
     {
-        0x00 => "ROM only",
-        0x01 => "ROM and MBC1",
-        0x02 => "ROM, MBC1 and RAM",
-        0x03 => "ROM, MBC1, RAM and battery",
-        0x05 => "ROM and MBC2",
-        0x06 => "ROM, MBC2 and battery",
-        0x08 => "ROM and RAM",
-        0x09 => "ROM, RAM and battery",
-        0x0B => "ROM and MMM01",
-        0x0C => "ROM, MMM01 and RAM",
-        0x0D => "ROM, MMM01, RAM and battery",
-        0x0F => "ROM, MBC3, timer and battery",
-        0x10 => "ROM, MBC3, RAM, timer and battery",
-        0x11 => "ROM and MBC3",
-        0x12 => "ROM, MBC3 and RAM",
-        0x13 => "ROM, MBC3, RAM and battery",
-        0x19 => "ROM and MBC5",
-        0x1A => "ROM, MBC5 and RAM",
-        0x1B => "ROM, MBC5, RAM and battery",
-        0x1C => "ROM, MBC5 and vibration motor",
-        0x1D => "ROM, MBC5, RAM and vibration motor",
-        0x1E => "ROM, MBC5, RAM, battery and vibration motor",
-        0x20 => "ROM and MBC6",
-        0x22 => "ROM, MBC7, RAM, battery, light sensor and vibration motor",
-        0xFC => "Pocket Camera",
-        0xFD => "ROM and TAMA5",
-        0xFE => "ROM and HuC-3",
-        0xFF => "ROM and HuC-1",
-        _    => "Unknown"
+        0x00 => Localization.ROM_only,
+        0x01 => Localization.ROM_and_MBC1,
+        0x02 => Localization.ROM_MBC1_and_RAM,
+        0x03 => Localization.ROM_MBC1_RAM_and_battery,
+        0x05 => Localization.ROM_and_MBC2,
+        0x06 => Localization.ROM_MBC2_and_battery,
+        0x08 => Localization.ROM_and_RAM,
+        0x09 => Localization.ROM_RAM_and_battery,
+        0x0B => Localization.ROM_and_MMM01,
+        0x0C => Localization.ROM_MMM01_and_RAM,
+        0x0D => Localization.ROM_MMM01_RAM_and_battery,
+        0x0F => Localization.ROM_MBC3_timer_and_battery,
+        0x10 => Localization.ROM_MBC3_RAM_timer_and_battery,
+        0x11 => Localization.ROM_and_MBC3,
+        0x12 => Localization.ROM_MBC3_and_RAM,
+        0x13 => Localization.ROM_MBC3_RAM_and_battery,
+        0x19 => Localization.ROM_and_MBC5,
+        0x1A => Localization.ROM_MBC5_and_RAM,
+        0x1B => Localization.ROM_MBC5_RAM_and_battery,
+        0x1C => Localization.ROM_MBC5_and_vibration_motor,
+        0x1D => Localization.ROM_MBC5_RAM_and_vibration_motor,
+        0x1E => Localization.ROM_MBC5_RAM_battery_and_vibration_motor,
+        0x20 => Localization.ROM_and_MBC6,
+        0x22 => Localization.ROM_MBC7_RAM_battery_light_sensor_and_vibration_motor,
+        0xFC => Localization.Pocket_Camera,
+        0xFD => Localization.ROM_and_TAMA5,
+        0xFE => Localization.ROM_and_HuC_3,
+        0xFF => Localization.ROM_and_HuC_1,
+        _    => Localization.Unknown_cartridge_type
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]

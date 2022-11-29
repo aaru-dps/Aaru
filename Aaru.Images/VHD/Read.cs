@@ -85,10 +85,10 @@ public sealed partial class Vhd
         uint headerCalculatedChecksum = VhdChecksum(header);
         uint footerCalculatedChecksum = VhdChecksum(footer);
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}",
+        AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Header_checksum_equals_0_X8_calculated_equals_1_X8,
                                    headerChecksum, headerCalculatedChecksum);
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}",
+        AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Header_checksum_equals_0_X8_calculated_equals_1_X8,
                                    footerChecksum, footerCalculatedChecksum);
 
         byte[] usableHeader;
@@ -108,8 +108,8 @@ public sealed partial class Vhd
         }
         else
         {
-            AaruConsole.
-                ErrorWriteLine("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
+            AaruConsole.ErrorWriteLine(Localization.
+                                           VirtualPC_plugin_Both_header_and_footer_are_corrupt_image_cannot_be_opened);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -178,8 +178,8 @@ public sealed partial class Vhd
             _imageInfo.Version = "1.0";
         else
         {
-            AaruConsole.ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType
-            } found. Please submit a bug with an example image.");
+            AaruConsole.ErrorWriteLine(string.Format(Localization.VirtualPC_plugin_Unknown_image_type_0_found,
+                                                     _thisFooter.DiskType));
 
             return ErrorNumber.InvalidArgument;
         }
@@ -214,8 +214,11 @@ public sealed partial class Vhd
 
                         break;
                     default:
-                        _imageInfo.Application = $"VirtualBox for unknown OS \"{
-                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs))}\"";
+                        _imageInfo.Application = string.Format(Localization.VirtualBox_for_unknown_OS_0,
+                                                               Encoding.ASCII.
+                                                                        GetString(BigEndianBitConverter.
+                                                                            GetBytes(_thisFooter.
+                                                                                CreatorHostOs)));
 
                         break;
                 }
@@ -230,7 +233,7 @@ public sealed partial class Vhd
                 _imageInfo.ApplicationVersion = _thisFooter.CreatorVersion switch
                 {
                     VERSION_VIRTUAL_SERVER2004 => "2004",
-                    _                          => $"Unknown version 0x{_thisFooter.CreatorVersion:X8}"
+                    _ => string.Format(Localization.Unknown_version_0_X8, _thisFooter.CreatorVersion)
                 };
 
                 break;
@@ -246,11 +249,12 @@ public sealed partial class Vhd
                         {
                             case VERSION_VIRTUAL_PC_MAC:
                                 _imageInfo.Application        = "Connectix Virtual PC";
-                                _imageInfo.ApplicationVersion = "5, 6 or 7";
+                                _imageInfo.ApplicationVersion = Localization._5_6_or_7;
 
                                 break;
                             default:
-                                _imageInfo.ApplicationVersion = $"Unknown version 0x{_thisFooter.CreatorVersion:X8}";
+                                _imageInfo.ApplicationVersion =
+                                    string.Format(Localization.Unknown_version_0_X8, _thisFooter.CreatorVersion);
 
                                 break;
                         }
@@ -261,7 +265,7 @@ public sealed partial class Vhd
                         {
                             case VERSION_VIRTUAL_PC_MAC:
                                 _imageInfo.Application        = "Connectix Virtual PC";
-                                _imageInfo.ApplicationVersion = "5, 6 or 7";
+                                _imageInfo.ApplicationVersion = Localization._5_6_or_7;
 
                                 break;
                             case VERSION_VIRTUAL_PC2004:
@@ -275,17 +279,22 @@ public sealed partial class Vhd
 
                                 break;
                             default:
-                                _imageInfo.ApplicationVersion = $"Unknown version 0x{_thisFooter.CreatorVersion:X8}";
+                                _imageInfo.ApplicationVersion =
+                                    string.Format(Localization.Unknown_version_0_X8, _thisFooter.CreatorVersion);
 
                                 break;
                         }
 
                         break;
                     default:
-                        _imageInfo.Application = $"Virtual PC for unknown OS \"{
-                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs))}\"";
+                        _imageInfo.Application = string.Format(Localization.Virtual_PC_for_unknown_OS_0,
+                                                               Encoding.ASCII.
+                                                                        GetString(BigEndianBitConverter.
+                                                                            GetBytes(_thisFooter.
+                                                                                CreatorHostOs)));
 
-                        _imageInfo.ApplicationVersion = $"Unknown version 0x{_thisFooter.CreatorVersion:X8}";
+                        _imageInfo.ApplicationVersion =
+                            string.Format(Localization.Unknown_version_0_X8, _thisFooter.CreatorVersion);
 
                         break;
                 }
@@ -316,10 +325,13 @@ public sealed partial class Vhd
                 break;
             default:
             {
-                _imageInfo.Application = $"Unknown application \"{
-                    Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs))}\"";
+                _imageInfo.Application = string.Format(Localization.Unknown_application_0,
+                                                       Encoding.ASCII.GetString(BigEndianBitConverter.
+                                                                                    GetBytes(_thisFooter.
+                                                                                        CreatorHostOs)));
 
-                _imageInfo.ApplicationVersion = $"Unknown version 0x{_thisFooter.CreatorVersion:X8}";
+                _imageInfo.ApplicationVersion =
+                    string.Format(Localization.Unknown_version_0_X8, _thisFooter.CreatorVersion);
 
                 break;
             }
@@ -353,13 +365,14 @@ public sealed partial class Vhd
 
             uint dynamicChecksumCalculated = VhdChecksum(dynamicBytes);
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "Dynamic header checksum = 0x{0:X8}, calculated = 0x{1:X8}",
+            AaruConsole.DebugWriteLine("VirtualPC plugin",
+                                       Localization.Dynamic_header_checksum_equals_0_X8_calculated_1_X8,
                                        dynamicChecksum, dynamicChecksumCalculated);
 
             if(dynamicChecksum != dynamicChecksumCalculated)
             {
-                AaruConsole.
-                    ErrorWriteLine("(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.");
+                AaruConsole.ErrorWriteLine(Localization.
+                                               VirtualPC_plugin_Both_header_and_footer_are_corrupt_image_cannot_be_opened);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -456,8 +469,8 @@ public sealed partial class Vhd
 
             if(_thisDynamic.HeaderVersion != VERSION1)
             {
-                AaruConsole.ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType
-                } found. Please submit a bug with an example image.");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.VirtualPC_plugin_Unknown_image_type_0_found,
+                                                         _thisFooter.DiskType));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -479,7 +492,7 @@ public sealed partial class Vhd
 
             DateTime endTime = DateTime.UtcNow;
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "Filling the BAT took {0} seconds",
+            AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Filling_the_BAT_took_0_seconds,
                                        (endTime - startTime).TotalSeconds);
 
             _bitmapSize = (uint)Math.Ceiling((double)_thisDynamic.BlockSize / 512
@@ -490,7 +503,7 @@ public sealed partial class Vhd
                                                                               // and aligned to 512 byte boundary
                                                                             / 512);
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "Bitmap is {0} sectors", _bitmapSize);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Bitmap_is_0_sectors, _bitmapSize);
         }
 
         _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
@@ -573,7 +586,8 @@ public sealed partial class Vhd
                             else
                             {
                                 AaruConsole.DebugWriteLine("VirtualPC plugin",
-                                                           "Unsupported protocol classified found in URI parent path: \"{0}\"",
+                                                           Localization.
+                                                               Unsupported_protocol_classified_found_in_URI_parent_path_0,
                                                            parentPath);
 
                                 parentPath = null;
@@ -584,7 +598,7 @@ public sealed partial class Vhd
 
                     if(parentPath != null)
                     {
-                        AaruConsole.DebugWriteLine("VirtualPC plugin", "Possible parent path: \"{0}\"", parentPath);
+                        AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Possible_parent_path_0, parentPath);
 
                         IFilter parentFilter =
                             new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));
@@ -601,8 +615,8 @@ public sealed partial class Vhd
 
                 if(!locatorFound)
                 {
-                    AaruConsole.
-                        ErrorWriteLine("(VirtualPC plugin): Cannot find parent file for differencing disk image");
+                    AaruConsole.ErrorWriteLine(Localization.
+                                                   VirtualPC_plugin_Cannot_find_parent_file_for_differencing_disk_image);
 
                     return ErrorNumber.NoSuchFile;
                 }
@@ -615,7 +629,7 @@ public sealed partial class Vhd
 
                     if(parentFilter == null)
                     {
-                        AaruConsole.ErrorWriteLine("(VirtualPC plugin): Cannot find parent image filter");
+                        AaruConsole.ErrorWriteLine(Localization.VirtualPC_plugin_Cannot_find_parent_image_filter);
 
                         return ErrorNumber.NoSuchFile;
                     }
@@ -629,7 +643,8 @@ public sealed partial class Vhd
 
                     if(!_parentImage.Identify(parentFilter))
                     {
-                        AaruConsole.ErrorWriteLine("(VirtualPC plugin): Parent image is not a Virtual PC disk image");
+                        AaruConsole.ErrorWriteLine(Localization.
+                                                       VirtualPC_plugin_Parent_image_is_not_a_Virtual_PC_disk_image);
 
                         return ErrorNumber.InvalidArgument;
                     }
@@ -638,8 +653,10 @@ public sealed partial class Vhd
 
                     if(parentError != ErrorNumber.NoError)
                     {
-                        AaruConsole.ErrorWriteLine($"(VirtualPC plugin): Error {parentError
-                        } opening parent disk image");
+                        AaruConsole.
+                            ErrorWriteLine(string.
+                                               Format(Localization.VirtualPC_plugin_Error_0_opening_parent_disk_image,
+                                                      parentError));
 
                         return parentError;
                     }
@@ -652,7 +669,7 @@ public sealed partial class Vhd
                     if(_parentImage.Info.Sectors == _imageInfo.Sectors)
                         return ErrorNumber.NoError;
 
-                    AaruConsole.ErrorWriteLine("(VirtualPC plugin): Parent image is of different size");
+                    AaruConsole.ErrorWriteLine(Localization.VirtualPC_plugin_Parent_image_is_of_different_size);
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -661,14 +678,13 @@ public sealed partial class Vhd
             case TYPE_DEPRECATED1:
             case TYPE_DEPRECATED2:
             case TYPE_DEPRECATED3:
-                AaruConsole.
-                    ErrorWriteLine("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
+                AaruConsole.ErrorWriteLine(Localization.VirtualPC_plugin_Deprecated_image_type_found);
 
                 return ErrorNumber.NotImplemented;
 
             default:
-                AaruConsole.ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType
-                } found. Please submit a bug with an example image.");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.VirtualPC_plugin_Unknown_image_type_0_found,
+                                                         _thisFooter.DiskType));
 
                 return ErrorNumber.InvalidArgument;
         }
@@ -858,14 +874,13 @@ public sealed partial class Vhd
             case TYPE_DEPRECATED1:
             case TYPE_DEPRECATED2:
             case TYPE_DEPRECATED3:
-                AaruConsole.
-                    ErrorWriteLine("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
+                AaruConsole.ErrorWriteLine(Localization.VirtualPC_plugin_Deprecated_image_type_found);
 
                 return ErrorNumber.NotImplemented;
 
             default:
-                AaruConsole.ErrorWriteLine($"(VirtualPC plugin): Unknown image type {_thisFooter.DiskType
-                } found. Please submit a bug with an example image.");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.VirtualPC_plugin_Unknown_image_type_0_found,
+                                                         _thisFooter.DiskType));
 
                 return ErrorNumber.InvalidArgument;
         }

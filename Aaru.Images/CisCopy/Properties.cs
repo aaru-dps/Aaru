@@ -42,13 +42,13 @@ namespace Aaru.DiscImages;
 public sealed partial class CisCopy
 {
     /// <inheritdoc />
-    public string Name => "CisCopy Disk Image (DC-File)";
+    public string Name => Localization.CisCopy_Name;
     /// <inheritdoc />
     public Guid Id => new("EDF20CC7-6012-49E2-9E92-663A53E42130");
     /// <inheritdoc />
     public string Format => "CisCopy";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />

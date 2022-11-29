@@ -109,7 +109,7 @@ public sealed partial class DiskCopy42
            header.Format != kSigmaFormatTwiggy &&
            header.Format != kNotStandardFormat)
         {
-            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown header.format = 0x{0:X2} value", header.Format);
+            AaruConsole.DebugWriteLine("DC42 plugin", Localization.Unknown_header_format_equals_0_value, header.Format);
 
             return ErrorNumber.NotSupported;
         }
@@ -123,14 +123,15 @@ public sealed partial class DiskCopy42
            header.FmtByte != kFmtNotStandard           &&
            header.FmtByte != kMacOSXFmtByte)
         {
-            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", header.FmtByte);
+            AaruConsole.DebugWriteLine("DC42 plugin", Localization.Unknown_tmp_header_fmtByte_equals_0_value,
+                                       header.FmtByte);
 
             return ErrorNumber.NotSupported;
         }
 
         if(header.FmtByte == kInvalidFmtByte)
         {
-            AaruConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
+            AaruConsole.DebugWriteLine("DC42 plugin", Localization.Image_says_its_unformatted);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -152,7 +153,7 @@ public sealed partial class DiskCopy42
                bptag != 20 &&
                bptag != 24)
             {
-                AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tag size");
+                AaruConsole.DebugWriteLine("DC42 plugin", Localization.Unknown_tag_size);
 
                 return ErrorNumber.NotSupported;
             }
@@ -208,7 +209,7 @@ public sealed partial class DiskCopy42
             if(mfsMagic     == 0xD2D7 &&
                mfsAllBlocks == 422)
             {
-                AaruConsole.DebugWriteLine("DC42 plugin", "Macintosh Twiggy detected, reversing disk sides");
+                AaruConsole.DebugWriteLine("DC42 plugin", Localization.Macintosh_Twiggy_detected_reversing_disk_sides);
                 Array.Copy(data, header.DataSize                    / 2, twiggyCache, 0, header.DataSize    / 2);
                 Array.Copy(tags, header.TagSize                     / 2, twiggyCacheTags, 0, header.TagSize / 2);
                 Array.Copy(data, 0, twiggyCache, header.DataSize    / 2, header.DataSize                    / 2);
@@ -216,7 +217,9 @@ public sealed partial class DiskCopy42
             }
             else
             {
-                AaruConsole.DebugWriteLine("DC42 plugin", "Lisa Twiggy detected, reversing second half of disk");
+                AaruConsole.DebugWriteLine("DC42 plugin",
+                                           Localization.Lisa_Twiggy_detected_reversing_second_half_of_disk);
+
                 Array.Copy(data, 0, twiggyCache, 0, header.DataSize    / 2);
                 Array.Copy(tags, 0, twiggyCacheTags, 0, header.TagSize / 2);
 
@@ -319,11 +322,11 @@ public sealed partial class DiskCopy42
         }
         catch(InvalidCastException) {}
 
-        AaruConsole.DebugWriteLine("DC42 plugin", "Image application = {0} version {1}", imageInfo.Application,
+        AaruConsole.DebugWriteLine("DC42 plugin", Localization.Image_application_0_version_1, imageInfo.Application,
                                    imageInfo.ApplicationVersion);
 
         imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-        AaruConsole.VerboseWriteLine("DiskCopy 4.2 image contains a disk of type {0}", imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.DiskCopy_4_2_image_contains_a_disk_of_type_0, imageInfo.MediaType);
 
         switch(imageInfo.MediaType)
         {

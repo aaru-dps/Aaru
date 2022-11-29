@@ -56,7 +56,8 @@ public sealed partial class HdCopy
         if(!TryReadHeader(stream, ref fheader, ref currentOffset))
             return ErrorNumber.InvalidArgument;
 
-        AaruConsole.DebugWriteLine("HDCP plugin", "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
+        AaruConsole.DebugWriteLine("HDCP plugin",
+                                   Localization.Detected_HD_Copy_image_with_0_tracks_and_1_sectors_per_track,
                                    fheader.lastCylinder + 1, fheader.sectorsPerTrack);
 
         _imageInfo.Cylinders       = (uint)fheader.lastCylinder + 1;
@@ -94,7 +95,7 @@ public sealed partial class HdCopy
                 if(blkLength < 0)
                     return ErrorNumber.InvalidArgument;
 
-                AaruConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i, currentOffset,
+                AaruConsole.DebugWriteLine("HDCP plugin", Localization.Track_0_offset_1_size_equals_2, i, currentOffset,
                                            blkLength);
 
                 _trackOffset[i] = currentOffset;

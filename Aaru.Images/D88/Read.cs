@@ -95,7 +95,7 @@ public sealed partial class D88
                 return ErrorNumber.InvalidArgument;
         }
 
-        AaruConsole.DebugWriteLine("D88 plugin", "{0} tracks", trkCounter);
+        AaruConsole.DebugWriteLine("D88 plugin", Localization._0_tracks, trkCounter);
 
         if(trkCounter == 0)
             return ErrorNumber.InvalidArgument;
@@ -132,9 +132,8 @@ public sealed partial class D88
             if(sechdr.spt != spt ||
                sechdr.n   != bps)
             {
-                AaruConsole.DebugWriteLine("D88 plugin",
-                                           "Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}",
-                                           sechdr.spt, spt, sechdr.n, bps, i, 0);
+                AaruConsole.DebugWriteLine("D88 plugin", Localization.Disk_tracks_are_not_same_size, sechdr.spt, spt,
+                                           sechdr.n, bps, i, 0);
 
                 allEqual = false;
             }
@@ -155,9 +154,8 @@ public sealed partial class D88
                    sechdr.n   == bps)
                     continue;
 
-                AaruConsole.DebugWriteLine("D88 plugin",
-                                           "Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}",
-                                           sechdr.spt, spt, sechdr.n, bps, i, j, sechdr.deleted_mark);
+                AaruConsole.DebugWriteLine("D88 plugin", Localization.Disk_tracks_are_not_same_size, sechdr.spt, spt,
+                                           sechdr.n, bps, i, j, sechdr.deleted_mark);
 
                 allEqual = false;
             }
@@ -170,7 +168,7 @@ public sealed partial class D88
                 _sectorsData.Add(kvp.Value);
         }
 
-        AaruConsole.DebugWriteLine("D88 plugin", "{0} sectors", _sectorsData.Count);
+        AaruConsole.DebugWriteLine("D88 plugin", Localization._0_sectors, _sectorsData.Count);
 
         _imageInfo.MediaType = MediaType.Unknown;
 
@@ -238,7 +236,7 @@ public sealed partial class D88
                         break;
                 }
 
-        AaruConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", _imageInfo.MediaType);
+        AaruConsole.DebugWriteLine("D88 plugin", Localization.MediaType_0, _imageInfo.MediaType);
 
         _imageInfo.ImageSize            = (ulong)hdr.disk_size;
         _imageInfo.CreationTime         = imageFilter.CreationTime;

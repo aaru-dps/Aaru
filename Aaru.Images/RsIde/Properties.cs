@@ -42,13 +42,13 @@ namespace Aaru.DiscImages;
 public sealed partial class RsIde
 {
     /// <inheritdoc />
-    public string Name => "RS-IDE Hard Disk Image";
+    public string Name => Localization.RsIde_Name;
     /// <inheritdoc />
     public Guid Id => new("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "RS-IDE disk image";
     /// <inheritdoc />

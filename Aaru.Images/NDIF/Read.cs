@@ -76,8 +76,8 @@ public sealed partial class Ndif
         }
         catch(InvalidCastException ex)
         {
-            AaruConsole.ErrorWriteLine("Exception trying to open image file {0}", imageFilter.BasePath);
-            AaruConsole.ErrorWriteLine("Exception: {0}", ex);
+            AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_open_image_file_0, imageFilter.BasePath);
+            AaruConsole.ErrorWriteLine(Localization.Exception_0, ex);
 
             return ErrorNumber.UnexpectedException;
         }
@@ -145,15 +145,15 @@ public sealed partial class Ndif
                 switch(bChnk.type)
                 {
                     case CHUNK_TYPE_KENCODE:
-                        AaruConsole.ErrorWriteLine("Chunks compressed with KenCode are not yet supported.");
+                        AaruConsole.ErrorWriteLine(Localization.Chunks_compressed_with_KenCode_are_not_yet_supported);
 
                         return ErrorNumber.NotImplemented;
                     case CHUNK_TYPE_LZH:
-                        AaruConsole.ErrorWriteLine("Chunks compressed with LZH are not yet supported.");
+                        AaruConsole.ErrorWriteLine(Localization.Chunks_compressed_with_LZH_are_not_yet_supported);
 
                         return ErrorNumber.NotImplemented;
                     case CHUNK_TYPE_STUFFIT:
-                        AaruConsole.ErrorWriteLine("Chunks compressed with StuffIt! are not yet supported.");
+                        AaruConsole.ErrorWriteLine(Localization.Chunks_compressed_with_StuffIt_are_not_yet_supported);
 
                         return ErrorNumber.NotImplemented;
                 }
@@ -162,7 +162,7 @@ public sealed partial class Ndif
                 if(bChnk.type is > CHUNK_TYPE_COPY and < CHUNK_TYPE_KENCODE or > CHUNK_TYPE_ADC and < CHUNK_TYPE_STUFFIT
                    or > CHUNK_TYPE_STUFFIT and < CHUNK_TYPE_END or 1)
                 {
-                    AaruConsole.ErrorWriteLine($"Unsupported chunk type 0x{bChnk.type:X8} found");
+                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_chunk_type_0_found, bChnk.type));
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -175,14 +175,14 @@ public sealed partial class Ndif
 
         if(_header.segmented > 0)
         {
-            AaruConsole.ErrorWriteLine("Segmented images are not yet supported.");
+            AaruConsole.ErrorWriteLine(Localization.Segmented_images_are_not_yet_supported);
 
             return ErrorNumber.NotImplemented;
         }
 
         if(_header.encrypted > 0)
         {
-            AaruConsole.ErrorWriteLine("Encrypted images are not yet supported.");
+            AaruConsole.ErrorWriteLine(Localization.Encrypted_images_are_not_yet_supported);
 
             return ErrorNumber.NotImplemented;
         }
@@ -243,7 +243,7 @@ public sealed partial class Ndif
             }
         }
 
-        AaruConsole.DebugWriteLine("NDIF plugin", "Image application = {0} version {1}", _imageInfo.Application,
+        AaruConsole.DebugWriteLine("NDIF plugin", Localization.Image_application_0_version_1, _imageInfo.Application,
                                    _imageInfo.ApplicationVersion);
 
         _sectorCache           = new Dictionary<ulong, byte[]>();

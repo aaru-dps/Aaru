@@ -99,9 +99,9 @@ public sealed partial class Cdrdao
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", _cdrdaoFilter.Filename);
-            AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-            AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+            AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, _cdrdaoFilter.Filename);
+            AaruConsole.ErrorWriteLine(Localization.Exception_0, ex.Message);
+            AaruConsole.ErrorWriteLine(Localization.Stack_trace_0, ex.StackTrace);
 
             return false;
         }

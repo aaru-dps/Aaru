@@ -67,7 +67,7 @@ public sealed partial class CisCopy
 
                 break;
             default:
-                AaruConsole.ErrorWriteLine($"Incorrect disk type {(byte)type}");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Incorrect_disk_type_0, (byte)type));
 
                 return ErrorNumber.InvalidArgument;
         }
@@ -79,7 +79,7 @@ public sealed partial class CisCopy
 
         if(cmpr != Compression.None)
         {
-            AaruConsole.ErrorWriteLine("Compressed images are not supported.");
+            AaruConsole.ErrorWriteLine(Localization.Compressed_images_are_not_supported);
 
             return ErrorNumber.NotImplemented;
         }
@@ -200,7 +200,7 @@ public sealed partial class CisCopy
 
         decodedImage.Close();
 
-        AaruConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.CisCopy_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         return ErrorNumber.NoError;
     }

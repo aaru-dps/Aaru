@@ -44,11 +44,11 @@ public sealed partial class Virtual98
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Virtual98 Disk Image";
+    public string Name => Localization.Virtual98_Name;
     /// <inheritdoc />
     public Guid Id => new("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Virtual98 disk image";
     /// <inheritdoc />

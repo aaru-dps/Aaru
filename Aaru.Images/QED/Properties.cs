@@ -45,11 +45,11 @@ public sealed partial class Qed
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "QEMU Enhanced Disk image";
+    public string Name => Localization.Qed_Name;
     /// <inheritdoc />
     public Guid Id => new("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "QEMU Enhanced Disk";
     /// <inheritdoc />

@@ -23,7 +23,7 @@ public class MasterSystem : IByteAddressableImage
     bool      _opened;
     int       _romSize;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
@@ -35,7 +35,7 @@ public class MasterSystem : IByteAddressableImage
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Sega Game Gear / Master System";
+    public string Name => Localization.MasterSystem_Name;
 
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
@@ -139,7 +139,7 @@ public class MasterSystem : IByteAddressableImage
                           ((header.ProductCode[1] & 0xF) * 100) + ((header.ProductCode[1] & 0xF0) * 1000) +
                           (((header.VersionAndProduct & 0xF0) >> 4) * 10000);
 
-        sb.AppendFormat("Product code: {0}", productCode).AppendLine();
+        sb.AppendFormat(Localization.Product_code_0, productCode).AppendLine();
 
         int    regionCode = (header.SizeAndRegion & 0xF0) >> 4;
         string region;
@@ -148,36 +148,36 @@ public class MasterSystem : IByteAddressableImage
         switch(regionCode)
         {
             case 3:
-                region   = "Japan";
-                cartType = "Master System";
+                region   = Localization.Japan;
+                cartType = Localization.Master_System;
 
                 break;
             case 4:
-                region   = "Export";
-                cartType = "Master System";
+                region   = Localization.Export;
+                cartType = Localization.Master_System;
 
                 break;
             case 5:
-                region    = "Japan";
-                cartType  = "Game Gear";
+                region    = Localization.Japan;
+                cartType  = Localization.Game_Gear;
                 _gameGear = true;
 
                 break;
             case 6:
-                region    = "Export";
-                cartType  = "Game Gear";
+                region    = Localization.Export;
+                cartType  = Localization.Game_Gear;
                 _gameGear = true;
 
                 break;
             case 7:
-                region    = "International";
-                cartType  = "Game Gear";
+                region    = Localization.International;
+                cartType  = Localization.Game_Gear;
                 _gameGear = true;
 
                 break;
             default:
-                region   = "Unknown";
-                cartType = "Unknown";
+                region   = Localization.Unknown_region;
+                cartType = Localization.Unknown_cartridge_type;
 
                 break;
         }
@@ -200,11 +200,11 @@ public class MasterSystem : IByteAddressableImage
             _   => 0
         };
 
-        sb.AppendFormat("Region: {0}", region).AppendLine();
-        sb.AppendFormat("Cartridge type: {0}", cartType).AppendLine();
-        sb.AppendFormat("ROM size: {0} bytes", _romSize).AppendLine();
-        sb.AppendFormat("Revision: {0}", header.VersionAndProduct & 0xF).AppendLine();
-        sb.AppendFormat("Checksum: 0x{0:X4}", header.Checksum).AppendLine();
+        sb.AppendFormat(Localization.Region_0, region).AppendLine();
+        sb.AppendFormat(Localization.Cartridge_type_0, cartType).AppendLine();
+        sb.AppendFormat(Localization.ROM_size_0_bytes, _romSize).AppendLine();
+        sb.AppendFormat(Localization.Revision_0, header.VersionAndProduct & 0xF).AppendLine();
+        sb.AppendFormat(Localization.Checksum_0_X4, header.Checksum).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -243,14 +243,14 @@ public class MasterSystem : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -282,14 +282,14 @@ public class MasterSystem : IByteAddressableImage
     {
         if(_opened)
         {
-            ErrorMessage = "Cannot create an opened image";
+            ErrorMessage = Localization.Cannot_create_an_opened_image;
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(mediaType != MediaType.MasterSystemCartridge)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return ErrorNumber.NotSupported;
         }
@@ -306,7 +306,7 @@ public class MasterSystem : IByteAddressableImage
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return ErrorNumber.InOutError;
         }
@@ -326,7 +326,7 @@ public class MasterSystem : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
@@ -360,14 +360,14 @@ public class MasterSystem : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -392,21 +392,21 @@ public class MasterSystem : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -432,14 +432,14 @@ public class MasterSystem : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
@@ -469,21 +469,21 @@ public class MasterSystem : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -509,28 +509,28 @@ public class MasterSystem : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }

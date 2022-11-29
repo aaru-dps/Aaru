@@ -42,13 +42,13 @@ public sealed partial class CopyQm
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Sydex CopyQM";
+    public string Name => Localization.CopyQm_Name;
     /// <inheritdoc />
     public Guid Id => new("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
     /// <inheritdoc />
     public string Format => "Sydex CopyQM";
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public List<DumpHardwareType> DumpHardware => null;
     /// <inheritdoc />

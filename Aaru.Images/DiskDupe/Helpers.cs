@@ -70,7 +70,7 @@ public sealed partial class DiskDupe
         TrackInfo[] trackMap     = new TrackInfo[numTracks];
         long[]      trackOffsets = new long[numTracks];
 
-        AaruConsole.DebugWriteLine("DiskDupe plugin", "Identified image with C/H/S = {0}/{1}/{2}",
+        AaruConsole.DebugWriteLine("DiskDupe plugin", Localization.Identified_image_with_CHS_equals_0_1_2,
                                    _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].hd,
                                    _diskTypes[fHeader.diskType].spt);
 

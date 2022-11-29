@@ -104,7 +104,8 @@ public sealed partial class DiskCopy42
            tmpHeader.Format != kSigmaFormatTwiggy &&
            tmpHeader.Format != kNotStandardFormat)
         {
-            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.format = 0x{0:X2} value", tmpHeader.Format);
+            AaruConsole.DebugWriteLine("DC42 plugin", Localization.Unknown_tmp_header_format_equals_0_value,
+                                       tmpHeader.Format);
 
             return false;
         }
@@ -118,7 +119,8 @@ public sealed partial class DiskCopy42
            tmpHeader.FmtByte != kFmtNotStandard           &&
            tmpHeader.FmtByte != kMacOSXFmtByte)
         {
-            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", tmpHeader.FmtByte);
+            AaruConsole.DebugWriteLine("DC42 plugin", Localization.Unknown_tmp_header_fmtByte_equals_0_value,
+                                       tmpHeader.FmtByte);
 
             return false;
         }
@@ -126,7 +128,7 @@ public sealed partial class DiskCopy42
         if(tmpHeader.FmtByte != kInvalidFmtByte)
             return true;
 
-        AaruConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
+        AaruConsole.DebugWriteLine("DC42 plugin", Localization.Image_says_its_unformatted);
 
         return false;
     }

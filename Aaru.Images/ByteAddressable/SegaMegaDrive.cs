@@ -58,7 +58,7 @@ public class SegaMegaDrive : IByteAddressableImage
     bool      _smd;
 
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public CICMMetadataType CicmMetadata => null;
     /// <inheritdoc />
@@ -76,7 +76,7 @@ public class SegaMegaDrive : IByteAddressableImage
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "Sega Mega Drive / 32X / Pico";
+    public string Name => Localization.SegaMegaDrive_Name;
 
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
@@ -244,83 +244,84 @@ public class SegaMegaDrive : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("System type: {0}", StringHandlers.SpacePaddedToString(header.SystemType, encoding)).
+        sb.AppendFormat(Localization.System_type_0, StringHandlers.SpacePaddedToString(header.SystemType, encoding)).
            AppendLine();
 
-        sb.AppendFormat("Copyright string: {0}", StringHandlers.SpacePaddedToString(header.Copyright, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Copyright_string_0,
+                        StringHandlers.SpacePaddedToString(header.Copyright, encoding)).AppendLine();
 
-        sb.AppendFormat("Domestic title: {0}", StringHandlers.SpacePaddedToString(header.DomesticTitle, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Domestic_title_0,
+                        StringHandlers.SpacePaddedToString(header.DomesticTitle, encoding)).AppendLine();
 
-        sb.AppendFormat("Overseas title: {0}", StringHandlers.SpacePaddedToString(header.OverseasTitle, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Overseas_title_0,
+                        StringHandlers.SpacePaddedToString(header.OverseasTitle, encoding)).AppendLine();
 
-        sb.AppendFormat("Serial number: {0}", StringHandlers.SpacePaddedToString(header.SerialNumber, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Serial_number_0,
+                        StringHandlers.SpacePaddedToString(header.SerialNumber, encoding)).AppendLine();
 
-        sb.AppendFormat("Checksum: 0x{0:X4}", header.Checksum).AppendLine();
+        sb.AppendFormat(Localization.Checksum_0_X4, header.Checksum).AppendLine();
 
-        sb.AppendFormat("Devices supported: {0}", StringHandlers.SpacePaddedToString(header.DeviceSupport, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Devices_supported_0,
+                        StringHandlers.SpacePaddedToString(header.DeviceSupport, encoding)).AppendLine();
 
-        sb.AppendFormat("ROM starts at 0x{0:X8} and ends at 0x{1:X8} ({2} bytes)", header.RomStart, header.RomEnd,
+        sb.AppendFormat(Localization.ROM_starts_at_0_and_ends_at_1_2_bytes, header.RomStart, header.RomEnd,
                         header.RomEnd - header.RomStart + 1).AppendLine();
 
-        sb.AppendFormat("RAM starts at 0x{0:X8} and ends at 0x{1:X8} ({2} bytes)", header.RamStart, header.RamEnd,
+        sb.AppendFormat(Localization.RAM_starts_at_0_and_ends_at_1_2_bytes, header.RamStart, header.RamEnd,
                         header.RamEnd - header.RamStart + 1).AppendLine();
 
         if(header.ExtraRamPresent[0] == 0x52 &&
            header.ExtraRamPresent[1] == 0x41)
         {
-            sb.AppendLine("Extra RAM present.");
+            sb.AppendLine(Localization.Extra_RAM_present);
 
             switch(header.ExtraRamType)
             {
                 case 0xA0:
-                    sb.AppendLine("Extra RAM uses 16-bit access.");
+                    sb.AppendLine(Localization.Extra_RAM_uses_16_bit_access);
 
                     break;
                 case 0xB0:
-                    sb.AppendLine("Extra RAM uses 8-bit access (even addresses).");
+                    sb.AppendLine(Localization.Extra_RAM_uses_8_bit_access_even_addresses);
 
                     break;
                 case 0xB8:
-                    sb.AppendLine("Extra RAM uses 8-bit access (odd addresses).");
+                    sb.AppendLine(Localization.Extra_RAM_uses_8_bit_access_odd_addresses);
 
                     break;
                 case 0xE0:
-                    sb.AppendLine("Extra RAM uses 16-bit access and persists when powered off.");
+                    sb.AppendLine(Localization.Extra_RAM_uses_16_bit_access_and_persists_when_powered_off);
 
                     break;
                 case 0xF0:
-                    sb.AppendLine("Extra RAM uses 8-bit access (even addresses) and persists when powered off.");
+                    sb.AppendLine(Localization.
+                                      Extra_RAM_uses_8_bit_access_even_addresses_and_persists_when_powered_off);
 
                     break;
                 case 0xF8:
-                    sb.AppendLine("Extra RAM uses 8-bit access (odd addresses) and persists when powered off.");
+                    sb.AppendLine(Localization.Extra_RAM_uses_8_bit_access_odd_addresses_and_persists_when_powered_off);
 
                     break;
                 default:
-                    sb.AppendFormat("Extra RAM is of unknown type 0x{0:X2}", header.ExtraRamType);
+                    sb.AppendFormat(Localization.Extra_RAM_is_of_unknown_type_0, header.ExtraRamType);
 
                     break;
             }
 
-            sb.AppendFormat("Extra RAM starts at 0x{0:X8} and ends at 0x{1:X8} ({2} bytes)", header.ExtraRamStart,
+            sb.AppendFormat(Localization.Extra_RAM_starts_at_0_and_ends_at_1_2_bytes, header.ExtraRamStart,
                             header.ExtraRamEnd,
                             (header.ExtraRamType & 0x10) == 0x10 ? (header.ExtraRamEnd - header.ExtraRamStart + 2) / 2
                                 : header.ExtraRamEnd - header.ExtraRamStart + 1).AppendLine();
         }
         else
-            sb.AppendLine("Extra RAM not present.");
+            sb.AppendLine(Localization.Extra_RAM_not_present);
 
         string modemSupport = StringHandlers.SpacePaddedToString(header.ModemSupport, encoding);
 
         if(!string.IsNullOrWhiteSpace(modemSupport))
-            sb.AppendFormat("Modem support: {0}", modemSupport).AppendLine();
+            sb.AppendFormat(Localization.Modem_support_0, modemSupport).AppendLine();
 
-        sb.AppendFormat("Region support: {0}", StringHandlers.SpacePaddedToString(header.Region, encoding)).
+        sb.AppendFormat(Localization.Region_support_0, StringHandlers.SpacePaddedToString(header.Region, encoding)).
            AppendLine();
 
         _imageInfo.ImageSize            = (ulong)stream.Length;
@@ -376,14 +377,14 @@ public class SegaMegaDrive : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -464,7 +465,7 @@ public class SegaMegaDrive : IByteAddressableImage
     {
         if(_opened)
         {
-            ErrorMessage = "Cannot create an opened image";
+            ErrorMessage = Localization.Cannot_create_an_opened_image;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -473,7 +474,7 @@ public class SegaMegaDrive : IByteAddressableImage
            mediaType != MediaType.MegaDriveCartridge &&
            mediaType != MediaType.SegaPicoCartridge)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return ErrorNumber.NotSupported;
         }
@@ -498,7 +499,7 @@ public class SegaMegaDrive : IByteAddressableImage
         }
         catch(IOException e)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
 
             return ErrorNumber.InOutError;
         }
@@ -518,7 +519,7 @@ public class SegaMegaDrive : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
@@ -638,14 +639,14 @@ public class SegaMegaDrive : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -670,21 +671,21 @@ public class SegaMegaDrive : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
@@ -710,14 +711,14 @@ public class SegaMegaDrive : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
@@ -752,21 +753,21 @@ public class SegaMegaDrive : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
@@ -792,28 +793,28 @@ public class SegaMegaDrive : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }

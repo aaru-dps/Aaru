@@ -42,13 +42,13 @@ namespace Aaru.DiscImages;
 public sealed partial class Parallels
 {
     /// <inheritdoc />
-    public string Name => "Parallels disk image";
+    public string Name => Localization.Parallels_Name;
     /// <inheritdoc />
     public Guid Id => new("E314DE35-C103-48A3-AD36-990F68523C46");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Parallels";
     /// <inheritdoc />

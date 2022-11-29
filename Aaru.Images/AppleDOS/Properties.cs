@@ -45,11 +45,11 @@ public sealed partial class AppleDos
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "Apple ][ Interleaved Disk Image";
+    public string Name => Localization.AppleDos_Name;
     /// <inheritdoc />
     public Guid Id => new("A5828AC0-62C9-4304-81D4-EFD4AAE47360");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => _extension == ".po" ? "Apple ][ Interleaved Disk Image (ProDOS order)"
                                 : "Apple ][ Interleaved Disk Image (DOS order)";

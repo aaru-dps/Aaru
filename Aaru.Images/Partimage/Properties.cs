@@ -43,11 +43,11 @@ public sealed partial class Partimage
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "Partimage disk image";
+    public string Name => Localization.Partimage_Name;
     /// <inheritdoc />
     public Guid Id => new("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Partimage";
     /// <inheritdoc />

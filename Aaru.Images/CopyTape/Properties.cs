@@ -44,11 +44,11 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Name => "CopyTape";
+    public string Name => Localization.CopyTape_Name;
     /// <inheritdoc />
     public Guid Id => new("C537D41E-D6A7-4922-9AA9-8E8442D0E340");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "CopyTape";
     /// <inheritdoc />

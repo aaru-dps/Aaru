@@ -45,11 +45,11 @@ public sealed partial class DriDiskCopy
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "Digital Research DiskCopy";
+    public string Name => Localization.DriDiskCopy_Name;
     /// <inheritdoc />
     public Guid Id => new("9F0BE551-8BAB-4038-8B5A-691F1BF5FFF3");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Digital Research DiskCopy";
     /// <inheritdoc />

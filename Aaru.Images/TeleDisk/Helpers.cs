@@ -105,7 +105,7 @@ public sealed partial class TeleDisk
 
                 break;
             default:
-                AaruConsole.ErrorWriteLine($"Sector size {sectorSize} is incorrect.");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Sector_size_0_is_incorrect, sectorSize));
 
                 return ErrorNumber.InvalidArgument;
         }
@@ -134,17 +134,19 @@ public sealed partial class TeleDisk
                     outs += decodedPiece.Length;
                 }
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Input data size: {0} bytes",
+                AaruConsole.DebugWriteLine("TeleDisk plugin",
+                                           Localization.Block_pattern_decoder_Input_data_size_0_bytes,
                                            encodedData.Length);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed input: {0} bytes",
-                                           ins);
+                AaruConsole.DebugWriteLine("TeleDisk plugin",
+                                           Localization.Block_pattern_decoder_Processed_input_0_bytes, ins);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Output data size: {0} bytes",
+                AaruConsole.DebugWriteLine("TeleDisk plugin",
+                                           Localization.Block_pattern_decoder_Output_data_size_0_bytes,
                                            decodedData.Length);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed Output: {0} bytes",
-                                           outs);
+                AaruConsole.DebugWriteLine("TeleDisk plugin",
+                                           Localization.Block_pattern_decoder_Processed_Output_0_bytes, outs);
 
                 break;
             }
@@ -180,20 +182,20 @@ public sealed partial class TeleDisk
                     }
                 }
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Input data size: {0} bytes",
+                AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.RLE_decoder_Input_data_size_0_bytes,
                                            encodedData.Length);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed input: {0} bytes", ins);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.RLE_decoder_Processed_input_0_bytes, ins);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Output data size: {0} bytes",
+                AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.RLE_decoder_Output_data_size_0_bytes,
                                            decodedData.Length);
 
-                AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed Output: {0} bytes", outs);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.RLE_decoder_Processed_Output_0_bytes, outs);
 
                 break;
             }
             default:
-                AaruConsole.ErrorWriteLine($"Data encoding {encodingType} is incorrect.");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Data_encoding_0_is_incorrect, encodingType));
 
                 return ErrorNumber.InvalidArgument;
         }

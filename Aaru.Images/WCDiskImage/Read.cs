@@ -58,7 +58,7 @@ public sealed partial class WCDiskImage
         FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 
         AaruConsole.DebugWriteLine("d2f plugin",
-                                   "Detected WC DISK IMAGE with {0} heads, {1} tracks and {2} sectors per track.",
+                                   Localization.Detected_WC_DISK_IMAGE_with_0_heads_1_tracks_and_2_sectors_per_track,
                                    fheader.heads, fheader.cylinders, fheader.sectorsPerTrack);
 
         _imageInfo.Cylinders       = fheader.cylinders;
@@ -93,25 +93,25 @@ public sealed partial class WCDiskImage
         /* if there are extra tracks, read them as well */
         if(fheader.extraTracks[0] == 1)
         {
-            AaruConsole.DebugWriteLine("d2f plugin", "Extra track 1 (head 0) present, reading");
+            AaruConsole.DebugWriteLine("d2f plugin", Localization.Extra_track_1_head_0_present_reading);
             ReadTrack(stream, (int)_imageInfo.Cylinders, 0);
         }
 
         if(fheader.extraTracks[1] == 1)
         {
-            AaruConsole.DebugWriteLine("d2f plugin", "Extra track 1 (head 1) present, reading");
+            AaruConsole.DebugWriteLine("d2f plugin", Localization.Extra_track_1_head_1_present_reading);
             ReadTrack(stream, (int)_imageInfo.Cylinders, 1);
         }
 
         if(fheader.extraTracks[2] == 1)
         {
-            AaruConsole.DebugWriteLine("d2f plugin", "Extra track 2 (head 0) present, reading");
+            AaruConsole.DebugWriteLine("d2f plugin", Localization.Extra_track_2_head_0_present_reading);
             ReadTrack(stream, (int)_imageInfo.Cylinders + 1, 0);
         }
 
         if(fheader.extraTracks[3] == 1)
         {
-            AaruConsole.DebugWriteLine("d2f plugin", "Extra track 2 (head 1) present, reading");
+            AaruConsole.DebugWriteLine("d2f plugin", Localization.Extra_track_2_head_1_present_reading);
             ReadTrack(stream, (int)_imageInfo.Cylinders + 1, 1);
         }
 
@@ -127,7 +127,7 @@ public sealed partial class WCDiskImage
         /* read the comment and directory data if present */
         if(fheader.extraFlags.HasFlag(ExtraFlag.Comment))
         {
-            AaruConsole.DebugWriteLine("d2f plugin", "Comment present, reading");
+            AaruConsole.DebugWriteLine("d2f plugin", Localization.Comment_present_reading);
             byte[] sheaderBuffer = new byte[6];
             stream.EnsureRead(sheaderBuffer, 0, 6);
 
@@ -135,7 +135,8 @@ public sealed partial class WCDiskImage
 
             if(sheader.flag != SectorFlag.Comment)
             {
-                AaruConsole.ErrorWriteLine($"Invalid sector type '{sheader.flag.ToString()}' encountered");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Invalid_sector_type_0_encountered,
+                                                         sheader.flag.ToString()));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -147,7 +148,7 @@ public sealed partial class WCDiskImage
 
         if(fheader.extraFlags.HasFlag(ExtraFlag.Directory))
         {
-            AaruConsole.DebugWriteLine("d2f plugin", "Directory listing present, reading");
+            AaruConsole.DebugWriteLine("d2f plugin", Localization.Directory_listing_present_reading);
             byte[] sheaderBuffer = new byte[6];
             stream.EnsureRead(sheaderBuffer, 0, 6);
 
@@ -155,7 +156,8 @@ public sealed partial class WCDiskImage
 
             if(sheader.flag != SectorFlag.Directory)
             {
-                AaruConsole.ErrorWriteLine($"Invalid sector type '{sheader.flag.ToString()}' encountered");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Invalid_sector_type_0_encountered,
+                                                         sheader.flag.ToString()));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -185,7 +187,7 @@ public sealed partial class WCDiskImage
 
         if(_badSectors[(cylinderNumber, headNumber, sectorNumber)])
         {
-            AaruConsole.DebugWriteLine("d2f plugin", "reading bad sector {0} ({1},{2},{3})", sectorAddress,
+            AaruConsole.DebugWriteLine("d2f plugin", Localization.reading_bad_sector_0_1_2_3, sectorAddress,
                                        cylinderNumber, headNumber, sectorNumber);
 
             /* if we have sector data, return that */
@@ -254,8 +256,9 @@ public sealed partial class WCDiskImage
                sheader.head     != head ||
                sheader.sector   != sect)
             {
-                AaruConsole.ErrorWriteLine($"Unexpected sector encountered. Found CHS {sheader.cylinder},{sheader.head
-                },{sheader.sector} but expected {cyl},{head},{sect}");
+                AaruConsole.
+                    ErrorWriteLine(string.Format(Localization.Unexpected_sector_encountered_Found_CHS_0_1_2_but_expected_3_4_5,
+                                                 sheader.cylinder, sheader.head, sheader.sector, cyl, head, sect));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -278,8 +281,9 @@ public sealed partial class WCDiskImage
 
                     if(calculatedCRC != sheader.crc)
                         AaruConsole.DebugWriteLine("d2f plugin",
-                                                   "CHS {0},{1},{2}: CRC mismatch: stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
-                                                   cyl, head, sect, sheader.crc, calculatedCRC);
+                                                   Localization.
+                                                       CHS_0_1_2_CRC_mismatch_stored_CRC_3_X4_calculated_CRC_4_X4, cyl,
+                                                   head, sect, sheader.crc, calculatedCRC);
 
                     break;
                 case SectorFlag.BadSector:
@@ -303,7 +307,8 @@ public sealed partial class WCDiskImage
 
                     break;
                 default:
-                    AaruConsole.ErrorWriteLine($"Invalid sector type '{sheader.flag.ToString()}' encountered");
+                    AaruConsole.ErrorWriteLine(string.Format(Localization.Invalid_sector_type_0_encountered,
+                                                             sheader.flag.ToString()));
 
                     return ErrorNumber.InvalidArgument;
             }

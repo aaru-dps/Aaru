@@ -45,11 +45,11 @@ public sealed partial class Anex86
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "Anex86 Disk Image";
+    public string Name => Localization.Anex86_Name;
     /// <inheritdoc />
     public Guid Id => new("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
     public string Format => "Anex86 disk image";
 

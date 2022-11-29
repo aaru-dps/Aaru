@@ -42,15 +42,15 @@ namespace Aaru.DiscImages;
 public sealed partial class SaveDskF
 {
     /// <inheritdoc />
-    public string Name => "IBM SaveDskF";
+    public string Name => Localization.SaveDskF_Name;
     /// <inheritdoc />
     public Guid Id => new("288CE058-1A51-4034-8C45-5A256CAE1461");
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
-    public string Format => "IBM SaveDskF";
+    public string Format => Localization.SaveDskF_Name;
     /// <inheritdoc />
     public List<DumpHardwareType> DumpHardware => null;
     /// <inheritdoc />
