@@ -49,11 +49,11 @@ public sealed class RioKarma : IPartition
     const byte   ENTRY_MAGIC = 0x4D;
 
     /// <inheritdoc />
-    public string Name => "Rio Karma partitioning";
+    public string Name => Localization.RioKarma_Name;
     /// <inheritdoc />
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -78,7 +78,7 @@ public sealed class RioKarma : IPartition
                              Offset   = (ulong)(entry.offset * sector.Length),
                              Size     = entry.size,
                              Length   = (ulong)(entry.size * sector.Length),
-                             Type     = "Rio Karma",
+                             Type     = Localization.Rio_Karma,
                              Sequence = counter++,
                              Scheme   = Name
                          } where entry.type == ENTRY_MAGIC select part).ToList();

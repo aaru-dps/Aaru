@@ -65,11 +65,11 @@ public sealed class BSD : IPartition
     };
 
     /// <inheritdoc />
-    public string Name => "BSD disklabel";
+    public string Name => Localization.BSD_Name;
     /// <inheritdoc />
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -104,7 +104,8 @@ public sealed class BSD : IPartition
                 dl = Marshal.ByteArrayToStructureLittleEndian<DiskLabel>(sector);
 
                 AaruConsole.DebugWriteLine("BSD plugin",
-                                           "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})",
+                                           Localization.
+                                               BSD_GetInformation_dl_magic_on_sector_0_at_offset_1_equals_2_X8_expected_3_X8,
                                            location + sectorOffset, offset, dl.d_magic, DISK_MAGIC);
 
                 if((dl.d_magic != DISK_MAGIC || dl.d_magic2 != DISK_MAGIC) &&
@@ -200,7 +201,7 @@ public sealed class BSD : IPartition
             }
 
             AaruConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
-            AaruConsole.DebugWriteLine("BSD plugin", "Adding it...");
+            AaruConsole.DebugWriteLine("BSD plugin", Localization.BSD_GetInformation_Adding_it);
             partitions.Add(part);
             counter++;
         }
@@ -212,36 +213,36 @@ public sealed class BSD : IPartition
     {
         switch(typ)
         {
-            case fsType.Unused:  return "Unused entry";
-            case fsType.Swap:    return "Swap partition";
-            case fsType.V6:      return "UNIX 6th Edition";
-            case fsType.V7:      return "UNIX 7th Edition";
-            case fsType.SystemV: return "UNIX System V";
-            case fsType.V7_1K:   return "UNIX 7th Edition with 1K blocks";
-            case fsType.V8:      return "UNIX 8th Edition with 4K blocks";
-            case fsType.BSDFFS:  return "4.2BSD Fast File System";
-            case fsType.BSDLFS:  return "4.4LFS";
-            case fsType.HPFS:    return "HPFS";
-            case fsType.ISO9660: return "ISO9660";
+            case fsType.Unused:  return Localization.Unused_entry;
+            case fsType.Swap:    return Localization.Swap_partition;
+            case fsType.V6:      return Localization.UNIX_6th_Edition;
+            case fsType.V7:      return Localization.UNIX_7th_Edition;
+            case fsType.SystemV: return Localization.UNIX_System_V;
+            case fsType.V7_1K:   return Localization.UNIX_7th_Edition_with_1K_blocks;
+            case fsType.V8:      return Localization.UNIX_8th_Edition_with_4K_blocks;
+            case fsType.BSDFFS:  return Localization._4_2_BSD_Fast_File_System;
+            case fsType.BSDLFS:  return Localization._4_4_LFS;
+            case fsType.HPFS:    return Localization.HPFS;
+            case fsType.ISO9660: return Localization.ISO9660;
             case fsType.Boot:
-            case fsType.SysVBoot: return "Boot";
-            case fsType.AFFS:       return "Amiga FFS";
-            case fsType.HFS:        return "Apple HFS";
-            case fsType.ADVfs:      return "Digital Advanced File System";
-            case fsType.LSMpublic:  return "Digital LSM Public Region";
-            case fsType.LSMprivate: return "Digital LSM Private Region";
-            case fsType.LSMsimple:  return "Digital LSM Simple Disk";
-            case fsType.CCD:        return "Concatenated disk";
-            case fsType.JFS2:       return "IBM JFS2";
-            case fsType.HAMMER:     return "Hammer";
-            case fsType.HAMMER2:    return "Hammer2";
-            case fsType.UDF:        return "UDF";
-            case fsType.EFS:        return "EFS";
-            case fsType.ZFS:        return "ZFS";
-            case fsType.NANDFS:     return "FreeBSD nandfs";
-            case fsType.MSDOS:      return "FAT";
-            case fsType.Other:      return "Other or unknown";
-            default:                return "Unknown";
+            case fsType.SysVBoot: return Localization.Boot;
+            case fsType.AFFS:       return Localization.Amiga_FFS;
+            case fsType.HFS:        return Localization.Apple_HFS;
+            case fsType.ADVfs:      return Localization.Digital_Advanced_File_System;
+            case fsType.LSMpublic:  return Localization.Digital_LSM_Public_Region;
+            case fsType.LSMprivate: return Localization.Digital_LSM_Private_Region;
+            case fsType.LSMsimple:  return Localization.Digital_LSM_Simple_Disk;
+            case fsType.CCD:        return Localization.Concatenated_disk;
+            case fsType.JFS2:       return Localization.IBM_JFS2;
+            case fsType.HAMMER:     return Localization.Hammer;
+            case fsType.HAMMER2:    return Localization.Hammer2;
+            case fsType.UDF:        return Localization.UDF;
+            case fsType.EFS:        return Localization.EFS;
+            case fsType.ZFS:        return Localization.ZFS;
+            case fsType.NANDFS:     return Localization.FreeBSD_nandfs;
+            case fsType.MSDOS:      return Localization.FAT;
+            case fsType.Other:      return Localization.Other_or_unknown;
+            default:                return Localization.Unknown_partition_type;
         }
     }
 

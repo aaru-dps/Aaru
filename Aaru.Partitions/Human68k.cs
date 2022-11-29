@@ -51,11 +51,11 @@ public sealed class Human68K : IPartition
     const uint X68K_MAGIC = 0x5836384B;
 
     /// <inheritdoc />
-    public string Name => "Human 68k partitions";
+    public string Name => Localization.Human68K_Name;
     /// <inheritdoc />
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

@@ -47,11 +47,11 @@ namespace Aaru.Partitions;
 public sealed class PC98 : IPartition
 {
     /// <inheritdoc />
-    public string Name => "NEC PC-9800 partition table";
+    public string Name => Localization.PC98_Name;
     /// <inheritdoc />
     public Guid Id => new("27333401-C7C2-447D-961C-22AD0641A09A");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
@@ -74,7 +74,7 @@ public sealed class PC98 : IPartition
             return false;
 
         // Prevent false positives with some FAT BPBs
-        if(Encoding.ASCII.GetString(bootSector, 0x36, 3) == "FAT")
+        if(Encoding.ASCII.GetString(bootSector, 0x36, 3) == Localization.FAT)
             return false;
 
         Table table = Marshal.ByteArrayToStructureLittleEndian<Table>(sector);
@@ -151,20 +151,20 @@ public sealed class PC98 : IPartition
     {
         switch(sid & 0x7F)
         {
-            case 0x01: return "FAT12";
-            case 0x04: return "PC-UX";
-            case 0x06: return "N88-BASIC(86)";
+            case 0x01: return Localization.FAT12;
+            case 0x04: return Localization.PC_UX;
+            case 0x06: return Localization.N88_BASIC_86;
 
             // Supposedly for FAT16 < 32 MiB, seen in bigger partitions
             case 0x11:
-            case 0x21: return "FAT16";
+            case 0x21: return Localization.FAT16;
             case 0x28:
             case 0x41:
-            case 0x48: return "Windows Volume Set";
-            case 0x44: return "FreeBSD";
-            case 0x61: return "FAT32";
-            case 0x62: return "Linux";
-            default:   return "Unknown";
+            case 0x48: return Localization.Windows_Volume_Set;
+            case 0x44: return Localization.FreeBSD;
+            case 0x61: return Localization.FAT32;
+            case 0x62: return Localization.Linux;
+            default:   return Localization.Unknown_partition_type;
         }
     }
 

@@ -53,11 +53,11 @@ public sealed class XENIX : IPartition
     const uint XENIX_OFFSET = 977;
 
     /// <inheritdoc />
-    public string Name => "XENIX";
+    public string Name => Localization.XENIX_Name;
     /// <inheritdoc />
     public Guid Id => new("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)

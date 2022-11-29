@@ -65,11 +65,11 @@ public sealed class Xbox : IPartition
     const uint XBOX360_DEVKIT_MAGIC        = 0x00020000;
 
     /// <inheritdoc />
-    public string Name => "Xbox partitioning";
+    public string Name => Localization.Xbox_Name;
     /// <inheritdoc />
     public Guid Id => new("E3F6FB91-D358-4F22-A550-81E92D50EB78");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -94,7 +94,7 @@ public sealed class Xbox : IPartition
         {
             var contentPart = new Partition
             {
-                Description = "Content volume",
+                Description = Localization.Content_volume,
                 Size        = (ulong)table.contentLen * imagePlugin.Info.SectorSize,
                 Length      = table.contentLen,
                 Sequence    = 1,
@@ -105,7 +105,7 @@ public sealed class Xbox : IPartition
 
             var dashboardPart = new Partition
             {
-                Description = "Dashboard volume",
+                Description = Localization.Dashboard_volume,
                 Size        = (ulong)table.dashboardLen * imagePlugin.Info.SectorSize,
                 Length      = table.dashboardLen,
                 Sequence    = 2,
@@ -134,7 +134,7 @@ public sealed class Xbox : IPartition
                 {
                     var sysCachePart = new Partition
                     {
-                        Description = "System cache",
+                        Description = Localization.System_cache,
                         Size        = MEMORY_UNIT_DATA_OFF,
                         Length      = (ulong)(MEMORY_UNIT_DATA_OFF / imagePlugin.Info.SectorSize),
                         Sequence    = 1,
@@ -145,7 +145,7 @@ public sealed class Xbox : IPartition
 
                     var dataPart = new Partition
                     {
-                        Description = "Data volume",
+                        Description = Localization.Data_volume,
                         Size        = (imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize) - MEMORY_UNIT_DATA_OFF,
                         Length      = imagePlugin.Info.Sectors                                 - sysCachePart.Length,
                         Sequence    = 2,
@@ -178,7 +178,7 @@ public sealed class Xbox : IPartition
 
             var securityPart = new Partition
             {
-                Description = "Security sectors",
+                Description = Localization.Security_sectors,
                 Size        = XBOX360_SECURITY_SECTOR_LEN,
                 Length      = (ulong)(XBOX360_SECURITY_SECTOR_LEN / imagePlugin.Info.SectorSize),
                 Sequence    = 1,
@@ -189,7 +189,7 @@ public sealed class Xbox : IPartition
 
             var sysCachePart = new Partition
             {
-                Description = "System cache",
+                Description = Localization.System_cache,
                 Size        = XBOX360_SYSTEM_CACHE_LEN,
                 Length      = (ulong)(XBOX360_SYSTEM_CACHE_LEN / imagePlugin.Info.SectorSize),
                 Sequence    = 2,
@@ -200,7 +200,7 @@ public sealed class Xbox : IPartition
 
             var gameCachePart = new Partition
             {
-                Description = "Game cache",
+                Description = Localization.Game_cache,
                 Size        = XBOX360_GAME_CACHE_LEN,
                 Length      = (ulong)(XBOX360_GAME_CACHE_LEN / imagePlugin.Info.SectorSize),
                 Sequence    = 3,
@@ -211,7 +211,7 @@ public sealed class Xbox : IPartition
 
             var sysExtPart = new Partition
             {
-                Description = "System volume",
+                Description = Localization.System_volume,
                 Size        = XBOX368_SYS_EXT_LEN,
                 Length      = (ulong)(XBOX368_SYS_EXT_LEN / imagePlugin.Info.SectorSize),
                 Sequence    = 4,
@@ -222,7 +222,7 @@ public sealed class Xbox : IPartition
 
             var sysExt2Part = new Partition
             {
-                Description = "System volume 2",
+                Description = Localization.System_volume_2,
                 Size        = XBOX360_SYS_EXT2_LEN,
                 Length      = (ulong)(XBOX360_SYS_EXT2_LEN / imagePlugin.Info.SectorSize),
                 Sequence    = 5,
@@ -233,7 +233,7 @@ public sealed class Xbox : IPartition
 
             var xbox1Part = new Partition
             {
-                Description = "Xbox backwards compatibility",
+                Description = Localization.Xbox_backwards_compatibility,
                 Size        = XBOX360_COMPAT_LEN,
                 Length      = (ulong)(XBOX360_COMPAT_LEN / imagePlugin.Info.SectorSize),
                 Sequence    = 6,
@@ -244,7 +244,7 @@ public sealed class Xbox : IPartition
 
             var dataPart = new Partition
             {
-                Description = "Data volume",
+                Description = Localization.Data_volume,
                 Sequence    = 7,
                 Offset      = XBOX_360DATA_OFF,
                 Start       = (ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize),

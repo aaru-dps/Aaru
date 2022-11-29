@@ -58,205 +58,256 @@ public sealed class MBR : IPartition
     static readonly string[] _mbrTypes =
     {
         // 0x00
-        "Empty", "FAT12", "XENIX root", "XENIX /usr",
+        Localization.Empty, Localization.FAT12, Localization.XENIX_root, Localization.XENIX_usr,
 
         // 0x04
-        "FAT16 < 32 MiB", "Extended", "FAT16", "IFS (HPFS/NTFS)",
+        Localization.FAT16_32_MiB, Localization.Extended, Localization.FAT16, Localization.IFS_HPFS_NTFS,
 
         // 0x08
-        "AIX boot, OS/2, Commodore DOS", "AIX data, Coherent, QNX", "Coherent swap, OPUS, OS/2 Boot Manager", "FAT32",
+        Localization.AIX_boot_OS2_Commodore_DOS, Localization.AIX_data_Coherent_QNX,
+        Localization.Coherent_swap_OPUS_OS_2_Boot_Manager, Localization.FAT32,
 
         // 0x0C
-        "FAT32 (LBA)", "Unknown", "FAT16 (LBA)", "Extended (LBA)",
+        Localization.FAT32_LBA, Localization.Unknown_partition_type, Localization.FAT16_LBA, Localization.Extended_LBA,
 
         // 0x10
-        "OPUS", "Hidden FAT12", "Compaq diagnostics, recovery partition", "Unknown",
+        Localization.OPUS, Localization.Hidden_FAT12, Localization.Compaq_diagnostics_recovery_partition,
+        Localization.Unknown_partition_type,
 
         // 0x14
-        "Hidden FAT16 < 32 MiB, AST-DOS", "Unknown", "Hidden FAT16", "Hidden IFS (HPFS/NTFS)",
+        Localization.Hidden_FAT16_32_MiB_AST_DOS, Localization.Unknown_partition_type, Localization.Hidden_FAT16,
+        Localization.Hidden_IFS_HPFS_NTFS,
 
         // 0x18
-        "AST-Windows swap", "Willowtech Photon coS", "Unknown", "Hidden FAT32",
+        Localization.AST_Windows_swap, Localization.Willowtech_Photon_coS, Localization.Unknown_partition_type,
+        Localization.Hidden_FAT32,
 
         // 0x1C
-        "Hidden FAT32 (LBA)", "Unknown", "Hidden FAT16 (LBA)", "Unknown",
+        Localization.Hidden_FAT32_LBA, Localization.Unknown_partition_type, Localization.Hidden_FAT16_LBA,
+        Localization.Unknown_partition_type,
 
         // 0x20
-        "Willowsoft Overture File System", "Oxygen FSo2", "Oxygen Extended ", "SpeedStor reserved",
+        Localization.Willowsoft_Overture_File_System, Localization.Oxygen_FSo2, Localization.Oxygen_Extended,
+        Localization.SpeedStor_reserved,
 
         // 0x24
-        "NEC-DOS", "Unknown", "SpeedStor reserved", "Hidden NTFS",
+        Localization.NEC_DOS, Localization.Unknown_partition_type, Localization.SpeedStor_reserved,
+        Localization.Hidden_NTFS,
 
         // 0x28
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x2C
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x30
-        "Unknown", "SpeedStor reserved", "Unknown", "SpeedStor reserved",
+        Localization.Unknown_partition_type, Localization.SpeedStor_reserved, Localization.Unknown_partition_type,
+        Localization.SpeedStor_reserved,
 
         // 0x34
-        "SpeedStor reserved", "Unknown", "SpeedStor reserved", "Unknown",
+        Localization.SpeedStor_reserved, Localization.Unknown_partition_type, Localization.SpeedStor_reserved,
+        Localization.Unknown_partition_type,
 
         // 0x38
-        "Theos", "Plan 9", "Unknown", "Unknown",
+        Localization.Theos, Localization.Plan_9, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x3C
-        "Partition Magic", "Hidden NetWare", "Unknown", "Unknown",
+        Localization.Partition_Magic, Localization.Hidden_NetWare, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x40
-        "VENIX 80286", "PReP Boot", "Secure File System", "PTS-DOS",
+        Localization.VENIX_80286, Localization.PReP_Boot, Localization.Secure_File_System, Localization.PTS_DOS,
 
         // 0x44
-        "Unknown", "Priam, EUMEL/Elan", "EUMEL/Elan", "EUMEL/Elan",
+        Localization.Unknown_partition_type, Localization.Priam_EUMEL_Elan, Localization.EUMEL_Elan,
+        Localization.EUMEL_Elan,
 
         // 0x48
-        "EUMEL/Elan", "Unknown", "ALFS/THIN lightweight filesystem for DOS", "Unknown",
+        Localization.EUMEL_Elan, Localization.Unknown_partition_type,
+        Localization.ALFS_THIN_lightweight_filesystem_for_DOS, Localization.Unknown_partition_type,
 
         // 0x4C
-        "Unknown", "QNX 4", "QNX 4", "QNX 4, Oberon",
+        Localization.Unknown_partition_type, Localization.QNX_4, Localization.QNX_4, Localization.QNX_4_Oberon,
 
         // 0x50
-        "Ontrack DM, R/O, FAT", "Ontrack DM, R/W, FAT", "CP/M, Microport UNIX", "Ontrack DM 6",
+        Localization.Ontrack_DM_RO_FAT, Localization.Ontrack_DM_RW_FAT, Localization.CPM_Microport_UNIX,
+        Localization.Ontrack_DM_6,
 
         // 0x54
-        "Ontrack DM 6", "EZ-Drive", "Golden Bow VFeature", "Unknown",
+        Localization.Ontrack_DM_6, Localization.EZ_Drive, Localization.Golden_Bow_VFeature,
+        Localization.Unknown_partition_type,
 
         // 0x58
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x5C
-        "Priam EDISK", "Unknown", "Unknown", "Unknown",
+        Localization.Priam_EDISK, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x60
-        "Unknown", "SpeedStor", "Unknown", "GNU Hurd, System V, 386/ix",
+        Localization.Unknown_partition_type, Localization.SpeedStor, Localization.Unknown_partition_type,
+        Localization.GNU_Hurd_System_V_386ix,
 
         // 0x64
-        "NetWare 286", "NetWare", "NetWare 386", "NetWare",
+        Localization.NetWare_286, Localization.NetWare, Localization.NetWare_386, Localization.NetWare,
 
         // 0x68
-        "NetWare", "NetWare NSS", "Unknown", "Unknown",
+        Localization.NetWare, Localization.NetWare_NSS, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x6C
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x70
-        "DiskSecure Multi-Boot", "Unknown", "UNIX 7th Edition", "Unknown",
+        Localization.DiskSecure_Multi_Boot, Localization.Unknown_partition_type, Localization.UNIX_7th_Edition,
+        Localization.Unknown_partition_type,
 
         // 0x74
-        "Unknown", "IBM PC/IX", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.IBM_PC_IX, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x78
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x7C
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x80
-        "Old MINIX", "MINIX, Old Linux", "Linux swap, Solaris", "Linux",
+        Localization.Old_MINIX, Localization.MINIX_Old_Linux, Localization.Linux_swap_Solaris, Localization.Linux,
 
         // 0x84
-        "Hidden by OS/2, APM hibernation", "Linux extended", "NT Stripe Set", "NT Stripe Set",
+        Localization.Hidden_by_OS2_APM_hibernation, Localization.Linux_extended, Localization.NT_Stripe_Set,
+        Localization.NT_Stripe_Set,
 
         // 0x88
-        "Linux Plaintext", "Unknown", "Unknown", "Unknown",
+        Localization.Linux_Plaintext, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x8C
-        "Unknown", "Unknown", "Linux LVM", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Linux_LVM,
+        Localization.Unknown_partition_type,
 
         // 0x90
-        "Unknown", "Unknown", "Unknown", "Amoeba, Hidden Linux",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Amoeba_Hidden_Linux,
 
         // 0x94
-        "Amoeba bad blocks", "Unknown", "Unknown", "Unknown",
+        Localization.Amoeba_bad_blocks, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x98
-        "Unknown", "Mylex EISA SCSI", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Mylex_EISA_SCSI, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x9C
-        "Unknown", "Unknown", "Unknown", "BSD/OS",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.BSD_OS,
 
         // 0xA0
-        "Hibernation", "HP Volume Expansion", "Unknown", "HP Volume Expansion",
+        Localization.Hibernation, Localization.HP_Volume_Expansion, Localization.Unknown_partition_type,
+        Localization.HP_Volume_Expansion,
 
         // 0xA4
-        "HP Volume Expansion", "FreeBSD", "OpenBSD", "NeXTStep",
+        Localization.HP_Volume_Expansion, Localization.FreeBSD, Localization.OpenBSD, Localization.NeXTStep,
 
         // 0xA8
-        "Apple UFS", "NetBSD", "Olivetti DOS FAT12", "Apple Boot",
+        Localization.Apple_UFS, Localization.NetBSD, Localization.Olivetti_DOS_FAT12, Localization.Apple_Boot,
 
         // 0xAC
-        "Unknown", "Unknown", "Unknown", "Apple HFS",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Apple_HFS,
 
         // 0xB0
-        "BootStar", "HP Volume Expansion", "Unknown", "HP Volume Expansion",
+        Localization.BootStar, Localization.HP_Volume_Expansion, Localization.Unknown_partition_type,
+        Localization.HP_Volume_Expansion,
 
         // 0xB4
-        "HP Volume Expansion", "Unknown", "HP Volume Expansion", "BSDi",
+        Localization.HP_Volume_Expansion, Localization.Unknown_partition_type, Localization.HP_Volume_Expansion,
+        Localization.BSDi,
 
         // 0xB8
-        "BSDi swap", "Unknown", "Unknown", "PTS BootWizard",
+        "BSDi swap", Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.PTS_BootWizard,
 
         // 0xBC
-        "Unknown", "Unknown", "Solaris boot", "Solaris",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Solaris_boot,
+        Localization.Solaris,
 
         // 0xC0
-        "Novell DOS, DR-DOS secured", "DR-DOS secured FAT12", "DR-DOS reserved", "DR-DOS reserved",
+        Localization.Novell_DOS_DR_DOS_secured, Localization.DR_DOS_secured_FAT12, Localization.DR_DOS_reserved,
+        Localization.DR_DOS_reserved,
 
         // 0xC4
-        "DR-DOS secured FAT16 < 32 MiB", "Unknown", "DR-DOS secured FAT16", "Syrinx",
+        Localization.DR_DOS_secured_FAT16_32_MiB, Localization.Unknown_partition_type,
+        Localization.DR_DOS_secured_FAT16, Localization.Syrinx,
 
         // 0xC8
-        "DR-DOS reserved", "DR-DOS reserved", "DR-DOS reserved", "DR-DOS secured FAT32",
+        Localization.DR_DOS_reserved, Localization.DR_DOS_reserved, Localization.DR_DOS_reserved,
+        Localization.DR_DOS_secured_FAT32,
 
         // 0xCC
-        "DR-DOS secured FAT32 (LBA)", "DR-DOS reserved", "DR-DOS secured FAT16 (LBA)", "DR-DOS secured extended (LBA)",
+        Localization.DR_DOS_secured_FAT32_LBA, Localization.DR_DOS_reserved, Localization.DR_DOS_secured_FAT16_LBA,
+        Localization.DR_DOS_secured_extended_LBA,
 
         // 0xD0
-        "Multiuser DOS secured FAT12", "Multiuser DOS secured FAT12", "Unknown", "Unknown",
+        Localization.Multiuser_DOS_secured_FAT12, Localization.Multiuser_DOS_secured_FAT12,
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type,
 
         // 0xD4
-        "Multiuser DOS secured FAT16 < 32 MiB", "Multiuser DOS secured extended", "Multiuser DOS secured FAT16",
-        "Unknown",
+        Localization.Multiuser_DOS_secured_FAT16_32_MiB, Localization.Multiuser_DOS_secured_extended,
+        Localization.Multiuser_DOS_secured_FAT16, Localization.Unknown_partition_type,
 
         // 0xD8
-        "CP/M", "Unknown", "Filesystem-less data", "CP/M, CCP/M, CTOS",
+        Localization.CPM, Localization.Unknown_partition_type, Localization.Filesystem_less_data,
+        Localization.CPM_CCPM_CTOS,
 
         // 0xDC
-        "Unknown", "Unknown", "Dell partition", "BootIt EMBRM",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Dell_partition,
+        Localization.BootIt_EMBRM,
 
         // 0xE0
-        "Unknown", "SpeedStor", "DOS read/only", "SpeedStor",
+        Localization.Unknown_partition_type, Localization.SpeedStor, Localization.DOS_read_only, Localization.SpeedStor,
 
         // 0xE4
-        "SpeedStor", "Tandy DOS", "SpeedStor", "Unknown",
+        Localization.SpeedStor, Localization.Tandy_DOS, Localization.SpeedStor, Localization.Unknown_partition_type,
 
         // 0xE8
-        "Unknown", "Unknown", "Unknown", "BeOS",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.BeOS,
 
         // 0xEC
-        "Unknown", "Spryt*x", "Guid Partition Table", "EFI system partition",
+        Localization.Unknown_partition_type, Localization.Sprytx, Localization.Guid_Partition_Table,
+        Localization.EFI_system_partition,
 
         // 0xF0
-        "Linux boot", "SpeedStor", "DOS 3.3 secondary, Unisys DOS", "SpeedStor",
+        Localization.Linux_boot, Localization.SpeedStor, Localization.DOS_3_3_secondary_Unisys_DOS,
+        Localization.SpeedStor,
 
         // 0xF4
-        "SpeedStor", "Prologue", "SpeedStor", "Unknown",
+        Localization.SpeedStor, Localization.Prologue, Localization.SpeedStor, Localization.Unknown_partition_type,
 
         // 0xF8
-        "Unknown", "Unknown", "Unknown", "VMWare VMFS",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.VMware_VMFS,
 
         // 0xFC
-        "VMWare VMKCORE", "Linux RAID, FreeDOS", "SpeedStor, LANStep, PS/2 IML", "Xenix bad block"
+        Localization.VMWare_VMKCORE, Localization.Linux_RAID_FreeDOS, Localization.SpeedStor_LANStep_PS2_IML,
+        Localization.Xenix_bad_block
     };
 
     /// <inheritdoc />
-    public string Name => "Master Boot Record";
+    public string Name => Localization.MBR_Name;
     /// <inheritdoc />
     public Guid Id => new("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     [SuppressMessage("ReSharper", "UnusedVariable")]
@@ -439,7 +490,7 @@ public sealed class MBR : IPartition
                     part.Type        = $"0x{entry.type:X2}";
                     part.Name        = DecodeMbrType(entry.type);
                     part.Sequence    = counter;
-                    part.Description = entry.status == 0x80 ? "Partition is bootable." : "";
+                    part.Description = entry.status == 0x80 ? Localization.Partition_is_bootable : "";
                     part.Scheme      = Name;
 
                     counter++;
@@ -562,7 +613,7 @@ public sealed class MBR : IPartition
                     part.Type        = $"0x{ebrEntry.type:X2}";
                     part.Name        = DecodeMbrType(ebrEntry.type);
                     part.Sequence    = counter;
-                    part.Description = ebrEntry.status == 0x80 ? "Partition is bootable." : "";
+                    part.Description = ebrEntry.status == 0x80 ? Localization.Partition_is_bootable : "";
                     part.Scheme      = Name;
                     counter++;
 
@@ -664,8 +715,8 @@ public sealed class MBR : IPartition
 
             anyMnx           = true;
             part.Type        = "MINIX";
-            part.Name        = "MINIX";
-            part.Description = mnxEntry.status == 0x80 ? "Partition is bootable." : "";
+            part.Name        = Localization.MINIX;
+            part.Description = mnxEntry.status == 0x80 ? Localization.Partition_is_bootable : "";
             part.Scheme      = "MINIX";
 
             partitions.Add(part);

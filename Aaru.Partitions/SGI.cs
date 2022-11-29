@@ -53,11 +53,11 @@ public sealed class SGI : IPartition
     const int SGI_MAGIC = 0x0BE5A941;
 
     /// <inheritdoc />
-    public string Name => "SGI Disk Volume Header";
+    public string Name => Localization.SGI_Name;
     /// <inheritdoc />
     public Guid Id => new("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
@@ -78,7 +78,8 @@ public sealed class SGI : IPartition
         for(int i = 0; i < dvh.partitions.Length; i++)
             dvh.partitions[i] = (Partition)Marshal.SwapStructureMembersEndian(dvh.partitions[i]);
 
-        AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.magic = 0x{0:X8} (should be 0x{1:X8})", dvh.magic, SGI_MAGIC);
+        AaruConsole.DebugWriteLine("SGIVH plugin", Localization.dvh_magic_equals_0_X8_should_be_1_X8, dvh.magic,
+                                   SGI_MAGIC);
 
         if(dvh.magic != SGI_MAGIC)
             return false;
@@ -168,24 +169,24 @@ public sealed class SGI : IPartition
 
     static string TypeToString(SGIType typ) => typ switch
     {
-        SGIType.Header    => "Volume header",
-        SGIType.TrkRepl   => "Track replacements",
-        SGIType.SecRepl   => "Sector replacements",
-        SGIType.Swap      => "Raw data (swap)",
-        SGIType.Bsd       => "4.2BSD Fast File System",
-        SGIType.SystemV   => "UNIX System V",
-        SGIType.Volume    => "Whole device",
-        SGIType.EFS       => "EFS",
-        SGIType.Lvol      => "Logical volume",
-        SGIType.Rlvol     => "Raw logical volume",
-        SGIType.XFS       => "XFS",
-        SGIType.Xlvol     => "XFS log device",
-        SGIType.Rxlvol    => "XLV volume",
-        SGIType.Xvm       => "SGI XVM",
-        SGIType.LinuxSwap => "Linux swap",
-        SGIType.Linux     => "Linux",
-        SGIType.LinuxRAID => "Linux RAID",
-        _                 => "Unknown"
+        SGIType.Header    => Localization.Volume_header,
+        SGIType.TrkRepl   => Localization.Track_replacements,
+        SGIType.SecRepl   => Localization.Sector_replacements,
+        SGIType.Swap      => Localization.Raw_data_swap,
+        SGIType.Bsd       => Localization._4_2_BSD_Fast_File_System,
+        SGIType.SystemV   => Localization.UNIX_System_V,
+        SGIType.Volume    => Localization.Whole_device,
+        SGIType.EFS       => Localization.EFS,
+        SGIType.Lvol      => Localization.Logical_volume,
+        SGIType.Rlvol     => Localization.Raw_logical_volume,
+        SGIType.XFS       => Localization.XFS,
+        SGIType.Xlvol     => Localization.XFS_log_device,
+        SGIType.Rxlvol    => Localization.XLV_volume,
+        SGIType.Xvm       => Localization.SGI_XVM,
+        SGIType.LinuxSwap => Localization.Linux_swap,
+        SGIType.Linux     => Localization.Linux,
+        SGIType.LinuxRAID => Localization.Linux_RAID,
+        _                 => Localization.Unknown_partition_type
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

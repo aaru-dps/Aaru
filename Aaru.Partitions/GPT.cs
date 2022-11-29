@@ -52,11 +52,11 @@ public sealed class GuidPartitionTable : IPartition
     const uint  GPT_REVISION1 = 0x00010000;
 
     /// <inheritdoc />
-    public string Name => "GUID Partition Table";
+    public string Name => Localization.GuidPartitionTable_Name;
     /// <inheritdoc />
     public Guid Id => new("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -91,7 +91,7 @@ public sealed class GuidPartitionTable : IPartition
 
                 if(signature == GPT_MAGIC)
                 {
-                    AaruConsole.DebugWriteLine("GPT Plugin", "Found unaligned signature", signature);
+                    AaruConsole.DebugWriteLine("GPT Plugin", Localization.Found_unaligned_signature, signature);
                     byte[] real = new byte[512];
                     Array.Copy(hdrBytes, 512, real, 0, 512);
                     hdrBytes   = real;
@@ -222,105 +222,105 @@ public sealed class GuidPartitionTable : IPartition
 
         switch(strType)
         {
-            case "024DEE41-33E7-11D3-9D69-0008C781F39F": return "MBR scheme";
-            case "C12A7328-F81F-11D2-BA4B-00A0C93EC93B": return "EFI System";
-            case "21686148-6449-6E6F-744E-656564454649": return "BIOS Boot";
-            case "D3BFE2DE-3DAF-11DF-BA40-E3A556D89593": return "Intel Fast Flash (iFFS)";
-            case "F4019732-066E-4E12-8273-346C5641494F": return "Sony boot";
-            case "BFBFAFE7-A34F-448A-9A5B-6213EB736C22": return "Lenovo boot";
-            case "E3C9E316-0B5C-4DB8-817D-F92DF00215AE": return "Microsoft Reserved (MSR)";
-            case "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7": return "Microsoft Basic data";
-            case "5808C8AA-7E8F-42E0-85D2-E1E90434CFB3": return "Logical Disk Manager (LDM) metadata";
-            case "AF9B60A0-1431-4F62-BC68-3311714A69AD": return "Logical Disk Manager data";
-            case "DE94BBA4-06D1-4D40-A16A-BFD50179D6AC": return "Windows Recovery Environment";
-            case "37AFFC90-EF7D-4E96-91C3-2D7AE055B174": return "IBM General Parallel File System (GPFS)";
-            case "E75CAF8F-F680-4CEE-AFA3-B001E56EFC2D": return "Windows Storage Spaces";
-            case "75894C1E-3AEB-11D3-B7C1-7B03A0000000": return "HP-UX Data";
-            case "E2A1E728-32E3-11D6-A682-7B03A0000000": return "HP-UX Service";
-            case "0FC63DAF-8483-4772-8E79-3D69D8477DE4": return "Linux filesystem";
-            case "A19D880F-05FC-4D3B-A006-743F0F84911E": return "Linux RAID";
-            case "44479540-F297-41B2-9AF7-D131D5F0458A": return "Linux Root (x86)";
-            case "4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709": return "Linux Root (x86-64)";
-            case "69DAD710-2CE4-4E3C-B16C-21A1D49ABED3": return "Linux Root (32-bit ARM)";
-            case "B921B045-1DF0-41C3-AF44-4C6F280D3FAE": return "Linux Root (64-bit ARM/AArch64)";
-            case "0657FD6D-A4AB-43C4-84E5-0933C84B4F4F": return "Linux Swap";
-            case "E6D6D379-F507-44C2-A23C-238F2A3DF928": return "Logical Volume Manager (LVM)";
-            case "933AC7E1-2EB4-4F13-B844-0E14E2AEF915": return "Linux /home";
-            case "3B8F8425-20E0-4F3B-907F-1A25A76F98E8": return "Linux /srv";
-            case "7FFEC5C9-2D00-49B7-8941-3EA10A5586B7": return "Plain dm-crypt";
-            case "CA7D7CCB-63ED-4C53-861C-1742536059CC": return "LUKS";
-            case "8DA63339-0007-60C0-C436-083AC8230908": return "Linux Reserved";
-            case "83BD6B9D-7F41-11DC-BE0B-001560B84F0F": return "FreeBSD Boot";
-            case "516E7CB4-6ECF-11D6-8FF8-00022D09712B": return "FreeBSD Data";
-            case "516E7CB5-6ECF-11D6-8FF8-00022D09712B": return "FreeBSD Swap";
-            case "516E7CB6-6ECF-11D6-8FF8-00022D09712B": return "FreeBSD UFS";
-            case "516E7CB7-6ECF-11D6-8FF8-00022D09712B": return "FreeBSD UFS2";
-            case "516E7CB8-6ECF-11D6-8FF8-00022D09712B": return "FreeBSD Vinum";
-            case "516E7CBA-6ECF-11D6-8FF8-00022D09712B": return "FreeBSD ZFS";
-            case "74BA7DD9-A689-11E1-BD04-00E081286ACF": return "FreeBSD nandfs";
-            case "48465300-0000-11AA-AA11-00306543ECAC": return "Apple HFS";
-            case "55465300-0000-11AA-AA11-00306543ECAC": return "Apple UFS";
-            case "52414944-0000-11AA-AA11-00306543ECAC": return "Apple RAID";
-            case "52414944-5F4F-11AA-AA11-00306543ECAC": return "Apple RAID, offline";
-            case "426F6F74-0000-11AA-AA11-00306543ECAC": return "Apple Boot";
-            case "4C616265-6C00-11AA-AA11-00306543ECAC": return "Apple Label";
-            case "5265636F-7665-11AA-AA11-00306543ECAC": return "Apple TV Recovery";
-            case "53746F72-6167-11AA-AA11-00306543ECAC": return "Apple Core Storage";
-            case "6A82CB45-1DD2-11B2-99A6-080020736631": return "Solaris Boot";
-            case "6A85CF4D-1DD2-11B2-99A6-080020736631": return "Solaris Root";
-            case "6A87C46F-1DD2-11B2-99A6-080020736631": return "Solaris Swap";
-            case "6A8B642B-1DD2-11B2-99A6-080020736631": return "Solaris Backup";
-            case "6A898CC3-1DD2-11B2-99A6-080020736631": return "Solaris /usr or Apple ZFS";
-            case "6A8EF2E9-1DD2-11B2-99A6-080020736631": return "Solaris /var";
-            case "6A90BA39-1DD2-11B2-99A6-080020736631": return "Solaris /home";
-            case "6A9283A5-1DD2-11B2-99A6-080020736631": return "Solaris Alternate sector";
+            case "024DEE41-33E7-11D3-9D69-0008C781F39F": return Localization.MBR_scheme;
+            case "C12A7328-F81F-11D2-BA4B-00A0C93EC93B": return Localization.EFI_System;
+            case "21686148-6449-6E6F-744E-656564454649": return Localization.BIOS_Boot;
+            case "D3BFE2DE-3DAF-11DF-BA40-E3A556D89593": return Localization.Intel_Fast_Flash_iFFS;
+            case "F4019732-066E-4E12-8273-346C5641494F": return Localization.Sony_boot;
+            case "BFBFAFE7-A34F-448A-9A5B-6213EB736C22": return Localization.Lenovo_boot;
+            case "E3C9E316-0B5C-4DB8-817D-F92DF00215AE": return Localization.Microsoft_Reserved_MSR;
+            case "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7": return Localization.Microsoft_Basic_data;
+            case "5808C8AA-7E8F-42E0-85D2-E1E90434CFB3": return Localization.Logical_Disk_Manager_LDM_metadata;
+            case "AF9B60A0-1431-4F62-BC68-3311714A69AD": return Localization.Logical_Disk_Manager_data;
+            case "DE94BBA4-06D1-4D40-A16A-BFD50179D6AC": return Localization.Windows_Recovery_Environment;
+            case "37AFFC90-EF7D-4E96-91C3-2D7AE055B174": return Localization.IBM_General_Parallel_File_System_GPFS;
+            case "E75CAF8F-F680-4CEE-AFA3-B001E56EFC2D": return Localization.Windows_Storage_Spaces;
+            case "75894C1E-3AEB-11D3-B7C1-7B03A0000000": return Localization.HP_UX_Data;
+            case "E2A1E728-32E3-11D6-A682-7B03A0000000": return Localization.HP_UX_Service;
+            case "0FC63DAF-8483-4772-8E79-3D69D8477DE4": return Localization.Linux_filesystem;
+            case "A19D880F-05FC-4D3B-A006-743F0F84911E": return Localization.Linux_RAID;
+            case "44479540-F297-41B2-9AF7-D131D5F0458A": return Localization.Linux_Root_x86;
+            case "4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709": return Localization.Linux_Root_x86_64;
+            case "69DAD710-2CE4-4E3C-B16C-21A1D49ABED3": return Localization.Linux_Root_32_bit_ARM;
+            case "B921B045-1DF0-41C3-AF44-4C6F280D3FAE": return Localization.Linux_Root_AArch64;
+            case "0657FD6D-A4AB-43C4-84E5-0933C84B4F4F": return Localization.Linux_swap;
+            case "E6D6D379-F507-44C2-A23C-238F2A3DF928": return Localization.Logical_Volume_Manager_LVM;
+            case "933AC7E1-2EB4-4F13-B844-0E14E2AEF915": return Localization.Linux_home;
+            case "3B8F8425-20E0-4F3B-907F-1A25A76F98E8": return Localization.Linux_srv;
+            case "7FFEC5C9-2D00-49B7-8941-3EA10A5586B7": return Localization.Plain_dm_crypt;
+            case "CA7D7CCB-63ED-4C53-861C-1742536059CC": return Localization.LUKS;
+            case "8DA63339-0007-60C0-C436-083AC8230908": return Localization.Linux_Reserved;
+            case "83BD6B9D-7F41-11DC-BE0B-001560B84F0F": return Localization.FreeBSD_Boot;
+            case "516E7CB4-6ECF-11D6-8FF8-00022D09712B": return Localization.FreeBSD_Data;
+            case "516E7CB5-6ECF-11D6-8FF8-00022D09712B": return Localization.FreeBSD_swap;
+            case "516E7CB6-6ECF-11D6-8FF8-00022D09712B": return Localization.FreeBSD_UFS;
+            case "516E7CB7-6ECF-11D6-8FF8-00022D09712B": return Localization.FreeBSD_UFS2;
+            case "516E7CB8-6ECF-11D6-8FF8-00022D09712B": return Localization.FreeBSD_Vinum;
+            case "516E7CBA-6ECF-11D6-8FF8-00022D09712B": return Localization.FreeBSD_ZFS;
+            case "74BA7DD9-A689-11E1-BD04-00E081286ACF": return Localization.FreeBSD_nandfs;
+            case "48465300-0000-11AA-AA11-00306543ECAC": return Localization.Apple_HFS;
+            case "55465300-0000-11AA-AA11-00306543ECAC": return Localization.Apple_UFS;
+            case "52414944-0000-11AA-AA11-00306543ECAC": return Localization.Apple_RAID;
+            case "52414944-5F4F-11AA-AA11-00306543ECAC": return Localization.Apple_RAID_offline;
+            case "426F6F74-0000-11AA-AA11-00306543ECAC": return Localization.Apple_Boot;
+            case "4C616265-6C00-11AA-AA11-00306543ECAC": return Localization.Apple_Label;
+            case "5265636F-7665-11AA-AA11-00306543ECAC": return Localization.Apple_TV_Recovery;
+            case "53746F72-6167-11AA-AA11-00306543ECAC": return Localization.Apple_Core_Storage;
+            case "6A82CB45-1DD2-11B2-99A6-080020736631": return Localization.Solaris_boot;
+            case "6A85CF4D-1DD2-11B2-99A6-080020736631": return Localization.Solaris_Root;
+            case "6A87C46F-1DD2-11B2-99A6-080020736631": return Localization.Solaris_Swap;
+            case "6A8B642B-1DD2-11B2-99A6-080020736631": return Localization.Solaris_Backup;
+            case "6A898CC3-1DD2-11B2-99A6-080020736631": return Localization.Solaris_usr_or_Apple_ZFS;
+            case "6A8EF2E9-1DD2-11B2-99A6-080020736631": return Localization.Solaris_var;
+            case "6A90BA39-1DD2-11B2-99A6-080020736631": return Localization.Solaris_home;
+            case "6A9283A5-1DD2-11B2-99A6-080020736631": return Localization.Solaris_Alternate_sector;
             case "6A945A3B-1DD2-11B2-99A6-080020736631":
             case "6A9630D1-1DD2-11B2-99A6-080020736631":
             case "6A980767-1DD2-11B2-99A6-080020736631":
             case "6A96237F-1DD2-11B2-99A6-080020736631":
-            case "6A8D2AC7-1DD2-11B2-99A6-080020736631": return "Solaris Reserved";
-            case "49F48D32-B10E-11DC-B99B-0019D1879648": return "NetBSD Swap";
-            case "49F48D5A-B10E-11DC-B99B-0019D1879648": return "NetBSD FFS";
-            case "49F48D82-B10E-11DC-B99B-0019D1879648": return "NetBSD LFS";
-            case "49F48DAA-B10E-11DC-B99B-0019D1879648": return "NetBSD RAID";
-            case "2DB519C4-B10F-11DC-B99B-0019D1879648": return "NetBSD Concatenated";
-            case "2DB519EC-B10F-11DC-B99B-0019D1879648": return "NetBSD Encrypted";
-            case "FE3A2A5D-4F32-41A7-B725-ACCC3285A309": return "ChromeOS kernel";
-            case "3CB8E202-3B7E-47DD-8A3C-7FF2A13CFCEC": return "ChromeOS rootfs";
-            case "2E0A753D-9E48-43B0-8337-B15192CB1B5E": return "ChromeOS future use";
-            case "42465331-3BA3-10F1-802A-4861696B7521": return "Haiku BFS";
-            case "85D5E45E-237C-11E1-B4B3-E89A8F7FC3A7": return "MidnightBSD Boot";
-            case "85D5E45A-237C-11E1-B4B3-E89A8F7FC3A7": return "MidnightBSD Data";
-            case "85D5E45B-237C-11E1-B4B3-E89A8F7FC3A7": return "MidnightBSD Swap";
-            case "0394EF8B-237E-11E1-B4B3-E89A8F7FC3A7": return "MidnightBSD UFS";
-            case "85D5E45C-237C-11E1-B4B3-E89A8F7FC3A7": return "MidnightBSD Vinum";
-            case "85D5E45D-237C-11E1-B4B3-E89A8F7FC3A7": return "MidnightBSD ZFS";
-            case "45B0969E-9B03-4F30-B4C6-B4B80CEFF106": return "Ceph Journal";
-            case "45B0969E-9B03-4F30-B4C6-5EC00CEFF106": return "Ceph dm-crypt Encrypted Journal";
-            case "4FBD7E29-9D25-41B8-AFD0-062C0CEFF05D": return "Ceph OSD";
-            case "4FBD7E29-9D25-41B8-AFD0-5EC00CEFF05D": return "Ceph dm-crypt OSD";
-            case "89C57F98-2FE5-4DC0-89C1-F3AD0CEFF2BE": return "Ceph disk in creation";
-            case "89C57F98-2FE5-4DC0-89C1-5EC00CEFF2BE": return "Ceph dm-crypt disk in creation";
-            case "824CC7A0-36A8-11E3-890A-952519AD3F61": return "OpenBSD Data";
-            case "CEF5A9AD-73BC-4601-89F3-CDEEEEE321A1": return "QNX Power-safe (QNX6)";
-            case "C91818F9-8025-47AF-89D2-F030D7000C2C": return "Plan 9";
-            case "9D275380-40AD-11DB-BF97-000C2911D1B8": return "VMware vmkcore (coredump)";
-            case "AA31E02A-400F-11DB-9590-000C2911D1B8": return "VMware VMFS";
-            case "9198EFFC-31C0-11DB-8F78-000C2911D1B8": return "VMware Reserved";
-            case "7412F7D5-A156-4B13-81DC-867174929325": return "ONIE boot";
-            case "D4E6E2CD-4469-46F3-B5CB-1BFF57AFC149": return "ONIE config";
-            case "9E1A2D38-C612-4316-AA26-8B49521E5A8B": return "PowerPC PReP boot";
-            case "0311FC50-01CA-4725-AD77-9ADBB20ACE98": return "Acronis Secure Zone";
-            case "7C3457EF-0000-11AA-AA11-00306543ECAC": return "Apple File System";
-            case "9D087404-1CA5-11DC-8817-01301BB8A9F5": return "DragonflyBSD Label";
-            case "9D58FDBD-1CA5-11DC-8817-01301BB8A9F5": return "DragonflyBSD Swap";
-            case "9D94CE7C-1CA5-11DC-8817-01301BB8A9F5": return "DragonflyBSD UFS";
-            case "9DD4478F-1CA5-11DC-8817-01301BB8A9F5": return "DragonflyBSD Vinum";
-            case "DBD5211B-1CA5-11DC-8817-01301BB8A9F5": return "DragonflyBSD CCD";
-            case "3D48CE54-1D16-11DC-8817-01301BB8A9F5": return "DragonflyBSD Label";
-            case "BD215AB2-1D16-11DC-8696-01301BB8A9F5": return "DragonflyBSD Legacy";
-            case "61DC63AC-6E38-11DC-8513-01301BB8A9F5": return "DragonflyBSD Hammer";
-            case "5CBB9AD1-862D-11DC-A94D-01301BB8A9F5": return "DragonflyBSD Hammer2";
+            case "6A8D2AC7-1DD2-11B2-99A6-080020736631": return Localization.Solaris_Reserved;
+            case "49F48D32-B10E-11DC-B99B-0019D1879648": return Localization.NetBSD_Swap;
+            case "49F48D5A-B10E-11DC-B99B-0019D1879648": return Localization.NetBSD_FFS;
+            case "49F48D82-B10E-11DC-B99B-0019D1879648": return Localization.NetBSD_LFS;
+            case "49F48DAA-B10E-11DC-B99B-0019D1879648": return Localization.NetBSD_RAID;
+            case "2DB519C4-B10F-11DC-B99B-0019D1879648": return Localization.NetBSD_Concatenated;
+            case "2DB519EC-B10F-11DC-B99B-0019D1879648": return Localization.NetBSD_Encrypted;
+            case "FE3A2A5D-4F32-41A7-B725-ACCC3285A309": return Localization.ChromeOS_kernel;
+            case "3CB8E202-3B7E-47DD-8A3C-7FF2A13CFCEC": return Localization.ChromeOS_rootfs;
+            case "2E0A753D-9E48-43B0-8337-B15192CB1B5E": return Localization.ChromeOS_future_use;
+            case "42465331-3BA3-10F1-802A-4861696B7521": return Localization.Haiku_BFS;
+            case "85D5E45E-237C-11E1-B4B3-E89A8F7FC3A7": return Localization.MidnightBSD_Boot;
+            case "85D5E45A-237C-11E1-B4B3-E89A8F7FC3A7": return Localization.MidnightBSD_Data;
+            case "85D5E45B-237C-11E1-B4B3-E89A8F7FC3A7": return Localization.MidnightBSD_Swap;
+            case "0394EF8B-237E-11E1-B4B3-E89A8F7FC3A7": return Localization.MidnightBSD_UFS;
+            case "85D5E45C-237C-11E1-B4B3-E89A8F7FC3A7": return Localization.MidnightBSD_Vinum;
+            case "85D5E45D-237C-11E1-B4B3-E89A8F7FC3A7": return Localization.MidnightBSD_ZFS;
+            case "45B0969E-9B03-4F30-B4C6-B4B80CEFF106": return Localization.Ceph_Journal;
+            case "45B0969E-9B03-4F30-B4C6-5EC00CEFF106": return Localization.Ceph_dm_crypt_Encrypted_Journal;
+            case "4FBD7E29-9D25-41B8-AFD0-062C0CEFF05D": return Localization.Ceph_OSD;
+            case "4FBD7E29-9D25-41B8-AFD0-5EC00CEFF05D": return Localization.Ceph_dm_crypt_OSD;
+            case "89C57F98-2FE5-4DC0-89C1-F3AD0CEFF2BE": return Localization.Ceph_disk_in_creation;
+            case "89C57F98-2FE5-4DC0-89C1-5EC00CEFF2BE": return Localization.Ceph_dm_crypt_disk_in_creation;
+            case "824CC7A0-36A8-11E3-890A-952519AD3F61": return Localization.OpenBSD_Data;
+            case "CEF5A9AD-73BC-4601-89F3-CDEEEEE321A1": return Localization.QNX_Power_safe_QNX6;
+            case "C91818F9-8025-47AF-89D2-F030D7000C2C": return Localization.Plan_9;
+            case "9D275380-40AD-11DB-BF97-000C2911D1B8": return Localization.VMware_vmkcore_coredump;
+            case "AA31E02A-400F-11DB-9590-000C2911D1B8": return Localization.VMware_VMFS;
+            case "9198EFFC-31C0-11DB-8F78-000C2911D1B8": return Localization.VMware_Reserved;
+            case "7412F7D5-A156-4B13-81DC-867174929325": return Localization.ONIE_boot;
+            case "D4E6E2CD-4469-46F3-B5CB-1BFF57AFC149": return Localization.ONIE_config;
+            case "9E1A2D38-C612-4316-AA26-8B49521E5A8B": return Localization.PowerPC_PReP_boot;
+            case "0311FC50-01CA-4725-AD77-9ADBB20ACE98": return Localization.Acronis_Secure_Zone;
+            case "7C3457EF-0000-11AA-AA11-00306543ECAC": return Localization.Apple_File_System;
+            case "9D087404-1CA5-11DC-8817-01301BB8A9F5": return Localization.DragonflyBSD_Label;
+            case "9D58FDBD-1CA5-11DC-8817-01301BB8A9F5": return Localization.DragonflyBSD_Swap;
+            case "9D94CE7C-1CA5-11DC-8817-01301BB8A9F5": return Localization.DragonflyBSD_UFS;
+            case "9DD4478F-1CA5-11DC-8817-01301BB8A9F5": return Localization.DragonflyBSD_Vinum;
+            case "DBD5211B-1CA5-11DC-8817-01301BB8A9F5": return Localization.DragonflyBSD_CCD;
+            case "3D48CE54-1D16-11DC-8817-01301BB8A9F5": return Localization.DragonflyBSD_Label;
+            case "BD215AB2-1D16-11DC-8696-01301BB8A9F5": return Localization.DragonflyBSD_Legacy;
+            case "61DC63AC-6E38-11DC-8513-01301BB8A9F5": return Localization.DragonflyBSD_Hammer;
+            case "5CBB9AD1-862D-11DC-A94D-01301BB8A9F5": return Localization.DragonflyBSD_Hammer2;
             default:                                     return "";
         }
     }

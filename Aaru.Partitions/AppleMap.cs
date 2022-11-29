@@ -61,11 +61,11 @@ public sealed class AppleMap : IPartition
     const uint HFS_MAGIC_OLD = 0x54465331;
 
     /// <inheritdoc />
-    public string Name => "Apple Partition Map";
+    public string Name => Localization.AppleMap_Name;
     /// <inheritdoc />
     public Guid Id => new("36405F8D-4F1A-07F5-209C-223D735D6D22");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -223,7 +223,7 @@ public sealed class AppleMap : IPartition
             // Check for a partition entry that's 512-byte aligned
             if(entry.signature == APM_MAGIC)
             {
-                AaruConsole.DebugWriteLine("AppleMap Plugin", "Found misaligned entry.");
+                AaruConsole.DebugWriteLine("AppleMap Plugin", Localization.Found_misaligned_entry);
                 entrySize     = 512;
                 entryCount    = entry.entries;
                 skipDdm       = 512;
@@ -235,7 +235,7 @@ public sealed class AppleMap : IPartition
 
                 if(entry.signature == APM_MAGIC)
                 {
-                    AaruConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
+                    AaruConsole.DebugWriteLine("AppleMap Plugin", Localization.Found_aligned_entry);
                     entrySize     = sectorSize;
                     entryCount    = entry.entries;
                     skipDdm       = sectorSize;
@@ -251,7 +251,7 @@ public sealed class AppleMap : IPartition
 
             if(entry.signature == APM_MAGIC)
             {
-                AaruConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
+                AaruConsole.DebugWriteLine("AppleMap Plugin", Localization.Found_aligned_entry);
                 entrySize     = sectorSize;
                 entryCount    = entry.entries;
                 skipDdm       = sectorSize;
@@ -342,38 +342,39 @@ public sealed class AppleMap : IPartition
                 Scheme   = Name
             };
 
-            sb.AppendLine("Partition flags:");
+            sb.AppendLine(Localization.Partition_flags);
 
             if(flags.HasFlag(AppleMapFlags.Valid))
-                sb.AppendLine("Partition is valid.");
+                sb.AppendLine(Localization.Partition_is_valid);
 
             if(flags.HasFlag(AppleMapFlags.Allocated))
-                sb.AppendLine("Partition entry is allocated.");
+                sb.AppendLine(Localization.Partition_entry_is_allocated);
 
             if(flags.HasFlag(AppleMapFlags.InUse))
-                sb.AppendLine("Partition is in use.");
+                sb.AppendLine(Localization.Partition_is_in_use);
 
             if(flags.HasFlag(AppleMapFlags.Bootable))
-                sb.AppendLine("Partition is bootable.");
+                sb.AppendLine(Localization.Partition_is_bootable);
 
             if(flags.HasFlag(AppleMapFlags.Readable))
-                sb.AppendLine("Partition is readable.");
+                sb.AppendLine(Localization.Partition_is_readable);
 
             if(flags.HasFlag(AppleMapFlags.Writable))
-                sb.AppendLine("Partition is writable.");
+                sb.AppendLine(Localization.Partition_is_writable);
 
             if(flags.HasFlag(AppleMapFlags.Bootable))
             {
-                sb.AppendFormat("First boot sector: {0}", entry.first_boot_block * entrySize / sectorSize).AppendLine();
+                sb.AppendFormat(Localization.First_boot_sector_0, entry.first_boot_block * entrySize / sectorSize).
+                   AppendLine();
 
-                sb.AppendFormat("Boot is {0} bytes.", entry.boot_size).AppendLine();
-                sb.AppendFormat("Boot load address: 0x{0:X8}", entry.load_address).AppendLine();
-                sb.AppendFormat("Boot entry point: 0x{0:X8}", entry.entry_point).AppendLine();
-                sb.AppendFormat("Boot code checksum: 0x{0:X8}", entry.checksum).AppendLine();
-                sb.AppendFormat("Processor: {0}", StringHandlers.CToString(entry.processor)).AppendLine();
+                sb.AppendFormat(Localization.Boot_is_0_bytes, entry.boot_size).AppendLine();
+                sb.AppendFormat(Localization.Boot_load_address_0_X8, entry.load_address).AppendLine();
+                sb.AppendFormat(Localization.Boot_entry_point_0_X8, entry.entry_point).AppendLine();
+                sb.AppendFormat(Localization.Boot_code_checksum_0_X8, entry.checksum).AppendLine();
+                sb.AppendFormat(Localization.Processor_0, StringHandlers.CToString(entry.processor)).AppendLine();
 
                 if(flags.HasFlag(AppleMapFlags.PicCode))
-                    sb.AppendLine("Partition's boot code is position independent.");
+                    sb.AppendLine(Localization.Partition_boot_code_is_position_independent);
             }
 
             partition.Description = sb.ToString();
@@ -388,7 +389,7 @@ public sealed class AppleMap : IPartition
             // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
             else if(partition.Start < imagePlugin.Info.Sectors)
             {
-                AaruConsole.DebugWriteLine("AppleMap Plugin", "Cutting last partition end ({0}) to media size ({1})",
+                AaruConsole.DebugWriteLine("AppleMap Plugin", Localization.Cutting_last_partition_end_0_to_media_size_1,
                                            partition.End, imagePlugin.Info.Sectors - 1);
 
                 partition.Length = imagePlugin.Info.Sectors - partition.Start;
@@ -397,7 +398,7 @@ public sealed class AppleMap : IPartition
             }
             else
                 AaruConsole.DebugWriteLine("AppleMap Plugin",
-                                           "Not adding partition because start ({0}) is outside media size ({1})",
+                                           Localization.Not_adding_partition_because_start_0_is_outside_media_size_1,
                                            partition.Start, imagePlugin.Info.Sectors - 1);
         }
 

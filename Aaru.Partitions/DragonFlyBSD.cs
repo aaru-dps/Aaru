@@ -49,11 +49,11 @@ public sealed class DragonFlyBSD : IPartition
     const uint DISK_MAGIC64 = 0xC4464C59;
 
     /// <inheritdoc />
-    public string Name => "DragonFly BSD 64-bit disklabel";
+    public string Name => Localization.DragonFlyBSD_Name;
     /// <inheritdoc />
     public Guid Id => new("D49E41A6-D952-4760-9D94-03DAE2450C5F");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

@@ -56,11 +56,11 @@ public sealed class Acorn : IPartition
     const uint  TYPE_MASK        = 15;
 
     /// <inheritdoc />
-    public string Name => "Acorn FileCore partitions";
+    public string Name => Localization.Acorn_Name;
     /// <inheritdoc />
     public Guid Id => new("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

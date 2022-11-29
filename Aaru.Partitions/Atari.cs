@@ -61,11 +61,11 @@ public sealed class AtariPartitions : IPartition
     const uint TYPE_MINIX2      = 0x004D4E58;
 
     /// <inheritdoc />
-    public string Name => "Atari partitions";
+    public string Name => Localization.AtariPartitions_Name;
     /// <inheritdoc />
     public Guid Id => new("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -112,7 +112,7 @@ public sealed class AtariPartitions : IPartition
 
         var sha1Ctx = new Sha1Context();
         sha1Ctx.Update(table.Boot);
-        AaruConsole.DebugWriteLine("Atari partition plugin", "Boot code SHA1: {0}", sha1Ctx.End());
+        AaruConsole.DebugWriteLine("Atari partition plugin", Localization.Boot_code_SHA1_0, sha1Ctx.End());
 
         for(int i = 0; i < 8; i++)
         {
@@ -176,7 +176,7 @@ public sealed class AtariPartitions : IPartition
                     {
                         if(table.Entries[i].Start + table.Entries[i].Length > imagePlugin.Info.Sectors)
                             AaruConsole.DebugWriteLine("Atari partition plugin",
-                                                       "WARNING: End of partition goes beyond device size");
+                                                       Localization.WARNING_End_of_partition_goes_beyond_device_size);
 
                         ulong sectorSize = imagePlugin.Info.SectorSize;
 
@@ -203,48 +203,48 @@ public sealed class AtariPartitions : IPartition
                         switch(type)
                         {
                             case TYPE_GEMDOS:
-                                part.Description = "Atari GEMDOS partition";
+                                part.Description = Localization.Atari_GEMDOS_partition;
 
                                 break;
                             case TYPE_BIG_GEMDOS:
-                                part.Description = "Atari GEMDOS partition bigger than 32 MiB";
+                                part.Description = Localization.Atari_GEMDOS_partition_bigger_than_32_MiB;
 
                                 break;
                             case TYPE_LINUX:
-                                part.Description = "Linux partition";
+                                part.Description = Localization.Linux_partition;
 
                                 break;
                             case TYPE_SWAP:
-                                part.Description = "Swap partition";
+                                part.Description = Localization.Swap_partition;
 
                                 break;
                             case TYPE_RAW:
-                                part.Description = "RAW partition";
+                                part.Description = Localization.RAW_partition;
 
                                 break;
                             case TYPE_NETBSD:
-                                part.Description = "NetBSD partition";
+                                part.Description = Localization.NetBSD_partition;
 
                                 break;
                             case TYPE_NETBSD_SWAP:
-                                part.Description = "NetBSD swap partition";
+                                part.Description = Localization.NetBSD_swap_partition;
 
                                 break;
                             case TYPE_SYSTEM_V:
-                                part.Description = "Atari UNIX partition";
+                                part.Description = Localization.Atari_UNIX_partition;
 
                                 break;
                             case TYPE_MAC:
-                                part.Description = "Macintosh partition";
+                                part.Description = Localization.Macintosh_partition;
 
                                 break;
                             case TYPE_MINIX:
                             case TYPE_MINIX2:
-                                part.Description = "MINIX partition";
+                                part.Description = Localization.MINIX_partition;
 
                                 break;
                             default:
-                                part.Description = "Unknown partition type";
+                                part.Description = Localization.Unknown_partition_type;
 
                                 break;
                         }
@@ -301,7 +301,7 @@ public sealed class AtariPartitions : IPartition
 
                         if(extendedTable.Entries[j].Start + extendedTable.Entries[j].Length > imagePlugin.Info.Sectors)
                             AaruConsole.DebugWriteLine("Atari partition plugin",
-                                                       "WARNING: End of partition goes beyond device size");
+                                                       Localization.WARNING_End_of_partition_goes_beyond_device_size);
 
                         ulong sectorSize = imagePlugin.Info.SectorSize;
 
@@ -328,48 +328,48 @@ public sealed class AtariPartitions : IPartition
                         switch(extendedType)
                         {
                             case TYPE_GEMDOS:
-                                part.Description = "Atari GEMDOS partition";
+                                part.Description = Localization.Atari_GEMDOS_partition;
 
                                 break;
                             case TYPE_BIG_GEMDOS:
-                                part.Description = "Atari GEMDOS partition bigger than 32 MiB";
+                                part.Description = Localization.Atari_GEMDOS_partition_bigger_than_32_MiB;
 
                                 break;
                             case TYPE_LINUX:
-                                part.Description = "Linux partition";
+                                part.Description = Localization.Linux_partition;
 
                                 break;
                             case TYPE_SWAP:
-                                part.Description = "Swap partition";
+                                part.Description = Localization.Swap_partition;
 
                                 break;
                             case TYPE_RAW:
-                                part.Description = "RAW partition";
+                                part.Description = Localization.RAW_partition;
 
                                 break;
                             case TYPE_NETBSD:
-                                part.Description = "NetBSD partition";
+                                part.Description = Localization.NetBSD_partition;
 
                                 break;
                             case TYPE_NETBSD_SWAP:
-                                part.Description = "NetBSD swap partition";
+                                part.Description = Localization.NetBSD_swap_partition;
 
                                 break;
                             case TYPE_SYSTEM_V:
-                                part.Description = "Atari UNIX partition";
+                                part.Description = Localization.Atari_UNIX_partition;
 
                                 break;
                             case TYPE_MAC:
-                                part.Description = "Macintosh partition";
+                                part.Description = Localization.Macintosh_partition;
 
                                 break;
                             case TYPE_MINIX:
                             case TYPE_MINIX2:
-                                part.Description = "MINIX partition";
+                                part.Description = Localization.MINIX_partition;
 
                                 break;
                             default:
-                                part.Description = "Unknown partition type";
+                                part.Description = Localization.Unknown_partition_type;
 
                                 break;
                         }
@@ -407,7 +407,7 @@ public sealed class AtariPartitions : IPartition
 
             if(table.IcdEntries[i].Start + table.IcdEntries[i].Length > imagePlugin.Info.Sectors)
                 AaruConsole.DebugWriteLine("Atari partition plugin",
-                                           "WARNING: End of partition goes beyond device size");
+                                           Localization.WARNING_End_of_partition_goes_beyond_device_size);
 
             ulong sectorSize = imagePlugin.Info.SectorSize;
 
@@ -434,48 +434,48 @@ public sealed class AtariPartitions : IPartition
             switch(type)
             {
                 case TYPE_GEMDOS:
-                    part.Description = "Atari GEMDOS partition";
+                    part.Description = Localization.Atari_GEMDOS_partition;
 
                     break;
                 case TYPE_BIG_GEMDOS:
-                    part.Description = "Atari GEMDOS partition bigger than 32 MiB";
+                    part.Description = Localization.Atari_GEMDOS_partition_bigger_than_32_MiB;
 
                     break;
                 case TYPE_LINUX:
-                    part.Description = "Linux partition";
+                    part.Description = Localization.Linux_partition;
 
                     break;
                 case TYPE_SWAP:
-                    part.Description = "Swap partition";
+                    part.Description = Localization.Swap_partition;
 
                     break;
                 case TYPE_RAW:
-                    part.Description = "RAW partition";
+                    part.Description = Localization.RAW_partition;
 
                     break;
                 case TYPE_NETBSD:
-                    part.Description = "NetBSD partition";
+                    part.Description = Localization.NetBSD_partition;
 
                     break;
                 case TYPE_NETBSD_SWAP:
-                    part.Description = "NetBSD swap partition";
+                    part.Description = Localization.NetBSD_swap_partition;
 
                     break;
                 case TYPE_SYSTEM_V:
-                    part.Description = "Atari UNIX partition";
+                    part.Description = Localization.Atari_UNIX_partition;
 
                     break;
                 case TYPE_MAC:
-                    part.Description = "Macintosh partition";
+                    part.Description = Localization.Macintosh_partition;
 
                     break;
                 case TYPE_MINIX:
                 case TYPE_MINIX2:
-                    part.Description = "MINIX partition";
+                    part.Description = Localization.MINIX_partition;
 
                     break;
                 default:
-                    part.Description = "Unknown partition type";
+                    part.Description = Localization.Unknown_partition_type;
 
                     break;
             }

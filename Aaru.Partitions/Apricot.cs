@@ -52,12 +52,12 @@ public sealed class Apricot : IPartition
     };
     readonly string[] _bootTypeCodes =
     {
-        "Non-bootable", "Apricot & XI RAM BIOS", "Generic ROM BIOS", "Apricot & XI ROM BIOS",
-        "Apricot Portable ROM BIOS", "Apricot F1 ROM BIOS"
+        Localization.Non_bootable, Localization.Apricot_XI_RAM_BIOS, Localization.Generic_ROM_BIOS,
+        Localization.Apricot_XI_ROM_BIOS, Localization.Apricot_Portable_ROM_BIOS, Localization.Apricot_F1_ROM_BIOS
     };
     readonly string[] _diskTypeCodes =
     {
-        "MF1DD 70-track", "MF1DD", "MF2DD", "Winchester 5M", "Winchester 10M", "Winchester 20M"
+        Localization.MF1DD_70_track, "MF1DD", "MF2DD", "Winchester 5M", "Winchester 10M", "Winchester 20M"
     };
     readonly int[] _lineModes =
     {
@@ -69,15 +69,16 @@ public sealed class Apricot : IPartition
     };
     readonly string[] _operatingSystemCodes =
     {
-        "Invalid", "MS-DOS", "UCSD Pascal", "CP/M", "Concurrent CP/M"
+        Localization.Invalid_operating_system, "MS-DOS", "UCSD Pascal", Localization.CPM, "Concurrent CP/M"
     };
     readonly string[] _parityTypes =
     {
-        "None", "Odd", "Even", "Mark", "Space"
+        Localization.None_parity, Localization.Odd_parity, Localization.Even_parity, Localization.Mark_parity,
+        Localization.Space_parity
     };
     readonly string[] _printDevices =
     {
-        "Parallel", "Serial"
+        Localization.Parallel_print_device, Localization.Serial_print_device
     };
     readonly double[] _stopBits =
     {
@@ -85,11 +86,11 @@ public sealed class Apricot : IPartition
     };
 
     /// <inheritdoc />
-    public string Name => "ACT Apricot partitions";
+    public string Name => Localization.Apricot_Name;
     /// <inheritdoc />
     public Guid Id => new("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -124,13 +125,15 @@ public sealed class Apricot : IPartition
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.operatingSystem = {0} ({1})", label.operatingSystem,
                                    label.operatingSystem < _operatingSystemCodes.Length
-                                       ? _operatingSystemCodes[label.operatingSystem] : "Unknown");
+                                       ? _operatingSystemCodes[label.operatingSystem]
+                                       : Localization.Unknown_operating_system);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.writeProtected = {0}", label.writeProtected);
         AaruConsole.DebugWriteLine("Apricot partitions", "label.copyProtected = {0}", label.copyProtected);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.bootType = {0} ({1})", label.bootType,
-                                   label.bootType < _bootTypeCodes.Length ? _bootTypeCodes[label.bootType] : "Unknown");
+                                   label.bootType < _bootTypeCodes.Length ? _bootTypeCodes[label.bootType]
+                                       : Localization.Unknown_boot_type);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.partitionCount = {0}", label.partitionCount);
         AaruConsole.DebugWriteLine("Apricot partitions", "label.winchester = {0}", label.winchester);
@@ -172,7 +175,7 @@ public sealed class Apricot : IPartition
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.diskType = {0} ({1})", label.mainBPB.diskType,
                                    label.mainBPB.diskType < _diskTypeCodes.Length
-                                       ? _diskTypeCodes[label.mainBPB.diskType] : "Unknown");
+                                       ? _diskTypeCodes[label.mainBPB.diskType] : Localization.Unknown_disk_type);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.startSector = {0}", label.mainBPB.startSector);
 
@@ -187,7 +190,8 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine("Apricot partitions", "label.diagnosticsFlag = {0}", label.diagnosticsFlag);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.prnDevice = {0} ({1})", label.prnDevice,
-                                   label.prnDevice < _printDevices.Length ? _printDevices[label.prnDevice] : "Unknown");
+                                   label.prnDevice < _printDevices.Length ? _printDevices[label.prnDevice]
+                                       : Localization.Unknown_print_device);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.bellVolume = {0}", label.bellVolume);
         AaruConsole.DebugWriteLine("Apricot partitions", "label.enableCache = {0}", label.enableCache);
@@ -235,7 +239,8 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine("Apricot partitions", "label.parityCheck = {0}", label.parityCheck);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.parityType = {0} ({1})", label.parityType,
-                                   label.parityType < _parityTypes.Length ? _parityTypes[label.parityType] : "Unknown");
+                                   label.parityType < _parityTypes.Length ? _parityTypes[label.parityType]
+                                       : Localization.Unknown_parity_type);
 
         AaruConsole.DebugWriteLine("Apricot partitions", "label.txXonXoff = {0}", label.txXonXoff);
         AaruConsole.DebugWriteLine("Apricot partitions", "label.rxXonXoff = {0}", label.rxXonXoff);
@@ -306,7 +311,8 @@ public sealed class Apricot : IPartition
             AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].diskType = {0} ({2})",
                                        label.partitions[i].diskType, i,
                                        label.partitions[i].diskType < _diskTypeCodes.Length
-                                           ? _diskTypeCodes[label.partitions[i].diskType] : "Unknown");
+                                           ? _diskTypeCodes[label.partitions[i].diskType]
+                                           : Localization.Unknown_disk_type);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].startSector = {0}",
                                        label.partitions[i].startSector, i);

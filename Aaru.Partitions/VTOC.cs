@@ -57,11 +57,11 @@ public sealed class VTOC : IPartition
     const uint XPDVERS   = 3; /* 1st version of extended pdinfo */
 
     /// <inheritdoc />
-    public string Name => "UNIX VTOC";
+    public string Name => Localization.VTOC_Name;
     /// <inheritdoc />
     public Guid Id => new("6D35A66F-8D77-426F-A562-D88F6A1F1702");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -87,7 +87,7 @@ public sealed class VTOC : IPartition
 
             magic = BitConverter.ToUInt32(pdsector, 4);
 
-            AaruConsole.DebugWriteLine("VTOC plugin", "sanity at {0} is 0x{1:X8} (should be 0x{2:X8} or 0x{3:X8})",
+            AaruConsole.DebugWriteLine("VTOC plugin", Localization.sanity_at_0_is_1_X8_should_be_2_X8_or_3_X8,
                                        i + sectorOffset, magic, PD_MAGIC, PD_CIGAM);
 
             if(magic != PD_MAGIC &&
@@ -175,7 +175,7 @@ public sealed class VTOC : IPartition
         if(magic is VTOC_SANE or VTOC_ENAS)
         {
             magicFound = true;
-            AaruConsole.DebugWriteLine("VTOC plugin", "New VTOC found at {0}", pdloc + sectorOffset + 1);
+            AaruConsole.DebugWriteLine("VTOC plugin", Localization.New_VTOC_found_at_0, pdloc + sectorOffset + 1);
 
             if(magic == VTOC_SANE)
                 vtoc = Marshal.ByteArrayToStructureLittleEndian<vtoc>(vtocsector);
@@ -203,7 +203,7 @@ public sealed class VTOC : IPartition
             {
                 magicFound = true;
                 useOld     = true;
-                AaruConsole.DebugWriteLine("VTOC plugin", "Old VTOC found at {0}", pdloc + sectorOffset + 1);
+                AaruConsole.DebugWriteLine("VTOC plugin", Localization.Old_VTOC_found_at_0, pdloc + sectorOffset + 1);
 
                 if(magic == VTOC_SANE)
                     vtocOld = Marshal.ByteArrayToStructureLittleEndian<vtocold>(vtocsector);
@@ -225,7 +225,7 @@ public sealed class VTOC : IPartition
 
         if(!magicFound)
         {
-            AaruConsole.DebugWriteLine("VTOC plugin", "Searching for VTOC on relative byte {0}", pd.vtoc_ptr);
+            AaruConsole.DebugWriteLine("VTOC plugin", Localization.Searching_for_VTOC_on_relative_byte_0, pd.vtoc_ptr);
             ulong relSecPtr = pd.vtoc_ptr               / imagePlugin.Info.SectorSize;
             uint  relSecOff = pd.vtoc_ptr               % imagePlugin.Info.SectorSize;
             uint  secCount  = (relSecOff + pd.vtoc_len) / imagePlugin.Info.SectorSize;
@@ -234,12 +234,12 @@ public sealed class VTOC : IPartition
                 secCount++;
 
             AaruConsole.DebugWriteLine("VTOC plugin",
-                                       "Going to read {0} sectors from sector {1}, getting VTOC from byte {2}",
+                                       Localization.Going_to_read_0_sectors_from_sector_1_getting_VTOC_from_byte_2,
                                        secCount, relSecPtr + sectorOffset, relSecOff);
 
             if(relSecPtr + sectorOffset + secCount >= imagePlugin.Info.Sectors)
             {
-                AaruConsole.DebugWriteLine("VTOC plugin", "Going to read past device size, aborting...");
+                AaruConsole.DebugWriteLine("VTOC plugin", Localization.Going_to_read_past_device_size_aborting);
 
                 return false;
             }
@@ -256,7 +256,7 @@ public sealed class VTOC : IPartition
             if(magic is VTOC_SANE or VTOC_ENAS)
             {
                 magicFound = true;
-                AaruConsole.DebugWriteLine("VTOC plugin", "New VTOC found.");
+                AaruConsole.DebugWriteLine("VTOC plugin", Localization.New_VTOC_found);
 
                 if(magic == VTOC_SANE)
                     vtoc = Marshal.ByteArrayToStructureLittleEndian<vtoc>(vtocsector);
@@ -278,7 +278,7 @@ public sealed class VTOC : IPartition
 
         if(!magicFound)
         {
-            AaruConsole.DebugWriteLine("VTOC plugin", "Cannot find VTOC.");
+            AaruConsole.DebugWriteLine("VTOC plugin", Localization.Cannot_find_VTOC);
 
             return false;
         }
@@ -397,22 +397,22 @@ public sealed class VTOC : IPartition
                 }
 
                 if(parts[i].p_flag.HasFlag(pFlag.V_VALID))
-                    info += " (valid)";
+                    info += Localization.valid;
 
                 if(parts[i].p_flag.HasFlag(pFlag.V_UNMNT))
-                    info += " (unmountable)";
+                    info += Localization._unmountable_;
 
                 if(parts[i].p_flag.HasFlag(pFlag.V_OPEN))
-                    info += " (open)";
+                    info += Localization.open;
 
                 if(parts[i].p_flag.HasFlag(pFlag.V_REMAP))
-                    info += " (alternate sector mapping)";
+                    info += Localization.alternate_sector_mapping;
 
                 if(parts[i].p_flag.HasFlag(pFlag.V_RONLY))
-                    info += " (read-only)";
+                    info += Localization._read_only_;
 
                 if(timestamps[i] != 0)
-                    info += $" created on {DateHandlers.UnixToDateTime(timestamps[i])}";
+                    info += string.Format(Localization.created_on_0, DateHandlers.UnixToDateTime(timestamps[i]));
 
                 part.Description = "UNIX slice" + info + ".";
 
@@ -425,23 +425,23 @@ public sealed class VTOC : IPartition
 
     static string DecodeUnixtag(pTag type, bool isNew) => type switch
     {
-        pTag.V_UNUSED      => "Unused",
-        pTag.V_BOOT        => "Boot",
+        pTag.V_UNUSED      => Localization.Unused,
+        pTag.V_BOOT        => Localization.Boot,
         pTag.V_ROOT        => "/",
-        pTag.V_SWAP        => "Swap",
+        pTag.V_SWAP        => Localization.swap,
         pTag.V_USER        => "/usr",
-        pTag.V_BACKUP      => "Whole disk",
-        pTag.V_STAND_OLD   => isNew ? "Stand" : "Alternate sector space",
-        pTag.V_VAR_OLD     => isNew ? "/var" : "non UNIX",
-        pTag.V_HOME_OLD    => isNew ? "/home" : "Alternate track space",
-        pTag.V_ALTSCTR_OLD => isNew ? "Alternate sector track" : "Stand",
-        pTag.V_CACHE       => isNew ? "Cache" : "/var",
-        pTag.V_RESERVED    => isNew ? "Reserved" : "/home",
-        pTag.V_DUMP        => "dump",
-        pTag.V_ALTSCTR     => "Alternate sector track",
-        pTag.V_VMPUBLIC    => "volume mgt public partition",
-        pTag.V_VMPRIVATE   => "volume mgt private partition",
-        _                  => $"Unknown TAG: 0x{type:X4}"
+        pTag.V_BACKUP      => Localization.Whole_disk,
+        pTag.V_STAND_OLD   => isNew ? "Stand" : Localization.Alternate_sector_space,
+        pTag.V_VAR_OLD     => isNew ? "/var" : Localization.non_UNIX,
+        pTag.V_HOME_OLD    => isNew ? "/home" : Localization.Alternate_track_space,
+        pTag.V_ALTSCTR_OLD => isNew ? Localization.Alternate_sector_track : "Stand",
+        pTag.V_CACHE       => isNew ? Localization.Cache : "/var",
+        pTag.V_RESERVED    => isNew ? Localization.Reserved : "/home",
+        pTag.V_DUMP        => Localization.dump,
+        pTag.V_ALTSCTR     => Localization.Alternate_sector_track,
+        pTag.V_VMPUBLIC    => Localization.volume_mgt_public_partition,
+        pTag.V_VMPRIVATE   => Localization.volume_mgt_private_partition,
+        _                  => string.Format(Localization.Unknown_TAG_0, type)
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

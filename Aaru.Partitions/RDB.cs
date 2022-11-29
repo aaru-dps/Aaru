@@ -178,11 +178,11 @@ public sealed class AmigaRigidDiskBlock : IPartition
     const uint FLAGS_NO_AUTOMOUNT = 0x00000002;
 
     /// <inheritdoc />
-    public string Name => "Amiga Rigid Disk Block";
+    public string Name => Localization.AmigaRigidDiskBlock_Name;
     /// <inheritdoc />
     public Guid Id => new("8D72ED97-1854-4170-9CE4-6E8446FD9863");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -211,11 +211,12 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
             uint magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
 
-            AaruConsole.DebugWriteLine("Amiga RDB plugin", "Possible magic at block {0} is 0x{1:X8}", rdbBlock, magic);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", Localization.Possible_magic_at_block_0_is_1_X8, rdbBlock,
+                                       magic);
 
             if(magic == RIGID_DISK_BLOCK_MAGIC)
             {
-                AaruConsole.DebugWriteLine("Amiga RDB plugin", "Found RDB magic at block {0}", rdbBlock);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", Localization.Found_RDB_magic_at_block_0, rdbBlock);
 
                 foundRdb = true;
 
@@ -371,7 +372,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
         while(nextBlock != 0xFFFFFFFF)
         {
-            AaruConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a BadBlock block",
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", Localization.Going_to_block_0_in_search_of_a_BadBlock_block,
                                        nextBlock);
 
             errno = imagePlugin.ReadSector(nextBlock, out sector);
@@ -384,7 +385,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             if(magic != BAD_BLOCK_LIST_MAGIC)
                 break;
 
-            AaruConsole.DebugWriteLine("Amiga RDB plugin", "Found BadBlock block");
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", Localization.Found_BadBlock_block);
 
             var chainEntry = new BadBlockList
             {
@@ -415,7 +416,8 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
                 chainEntry.BlockPairs[i].GoodBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + (i * 8) + 4));
 
-                AaruConsole.DebugWriteLine("Amiga RDB plugin", "Bad block at {0} replaced with good block at {1}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin",
+                                           Localization.Bad_block_at_0_replaced_with_good_block_at_1,
                                            chainEntry.BlockPairs[i].BadBlock, chainEntry.BlockPairs[i].GoodBlock);
             }
 
@@ -429,7 +431,8 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
         while(nextBlock != 0xFFFFFFFF)
         {
-            AaruConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a PartitionEntry block",
+            AaruConsole.DebugWriteLine("Amiga RDB plugin",
+                                       Localization.Going_to_block_0_in_search_of_a_PartitionEntry_block,
                                        nextBlock + sectorOffset);
 
             errno = imagePlugin.ReadSector(nextBlock + sectorOffset, out sector);
@@ -442,7 +445,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             if(magic != PARTITION_BLOCK_MAGIC)
                 break;
 
-            AaruConsole.DebugWriteLine("Amiga RDB plugin", "Found PartitionEntry block");
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", Localization.Found_PartitionEntry_block);
 
             var partEntry = new PartitionEntry
             {
@@ -598,8 +601,8 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
         while(nextBlock != 0xFFFFFFFF)
         {
-            AaruConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a FileSystemHeader block",
-                                       nextBlock);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin",
+                                       Localization.Going_to_block_0_in_search_of_a_FileSystemHeader_block, nextBlock);
 
             errno = imagePlugin.ReadSector(nextBlock, out sector);
 
@@ -611,7 +614,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             if(magic != FILESYSTEM_HEADER_MAGIC)
                 break;
 
-            AaruConsole.DebugWriteLine("Amiga RDB plugin", "Found FileSystemHeader block");
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", Localization.Found_FileSystemHeader_block);
 
             var fshd = new FileSystemHeader
             {
@@ -676,8 +679,8 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
             while(nextBlock != 0xFFFFFFFF)
             {
-                AaruConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a LoadSegment block",
-                                           nextBlock);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin",
+                                           Localization.Going_to_block_0_in_search_of_a_LoadSegment_block, nextBlock);
 
                 errno = imagePlugin.ReadSector(nextBlock, out sector);
 
@@ -689,7 +692,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
                 if(magicSeg != LOAD_SEG_MAGIC)
                     break;
 
-                AaruConsole.DebugWriteLine("Amiga RDB plugin", "Found LoadSegment block");
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", Localization.Found_LoadSegment_block);
 
                 thereAreLoadSegments = true;
 
@@ -723,7 +726,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             if(thereAreLoadSegments)
             {
                 string loadSegSha1 = sha1Ctx.End();
-                AaruConsole.DebugWriteLine("Amiga RDB plugin", "LoadSegment data SHA1: {0}", loadSegSha1);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", Localization.LoadSegment_data_SHA1_0, loadSegSha1);
             }
 
             fshdEntries.Add(fshd);
@@ -760,88 +763,99 @@ public sealed class AmigaRigidDiskBlock : IPartition
     {
         switch(amigaDosType)
         {
-            case TYPEID_OFS:           return "Amiga Original File System";
-            case TYPEID_FFS:           return "Amiga Fast File System";
-            case TYPEID_OFS_INTL:      return "Amiga Original File System with international characters";
-            case TYPEID_FFS_INTL:      return "Amiga Fast File System with international characters";
-            case TYPEID_OFS_CACHE:     return "Amiga Original File System with directory cache";
-            case TYPEID_FFS_CACHE:     return "Amiga Fast File System with directory cache";
-            case TYPEID_OFS2:          return "Amiga Original File System with long filenames";
-            case TYPEID_FFS2:          return "Amiga Fast File System with long filenames";
-            case TYPEID_AMIX_SYSV:     return "Amiga UNIX System V filesystem";
-            case TYPEID_AMIX_BOOT:     return "Amiga UNIX boot filesystem";
-            case TYPEID_AMIX_FFS:      return "Amiga UNIX BSD filesystem";
-            case TYPEID_AMIX_RESERVED: return "Amiga UNIX Reserved partition (swap)";
+            case TYPEID_OFS:           return Localization.Amiga_Original_File_System;
+            case TYPEID_FFS:           return Localization.Amiga_Fast_File_System;
+            case TYPEID_OFS_INTL:      return Localization.Amiga_Original_File_System_with_international_characters;
+            case TYPEID_FFS_INTL:      return Localization.Amiga_Fast_File_System_with_international_characters;
+            case TYPEID_OFS_CACHE:     return Localization.Amiga_Original_File_System_with_directory_cache;
+            case TYPEID_FFS_CACHE:     return Localization.Amiga_Fast_File_System_with_directory_cache;
+            case TYPEID_OFS2:          return Localization.Amiga_Original_File_System_with_long_filenames;
+            case TYPEID_FFS2:          return Localization.Amiga_Fast_File_System_with_long_filenames;
+            case TYPEID_AMIX_SYSV:     return Localization.Amiga_UNIX_System_V_filesystem;
+            case TYPEID_AMIX_BOOT:     return Localization.Amiga_UNIX_boot_filesystem;
+            case TYPEID_AMIX_FFS:      return Localization.Amiga_UNIX_BSD_filesystem;
+            case TYPEID_AMIX_RESERVED: return Localization.Amiga_UNIX_Reserved_partition__swap_;
             case TYPEID_PFS:
             case TYPEID_PFS2:
             case TYPEID_PFS_MUSER:
-            case TYPEID_AFS: return "ProfessionalFileSystem";
-            case TYPEID_SFS:       return "SmartFileSystem v1";
-            case TYPEID_SFS2:      return "SmartFileSystem v2";
-            case TYPEID_JXFS:      return "JXFS";
-            case TYPEID_CROSS_DOS: return "FAT, as set by CrossDOS";
-            case TYPEID_CROSS_MAC: return "HFS, as set by CrossMac";
-            case TYPEID_BFFS:      return "4.2UFS, for BFFS";
-            case TYPEID_OFS_MUSER: return "Amiga Original File System with multi-user patches";
-            case TYPEID_FFS_MUSER: return "Amiga Fast File System with multi-user patches";
+            case TYPEID_AFS: return Localization.ProfessionalFileSystem;
+            case TYPEID_SFS:       return Localization.SmartFileSystem_v1;
+            case TYPEID_SFS2:      return Localization.SmartFileSystem_v2;
+            case TYPEID_JXFS:      return Localization.JXFS;
+            case TYPEID_CROSS_DOS: return Localization.FAT_as_set_by_CrossDOS;
+            case TYPEID_CROSS_MAC: return Localization.HFS_as_set_by_CrossMac;
+            case TYPEID_BFFS:      return Localization._4_2_UFS_for_BFFS;
+            case TYPEID_OFS_MUSER: return Localization.Amiga_Original_File_System_with_multi_user_patches;
+            case TYPEID_FFS_MUSER: return Localization.Amiga_Fast_File_System_with_multi_user_patches;
             case TYPEID_OFS_INTL_MUSER:
-                return "Amiga Original File System with international characters and multi-user patches";
+                return Localization.Amiga_Original_File_System_with_international_characters_and_multi_user_patches;
             case TYPEID_FFS_INTL_MUSER:
-                return "Amiga Fast File System with international characters and multi-user patches";
+                return Localization.Amiga_Fast_File_System_with_international_characters_and_multi_user_patches;
             case TYPEID_OFS_CACHE_MUSER:
-                return "Amiga Original File System with directory cache and multi-user patches";
-            case TYPEID_FFS_CACHE_MUSER:    return "Amiga Fast File System with directory cache and multi-user patches";
-            case TYPEID_OLD_BSD_UNUSED:     return "BSD unused";
-            case TYPEID_OLD_BSD_SWAP:       return "BSD swap";
-            case TYPEID_OLD_BSD42_FFS:      return "BSD 4.2 FFS";
-            case TYPEID_OLD_BSD44_LFS:      return "BSD 4.4 LFS";
-            case TYPEID_NETBSD_ROOT_UNUSED: return "NetBSD unused root partition";
-            case TYPEID_NETBSD_ROOT_42FFS:  return "NetBSD 4.2 FFS root partition";
-            case TYPEID_NETBSD_ROOT_44LFS:  return "NetBSD 4.4 LFS root partition";
-            case TYPEID_NETBSD_USER_UNUSED: return "NetBSD unused user partition";
-            case TYPEID_NETBSD_USER_42FFS:  return "NetBSD 4.2 FFS user partition";
-            case TYPEID_NETBSD_USER_44LFS:  return "NetBSD 4.4 LFS user partition";
-            case TYPEID_NETBSD_SWAP:        return "NetBSD swap partition";
-            case TYPEID_LINUX:              return "Linux filesystem partition";
-            case TYPEID_LINUX_SWAP:         return "Linux swap partition";
+                return Localization.Amiga_Original_File_System_with_directory_cache_and_multi_user_patches;
+            case TYPEID_FFS_CACHE_MUSER:
+                return Localization.Amiga_Fast_File_System_with_directory_cache_and_multi_user_patches;
+            case TYPEID_OLD_BSD_UNUSED:     return Localization.BSD_unused;
+            case TYPEID_OLD_BSD_SWAP:       return Localization.BSD_swap;
+            case TYPEID_OLD_BSD42_FFS:      return Localization.BSD_4_2_FFS;
+            case TYPEID_OLD_BSD44_LFS:      return Localization.BSD_4_4_LFS;
+            case TYPEID_NETBSD_ROOT_UNUSED: return Localization.NetBSD_unused_root_partition;
+            case TYPEID_NETBSD_ROOT_42FFS:  return Localization.NetBSD_4_2_FFS_root_partition;
+            case TYPEID_NETBSD_ROOT_44LFS:  return Localization.NetBSD_4_4_LFS_root_partition;
+            case TYPEID_NETBSD_USER_UNUSED: return Localization.NetBSD_unused_user_partition;
+            case TYPEID_NETBSD_USER_42FFS:  return Localization.NetBSD_4_2_FFS_user_partition;
+            case TYPEID_NETBSD_USER_44LFS:  return Localization.NetBSD_4_4_LFS_user_partition;
+            case TYPEID_NETBSD_SWAP:        return Localization.NetBSD_swap_partition;
+            case TYPEID_LINUX:              return Localization.Linux_filesystem_partition;
+            case TYPEID_LINUX_SWAP:         return Localization.Linux_swap_partition;
             case TYPEID_RAID_FRAME:
-            case TYPEID_RAID_FRAME0: return "RaidFrame partition";
+            case TYPEID_RAID_FRAME0: return Localization.RaidFrame_partition;
 
             default:
             {
                 if((amigaDosType & TYPEID_OFS) == TYPEID_OFS)
-                    return $"Unknown Amiga DOS filesystem type {AmigaDosTypeToString(amigaDosType)}";
+                    return string.Format(Localization.Unknown_Amiga_DOS_filesystem_type_0,
+                                         AmigaDosTypeToString(amigaDosType));
 
                 if((amigaDosType & TYPEID_AMIX_SYSV) == TYPEID_AMIX_SYSV)
-                    return $"Unknown Amiga UNIX filesystem type {AmigaDosTypeToString(amigaDosType)}";
+                    return string.Format(Localization.Unknown_Amiga_UNIX_filesystem_type_0,
+                                         AmigaDosTypeToString(amigaDosType));
 
                 if((amigaDosType & 0x50465300) == 0x50465300 ||
                    (amigaDosType & 0x41465300) == 0x41465300)
-                    return $"Unknown ProfessionalFileSystem type {AmigaDosTypeToString(amigaDosType)}";
+                    return string.Format(Localization.Unknown_ProfessionalFileSystem_type_0,
+                                         AmigaDosTypeToString(amigaDosType));
 
                 if((amigaDosType & TYPEID_SFS) == TYPEID_SFS)
-                    return $"Unknown SmartFileSystem type {AmigaDosTypeToString(amigaDosType)}";
+                    return string.Format(Localization.Unknown_SmartFileSystem_type_0,
+                                         AmigaDosTypeToString(amigaDosType));
 
                 if((amigaDosType & TYPEID_OFS_MUSER) == TYPEID_OFS_MUSER)
-                    return $"Unknown Amiga DOS multi-user filesystem type {AmigaDosTypeToString(amigaDosType)}";
+                    return string.Format(Localization.Unknown_Amiga_DOS_multi_user_filesystem_type_0,
+                                         AmigaDosTypeToString(amigaDosType));
 
                 if((amigaDosType & TYPEID_OLD_BSD_UNUSED) == TYPEID_OLD_BSD_UNUSED)
-                    return $"Unknown BSD filesystem type {AmigaDosTypeToString(amigaDosType)}";
+                    return string.Format(Localization.Unknown_BSD_filesystem_type_0,
+                                         AmigaDosTypeToString(amigaDosType));
 
                 if((amigaDosType & TYPEID_NETBSD_ROOT_UNUSED) == TYPEID_NETBSD_ROOT_UNUSED)
-                    return $"Unknown NetBSD root filesystem type {AmigaDosTypeToString(amigaDosType)}";
+                    return string.Format(Localization.Unknown_NetBSD_root_filesystem_type_0,
+                                         AmigaDosTypeToString(amigaDosType));
 
                 if((amigaDosType & TYPEID_NETBSD_USER_UNUSED) == TYPEID_NETBSD_USER_UNUSED)
-                    return $"Unknown NetBSD user filesystem type {AmigaDosTypeToString(amigaDosType)}";
+                    return string.Format(Localization.Unknown_NetBSD_user_filesystem_type_0,
+                                         AmigaDosTypeToString(amigaDosType));
 
                 if((amigaDosType & TYPEID_NETBSD_SWAP) == TYPEID_NETBSD_SWAP)
-                    return $"Unknown NetBSD swap filesystem type {AmigaDosTypeToString(amigaDosType)}";
+                    return string.Format(Localization.Unknown_NetBSD_swap_filesystem_type_0,
+                                         AmigaDosTypeToString(amigaDosType));
 
                 if((amigaDosType & TYPEID_LINUX)      == TYPEID_LINUX ||
                    (amigaDosType & TYPEID_LINUX_SWAP) == TYPEID_LINUX_SWAP)
-                    return $"Unknown Linux filesystem type {AmigaDosTypeToString(amigaDosType)}";
+                    return string.Format(Localization.Unknown_Linux_filesystem_type_0,
+                                         AmigaDosTypeToString(amigaDosType));
 
-                return $"Unknown partition type {AmigaDosTypeToString(amigaDosType)}";
+                return string.Format(Localization.Unknown_partition_type_0, AmigaDosTypeToString(amigaDosType));
             }
         }
     }

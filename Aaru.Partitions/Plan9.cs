@@ -50,11 +50,11 @@ namespace Aaru.Partitions;
 public sealed class Plan9 : IPartition
 {
     /// <inheritdoc />
-    public string Name => "Plan9 partition table";
+    public string Name => Localization.Plan9_Name;
     /// <inheritdoc />
     public Guid Id => new("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

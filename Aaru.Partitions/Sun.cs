@@ -76,11 +76,11 @@ public sealed class SunDisklabel : IPartition
                                                (4 * 4) + (12 * 2) + (2 * 2));
 
     /// <inheritdoc />
-    public string Name => "Sun Disklabel";
+    public string Name => Localization.SunDisklabel_Name;
     /// <inheritdoc />
     public Guid Id => new("50F35CC4-8375-4445-8DCB-1BA550C931A3");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -195,7 +195,7 @@ public sealed class SunDisklabel : IPartition
                             (((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) * DK_LABEL_SIZE,
                         Start = (((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) *
                                 DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
-                        Type   = "SunOS partition",
+                        Type   = Localization.SunOS_partition,
                         Scheme = Name
                     };
 
@@ -278,8 +278,9 @@ public sealed class SunDisklabel : IPartition
                     };
 
                     if(dkl8.dkl_vtoc.v_timestamp[i] != 0)
-                        part.Description += $"\nPartition timestamped on {
-                            DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i])}";
+                        part.Description += "\n" + string.Format(Localization.Partition_timestamped_on_0,
+                                                                 DateHandlers.
+                                                                     UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
 
                     if(part.Start < imagePlugin.Info.Sectors &&
                        part.End   <= imagePlugin.Info.Sectors)
@@ -359,8 +360,9 @@ public sealed class SunDisklabel : IPartition
                     };
 
                     if(dkl16.dkl_vtoc.v_timestamp[i] != 0)
-                        part.Description += $"\nPartition timestamped on {
-                            DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i])}";
+                        part.Description += "\n" + string.Format(Localization.Partition_timestamped_on_0,
+                                                                 DateHandlers.
+                                                                     UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
 
                     if(part.Start < imagePlugin.Info.Sectors &&
                        part.End   <= imagePlugin.Info.Sectors)
@@ -373,7 +375,7 @@ public sealed class SunDisklabel : IPartition
 
     static dk_label SwapDiskLabel(dk_label label)
     {
-        AaruConsole.DebugWriteLine("Sun plugin", "Swapping dk_label");
+        AaruConsole.DebugWriteLine("Sun plugin", Localization.Swapping_dk_label);
         label = (dk_label)Marshal.SwapStructureMembersEndian(label);
 
         for(int i = 0; i < label.dkl_map.Length; i++)
@@ -384,7 +386,7 @@ public sealed class SunDisklabel : IPartition
 
     static dk_label8 SwapDiskLabel(dk_label8 label)
     {
-        AaruConsole.DebugWriteLine("Sun plugin", "Swapping dk_label8");
+        AaruConsole.DebugWriteLine("Sun plugin", Localization.Swapping_dk_label8);
         label = (dk_label8)Marshal.SwapStructureMembersEndian(label);
 
         for(int i = 0; i < label.dkl_map.Length; i++)
@@ -410,7 +412,7 @@ public sealed class SunDisklabel : IPartition
 
     static dk_label16 SwapDiskLabel(dk_label16 label)
     {
-        AaruConsole.DebugWriteLine("Sun plugin", "Swapping dk_label16");
+        AaruConsole.DebugWriteLine("Sun plugin", Localization.Swapping_dk_label16);
         label = (dk_label16)Marshal.SwapStructureMembersEndian(label);
 
         for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
@@ -438,41 +440,41 @@ public sealed class SunDisklabel : IPartition
         var sb = new StringBuilder();
 
         if(flags.HasFlag(SunFlags.NoMount))
-            sb.AppendLine("Unmountable");
+            sb.AppendLine(Localization.Unmountable);
 
         if(flags.HasFlag(SunFlags.ReadOnly))
-            sb.AppendLine("Read-only");
+            sb.AppendLine(Localization.Read_only);
 
         return sb.ToString();
     }
 
     static string SunIdToString(SunTag id) => id switch
     {
-        SunTag.Linux          => "Linux",
-        SunTag.LinuxRaid      => "Linux RAID",
-        SunTag.LinuxSwap      => "Linux swap",
-        SunTag.LVM            => "LVM",
-        SunTag.SunBoot        => "Sun boot",
-        SunTag.SunEmpty       => "Empty",
-        SunTag.SunHome        => "Sun /home",
-        SunTag.SunRoot        => "Sun /",
-        SunTag.SunStand       => "Sun /stand",
-        SunTag.SunSwap        => "Sun swap",
-        SunTag.SunUsr         => "Sun /usr",
-        SunTag.SunVar         => "Sun /var",
-        SunTag.SunWholeDisk   => "Whole disk",
-        SunTag.SunAlt         => "Replacement sectors",
-        SunTag.SunCache       => "Sun cachefs",
-        SunTag.SunReserved    => "Reserved for SMI",
-        SunTag.VxVmPublic     => "Veritas public",
-        SunTag.VxVmPrivate    => "Veritas private",
-        SunTag.NetBSD         => "NetBSD",
-        SunTag.FreeBSD_Swap   => "FreeBSD swap",
-        SunTag.FreeBSD_UFS    => "FreeBSD",
-        SunTag.FreeBSD_Vinum  => "Vinum",
-        SunTag.FreeBSD_ZFS    => "FreeBSD ZFS",
-        SunTag.FreeBSD_NANDFS => "FreeBSD nandfs",
-        _                     => "Unknown"
+        SunTag.Linux          => Localization.Linux,
+        SunTag.LinuxRaid      => Localization.Linux_RAID,
+        SunTag.LinuxSwap      => Localization.Linux_swap,
+        SunTag.LVM            => Localization.LVM,
+        SunTag.SunBoot        => Localization.Sun_boot,
+        SunTag.SunEmpty       => Localization.Empty,
+        SunTag.SunHome        => Localization.Sun_home,
+        SunTag.SunRoot        => Localization.Sun_root,
+        SunTag.SunStand       => Localization.Sun_stand,
+        SunTag.SunSwap        => Localization.Sun_swap,
+        SunTag.SunUsr         => Localization.Sun_usr,
+        SunTag.SunVar         => Localization.Sun_var,
+        SunTag.SunWholeDisk   => Localization.Whole_disk,
+        SunTag.SunAlt         => Localization.Replacement_sectors,
+        SunTag.SunCache       => Localization.Sun_cachefs,
+        SunTag.SunReserved    => Localization.Reserved_for_SMI,
+        SunTag.VxVmPublic     => Localization.Veritas_public,
+        SunTag.VxVmPrivate    => Localization.Veritas_private,
+        SunTag.NetBSD         => Localization.NetBSD,
+        SunTag.FreeBSD_Swap   => Localization.FreeBSD_swap,
+        SunTag.FreeBSD_UFS    => Localization.FreeBSD,
+        SunTag.FreeBSD_Vinum  => Localization.Vinum,
+        SunTag.FreeBSD_ZFS    => Localization.FreeBSD_ZFS,
+        SunTag.FreeBSD_NANDFS => Localization.FreeBSD_nandfs,
+        _                     => Localization.Unknown_partition_type
     };
 
     enum SunTag : ushort

@@ -64,11 +64,11 @@ public sealed class NeXTDisklabel : IPartition
     const ushort DISKTAB_ENTRY_SIZE = 0x2C;
 
     /// <inheritdoc />
-    public string Name => "NeXT Disklabel";
+    public string Name => Localization.NeXTDisklabel_Name;
     /// <inheritdoc />
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -229,34 +229,34 @@ public sealed class NeXTDisklabel : IPartition
 
             if(part.Start + part.Length > imagePlugin.Info.Sectors)
             {
-                AaruConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
+                AaruConsole.DebugWriteLine("NeXT Plugin", Localization.Partition_bigger_than_device_reducing);
                 part.Length = imagePlugin.Info.Sectors - part.Start;
                 part.Size   = part.Length * sectorSize;
 
                 AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i, part.Length);
             }
 
-            sb.AppendFormat("{0} bytes per block", label.dl_dt.d_partitions[i].p_bsize).AppendLine();
-            sb.AppendFormat("{0} bytes per fragment", label.dl_dt.d_partitions[i].p_fsize).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_block, label.dl_dt.d_partitions[i].p_bsize).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_fragment, label.dl_dt.d_partitions[i].p_fsize).AppendLine();
 
             if(label.dl_dt.d_partitions[i].p_opt == 's')
-                sb.AppendLine("Space optimized");
+                sb.AppendLine(Localization.Space_optimized);
             else if(label.dl_dt.d_partitions[i].p_opt == 't')
-                sb.AppendLine("Time optimized");
+                sb.AppendLine(Localization.Time_optimized);
             else
-                sb.AppendFormat("Unknown optimization {0:X2}", label.dl_dt.d_partitions[i].p_opt).AppendLine();
+                sb.AppendFormat(Localization.Unknown_optimization_0_X2, label.dl_dt.d_partitions[i].p_opt).AppendLine();
 
-            sb.AppendFormat("{0} cylinders per group", label.dl_dt.d_partitions[i].p_cpg).AppendLine();
-            sb.AppendFormat("{0} bytes per inode", label.dl_dt.d_partitions[i].p_density).AppendLine();
+            sb.AppendFormat(Localization._0_cylinders_per_group, label.dl_dt.d_partitions[i].p_cpg).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_inode, label.dl_dt.d_partitions[i].p_density).AppendLine();
 
-            sb.AppendFormat("{0}% of space must be free at minimum", label.dl_dt.d_partitions[i].p_minfree).
+            sb.AppendFormat(Localization._0_of_space_must_be_free_at_minimum, label.dl_dt.d_partitions[i].p_minfree).
                AppendLine();
 
             if(label.dl_dt.d_partitions[i].p_newfs != 1)
-                sb.AppendLine("Filesystem should be formatted at start");
+                sb.AppendLine(Localization.Filesystem_should_be_formatted_at_start);
 
             if(label.dl_dt.d_partitions[i].p_automnt == 1)
-                sb.AppendLine("Filesystem should be automatically mounted");
+                sb.AppendLine(Localization.Filesystem_should_be_automatically_mounted);
 
             part.Description = sb.ToString();
 

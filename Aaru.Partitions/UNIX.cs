@@ -53,7 +53,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9600,
             Start       = 0,
             Size        = 4915200,
@@ -64,7 +64,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 20000,
             Start       = 9600,
             Size        = 10240000,
@@ -74,8 +74,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 200,
             Start       = 29600,
             Size        = 102400,
@@ -85,8 +85,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 6000,
             Start       = 29800,
             Size        = 3072000,
@@ -96,8 +96,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 363376,
             Start       = 35800,
             Size        = 186048512,
@@ -107,8 +107,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 181688,
             Start       = 35800,
             Size        = 93024256,
@@ -118,8 +118,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 181688,
             Start       = 217488,
             Size        = 93024256,
@@ -129,8 +129,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "maintenance area",
-            Type        = "maintenance",
+            Name        = Localization.maintenance_area,
+            Type        = Localization.maintenance,
             Length      = 1000,
             Start       = 399176,
             Size        = 512000,
@@ -145,7 +145,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9600,
             Start       = 0,
             Size        = 4915200,
@@ -156,7 +156,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 20000,
             Start       = 9600,
             Size        = 10240000,
@@ -166,8 +166,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 200,
             Start       = 29600,
             Size        = 102400,
@@ -177,8 +177,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 6000,
             Start       = 29800,
             Size        = 3072000,
@@ -188,8 +188,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 200412,
             Start       = 35800,
             Size        = 102610944,
@@ -199,8 +199,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "maintenance area",
-            Type        = "maintenance",
+            Name        = Localization.maintenance_area,
+            Type        = Localization.maintenance,
             Length      = 1000,
             Start       = 236212,
             Size        = 512000,
@@ -215,7 +215,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9600,
             Start       = 0,
             Size        = 4915200,
@@ -226,7 +226,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 20000,
             Start       = 9600,
             Size        = 10240000,
@@ -236,8 +236,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 200,
             Start       = 29600,
             Size        = 102400,
@@ -247,8 +247,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 6000,
             Start       = 29800,
             Size        = 3072000,
@@ -258,8 +258,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 854272,
             Start       = 35800,
             Size        = 437387264,
@@ -269,8 +269,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 181688,
             Start       = 35800,
             Size        = 93024256,
@@ -280,8 +280,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 181688,
             Start       = 217488,
             Size        = 93024256,
@@ -291,8 +291,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 490896,
             Start       = 399176,
             Size        = 251338752,
@@ -302,8 +302,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "maintenance area",
-            Type        = "maintenance",
+            Name        = Localization.maintenance_area,
+            Type        = Localization.maintenance,
             Length      = 1000,
             Start       = 890072,
             Size        = 512000,
@@ -318,7 +318,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9000,
             Start       = 0,
             Size        = 4608000,
@@ -328,8 +328,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 200,
             Start       = 9000,
             Size        = 102400,
@@ -339,8 +339,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 4000,
             Start       = 9200,
             Size        = 2048000,
@@ -350,8 +350,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 37600,
             Start       = 13200,
             Size        = 19251200,
@@ -361,8 +361,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 12000,
             Start       = 13200,
             Size        = 6144000,
@@ -372,8 +372,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 25600,
             Start       = 25200,
             Size        = 13107200,
@@ -383,8 +383,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "maintenance area",
-            Type        = "maintenance",
+            Name        = Localization.maintenance_area,
+            Type        = Localization.maintenance,
             Length      = 102,
             Start       = 890072,
             Size        = 50800,
@@ -399,7 +399,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9700,
             Start       = 0,
             Size        = 4966400,
@@ -409,8 +409,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 100,
             Start       = 9700,
             Size        = 51200,
@@ -420,8 +420,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 3000,
             Start       = 9800,
             Size        = 1536000,
@@ -432,7 +432,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 28728,
             Start       = 12800,
             Size        = 14708736,
@@ -442,8 +442,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "maintenance area",
-            Type        = "maintenance",
+            Name        = Localization.maintenance_area,
+            Type        = Localization.maintenance,
             Length      = 32,
             Start       = 41528,
             Size        = 16384,
@@ -458,7 +458,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9700,
             Start       = 0,
             Size        = 4966400,
@@ -469,7 +469,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 17300,
             Start       = 9700,
             Size        = 102400,
@@ -479,8 +479,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 100,
             Start       = 27000,
             Size        = 51200,
@@ -490,8 +490,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 3000,
             Start       = 27100,
             Size        = 1536000,
@@ -501,8 +501,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 53072,
             Start       = 30100,
             Size        = 27172864,
@@ -512,8 +512,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "maintenance area",
-            Type        = "maintenance",
+            Name        = Localization.maintenance_area,
+            Type        = Localization.maintenance,
             Length      = 32,
             Start       = 83172,
             Size        = 16384,
@@ -528,7 +528,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 7460,
             Start       = 0,
             Size        = 4608000,
@@ -538,8 +538,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 40,
             Start       = 0,
             Size        = 20480,
@@ -549,8 +549,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 2200,
             Start       = 0,
             Size        = 1126400,
@@ -561,7 +561,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 11868,
             Start       = 9700,
             Size        = 6076416,
@@ -571,8 +571,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "maintenance area",
-            Type        = "maintenance",
+            Name        = Localization.maintenance_area,
+            Type        = Localization.maintenance,
             Length      = 32,
             Start       = 21568,
             Size        = 16384,
@@ -587,7 +587,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9700,
             Start       = 0,
             Size        = 4966400,
@@ -598,7 +598,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 17300,
             Start       = 9700,
             Size        = 8857600,
@@ -608,8 +608,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 100,
             Start       = 27000,
             Size        = 51200,
@@ -619,8 +619,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 3000,
             Start       = 27100,
             Size        = 1536000,
@@ -630,8 +630,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 30348,
             Start       = 30100,
             Size        = 15538176,
@@ -641,8 +641,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "maintenance area",
-            Type        = "maintenance",
+            Name        = Localization.maintenance_area,
+            Type        = Localization.maintenance,
             Length      = 32,
             Start       = 60448,
             Size        = 16384,
@@ -657,7 +657,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9700,
             Start       = 0,
             Size        = 4966400,
@@ -668,7 +668,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 17300,
             Start       = 9700,
             Size        = 8857600,
@@ -678,8 +678,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 100,
             Start       = 27000,
             Size        = 51200,
@@ -689,8 +689,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 3000,
             Start       = 27100,
             Size        = 1536000,
@@ -700,8 +700,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 108540,
             Start       = 30100,
             Size        = 55572480,
@@ -711,8 +711,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "maintenance area",
-            Type        = "maintenance",
+            Name        = Localization.maintenance_area,
+            Type        = Localization.maintenance,
             Length      = 32,
             Start       = 138640,
             Size        = 16384,
@@ -727,7 +727,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9700,
             Start       = 0,
             Size        = 4966400,
@@ -738,7 +738,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 17300,
             Start       = 9700,
             Size        = 8857600,
@@ -748,8 +748,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 100,
             Start       = 27000,
             Size        = 51200,
@@ -759,8 +759,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 3000,
             Start       = 27100,
             Size        = 1536000,
@@ -770,8 +770,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 281068,
             Start       = 30100,
             Size        = 143906816,
@@ -781,8 +781,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "maintenance area",
-            Type        = "maintenance",
+            Name        = Localization.maintenance_area,
+            Type        = Localization.maintenance,
             Length      = 32,
             Start       = 311168,
             Size        = 16384,
@@ -797,7 +797,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 7920,
             Start       = 0,
             Size        = 4055040,
@@ -807,8 +807,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 100,
             Start       = 7920,
             Size        = 51200,
@@ -818,8 +818,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 2936,
             Start       = 8020,
             Size        = 1503232,
@@ -830,7 +830,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 16126,
             Start       = 10956,
             Size        = 8256512,
@@ -840,8 +840,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "bad sector file",
-            Type        = "bad",
+            Name        = Localization.bad_sector_file,
+            Type        = Localization.bad,
             Length      = 44,
             Start       = 27082,
             Size        = 22528,
@@ -856,7 +856,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 7920,
             Start       = 0,
             Size        = 4055040,
@@ -866,8 +866,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 100,
             Start       = 7920,
             Size        = 51200,
@@ -877,8 +877,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 2936,
             Start       = 8020,
             Size        = 1503232,
@@ -889,7 +889,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 42790,
             Start       = 10956,
             Size        = 21908480,
@@ -899,8 +899,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "bad sector file",
-            Type        = "bad",
+            Name        = Localization.bad_sector_file,
+            Type        = Localization.bad,
             Length      = 44,
             Start       = 53746,
             Size        = 22528,
@@ -915,7 +915,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9120,
             Start       = 0,
             Size        = 4669440,
@@ -925,8 +925,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 200,
             Start       = 9120,
             Size        = 102400,
@@ -936,8 +936,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 5400,
             Start       = 9320,
             Size        = 2764800,
@@ -948,7 +948,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 5600,
             Start       = 29120,
             Size        = 2867200,
@@ -958,8 +958,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 96896,
             Start       = 34720,
             Size        = 49610752,
@@ -969,8 +969,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 32160,
             Start       = 34720,
             Size        = 16465920,
@@ -980,8 +980,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 32160,
             Start       = 66880,
             Size        = 16465920,
@@ -991,8 +991,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 32576,
             Start       = 99040,
             Size        = 16678912,
@@ -1002,8 +1002,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "bad sector file",
-            Type        = "bad",
+            Name        = Localization.bad_sector_file,
+            Type        = Localization.bad,
             Length      = 64,
             Start       = 131616,
             Size        = 32768,
@@ -1018,7 +1018,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 10336,
             Start       = 0,
             Size        = 5292032,
@@ -1029,7 +1029,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 21280,
             Start       = 10336,
             Size        = 10895360,
@@ -1039,8 +1039,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 200,
             Start       = 31616,
             Size        = 102400,
@@ -1050,8 +1050,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 6388,
             Start       = 31816,
             Size        = 3270656,
@@ -1061,8 +1061,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 462016,
             Start       = 38304,
             Size        = 236552192,
@@ -1072,8 +1072,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 153824,
             Start       = 38304,
             Size        = 78757888,
@@ -1083,8 +1083,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 153824,
             Start       = 192128,
             Size        = 78757888,
@@ -1094,8 +1094,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 154368,
             Start       = 192128,
             Size        = 79036416,
@@ -1105,8 +1105,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "bad sector file",
-            Type        = "bad",
+            Name        = Localization.bad_sector_file,
+            Type        = Localization.bad,
             Length      = 64,
             Start       = 421312,
             Size        = 32768,
@@ -1121,7 +1121,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 8400,
             Start       = 0,
             Size        = 4300800,
@@ -1131,8 +1131,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 100,
             Start       = 8400,
             Size        = 51200,
@@ -1142,8 +1142,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 3100,
             Start       = 8500,
             Size        = 1587200,
@@ -1154,7 +1154,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 28400,
             Start       = 11600,
             Size        = 14540800,
@@ -1169,7 +1169,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 8400,
             Start       = 0,
             Size        = 4300800,
@@ -1179,8 +1179,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 100,
             Start       = 8400,
             Size        = 51200,
@@ -1190,8 +1190,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 3100,
             Start       = 8500,
             Size        = 1587200,
@@ -1202,7 +1202,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 68400,
             Start       = 11600,
             Size        = 35020800,
@@ -1217,7 +1217,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9614,
             Start       = 0,
             Size        = 4922368,
@@ -1228,7 +1228,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 20064,
             Start       = 9614,
             Size        = 10272768,
@@ -1238,8 +1238,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 200,
             Start       = 29678,
             Size        = 102400,
@@ -1249,8 +1249,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 6070,
             Start       = 29878,
             Size        = 1587200,
@@ -1260,8 +1260,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 135806,
             Start       = 35948,
             Size        = 69532672,
@@ -1271,8 +1271,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "bad sector file",
-            Type        = "bad",
+            Name        = Localization.bad_sector_file,
+            Type        = Localization.bad,
             Length      = 44,
             Start       = 171754,
             Size        = 22528,
@@ -1287,7 +1287,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 9614,
             Start       = 0,
             Size        = 4922368,
@@ -1298,7 +1298,7 @@ public sealed class UNIX : IPartition
         {
             Description = null,
             Name        = "/usr",
-            Type        = "data",
+            Type        = Localization.data,
             Length      = 20064,
             Start       = 9614,
             Size        = 10272768,
@@ -1308,8 +1308,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "error log",
-            Type        = "errorlog",
+            Name        = Localization.error_log,
+            Type        = Localization.errorlog,
             Length      = 200,
             Start       = 29678,
             Size        = 102400,
@@ -1319,8 +1319,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "swap",
-            Type        = "swap",
+            Name        = Localization.swap,
+            Type        = Localization.swap,
             Length      = 6070,
             Start       = 29878,
             Size        = 1587200,
@@ -1330,8 +1330,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 135806,
             Start       = 35948,
             Size        = 69532672,
@@ -1341,8 +1341,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 304678,
             Start       = 35948,
             Size        = 155995136,
@@ -1352,8 +1352,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "user",
-            Type        = "data",
+            Name        = Localization.user,
+            Type        = Localization.data,
             Length      = 166828,
             Start       = 171798,
             Size        = 85415936,
@@ -1363,8 +1363,8 @@ public sealed class UNIX : IPartition
         new()
         {
             Description = null,
-            Name        = "bad sector file",
-            Type        = "bad",
+            Name        = Localization.bad_sector_file,
+            Type        = Localization.bad,
             Length      = 44,
             Start       = 340626,
             Size        = 22528,
@@ -1374,11 +1374,11 @@ public sealed class UNIX : IPartition
     };
 
     /// <inheritdoc />
-    public string Name => "UNIX hardwired";
+    public string Name => Localization.UNIX_Name;
     /// <inheritdoc />
     public Guid Id => new("9ED7E30B-53BF-4619-87A0-5D2002155617");
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
