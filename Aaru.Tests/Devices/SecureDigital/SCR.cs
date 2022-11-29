@@ -142,26 +142,37 @@ public class SCR
                 Assert.Multiple(() =>
                 {
                     int count = Marshal.ConvertFromHexAscii(scrs[i], out byte[] response);
-                    Assert.AreEqual(8, count, $"Size - {cards[i]}");
+                    Assert.AreEqual(8, count, string.Format(Localization.Size_0, cards[i]));
                     Decoders.SecureDigital.SCR scr = Decoders.SecureDigital.Decoders.DecodeSCR(response);
-                    Assert.IsNotNull(scr, $"Decoded - {cards[i]}");
-                    Assert.AreEqual(structure_version[i], scr.Structure, $"Version - {cards[i]}");
-                    Assert.AreEqual(specification_version[i], scr.Spec, $"Specification version - {cards[i]}");
+                    Assert.IsNotNull(scr, string.Format(Localization.Decoded_0, cards[i]));
+
+                    Assert.AreEqual(structure_version[i], scr.Structure,
+                                    string.Format(Localization.Version_0, cards[i]));
+
+                    Assert.AreEqual(specification_version[i], scr.Spec,
+                                    string.Format(Localization.Specification_version_0, cards[i]));
 
                     Assert.AreEqual(data_stat_after_erase[i], scr.DataStatusAfterErase,
-                                    $"Data stat after erase - {cards[i]}");
+                                    string.Format(Localization.Data_stat_after_erase_0, cards[i]));
 
-                    Assert.AreEqual(sd_security[i], scr.Security, $"Security - {cards[i]}");
-                    Assert.AreEqual((BusWidth)sd_bus_widths[i], scr.BusWidth, $"Bus widths - {cards[i]}");
-                    Assert.AreEqual(sd_spec3[i], scr.Spec3, $"Spec 3 - {cards[i]}");
-                    Assert.AreEqual(ex_security[i], scr.ExtendedSecurity, $"Extended security - {cards[i]}");
-                    Assert.AreEqual(sd_spec4[i], scr.Spec4, $"Spec 4 - {cards[i]}");
-                    Assert.AreEqual(sd_specx[i], scr.SpecX, $"Spec X - {cards[i]}");
+                    Assert.AreEqual(sd_security[i], scr.Security, string.Format(Localization.Security_0, cards[i]));
+
+                    Assert.AreEqual((BusWidth)sd_bus_widths[i], scr.BusWidth,
+                                    string.Format(Localization.Bus_widths_0, cards[i]));
+
+                    Assert.AreEqual(sd_spec3[i], scr.Spec3, string.Format(Localization.Spec_3_0, cards[i]));
+
+                    Assert.AreEqual(ex_security[i], scr.ExtendedSecurity,
+                                    string.Format(Localization.Extended_security_0, cards[i]));
+
+                    Assert.AreEqual(sd_spec4[i], scr.Spec4, string.Format(Localization.Spec_4_0, cards[i]));
+                    Assert.AreEqual(sd_specx[i], scr.SpecX, string.Format(Localization.Spec_X_0, cards[i]));
 
                     Assert.AreEqual((CommandSupport)cmd_support[i], scr.CommandSupport,
-                                    $"Command support - {cards[i]}");
+                                    string.Format(Localization.Command_support_0, cards[i]));
 
-                    Assert.AreEqual(mfg[i], scr.ManufacturerReserved, $"Manufacturer reserved - {cards[i]}");
+                    Assert.AreEqual(mfg[i], scr.ManufacturerReserved,
+                                    string.Format(Localization.Manufacturer_reserved_0, cards[i]));
                 });
     }
 }

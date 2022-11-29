@@ -215,7 +215,7 @@ public class ExtendedCSD
         for(int i = 0; i < _ecsd.Length; i++)
         {
             Decoders.MMC.ExtendedCSD csd = Decoders.MMC.Decoders.DecodeExtendedCSD(_ecsd[i]);
-            Assert.IsNotNull(csd, $"Not decoded - {i}");
+            Assert.IsNotNull(csd, string.Format(Localization.Not_decoded_0, i));
             csd.Should().BeEquivalentTo(_decoded[i]);
         }
     }

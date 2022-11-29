@@ -36,7 +36,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 var    partition = new Partition();
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -46,13 +46,14 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 var     filtersList = new FiltersList();
                 IFilter inputFilter = filtersList.GetFilter(testFile);
 
-                Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
+                Assert.IsNotNull(inputFilter, string.Format(Localization.Filter_0, testFile));
 
                 var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
-                Assert.IsNotNull(image, $"Image format: {testFile}");
+                Assert.IsNotNull(image, string.Format(Localization.Image_format_0, testFile));
 
-                Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), $"Cannot open image for {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter),
+                                string.Format(Localization.Cannot_open_image_for_0, testFile));
 
                 List<string> idPlugins;
 
@@ -60,7 +61,8 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 {
                     List<Partition> partitionsList = Core.Partitions.GetAll(image);
 
-                    Assert.Greater(partitionsList.Count, 0, $"No partitions found for {testFile}");
+                    Assert.Greater(partitionsList.Count, 0,
+                                   string.Format(Localization.No_partitions_found_for_0, testFile));
 
                     // In reverse to skip boot partitions we're not interested in
                     for(int index = partitionsList.Count - 1; index >= 0; index--)
@@ -90,12 +92,13 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
                     Core.Filesystems.Identify(image, out idPlugins, partition, true);
 
-                    Assert.Greater(idPlugins.Count, 0, $"No filesystems found for {testFile}");
+                    Assert.Greater(idPlugins.Count, 0,
+                                   string.Format(Localization.No_filesystems_found_for_0, testFile));
 
                     found = idPlugins.Contains(Plugin.Id.ToString());
                 }
 
-                Assert.True(found, $"Filesystem not identified for {testFile}");
+                Assert.True(found, string.Format(Localization.Filesystem_not_identified_for_0, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It is not the case, it changes
@@ -104,13 +107,13 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
                 var fs = Activator.CreateInstance(Plugin.GetType()) as IReadOnlyFilesystem;
 
-                Assert.NotNull(fs, $"Could not instantiate filesystem for {testFile}");
+                Assert.NotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 test.Encoding ??= Encoding.ASCII;
 
                 ErrorNumber ret = fs.Mount(image, partition, test.Encoding, null, test.Namespace);
 
-                Assert.AreEqual(ErrorNumber.NoError, ret, $"Unmountable: {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, ret, string.Format(Localization.Unmountable_0, testFile));
 
                 var serializer = new JsonSerializer
                 {
@@ -285,7 +288,8 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         ErrorNumber ret = fs.ReadDir(path, out List<string> contents);
 
         Assert.AreEqual(ErrorNumber.NoError, ret,
-                        $"Unexpected error {ret} when reading directory \"{path}\" of {testFile}.");
+                        string.Format(Localization.Unexpected_error_0_when_reading_directory_1_of_2, ret, path,
+                                      testFile));
 
         if(children.Count == 0 &&
            contents.Count == 0)
@@ -313,9 +317,11 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             contents.Remove(child.Key);
 
             Assert.AreEqual(ErrorNumber.NoError, ret,
-                            $"Unexpected error {ret} retrieving stats for \"{childPath}\" in {testFile}");
+                            string.Format(Localization.Unexpected_error_0_retrieving_stats_for_1_in_2, ret, childPath,
+                                          testFile));
 
-            stat.Should().BeEquivalentTo(child.Value.Info, $"Wrong info for \"{childPath}\" in {testFile}");
+            stat.Should().BeEquivalentTo(child.Value.Info,
+                                         string.Format(Localization.Wrong_info_for_0_in_1, childPath, testFile));
 
             byte[] buffer = Array.Empty<byte>();
 
@@ -324,11 +330,12 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 ret = fs.Read(childPath, 0, 1, ref buffer);
 
                 Assert.AreEqual(ErrorNumber.IsDirectory, ret,
-                                $"Got wrong data for directory \"{childPath}\" in {testFile}");
+                                string.Format(Localization.Got_wrong_data_for_directory_0_in_1, childPath, testFile));
 
                 Assert.IsNotNull(child.Value.Children,
-                                 $"Contents for \"{childPath}\" in {testFile
-                                 } must be defined in unit test declaration!");
+                                 string.
+                                     Format(Localization.Contents_for_0_in_1_must_be_defined_in_unit_test_declaration,
+                                            childPath, testFile));
 
                 if(child.Value.Children != null)
                     TestDirectory(fs, childPath, child.Value.Children, testFile, testXattr);
@@ -338,10 +345,12 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 ret = fs.ReadLink(childPath, out string link);
 
                 Assert.AreEqual(ErrorNumber.NoError, ret,
-                                $"Got wrong data for symbolic link \"{childPath}\" in {testFile}");
+                                string.Format(Localization.Got_wrong_data_for_symbolic_link_0_in_1, childPath,
+                                              testFile));
 
                 Assert.AreEqual(child.Value.LinkTarget, link,
-                                $"Invalid target for symbolic link \"{childPath}\" in {testFile}");
+                                string.Format(Localization.Invalid_target_for_symbolic_link_0_in_1, childPath,
+                                              testFile));
             }
             else
 
@@ -356,20 +365,22 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             if(ret == ErrorNumber.NotSupported)
             {
                 Assert.IsNull(child.Value.XattrsWithMd5,
-                              $"Defined extended attributes for \"{childPath}\" in {testFile
-                              } are not supported by filesystem.");
+                              string.
+                                  Format(Localization.Defined_extended_attributes_for_0_in_1_are_not_supported_by_filesystem,
+                                         childPath, testFile));
 
                 continue;
             }
 
             Assert.AreEqual(ErrorNumber.NoError, ret,
-                            $"Unexpected error {ret} when listing extended attributes for \"{childPath}\" in {testFile
-                            }");
+                            string.Format(Localization.Unexpected_error_0_when_listing_extended_attributes_for_1_in_2,
+                                          ret, childPath, testFile));
 
             if(xattrs.Count > 0)
                 Assert.IsNotNull(child.Value.XattrsWithMd5,
-                                 $"Extended attributes for \"{childPath}\" in {testFile
-                                 } must be defined in unit test declaration!");
+                                 string.
+                                     Format(Localization.Extended_attributes_for_0_in_1_must_be_defined_in_unit_test_declaration,
+                                            childPath, testFile));
 
             if(xattrs.Count                     > 0 ||
                child.Value.XattrsWithMd5?.Count > 0)
@@ -377,13 +388,13 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         }
 
         Assert.IsEmpty(expectedNotFound,
-                       $"Could not find the children of \"{path}\" in {testFile}: {string.Join(" ", expectedNotFound)
-                       }");
+                       string.Format(Localization.Could_not_find_the_children_of_0_in_1_2, path, testFile,
+                                     string.Join(" ", expectedNotFound)));
 
         if(contents != null)
             Assert.IsEmpty(contents,
-                           $"Found the following unexpected children of \"{path}\" in {testFile}: {
-                               string.Join(" ", contents)}");
+                           string.Format(Localization.Found_the_following_unexpected_children_of_0_in_1_2, path,
+                                         testFile, string.Join(" ", contents)));
     }
 
     static void TestFile(IReadOnlyFilesystem fs, string path, string md5, long length, string testFile)
@@ -391,7 +402,8 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         byte[]      buffer = new byte[length];
         ErrorNumber ret    = fs.Read(path, 0, length, ref buffer);
 
-        Assert.AreEqual(ErrorNumber.NoError, ret, $"Unexpected error {ret} when reading \"{path}\" in {testFile}");
+        Assert.AreEqual(ErrorNumber.NoError, ret,
+                        string.Format(Localization.Unexpected_error_0_when_reading_1_in_2, ret, path, testFile));
 
         string data = Md5Context.Data(buffer, out _);
 
@@ -428,20 +440,22 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             contents.Remove(xattr.Key);
 
             Assert.AreEqual(ErrorNumber.NoError, ret,
-                            $"Unexpected error {ret} retrieving extended attributes for \"{path}\" in {testFile}");
+                            string.Format(Localization.Unexpected_error_0_retrieving_extended_attributes_for_1_in_2,
+                                          ret, path, testFile));
 
             string data = Md5Context.Data(buffer, out _);
 
             Assert.AreEqual(xattr.Value, data,
-                            $"Got MD5 {data} for {xattr.Key} of \"{path}\" in {testFile} but expected {xattr.Value}");
+                            string.Format(Localization.Got_MD5_0_for_1_of_2_in_3_but_expected_4, data, xattr.Key, path,
+                                          testFile, xattr.Value));
         }
 
         Assert.IsEmpty(expectedNotFound,
-                       $"Could not find the following extended attributes of \"{path}\" in {testFile}: {
-                           string.Join(" ", expectedNotFound)}");
+                       string.Format(Localization.Could_not_find_the_following_extended_attributes_of_0_in_1_2, path,
+                                     testFile, string.Join(" ", expectedNotFound)));
 
         Assert.IsEmpty(contents,
-                       $"Found the following unexpected extended attributes of \"{path}\" in {testFile}: {
-                           string.Join(" ", contents)}");
+                       string.Format(Localization.Found_the_following_unexpected_extended_attributes_of_0_in_1_2, path,
+                                     testFile, string.Join(" ", contents)));
     }
 }

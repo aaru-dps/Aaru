@@ -32,7 +32,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -44,10 +44,10 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError)
                     continue;
@@ -55,9 +55,14 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 using(new AssertionScope())
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
-                        Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
-                        Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
+                        Assert.AreEqual(test.Sectors, image.Info.Sectors,
+                                        string.Format(Localization.Sectors_0, testFile));
+
+                        Assert.AreEqual(test.SectorSize, image.Info.SectorSize,
+                                        string.Format(Localization.Sector_size_0, testFile));
+
+                        Assert.AreEqual(test.MediaType, image.Info.MediaType,
+                                        string.Format(Localization.Media_type_0, testFile));
                     });
             }
         });
@@ -76,7 +81,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -88,10 +93,10 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError)
                     continue;
@@ -119,7 +124,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(test.Md5, ctx.End(), $"Hash: {testFile}");
+                Assert.AreEqual(test.Md5, ctx.End(), string.Format(Localization.Hash_0, testFile));
             }
         });
     }
@@ -140,7 +145,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -152,10 +157,10 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError)
                     continue;
@@ -174,8 +179,8 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                     });
 
                 Assert.AreEqual(test.Partitions.Length, partitions.Count,
-                                $"Expected {test.Partitions.Length} partitions in {testFile} but found {partitions.Count
-                                }");
+                                string.Format(Localization.Expected_0_partitions_in_1_but_found_2,
+                                              test.Partitions.Length, testFile, partitions.Count));
 
                 using(new AssertionScope())
                     Assert.Multiple(() =>
@@ -186,12 +191,14 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                             Partition             foundPartition    = partitions[i];
 
                             Assert.AreEqual(expectedPartition.Start, foundPartition.Start,
-                                            $"Expected partition {i} to start at sector {expectedPartition.Start
-                                            } but found it starts at {foundPartition.Start} in {testFile}");
+                                            string.
+                                                Format(Localization.Expected_partition_0_to_start_at_sector_1_but_found_it_starts_at_2_in_3,
+                                                       i, expectedPartition.Start, foundPartition.Start, testFile));
 
                             Assert.AreEqual(expectedPartition.Length, foundPartition.Length,
-                                            $"Expected partition {i} to have {expectedPartition.Length
-                                            } sectors but found it has {foundPartition.Length} sectors in {testFile}");
+                                            string.
+                                                Format(Localization.Expected_partition_0_to_have_1_sectors_but_found_it_has_2_sectors_in_3,
+                                                       i, expectedPartition.Length, foundPartition.Length, testFile));
 
                             string expectedDataFilename = $"{testFile}.contents.partition{i}.json";
 
@@ -230,18 +237,18 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                                            out IReadOnlyFilesystem plugin))
                                         continue;
 
-                                    Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
+                                    Assert.IsNotNull(plugin, Localization.Could_not_instantiate_filesystem_plugin);
 
                                     var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
                                                                          Invoke(new object[]
                                                                              {});
 
-                                    Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName}");
+                                    Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 
                                     Errno error = fs.Mount(image, partitions[i], null, null, null);
 
                                     Assert.AreEqual(ErrorNumber.NoError, error,
-                                                    $"Could not mount {pluginName} in partition {i}.");
+                                                    string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
 
                                     if(error != ErrorNumber.NoError)
                                         continue;
@@ -271,7 +278,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                                 if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem plugin))
                                     continue;
 
-                                Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
+                                Assert.IsNotNull(plugin, Localization.Could_not_instantiate_filesystem_plugin);
 
                                 var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
                                                                      Invoke(Array.Empty<object>());

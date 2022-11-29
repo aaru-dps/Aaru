@@ -39,7 +39,7 @@ public abstract class FsExtractHashIssueTest
         Dictionary<string, string> options = ParsedOptions;
         options["debug"] = Debug.ToString();
 
-        Assert.IsNotNull(inputFilter, "Cannot open specified file.");
+        Assert.IsNotNull(inputFilter, Localization.Cannot_open_specified_file);
 
         Encoding encodingClass = null;
 
@@ -50,15 +50,15 @@ public abstract class FsExtractHashIssueTest
 
         var imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
-        Assert.NotNull(imageFormat, "Image format not identified, not proceeding with analysis.");
+        Assert.NotNull(imageFormat, Localization.Image_format_not_identified_not_proceeding_with_analysis);
 
-        Assert.AreEqual(ErrorNumber.NoError, imageFormat.Open(inputFilter), "Unable to open image format");
+        Assert.AreEqual(ErrorNumber.NoError, imageFormat.Open(inputFilter), Localization.Unable_to_open_image_format);
 
         List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
 
         if(partitions.Count == 0)
         {
-            Assert.IsFalse(ExpectPartitions, "No partitions found");
+            Assert.IsFalse(ExpectPartitions, Localization.No_partitions_found);
 
             partitions.Add(new Partition
             {
@@ -90,7 +90,8 @@ public abstract class FsExtractHashIssueTest
         Assert.NotNull(expectedData);
 
         Assert.AreEqual(expectedData.Partitions.Length, partitions.Count,
-                        $"Excepted {expectedData.Partitions.Length} partitions but found {partitions.Count}");
+                        string.Format(Localization.Excepted_0_partitions_but_found_1, expectedData.Partitions.Length,
+                                      partitions.Count));
 
         for(int i = 0; i < partitions.Count; i++)
         {
@@ -99,7 +100,8 @@ public abstract class FsExtractHashIssueTest
             if(idPlugins.Count == 0)
             {
                 Assert.IsNull(expectedData.Partitions[i],
-                              $"Expected no filesystems identified in partition {i} but found {idPlugins.Count}");
+                              string.Format(Localization.Expected_no_filesystems_identified_in_partition_0_but_found_1,
+                                            i, idPlugins.Count));
 
                 continue;
             }
@@ -108,8 +110,8 @@ public abstract class FsExtractHashIssueTest
                 continue;
 
             Assert.AreEqual(expectedData.Partitions[i].Volumes.Length, idPlugins.Count,
-                            $"Expected {expectedData.Partitions[i].Volumes.Length} filesystems identified in partition {
-                                i} but found {idPlugins.Count}");
+                            string.Format(Localization.Expected_0_filesystems_identified_in_partition_1_but_found_2,
+                                          expectedData.Partitions[i].Volumes.Length, i, idPlugins.Count));
 
             for(int j = 0; j < idPlugins.Count; j++)
             {
@@ -118,33 +120,38 @@ public abstract class FsExtractHashIssueTest
                 if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem plugin))
                     continue;
 
-                Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
+                Assert.IsNotNull(plugin, Localization.Could_not_instantiate_filesystem_plugin);
 
                 var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
                                                      Invoke(Array.Empty<object>());
 
-                Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName}");
+                Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 
                 filesystemFound = true;
 
                 ErrorNumber error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                Assert.AreEqual(ErrorNumber.NoError, error, $"Could not mount {pluginName} in partition {i}.");
+                Assert.AreEqual(ErrorNumber.NoError, error,
+                                string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
 
                 Assert.AreEqual(expectedData.Partitions[i].Volumes[j].VolumeName, fs.XmlFsType.VolumeName,
-                                $"Excepted volume name \"{expectedData.Partitions[i].Volumes[j].VolumeName
-                                }\" for filesystem {j} in partition {i} but found \"{fs.XmlFsType.VolumeName}\"");
+                                string.
+                                    Format(Localization.Excepted_volume_name_0_for_filesystem_1_in_partition_2_but_found_3,
+                                           expectedData.Partitions[i].Volumes[j].VolumeName, j, i,
+                                           fs.XmlFsType.VolumeName));
 
                 VolumeData volumeData = expectedData.Partitions[i].Volumes[j];
 
                 ExtractFilesInDir("/", fs, Xattrs, volumeData);
 
-                volumeData.Directories.Should().BeEmpty("Expected directories not found:", volumeData.Directories);
-                volumeData.Files.Should().BeEmpty("Expected files not found:", volumeData.Files.Keys);
+                volumeData.Directories.Should().
+                           BeEmpty(Localization.Expected_directories_not_found, volumeData.Directories);
+
+                volumeData.Files.Should().BeEmpty(Localization.Expected_files_not_found, volumeData.Files.Keys);
             }
         }
 
-        Assert.IsTrue(filesystemFound, "No filesystems found.");
+        Assert.IsTrue(filesystemFound, Localization.No_filesystems_found);
     }
 
     static void ExtractFilesInDir(string path, IReadOnlyFilesystem fs, bool doXattrs, VolumeData volumeData)
@@ -155,25 +162,28 @@ public abstract class FsExtractHashIssueTest
         ErrorNumber error = fs.ReadDir(path, out List<string> directory);
 
         Assert.AreEqual(ErrorNumber.NoError, error,
-                        string.Format("Error {0} reading root directory {0}", error.ToString()));
+                        string.Format(Localization.Error_0_reading_root_directory_0, error.ToString()));
 
         foreach(string entry in directory)
         {
             error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
-            Assert.AreEqual(ErrorNumber.NoError, error, $"Error getting stat for entry {entry}");
+            Assert.AreEqual(ErrorNumber.NoError, error,
+                            string.Format(Localization.Error_getting_stat_for_entry_0, entry));
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory))
             {
                 if(string.IsNullOrWhiteSpace(path))
                 {
-                    Assert.True(volumeData.Directories.Contains(entry), $"Found unexpected directory {entry}");
+                    Assert.True(volumeData.Directories.Contains(entry),
+                                string.Format(Localization.Found_unexpected_directory_0, entry));
+
                     volumeData.Directories.Remove(entry);
                 }
                 else
                 {
-                    Assert.True(volumeData.Directories.Contains(path + "/" + entry),
-                                $"Found unexpected directory {path + "/" + entry}");
+                    Assert.True(volumeData.Directories.Contains(path                          + "/" + entry),
+                                string.Format(Localization.Found_unexpected_directory_0, path + "/" + entry));
 
                     volumeData.Directories.Remove(path + "/" + entry);
                 }
@@ -187,14 +197,15 @@ public abstract class FsExtractHashIssueTest
 
             if(string.IsNullOrWhiteSpace(path))
             {
-                Assert.IsTrue(volumeData.Files.TryGetValue(entry, out fileData), $"Found unexpected file {entry}");
+                Assert.IsTrue(volumeData.Files.TryGetValue(entry, out fileData),
+                              string.Format(Localization.Found_unexpected_file_0, entry));
 
                 volumeData.Files.Remove(entry);
             }
             else
             {
-                Assert.IsTrue(volumeData.Files.TryGetValue(path + "/" + entry, out fileData),
-                              $"Found unexpected file {path + "/" + entry}");
+                Assert.IsTrue(volumeData.Files.TryGetValue(path                        + "/" + entry, out fileData),
+                              string.Format(Localization.Found_unexpected_file_0, path + "/" + entry));
 
                 volumeData.Files.Remove(path + "/" + entry);
             }
@@ -204,7 +215,8 @@ public abstract class FsExtractHashIssueTest
                 error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
 
                 Assert.AreEqual(ErrorNumber.NoError, error,
-                                $"Error {error} getting extended attributes for entry {path + "/" + entry}");
+                                string.Format(Localization.Error_0_getting_extended_attributes_for_entry_1, error,
+                                              path + "/" + entry));
 
                 Dictionary<string, string> expectedXattrs = fileData.XattrsWithMd5;
 
@@ -212,7 +224,8 @@ public abstract class FsExtractHashIssueTest
                     foreach(string xattr in xattrs)
                     {
                         Assert.IsTrue(expectedXattrs.TryGetValue(xattr, out string expectedXattrMd5),
-                                      $"Found unexpected extended attribute {xattr} in file {entry}");
+                                      string.Format(Localization.Found_unexpected_extended_attribute_0_in_file_1, xattr,
+                                                    entry));
 
                         expectedXattrs.Remove(xattr);
 
@@ -220,16 +233,18 @@ public abstract class FsExtractHashIssueTest
                         error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
 
                         Assert.AreEqual(ErrorNumber.NoError, error,
-                                        $"Error {error} reading extended attributes for entry {path + "/" + entry}");
+                                        string.Format(Localization.Error_0_reading_extended_attributes_for_entry_1,
+                                                      error, path + "/" + entry));
 
                         string xattrMd5 = Md5Context.Data(xattrBuf, out _);
 
                         Assert.AreEqual(expectedXattrMd5, xattrMd5,
-                                        $"Invalid checksum for xattr {xattr} for file {path + "/" + entry}");
+                                        string.Format(Localization.Invalid_checksum_for_xattr_0_for_file_1, xattr,
+                                                      path + "/" + entry));
                     }
 
                 expectedXattrs.Should().
-                               BeEmpty($"Expected extended attributes not found for file {path + "/" + entry}:",
+                               BeEmpty(string.Format(Localization.Expected_extended_attributes_not_found_for_file_0, path + "/" + entry),
                                        expectedXattrs);
             }
 
@@ -237,11 +252,13 @@ public abstract class FsExtractHashIssueTest
 
             error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
 
-            Assert.AreEqual(ErrorNumber.NoError, error, $"Error {error} reading file {path + "/" + entry}");
+            Assert.AreEqual(ErrorNumber.NoError, error,
+                            string.Format(Localization.Error_0_reading_file_1, error, path + "/" + entry));
 
             string calculatedMd5 = Md5Context.Data(outBuf, out _);
 
-            Assert.AreEqual(fileData.Md5, calculatedMd5, $"Invalid checksum for file {path + "/" + entry}");
+            Assert.AreEqual(fileData.Md5, calculatedMd5,
+                            string.Format(Localization.Invalid_checksum_for_file_0, path + "/" + entry));
         }
     }
 }

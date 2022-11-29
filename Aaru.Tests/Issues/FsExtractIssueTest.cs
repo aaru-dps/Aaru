@@ -33,7 +33,7 @@ public abstract class FsExtractIssueTest
         Dictionary<string, string> options = ParsedOptions;
         options["debug"] = Debug.ToString();
 
-        Assert.IsNotNull(inputFilter, "Cannot open specified file.");
+        Assert.IsNotNull(inputFilter, Localization.Cannot_open_specified_file);
 
         Encoding encodingClass = null;
 
@@ -44,15 +44,15 @@ public abstract class FsExtractIssueTest
 
         var imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
-        Assert.NotNull(imageFormat, "Image format not identified, not proceeding with analysis.");
+        Assert.NotNull(imageFormat, Localization.Image_format_not_identified_not_proceeding_with_analysis);
 
-        Assert.AreEqual(ErrorNumber.NoError, imageFormat.Open(inputFilter), "Unable to open image format");
+        Assert.AreEqual(ErrorNumber.NoError, imageFormat.Open(inputFilter), Localization.Unable_to_open_image_format);
 
         List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
 
         if(partitions.Count == 0)
         {
-            Assert.IsFalse(ExpectPartitions, "No partitions found");
+            Assert.IsFalse(ExpectPartitions, Localization.No_partitions_found);
 
             partitions.Add(new Partition
             {
@@ -82,18 +82,18 @@ public abstract class FsExtractIssueTest
                 foreach(string pluginName in idPlugins)
                     if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
                     {
-                        Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
+                        Assert.IsNotNull(plugin, Localization.Could_not_instantiate_filesystem_plugin);
 
                         var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
                                                              Invoke(Array.Empty<object>());
 
-                        Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName}");
+                        Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 
                         filesystemFound = true;
 
                         error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                        Assert.AreEqual(ErrorNumber.NoError, error, $"Could not mount {pluginName} in partition {i}.");
+                        Assert.AreEqual(ErrorNumber.NoError, error, string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
 
                         ExtractFilesInDir("/", fs, Xattrs);
                     }
@@ -108,19 +108,19 @@ public abstract class FsExtractIssueTest
                 var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
                                                      Invoke(Array.Empty<object>());
 
-                Assert.IsNotNull(fs, $"Could not instantiate filesystem {plugin.Name}");
+                Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, plugin.Name));
 
                 filesystemFound = true;
 
                 error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                Assert.AreEqual(ErrorNumber.NoError, error, $"Could not mount {plugin.Name} in partition {i}.");
+                Assert.AreEqual(ErrorNumber.NoError, error, string.Format(Localization.Could_not_mount_0_in_partition_1, plugin.Name, i));
 
                 ExtractFilesInDir("/", fs, Xattrs);
             }
         }
 
-        Assert.IsTrue(filesystemFound, "No filesystems found.");
+        Assert.IsTrue(filesystemFound, Localization.No_filesystems_found);
     }
 
     static void ExtractFilesInDir(string path, IReadOnlyFilesystem fs, bool doXattrs)
@@ -131,13 +131,13 @@ public abstract class FsExtractIssueTest
         ErrorNumber error = fs.ReadDir(path, out List<string> directory);
 
         Assert.AreEqual(ErrorNumber.NoError, error,
-                        string.Format("Error {0} reading root directory {0}", error.ToString()));
+                        string.Format(Localization.Error_0_reading_root_directory_0, error.ToString()));
 
         foreach(string entry in directory)
         {
             error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
-            Assert.AreEqual(ErrorNumber.NoError, error, $"Error getting stat for entry {entry}");
+            Assert.AreEqual(ErrorNumber.NoError, error, string.Format(Localization.Error_getting_stat_for_entry_0, entry));
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory))
             {
@@ -151,7 +151,7 @@ public abstract class FsExtractIssueTest
                 error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
 
                 Assert.AreEqual(ErrorNumber.NoError, error,
-                                $"Error {error} getting extended attributes for entry {path + "/" + entry}");
+                                string.Format(Localization.Error_0_getting_extended_attributes_for_entry_1, error, path + "/" + entry));
 
                 if(error == ErrorNumber.NoError)
                     foreach(string xattr in xattrs)
@@ -160,7 +160,7 @@ public abstract class FsExtractIssueTest
                         error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
 
                         Assert.AreEqual(ErrorNumber.NoError, error,
-                                        $"Error {error} reading extended attributes for entry {path + "/" + entry}");
+                                        string.Format(Localization.Error_0_reading_extended_attributes_for_entry_1, error, path + "/" + entry));
                     }
             }
 
@@ -168,7 +168,7 @@ public abstract class FsExtractIssueTest
 
             error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
 
-            Assert.AreEqual(ErrorNumber.NoError, error, $"Error {error} reading file {path + "/" + entry}");
+            Assert.AreEqual(ErrorNumber.NoError, error, string.Format(Localization.Error_0_reading_file_1, error, path + "/" + entry));
         }
     }
 }

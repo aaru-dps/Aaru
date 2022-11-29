@@ -77,7 +77,7 @@ public class IomegaJaz
                 var         image  = new ZZZRawImage();
                 ErrorNumber opened = image.Open(filter);
 
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {_testFiles[i]}");
+                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, _testFiles[i]));
 
                 if(opened != ErrorNumber.NoError)
                     continue;
@@ -85,9 +85,14 @@ public class IomegaJaz
                 using(new AssertionScope())
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                        Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                        Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
+                        Assert.AreEqual(_sectors[i], image.Info.Sectors,
+                                        string.Format(Localization.Sectors_0, _testFiles[i]));
+
+                        Assert.AreEqual(_sectorSize[i], image.Info.SectorSize,
+                                        string.Format(Localization.Sector_size_0, _testFiles[i]));
+
+                        Assert.AreEqual(_mediaTypes[i], image.Info.MediaType,
+                                        string.Format(Localization.Media_type_0, _testFiles[i]));
                     });
             }
         });

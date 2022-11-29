@@ -29,7 +29,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -41,22 +41,24 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as ITapeImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError)
                     continue;
 
-                Assert.AreEqual(true, image.IsTape, $"Is tape?: {testFile}");
+                Assert.AreEqual(true, image.IsTape, string.Format(Localization.Is_tape_0, testFile));
 
                 using(new AssertionScope())
                     Assert.Multiple(() =>
                     {
-                        image.Files.Should().BeEquivalentTo(test.Files, $"Tape files: {testFile}");
+                        image.Files.Should().
+                              BeEquivalentTo(test.Files, string.Format(Localization.Tape_files_0, testFile));
 
-                        image.TapePartitions.Should().BeEquivalentTo(test.Partitions, $"Tape partitions: {testFile}");
+                        image.TapePartitions.Should().
+                              BeEquivalentTo(test.Partitions, string.Format(Localization.Tape_partitions_0, testFile));
                     });
             }
         });
@@ -74,7 +76,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -86,10 +88,10 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError)
                     continue;
@@ -97,9 +99,14 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 using(new AssertionScope())
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
-                        Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
-                        Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
+                        Assert.AreEqual(test.Sectors, image.Info.Sectors,
+                                        string.Format(Localization.Sectors_0, testFile));
+
+                        Assert.AreEqual(test.SectorSize, image.Info.SectorSize,
+                                        string.Format(Localization.Sector_size_0, testFile));
+
+                        Assert.AreEqual(test.MediaType, image.Info.MediaType,
+                                        string.Format(Localization.Media_type_0, testFile));
                     });
             }
         });
@@ -118,7 +125,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -130,10 +137,10 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError)
                     continue;
@@ -161,7 +168,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(test.Md5, ctx.End(), $"Hash: {testFile}");
+                Assert.AreEqual(test.Md5, ctx.End(), string.Format(Localization.Hash_0, testFile));
             }
         });
     }

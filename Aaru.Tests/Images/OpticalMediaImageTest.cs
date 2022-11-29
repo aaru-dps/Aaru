@@ -36,7 +36,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -48,10 +48,10 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError)
                     continue;
@@ -59,29 +59,37 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 using(new AssertionScope())
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
+                        Assert.AreEqual(test.Sectors, image.Info.Sectors,
+                                        string.Format(Localization.Sectors_0, testFile));
 
                         if(test.SectorSize > 0)
-                            Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
+                            Assert.AreEqual(test.SectorSize, image.Info.SectorSize,
+                                            string.Format(Localization.Sector_size_0, testFile));
 
-                        Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
+                        Assert.AreEqual(test.MediaType, image.Info.MediaType,
+                                        string.Format(Localization.Media_type_0, testFile));
 
                         if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
                             return;
 
-                        Assert.AreEqual(test.Tracks.Length, image.Tracks.Count, $"Tracks: {testFile}");
+                        Assert.AreEqual(test.Tracks.Length, image.Tracks.Count,
+                                        string.Format(Localization.Tracks_0, testFile));
 
                         image.Tracks.Select(t => t.Session).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Session), $"Track session: {testFile}");
+                              BeEquivalentTo(test.Tracks.Select(s => s.Session),
+                                             string.Format(Localization.Track_session_0, testFile));
 
                         image.Tracks.Select(t => t.StartSector).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Start), $"Track start: {testFile}");
+                              BeEquivalentTo(test.Tracks.Select(s => s.Start),
+                                             string.Format(Localization.Track_start_0, testFile));
 
                         image.Tracks.Select(t => t.EndSector).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.End), $"Track end: {testFile}");
+                              BeEquivalentTo(test.Tracks.Select(s => s.End),
+                                             string.Format(Localization.Track_end_0, testFile));
 
                         image.Tracks.Select(t => t.Pregap).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Pregap), $"Track pregap: {testFile}");
+                              BeEquivalentTo(test.Tracks.Select(s => s.Pregap),
+                                             string.Format(Localization.Track_pregap_0, testFile));
 
                         int trackNo = 0;
 
@@ -108,11 +116,12 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                             trackNo++;
                         }
 
-                        flags.Should().BeEquivalentTo(test.Tracks.Select(s => s.Flags), $"Track flags: {testFile}");
+                        flags.Should().BeEquivalentTo(test.Tracks.Select(s => s.Flags),
+                                                      string.Format(Localization.Track_flags_0, testFile));
 
                         Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
-                                        $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors
-                                        } for image");
+                                        string.Format(Localization.Last_sector_for_tracks_is_0_but_it_is_1_for_image,
+                                                      latestEndSector, image.Info.Sectors));
                     });
             }
         });
@@ -130,7 +139,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -142,10 +151,10 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError)
                     continue;
@@ -173,8 +182,8 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                             Core.Filesystems.Identify(image, out List<string> idPlugins, partition);
 
                             Assert.AreEqual(track.FileSystems.Length, idPlugins.Count,
-                                            $"Expected {track.FileSystems.Length} filesystems in {testFile} but found {
-                                                idPlugins.Count}");
+                                            string.Format(Localization.Expected_0_filesystems_in_1_but_found_2,
+                                                          track.FileSystems.Length, testFile, idPlugins.Count));
 
                             for(int i = 0; i < track.FileSystems.Length; i++)
                             {
@@ -188,35 +197,38 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                                 var fs = Activator.CreateInstance(plugin.GetType()) as IFilesystem;
 
-                                Assert.NotNull(fs, $"Could not instantiate filesystem for {testFile}");
+                                Assert.NotNull(fs,
+                                               string.Format(Localization.Could_not_instantiate_filesystem_for_0,
+                                                             testFile));
 
                                 fs.GetInformation(image, partition, out _, null);
 
                                 if(track.FileSystems[i].ApplicationId != null)
                                     Assert.AreEqual(track.FileSystems[i].ApplicationId,
-                                                    fs.XmlFsType.ApplicationIdentifier, $"Application ID: {testFile}");
+                                                    fs.XmlFsType.ApplicationIdentifier,
+                                                    string.Format(Localization.Application_ID_0, testFile));
 
                                 Assert.AreEqual(track.FileSystems[i].Bootable, fs.XmlFsType.Bootable,
-                                                $"Bootable: {testFile}");
+                                                string.Format(Localization.Bootable_0, testFile));
 
                                 Assert.AreEqual(track.FileSystems[i].Clusters, fs.XmlFsType.Clusters,
-                                                $"Clusters: {testFile}");
+                                                string.Format(Localization.Clusters_0, testFile));
 
                                 Assert.AreEqual(track.FileSystems[i].ClusterSize, fs.XmlFsType.ClusterSize,
-                                                $"Cluster size: {testFile}");
+                                                string.Format(Localization.Cluster_size_0, testFile));
 
                                 if(track.FileSystems[i].SystemId != null)
                                     Assert.AreEqual(track.FileSystems[i].SystemId, fs.XmlFsType.SystemIdentifier,
-                                                    $"System ID: {testFile}");
+                                                    string.Format(Localization.System_ID_0, testFile));
 
                                 Assert.AreEqual(track.FileSystems[i].Type, fs.XmlFsType.Type,
-                                                $"Filesystem type: {testFile}");
+                                                string.Format(Localization.Filesystem_type_0, testFile));
 
                                 Assert.AreEqual(track.FileSystems[i].VolumeName, fs.XmlFsType.VolumeName,
-                                                $"Volume name: {testFile}");
+                                                string.Format(Localization.Volume_name_0, testFile));
 
                                 Assert.AreEqual(track.FileSystems[i].VolumeSerial, fs.XmlFsType.VolumeSerial,
-                                                $"Volume serial: {testFile}");
+                                                string.Format(Localization.Volume_serial_0, testFile));
 
                                 if(Activator.CreateInstance(plugin.GetType()) is not IReadOnlyFilesystem rofs)
                                 {
@@ -224,8 +236,9 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                        track.FileSystems[i].ContentsJson != null ||
                                        File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
                                         Assert.NotNull(null,
-                                                       $"Could not instantiate filesystem for {testFile}, track {
-                                                           track.Number}, filesystem {i}");
+                                                       string.
+                                                           Format(Localization.Could_not_instantiate_filesystem_for_0_track_1_filesystem_2,
+                                                                  testFile, track.Number, i));
 
                                     continue;
                                 }
@@ -235,7 +248,8 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 ErrorNumber ret = rofs.Mount(image, partition, track.FileSystems[i].Encoding, null,
                                                              track.FileSystems[i].Namespace);
 
-                                Assert.AreEqual(ErrorNumber.NoError, ret, $"Unmountable: {testFile}");
+                                Assert.AreEqual(ErrorNumber.NoError, ret,
+                                                string.Format(Localization.Unmountable_0, testFile));
 
                                 var serializer = new JsonSerializer
                                 {
@@ -294,7 +308,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 string testFile = Tests[i].TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -306,10 +320,10 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError)
                     return;
@@ -398,7 +412,8 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                         }
                     }
 
-                    Assert.AreEqual(Tests[i].SubchannelMd5, ctx.End(), $"Subchannel hash: {testFile}");
+                    Assert.AreEqual(Tests[i].SubchannelMd5, ctx.End(),
+                                    string.Format(Localization.Subchannel_hash_0, testFile));
                 }
                 else
                 {
@@ -426,7 +441,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                         ctx.Update(sector);
                     }
 
-                    Assert.AreEqual(Tests[i].Md5, ctx.End(), $"Hash: {testFile}");
+                    Assert.AreEqual(Tests[i].Md5, ctx.End(), string.Format(Localization.Hash_0, testFile));
                 }
             });
         });

@@ -24,7 +24,7 @@ public abstract class PartitionSchemeTest
             Environment.CurrentDirectory = DataFolder;
 
             bool exists = File.Exists(testFile);
-            Assert.True(exists, $"{testFile} not found");
+            Assert.True(exists, string.Format(Localization._0_not_found, testFile));
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             // It arrives here...
@@ -36,17 +36,17 @@ public abstract class PartitionSchemeTest
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(testFile);
 
-            Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
+            Assert.IsNotNull(inputFilter, string.Format(Localization.Filter_0, testFile));
 
             var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
-            Assert.IsNotNull(image, $"Image format: {testFile}");
+            Assert.IsNotNull(image, string.Format(Localization.Image_format_0, testFile));
 
-            Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), $"Cannot open image for {testFile}");
+            Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), string.Format(Localization.Cannot_open_image_for_0, testFile));
 
             List<Partition> partitions = Core.Partitions.GetAll(image);
 
-            partitions.Should().BeEquivalentTo(test.Partitions, $"Partitions: {testFile}");
+            partitions.Should().BeEquivalentTo(test.Partitions, string.Format(Localization.Partitions_0, testFile));
         }
     }
 }

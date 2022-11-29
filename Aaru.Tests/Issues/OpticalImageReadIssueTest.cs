@@ -24,22 +24,22 @@ public abstract class OpticalImageReadIssueTest
         Environment.CurrentDirectory = DataFolder;
 
         bool exists = File.Exists(TestFile);
-        Assert.True(exists, "Test file not found");
+        Assert.True(exists, Localization.Test_file_not_found);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = filtersList.GetFilter(TestFile);
 
-        Assert.IsNotNull(inputFilter, "Filter for test file is not detected");
+        Assert.IsNotNull(inputFilter, Localization.Filter_for_test_file_is_not_detected);
 
         var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
-        Assert.IsNotNull(image, "Image format for test file is not detected");
+        Assert.IsNotNull(image, Localization.Image_format_for_test_file_is_not_detected);
 
-        Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), "Cannot open image for test file");
+        Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), Localization.Cannot_open_image_for_test_file);
 
         var opticalInput = image as IOpticalMediaImage;
 
-        Assert.IsNotNull(opticalInput, "Image format for test file is not for an optical disc");
+        Assert.IsNotNull(opticalInput, Localization.Image_format_for_test_file_is_not_for_an_optical_disc);
 
         var ctx = new Crc32Context();
 

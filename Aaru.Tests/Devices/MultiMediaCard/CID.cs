@@ -62,16 +62,28 @@ public class CID
                 Assert.Multiple(() =>
                 {
                     int count = Marshal.ConvertFromHexAscii(cids[i], out byte[] response);
-                    Assert.AreEqual(16, count, $"Size - {cards[i]}");
+                    Assert.AreEqual(16, count, string.Format(Localization.Size_0, cards[i]));
                     Decoders.MMC.CID cid = Decoders.MMC.Decoders.DecodeCID(response);
-                    Assert.IsNotNull(cid, $"Decoded - {cards[i]}");
-                    Assert.AreEqual(manufacturers[i], cid.Manufacturer, $"Manufacturer - {cards[i]}");
-                    Assert.AreEqual(applications[i], cid.ApplicationID, $"Application ID - {cards[i]}");
-                    Assert.AreEqual(names[i], cid.ProductName, $"Product name - {cards[i]}");
-                    Assert.AreEqual(revisions[i], cid.ProductRevision, $"Product revision - {cards[i]}");
-                    Assert.AreEqual(serials[i], cid.ProductSerialNumber, $"Serial number - {cards[i]}");
-                    Assert.AreEqual(dates[i], cid.ManufacturingDate, $"Manufacturing date - {cards[i]}");
-                    Assert.AreEqual(crcs[i], cid.CRC, $"CRC - {cards[i]}");
+                    Assert.IsNotNull(cid, string.Format(Localization.Decoded_0, cards[i]));
+
+                    Assert.AreEqual(manufacturers[i], cid.Manufacturer,
+                                    string.Format(Localization.Manufacturer_0, cards[i]));
+
+                    Assert.AreEqual(applications[i], cid.ApplicationID,
+                                    string.Format(Localization.Application_ID_0, cards[i]));
+
+                    Assert.AreEqual(names[i], cid.ProductName, string.Format(Localization.Product_name_0, cards[i]));
+
+                    Assert.AreEqual(revisions[i], cid.ProductRevision,
+                                    string.Format(Localization.Product_revision_0, cards[i]));
+
+                    Assert.AreEqual(serials[i], cid.ProductSerialNumber,
+                                    string.Format(Localization.Serial_number_0, cards[i]));
+
+                    Assert.AreEqual(dates[i], cid.ManufacturingDate,
+                                    string.Format(Localization.Manufacturing_date_0, cards[i]));
+
+                    Assert.AreEqual(crcs[i], cid.CRC, string.Format(Localization.CRC_0, cards[i]));
                 });
     }
 }
