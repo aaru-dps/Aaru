@@ -40,17 +40,17 @@ static class HlDtSt
         while(true)
         {
             System.Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Send an HL-DT-ST vendor command to the device:");
-            AaruConsole.WriteLine("1.- Send READ DVD (RAW) command.");
-            AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
-            AaruConsole.Write("Choose: ");
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Send_an_HLDTST_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_READ_DVD_RAW_command);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_commands_menu);
+            AaruConsole.Write(Localization.Choose);
 
             string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                 System.Console.ReadKey();
 
                 continue;
@@ -59,7 +59,7 @@ static class HlDtSt
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_commands_menu);
 
                     return;
                 case 1:
@@ -67,7 +67,7 @@ static class HlDtSt
 
                     continue;
                 default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                     System.Console.ReadKey();
 
                     continue;
@@ -87,21 +87,21 @@ static class HlDtSt
         while(true)
         {
             System.Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for READ DVD (RAW) command:");
-            AaruConsole.WriteLine("LBA: {0}", lba);
-            AaruConsole.WriteLine("Count: {0}", count);
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_READ_DVD_RAW_command);
+            AaruConsole.WriteLine(Localization.LBA_0, lba);
+            AaruConsole.WriteLine(Localization.Count_0, count);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to HL-DT-ST vendor commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_HLDTST_vendor_commands_menu);
 
             strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                 System.Console.ReadKey();
 
                 continue;
@@ -110,28 +110,28 @@ static class HlDtSt
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to HL-DT-ST vendor commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_HLDTST_vendor_commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.Write("How many sectors?: ");
+                    AaruConsole.Write(Localization.How_many_sectors);
                     strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out count))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         count = 1;
                         System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("LBA?: ");
+                    AaruConsole.Write(Localization.LBA_Q);
                     strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         lba = 0;
                         System.Console.ReadKey();
                     }
@@ -148,29 +148,34 @@ static class HlDtSt
                                           out double duration);
 
         menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending READ DVD (RAW) to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_READ_DVD_RAW_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Buffer_is_0_bytes, buffer?.Length.ToString() ?? Localization._null);
+        AaruConsole.WriteLine(Localization.Buffer_is_null_or_empty_0_Q, ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
         AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print buffer.");
-        AaruConsole.WriteLine("2.- Print sense buffer.");
-        AaruConsole.WriteLine("3.- Decode sense buffer.");
-        AaruConsole.WriteLine("4.- Send command again.");
-        AaruConsole.WriteLine("5.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to HL-DT-ST vendor commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization.Print_buffer);
+        AaruConsole.WriteLine(Localization._2_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._3_Decode_sense_buffer);
+        AaruConsole.WriteLine(Localization._4_Send_command_again);
+        AaruConsole.WriteLine(Localization._5_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_HLDTST_vendor_commands_menu);
+        AaruConsole.Write(Localization.Choose);
 
         strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
             System.Console.ReadKey();
             System.Console.Clear();
 
@@ -180,52 +185,52 @@ static class HlDtSt
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to HL-DT-ST vendor commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_HLDTST_vendor_commands_menu);
 
                 return;
             case 1:
                 System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ DVD (RAW) response:");
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_DVD_RAW_response);
 
                 if(buffer != null)
                     PrintHex.PrintHexArray(buffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
                 System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2:
                 System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ DVD (RAW) sense:");
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_DVD_RAW_sense);
 
                 if(senseBuffer != null)
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
                 System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 3:
                 System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ DVD (RAW) decoded sense:");
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_DVD_RAW_decoded_sense);
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                AaruConsole.WriteLine("Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
                 System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 4: goto start;
             case 5: goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
                 System.Console.Clear();
 

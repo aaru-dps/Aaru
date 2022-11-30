@@ -35,7 +35,7 @@ static partial class MainClass
 {
     public static void NVMe(string devPath, Device dev)
     {
-        AaruConsole.WriteLine("NVMe commands not yet implemented. Press any key to continue...");
+        AaruConsole.WriteLine(Localization.NVMe_commands_not_yet_implemented_Press_any_key_to_continue);
         System.Console.ReadKey();
     }
 }

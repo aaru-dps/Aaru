@@ -1,0 +1,3556 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<root>
+  <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+              xmlns="">
+    <xsd:element name="root" msdata:IsDataSet="true"></xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    </value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    </value>
+  </resheader>
+  <data name="Device_0" xml:space="preserve">
+    <value>Device: {0}</value>
+  </data>
+  <data name="Send_a_28_bit_ATA_command_to_the_device" xml:space="preserve">
+    <value>Send a 28-bit ATA command to the device:</value>
+  </data>
+  <data name="Send_READ_BUFFER_command" xml:space="preserve">
+    <value>1.- Send READ BUFFER command.</value>
+  </data>
+  <data name="Send_READ_BUFFER_DMA_command" xml:space="preserve">
+    <value>2.- Send READ BUFFER DMA command.</value>
+  </data>
+  <data name="_3_Send_READ_DMA_command" xml:space="preserve">
+    <value>3.- Send READ DMA command.</value>
+  </data>
+  <data name="_4_Send_READ_DMA_WITH_RETRIES_command" xml:space="preserve">
+    <value>4.- Send READ DMA WITH RETRIES command.</value>
+  </data>
+  <data name="_5_Send_READ_LONG_command" xml:space="preserve">
+    <value>5.- Send READ LONG command.</value>
+  </data>
+  <data name="_6_Send_READ_LONG_WITH_RETRIES_command" xml:space="preserve">
+    <value>6.- Send READ LONG WITH RETRIES command.</value>
+  </data>
+  <data name="_7_Send_READ_MULTIPLE_command" xml:space="preserve">
+    <value>7.- Send READ MULTIPLE command.</value>
+  </data>
+  <data name="Send_READ_NATIVE_MAX_ADDRESS_command" xml:space="preserve">
+    <value>8.- Send READ NATIVE MAX ADDRESS command.</value>
+  </data>
+  <data name="_9_Send_READ_SECTORS_command" xml:space="preserve">
+    <value>9.- Send READ SECTORS command.</value>
+  </data>
+  <data name="_10_Send_READ_SECTORS_WITH_RETRIES_command" xml:space="preserve">
+    <value>10.- Send READ SECTORS WITH RETRIES command.</value>
+  </data>
+  <data name="_11_Send_SEEK_command" xml:space="preserve">
+    <value>11.- Send SEEK command.</value>
+  </data>
+  <data name="Return_to_ATA_commands_menu" xml:space="preserve">
+    <value>0.- Return to ATA commands menu.</value>
+  </data>
+  <data name="Choose" xml:space="preserve">
+    <value>Choose: </value>
+  </data>
+  <data name="Not_a_number_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a number. Press any key to continue...</value>
+  </data>
+  <data name="Returning_to_ATA_commands_menu" xml:space="preserve">
+    <value>Returning to ATA commands menu...</value>
+  </data>
+  <data name="Incorrect_option_Press_any_key_to_continue" xml:space="preserve">
+    <value>Incorrect option. Press any key to continue...</value>
+  </data>
+  <data name="Sending_READ_BUFFER_to_the_device" xml:space="preserve">
+    <value>Sending READ BUFFER to the device:</value>
+  </data>
+  <data name="Command_took_0_ms" xml:space="preserve">
+    <value>Command took {0} ms.</value>
+  </data>
+  <data name="Sense_is_0" xml:space="preserve">
+    <value>Sense is {0}.</value>
+  </data>
+  <data name="Buffer_is_0_bytes" xml:space="preserve">
+    <value>Buffer is {0} bytes.</value>
+  </data>
+  <data name="Buffer_is_null_or_empty_0_Q" xml:space="preserve">
+    <value>Buffer is null or empty? {0}</value>
+  </data>
+  <data name="Choose_what_to_do" xml:space="preserve">
+    <value>Choose what to do:</value>
+  </data>
+  <data name="Print_buffer" xml:space="preserve">
+    <value>1.- Print buffer.</value>
+  </data>
+  <data name="Decode_error_registers" xml:space="preserve">
+    <value>2.- Decode error registers.</value>
+  </data>
+  <data name="Send_command_again" xml:space="preserve">
+    <value>3.- Send command again.</value>
+  </data>
+  <data name="Return_to_28_bit_ATA_commands_menu" xml:space="preserve">
+    <value>0.- Return to 28-bit ATA commands menu.</value>
+  </data>
+  <data name="Returning_to_28_bit_ATA_commands_menu" xml:space="preserve">
+    <value>Returning to 28-bit ATA commands menu...</value>
+  </data>
+  <data name="READ_BUFFER_response" xml:space="preserve">
+    <value>READ BUFFER response:</value>
+  </data>
+  <data name="Press_any_key_to_continue" xml:space="preserve">
+    <value>Press any key to continue...</value>
+  </data>
+  <data name="READ_BUFFER_status_registers" xml:space="preserve">
+    <value>READ BUFFER status registers:</value>
+  </data>
+  <data name="null" xml:space="preserve">
+    <value>null</value>
+  </data>
+  <data name="Sending_READ_BUFFER_DMA_to_the_device" xml:space="preserve">
+    <value>Sending READ BUFFER DMA to the device:</value>
+  </data>
+  <data name="READ_BUFFER_DMA_response" xml:space="preserve">
+    <value>READ BUFFER DMA response:</value>
+  </data>
+  <data name="READ_BUFFER_DMA_status_registers" xml:space="preserve">
+    <value>READ BUFFER DMA status registers:</value>
+  </data>
+  <data name="Parameters_for_READ_DMA_WITH_RETRIES_command" xml:space="preserve">
+    <value>Parameters for READ DMA WITH RETRIES command:</value>
+  </data>
+  <data name="Parameters_for_READ_DMA_command" xml:space="preserve">
+    <value>Parameters for READ DMA command:</value>
+  </data>
+  <data name="LBA_0" xml:space="preserve">
+    <value>LBA: {0}</value>
+  </data>
+  <data name="Count_0" xml:space="preserve">
+    <value>Count: {0}</value>
+  </data>
+  <data name="_1_Change_parameters" xml:space="preserve">
+    <value>1.- Change parameters.</value>
+  </data>
+  <data name="What_logical_block_address" xml:space="preserve">
+    <value>What logical block address?: </value>
+  </data>
+  <data name="Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0" xml:space="preserve">
+    <value>Logical block address cannot be bigger than {0}. Setting it to {0}...</value>
+  </data>
+  <data name="How_many_sectors" xml:space="preserve">
+    <value>How many sectors?: </value>
+  </data>
+  <data name="Sending_READ_DMA_WITH_RETRIES_to_the_device" xml:space="preserve">
+    <value>Sending READ DMA WITH RETRIES to the device:</value>
+  </data>
+  <data name="Sending_READ_DMA_to_the_device" xml:space="preserve">
+    <value>Sending READ DMA to the device:</value>
+  </data>
+  <data name="_4_Change_parameters" xml:space="preserve">
+    <value>4.- Change parameters.</value>
+  </data>
+  <data name="READ_DMA_WITH_RETRIES_response" xml:space="preserve">
+    <value>READ DMA WITH RETRIES response:</value>
+  </data>
+  <data name="READ_DMA_response" xml:space="preserve">
+    <value>READ DMA response:</value>
+  </data>
+  <data name="READ_DMA_WITH_RETRIES_status_registers" xml:space="preserve">
+    <value>READ DMA WITH RETRIES status registers:</value>
+  </data>
+  <data name="READ_DMA_status_registers" xml:space="preserve">
+    <value>READ DMA status registers:</value>
+  </data>
+  <data name="_2_Send_command_with_these_parameters" xml:space="preserve">
+    <value>2.- Send command with these parameters.</value>
+  </data>
+  <data name="Parameters_for_READ_LONG_WITH_RETRIES_command" xml:space="preserve">
+    <value>Parameters for READ LONG WITH RETRIES command:</value>
+  </data>
+  <data name="Parameters_for_READ_LONG_command" xml:space="preserve">
+    <value>Parameters for READ LONG command:</value>
+  </data>
+  <data name="Block_size_0" xml:space="preserve">
+    <value>Block size: {0}</value>
+  </data>
+  <data name="How_many_bytes_to_expect" xml:space="preserve">
+    <value>How many bytes to expect?: </value>
+  </data>
+  <data name="Sending_READ_LONG_WITH_RETRIES_to_the_device" xml:space="preserve">
+    <value>Sending READ LONG WITH RETRIES to the device:</value>
+  </data>
+  <data name="Sending_READ_LONG_to_the_device" xml:space="preserve">
+    <value>Sending READ LONG to the device:</value>
+  </data>
+  <data name="READ_LONG_WITH_RETRIES_response" xml:space="preserve">
+    <value>READ LONG WITH RETRIES response:</value>
+  </data>
+  <data name="READ_LONG_response" xml:space="preserve">
+    <value>READ LONG response:</value>
+  </data>
+  <data name="READ_LONG_WITH_RETRIES_status_registers" xml:space="preserve">
+    <value>READ LONG WITH RETRIES status registers:</value>
+  </data>
+  <data name="READ_LONG_status_registers" xml:space="preserve">
+    <value>READ LONG status registers:</value>
+  </data>
+  <data name="Parameters_for_READ_MULTIPLE_command" xml:space="preserve">
+    <value>Parameters for READ MULTIPLE command:</value>
+  </data>
+  <data name="Sending_READ_MULTIPLE_to_the_device" xml:space="preserve">
+    <value>Sending READ MULTIPLE to the device:</value>
+  </data>
+  <data name="READ_MULTIPLE_response" xml:space="preserve">
+    <value>READ MULTIPLE response:</value>
+  </data>
+  <data name="READ_MULTIPLE_status_registers" xml:space="preserve">
+    <value>READ MULTIPLE status registers:</value>
+  </data>
+  <data name="Sending_READ_NATIVE_MAX_ADDRESS_to_the_device" xml:space="preserve">
+    <value>Sending READ NATIVE MAX ADDRESS to the device:</value>
+  </data>
+  <data name="Max_LBA_is_0" xml:space="preserve">
+    <value>Max LBA is {0}.</value>
+  </data>
+  <data name="_1_Decode_error_registers" xml:space="preserve">
+    <value>1.- Decode error registers.</value>
+  </data>
+  <data name="_2_Send_command_again" xml:space="preserve">
+    <value>2.- Send command again.</value>
+  </data>
+  <data name="READ_NATIVE_MAX_ADDRESS_status_registers" xml:space="preserve">
+    <value>READ NATIVE MAX ADDRESS status registers:</value>
+  </data>
+  <data name="Parameters_for_READ_SECTORS_WITH_RETRIES_command" xml:space="preserve">
+    <value>Parameters for READ SECTORS WITH RETRIES command:</value>
+  </data>
+  <data name="Parameters_for_READ_SECTORS_command" xml:space="preserve">
+    <value>Parameters for READ SECTORS command:</value>
+  </data>
+  <data name="Sending_READ_SECTORS_WITH_RETRIES_to_the_device" xml:space="preserve">
+    <value>Sending READ SECTORS WITH RETRIES to the device:</value>
+  </data>
+  <data name="Sending_READ_SECTORS_to_the_device" xml:space="preserve">
+    <value>Sending READ SECTORS to the device:</value>
+  </data>
+  <data name="READ_SECTORS_WITH_RETRIES_response" xml:space="preserve">
+    <value>READ SECTORS WITH RETRIES response:</value>
+  </data>
+  <data name="READ_SECTORS_response" xml:space="preserve">
+    <value>READ SECTORS response:</value>
+  </data>
+  <data name="READ_SECTORS_WITH_RETRIES_status_registers" xml:space="preserve">
+    <value>READ SECTORS WITH RETRIES status registers:</value>
+  </data>
+  <data name="READ_SECTORS_status_registers" xml:space="preserve">
+    <value>READ SECTORS status registers:</value>
+  </data>
+  <data name="Parameters_for_SEEK_command" xml:space="preserve">
+    <value>Parameters for SEEK command:</value>
+  </data>
+  <data name="Sending_SEEK_to_the_device" xml:space="preserve">
+    <value>Sending SEEK to the device:</value>
+  </data>
+  <data name="_3_Change_parameters" xml:space="preserve">
+    <value>3.- Change parameters.</value>
+  </data>
+  <data name="SEEK_status_registers" xml:space="preserve">
+    <value>SEEK status registers:</value>
+  </data>
+  <data name="Send_a_48_bit_ATA_command_to_the_device" xml:space="preserve">
+    <value>Send a 48-bit ATA command to the device:</value>
+  </data>
+  <data name="Send_GET_NATIVE_MAX_ADDRESS_EXT_command" xml:space="preserve">
+    <value>1.- Send GET NATIVE MAX ADDRESS EXT command.</value>
+  </data>
+  <data name="Send_READ_DMA_EXT_command" xml:space="preserve">
+    <value>2.- Send READ DMA EXT command.</value>
+  </data>
+  <data name="Send_READ_LOG_DMA_EXT_command" xml:space="preserve">
+    <value>3.- Send READ LOG DMA EXT command.</value>
+  </data>
+  <data name="Send_READ_LOG_EXT_command" xml:space="preserve">
+    <value>4.- Send READ LOG EXT command.</value>
+  </data>
+  <data name="Send_READ_NATIVE_MAX_ADDRESS_EXT_command" xml:space="preserve">
+    <value>5.- Send READ NATIVE MAX ADDRESS EXT command.</value>
+  </data>
+  <data name="Send_READ_MULTIPLE_EXT_command" xml:space="preserve">
+    <value>6.- Send READ MULTIPLE EXT command.</value>
+  </data>
+  <data name="Send_READ_SECTORS_EXT_command" xml:space="preserve">
+    <value>7.- Send READ SECTORS EXT command.</value>
+  </data>
+  <data name="Sending_GET_NATIVE_MAX_ADDRESS_EXT_to_the_device" xml:space="preserve">
+    <value>Sending GET NATIVE MAX ADDRESS EXT to the device:</value>
+  </data>
+  <data name="Return_to_48_bit_ATA_commands_menu" xml:space="preserve">
+    <value>0.- Return to 48-bit ATA commands menu.</value>
+  </data>
+  <data name="Returning_to_48_bit_ATA_commands_menu" xml:space="preserve">
+    <value>Returning to 48-bit ATA commands menu...</value>
+  </data>
+  <data name="GET_NATIVE_MAX_ADDRESS_EXT_status_registers" xml:space="preserve">
+    <value>GET NATIVE MAX ADDRESS EXT status registers:</value>
+  </data>
+  <data name="Parameters_for_READ_DMA_EXT_command" xml:space="preserve">
+    <value>Parameters for READ DMA EXT command:</value>
+  </data>
+  <data name="Sending_READ_DMA_EXT_to_the_device" xml:space="preserve">
+    <value>Sending READ DMA EXT to the device:</value>
+  </data>
+  <data name="READ_DMA_EXT_response" xml:space="preserve">
+    <value>READ DMA EXT response:</value>
+  </data>
+  <data name="READ_DMA_EXT_status_registers" xml:space="preserve">
+    <value>READ DMA EXT status registers:</value>
+  </data>
+  <data name="Parameters_for_READ_LOG_EXT_command" xml:space="preserve">
+    <value>Parameters for READ LOG EXT command:</value>
+  </data>
+  <data name="Log_address_0" xml:space="preserve">
+    <value>Log address: {0}</value>
+  </data>
+  <data name="Page_number_0" xml:space="preserve">
+    <value>Page number: {0}</value>
+  </data>
+  <data name="What_log_address" xml:space="preserve">
+    <value>What log address?: </value>
+  </data>
+  <data name="What_page_number" xml:space="preserve">
+    <value>What page number?: </value>
+  </data>
+  <data name="Sending_READ_LOG_EXT_to_the_device" xml:space="preserve">
+    <value>Sending READ LOG EXT to the device:</value>
+  </data>
+  <data name="READ_LOG_EXT_response" xml:space="preserve">
+    <value>READ LOG EXT response:</value>
+  </data>
+  <data name="READ_LOG_EXT_status_registers" xml:space="preserve">
+    <value>READ LOG EXT status registers:</value>
+  </data>
+  <data name="Parameters_for_READ_LOG_DMA_EXT_command" xml:space="preserve">
+    <value>Parameters for READ LOG DMA EXT command:</value>
+  </data>
+  <data name="Sending_READ_LOG_DMA_EXT_to_the_device" xml:space="preserve">
+    <value>Sending READ LOG DMA EXT to the device:</value>
+  </data>
+  <data name="READ_LOG_DMA_EXT_response" xml:space="preserve">
+    <value>READ LOG DMA EXT response:</value>
+  </data>
+  <data name="READ_LOG_DMA_EXT_status_registers" xml:space="preserve">
+    <value>READ LOG DMA EXT status registers:</value>
+  </data>
+  <data name="Parameters_for_READ_MULTIPLE_EXT_command" xml:space="preserve">
+    <value>Parameters for READ MULTIPLE EXT command:</value>
+  </data>
+  <data name="Sending_READ_MULTIPLE_EXT_to_the_device" xml:space="preserve">
+    <value>Sending READ MULTIPLE EXT to the device:</value>
+  </data>
+  <data name="READ_MULTIPLE_EXT_response" xml:space="preserve">
+    <value>READ MULTIPLE EXT response:</value>
+  </data>
+  <data name="READ_MULTIPLE_EXT_status_registers" xml:space="preserve">
+    <value>READ MULTIPLE EXT status registers:</value>
+  </data>
+  <data name="Sending_READ_NATIVE_MAX_ADDRESS_EXT_to_the_device" xml:space="preserve">
+    <value>Sending READ NATIVE MAX ADDRESS EXT to the device:</value>
+  </data>
+  <data name="Parameters_for_READ_SECTORS_EXT_command" xml:space="preserve">
+    <value>Parameters for READ SECTORS EXT command:</value>
+  </data>
+  <data name="Sending_READ_SECTORS_EXT_to_the_device" xml:space="preserve">
+    <value>Sending READ SECTORS EXT to the device:</value>
+  </data>
+  <data name="READ_SECTORS_EXT_response" xml:space="preserve">
+    <value>READ SECTORS EXT response:</value>
+  </data>
+  <data name="READ_SECTORS_EXT_status_registers" xml:space="preserve">
+    <value>READ SECTORS EXT status registers:</value>
+  </data>
+  <data name="Send_a_CHS_ATA_command_to_the_device" xml:space="preserve">
+    <value>Send a CHS ATA command to the device:</value>
+  </data>
+  <data name="Send_IDENTIFY_DEVICE_command" xml:space="preserve">
+    <value>1.- Send IDENTIFY DEVICE command.</value>
+  </data>
+  <data name="_2_Send_READ_DMA_command" xml:space="preserve">
+    <value>2.- Send READ DMA command.</value>
+  </data>
+  <data name="_3_Send_READ_DMA_WITH_RETRIES_command" xml:space="preserve">
+    <value>3.- Send READ DMA WITH RETRIES command.</value>
+  </data>
+  <data name="_4_Send_READ_LONG_command" xml:space="preserve">
+    <value>4.- Send READ LONG command.</value>
+  </data>
+  <data name="_5_Send_READ_LONG_WITH_RETRIES_command" xml:space="preserve">
+    <value>5.- Send READ LONG WITH RETRIES command.</value>
+  </data>
+  <data name="_6_Send_READ_MULTIPLE_command" xml:space="preserve">
+    <value>6.- Send READ MULTIPLE command.</value>
+  </data>
+  <data name="_7_Send_READ_SECTORS_command" xml:space="preserve">
+    <value>7.- Send READ SECTORS command.</value>
+  </data>
+  <data name="_8_Send_READ_SECTORS_WITH_RETRIES_command" xml:space="preserve">
+    <value>8.- Send READ SECTORS WITH RETRIES command.</value>
+  </data>
+  <data name="_9_Send_SEEK_command" xml:space="preserve">
+    <value>9.- Send SEEK command.</value>
+  </data>
+  <data name="Send_SET_FEATURES_command" xml:space="preserve">
+    <value>10.- Send SET FEATURES command.</value>
+  </data>
+  <data name="Sending_IDENTIFY_DEVICE_to_the_device" xml:space="preserve">
+    <value>Sending IDENTIFY DEVICE to the device:</value>
+  </data>
+  <data name="_2_Decode_buffer" xml:space="preserve">
+    <value>2.- Decode buffer.</value>
+  </data>
+  <data name="_3_Decode_error_registers" xml:space="preserve">
+    <value>3.- Decode error registers.</value>
+  </data>
+  <data name="_4_Send_command_again" xml:space="preserve">
+    <value>4.- Send command again.</value>
+  </data>
+  <data name="Return_to_CHS_ATA_commands_menu" xml:space="preserve">
+    <value>0.- Return to CHS ATA commands menu.</value>
+  </data>
+  <data name="Returning_to_CHS_ATA_commands_menu" xml:space="preserve">
+    <value>Returning to CHS ATA commands menu...</value>
+  </data>
+  <data name="IDENTIFY_DEVICE_response" xml:space="preserve">
+    <value>IDENTIFY DEVICE response:</value>
+  </data>
+  <data name="IDENTIFY_DEVICE_decoded_response" xml:space="preserve">
+    <value>IDENTIFY DEVICE decoded response:</value>
+  </data>
+  <data name="IDENTIFY_DEVICE_status_registers" xml:space="preserve">
+    <value>IDENTIFY DEVICE status registers:</value>
+  </data>
+  <data name="Cylinder_0" xml:space="preserve">
+    <value>Cylinder: {0}</value>
+  </data>
+  <data name="Head_0" xml:space="preserve">
+    <value>Head: {0}</value>
+  </data>
+  <data name="Sector_0" xml:space="preserve">
+    <value>Sector: {0}</value>
+  </data>
+  <data name="What_cylinder" xml:space="preserve">
+    <value>What cylinder?: </value>
+  </data>
+  <data name="What_head" xml:space="preserve">
+    <value>What head?: </value>
+  </data>
+  <data name="Head_cannot_be_bigger_than_15_Setting_it_to_15" xml:space="preserve">
+    <value>Head cannot be bigger than 15. Setting it to 15...</value>
+  </data>
+  <data name="What_sector" xml:space="preserve">
+    <value>What sector?: </value>
+  </data>
+  <data name="Parameters_for_SET_FEATURES_command" xml:space="preserve">
+    <value>Parameters for SET FEATURES command:</value>
+  </data>
+  <data name="Sector_count_0" xml:space="preserve">
+    <value>Sector count: {0}</value>
+  </data>
+  <data name="Feature_0_X2" xml:space="preserve">
+    <value>Feature: 0x{0:X2}</value>
+  </data>
+  <data name="What_sector_count" xml:space="preserve">
+    <value>What sector count?: </value>
+  </data>
+  <data name="What_feature" xml:space="preserve">
+    <value>What feature?: </value>
+  </data>
+  <data name="Sending_SET_FEATURES_to_the_device" xml:space="preserve">
+    <value>Sending SET FEATURES to the device:</value>
+  </data>
+  <data name="SET_FEATURES_status_registers" xml:space="preserve">
+    <value>SET FEATURES status registers:</value>
+  </data>
+  <data name="Send_an_ATAPI_command_to_the_device" xml:space="preserve">
+    <value>Send an ATAPI command to the device:</value>
+  </data>
+  <data name="Send_IDENTIFY_PACKET_DEVICE_command" xml:space="preserve">
+    <value>1.- Send IDENTIFY PACKET DEVICE command.</value>
+  </data>
+  <data name="Sending_IDENTIFY_PACKET_DEVICE_to_the_device" xml:space="preserve">
+    <value>Sending IDENTIFY PACKET DEVICE to the device:</value>
+  </data>
+  <data name="Return_to_ATAPI_commands_menu" xml:space="preserve">
+    <value>0.- Return to ATAPI commands menu.</value>
+  </data>
+  <data name="Returning_to_ATAPI_commands_menu" xml:space="preserve">
+    <value>Returning to ATAPI commands menu...</value>
+  </data>
+  <data name="IDENTIFY_PACKET_DEVICE_response" xml:space="preserve">
+    <value>IDENTIFY PACKET DEVICE response:</value>
+  </data>
+  <data name="IDENTIFY_PACKET_DEVICE_decoded_response" xml:space="preserve">
+    <value>IDENTIFY PACKET DEVICE decoded response:</value>
+  </data>
+  <data name="IDENTIFY_PACKET_DEVICE_status_registers" xml:space="preserve">
+    <value>IDENTIFY PACKET DEVICE status registers:</value>
+  </data>
+  <data name="Send_a_CompactFlash_command_to_the_device" xml:space="preserve">
+    <value>Send a CompactFlash command to the device:</value>
+  </data>
+  <data name="Send_REQUEST_EXTENDED_ERROR_CODE_command" xml:space="preserve">
+    <value>1.- Send REQUEST EXTENDED ERROR CODE command.</value>
+  </data>
+  <data name="Send_CHS_TRANSLATE_SECTOR_command" xml:space="preserve">
+    <value>2.- Send CHS TRANSLATE SECTOR command.</value>
+  </data>
+  <data name="Send_LBA_TRANSLATE_SECTOR_command" xml:space="preserve">
+    <value>3.- Send LBA TRANSLATE SECTOR command.</value>
+  </data>
+  <data name="Sending_REQUEST_EXTENDED_ERROR_CODE_to_the_device" xml:space="preserve">
+    <value>Sending REQUEST EXTENDED ERROR CODE to the device:</value>
+  </data>
+  <data name="Error_code_is_0" xml:space="preserve">
+    <value>Error code is {0}.</value>
+  </data>
+  <data name="Return_to_CompactFlash_commands_menu" xml:space="preserve">
+    <value>0.- Return to CompactFlash commands menu.</value>
+  </data>
+  <data name="Returning_to_CompactFlash_commands_menu" xml:space="preserve">
+    <value>Returning to CompactFlash commands menu...</value>
+  </data>
+  <data name="REQUEST_EXTENDED_ERROR_CODE_status_registers" xml:space="preserve">
+    <value>REQUEST EXTENDED ERROR CODE status registers:</value>
+  </data>
+  <data name="Parameters_for_TRANSLATE_SECTOR_command" xml:space="preserve">
+    <value>Parameters for TRANSLATE SECTOR command:</value>
+  </data>
+  <data name="Sending_TRANSLATE_SECTOR_to_the_device" xml:space="preserve">
+    <value>Sending TRANSLATE SECTOR to the device:</value>
+  </data>
+  <data name="TRANSLATE_SECTOR_response" xml:space="preserve">
+    <value>TRANSLATE SECTOR response:</value>
+  </data>
+  <data name="TRANSLATE_SECTOR_status_registers" xml:space="preserve">
+    <value>TRANSLATE SECTOR status registers:</value>
+  </data>
+  <data name="Send_a_Media_Card_Pass_Through_command_to_the_device" xml:space="preserve">
+    <value>Send a Media Card Pass Through command to the device:</value>
+  </data>
+  <data name="Send_CHECK_MEDIA_CARD_TYPE_command" xml:space="preserve">
+    <value>1.- Send CHECK MEDIA CARD TYPE command.</value>
+  </data>
+  <data name="Parameters_for_CHECK_MEDIA_CARD_TYPE_command" xml:space="preserve">
+    <value>Parameters for CHECK MEDIA CARD TYPE command:</value>
+  </data>
+  <data name="Feature_0" xml:space="preserve">
+    <value>Feature: {0}</value>
+  </data>
+  <data name="Return_to_Media_Card_Pass_Through_commands_menu" xml:space="preserve">
+    <value>0.- Return to Media Card Pass Through commands menu.</value>
+  </data>
+  <data name="Returning_to_Media_Card_Pass_Through_commands_menu" xml:space="preserve">
+    <value>Returning to Media Card Pass Through commands menu...</value>
+  </data>
+  <data name="Feature" xml:space="preserve">
+    <value>Feature?: </value>
+  </data>
+  <data name="Sending_CHECK_MEDIA_CARD_TYPE_to_the_device" xml:space="preserve">
+    <value>Sending CHECK MEDIA CARD TYPE to the device:</value>
+  </data>
+  <data name="CHECK_MEDIA_CARD_TYPE_status_registers" xml:space="preserve">
+    <value>CHECK MEDIA CARD TYPE status registers:</value>
+  </data>
+  <data name="_1_Send_command_again" xml:space="preserve">
+    <value>1.- Send command again.</value>
+  </data>
+  <data name="_2_Change_parameters" xml:space="preserve">
+    <value>2.- Change parameters.</value>
+  </data>
+  <data name="Send_a_SMART_command_to_the_device" xml:space="preserve">
+    <value>Send a S.M.A.R.T. command to the device:</value>
+  </data>
+  <data name="Send_DISABLE_ATTRIBUTE_AUTOSAVE_command" xml:space="preserve">
+    <value>1.- Send DISABLE ATTRIBUTE AUTOSAVE command.</value>
+  </data>
+  <data name="Send_DISABLE_OPERATIONS_command" xml:space="preserve">
+    <value>2.- Send DISABLE OPERATIONS command.</value>
+  </data>
+  <data name="Send_ENABLE_ATTRIBUTE_AUTOSAVE_command" xml:space="preserve">
+    <value>3.- Send ENABLE ATTRIBUTE AUTOSAVE command.</value>
+  </data>
+  <data name="Send_ENABLE_OPERATIONS_command" xml:space="preserve">
+    <value>4.- Send ENABLE OPERATIONS command.</value>
+  </data>
+  <data name="Send_EXECUTE_OFF_LINE_IMMEDIATE_command" xml:space="preserve">
+    <value>5.- Send EXECUTE OFF-LINE IMMEDIATE command.</value>
+  </data>
+  <data name="Send_READ_DATA_command" xml:space="preserve">
+    <value>6.- Send READ DATA command.</value>
+  </data>
+  <data name="Send_READ_LOG_command" xml:space="preserve">
+    <value>7.- Send READ LOG command.</value>
+  </data>
+  <data name="Send_RETURN_STATUS_command" xml:space="preserve">
+    <value>8.- Send RETURN STATUS command.</value>
+  </data>
+  <data name="Sending_DISABLE_ATTRIBUTE_AUTOSAVE_to_the_device" xml:space="preserve">
+    <value>Sending DISABLE ATTRIBUTE AUTOSAVE to the device:</value>
+  </data>
+  <data name="DISABLE_ATTRIBUTE_AUTOSAVE_status_registers" xml:space="preserve">
+    <value>DISABLE ATTRIBUTE AUTOSAVE status registers:</value>
+  </data>
+  <data name="Return_to_SMART_commands_menu" xml:space="preserve">
+    <value>0.- Return to S.M.A.R.T. commands menu.</value>
+  </data>
+  <data name="Returning_to_SMART_commands_menu" xml:space="preserve">
+    <value>Returning to S.M.A.R.T. commands menu...</value>
+  </data>
+  <data name="Sending_DISABLE_OPERATIONS_to_the_device" xml:space="preserve">
+    <value>Sending DISABLE OPERATIONS to the device:</value>
+  </data>
+  <data name="DISABLE_OPERATIONS_status_registers" xml:space="preserve">
+    <value>DISABLE OPERATIONS status registers:</value>
+  </data>
+  <data name="Sending_ENABLE_ATTRIBUTE_AUTOSAVE_to_the_device" xml:space="preserve">
+    <value>Sending ENABLE ATTRIBUTE AUTOSAVE to the device:</value>
+  </data>
+  <data name="ENABLE_ATTRIBUTE_AUTOSAVE_status_registers" xml:space="preserve">
+    <value>ENABLE ATTRIBUTE AUTOSAVE status registers:</value>
+  </data>
+  <data name="Sending_ENABLE_OPERATIONS_to_the_device" xml:space="preserve">
+    <value>Sending ENABLE OPERATIONS to the device:</value>
+  </data>
+  <data name="ENABLE_OPERATIONS_status_registers" xml:space="preserve">
+    <value>ENABLE OPERATIONS status registers:</value>
+  </data>
+  <data name="Parameters_for_EXECUTE_OFF_LINE_IMMEDIATE_command" xml:space="preserve">
+    <value>Parameters for EXECUTE OFF-LINE IMMEDIATE command:</value>
+  </data>
+  <data name="Subcommand_0" xml:space="preserve">
+    <value>Subcommand: {0}</value>
+  </data>
+  <data name="Subcommand" xml:space="preserve">
+    <value>Subcommand?: </value>
+  </data>
+  <data name="Sending_EXECUTE_OFF_LINE_IMMEDIATE_to_the_device" xml:space="preserve">
+    <value>Sending EXECUTE OFF-LINE IMMEDIATE to the device:</value>
+  </data>
+  <data name="EXECUTE_OFF_LINE_IMMEDIATE_status_registers" xml:space="preserve">
+    <value>EXECUTE OFF-LINE IMMEDIATE status registers:</value>
+  </data>
+  <data name="Sending_READ_DATA_to_the_device" xml:space="preserve">
+    <value>Sending READ DATA to the device:</value>
+  </data>
+  <data name="READ_DATA_response" xml:space="preserve">
+    <value>READ DATA response:</value>
+  </data>
+  <data name="READ_DATA_status_registers" xml:space="preserve">
+    <value>READ DATA status registers:</value>
+  </data>
+  <data name="Parameters_for_READ_LOG_command" xml:space="preserve">
+    <value>Parameters for READ LOG command:</value>
+  </data>
+  <data name="Log_address" xml:space="preserve">
+    <value>Log address?: </value>
+  </data>
+  <data name="Sending_READ_LOG_to_the_device" xml:space="preserve">
+    <value>Sending READ LOG to the device:</value>
+  </data>
+  <data name="READ_LOG_response" xml:space="preserve">
+    <value>READ LOG response:</value>
+  </data>
+  <data name="READ_LOG_status_registers" xml:space="preserve">
+    <value>READ LOG status registers:</value>
+  </data>
+  <data name="Sending_RETURN_STATUS_to_the_device" xml:space="preserve">
+    <value>Sending RETURN STATUS to the device:</value>
+  </data>
+  <data name="RETURN_STATUS_status_registers" xml:space="preserve">
+    <value>RETURN STATUS status registers:</value>
+  </data>
+  <data name="Send_an_Adaptec_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send an Adaptec vendor command to the device:</value>
+  </data>
+  <data name="Send_READ_RESET_USAGE_COUNTER_command" xml:space="preserve">
+    <value>1.- Send READ/RESET USAGE COUNTER command.</value>
+  </data>
+  <data name="Send_READ_DATA_BUFFER_command" xml:space="preserve">
+    <value>2.- Send READ DATA BUFFER command.</value>
+  </data>
+  <data name="Send_SET_ERROR_THRESHOLD_command" xml:space="preserve">
+    <value>3.- Send SET ERROR THRESHOLD command.</value>
+  </data>
+  <data name="Send_TRANSLATE_command" xml:space="preserve">
+    <value>4.- Send TRANSLATE command.</value>
+  </data>
+  <data name="Return_to_SCSI_commands_menu" xml:space="preserve">
+    <value>0.- Return to SCSI commands menu.</value>
+  </data>
+  <data name="Returning_to_SCSI_commands_menu" xml:space="preserve">
+    <value>Returning to SCSI commands menu...</value>
+  </data>
+  <data name="Parameters_for_READ_RESET_USAGE_COUNTER_command" xml:space="preserve">
+    <value>Parameters for READ/RESET USAGE COUNTER command:</value>
+  </data>
+  <data name="Drive_one_0" xml:space="preserve">
+    <value>Drive 1?: {0}</value>
+  </data>
+  <data name="Return_to_Adaptec_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to Adaptec vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_Adaptec_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to Adaptec vendor commands menu...</value>
+  </data>
+  <data name="Drive_1_Q" xml:space="preserve">
+    <value>Drive 1?: </value>
+  </data>
+  <data name="Not_a_boolean_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a boolean. Press any key to continue...</value>
+  </data>
+  <data name="Sending_READ_RESET_USAGE_COUNTER_to_the_device" xml:space="preserve">
+    <value>Sending READ/RESET USAGE COUNTER to the device:</value>
+  </data>
+  <data name="Sense_buffer_is_0_bytes" xml:space="preserve">
+    <value>Sense buffer is {0} bytes.</value>
+  </data>
+  <data name="Sense_buffer_is_null_or_empty_0" xml:space="preserve">
+    <value>Sense buffer is null or empty? {0}</value>
+  </data>
+  <data name="_2_Print_sense_buffer" xml:space="preserve">
+    <value>2.- Print sense buffer.</value>
+  </data>
+  <data name="_3_Decode_sense_buffer" xml:space="preserve">
+    <value>3.- Decode sense buffer.</value>
+  </data>
+  <data name="_5_Change_parameters" xml:space="preserve">
+    <value>5.- Change parameters.</value>
+  </data>
+  <data name="READ_RESET_USAGE_COUNTER_response" xml:space="preserve">
+    <value>READ/RESET USAGE COUNTER response:</value>
+  </data>
+  <data name="READ_RESET_USAGE_COUNTER_sense" xml:space="preserve">
+    <value>READ/RESET USAGE COUNTER sense:</value>
+  </data>
+  <data name="READ_RESET_USAGE_COUNTER_decoded_sense" xml:space="preserve">
+    <value>READ/RESET USAGE COUNTER decoded sense:</value>
+  </data>
+  <data name="Sending_READ_DATA_BUFFER_to_the_device" xml:space="preserve">
+    <value>Sending READ DATA BUFFER to the device:</value>
+  </data>
+  <data name="READ_DATA_BUFFER_response" xml:space="preserve">
+    <value>READ DATA BUFFER response:</value>
+  </data>
+  <data name="READ_DATA_BUFFER_sense" xml:space="preserve">
+    <value>READ DATA BUFFER sense:</value>
+  </data>
+  <data name="READ_DATA_BUFFER_decoded_sense" xml:space="preserve">
+    <value>READ DATA BUFFER decoded sense:</value>
+  </data>
+  <data name="Parameters_for_SET_ERROR_THRESHOLD_command" xml:space="preserve">
+    <value>Parameters for SET ERROR THRESHOLD command:</value>
+  </data>
+  <data name="Error_threshold_0" xml:space="preserve">
+    <value>Error threshold: {0}</value>
+  </data>
+  <data name="Error_threshold" xml:space="preserve">
+    <value>Error threshold?: </value>
+  </data>
+  <data name="Sending_SET_ERROR_THRESHOLD_to_the_device" xml:space="preserve">
+    <value>Sending SET ERROR THRESHOLD to the device:</value>
+  </data>
+  <data name="SET_ERROR_THRESHOLD_decoded_sense" xml:space="preserve">
+    <value>SET ERROR THRESHOLD decoded sense:</value>
+  </data>
+  <data name="_1_Print_sense_buffer" xml:space="preserve">
+    <value>1.- Print sense buffer.</value>
+  </data>
+  <data name="SET_ERROR_THRESHOLD_sense" xml:space="preserve">
+    <value>SET ERROR THRESHOLD sense:</value>
+  </data>
+  <data name="Parameters_for_TRANSLATE_command" xml:space="preserve">
+    <value>Parameters for TRANSLATE command:</value>
+  </data>
+  <data name="LBA_Q" xml:space="preserve">
+    <value>LBA?: </value>
+  </data>
+  <data name="Sending_TRANSLATE_to_the_device" xml:space="preserve">
+    <value>Sending TRANSLATE to the device:</value>
+  </data>
+  <data name="TRANSLATE_response" xml:space="preserve">
+    <value>TRANSLATE response:</value>
+  </data>
+  <data name="TRANSLATE_sense" xml:space="preserve">
+    <value>TRANSLATE sense:</value>
+  </data>
+  <data name="TRANSLATE_decoded_sense" xml:space="preserve">
+    <value>TRANSLATE decoded sense:</value>
+  </data>
+  <data name="Send_an_Archive_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send an Archive vendor command to the device:</value>
+  </data>
+  <data name="Send_REQUEST_BLOCK_ADDRESS_command" xml:space="preserve">
+    <value>1.- Send REQUEST BLOCK ADDRESS command.</value>
+  </data>
+  <data name="Send_SEEK_BLOCK_command" xml:space="preserve">
+    <value>2.- Send SEEK BLOCK command.</value>
+  </data>
+  <data name="ArchiveCorp_RequestBlockAddress_Parameters_for_REQUEST_BLOCK_ADDRESS_command" xml:space="preserve">
+    <value>Parameters for REQUEST BLOCK ADDRESS command:</value>
+  </data>
+  <data name="ArchiveCorp_RequestBlockAddress_Return_to_Archive_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to Archive vendor commands menu.</value>
+  </data>
+  <data name="ArchiveCorp_RequestBlockAddress_Returning_to_Archive_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to Archive vendor commands menu...</value>
+  </data>
+  <data name="ArchiveCorp_RequestBlockAddress_Sending_REQUEST_BLOCK_ADDRESS_to_the_device" xml:space="preserve">
+    <value>Sending REQUEST BLOCK ADDRESS to the device:</value>
+  </data>
+  <data name="ArchiveCorp_RequestBlockAddress_REQUEST_BLOCK_ADDRESS_response" xml:space="preserve">
+    <value>REQUEST BLOCK ADDRESS response:</value>
+  </data>
+  <data name="ArchiveCorp_RequestBlockAddress_REQUEST_BLOCK_ADDRESS_sense" xml:space="preserve">
+    <value>REQUEST BLOCK ADDRESS sense:</value>
+  </data>
+  <data name="ArchiveCorp_RequestBlockAddress_REQUEST_BLOCK_ADDRESS_decoded_sense" xml:space="preserve">
+    <value>REQUEST BLOCK ADDRESS decoded sense:</value>
+  </data>
+  <data name="Parameters_for_SEEK_BLOCK_command" xml:space="preserve">
+    <value>Parameters for SEEK BLOCK command:</value>
+  </data>
+  <data name="Immediate_0" xml:space="preserve">
+    <value>Immediate?: {0}</value>
+  </data>
+  <data name="Immediate_Q" xml:space="preserve">
+    <value>Immediate?: </value>
+  </data>
+  <data name="Sending_SEEK_BLOCK_to_the_device" xml:space="preserve">
+    <value>Sending SEEK BLOCK to the device:</value>
+  </data>
+  <data name="SEEK_BLOCK_decoded_sense" xml:space="preserve">
+    <value>SEEK BLOCK decoded sense:</value>
+  </data>
+  <data name="SEEK_BLOCK_sense" xml:space="preserve">
+    <value>SEEK BLOCK sense:</value>
+  </data>
+  <data name="Send_a_Certance_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send a Certance vendor command to the device:</value>
+  </data>
+  <data name="Send_PARK_command" xml:space="preserve">
+    <value>1.- Send PARK command.</value>
+  </data>
+  <data name="Send_UNPARK_command" xml:space="preserve">
+    <value>2.- Send UNPARK command.</value>
+  </data>
+  <data name="Sending_PARK_to_the_device" xml:space="preserve">
+    <value>Sending PARK to the device:</value>
+  </data>
+  <data name="PARK_decoded_sense" xml:space="preserve">
+    <value>PARK decoded sense:</value>
+  </data>
+  <data name="Return_to_Certance_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to Certance vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_Certance_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to Certance vendor commands menu...</value>
+  </data>
+  <data name="PARK_sense" xml:space="preserve">
+    <value>PARK sense:</value>
+  </data>
+  <data name="Sending_UNPARK_to_the_device" xml:space="preserve">
+    <value>Sending UNPARK to the device:</value>
+  </data>
+  <data name="UNPARK_decoded_sense" xml:space="preserve">
+    <value>UNPARK decoded sense:</value>
+  </data>
+  <data name="UNPARK_sense" xml:space="preserve">
+    <value>UNPARK sense:</value>
+  </data>
+  <data name="Send_a_Fujitsu_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send a Fujitsu vendor command to the device:</value>
+  </data>
+  <data name="Send_DISPLAY_command" xml:space="preserve">
+    <value>1.- Send DISPLAY command.</value>
+  </data>
+  <data name="Parameters_for_DISPLAY_command" xml:space="preserve">
+    <value>Parameters for DISPLAY command:</value>
+  </data>
+  <data name="Descriptor_0" xml:space="preserve">
+    <value>Descriptor: {0}</value>
+  </data>
+  <data name="Return_to_Fujitsu_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to Fujitsu vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_Fujitsu_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to Fujitsu vendor commands menu...</value>
+  </data>
+  <data name="Display_mode" xml:space="preserve">
+    <value>Display mode</value>
+  </data>
+  <data name="Available_values_0_1_2_3_4" xml:space="preserve">
+    <value>Available values: {0} {1} {2} {3} {4}</value>
+  </data>
+  <data name="Choose_Q" xml:space="preserve">
+    <value>Choose?: </value>
+  </data>
+  <data name="Not_a_correct_display_mode_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct display mode. Press any key to continue...</value>
+  </data>
+  <data name="First_display_half_will_be_cut_to_7_bit_ASCII_8_chars" xml:space="preserve">
+    <value>First display half (will be cut to 7-bit ASCII, 8 chars?: </value>
+  </data>
+  <data name="Second_display_half_will_be_cut_to_7_bit_ASCII_8_chars" xml:space="preserve">
+    <value>Second display half (will be cut to 7-bit ASCII, 8 chars?: </value>
+  </data>
+  <data name="Sending_DISPLAY_to_the_device" xml:space="preserve">
+    <value>Sending DISPLAY to the device:</value>
+  </data>
+  <data name="DISPLAY_decoded_sense" xml:space="preserve">
+    <value>DISPLAY decoded sense:</value>
+  </data>
+  <data name="DISPLAY_sense" xml:space="preserve">
+    <value>DISPLAY sense:</value>
+  </data>
+  <data name="Send_an_HLDTST_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send an HL-DT-ST vendor command to the device:</value>
+  </data>
+  <data name="Send_READ_DVD_RAW_command" xml:space="preserve">
+    <value>1.- Send READ DVD (RAW) command.</value>
+  </data>
+  <data name="Parameters_for_READ_DVD_RAW_command" xml:space="preserve">
+    <value>Parameters for READ DVD (RAW) command:</value>
+  </data>
+  <data name="Return_to_HLDTST_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to HL-DT-ST vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_HLDTST_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to HL-DT-ST vendor commands menu...</value>
+  </data>
+  <data name="Sending_READ_DVD_RAW_to_the_device" xml:space="preserve">
+    <value>Sending READ DVD (RAW) to the device:</value>
+  </data>
+  <data name="READ_DVD_RAW_response" xml:space="preserve">
+    <value>READ DVD (RAW) response:</value>
+  </data>
+  <data name="READ_DVD_RAW_sense" xml:space="preserve">
+    <value>READ DVD (RAW) sense:</value>
+  </data>
+  <data name="READ_DVD_RAW_decoded_sense" xml:space="preserve">
+    <value>READ DVD (RAW) decoded sense:</value>
+  </data>
+  <data name="Send_a_Hewlett_Packard_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send a Hewlett-Packard vendor command to the device:</value>
+  </data>
+  <data name="_1_Send_READ_LONG_command" xml:space="preserve">
+    <value>1.- Send READ LONG command.</value>
+  </data>
+  <data name="Physical_Block_Address_0" xml:space="preserve">
+    <value>Physical Block Address: {0}</value>
+  </data>
+  <data name="Logical_Block_Address_0" xml:space="preserve">
+    <value>Logical Block Address: {0}</value>
+  </data>
+  <data name="Relative_0" xml:space="preserve">
+    <value>Relative?: {0}</value>
+  </data>
+  <data name="Will_transfer_0_sectors" xml:space="preserve">
+    <value>Will transfer {0} sectors</value>
+  </data>
+  <data name="Will_transfer_0_bytes" xml:space="preserve">
+    <value>Will transfer {0} bytes</value>
+  </data>
+  <data name="Expected_sector_size_0_bytes" xml:space="preserve">
+    <value>Expected sector size: {0} bytes</value>
+  </data>
+  <data name="Return_to_Hewlett_Packard_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to Hewlett-Packard vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_Hewlett_Packard_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to Hewlett-Packard vendor commands menu...</value>
+  </data>
+  <data name="Physical_address_Q" xml:space="preserve">
+    <value>Physical address?: </value>
+  </data>
+  <data name="Relative_address_Q" xml:space="preserve">
+    <value>Relative address?: </value>
+  </data>
+  <data name="Physical_Block_Address_Q" xml:space="preserve">
+    <value>Physical Block Address?: </value>
+  </data>
+  <data name="Logical_Block_Address_Q" xml:space="preserve">
+    <value>Logical Block Address?: </value>
+  </data>
+  <data name="Transfer_sectors_Q" xml:space="preserve">
+    <value>Transfer sectors?: </value>
+  </data>
+  <data name="How_many_sectors_to_transfer_Q" xml:space="preserve">
+    <value>How many sectors to transfer?: </value>
+  </data>
+  <data name="How_many_bytes_to_transfer_Q" xml:space="preserve">
+    <value>How many bytes to transfer?: </value>
+  </data>
+  <data name="How_many_bytes_to_expect_per_sector_Q" xml:space="preserve">
+    <value>How many bytes to expect per sector?</value>
+  </data>
+  <data name="READ_LONG_sense" xml:space="preserve">
+    <value>READ LONG sense:</value>
+  </data>
+  <data name="READ_LONG_decoded_sense" xml:space="preserve">
+    <value>READ LONG decoded sense:</value>
+  </data>
+  <data name="Kreon_Menu_Send_a_Kreon_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send a Kreon vendor command to the device:</value>
+  </data>
+  <data name="Kreon_Menu_Send_EXTRACT_SS_command" xml:space="preserve">
+    <value>1.- Send EXTRACT SS command.</value>
+  </data>
+  <data name="Kreon_Menu_Send_GET_FEATURE_LIST_command" xml:space="preserve">
+    <value>2.- Send GET FEATURE LIST command.</value>
+  </data>
+  <data name="Kreon_Menu_Send_SET_LOCK_STATE_command" xml:space="preserve">
+    <value>3.- Send SET LOCK STATE command.</value>
+  </data>
+  <data name="Kreon_Menu_Send_UNLOCK_command" xml:space="preserve">
+    <value>4.- Send UNLOCK command.</value>
+  </data>
+  <data name="Parameters_for_EXTRACT_SS_command" xml:space="preserve">
+    <value>Parameters for EXTRACT SS command:</value>
+  </data>
+  <data name="Request_number_0" xml:space="preserve">
+    <value>Request number: {0}</value>
+  </data>
+  <data name="Return_to_Kreon_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to Kreon vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_Kreon_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to Kreon vendor commands menu...</value>
+  </data>
+  <data name="Request_number_Q" xml:space="preserve">
+    <value>Request number?: </value>
+  </data>
+  <data name="Sending_EXTRACT_SS_to_the_device" xml:space="preserve">
+    <value>Sending EXTRACT SS to the device:</value>
+  </data>
+  <data name="EXTRACT_SS_response" xml:space="preserve">
+    <value>EXTRACT SS response:</value>
+  </data>
+  <data name="EXTRACT_SS_sense" xml:space="preserve">
+    <value>EXTRACT SS sense:</value>
+  </data>
+  <data name="EXTRACT_SS_decoded_sense" xml:space="preserve">
+    <value>EXTRACT SS decoded sense:</value>
+  </data>
+  <data name="Sending_GET_FEATURE_LIST_to_the_device" xml:space="preserve">
+    <value>Sending GET FEATURE LIST to the device:</value>
+  </data>
+  <data name="Features_0" xml:space="preserve">
+    <value>Features: {0}.</value>
+  </data>
+  <data name="GET_FEATURE_LIST_decoded_sense" xml:space="preserve">
+    <value>GET FEATURE LIST decoded sense:</value>
+  </data>
+  <data name="GET_FEATURE_LIST_sense" xml:space="preserve">
+    <value>GET FEATURE LIST sense:</value>
+  </data>
+  <data name="Parameters_for_SET_LOCK_STATE_command" xml:space="preserve">
+    <value>Parameters for SET LOCK STATE command:</value>
+  </data>
+  <data name="Lock_state_0" xml:space="preserve">
+    <value>Lock state: {0}</value>
+  </data>
+  <data name="Lock_state" xml:space="preserve">
+    <value>Lock state</value>
+  </data>
+  <data name="Available_values_0_1_2" xml:space="preserve">
+    <value>Available values: {0} {1} {2}</value>
+  </data>
+  <data name="Not_a_correct_lock_state_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct lock state. Press any key to continue...</value>
+  </data>
+  <data name="Sending_SET_LOCK_STATE_to_the_device" xml:space="preserve">
+    <value>Sending SET LOCK STATE to the device:</value>
+  </data>
+  <data name="SET_LOCK_STATE_decoded_sense" xml:space="preserve">
+    <value>SET LOCK STATE decoded sense:</value>
+  </data>
+  <data name="Sending_UNLOCK_to_the_device" xml:space="preserve">
+    <value>Sending UNLOCK to the device:</value>
+  </data>
+  <data name="UNLOCK_decoded_sense" xml:space="preserve">
+    <value>UNLOCK decoded sense:</value>
+  </data>
+  <data name="UNLOCK_sense" xml:space="preserve">
+    <value>UNLOCK sense:</value>
+  </data>
+  <data name="Send_a_MultiMedia_Command_to_the_device" xml:space="preserve">
+    <value>Send a MultiMedia Command to the device:</value>
+  </data>
+  <data name="Send_GET_CONFIGURATION_command" xml:space="preserve">
+    <value>1.- Send GET CONFIGURATION command.</value>
+  </data>
+  <data name="Send_PREVENT_ALLOW_MEDIUM_REMOVAL_command" xml:space="preserve">
+    <value>2.- Send PREVENT ALLOW MEDIUM REMOVAL command.</value>
+  </data>
+  <data name="Send_READ_CD_command" xml:space="preserve">
+    <value>3.- Send READ CD command.</value>
+  </data>
+  <data name="Send_READ_CD_MSF_command" xml:space="preserve">
+    <value>4.- Send READ CD MSF command.</value>
+  </data>
+  <data name="Send_READ_DISC_INFORMATION_command" xml:space="preserve">
+    <value>5.- Send READ DISC INFORMATION command.</value>
+  </data>
+  <data name="Send_READ_DISC_STRUCTURE_command" xml:space="preserve">
+    <value>6.- Send READ DISC STRUCTURE command.</value>
+  </data>
+  <data name="Send_READ_TOC_PMA_ATIP_command" xml:space="preserve">
+    <value>7.- Send READ TOC/PMA/ATIP command.</value>
+  </data>
+  <data name="Send_START_STOP_UNIT_command" xml:space="preserve">
+    <value>8.- Send START STOP UNIT command.</value>
+  </data>
+  <data name="Parameters_for_GET_CONFIGURATION_command" xml:space="preserve">
+    <value>Parameters for GET CONFIGURATION command:</value>
+  </data>
+  <data name="RT_0" xml:space="preserve">
+    <value>RT: {0}</value>
+  </data>
+  <data name="Feature_number_0" xml:space="preserve">
+    <value>Feature number: {0}</value>
+  </data>
+  <data name="Return_to_SCSI_MultiMedia_Commands_menu" xml:space="preserve">
+    <value>0.- Return to SCSI MultiMedia Commands menu.</value>
+  </data>
+  <data name="Returning_to_SCSI_MultiMedia_Commands_menu" xml:space="preserve">
+    <value>Returning to SCSI MultiMedia Commands menu...</value>
+  </data>
+  <data name="RT" xml:space="preserve">
+    <value>RT</value>
+  </data>
+  <data name="Available_values_0_1_2_3" xml:space="preserve">
+    <value>Available values: {0} {1} {2} {3}</value>
+  </data>
+  <data name="Not_a_correct_object_type_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct object type. Press any key to continue...</value>
+  </data>
+  <data name="Feature_number" xml:space="preserve">
+    <value>Feature number</value>
+  </data>
+  <data name="Sending_GET_CONFIGURATION_to_the_device" xml:space="preserve">
+    <value>Sending GET CONFIGURATION to the device:</value>
+  </data>
+  <data name="_3_Print_sense_buffer" xml:space="preserve">
+    <value>3.- Print sense buffer.</value>
+  </data>
+  <data name="_4_Decode_sense_buffer" xml:space="preserve">
+    <value>4.- Decode sense buffer.</value>
+  </data>
+  <data name="_5_Send_command_again" xml:space="preserve">
+    <value>5.- Send command again.</value>
+  </data>
+  <data name="_6_Change_parameters" xml:space="preserve">
+    <value>6.- Change parameters.</value>
+  </data>
+  <data name="GET_CONFIGURATION_buffer" xml:space="preserve">
+    <value>GET CONFIGURATION buffer:</value>
+  </data>
+  <data name="GET_CONFIGURATION_decoded_buffer" xml:space="preserve">
+    <value>GET CONFIGURATION decoded buffer:</value>
+  </data>
+  <data name="GET_CONFIGURATION_length_is_0_bytes" xml:space="preserve">
+    <value>GET CONFIGURATION length is {0} bytes</value>
+  </data>
+  <data name="GET_CONFIGURATION_current_profile_is_0_X4" xml:space="preserve">
+    <value>GET CONFIGURATION current profile is {0:X4}h</value>
+  </data>
+  <data name="Feature_0_X4" xml:space="preserve">
+    <value>Feature {0:X4}h</value>
+  </data>
+  <data name="Dont_know_how_to_decode_feature_0" xml:space="preserve">
+    <value>Don't know how to decode feature 0x{0:X4}</value>
+  </data>
+  <data name="GET_CONFIGURATION_sense" xml:space="preserve">
+    <value>GET CONFIGURATION sense:</value>
+  </data>
+  <data name="GET_CONFIGURATION_decoded_sense" xml:space="preserve">
+    <value>GET CONFIGURATION decoded sense:</value>
+  </data>
+  <data name="Parameters_for_PREVENT_ALLOW_MEDIUM_REMOVAL_command" xml:space="preserve">
+    <value>Parameters for PREVENT ALLOW MEDIUM REMOVAL command:</value>
+  </data>
+  <data name="Prevent_removal_0" xml:space="preserve">
+    <value>Prevent removal?: {0}</value>
+  </data>
+  <data name="Persistent_value_0" xml:space="preserve">
+    <value>Persistent value?: {0}</value>
+  </data>
+  <data name="Prevent_removal_Q" xml:space="preserve">
+    <value>Prevent removal?: </value>
+  </data>
+  <data name="Persistent_value_Q" xml:space="preserve">
+    <value>Persistent value?: </value>
+  </data>
+  <data name="Sending_PREVENT_ALLOW_MEDIUM_REMOVAL_to_the_device" xml:space="preserve">
+    <value>Sending PREVENT ALLOW MEDIUM REMOVAL to the device:</value>
+  </data>
+  <data name="PREVENT_ALLOW_MEDIUM_REMOVAL_decoded_sense" xml:space="preserve">
+    <value>PREVENT ALLOW MEDIUM REMOVAL decoded sense:</value>
+  </data>
+  <data name="PREVENT_ALLOW_MEDIUM_REMOVAL_sense" xml:space="preserve">
+    <value>PREVENT ALLOW MEDIUM REMOVAL sense:</value>
+  </data>
+  <data name="Parameters_for_READ_CD_command" xml:space="preserve">
+    <value>Parameters for READ CD command:</value>
+  </data>
+  <data name="Address_relative_to_current_position_0" xml:space="preserve">
+    <value>Address relative to current position?: {0}</value>
+  </data>
+  <data name="Address_0" xml:space="preserve">
+    <value>Address: {0}</value>
+  </data>
+  <data name="Sector_type_0" xml:space="preserve">
+    <value>Sector type: {0}</value>
+  </data>
+  <data name="Process_audio_0" xml:space="preserve">
+    <value>Process audio?: {0}</value>
+  </data>
+  <data name="Retrieve_sync_bytes_0" xml:space="preserve">
+    <value>Retrieve sync bytes?: {0}</value>
+  </data>
+  <data name="Header_mode_0" xml:space="preserve">
+    <value>Header mode: {0}</value>
+  </data>
+  <data name="Retrieve_user_data_0" xml:space="preserve">
+    <value>Retrieve user data?: {0}</value>
+  </data>
+  <data name="Retrieve_EDC_ECC_data_0" xml:space="preserve">
+    <value>Retrieve EDC/ECC data?: {0}</value>
+  </data>
+  <data name="C2_mode_0" xml:space="preserve">
+    <value>C2 mode: {0}</value>
+  </data>
+  <data name="Subchannel_mode_0" xml:space="preserve">
+    <value>Subchannel mode: {0}</value>
+  </data>
+  <data name="_0_bytes_per_sector" xml:space="preserve">
+    <value>{0} bytes per sector</value>
+  </data>
+  <data name="Address_is_relative_to_current_position" xml:space="preserve">
+    <value>Address is relative to current position?: </value>
+  </data>
+  <data name="Address_Q" xml:space="preserve">
+    <value>Address?: </value>
+  </data>
+  <data name="Sector_type" xml:space="preserve">
+    <value>Sector type</value>
+  </data>
+  <data name="Available_values_0_1_2_3_4_5" xml:space="preserve">
+    <value>Available values: {0} {1} {2} {3} {4} {5}</value>
+  </data>
+  <data name="Not_a_correct_sector_type_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct sector type. Press any key to continue...</value>
+  </data>
+  <data name="Process_audio_Q" xml:space="preserve">
+    <value>Process audio?: </value>
+  </data>
+  <data name="Retrieve_sync_bytes_Q" xml:space="preserve">
+    <value>Retrieve sync bytes?: </value>
+  </data>
+  <data name="Header_mode" xml:space="preserve">
+    <value>Header mode</value>
+  </data>
+  <data name="Not_a_correct_header_mode_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct header mode. Press any key to continue...</value>
+  </data>
+  <data name="Retrieve_user_data_Q" xml:space="preserve">
+    <value>Retrieve user data?: </value>
+  </data>
+  <data name="Retrieve_EDC_ECC_Q" xml:space="preserve">
+    <value>Retrieve EDC/ECC?: </value>
+  </data>
+  <data name="C2_mode" xml:space="preserve">
+    <value>C2 mode</value>
+  </data>
+  <data name="Not_a_correct_C2_mode_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct C2 mode. Press any key to continue...</value>
+  </data>
+  <data name="Subchannel_mode" xml:space="preserve">
+    <value>Subchannel mode</value>
+  </data>
+  <data name="Not_a_correct_subchannel_mode_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct subchannel mode. Press any key to continue...</value>
+  </data>
+  <data name="Expected_block_size_Q" xml:space="preserve">
+    <value>Expected block size?: </value>
+  </data>
+  <data name="Sending_READ_CD_to_the_device" xml:space="preserve">
+    <value>Sending READ CD to the device:</value>
+  </data>
+  <data name="READ_CD_response" xml:space="preserve">
+    <value>READ CD response:</value>
+  </data>
+  <data name="READ_CD_sense" xml:space="preserve">
+    <value>READ CD sense:</value>
+  </data>
+  <data name="READ_CD_decoded_sense" xml:space="preserve">
+    <value>READ CD decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_CD_MSF_command" xml:space="preserve">
+    <value>Parameters for READ CD MSF command:</value>
+  </data>
+  <data name="Start_0_1_2" xml:space="preserve">
+    <value>Start: {0:D2}:{1:D2}:{2:D2}</value>
+  </data>
+  <data name="End_0_1_2" xml:space="preserve">
+    <value>End: {0:D2}:{1:D2}:{2:D2}</value>
+  </data>
+  <data name="Start_minute_Q" xml:space="preserve">
+    <value>Start minute?: </value>
+  </data>
+  <data name="Start_second_Q" xml:space="preserve">
+    <value>Start second?: </value>
+  </data>
+  <data name="Start_frame_Q" xml:space="preserve">
+    <value>Start frame?: </value>
+  </data>
+  <data name="End_minute_Q" xml:space="preserve">
+    <value>End minute?: </value>
+  </data>
+  <data name="End_second_Q" xml:space="preserve">
+    <value>End second?: </value>
+  </data>
+  <data name="End_frame_Q" xml:space="preserve">
+    <value>End frame?: </value>
+  </data>
+  <data name="Sending_READ_CD_MSF_to_the_device" xml:space="preserve">
+    <value>Sending READ CD MSF to the device:</value>
+  </data>
+  <data name="READ_CD_MSF_response" xml:space="preserve">
+    <value>READ CD MSF response:</value>
+  </data>
+  <data name="READ_CD_MSF_sense" xml:space="preserve">
+    <value>READ CD MSF sense:</value>
+  </data>
+  <data name="READ_CD_MSF_decoded_sense" xml:space="preserve">
+    <value>READ CD MSF decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_DISC_INFORMATION_command" xml:space="preserve">
+    <value>Parameters for READ DISC INFORMATION command:</value>
+  </data>
+  <data name="Information_type_0" xml:space="preserve">
+    <value>Information type: {0}</value>
+  </data>
+  <data name="Information_type" xml:space="preserve">
+    <value>Information type</value>
+  </data>
+  <data name="Not_a_correct_information_type_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct information type. Press any key to continue...</value>
+  </data>
+  <data name="Sending_READ_DISC_INFORMATION_to_the_device" xml:space="preserve">
+    <value>Sending READ DISC INFORMATION to the device:</value>
+  </data>
+  <data name="READ_DISC_INFORMATION_response" xml:space="preserve">
+    <value>READ DISC INFORMATION response:</value>
+  </data>
+  <data name="READ_DISC_INFORMATION_decoded_response" xml:space="preserve">
+    <value>READ DISC INFORMATION decoded response:</value>
+  </data>
+  <data name="READ_DISC_INFORMATION_sense" xml:space="preserve">
+    <value>READ DISC INFORMATION sense:</value>
+  </data>
+  <data name="READ_DISC_INFORMATION_decoded_sense" xml:space="preserve">
+    <value>READ DISC INFORMATION decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_DISC_STRUCTURE_command" xml:space="preserve">
+    <value>Parameters for READ DISC STRUCTURE command:</value>
+  </data>
+  <data name="Media_type_0" xml:space="preserve">
+    <value>Media type: {0}</value>
+  </data>
+  <data name="Format_0" xml:space="preserve">
+    <value>Format: {0}</value>
+  </data>
+  <data name="Layer_0" xml:space="preserve">
+    <value>Layer: {0}</value>
+  </data>
+  <data name="AGID_0" xml:space="preserve">
+    <value>AGID: {0}</value>
+  </data>
+  <data name="Media_type" xml:space="preserve">
+    <value>Media type</value>
+  </data>
+  <data name="Available_values_0_1" xml:space="preserve">
+    <value>Available values: {0} {1}</value>
+  </data>
+  <data name="Not_a_correct_media_type_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct media type. Press any key to continue...</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="Available_values" xml:space="preserve">
+    <value>Available values:</value>
+  </data>
+  <data name="Not_a_correct_structure_format_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct structure format. Press any key to continue...</value>
+  </data>
+  <data name="Layer_Q" xml:space="preserve">
+    <value>Layer?: </value>
+  </data>
+  <data name="AGID_Q" xml:space="preserve">
+    <value>AGID?: </value>
+  </data>
+  <data name="Sending_READ_DISC_STRUCTURE_to_the_device" xml:space="preserve">
+    <value>Sending READ DISC STRUCTURE to the device:</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_response" xml:space="preserve">
+    <value>READ DISC STRUCTURE response:</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_decoding_not_yet_implemented" xml:space="preserve">
+    <value>READ DISC STRUCTURE decoding not yet implemented:</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_sense" xml:space="preserve">
+    <value>READ DISC STRUCTURE sense:</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_decoded_sense" xml:space="preserve">
+    <value>READ DISC STRUCTURE decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_TOC_PMA_ATIP_command" xml:space="preserve">
+    <value>Parameters for READ TOC/PMA/ATIP command:</value>
+  </data>
+  <data name="Return_MSF_values_0" xml:space="preserve">
+    <value>Return MSF values?: {0}</value>
+  </data>
+  <data name="Format_byte_0" xml:space="preserve">
+    <value>Format byte: {0}</value>
+  </data>
+  <data name="Session_0" xml:space="preserve">
+    <value>Session: {0}</value>
+  </data>
+  <data name="Return_MSF_values_Q" xml:space="preserve">
+    <value>Return MSF values?: </value>
+  </data>
+  <data name="Format_Q" xml:space="preserve">
+    <value>Format?: </value>
+  </data>
+  <data name="Session_Q" xml:space="preserve">
+    <value>Session?: </value>
+  </data>
+  <data name="Sending_READ_TOC_PMA_ATIP_to_the_device" xml:space="preserve">
+    <value>Sending READ TOC/PMA/ATIP to the device:</value>
+  </data>
+  <data name="READ_TOC_PMA_ATIP_buffer" xml:space="preserve">
+    <value>READ TOC/PMA/ATIP buffer:</value>
+  </data>
+  <data name="READ_TOC_PMA_ATIP_decoded_buffer" xml:space="preserve">
+    <value>READ TOC/PMA/ATIP decoded buffer:</value>
+  </data>
+  <data name="READ_TOC_PMA_ATIP_sense" xml:space="preserve">
+    <value>READ TOC/PMA/ATIP sense:</value>
+  </data>
+  <data name="READ_TOC_PMA_ATIP_decoded_sense" xml:space="preserve">
+    <value>READ TOC/PMA/ATIP decoded sense:</value>
+  </data>
+  <data name="Parameters_for_START_STOP_UNIT_command" xml:space="preserve">
+    <value>Parameters for START STOP UNIT command:</value>
+  </data>
+  <data name="Change_format_layer_0" xml:space="preserve">
+    <value>Change format layer?: {0}</value>
+  </data>
+  <data name="Eject_0" xml:space="preserve">
+    <value>Eject?: {0}</value>
+  </data>
+  <data name="Start_0" xml:space="preserve">
+    <value>Start?: {0}</value>
+  </data>
+  <data name="Format_layer_0" xml:space="preserve">
+    <value>Format layer: {0}</value>
+  </data>
+  <data name="Power_conditions_0" xml:space="preserve">
+    <value>Power conditions: {0}</value>
+  </data>
+  <data name="Change_format_layer_Q" xml:space="preserve">
+    <value>Change format layer?: </value>
+  </data>
+  <data name="Eject_Q" xml:space="preserve">
+    <value>Eject?: </value>
+  </data>
+  <data name="Start_Q" xml:space="preserve">
+    <value>Start?: </value>
+  </data>
+  <data name="Format_layer_Q" xml:space="preserve">
+    <value>Format layer?: </value>
+  </data>
+  <data name="Power_conditions_Q" xml:space="preserve">
+    <value>Power conditions?: </value>
+  </data>
+  <data name="Sending_START_STOP_UNIT_to_the_device" xml:space="preserve">
+    <value>Sending START STOP UNIT to the device:</value>
+  </data>
+  <data name="START_STOP_UNIT_decoded_sense" xml:space="preserve">
+    <value>START STOP UNIT decoded sense:</value>
+  </data>
+  <data name="START_STOP_UNIT_sense" xml:space="preserve">
+    <value>START STOP UNIT sense:</value>
+  </data>
+  <data name="Send_a_NEC_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send a NEC vendor command to the device:</value>
+  </data>
+  <data name="_1_Send_READ_CD_DA_command" xml:space="preserve">
+    <value>1.- Send READ CD-DA command.</value>
+  </data>
+  <data name="Parameters_for_READ_CD_DA_command" xml:space="preserve">
+    <value>Parameters for READ CD-DA command:</value>
+  </data>
+  <data name="Return_to_NEC_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to NEC vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_NEC_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to NEC vendor commands menu...</value>
+  </data>
+  <data name="Sending_READ_CD_DA_to_the_device" xml:space="preserve">
+    <value>Sending READ CD-DA to the device:</value>
+  </data>
+  <data name="READ_CD_DA_response" xml:space="preserve">
+    <value>READ CD-DA response:</value>
+  </data>
+  <data name="READ_CD_DA_sense" xml:space="preserve">
+    <value>READ CD-DA sense:</value>
+  </data>
+  <data name="READ_CD_DA_decoded_sense" xml:space="preserve">
+    <value>READ CD-DA decoded sense:</value>
+  </data>
+  <data name="Send_a_Pioneer_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send a Pioneer vendor command to the device:</value>
+  </data>
+  <data name="_2_Send_READ_CD_DA_MSF_command" xml:space="preserve">
+    <value>2.- Send READ CD-DA MSF command.</value>
+  </data>
+  <data name="_3_Send_READ_CD_XA_command" xml:space="preserve">
+    <value>3.- Send READ CD-XA command.</value>
+  </data>
+  <data name="_0_bytes_per_sectors" xml:space="preserve">
+    <value>{0} bytes per sectors</value>
+  </data>
+  <data name="Return_to_Pioneer_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to Pioneer vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_Pioneer_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to Pioneer vendor commands menu...</value>
+  </data>
+  <data name="Parameters_for_READ_CD_DA_MSF_command" xml:space="preserve">
+    <value>Parameters for READ CD-DA MSF command:</value>
+  </data>
+  <data name="Sending_READ_CD_DA_MSF_to_the_device" xml:space="preserve">
+    <value>Sending READ CD-DA MSF to the device:</value>
+  </data>
+  <data name="READ_CD_DA_MSF_response" xml:space="preserve">
+    <value>READ CD-DA MSF response:</value>
+  </data>
+  <data name="READ_CD_DA_MSF_sense" xml:space="preserve">
+    <value>READ CD-DA MSF sense:</value>
+  </data>
+  <data name="READ_CD_DA_MSF_decoded_sense" xml:space="preserve">
+    <value>READ CD-DA MSF decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_CD_XA_command" xml:space="preserve">
+    <value>Parameters for READ CD-XA command:</value>
+  </data>
+  <data name="Include_error_flags_0" xml:space="preserve">
+    <value>Include error flags?: {0}</value>
+  </data>
+  <data name="Whole_sector_0" xml:space="preserve">
+    <value>Whole sector?: {0}</value>
+  </data>
+  <data name="Include_error_flags_Q" xml:space="preserve">
+    <value>Include error flags?: </value>
+  </data>
+  <data name="Read_whole_sector_Q" xml:space="preserve">
+    <value>Read whole sector?: </value>
+  </data>
+  <data name="Sending_READ_CD_XA_to_the_device" xml:space="preserve">
+    <value>Sending READ CD-XA to the device:</value>
+  </data>
+  <data name="READ_CD_XA_response" xml:space="preserve">
+    <value>READ CD-XA response:</value>
+  </data>
+  <data name="READ_CD_XA_sense" xml:space="preserve">
+    <value>READ CD-XA sense:</value>
+  </data>
+  <data name="READ_CD_XA_decoded_sense" xml:space="preserve">
+    <value>READ CD-XA decoded sense:</value>
+  </data>
+  <data name="Send_a_Plasmon_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send a Plasmon vendor command to the device:</value>
+  </data>
+  <data name="_2_Send_READ_SECTOR_LOCATION_command" xml:space="preserve">
+    <value>2.- Send READ SECTOR LOCATION command.</value>
+  </data>
+  <data name="Return_to_Plasmon_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to Plasmon vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_Plasmon_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to Plasmon vendor commands menu...</value>
+  </data>
+  <data name="Parameters_for_READ_SECTOR_LOCATION_command" xml:space="preserve">
+    <value>Parameters for READ SECTOR LOCATION command:</value>
+  </data>
+  <data name="Sending_READ_SECTOR_LOCATION_to_the_device" xml:space="preserve">
+    <value>Sending READ SECTOR LOCATION to the device:</value>
+  </data>
+  <data name="READ_SECTOR_LOCATION_response" xml:space="preserve">
+    <value>READ SECTOR LOCATION response:</value>
+  </data>
+  <data name="READ_SECTOR_LOCATION_sense" xml:space="preserve">
+    <value>READ SECTOR LOCATION sense:</value>
+  </data>
+  <data name="READ_SECTOR_LOCATION_decoded_sense" xml:space="preserve">
+    <value>READ SECTOR LOCATION decoded sense:</value>
+  </data>
+  <data name="Send_a_Plextor_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send a Plextor vendor command to the device:</value>
+  </data>
+  <data name="Send_GET_BOOK_BITSETTING_command" xml:space="preserve">
+    <value>1.- Send GET BOOK BITSETTING command.</value>
+  </data>
+  <data name="Send_GET_GIGAREC_command" xml:space="preserve">
+    <value>2.- Send GET GIGAREC command.</value>
+  </data>
+  <data name="Send_GET_SECUREC_command" xml:space="preserve">
+    <value>3.- Send GET SECUREC command.</value>
+  </data>
+  <data name="Send_GET_SILENT_MODE_command" xml:space="preserve">
+    <value>4.- Send GET SILENT MODE command.</value>
+  </data>
+  <data name="Send_GET_SINGLE_SESSION_HIDE_CD_R_command" xml:space="preserve">
+    <value>5.- Send GET SINGLE-SESSION / HIDE CD-R command.</value>
+  </data>
+  <data name="Send_GET_SPEEDREAD_command" xml:space="preserve">
+    <value>6.- Send GET SPEEDREAD command.</value>
+  </data>
+  <data name="Send_GET_TEST_WRITE_DVD_PLUS_command" xml:space="preserve">
+    <value>7.- Send GET TEST WRITE DVD+ command.</value>
+  </data>
+  <data name="Send_GET_VARIREC_command" xml:space="preserve">
+    <value>8.- Send GET VARIREC command.</value>
+  </data>
+  <data name="Send_POWEREC_GET_SPEEDS_command" xml:space="preserve">
+    <value>9.- Send POWEREC GET SPEEDS command.</value>
+  </data>
+  <data name="Send_READ_CD_DA_command" xml:space="preserve">
+    <value>10.- Send READ CD-DA command.</value>
+  </data>
+  <data name="_11_Send_READ_DVD_RAW_command" xml:space="preserve">
+    <value>11.- Send READ DVD (RAW) command.</value>
+  </data>
+  <data name="Send_READ_EEPROM_CD_recorders_command" xml:space="preserve">
+    <value>12.- Send READ EEPROM (CD recorders) command.</value>
+  </data>
+  <data name="Send_READ_EEPROM_DVD_recorders_command" xml:space="preserve">
+    <value>13.- Send READ EEPROM (DVD recorders) command.</value>
+  </data>
+  <data name="Send_READ_EEPROM_PX_708_and_PX_712_command" xml:space="preserve">
+    <value>14.- Send READ EEPROM (PX-708 and PX-712) command.</value>
+  </data>
+  <data name="Parameters_for_GET_BOOK_BITSETTING_command" xml:space="preserve">
+    <value>Parameters for GET BOOK BITSETTING command:</value>
+  </data>
+  <data name="Dual_layer_0" xml:space="preserve">
+    <value>Dual layer?: {0}</value>
+  </data>
+  <data name="Return_to_Plextor_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to Plextor vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_Plextor_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to Plextor vendor commands menu...</value>
+  </data>
+  <data name="Dual_layer" xml:space="preserve">
+    <value>Dual layer?: </value>
+  </data>
+  <data name="Sending_GET_BOOK_BITSETTING_to_the_device" xml:space="preserve">
+    <value>Sending GET BOOK BITSETTING to the device:</value>
+  </data>
+  <data name="GET_BOOK_BITSETTING_response" xml:space="preserve">
+    <value>GET BOOK BITSETTING response:</value>
+  </data>
+  <data name="GET_BOOK_BITSETTING_sense" xml:space="preserve">
+    <value>GET BOOK BITSETTING sense:</value>
+  </data>
+  <data name="GET_BOOK_BITSETTING_decoded_sense" xml:space="preserve">
+    <value>GET BOOK BITSETTING decoded sense:</value>
+  </data>
+  <data name="Sending_GET_GIGAREC_to_the_device" xml:space="preserve">
+    <value>Sending GET GIGAREC to the device:</value>
+  </data>
+  <data name="GET_GIGAREC_response" xml:space="preserve">
+    <value>GET GIGAREC response:</value>
+  </data>
+  <data name="GET_GIGAREC_sense" xml:space="preserve">
+    <value>GET GIGAREC sense:</value>
+  </data>
+  <data name="GET_GIGAREC_decoded_sense" xml:space="preserve">
+    <value>GET GIGAREC decoded sense:</value>
+  </data>
+  <data name="Sending_GET_SECUREC_to_the_device" xml:space="preserve">
+    <value>Sending GET SECUREC to the device:</value>
+  </data>
+  <data name="GET_SECUREC_response" xml:space="preserve">
+    <value>GET SECUREC response:</value>
+  </data>
+  <data name="GET_SECUREC_sense" xml:space="preserve">
+    <value>GET SECUREC sense:</value>
+  </data>
+  <data name="GET_SECUREC_decoded_sense" xml:space="preserve">
+    <value>GET SECUREC decoded sense:</value>
+  </data>
+  <data name="Sending_GET_SILENT_MODE_to_the_device" xml:space="preserve">
+    <value>Sending GET SILENT MODE to the device:</value>
+  </data>
+  <data name="GET_SILENT_MODE_response" xml:space="preserve">
+    <value>GET SILENT MODE response:</value>
+  </data>
+  <data name="GET_SILENT_MODE_sense" xml:space="preserve">
+    <value>GET SILENT MODE sense:</value>
+  </data>
+  <data name="GET_SILENT_MODE_decoded_sense" xml:space="preserve">
+    <value>GET SILENT MODE decoded sense:</value>
+  </data>
+  <data name="Sending_GET_SINGLE_SESSION_HIDE_CD_R_to_the_device" xml:space="preserve">
+    <value>Sending GET SINGLE-SESSION / HIDE CD-R to the device:</value>
+  </data>
+  <data name="GET_SINGLE_SESSION_HIDE_CD_R_response" xml:space="preserve">
+    <value>GET SINGLE-SESSION / HIDE CD-R response:</value>
+  </data>
+  <data name="GET_SINGLE_SESSION_HIDE_CD_R_sense" xml:space="preserve">
+    <value>GET SINGLE-SESSION / HIDE CD-R sense:</value>
+  </data>
+  <data name="GET_SINGLE_SESSION_HIDE_CD_R_decoded_sense" xml:space="preserve">
+    <value>GET SINGLE-SESSION / HIDE CD-R decoded sense:</value>
+  </data>
+  <data name="Sending_GET_SPEEDREAD_to_the_device" xml:space="preserve">
+    <value>Sending GET SPEEDREAD to the device:</value>
+  </data>
+  <data name="GET_SPEEDREAD_response" xml:space="preserve">
+    <value>GET SPEEDREAD response:</value>
+  </data>
+  <data name="GET_SPEEDREAD_sense" xml:space="preserve">
+    <value>GET SPEEDREAD sense:</value>
+  </data>
+  <data name="GET_SPEEDREAD_decoded_sense" xml:space="preserve">
+    <value>GET SPEEDREAD decoded sense:</value>
+  </data>
+  <data name="Sending_GET_TEST_WRITE_DVD_Plus_to_the_device" xml:space="preserve">
+    <value>Sending GET TEST WRITE DVD+ to the device:</value>
+  </data>
+  <data name="GET_TEST_WRITE_DVD_Plus_response" xml:space="preserve">
+    <value>GET TEST WRITE DVD+ response:</value>
+  </data>
+  <data name="GET_TEST_WRITE_DVD_Plus_sense" xml:space="preserve">
+    <value>GET TEST WRITE DVD+ sense:</value>
+  </data>
+  <data name="GET_TEST_WRITE_DVD_Plus_decoded_sense" xml:space="preserve">
+    <value>GET TEST WRITE DVD+ decoded sense:</value>
+  </data>
+  <data name="Parameters_for_GET_VARIREC_command" xml:space="preserve">
+    <value>Parameters for GET VARIREC command:</value>
+  </data>
+  <data name="DVD_0" xml:space="preserve">
+    <value>DVD?: {0}</value>
+  </data>
+  <data name="DVD_Q" xml:space="preserve">
+    <value>DVD?: </value>
+  </data>
+  <data name="Sending_GET_VARIREC_to_the_device" xml:space="preserve">
+    <value>Sending GET VARIREC to the device:</value>
+  </data>
+  <data name="GET_VARIREC_response" xml:space="preserve">
+    <value>GET VARIREC response:</value>
+  </data>
+  <data name="GET_VARIREC_sense" xml:space="preserve">
+    <value>GET VARIREC sense:</value>
+  </data>
+  <data name="GET_VARIREC_decoded_sense" xml:space="preserve">
+    <value>GET VARIREC decoded sense:</value>
+  </data>
+  <data name="Sending_POWEREC_GET_SPEEDS_to_the_device" xml:space="preserve">
+    <value>Sending POWEREC GET SPEEDS to the device:</value>
+  </data>
+  <data name="PoweRec_is_enabled" xml:space="preserve">
+    <value>PoweRec is enabled.</value>
+  </data>
+  <data name="PoweRec_is_disabled" xml:space="preserve">
+    <value>PoweRec is disabled.</value>
+  </data>
+  <data name="Speed_0" xml:space="preserve">
+    <value>Speed: {0}</value>
+  </data>
+  <data name="POWEREC_GET_SPEEDS_decoded_sense" xml:space="preserve">
+    <value>POWEREC GET SPEEDS decoded sense:</value>
+  </data>
+  <data name="POWEREC_GET_SPEEDS_sense" xml:space="preserve">
+    <value>POWEREC GET SPEEDS sense:</value>
+  </data>
+  <data name="Sending_READ_EEPROM_to_the_device" xml:space="preserve">
+    <value>Sending READ EEPROM to the device:</value>
+  </data>
+  <data name="READ_EEPROM_response" xml:space="preserve">
+    <value>READ EEPROM response:</value>
+  </data>
+  <data name="READ_EEPROM_sense" xml:space="preserve">
+    <value>READ EEPROM sense:</value>
+  </data>
+  <data name="READ_EEPROM_decoded_sense" xml:space="preserve">
+    <value>READ EEPROM decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_EEPROM_command" xml:space="preserve">
+    <value>Parameters for READ EEPROM command:</value>
+  </data>
+  <data name="EEPROM_block_to_read_0" xml:space="preserve">
+    <value>EEPROM block to read: {0}</value>
+  </data>
+  <data name="EEPROM_block_size_0" xml:space="preserve">
+    <value>EEPROM block size: {0}</value>
+  </data>
+  <data name="EEPROM_block_to_read_Q" xml:space="preserve">
+    <value>EEPROM block to read?: </value>
+  </data>
+  <data name="EEPROM_block_size_Q" xml:space="preserve">
+    <value>EEPROM block size?: </value>
+  </data>
+  <data name="Send_a_SCSI_Block_Command_to_the_device" xml:space="preserve">
+    <value>Send a SCSI Block Command to the device:</value>
+  </data>
+  <data name="_1_Send_READ_6_command" xml:space="preserve">
+    <value>1.- Send READ (6) command.</value>
+  </data>
+  <data name="_2_Send_READ_10_command" xml:space="preserve">
+    <value>2.- Send READ (10) command.</value>
+  </data>
+  <data name="_3_Send_READ_12_command" xml:space="preserve">
+    <value>3.- Send READ (12) command.</value>
+  </data>
+  <data name="_4_Send_READ_16_command" xml:space="preserve">
+    <value>4.- Send READ (16) command.</value>
+  </data>
+  <data name="_5_Send_READ_LONG_10_command" xml:space="preserve">
+    <value>5.- Send READ LONG (10) command.</value>
+  </data>
+  <data name="_6_Send_READ_LONG_16_command" xml:space="preserve">
+    <value>6.- Send READ LONG (16) command.</value>
+  </data>
+  <data name="_7_Send_SEEK_6_command" xml:space="preserve">
+    <value>7.- Send SEEK (6) command.</value>
+  </data>
+  <data name="_8_Send_SEEK_10_command" xml:space="preserve">
+    <value>8.- Send SEEK (10) command.</value>
+  </data>
+  <data name="Parameters_for_READ_6_command" xml:space="preserve">
+    <value>Parameters for READ (6) command:</value>
+  </data>
+  <data name="_0_blocks_to_read" xml:space="preserve">
+    <value>{0} blocks to read</value>
+  </data>
+  <data name="_0_bytes_expected_per_block" xml:space="preserve">
+    <value>{0} bytes expected per block</value>
+  </data>
+  <data name="Return_to_SCSI_Block_Commands_menu" xml:space="preserve">
+    <value>0.- Return to SCSI Block Commands menu.</value>
+  </data>
+  <data name="Returning_to_SCSI_Block_Commands_menu" xml:space="preserve">
+    <value>Returning to SCSI Block Commands menu...</value>
+  </data>
+  <data name="Max_LBA_is_0_setting_to_0" xml:space="preserve">
+    <value>Max LBA is {0}, setting to {0}</value>
+  </data>
+  <data name="Blocks_to_read_zero_for_256_blocks" xml:space="preserve">
+    <value>Blocks to read (0 for 256 blocks)?: </value>
+  </data>
+  <data name="How_many_bytes_to_expect_per_block_Q" xml:space="preserve">
+    <value>How many bytes to expect per block?: </value>
+  </data>
+  <data name="Sending_READ_6_to_the_device" xml:space="preserve">
+    <value>Sending READ (6) to the device:</value>
+  </data>
+  <data name="READ_6_response" xml:space="preserve">
+    <value>READ (6) response:</value>
+  </data>
+  <data name="READ_6_sense" xml:space="preserve">
+    <value>READ (6) sense:</value>
+  </data>
+  <data name="READ_6_decoded_sense" xml:space="preserve">
+    <value>READ (6) decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_10_command" xml:space="preserve">
+    <value>Parameters for READ (10) command:</value>
+  </data>
+  <data name="How_to_check_protection_information_0" xml:space="preserve">
+    <value>How to check protection information: {0}</value>
+  </data>
+  <data name="Give_lowest_cache_priority_0" xml:space="preserve">
+    <value>Give lowest cache priority?: {0}</value>
+  </data>
+  <data name="Force_bypassing_cache_and_reading_from_medium_0" xml:space="preserve">
+    <value>Force bypassing cache and reading from medium?: {0}</value>
+  </data>
+  <data name="Force_bypassing_cache_and_reading_from_non_volatile_cache_0" xml:space="preserve">
+    <value>Force bypassing cache and reading from non-volatile cache?: {0}</value>
+  </data>
+  <data name="Group_number_0" xml:space="preserve">
+    <value>Group number: {0}</value>
+  </data>
+  <data name="Address_relative_to_current_position_Q" xml:space="preserve">
+    <value>Address relative to current position?: </value>
+  </data>
+  <data name="How_to_check_protection_information_Q" xml:space="preserve">
+    <value>How to check protection information?: </value>
+  </data>
+  <data name="Give_lowest_cache_priority_Q" xml:space="preserve">
+    <value>Give lowest cache priority?: </value>
+  </data>
+  <data name="Force_bypassing_cache_and_reading_from_medium_Q" xml:space="preserve">
+    <value>Force bypassing cache and reading from medium?: </value>
+  </data>
+  <data name="Force_bypassing_cache_and_reading_from_non_volatile_cache_Q" xml:space="preserve">
+    <value>Force bypassing cache and reading from non-volatile cache?: </value>
+  </data>
+  <data name="Group_number_Q" xml:space="preserve">
+    <value>Group number?: </value>
+  </data>
+  <data name="Sending_READ_10_to_the_device" xml:space="preserve">
+    <value>Sending READ (10) to the device:</value>
+  </data>
+  <data name="READ_10_response" xml:space="preserve">
+    <value>READ (10) response:</value>
+  </data>
+  <data name="READ_10_sense" xml:space="preserve">
+    <value>READ (10) sense:</value>
+  </data>
+  <data name="READ_10_decoded_sense" xml:space="preserve">
+    <value>READ (10) decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_12_command" xml:space="preserve">
+    <value>Parameters for READ (12) command:</value>
+  </data>
+  <data name="Use_streaming_0" xml:space="preserve">
+    <value>Use streaming?: {0}</value>
+  </data>
+  <data name="Use_streaming_Q" xml:space="preserve">
+    <value>Use streaming?: </value>
+  </data>
+  <data name="Sending_READ_12_to_the_device" xml:space="preserve">
+    <value>Sending READ (12) to the device:</value>
+  </data>
+  <data name="READ_12_response" xml:space="preserve">
+    <value>READ (12) response:</value>
+  </data>
+  <data name="READ_12_sense" xml:space="preserve">
+    <value>READ (12) sense:</value>
+  </data>
+  <data name="READ_12_decoded_sense" xml:space="preserve">
+    <value>READ (12) decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_16_command" xml:space="preserve">
+    <value>Parameters for READ (16) command:</value>
+  </data>
+  <data name="Sending_READ_16_to_the_device" xml:space="preserve">
+    <value>Sending READ (16) to the device:</value>
+  </data>
+  <data name="READ_16_response" xml:space="preserve">
+    <value>READ (16) response:</value>
+  </data>
+  <data name="READ_16_sense" xml:space="preserve">
+    <value>READ (16) sense:</value>
+  </data>
+  <data name="READ_16_decoded_sense" xml:space="preserve">
+    <value>READ (16) decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_LONG_10_command" xml:space="preserve">
+    <value>Parameters for READ LONG (10) command:</value>
+  </data>
+  <data name="Try_to_error_correct_block_0" xml:space="preserve">
+    <value>Try to error correct block?: {0}</value>
+  </data>
+  <data name="Try_to_error_correct_block_Q" xml:space="preserve">
+    <value>Try to error correct block?: </value>
+  </data>
+  <data name="Sending_READ_LONG_10_to_the_device" xml:space="preserve">
+    <value>Sending READ LONG (10) to the device:</value>
+  </data>
+  <data name="READ_LONG_10_response" xml:space="preserve">
+    <value>READ LONG (10) response:</value>
+  </data>
+  <data name="READ_LONG_10_sense" xml:space="preserve">
+    <value>READ LONG (10) sense:</value>
+  </data>
+  <data name="READ_LONG_10_decoded_sense" xml:space="preserve">
+    <value>READ LONG (10) decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_LONG_16_command" xml:space="preserve">
+    <value>Parameters for READ LONG (16) command:</value>
+  </data>
+  <data name="Sending_READ_LONG_16_to_the_device" xml:space="preserve">
+    <value>Sending READ LONG (16) to the device:</value>
+  </data>
+  <data name="READ_LONG_16_response" xml:space="preserve">
+    <value>READ LONG (16) response:</value>
+  </data>
+  <data name="READ_LONG_16_sense" xml:space="preserve">
+    <value>READ LONG (16) sense:</value>
+  </data>
+  <data name="READ_LONG_16_decoded_sense" xml:space="preserve">
+    <value>READ LONG (16) decoded sense:</value>
+  </data>
+  <data name="Parameters_for_SEEK_6_command" xml:space="preserve">
+    <value>Parameters for SEEK (6) command:</value>
+  </data>
+  <data name="Sending_SEEK_6_to_the_device" xml:space="preserve">
+    <value>Sending SEEK (6) to the device:</value>
+  </data>
+  <data name="SEEK_6_decoded_sense" xml:space="preserve">
+    <value>SEEK (6) decoded sense:</value>
+  </data>
+  <data name="SEEK_6_sense" xml:space="preserve">
+    <value>SEEK (6) sense:</value>
+  </data>
+  <data name="Parameters_for_SEEK_10_command" xml:space="preserve">
+    <value>Parameters for SEEK (10) command:</value>
+  </data>
+  <data name="Descriptor_Q" xml:space="preserve">
+    <value>Descriptor?: </value>
+  </data>
+  <data name="Sending_SEEK_10_to_the_device" xml:space="preserve">
+    <value>Sending SEEK (10) to the device:</value>
+  </data>
+  <data name="SEEK_10_sense" xml:space="preserve">
+    <value>SEEK (10) sense:</value>
+  </data>
+  <data name="Send_a_SCSI_Media_Changer_command_to_the_device" xml:space="preserve">
+    <value>Send a SCSI Media Changer command to the device:</value>
+  </data>
+  <data name="_1_Send_READ_ATTRIBUTE_command" xml:space="preserve">
+    <value>1.- Send READ ATTRIBUTE command.</value>
+  </data>
+  <data name="Parameters_for_READ_ATTRIBUTE_command" xml:space="preserve">
+    <value>Parameters for READ ATTRIBUTE command:</value>
+  </data>
+  <data name="Action_0" xml:space="preserve">
+    <value>Action: {0}</value>
+  </data>
+  <data name="Element_0" xml:space="preserve">
+    <value>Element: {0}</value>
+  </data>
+  <data name="Element_type_0" xml:space="preserve">
+    <value>Element type: {0}</value>
+  </data>
+  <data name="Volume_0" xml:space="preserve">
+    <value>Volume: {0}</value>
+  </data>
+  <data name="Partition_0" xml:space="preserve">
+    <value>Partition: {0}</value>
+  </data>
+  <data name="First_attribute_0" xml:space="preserve">
+    <value>First attribute: {0}</value>
+  </data>
+  <data name="Use_cache_0" xml:space="preserve">
+    <value>Use cache?: {0}</value>
+  </data>
+  <data name="Return_to_SCSI_Media_Changer_commands_menu" xml:space="preserve">
+    <value>0.- Return to SCSI Media Changer commands menu.</value>
+  </data>
+  <data name="Returning_to_SCSI_Media_Changer_commands_menu" xml:space="preserve">
+    <value>Returning to SCSI Media Changer commands menu...</value>
+  </data>
+  <data name="Attribute_action" xml:space="preserve">
+    <value>Attribute action</value>
+  </data>
+  <data name="Not_a_valid_attribute_action_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a valid attribute action. Press any key to continue...</value>
+  </data>
+  <data name="Element_Q" xml:space="preserve">
+    <value>Element?: </value>
+  </data>
+  <data name="Element_type_Q" xml:space="preserve">
+    <value>Element type?: </value>
+  </data>
+  <data name="Volume_Q" xml:space="preserve">
+    <value>Volume?: </value>
+  </data>
+  <data name="Partition_Q" xml:space="preserve">
+    <value>Partition?: </value>
+  </data>
+  <data name="First_attribute_Q" xml:space="preserve">
+    <value>First attribute?: </value>
+  </data>
+  <data name="Use_cache_Q" xml:space="preserve">
+    <value>Use cache?: </value>
+  </data>
+  <data name="Sending_READ_ATTRIBUTE_to_the_device" xml:space="preserve">
+    <value>Sending READ ATTRIBUTE to the device:</value>
+  </data>
+  <data name="READ_ATTRIBUTE_response" xml:space="preserve">
+    <value>READ ATTRIBUTE response:</value>
+  </data>
+  <data name="READ_ATTRIBUTE_sense" xml:space="preserve">
+    <value>READ ATTRIBUTE sense:</value>
+  </data>
+  <data name="READ_ATTRIBUTE_decoded_sense" xml:space="preserve">
+    <value>READ ATTRIBUTE decoded sense:</value>
+  </data>
+  <data name="Send_a_SCSI_Primary_Commands_to_the_device" xml:space="preserve">
+    <value>Send a SCSI Primary Commands to the device:</value>
+  </data>
+  <data name="_1_Send_INQUIRY_command" xml:space="preserve">
+    <value>1.- Send INQUIRY command.</value>
+  </data>
+  <data name="_2_Send_INQUIRY_EPVD_command" xml:space="preserve">
+    <value>2.- Send INQUIRY EVPD command.</value>
+  </data>
+  <data name="_3_Send_MODE_SENSE_6_command" xml:space="preserve">
+    <value>3.- Send MODE SENSE (6) command.</value>
+  </data>
+  <data name="_4_Send_MODE_SENSE_10_command" xml:space="preserve">
+    <value>4.- Send MODE SENSE (10) command.</value>
+  </data>
+  <data name="_5_Send_PREVENT_ALLOW_MEDIUM_REMOVAL_command" xml:space="preserve">
+    <value>5.- Send PREVENT ALLOW MEDIUM REMOVAL command.</value>
+  </data>
+  <data name="_6_SEND_READ_CAPACITY_10_command" xml:space="preserve">
+    <value>6.- Send READ CAPACITY (10) command.</value>
+  </data>
+  <data name="_7_Send_READ_CAPACITY_16_command" xml:space="preserve">
+    <value>7.- Send READ CAPACITY (16) command.</value>
+  </data>
+  <data name="_8_Send_READ_MEDIA_SERIAL_NUMBER_command" xml:space="preserve">
+    <value>8.- Send READ MEDIA SERIAL NUMBER command.</value>
+  </data>
+  <data name="_9_Send_REQUEST_SENSE_command" xml:space="preserve">
+    <value>9.- Send REQUEST SENSE command.</value>
+  </data>
+  <data name="_10_Send_TEST_UNIT_READY_command" xml:space="preserve">
+    <value>10.- Send TEST UNIT READY command.</value>
+  </data>
+  <data name="Sending_INQUIRY_to_the_device" xml:space="preserve">
+    <value>Sending INQUIRY to the device:</value>
+  </data>
+  <data name="Return_to_SCSI_Primary_Commands_menu" xml:space="preserve">
+    <value>0.- Return to SCSI Primary Commands menu.</value>
+  </data>
+  <data name="Returning_to_SCSI_Primary_Commands_menu" xml:space="preserve">
+    <value>Returning to SCSI Primary Commands menu...</value>
+  </data>
+  <data name="INQUIRY_response" xml:space="preserve">
+    <value>INQUIRY response:</value>
+  </data>
+  <data name="INQUIRY_decoded_response" xml:space="preserve">
+    <value>INQUIRY decoded response:</value>
+  </data>
+  <data name="INQUIRY_sense" xml:space="preserve">
+    <value>INQUIRY sense:</value>
+  </data>
+  <data name="INQUIRY_decoded_sense" xml:space="preserve">
+    <value>INQUIRY decoded sense:</value>
+  </data>
+  <data name="Parameters_for_INQUIRY_command" xml:space="preserve">
+    <value>Parameters for INQUIRY command:</value>
+  </data>
+  <data name="EVPD_page_0" xml:space="preserve">
+    <value>EVPD page: {0}</value>
+  </data>
+  <data name="Page_Q" xml:space="preserve">
+    <value>Page?: </value>
+  </data>
+  <data name="Parameters_for_MODE_SENSE_6_command" xml:space="preserve">
+    <value>Parameters for MODE SENSE (6) command:</value>
+  </data>
+  <data name="DBD_0" xml:space="preserve">
+    <value>DBD?: {0}</value>
+  </data>
+  <data name="Page_control_0" xml:space="preserve">
+    <value>Page control: {0}</value>
+  </data>
+  <data name="Page_0" xml:space="preserve">
+    <value>Page: {0}</value>
+  </data>
+  <data name="Subpage_0" xml:space="preserve">
+    <value>Subpage: {0}</value>
+  </data>
+  <data name="DBD_Q" xml:space="preserve">
+    <value>DBD?: </value>
+  </data>
+  <data name="Page_control" xml:space="preserve">
+    <value>Page control</value>
+  </data>
+  <data name="Not_a_correct_page_control_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct page control. Press any key to continue...</value>
+  </data>
+  <data name="Subpage_Q" xml:space="preserve">
+    <value>Subpage?: </value>
+  </data>
+  <data name="Sending_MODE_SENSE_6_to_the_device" xml:space="preserve">
+    <value>Sending MODE SENSE (6) to the device:</value>
+  </data>
+  <data name="MODE_SENSE_6_response" xml:space="preserve">
+    <value>MODE SENSE (6) response:</value>
+  </data>
+  <data name="MODE_SENSE_6_decoded_response" xml:space="preserve">
+    <value>MODE SENSE (6) decoded response:</value>
+  </data>
+  <data name="MODE_SENSE_6_sense" xml:space="preserve">
+    <value>MODE SENSE (6) sense:</value>
+  </data>
+  <data name="MODE_SENSE_6_decoded_sense" xml:space="preserve">
+    <value>MODE SENSE (6) decoded sense:</value>
+  </data>
+  <data name="Parameters_for_MODE_SENSE_10_command" xml:space="preserve">
+    <value>Parameters for MODE SENSE (10) command:</value>
+  </data>
+  <data name="LLBA_0" xml:space="preserve">
+    <value>LLBA?: {0}</value>
+  </data>
+  <data name="LLBA_Q" xml:space="preserve">
+    <value>LLBA?: </value>
+  </data>
+  <data name="Sending_MODE_SENSE_10_to_the_device" xml:space="preserve">
+    <value>Sending MODE SENSE (10) to the device:</value>
+  </data>
+  <data name="MODE_SENSE_10_response" xml:space="preserve">
+    <value>MODE SENSE (10) response:</value>
+  </data>
+  <data name="MODE_SENSE_10_decoded_response" xml:space="preserve">
+    <value>MODE SENSE (10) decoded response:</value>
+  </data>
+  <data name="MODE_SENSE_10_sense" xml:space="preserve">
+    <value>MODE SENSE (10) sense:</value>
+  </data>
+  <data name="MODE_SENSE_10_decoded_sense" xml:space="preserve">
+    <value>MODE SENSE (10) decoded sense:</value>
+  </data>
+  <data name="Mode_0" xml:space="preserve">
+    <value>Mode: {0}</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Mode</value>
+  </data>
+  <data name="Not_a_correct_mode_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct mode. Press any key to continue...</value>
+  </data>
+  <data name="Parameters_for_READ_CAPACITY_10_command" xml:space="preserve">
+    <value>Parameters for READ CAPACITY (10) command:</value>
+  </data>
+  <data name="Relative_address_0" xml:space="preserve">
+    <value>Relative address?: {0}</value>
+  </data>
+  <data name="Partial_capacity_0" xml:space="preserve">
+    <value>Partial capacity?: {0}</value>
+  </data>
+  <data name="Partial_capacity_Q" xml:space="preserve">
+    <value>Partial capacity?: </value>
+  </data>
+  <data name="Sending_READ_CAPACITY_10_to_the_device" xml:space="preserve">
+    <value>Sending READ CAPACITY (10) to the device:</value>
+  </data>
+  <data name="READ_CAPACITY_10_response" xml:space="preserve">
+    <value>READ CAPACITY (10) response:</value>
+  </data>
+  <data name="READ_CAPACITY_10_sense" xml:space="preserve">
+    <value>READ CAPACITY (10) sense:</value>
+  </data>
+  <data name="READ_CAPACITY_10_decoded_sense" xml:space="preserve">
+    <value>READ CAPACITY (10) decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_CAPACITY_16_command" xml:space="preserve">
+    <value>Parameters for READ CAPACITY (16) command:</value>
+  </data>
+  <data name="Sending_READ_CAPACITY_16_to_the_device" xml:space="preserve">
+    <value>Sending READ CAPACITY (16) to the device:</value>
+  </data>
+  <data name="READ_CAPACITY_16_response" xml:space="preserve">
+    <value>READ CAPACITY (16) response:</value>
+  </data>
+  <data name="READ_CAPACITY_16_sense" xml:space="preserve">
+    <value>READ CAPACITY (16) sense:</value>
+  </data>
+  <data name="READ_CAPACITY_16_decoded_sense" xml:space="preserve">
+    <value>READ CAPACITY (16) decoded sense:</value>
+  </data>
+  <data name="Sending_READ_MEDIA_SERIAL_NUMBER_to_the_device" xml:space="preserve">
+    <value>Sending READ MEDIA SERIAL NUMBER to the device:</value>
+  </data>
+  <data name="READ_MEDIA_SERIAL_NUMBER_response" xml:space="preserve">
+    <value>READ MEDIA SERIAL NUMBER response:</value>
+  </data>
+  <data name="READ_MEDIA_SERIAL_NUMBER_sense" xml:space="preserve">
+    <value>READ MEDIA SERIAL NUMBER sense:</value>
+  </data>
+  <data name="READ_MEDIA_SERIAL_NUMBER_decoded_sense" xml:space="preserve">
+    <value>READ MEDIA SERIAL NUMBER decoded sense:</value>
+  </data>
+  <data name="Parameters_for_REQUEST_SENSE_command" xml:space="preserve">
+    <value>Parameters for REQUEST SENSE command:</value>
+  </data>
+  <data name="Sending_REQUEST_SENSE_to_the_device" xml:space="preserve">
+    <value>Sending REQUEST SENSE to the device:</value>
+  </data>
+  <data name="REQUEST_SENSE_decoded_sense" xml:space="preserve">
+    <value>REQUEST SENSE decoded sense:</value>
+  </data>
+  <data name="REQUEST_SENSE_sense" xml:space="preserve">
+    <value>REQUEST SENSE sense:</value>
+  </data>
+  <data name="Sending_TEST_UNIT_READY_to_the_device" xml:space="preserve">
+    <value>Sending TEST UNIT READY to the device:</value>
+  </data>
+  <data name="TEST_UNIT_READY_decoded_sense" xml:space="preserve">
+    <value>TEST UNIT READY decoded sense:</value>
+  </data>
+  <data name="TEST_UNIT_READY_sense" xml:space="preserve">
+    <value>TEST UNIT READY sense:</value>
+  </data>
+  <data name="Send_a_SCSI_Streaming_Command_to_the_device" xml:space="preserve">
+    <value>Send a SCSI Streaming Command to the device:</value>
+  </data>
+  <data name="_1_Send_LOAD_UNLOAD_command" xml:space="preserve">
+    <value>1.- Send LOAD UNLOAD command.</value>
+  </data>
+  <data name="_2_Send_LOCATE_10_command" xml:space="preserve">
+    <value>2.- Send LOCATE (10) command.</value>
+  </data>
+  <data name="_3_Send_LOCATE_16_command" xml:space="preserve">
+    <value>3.- Send LOCATE (16) command.</value>
+  </data>
+  <data name="_4_Send_READ_6_command" xml:space="preserve">
+    <value>4.- Send READ (6) command.</value>
+  </data>
+  <data name="_5_Send_READ_16_command" xml:space="preserve">
+    <value>5.- Send READ (16) command.</value>
+  </data>
+  <data name="_6_Send_READ_BLOCK_LIMITS_command" xml:space="preserve">
+    <value>6.- Send READ BLOCK LIMITS command.</value>
+  </data>
+  <data name="_7_Send_READ_POSITION_command" xml:space="preserve">
+    <value>7.- Send READ POSITION command.</value>
+  </data>
+  <data name="_8_Send_READ_REVERSE_6_command" xml:space="preserve">
+    <value>8.- Send READ REVERSE (6) command.</value>
+  </data>
+  <data name="_9_Send_READ_REVERSE_16_command" xml:space="preserve">
+    <value>9.- Send READ REVERSE (16) command.</value>
+  </data>
+  <data name="_10_Send_RECOVER_BUFFERED_DATA_command" xml:space="preserve">
+    <value>10.- Send RECOVER BUFFERED DATA command.</value>
+  </data>
+  <data name="_11_Send_REPORT_DENSITY_SUPPORT_command" xml:space="preserve">
+    <value>11.- Send REPORT DENSITY SUPPORT command.</value>
+  </data>
+  <data name="_12_Send_REWIND_command" xml:space="preserve">
+    <value>12.- Send REWIND command.</value>
+  </data>
+  <data name="_13_Send_SPACE_command" xml:space="preserve">
+    <value>13.- Send SPACE command.</value>
+  </data>
+  <data name="_14_Send_TRACK_SELECT_command" xml:space="preserve">
+    <value>14.- Send TRACK SELECT command.</value>
+  </data>
+  <data name="Parameters_for_LOAD_UNLOAD_command" xml:space="preserve">
+    <value>Parameters for LOAD UNLOAD command:</value>
+  </data>
+  <data name="Load_0" xml:space="preserve">
+    <value>Load?: {0}</value>
+  </data>
+  <data name="Retense_0" xml:space="preserve">
+    <value>Retense?: {0}</value>
+  </data>
+  <data name="End_of_tape_0" xml:space="preserve">
+    <value>End of tape?: {0}</value>
+  </data>
+  <data name="Hold_0" xml:space="preserve">
+    <value>Hold?: {0}</value>
+  </data>
+  <data name="Return_to_SCSI_Streaming_Commands_menu" xml:space="preserve">
+    <value>0.- Return to SCSI Streaming Commands menu.</value>
+  </data>
+  <data name="Returning_to_SCSI_Streaming_Commands_menu" xml:space="preserve">
+    <value>Returning to SCSI Streaming Commands menu...</value>
+  </data>
+  <data name="Load_Q" xml:space="preserve">
+    <value>Load?: </value>
+  </data>
+  <data name="Retense_Q" xml:space="preserve">
+    <value>Retense?: </value>
+  </data>
+  <data name="End_of_tape_Q" xml:space="preserve">
+    <value>End of tape?: </value>
+  </data>
+  <data name="Hold_Q" xml:space="preserve">
+    <value>Hold?: </value>
+  </data>
+  <data name="Sending_LOAD_UNLOAD_to_the_device" xml:space="preserve">
+    <value>Sending LOAD UNLOAD to the device:</value>
+  </data>
+  <data name="LOAD_UNLOAD_decoded_sense" xml:space="preserve">
+    <value>LOAD UNLOAD decoded sense:</value>
+  </data>
+  <data name="LOAD_UNLOAD_sense" xml:space="preserve">
+    <value>LOAD UNLOAD sense:</value>
+  </data>
+  <data name="Parameters_for_LOCATE_10_command" xml:space="preserve">
+    <value>Parameters for LOCATE (10) command:</value>
+  </data>
+  <data name="Locate_block_0" xml:space="preserve">
+    <value>Locate block?: {0}</value>
+  </data>
+  <data name="Change_partition_0" xml:space="preserve">
+    <value>Change partition?: {0}</value>
+  </data>
+  <data name="Block_0" xml:space="preserve">
+    <value>Block: {0}</value>
+  </data>
+  <data name="Object_0" xml:space="preserve">
+    <value>Object: {0}</value>
+  </data>
+  <data name="Change_partition_Q" xml:space="preserve">
+    <value>Change partition?: </value>
+  </data>
+  <data name="Block_Q" xml:space="preserve">
+    <value>Block?: </value>
+  </data>
+  <data name="Object_Q" xml:space="preserve">
+    <value>Object?: </value>
+  </data>
+  <data name="Sending_LOCATE_10_to_the_device" xml:space="preserve">
+    <value>Sending LOCATE (10) to the device:</value>
+  </data>
+  <data name="LOCATE_10_decoded_sense" xml:space="preserve">
+    <value>LOCATE (10) decoded sense:</value>
+  </data>
+  <data name="LOCATE_10_sense" xml:space="preserve">
+    <value>LOCATE (10) sense:</value>
+  </data>
+  <data name="Parameters_for_LOCATE_16_command" xml:space="preserve">
+    <value>Parameters for LOCATE (16) command:</value>
+  </data>
+  <data name="Object_type_0" xml:space="preserve">
+    <value>Object type: {0}</value>
+  </data>
+  <data name="Explicit_identifier_0" xml:space="preserve">
+    <value>Explicit identifier?: {0}</value>
+  </data>
+  <data name="Object_identifier_0" xml:space="preserve">
+    <value>Object identifier: {0}</value>
+  </data>
+  <data name="Object_type" xml:space="preserve">
+    <value>Object type</value>
+  </data>
+  <data name="Explicit_identifier_Q" xml:space="preserve">
+    <value>Explicit identifier?: </value>
+  </data>
+  <data name="Identifier" xml:space="preserve">
+    <value>Identifier</value>
+  </data>
+  <data name="Sending_LOCATE_16_to_the_device" xml:space="preserve">
+    <value>Sending LOCATE (16) to the device:</value>
+  </data>
+  <data name="LOCATE_16_decoded_sense" xml:space="preserve">
+    <value>LOCATE (16) decoded sense:</value>
+  </data>
+  <data name="LOCATE_16_sense" xml:space="preserve">
+    <value>LOCATE (16) sense:</value>
+  </data>
+  <data name="Fixed_block_size_0" xml:space="preserve">
+    <value>Fixed block size?: {0}</value>
+  </data>
+  <data name="Will_read_0_blocks" xml:space="preserve">
+    <value>Will read {0} blocks</value>
+  </data>
+  <data name="Will_read_0_bytes" xml:space="preserve">
+    <value>Will read {0} bytes</value>
+  </data>
+  <data name="Suppress_length_indicator_0" xml:space="preserve">
+    <value>Suppress length indicator?: {0}</value>
+  </data>
+  <data name="Fixed_block_size_Q" xml:space="preserve">
+    <value>Fixed block size?: </value>
+  </data>
+  <data name="How_many_blocks_to_read_Q" xml:space="preserve">
+    <value>How many blocks to read?: </value>
+  </data>
+  <data name="How_many_bytes_to_read_Q" xml:space="preserve">
+    <value>How many bytes to read?: </value>
+  </data>
+  <data name="Max_number_of_blocks_is_0_setting_to_0" xml:space="preserve">
+    <value>Max number of blocks is {0}, setting to {0}</value>
+  </data>
+  <data name="Max_number_of_bytes_is_0_setting_to_0" xml:space="preserve">
+    <value>Max number of bytes is {0}, setting to {0}</value>
+  </data>
+  <data name="Suppress_length_indicator_Q" xml:space="preserve">
+    <value>Suppress length indicator?: </value>
+  </data>
+  <data name="Will_read_0_objects" xml:space="preserve">
+    <value>Will read {0} objects</value>
+  </data>
+  <data name="_0_bytes_expected_per_object" xml:space="preserve">
+    <value>{0} bytes expected per object</value>
+  </data>
+  <data name="Read_object_0_from_partition_1" xml:space="preserve">
+    <value>Read object {0} from partition {1}</value>
+  </data>
+  <data name="How_many_objects_to_read_Q" xml:space="preserve">
+    <value>How many objects to read?: </value>
+  </data>
+  <data name="How_many_bytes_to_expect_per_object_Q" xml:space="preserve">
+    <value>How many bytes to expect per object?: </value>
+  </data>
+  <data name="Object_identifier_Q" xml:space="preserve">
+    <value>Object identifier?: </value>
+  </data>
+  <data name="Sending_READ_BLOCK_LIMITS_to_the_device" xml:space="preserve">
+    <value>Sending READ BLOCK LIMITS to the device:</value>
+  </data>
+  <data name="READ_BLOCK_LIMITS_response" xml:space="preserve">
+    <value>READ BLOCK LIMITS response:</value>
+  </data>
+  <data name="READ_BLOCK_LIMITS_decoded_response" xml:space="preserve">
+    <value>READ BLOCK LIMITS decoded response:</value>
+  </data>
+  <data name="READ_BLOCK_LIMITS_sense" xml:space="preserve">
+    <value>READ BLOCK LIMITS sense:</value>
+  </data>
+  <data name="READ_BLOCK_LIMITS_decoded_sense" xml:space="preserve">
+    <value>READ BLOCK LIMITS decoded sense:</value>
+  </data>
+  <data name="Response_form_0" xml:space="preserve">
+    <value>Response form: {0}</value>
+  </data>
+  <data name="Response_form" xml:space="preserve">
+    <value>Response form</value>
+  </data>
+  <data name="Available_values_0_1_2_3_4_5_6_7_8" xml:space="preserve">
+    <value>Available values: {0} {1} {2} {3} {4} {5} {6} {7} {8}</value>
+  </data>
+  <data name="Not_a_correct_response_form_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct response form. Press any key to continue...</value>
+  </data>
+  <data name="Sending_READ_POSITION_to_the_device" xml:space="preserve">
+    <value>Sending READ POSITION to the device:</value>
+  </data>
+  <data name="READ_POSITION_decoded_sense" xml:space="preserve">
+    <value>READ POSITION decoded sense:</value>
+  </data>
+  <data name="READ_POSITION_sense" xml:space="preserve">
+    <value>READ POSITION sense:</value>
+  </data>
+  <data name="Parameters_for_READ_REVERSE_6_command" xml:space="preserve">
+    <value>Parameters for READ REVERSE (6) command:</value>
+  </data>
+  <data name="Drive_should_unreverse_bytes_0" xml:space="preserve">
+    <value>Drive should unreverse bytes?: {0}</value>
+  </data>
+  <data name="Drive_should_unreverse_bytes_Q" xml:space="preserve">
+    <value>Drive should unreverse bytes?: </value>
+  </data>
+  <data name="Sending_READ_REVERSE_6_to_the_device" xml:space="preserve">
+    <value>Sending READ REVERSE (6) to the device:</value>
+  </data>
+  <data name="READ_REVERSE_6_response" xml:space="preserve">
+    <value>READ REVERSE (6) response:</value>
+  </data>
+  <data name="READ_REVERSE_6_sense" xml:space="preserve">
+    <value>READ REVERSE (6) sense:</value>
+  </data>
+  <data name="READ_REVERSE_6_decoded_sense" xml:space="preserve">
+    <value>READ REVERSE (6) decoded sense:</value>
+  </data>
+  <data name="Parameters_for_READ_REVERSE_16_command" xml:space="preserve">
+    <value>Parameters for READ REVERSE (16) command:</value>
+  </data>
+  <data name="Sending_READ_REVERSE_16_to_the_device" xml:space="preserve">
+    <value>Sending READ REVERSE (16) to the device:</value>
+  </data>
+  <data name="READ_REVERSE_16_response" xml:space="preserve">
+    <value>READ REVERSE (16) response:</value>
+  </data>
+  <data name="READ_REVERSE_16_sense" xml:space="preserve">
+    <value>READ REVERSE (16) sense:</value>
+  </data>
+  <data name="READ_REVERSE_16_decoded_sense" xml:space="preserve">
+    <value>READ REVERSE (16) decoded sense:</value>
+  </data>
+  <data name="Parameters_for_RECOVER_BUFFERED_DATA_command" xml:space="preserve">
+    <value>Parameters for RECOVER BUFFERED DATA command:</value>
+  </data>
+  <data name="Sending_RECOVER_BUFFERED_DATA_to_the_device" xml:space="preserve">
+    <value>Sending RECOVER BUFFERED DATA to the device:</value>
+  </data>
+  <data name="RECOVER_BUFFERED_DATA_response" xml:space="preserve">
+    <value>RECOVER BUFFERED DATA response:</value>
+  </data>
+  <data name="RECOVER_BUFFERED_DATA_sense" xml:space="preserve">
+    <value>RECOVER BUFFERED DATA sense:</value>
+  </data>
+  <data name="RECOVER_BUFFERED_DATA_decoded_sense" xml:space="preserve">
+    <value>RECOVER BUFFERED DATA decoded sense:</value>
+  </data>
+  <data name="Parameters_for_REPORT_DENSITY_SUPPORT_command" xml:space="preserve">
+    <value>Parameters for REPORT DENSITY SUPPORT command:</value>
+  </data>
+  <data name="Report_about_medium_types_0" xml:space="preserve">
+    <value>Report about medium types?: {0}</value>
+  </data>
+  <data name="Report_about_current_medium_0" xml:space="preserve">
+    <value>Report about current medium?: {0}</value>
+  </data>
+  <data name="Report_about_medium_types_Q" xml:space="preserve">
+    <value>Report about medium types?: </value>
+  </data>
+  <data name="Report_about_current_medium_Q" xml:space="preserve">
+    <value>Report about current medium?: </value>
+  </data>
+  <data name="Sending_REPORT_DENSITY_SUPPORT_to_the_device" xml:space="preserve">
+    <value>Sending REPORT DENSITY SUPPORT to the device:</value>
+  </data>
+  <data name="REPORT_DENSITY_SUPPORT_response" xml:space="preserve">
+    <value>REPORT DENSITY SUPPORT response:</value>
+  </data>
+  <data name="REPORT_DENSITY_SUPPORT_decoded_buffer" xml:space="preserve">
+    <value>REPORT DENSITY SUPPORT decoded buffer:</value>
+  </data>
+  <data name="REPORT_DENSITY_SUPPORT_sense" xml:space="preserve">
+    <value>REPORT DENSITY SUPPORT sense:</value>
+  </data>
+  <data name="REPORT_DENSITY_SUPPORT_decoded_sense" xml:space="preserve">
+    <value>REPORT DENSITY SUPPORT decoded sense:</value>
+  </data>
+  <data name="Parameters_for_REWIND_command" xml:space="preserve">
+    <value>Parameters for REWIND command:</value>
+  </data>
+  <data name="Sending_REWIND_to_the_device" xml:space="preserve">
+    <value>Sending REWIND to the device:</value>
+  </data>
+  <data name="REWIND_decoded_sense" xml:space="preserve">
+    <value>REWIND decoded sense:</value>
+  </data>
+  <data name="REWIND_sense" xml:space="preserve">
+    <value>REWIND sense:</value>
+  </data>
+  <data name="Parameters_for_SPACE_command" xml:space="preserve">
+    <value>Parameters for SPACE command:</value>
+  </data>
+  <data name="What_to_space_0" xml:space="preserve">
+    <value>What to space: {0}</value>
+  </data>
+  <data name="How_many_0" xml:space="preserve">
+    <value>How many: {0}</value>
+  </data>
+  <data name="What_to_space" xml:space="preserve">
+    <value>What to space</value>
+  </data>
+  <data name="Not_a_correct_space_type_Press_any_key_to_continue" xml:space="preserve">
+    <value>Not a correct space type. Press any key to continue...</value>
+  </data>
+  <data name="How_many_negative_for_reverse_Q" xml:space="preserve">
+    <value>How many (negative for reverse)?: </value>
+  </data>
+  <data name="Sending_SPACE_to_the_device" xml:space="preserve">
+    <value>Sending SPACE to the device:</value>
+  </data>
+  <data name="SPACE_decoded_sense" xml:space="preserve">
+    <value>SPACE decoded sense:</value>
+  </data>
+  <data name="SPACE_sense" xml:space="preserve">
+    <value>SPACE sense:</value>
+  </data>
+  <data name="Parameters_for_TRACK_SELECT_command" xml:space="preserve">
+    <value>Parameters for TRACK SELECT command:</value>
+  </data>
+  <data name="Track_0" xml:space="preserve">
+    <value>Track: {0}</value>
+  </data>
+  <data name="Track_Q" xml:space="preserve">
+    <value>Track?: </value>
+  </data>
+  <data name="Sending_TRACK_SELECT_to_the_device" xml:space="preserve">
+    <value>Sending TRACK SELECT to the device:</value>
+  </data>
+  <data name="TRACK_SELECT_decoded_sense" xml:space="preserve">
+    <value>TRACK SELECT decoded sense:</value>
+  </data>
+  <data name="TRACK_SELECT_sense" xml:space="preserve">
+    <value>TRACK SELECT sense:</value>
+  </data>
+  <data name="Send_a_SyQuest_vendor_command_to_the_device" xml:space="preserve">
+    <value>Send a SyQuest vendor command to the device:</value>
+  </data>
+  <data name="_3_Send_READ_LONG_6_command" xml:space="preserve">
+    <value>3.- Send READ LONG (6) command.</value>
+  </data>
+  <data name="_4_Send_READ_LONG_10_command" xml:space="preserve">
+    <value>4.- Send READ LONG (10) command.</value>
+  </data>
+  <data name="_5_Send_READ_RESET_USAGE_COUNTER_command" xml:space="preserve">
+    <value>5.- Send READ/RESET USAGE COUNTER command.</value>
+  </data>
+  <data name="Parameters_for_READ_LONG_6_command" xml:space="preserve">
+    <value>Parameters for READ LONG (6) command:</value>
+  </data>
+  <data name="Inhibit_DMA_0" xml:space="preserve">
+    <value>Inhibit DMA?: {0}</value>
+  </data>
+  <data name="Return_to_SyQuest_vendor_commands_menu" xml:space="preserve">
+    <value>0.- Return to SyQuest vendor commands menu.</value>
+  </data>
+  <data name="Returning_to_SyQuest_vendor_commands_menu" xml:space="preserve">
+    <value>Returning to SyQuest vendor commands menu...</value>
+  </data>
+  <data name="Inhibit_DMA_Q" xml:space="preserve">
+    <value>Inhibit DMA?: </value>
+  </data>
+  <data name="Sending_READ_LONG_6_to_the_device" xml:space="preserve">
+    <value>Sending READ LONG (6) to the device:</value>
+  </data>
+  <data name="READ_LONG_6_response" xml:space="preserve">
+    <value>READ LONG (6) response:</value>
+  </data>
+  <data name="READ_LONG_6_sense" xml:space="preserve">
+    <value>READ LONG (6) sense:</value>
+  </data>
+  <data name="READ_LONG_6_decoded_sense" xml:space="preserve">
+    <value>READ LONG (6) decoded sense:</value>
+  </data>
+  <data name="Ejecting_disc" xml:space="preserve">
+    <value>Ejecting disc...</value>
+  </data>
+  <data name="Please_insert_trap_disc_inside" xml:space="preserve">
+    <value>Please insert trap disc inside...</value>
+  </data>
+  <data name="Sending_READ_FULL_TOC_to_the_device" xml:space="preserve">
+    <value>Sending READ FULL TOC to the device...</value>
+  </data>
+  <data name="READ_FULL_TOC_failed" xml:space="preserve">
+    <value>READ FULL TOC failed...</value>
+  </data>
+  <data name="Could_not_decode_TOC" xml:space="preserve">
+    <value>Could not decode TOC...</value>
+  </data>
+  <data name="Cannot_find_lead_out" xml:space="preserve">
+    <value>Cannot find lead-out...</value>
+  </data>
+  <data name="Trap_disc_shows_0_sectors" xml:space="preserve">
+    <value>Trap disc shows {0} sectors...</value>
+  </data>
+  <data name="Trap_disc_doesnt_have_enough_sectors" xml:space="preserve">
+    <value>Trap disc doesn't have enough sectors...</value>
+  </data>
+  <data name="Stopping_motor" xml:space="preserve">
+    <value>Stopping motor...</value>
+  </data>
+  <data name="Please_MANUALLY_get_the_trap_disc_out_and_put_the_GD_ROM_disc_inside" xml:space="preserve">
+    <value>Please MANUALLY get the trap disc out and put the GD-ROM disc inside...</value>
+  </data>
+  <data name="Waiting_5_seconds" xml:space="preserve">
+    <value>Waiting 5 seconds...</value>
+  </data>
+  <data name="Lead_out_has_changed_this_drive_does_not_support_hot_swapping_discs" xml:space="preserve">
+    <value>Lead-out has changed, this drive does not support hot swapping discs...</value>
+  </data>
+  <data name="Reading_LBA_zero" xml:space="preserve">
+    <value>Reading LBA 0... </value>
+  </data>
+  <data name="FAIL" xml:space="preserve">
+    <value>FAIL!</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Success!</value>
+  </data>
+  <data name="Reading_LBA_100000" xml:space="preserve">
+    <value>Reading LBA 100000... </value>
+  </data>
+  <data name="Reading_LBA_zero_as_audio_scrambled" xml:space="preserve">
+    <value>Reading LBA 0 as audio (scrambled)... </value>
+  </data>
+  <data name="Reading_LBA_50000" xml:space="preserve">
+    <value>Reading LBA 50000... </value>
+  </data>
+  <data name="Reading_LBA_450000" xml:space="preserve">
+    <value>Reading LBA 450000... </value>
+  </data>
+  <data name="Reading_LBA_400000" xml:space="preserve">
+    <value>Reading LBA 400000... </value>
+  </data>
+  <data name="Reading_LBA_45000" xml:space="preserve">
+    <value>Reading LBA 45000... </value>
+  </data>
+  <data name="Reading_LBA_44990" xml:space="preserve">
+    <value>Reading LBA 44990... </value>
+  </data>
+  <data name="Device_cannot_read_HD_area" xml:space="preserve">
+    <value>Device cannot read HD area.</value>
+  </data>
+  <data name="Device_can_read_HD_area" xml:space="preserve">
+    <value>Device can read HD area.</value>
+  </data>
+  <data name="LBA_zero_sense_is_0_buffer_is_1_sense_buffer_is_2" xml:space="preserve">
+    <value>LBA 0 sense is {0}, buffer is {1}, sense buffer is {2}.</value>
+  </data>
+  <data name="empty" xml:space="preserve">
+    <value>empty</value>
+  </data>
+  <data name="_0_bytes" xml:space="preserve">
+    <value>{0} bytes</value>
+  </data>
+  <data name="LBA_zero_scrambled_sense_is_0_buffer_is_1_sense_buffer_is_2_" xml:space="preserve">
+    <value>LBA 0 (scrambled) sense is {0}, buffer is {1}, sense buffer is {2}.</value>
+  </data>
+  <data name="LBA_44990_sense_is_0_buffer_is_1_sense_buffer_is_2" xml:space="preserve">
+    <value>LBA 44990 sense is {0}, buffer is {1}, sense buffer is {2}.</value>
+  </data>
+  <data name="LBA_45000_sense_is_0_buffer_is_1_sense_buffer_is_2" xml:space="preserve">
+    <value>LBA 45000 sense is {0}, buffer is {1}, sense buffer is {2}.</value>
+  </data>
+  <data name="LBA_50000_sense_is_0_buffer_is_1_sense_buffer_is_2" xml:space="preserve">
+    <value>LBA 50000 sense is {0}, buffer is {1}, sense buffer is {2}.</value>
+  </data>
+  <data name="LBA_100000_sense_is_0_buffer_is_1_sense_buffer_is_2" xml:space="preserve">
+    <value>LBA 100000 sense is {0}, buffer is {1}, sense buffer is {2}.</value>
+  </data>
+  <data name="LBA_400000_sense_is_0_buffer_is_1_sense_buffer_is_2" xml:space="preserve">
+    <value>LBA 400000 sense is {0}, buffer is {1}, sense buffer is {2}.</value>
+  </data>
+  <data name="LBA_450000_sense_is_0_buffer_is_1_sense_buffer_is_2" xml:space="preserve">
+    <value>LBA 450000 sense is {0}, buffer is {1}, sense buffer is {2}.</value>
+  </data>
+  <data name="_1_Print_LBA_zero_buffer" xml:space="preserve">
+    <value>1.- Print LBA 0 buffer.</value>
+  </data>
+  <data name="_2_Print_LBA_zero_sense_buffer" xml:space="preserve">
+    <value>2.- Print LBA 0 sense buffer.</value>
+  </data>
+  <data name="_3_Decode_LBA_zero_sense_buffer" xml:space="preserve">
+    <value>3.- Decode LBA 0 sense buffer.</value>
+  </data>
+  <data name="_4_Print_LBA_zero_scrambled_buffer" xml:space="preserve">
+    <value>4.- Print LBA 0 (scrambled) buffer.</value>
+  </data>
+  <data name="_5_Print_LBA_zero_scrambled_sense_buffer" xml:space="preserve">
+    <value>5.- Print LBA 0 (scrambled) sense buffer.</value>
+  </data>
+  <data name="_6_Decode_LBA_zero_scrambled_sense_buffer" xml:space="preserve">
+    <value>6.- Decode LBA 0 (scrambled) sense buffer.</value>
+  </data>
+  <data name="_7_Print_LBA_44990_buffer" xml:space="preserve">
+    <value>7.- Print LBA 44990 buffer.</value>
+  </data>
+  <data name="_8_Print_LBA_44990_sense_buffer" xml:space="preserve">
+    <value>8.- Print LBA 44990 sense buffer.</value>
+  </data>
+  <data name="_9_Decode_LBA_44990_sense_buffer" xml:space="preserve">
+    <value>9.- Decode LBA 44990 sense buffer.</value>
+  </data>
+  <data name="_10_Print_LBA_45000_buffer" xml:space="preserve">
+    <value>10.- Print LBA 45000 buffer.</value>
+  </data>
+  <data name="_11_Print_LBA_45000_sense_buffer" xml:space="preserve">
+    <value>11.- Print LBA 45000 sense buffer.</value>
+  </data>
+  <data name="_12_Decode_LBA_45000_sense_buffer" xml:space="preserve">
+    <value>12.- Decode LBA 45000 sense buffer.</value>
+  </data>
+  <data name="_13_Print_LBA_50000_buffer" xml:space="preserve">
+    <value>13.- Print LBA 50000 buffer.</value>
+  </data>
+  <data name="_14_Print_LBA_50000_sense_buffer" xml:space="preserve">
+    <value>14.- Print LBA 50000 sense buffer.</value>
+  </data>
+  <data name="_15_Decode_LBA_50000_sense_buffer" xml:space="preserve">
+    <value>15.- Decode LBA 50000 sense buffer.</value>
+  </data>
+  <data name="_16_Print_LBA_100000_buffer" xml:space="preserve">
+    <value>16.- Print LBA 100000 buffer.</value>
+  </data>
+  <data name="_17_Print_LBA_100000_sense_buffer" xml:space="preserve">
+    <value>17.- Print LBA 100000 sense buffer.</value>
+  </data>
+  <data name="_18_Decode_LBA_100000_sense_buffer" xml:space="preserve">
+    <value>18.- Decode LBA 100000 sense buffer.</value>
+  </data>
+  <data name="_19_Print_LBA_400000_buffer" xml:space="preserve">
+    <value>19.- Print LBA 400000 buffer.</value>
+  </data>
+  <data name="_20_Print_LBA_400000_sense_buffer" xml:space="preserve">
+    <value>20.- Print LBA 400000 sense buffer.</value>
+  </data>
+  <data name="_21_Decode_LBA_400000_sense_buffer" xml:space="preserve">
+    <value>21.- Decode LBA 400000 sense buffer.</value>
+  </data>
+  <data name="_22_Print_LBA_450000_buffer" xml:space="preserve">
+    <value>22.- Print LBA 450000 buffer.</value>
+  </data>
+  <data name="_23_Print_LBA_450000_sense_buffer" xml:space="preserve">
+    <value>23.- Print LBA 450000 sense buffer.</value>
+  </data>
+  <data name="_24_Decode_LBA_450000_sense_buffer" xml:space="preserve">
+    <value>24.- Decode LBA 450000 sense buffer.</value>
+  </data>
+  <data name="_25_Send_command_again" xml:space="preserve">
+    <value>25.- Send command again.</value>
+  </data>
+  <data name="Return_to_special_SCSI_MultiMedia_Commands_menu" xml:space="preserve">
+    <value>0.- Return to special SCSI MultiMedia Commands menu.</value>
+  </data>
+  <data name="Returning_to_special_SCSI_MultiMedia_Commands_menu" xml:space="preserve">
+    <value>Returning to special SCSI MultiMedia Commands menu...</value>
+  </data>
+  <data name="LBA_zero_response" xml:space="preserve">
+    <value>LBA 0 response:</value>
+  </data>
+  <data name="LBA_zero_sense" xml:space="preserve">
+    <value>LBA 0 sense:</value>
+  </data>
+  <data name="LBA_zero_decoded_sense" xml:space="preserve">
+    <value>LBA 0 decoded sense:</value>
+  </data>
+  <data name="LBA_zero_scrambled_response" xml:space="preserve">
+    <value>LBA 0 (scrambled) response:</value>
+  </data>
+  <data name="LBA_zero_scrambled_sense" xml:space="preserve">
+    <value>LBA 0 (scrambled) sense:</value>
+  </data>
+  <data name="LBA_zero_scrambled_decoded_sense" xml:space="preserve">
+    <value>LBA 0 (scrambled) decoded sense:</value>
+  </data>
+  <data name="LBA_44990_response" xml:space="preserve">
+    <value>LBA 44990 response:</value>
+  </data>
+  <data name="LBA_44990_sense" xml:space="preserve">
+    <value>LBA 44990 sense:</value>
+  </data>
+  <data name="LBA_44990_decoded_sense" xml:space="preserve">
+    <value>LBA 44990 decoded sense:</value>
+  </data>
+  <data name="LBA_45000_response" xml:space="preserve">
+    <value>LBA 45000 response:</value>
+  </data>
+  <data name="LBA_45000_sense" xml:space="preserve">
+    <value>LBA 45000 sense:</value>
+  </data>
+  <data name="LBA_45000_decoded_sense" xml:space="preserve">
+    <value>LBA 45000 decoded sense:</value>
+  </data>
+  <data name="LBA_50000_response" xml:space="preserve">
+    <value>LBA 50000 response:</value>
+  </data>
+  <data name="LBA_50000_sense" xml:space="preserve">
+    <value>LBA 50000 sense:</value>
+  </data>
+  <data name="LBA_50000_decoded_sense" xml:space="preserve">
+    <value>LBA 50000 decoded sense:</value>
+  </data>
+  <data name="LBA_100000_response" xml:space="preserve">
+    <value>LBA 100000 response:</value>
+  </data>
+  <data name="LBA_100000_sense" xml:space="preserve">
+    <value>LBA 100000 sense:</value>
+  </data>
+  <data name="LBA_100000_decoded_sense" xml:space="preserve">
+    <value>LBA 100000 decoded sense:</value>
+  </data>
+  <data name="LBA_400000_response" xml:space="preserve">
+    <value>LBA 400000 response:</value>
+  </data>
+  <data name="LBA_400000_sense" xml:space="preserve">
+    <value>LBA 400000 sense:</value>
+  </data>
+  <data name="LBA_400000_decoded_sense" xml:space="preserve">
+    <value>LBA 400000 decoded sense:</value>
+  </data>
+  <data name="LBA_450000_response" xml:space="preserve">
+    <value>LBA 450000 response:</value>
+  </data>
+  <data name="LBA_450000_sense" xml:space="preserve">
+    <value>LBA 450000 sense:</value>
+  </data>
+  <data name="LBA_450000_decoded_sense" xml:space="preserve">
+    <value>LBA 450000 decoded sense:</value>
+  </data>
+  <data name="Please_insert_a_data_only_disc_inside" xml:space="preserve">
+    <value>Please insert a data only disc inside...</value>
+  </data>
+  <data name="Data_disc_shows_0_sectors" xml:space="preserve">
+    <value>Data disc shows {0} sectors...</value>
+  </data>
+  <data name="Please_insert_the_trap_disc_inside" xml:space="preserve">
+    <value>Please insert the trap disc inside...</value>
+  </data>
+  <data name="Please_MANUALLY_get_the_trap_disc_out_and_put_the_data_disc_back_inside" xml:space="preserve">
+    <value>Please MANUALLY get the trap disc out and put the data disc back inside...</value>
+  </data>
+  <data name="Reading_LBA_0" xml:space="preserve">
+    <value>Reading LBA {0}... </value>
+  </data>
+  <data name="Reading_LBA_0_as_audio_scrambled" xml:space="preserve">
+    <value>Reading LBA {0} as audio (scrambled)... </value>
+  </data>
+  <data name="Reading_LBA_0_PQ_subchannel" xml:space="preserve">
+    <value>Reading LBA {0}'s PQ subchannel... </value>
+  </data>
+  <data name="Reading_LBA_0_RW_subchannel" xml:space="preserve">
+    <value>Reading LBA {0}'s RW subchannel... </value>
+  </data>
+  <data name="Device_cannot_read_Lead_Out" xml:space="preserve">
+    <value>Device cannot read Lead-Out.</value>
+  </data>
+  <data name="Device_can_read_Lead_Out" xml:space="preserve">
+    <value>Device can read Lead-Out.</value>
+  </data>
+  <data name="LBA_0_sense_is_1_buffer_is_2_sense_buffer_is_3" xml:space="preserve">
+    <value>LBA {0} sense is {1}, buffer is {2}, sense buffer is {3}.</value>
+  </data>
+  <data name="LBA_0_scrambled_sense_is_1_buffer_is_2_sense_buffer_is_3" xml:space="preserve">
+    <value>LBA {0} (scrambled) sense is {1}, buffer is {2}, sense buffer is {3}.</value>
+  </data>
+  <data name="LBA_0_PQ_sense_is_1_buffer_is_2_sense_buffer_is_3" xml:space="preserve">
+    <value>LBA {0}'s PQ sense is {1}, buffer is {2}, sense buffer is {3}.</value>
+  </data>
+  <data name="LBA_0_RW_sense_is_1_buffer_is_2_sense_buffer_is_3" xml:space="preserve">
+    <value>LBA {0}'s RW sense is {1}, buffer is {2}, sense buffer is {3}.</value>
+  </data>
+  <data name="_1_Print_LBA_0_buffer" xml:space="preserve">
+    <value>1.- Print LBA {0} buffer.</value>
+  </data>
+  <data name="_2_Print_LBA_0_sense_buffer" xml:space="preserve">
+    <value>2.- Print LBA {0} sense buffer.</value>
+  </data>
+  <data name="_3_Decode_LBA_0_sense_buffer" xml:space="preserve">
+    <value>3.- Decode LBA {0} sense buffer.</value>
+  </data>
+  <data name="_4_Print_LBA_0_scrambled_buffer" xml:space="preserve">
+    <value>4.- Print LBA {0} (scrambled) buffer.</value>
+  </data>
+  <data name="_5_Print_LBA_0_scrambled_sense_buffer" xml:space="preserve">
+    <value>5.- Print LBA {0} (scrambled) sense buffer.</value>
+  </data>
+  <data name="_6_Decode_LBA_0_scrambled_sense_buffer" xml:space="preserve">
+    <value>6.- Decode LBA {0} (scrambled) sense buffer.</value>
+  </data>
+  <data name="_7_Print_LBA_0_PQ_buffer" xml:space="preserve">
+    <value>7.- Print LBA {0}'s PQ buffer.</value>
+  </data>
+  <data name="_8_Print_LBA_0_PQ_sense_buffer" xml:space="preserve">
+    <value>8.- Print LBA {0}'s PQ sense buffer.</value>
+  </data>
+  <data name="_9_Decode_LBA_0_PQ_sense_buffer" xml:space="preserve">
+    <value>9.- Decode LBA {0}'s PQ sense buffer.</value>
+  </data>
+  <data name="_10_Print_LBA_0_RW_buffer" xml:space="preserve">
+    <value>10.- Print LBA {0}'s RW buffer.</value>
+  </data>
+  <data name="_11_Print_LBA_0_RW_sense_buffer" xml:space="preserve">
+    <value>11.- Print LBA {0}'s RW sense buffer.</value>
+  </data>
+  <data name="_12_Decode_LBA_0_RW_sense_buffer" xml:space="preserve">
+    <value>12.- Decode LBA {0}'s RW sense buffer.</value>
+  </data>
+  <data name="_13_Send_command_again" xml:space="preserve">
+    <value>13.- Send command again.</value>
+  </data>
+  <data name="LBA_0_response" xml:space="preserve">
+    <value>LBA {0} response:</value>
+  </data>
+  <data name="LBA_0_sense" xml:space="preserve">
+    <value>LBA {0} sense:</value>
+  </data>
+  <data name="LBA_0_decoded_sense" xml:space="preserve">
+    <value>LBA {0} decoded sense:</value>
+  </data>
+  <data name="LBA_0_scrambled_response" xml:space="preserve">
+    <value>LBA {0} (scrambled) response:</value>
+  </data>
+  <data name="LBA_0_scrambled_sense" xml:space="preserve">
+    <value>LBA {0} (scrambled) sense:</value>
+  </data>
+  <data name="LBA_0_scrambled_decoded_sense" xml:space="preserve">
+    <value>LBA {0} (scrambled) decoded sense:</value>
+  </data>
+  <data name="LBA_PQ_0_response" xml:space="preserve">
+    <value>LBA's PQ {0} response:</value>
+  </data>
+  <data name="LBA_PQ_0_sense" xml:space="preserve">
+    <value>LBA's PQ {0} sense:</value>
+  </data>
+  <data name="LBA_PQ_decoded_sense" xml:space="preserve">
+    <value>LBA's PQ {0} decoded sense:</value>
+  </data>
+  <data name="LBA_RW_0_response" xml:space="preserve">
+    <value>LBA's RW {0} response:</value>
+  </data>
+  <data name="LBA_RW_0_sense" xml:space="preserve">
+    <value>LBA's RW {0} sense:</value>
+  </data>
+  <data name="LBA_RW_0_decoded_sense" xml:space="preserve">
+    <value>LBA's RW {0} decoded sense:</value>
+  </data>
+  <data name="Parameters_for_MediaTek_READ_CACHE_command" xml:space="preserve">
+    <value>Parameters for MediaTek READ CACHE command:</value>
+  </data>
+  <data name="READ_CD_failed" xml:space="preserve">
+    <value>READ CD failed...</value>
+  </data>
+  <data name="Sending_MediaTek_READ_DRAM_to_the_device" xml:space="preserve">
+    <value>Sending MediaTek READ DRAM to the device...</value>
+  </data>
+  <data name="System_error_status_is_0_and_error_number_is_1" xml:space="preserve">
+    <value>System error status is {0} and error number is {1}.</value>
+  </data>
+  <data name="MediaTek_READ_CACHE_response" xml:space="preserve">
+    <value>MediaTek's READ CACHE response:</value>
+  </data>
+  <data name="MediaTek_READ_CACHE_sense" xml:space="preserve">
+    <value>MediaTek's READ CACHE sense:</value>
+  </data>
+  <data name="MediaTek_READ_CACHE_decoded_sense" xml:space="preserve">
+    <value>MediaTek's READ CACHE decoded sense:</value>
+  </data>
+  <data name="Send_a_special_SCSI_MultiMedia_command_to_the_device" xml:space="preserve">
+    <value>Send a special SCSI MultiMedia command to the device:</value>
+  </data>
+  <data name="Try_to_read_the_cache_data_from_a_device_with_a_MediaTek_chipset_F1h_command_06h_subcommand"
+        xml:space="preserve">
+    <value>1.- Try to read the cache data from a device with a MediaTek chipset (F1h command 06h subcommand).</value>
+  </data>
+  <data name="Try_to_read_a_GD_ROM_using_a_trap_disc" xml:space="preserve">
+    <value>2.- Try to read a GD-ROM using a trap disc.</value>
+  </data>
+  <data name="Try_to_read_Lead_Out_using_a_trap_disc" xml:space="preserve">
+    <value>3.- Try to read Lead-Out using a trap disc.</value>
+  </data>
+  <data name="Return_to_command_class_menu" xml:space="preserve">
+    <value>0.- Return to command class menu.</value>
+  </data>
+  <data name="Send_a_MultiMediaCard_command_to_the_device" xml:space="preserve">
+    <value>Send a MultiMediaCard command to the device:</value>
+  </data>
+  <data name="_1_Send_READ_MULTIPLE_BLOCK_command" xml:space="preserve">
+    <value>1.- Send READ_MULTIPLE_BLOCK command.</value>
+  </data>
+  <data name="_2_Send_READ_SINGLE_BLOCK_command" xml:space="preserve">
+    <value>2.- Send READ_SINGLE_BLOCK command.</value>
+  </data>
+  <data name="_3_Send_SEND_CID_command" xml:space="preserve">
+    <value>3.- Send SEND_CID command.</value>
+  </data>
+  <data name="_4_Send_SEND_CSD_command" xml:space="preserve">
+    <value>4.- Send SEND_CSD command.</value>
+  </data>
+  <data name="_5_Send_SEND_EXT_CSD_command" xml:space="preserve">
+    <value>5.- Send SEND_EXT_CSD command.</value>
+  </data>
+  <data name="_6_Send_SEND_OP_COND_command" xml:space="preserve">
+    <value>6.- Send SEND_OP_COND command.</value>
+  </data>
+  <data name="_7_Send_SEND_STATUS_command" xml:space="preserve">
+    <value>7.- Send SEND_STATUS command.</value>
+  </data>
+  <data name="_8_Send_SET_BLOCKLEN_command" xml:space="preserve">
+    <value>8.- Send SET_BLOCKLEN command.</value>
+  </data>
+  <data name="Return_to_SecureDigital_MultiMediaCard_commands_menu" xml:space="preserve">
+    <value>0.- Return to SecureDigital/MultiMediaCard commands menu.</value>
+  </data>
+  <data name="Returning_to_SecureDigital_MultiMediaCard_commands_menu" xml:space="preserve">
+    <value>Returning to SecureDigital/MultiMediaCard commands menu...</value>
+  </data>
+  <data name="Parameters_for_READ_MULTIPLE_BLOCK_command" xml:space="preserve">
+    <value>Parameters for READ_MULTIPLE_BLOCK command:</value>
+  </data>
+  <data name="Parameters_for_READ_SINGLE_BLOCK_command" xml:space="preserve">
+    <value>Parameters for READ_SINGLE_BLOCK command:</value>
+  </data>
+  <data name="Return_to_MultiMediaCard_commands_menu" xml:space="preserve">
+    <value>0.- Return to MultiMediaCard commands menu.</value>
+  </data>
+  <data name="Returning_to_MultiMediaCard_commands_menu" xml:space="preserve">
+    <value>Returning to MultiMediaCard commands menu...</value>
+  </data>
+  <data name="Use_byte_addressing_Q" xml:space="preserve">
+    <value>Use byte addressing?: </value>
+  </data>
+  <data name="Read_from_byte_Q" xml:space="preserve">
+    <value>Read from byte?: </value>
+  </data>
+  <data name="Read_from_block_Q" xml:space="preserve">
+    <value>Read from block?: </value>
+  </data>
+  <data name="How_many_bytes_to_expect_in_a_block_Q" xml:space="preserve">
+    <value>How many bytes to expect in a block?</value>
+  </data>
+  <data name="Sending_READ_MULTIPLE_BLOCK_to_the_device" xml:space="preserve">
+    <value>Sending READ_MULTIPLE_BLOCK to the device:</value>
+  </data>
+  <data name="Sending_READ_SINGLE_BLOCK_to_the_device" xml:space="preserve">
+    <value>Sending READ_SINGLE_BLOCK to the device:</value>
+  </data>
+  <data name="Response_has_0_elements" xml:space="preserve">
+    <value>Response has {0} elements.</value>
+  </data>
+  <data name="_2_Print_response_buffer" xml:space="preserve">
+    <value>2.- Print response buffer.</value>
+  </data>
+  <data name="READ_MULTIPLE_BLOCK_buffer" xml:space="preserve">
+    <value>READ_MULTIPLE_BLOCK buffer:</value>
+  </data>
+  <data name="READ_SINGLE_BLOCK_buffer" xml:space="preserve">
+    <value>READ_SINGLE_BLOCK buffer:</value>
+  </data>
+  <data name="READ_MULTIPLE_BLOCK_response" xml:space="preserve">
+    <value>READ_MULTIPLE_BLOCK response:</value>
+  </data>
+  <data name="READ_SINGLE_BLOCK_response" xml:space="preserve">
+    <value>READ_SINGLE_BLOCK response:</value>
+  </data>
+  <data name="Sending_SEND_OP_COND_to_the_device" xml:space="preserve">
+    <value>Sending SEND_OP_COND to the device:</value>
+  </data>
+  <data name="_3_Print_response_buffer" xml:space="preserve">
+    <value>3.- Print response buffer.</value>
+  </data>
+  <data name="SEND_OP_COND_buffer" xml:space="preserve">
+    <value>SEND_OP_COND buffer:</value>
+  </data>
+  <data name="SEND_OP_COND_decoded_buffer" xml:space="preserve">
+    <value>SEND_OP_COND decoded buffer:</value>
+  </data>
+  <data name="SEND_OP_COND_response" xml:space="preserve">
+    <value>SEND_OP_COND response:</value>
+  </data>
+  <data name="Sending_SEND_STATUS_to_the_device" xml:space="preserve">
+    <value>Sending SEND_STATUS to the device:</value>
+  </data>
+  <data name="SEND_STATUS_buffer" xml:space="preserve">
+    <value>SEND_STATUS buffer:</value>
+  </data>
+  <data name="SEND_STATUS_response" xml:space="preserve">
+    <value>SEND_STATUS response:</value>
+  </data>
+  <data name="Sending_SEND_CID_to_the_device" xml:space="preserve">
+    <value>Sending SEND_CID to the device:</value>
+  </data>
+  <data name="SEND_CID_buffer" xml:space="preserve">
+    <value>SEND_CID buffer:</value>
+  </data>
+  <data name="SEND_CID_decoded_buffer" xml:space="preserve">
+    <value>SEND_CID decoded buffer:</value>
+  </data>
+  <data name="SEND_CID_response" xml:space="preserve">
+    <value>SEND_CID response:</value>
+  </data>
+  <data name="Sending_SEND_CSD_to_the_device" xml:space="preserve">
+    <value>Sending SEND_CSD to the device:</value>
+  </data>
+  <data name="SEND_CSD_buffer" xml:space="preserve">
+    <value>SEND_CSD buffer:</value>
+  </data>
+  <data name="SEND_CSD_decoded_buffer" xml:space="preserve">
+    <value>SEND_CSD decoded buffer:</value>
+  </data>
+  <data name="SEND_CSD_response" xml:space="preserve">
+    <value>SEND_CSD response:</value>
+  </data>
+  <data name="Sending_SEND_EXT_CSD_to_the_device" xml:space="preserve">
+    <value>Sending SEND_EXT_CSD to the device:</value>
+  </data>
+  <data name="SEND_EXT_CSD_buffer" xml:space="preserve">
+    <value>SEND_EXT_CSD buffer:</value>
+  </data>
+  <data name="SEND_EXT_CSD_decoded_buffer" xml:space="preserve">
+    <value>SEND_EXT_CSD decoded buffer:</value>
+  </data>
+  <data name="SEND_EXT_CSD_response" xml:space="preserve">
+    <value>SEND_EXT_CSD response:</value>
+  </data>
+  <data name="Parameters_for_SET_BLOCKLEN_command" xml:space="preserve">
+    <value>Parameters for SET_BLOCKLEN command:</value>
+  </data>
+  <data name="Set_block_length_to_0_bytes" xml:space="preserve">
+    <value>Set block length to: {0} bytes</value>
+  </data>
+  <data name="Set_block_length_to_Q" xml:space="preserve">
+    <value>Set block length to?</value>
+  </data>
+  <data name="Sending_SET_BLOCKLEN_to_the_device" xml:space="preserve">
+    <value>Sending SET_BLOCKLEN to the device:</value>
+  </data>
+  <data name="SET_BLOCKLEN_response" xml:space="preserve">
+    <value>SET_BLOCKLEN response:</value>
+  </data>
+  <data name="Send_a_SecureDigital_command_to_the_device" xml:space="preserve">
+    <value>Send a SecureDigital command to the device:</value>
+  </data>
+  <data name="_3_Send_SD_SEND_OP_COND_command" xml:space="preserve">
+    <value>3.- Send SD_SEND_OP_COND command.</value>
+  </data>
+  <data name="_4_Send_SD_STATUS_command" xml:space="preserve">
+    <value>4.- Send SD_STATUS command.</value>
+  </data>
+  <data name="_5_Send_SEND_CID_command" xml:space="preserve">
+    <value>5.- Send SEND_CID command.</value>
+  </data>
+  <data name="_6_Send_SEND_CSD_command" xml:space="preserve">
+    <value>6.- Send SEND_CSD command.</value>
+  </data>
+  <data name="_7_Send_SEND_SCR_command" xml:space="preserve">
+    <value>7.- Send SEND_SCR command.</value>
+  </data>
+  <data name="Read_from_byte_0" xml:space="preserve">
+    <value>Read from byte: {0}</value>
+  </data>
+  <data name="Read_from_block_0" xml:space="preserve">
+    <value>Read from block: {0}</value>
+  </data>
+  <data name="Expected_block_size_0_bytes" xml:space="preserve">
+    <value>Expected block size: {0} bytes</value>
+  </data>
+  <data name="Return_to_SecureDigital_commands_menu" xml:space="preserve">
+    <value>0.- Return to SecureDigital commands menu.</value>
+  </data>
+  <data name="Returning_to_SecureDigital_commands_menu" xml:space="preserve">
+    <value>Returning to SecureDigital commands menu...</value>
+  </data>
+  <data name="Sending_SD_SEND_OP_COND_to_the_device" xml:space="preserve">
+    <value>Sending SD_SEND_OP_COND to the device:</value>
+  </data>
+  <data name="SD_SEND_OP_COND_buffer" xml:space="preserve">
+    <value>SD_SEND_OP_COND buffer:</value>
+  </data>
+  <data name="SD_SEND_OP_COND_decoded_buffer" xml:space="preserve">
+    <value>SD_SEND_OP_COND decoded buffer:</value>
+  </data>
+  <data name="SD_SEND_OP_COND_response" xml:space="preserve">
+    <value>SD_SEND_OP_COND response:</value>
+  </data>
+  <data name="Sending_SD_STATUS_to_the_device" xml:space="preserve">
+    <value>Sending SD_STATUS to the device:</value>
+  </data>
+  <data name="SD_STATUS_buffer" xml:space="preserve">
+    <value>SD_STATUS buffer:</value>
+  </data>
+  <data name="SD_STATUS_response" xml:space="preserve">
+    <value>SD_STATUS response:</value>
+  </data>
+  <data name="Sending_SEND_SCR_to_the_device" xml:space="preserve">
+    <value>Sending SEND_SCR to the device:</value>
+  </data>
+  <data name="SEND_SCR_buffer" xml:space="preserve">
+    <value>SEND_SCR buffer:</value>
+  </data>
+  <data name="SEND_SCR_decoded_buffer" xml:space="preserve">
+    <value>SEND_SCR decoded buffer:</value>
+  </data>
+  <data name="SEND_SCR_response" xml:space="preserve">
+    <value>SEND_SCR response:</value>
+  </data>
+  <data name="Send_an_ATA_command_to_the_device" xml:space="preserve">
+    <value>Send an ATA command to the device:</value>
+  </data>
+  <data name="_1_Send_a_CHS_ATA_command_to_the_device" xml:space="preserve">
+    <value>1.- Send a CHS ATA command to the device.</value>
+  </data>
+  <data name="_2_Send_a_28_bit_ATA_command_to_the_device" xml:space="preserve">
+    <value>2.- Send a 28-bit ATA command to the device.</value>
+  </data>
+  <data name="_3_Send_a_48_bit_ATA_command_to_the_device" xml:space="preserve">
+    <value>3.- Send a 48-bit ATA command to the device.</value>
+  </data>
+  <data name="_4_Send_an_ATAPI_command_to_the_device" xml:space="preserve">
+    <value>4.- Send an ATAPI command to the device.</value>
+  </data>
+  <data name="_5_Send_a_CompactFlash_command_to_the_device" xml:space="preserve">
+    <value>5.- Send a CompactFlash command to the device.</value>
+  </data>
+  <data name="_6_Send_a_Media_Card_Pass_Through_command_to_the_device" xml:space="preserve">
+    <value>6.- Send a Media Card Pass Through command to the device.</value>
+  </data>
+  <data name="_7_Send_a_SMART_command_to_the_device" xml:space="preserve">
+    <value>7.- Send a S.M.A.R.T. command to the device.</value>
+  </data>
+  <data name="Returning_to_command_class_menu" xml:space="preserve">
+    <value>Returning to command class menu...</value>
+  </data>
+  <data name="Send_a_command_to_the_device" xml:space="preserve">
+    <value>Send a command to the device:</value>
+  </data>
+  <data name="Send_a_SCSI_command" xml:space="preserve">
+    <value>1.- Send a SCSI command.</value>
+  </data>
+  <data name="Send_an_ATA_command" xml:space="preserve">
+    <value>2.- Send an ATA command.</value>
+  </data>
+  <data name="Send_a_SecureDigital_MultiMediaCard_command" xml:space="preserve">
+    <value>3.- Send a SecureDigital/MultiMediaCard command.</value>
+  </data>
+  <data name="Send_a_NVMe_command" xml:space="preserve">
+    <value>4.- Send a NVMe command.</value>
+  </data>
+  <data name="Send_a_special_sequence_of_commands_for_SCSI_Multimedia_devices" xml:space="preserve">
+    <value>5.- Send a special sequence of commands for SCSI Multimedia devices.</value>
+  </data>
+  <data name="Returning_to_device_menu" xml:space="preserve">
+    <value>Returning to device menu...</value>
+  </data>
+  <data name="Return_to_device_menu" xml:space="preserve">
+    <value>0.- Return to device menu.</value>
+  </data>
+  <data name="Status_0" xml:space="preserve">
+    <value>Status: {0}</value>
+  </data>
+  <data name="Error_0" xml:space="preserve">
+    <value>Error: {0}</value>
+  </data>
+  <data name="LBA_Q_0" xml:space="preserve">
+    <value>LBA?: {0}</value>
+  </data>
+  <data name="Bit_7_set_0" xml:space="preserve">
+    <value>Bit 7 set?: {0}</value>
+  </data>
+  <data name="Bit_5_set_0" xml:space="preserve">
+    <value>Bit 5 set?: {0}</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options:</value>
+  </data>
+  <data name="Print_USB_descriptors" xml:space="preserve">
+    <value>1.- Print USB descriptors.</value>
+  </data>
+  <data name="Print_PCMCIA_CIS" xml:space="preserve">
+    <value>2.- Print PCMCIA CIS.</value>
+  </data>
+  <data name="_3_Send_a_command_to_the_device" xml:space="preserve">
+    <value>3.- Send a command to the device.</value>
+  </data>
+  <data name="Return_to_device_selection" xml:space="preserve">
+    <value>0.- Return to device selection.</value>
+  </data>
+  <data name="Returning_to_device_selection" xml:space="preserve">
+    <value>Returning to device selection...</value>
+  </data>
+  <data name="USB_descriptors" xml:space="preserve">
+    <value>USB descriptors:</value>
+  </data>
+  <data name="PCMCIA_CIS" xml:space="preserve">
+    <value>PCMCIA CIS:</value>
+  </data>
+  <data name="No_known_devices_attached" xml:space="preserve">
+    <value>No known devices attached.</value>
+  </data>
+  <data name="Aaru_device_handling_tests" xml:space="preserve">
+    <value>Aaru device handling tests</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="Vendor" xml:space="preserve">
+    <value>Vendor</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="Serial" xml:space="preserve">
+    <value>Serial</value>
+  </data>
+  <data name="Bus" xml:space="preserve">
+    <value>Bus</value>
+  </data>
+  <data name="Supported" xml:space="preserve">
+    <value>Supported?</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="Please_choose_which_drive_to_test_zero_to_exit" xml:space="preserve">
+    <value>Please choose which drive to test (0 to exit): </value>
+  </data>
+  <data name="Exiting" xml:space="preserve">
+    <value>Exiting...</value>
+  </data>
+  <data name="No_such_device_Press_any_key_to_continue" xml:space="preserve">
+    <value>No such device. Press any key to continue...</value>
+  </data>
+  <data name="NVMe_commands_not_yet_implemented_Press_any_key_to_continue" xml:space="preserve">
+    <value>NVMe commands not yet implemented. Press any key to continue...</value>
+  </data>
+  <data name="Send_a_SCSI_command_to_the_device" xml:space="preserve">
+    <value>Send a SCSI command to the device:</value>
+  </data>
+  <data name="_1_Send_an_Adaptec_vendor_command_to_the_device" xml:space="preserve">
+    <value>1.- Send an Adaptec vendor command to the device.</value>
+  </data>
+  <data name="_2_Send_an_Archive_vendor_command_to_the_device" xml:space="preserve">
+    <value>2.- Send an Archive vendor command to the device.</value>
+  </data>
+  <data name="_3_Send_a_Certance_vendor_command_to_the_device" xml:space="preserve">
+    <value>3.- Send a Certance vendor command to the device.</value>
+  </data>
+  <data name="_4_Send_a_Fujitsu_vendor_command_to_the_device" xml:space="preserve">
+    <value>4.- Send a Fujitsu vendor command to the device.</value>
+  </data>
+  <data name="_5_Send_an_HLDTST_vendor_command_to_the_device" xml:space="preserve">
+    <value>5.- Send an HL-DT-ST vendor command to the device.</value>
+  </data>
+  <data name="_6_Send_a_Hewlett_Packard_vendor_command_to_the_device" xml:space="preserve">
+    <value>6.- Send a Hewlett-Packard vendor command to the device.</value>
+  </data>
+  <data name="_7_Send_a_Kreon_vendor_command_to_the_device" xml:space="preserve">
+    <value>7.- Send a Kreon vendor command to the device.</value>
+  </data>
+  <data name="_8_Send_a_SCSI_MultiMedia_Command_to_the_device" xml:space="preserve">
+    <value>8.- Send a SCSI MultiMedia Command to the device.</value>
+  </data>
+  <data name="_9_Send_a_NEC_vendor_command_to_the_device" xml:space="preserve">
+    <value>9.- Send a NEC vendor command to the device.</value>
+  </data>
+  <data name="_10_Send_a_Pioneer_vendor_command_to_the_device" xml:space="preserve">
+    <value>10.- Send a Pioneer vendor command to the device.</value>
+  </data>
+  <data name="_11_Send_a_Plasmon_vendor_command_to_the_device" xml:space="preserve">
+    <value>11.- Send a Plasmon vendor command to the device.</value>
+  </data>
+  <data name="_12_Send_a_Plextor_vendor_command_to_the_device" xml:space="preserve">
+    <value>12.- Send a Plextor vendor command to the device.</value>
+  </data>
+  <data name="_13_Send_a_SCSI_Block_Command_to_the_device" xml:space="preserve">
+    <value>13.- Send a SCSI Block Command to the device.</value>
+  </data>
+  <data name="_14_Send_a_SCSI_Media_Changer_command_to_the_device" xml:space="preserve">
+    <value>14.- Send a SCSI Media Changer command to the device.</value>
+  </data>
+  <data name="_15_Send_a_SCSI_Primary_Command_to_the_device" xml:space="preserve">
+    <value>15.- Send a SCSI Primary Command to the device.</value>
+  </data>
+  <data name="_16_Send_a_SCSI_Streaming_Command_to_the_device" xml:space="preserve">
+    <value>16.- Send a SCSI Streaming Command to the device.</value>
+  </data>
+  <data name="_17_Send_a_SyQuest_vendor_command_to_the_device" xml:space="preserve">
+    <value>17.- Send a SyQuest vendor command to the device.</value>
+  </data>
+  <data name="Send_an_SecureDigital_MultiMediaCard_command_to_the_device" xml:space="preserve">
+    <value>Send an SecureDigital/MultiMediaCard command to the device:</value>
+  </data>
+  <data name="_1_Send_a_SecureDigital_command_to_the_device" xml:space="preserve">
+    <value>1.- Send a SecureDigital command to the device.</value>
+  </data>
+  <data name="_2_Send_a_MultiMediaCard_command_to_the_device" xml:space="preserve">
+    <value>2.- Send a MultiMediaCard command to the device.</value>
+  </data>
+</root>

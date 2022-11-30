@@ -40,18 +40,18 @@ static class Certance
         while(true)
         {
             System.Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Send a Certance vendor command to the device:");
-            AaruConsole.WriteLine("1.- Send PARK command.");
-            AaruConsole.WriteLine("2.- Send UNPARK command.");
-            AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
-            AaruConsole.Write("Choose: ");
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Send_a_Certance_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_PARK_command);
+            AaruConsole.WriteLine(Localization.Send_UNPARK_command);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_commands_menu);
+            AaruConsole.Write(Localization.Choose);
 
             string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                 System.Console.ReadKey();
 
                 continue;
@@ -60,7 +60,7 @@ static class Certance
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_commands_menu);
 
                     return;
                 case 1:
@@ -72,7 +72,7 @@ static class Certance
 
                     continue;
                 default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                     System.Console.ReadKey();
 
                     continue;
@@ -87,26 +87,31 @@ static class Certance
         bool sense = dev.CertancePark(out byte[] senseBuffer, dev.Timeout, out double duration);
 
         menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending PARK to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine("PARK decoded sense:");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_PARK_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine(Localization.PARK_decoded_sense);
         AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
         AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print sense buffer.");
-        AaruConsole.WriteLine("2.- Send command again.");
-        AaruConsole.WriteLine("0.- Return to Certance vendor commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization._1_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._2_Send_command_again);
+        AaruConsole.WriteLine(Localization.Return_to_Certance_vendor_commands_menu);
+        AaruConsole.Write(Localization.Choose);
 
         string strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
             System.Console.ReadKey();
             System.Console.Clear();
 
@@ -116,26 +121,26 @@ static class Certance
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to Certance vendor commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_Certance_vendor_commands_menu);
 
                 return;
             case 1:
                 System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("PARK sense:");
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.PARK_sense);
 
                 if(senseBuffer != null)
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
                 System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2: goto start;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
                 System.Console.Clear();
 
@@ -150,26 +155,31 @@ static class Certance
         bool sense = dev.CertanceUnpark(out byte[] senseBuffer, dev.Timeout, out double duration);
 
         menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending UNPARK to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine("UNPARK decoded sense:");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_UNPARK_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine(Localization.UNPARK_decoded_sense);
         AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
         AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print sense buffer.");
-        AaruConsole.WriteLine("2.- Send command again.");
-        AaruConsole.WriteLine("0.- Return to Certance vendor commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization._1_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._2_Send_command_again);
+        AaruConsole.WriteLine(Localization.Return_to_Certance_vendor_commands_menu);
+        AaruConsole.Write(Localization.Choose);
 
         string strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
             System.Console.ReadKey();
             System.Console.Clear();
 
@@ -179,26 +189,26 @@ static class Certance
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to Certance vendor commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_Certance_vendor_commands_menu);
 
                 return;
             case 1:
                 System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("UNPARK sense:");
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.UNPARK_sense);
 
                 if(senseBuffer != null)
                     PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
                 System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2: goto start;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
                 System.Console.Clear();
 

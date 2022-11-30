@@ -38,23 +38,23 @@ static partial class ScsiMmc
         while(true)
         {
             System.Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Send a special SCSI MultiMedia command to the device:");
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Send_a_special_SCSI_MultiMedia_command_to_the_device);
 
-            AaruConsole.
-                WriteLine("1.- Try to read the cache data from a device with a MediaTek chipset (F1h command 06h subcommand).");
+            AaruConsole.WriteLine(Localization.
+                                      Try_to_read_the_cache_data_from_a_device_with_a_MediaTek_chipset_F1h_command_06h_subcommand);
 
-            AaruConsole.WriteLine("2.- Try to read a GD-ROM using a trap disc.");
-            AaruConsole.WriteLine("3.- Try to read Lead-Out using a trap disc.");
+            AaruConsole.WriteLine(Localization.Try_to_read_a_GD_ROM_using_a_trap_disc);
+            AaruConsole.WriteLine(Localization.Try_to_read_Lead_Out_using_a_trap_disc);
 
-            AaruConsole.WriteLine("0.- Return to command class menu.");
-            AaruConsole.Write("Choose: ");
+            AaruConsole.WriteLine(Localization.Return_to_command_class_menu);
+            AaruConsole.Write(Localization.Choose);
 
             string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                 System.Console.ReadKey();
 
                 continue;
@@ -63,7 +63,7 @@ static partial class ScsiMmc
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to command class menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_command_class_menu);
 
                     return;
                 case 1:
@@ -79,7 +79,7 @@ static partial class ScsiMmc
 
                     continue;
                 default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                     System.Console.ReadKey();
 
                     continue;

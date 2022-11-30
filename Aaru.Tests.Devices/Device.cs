@@ -57,7 +57,8 @@ static partial class MainClass
             AaruConsole.WriteLine("dev.USBVendorID = 0x{0:X4}", dev.UsbVendorId);
             AaruConsole.WriteLine("dev.USBProductID = 0x{0:X4}", dev.UsbProductId);
 
-            AaruConsole.WriteLine("dev.USBDescriptors.Length = {0}", dev.UsbDescriptors?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("dev.USBDescriptors.Length = {0}",
+                                  dev.UsbDescriptors?.Length.ToString() ?? Localization._null);
 
             AaruConsole.WriteLine("dev.USBManufacturerString = \"{0}\"", dev.UsbManufacturerString);
             AaruConsole.WriteLine("dev.USBProductString = \"{0}\"", dev.UsbProductString);
@@ -70,26 +71,26 @@ static partial class MainClass
             AaruConsole.WriteLine("dev.FireWireVendorName = \"{0}\"", dev.FireWireVendorName);
             AaruConsole.WriteLine("dev.IsCompactFlash = {0}", dev.IsCompactFlash);
             AaruConsole.WriteLine("dev.IsPCMCIA = {0}", dev.IsPcmcia);
-            AaruConsole.WriteLine("dev.CIS.Length = {0}", dev.Cis?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("dev.CIS.Length = {0}", dev.Cis?.Length.ToString() ?? Localization._null);
 
-            AaruConsole.WriteLine("Press any key to continue...", devPath);
+            AaruConsole.WriteLine(Localization.Press_any_key_to_continue, devPath);
             System.Console.ReadKey();
 
             menu:
             System.Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Options:");
-            AaruConsole.WriteLine("1.- Print USB descriptors.");
-            AaruConsole.WriteLine("2.- Print PCMCIA CIS.");
-            AaruConsole.WriteLine("3.- Send a command to the device.");
-            AaruConsole.WriteLine("0.- Return to device selection.");
-            AaruConsole.Write("Choose: ");
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Options);
+            AaruConsole.WriteLine(Localization.Print_USB_descriptors);
+            AaruConsole.WriteLine(Localization.Print_PCMCIA_CIS);
+            AaruConsole.WriteLine(Localization._3_Send_a_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Return_to_device_selection);
+            AaruConsole.Write(Localization.Choose);
 
             string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                 System.Console.ReadKey();
 
                 goto menu;
@@ -98,30 +99,30 @@ static partial class MainClass
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to device selection...");
+                    AaruConsole.WriteLine(Localization.Returning_to_device_selection);
 
                     return;
                 case 1:
                     System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("USB descriptors:");
+                    AaruConsole.WriteLine(Localization.Device_0, devPath);
+                    AaruConsole.WriteLine(Localization.USB_descriptors);
 
                     if(dev.UsbDescriptors != null)
                         PrintHex.PrintHexArray(dev.UsbDescriptors, 64);
 
-                    AaruConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                     System.Console.ReadKey();
 
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    AaruConsole.WriteLine("Device: {0}", devPath);
-                    AaruConsole.WriteLine("PCMCIA CIS:");
+                    AaruConsole.WriteLine(Localization.Device_0, devPath);
+                    AaruConsole.WriteLine(Localization.PCMCIA_CIS);
 
                     if(dev.Cis != null)
                         PrintHex.PrintHexArray(dev.Cis, 64);
 
-                    AaruConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                     System.Console.ReadKey();
 
                     goto menu;
@@ -130,7 +131,7 @@ static partial class MainClass
 
                     goto menu;
                 default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                     System.Console.ReadKey();
 
                     goto menu;

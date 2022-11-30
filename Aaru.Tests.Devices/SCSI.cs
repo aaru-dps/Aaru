@@ -39,33 +39,33 @@ static partial class MainClass
         while(true)
         {
             System.Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Send a SCSI command to the device:");
-            AaruConsole.WriteLine("1.- Send an Adaptec vendor command to the device.");
-            AaruConsole.WriteLine("2.- Send an Archive vendor command to the device.");
-            AaruConsole.WriteLine("3.- Send a Certance vendor command to the device.");
-            AaruConsole.WriteLine("4.- Send a Fujitsu vendor command to the device.");
-            AaruConsole.WriteLine("5.- Send an HL-DT-ST vendor command to the device.");
-            AaruConsole.WriteLine("6.- Send a Hewlett-Packard vendor command to the device.");
-            AaruConsole.WriteLine("7.- Send a Kreon vendor command to the device.");
-            AaruConsole.WriteLine("8.- Send a SCSI MultiMedia Command to the device.");
-            AaruConsole.WriteLine("9.- Send a NEC vendor command to the device.");
-            AaruConsole.WriteLine("10.- Send a Pioneer vendor command to the device.");
-            AaruConsole.WriteLine("11.- Send a Plasmon vendor command to the device.");
-            AaruConsole.WriteLine("12.- Send a Plextor vendor command to the device.");
-            AaruConsole.WriteLine("13.- Send a SCSI Block Command to the device.");
-            AaruConsole.WriteLine("14.- Send a SCSI Media Changer command to the device.");
-            AaruConsole.WriteLine("15.- Send a SCSI Primary Command to the device.");
-            AaruConsole.WriteLine("16.- Send a SCSI Streaming Command to the device.");
-            AaruConsole.WriteLine("17.- Send a SyQuest vendor command to the device.");
-            AaruConsole.WriteLine("0.- Return to command class menu.");
-            AaruConsole.Write("Choose: ");
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Send_a_SCSI_command_to_the_device);
+            AaruConsole.WriteLine(Localization._1_Send_an_Adaptec_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._2_Send_an_Archive_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._3_Send_a_Certance_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._4_Send_a_Fujitsu_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._5_Send_an_HLDTST_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._6_Send_a_Hewlett_Packard_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._7_Send_a_Kreon_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._8_Send_a_SCSI_MultiMedia_Command_to_the_device);
+            AaruConsole.WriteLine(Localization._9_Send_a_NEC_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._10_Send_a_Pioneer_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._11_Send_a_Plasmon_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._12_Send_a_Plextor_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._13_Send_a_SCSI_Block_Command_to_the_device);
+            AaruConsole.WriteLine(Localization._14_Send_a_SCSI_Media_Changer_command_to_the_device);
+            AaruConsole.WriteLine(Localization._15_Send_a_SCSI_Primary_Command_to_the_device);
+            AaruConsole.WriteLine(Localization._16_Send_a_SCSI_Streaming_Command_to_the_device);
+            AaruConsole.WriteLine(Localization._17_Send_a_SyQuest_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Return_to_command_class_menu);
+            AaruConsole.Write(Localization.Choose);
 
             string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                 System.Console.ReadKey();
 
                 continue;
@@ -74,7 +74,7 @@ static partial class MainClass
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to command class menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_command_class_menu);
 
                     return;
                 case 1:
@@ -146,7 +146,7 @@ static partial class MainClass
 
                     continue;
                 default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                     System.Console.ReadKey();
 
                     continue;

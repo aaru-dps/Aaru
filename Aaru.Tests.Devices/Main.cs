@@ -47,7 +47,7 @@ static partial class MainClass
         if(devices        == null ||
            devices.Length == 0)
         {
-            AaruConsole.WriteLine("No known devices attached.");
+            AaruConsole.WriteLine(Localization.No_known_devices_attached);
 
             return;
         }
@@ -58,10 +58,11 @@ static partial class MainClass
         {
             System.Console.Clear();
 
-            AaruConsole.WriteLine("DiscImageChef device handling tests");
+            AaruConsole.WriteLine(Localization.Aaru_device_handling_tests);
 
-            AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
-                                  "Serial", "Bus", "Supported?", "Number");
+            AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", Localization.Path,
+                                  Localization.Vendor, Localization.Model, Localization.Serial, Localization.Bus,
+                                  Localization.Supported, Localization.Number);
 
             AaruConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
                                   "----------------", "------------------------", "------------------------",
@@ -72,12 +73,12 @@ static partial class MainClass
                                       devices[i].Vendor, devices[i].Model, devices[i].Serial, devices[i].Bus,
                                       devices[i].Supported, i + 1);
 
-            AaruConsole.Write("Please choose which drive to test (0 to exit): ");
+            AaruConsole.Write(Localization.Please_choose_which_drive_to_test_zero_to_exit);
             string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                 System.Console.ReadKey();
 
                 continue;
@@ -85,14 +86,14 @@ static partial class MainClass
 
             if(item == 0)
             {
-                AaruConsole.WriteLine("Exiting...");
+                AaruConsole.WriteLine(Localization.Exiting);
 
                 return;
             }
 
             if(item > devices.Length)
             {
-                AaruConsole.WriteLine("No such device. Press any key to continue...");
+                AaruConsole.WriteLine(Localization.No_such_device_Press_any_key_to_continue);
                 System.Console.ReadKey();
 
                 continue;
