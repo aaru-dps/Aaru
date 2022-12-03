@@ -27,7 +27,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
 using System.Collections.ObjectModel;
@@ -421,9 +421,9 @@ public sealed class MediaScanViewModel : ViewModelBase
 
         // TODO: Show results
         /*
-        
+
         if(results.SeekTotal != 0 || results.SeekMin != double.MaxValue || results.SeekMax != double.MinValue)
-            
+
             string.Format("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                                  results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
                                  */

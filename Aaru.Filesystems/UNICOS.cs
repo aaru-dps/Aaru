@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
 // UNICOS is ILP64 so let's think everything is 64-bit
