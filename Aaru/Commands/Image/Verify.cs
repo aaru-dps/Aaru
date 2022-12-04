@@ -34,12 +34,14 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
+using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Core.Graphics;
 using Aaru.Localization;
 using Spectre.Console;
 
@@ -59,6 +61,16 @@ sealed class VerifyCommand : Command
             "--verify-sectors", "-s"
         }, () => true, UI.Verify_all_sectors_if_supported));
 
+        Add(new Option<bool>(new[]
+        {
+            "--create-graph", "-g"
+        }, () => true, UI.Create_graph_of_verified_disc));
+
+        Add(new Option<uint>(new[]
+        {
+            "--dimensions"
+        }, () => 1080, UI.Verify_dimensions_paramater_help));
+
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
@@ -69,8 +81,8 @@ sealed class VerifyCommand : Command
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
-    public static int Invoke(bool debug, bool verbose, string imagePath, bool verifyDisc = true,
-                             bool verifySectors = true)
+    public static int Invoke(bool debug, bool verbose, string imagePath, bool verifyDisc, bool verifySectors,
+                             bool createGraph, uint dimensions)
     {
         MainClass.PrintCopyright();
 
@@ -106,6 +118,8 @@ sealed class VerifyCommand : Command
         AaruConsole.DebugWriteLine("Verify command", "--verbose={0}", verbose);
         AaruConsole.DebugWriteLine("Verify command", "--verify-disc={0}", verifyDisc);
         AaruConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", verifySectors);
+        AaruConsole.DebugWriteLine("Verify command", "--create-graph={0}", createGraph);
+        AaruConsole.DebugWriteLine("Verify command", "--dimensions={0}", dimensions);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
@@ -221,9 +235,18 @@ sealed class VerifyCommand : Command
         DateTime    endCheck    = startCheck;
         List<ulong> failingLbas = new();
         List<ulong> unknownLbas = new();
+        Spiral      spiral      = null;
 
         if(verifiableSectorsImage is IOpticalMediaImage { Tracks: {} } opticalMediaImage)
         {
+            Spiral.DiscParameters spiralParameters = null;
+
+            if(createGraph)
+                spiralParameters = Spiral.DiscParametersFromMediaType(opticalMediaImage.Info.MediaType);
+
+            if(spiralParameters is not null)
+                spiral = new Spiral((int)dimensions, (int)dimensions, spiralParameters, opticalMediaImage.Info.Sectors);
+
             List<Track> inputTracks      = opticalMediaImage.Tracks;
             ulong       currentSectorAll = 0;
 
@@ -264,6 +287,29 @@ sealed class VerifyCommand : Command
                                     else
                                         opticalMediaImage.VerifySectors(currentSector, 512, currentTrack.Sequence,
                                                                         out tempFailingLbas, out tempUnknownLbas);
+
+                                    List<ulong> tempCorrectLbas = new();
+
+                                    for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
+                                        tempCorrectLbas.Add(currentSector + l);
+
+                                    if(spiral != null)
+                                    {
+                                        foreach(ulong f in tempFailingLbas)
+                                            tempCorrectLbas.Remove(f);
+
+                                        foreach(ulong u in tempUnknownLbas)
+                                        {
+                                            tempCorrectLbas.Remove(u);
+                                            spiral.PaintSectorUnknown(currentTrack.StartSector + u);
+                                        }
+
+                                        foreach(ulong lba in tempCorrectLbas)
+                                            spiral.PaintSectorGood(currentTrack.StartSector + lba);
+
+                                        foreach(ulong f in tempFailingLbas)
+                                            spiral.PaintSectorBad(currentTrack.StartSector + f);
+                                    }
 
                                     failingLbas.AddRange(tempFailingLbas);
 
@@ -381,6 +427,14 @@ sealed class VerifyCommand : Command
         AaruConsole.WriteLine($"[italic]{UI.Total_errors}[/] {failingLbas.Count}");
         AaruConsole.WriteLine($"[italic]{UI.Total_unknowns}[/] {unknownLbas.Count}");
         AaruConsole.WriteLine($"[italic]{UI.Total_errors_plus_unknowns}[/] {failingLbas.Count + unknownLbas.Count}");
+
+        if(spiral is not null)
+        {
+            string spiralFilename = $"{Path.GetFileNameWithoutExtension(inputFilter.Filename)}.verify.png";
+            var    spiralFs       = new FileStream(spiralFilename, FileMode.Create);
+            spiral.WriteToStream(spiralFs);
+            spiralFs.Close();
+        }
 
         if(failingLbas.Count > 0)
             correctSectors = false;

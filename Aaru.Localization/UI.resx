@@ -3000,4 +3000,10 @@ Do you want to continue?</value>
   <data name="Show_long_sector" xml:space="preserve">
     <value>Show long sector</value>
   </data>
+  <data name="Create_graph_of_verified_disc" xml:space="preserve">
+    <value>Create graph of verified disc (currently only implemented for optical discs).</value>
+  </data>
+  <data name="Verify_dimensions_paramater_help" xml:space="preserve">
+    <value>Dimensions, as a square, in pixels, for the graph of verified disc.</value>
+  </data>
 </root>

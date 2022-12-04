@@ -5853,5 +5853,17 @@ namespace Aaru.Localization {
                 return ResourceManager.GetString("Show_long_sector", resourceCulture);
             }
         }
+        
+        public static string Create_graph_of_verified_disc {
+            get {
+                return ResourceManager.GetString("Create_graph_of_verified_disc", resourceCulture);
+            }
+        }
+        
+        public static string Verify_dimensions_paramater_help {
+            get {
+                return ResourceManager.GetString("Verify_dimensions_paramater_help", resourceCulture);
+            }
+        }
     }
 }
