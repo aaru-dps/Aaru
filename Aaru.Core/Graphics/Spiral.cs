@@ -73,6 +73,12 @@ public sealed class Spiral
         new(120, 15, 33, 46, 48, 116, 44, 46, 2294922, new SKColor(0x38, 0x38, 0x38));
     static readonly DiscParameters _dvdRwParameters80 =
         new(80, 15, 33, 46, 48, 76, 44, 46, 712891, new SKColor(0x38, 0x38, 0x38));
+    static readonly DiscParameters _bdParameters =
+        new(120, 15, 33, 44, 48, 116, 0, 0, 12219392, new SKColor(0xC0, 0xC0, 0xC0));
+    static readonly DiscParameters _bdRParameters =
+        new(120, 15, 33, 46, 48, 116, 44, 46, 12219392, new SKColor(0xD0, 0xD0, 0xD0));
+    static readonly DiscParameters _bdReParameters =
+        new(120, 15, 33, 46, 48, 116, 44, 46, 11826176, new SKColor(0xE0, 0xE0, 0xE0));
     readonly SKCanvas      _canvas;
     readonly List<SKPoint> _leadInPoints;
     readonly long          _maxSector;
@@ -215,8 +221,6 @@ public sealed class Spiral
 
     public static DiscParameters DiscParametersFromMediaType(MediaType mediaType, bool smallDisc = false) =>
 
-        // TODO: Blu-ray
-        // TODO: DDCD
         // TODO: HD DVD
         // TODO: UMD
         // TODO: GD-ROM
@@ -258,7 +262,7 @@ public sealed class Spiral
             MediaType.XGD         => _dvdParameters,
             MediaType.XGD2        => _dvdParameters,
             MediaType.XGD3        => _dvdParameters,
-            MediaType.XGD4        => _dvdParameters,
+            MediaType.XGD4        => _bdParameters,
             MediaType.MEGACD      => _cdParameters,
             MediaType.SATURNCD    => _cdParameters,
             MediaType.MilCD       => _cdParameters,
@@ -276,6 +280,12 @@ public sealed class Spiral
             MediaType.DDCD        => _ddcdParameters,
             MediaType.DDCDR       => _ddcdRecordableParameters,
             MediaType.DDCDRW      => _ddcdRewritableParameters,
+            MediaType.BDROM       => _bdParameters,
+            MediaType.BDR         => _bdRParameters,
+            MediaType.BDRE        => _bdReParameters,
+            MediaType.PS3BD       => _bdParameters,
+            MediaType.PS4BD       => _bdParameters,
+            MediaType.PS5BD       => _bdParameters,
             _                     => null
         };
 
