@@ -298,6 +298,11 @@ public sealed class Spiral
             MediaType.HDDVDRW     => _hddvdRwParameters,
             MediaType.HDDVDRWDL   => _hddvdRwParameters,
             MediaType.CBHD        => _hddvdParameters,
+            MediaType.FMTOWNS     => _cdParameters,
+            MediaType.DVDDownload => _dvdParameters,
+            MediaType.CVD         => _cdParameters,
+            MediaType.Playdia     => _cdParameters,
+            MediaType.WUOD        => _bdParameters,
             _                     => null
         };
 
