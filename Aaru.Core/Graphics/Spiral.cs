@@ -38,6 +38,7 @@ using SkiaSharp;
 
 namespace Aaru.Core.Graphics;
 
+// TODO: HD DVD sectors are a guess
 public sealed class Spiral
 {
     static readonly DiscParameters _cdParameters = new(120, 15, 33, 46, 50, 116, 0, 0, 360000, SKColors.Silver);
@@ -74,11 +75,17 @@ public sealed class Spiral
     static readonly DiscParameters _dvdRwParameters80 =
         new(80, 15, 33, 46, 48, 76, 44, 46, 712891, new SKColor(0x38, 0x38, 0x38));
     static readonly DiscParameters _bdParameters =
-        new(120, 15, 33, 44, 48, 116, 0, 0, 12219392, new SKColor(0xC0, 0xC0, 0xC0));
+        new(120, 15, 33, 44, 48, 116, 0, 0, 12219392, new SKColor(0x80, 0x80, 0x80));
     static readonly DiscParameters _bdRParameters =
-        new(120, 15, 33, 46, 48, 116, 44, 46, 12219392, new SKColor(0xD0, 0xD0, 0xD0));
+        new(120, 15, 33, 46, 48, 116, 44, 46, 12219392, new SKColor(0x40, 0x40, 0x40));
     static readonly DiscParameters _bdReParameters =
-        new(120, 15, 33, 46, 48, 116, 44, 46, 11826176, new SKColor(0xE0, 0xE0, 0xE0));
+        new(120, 15, 33, 46, 48, 116, 44, 46, 11826176, new SKColor(0x20, 0x20, 0x20));
+    static readonly DiscParameters _hddvdParameters =
+        new(120, 15, 33, 44, 48, 116, 0, 0, 7864320, new SKColor(0x6f, 0x0A, 0xCA));
+    static readonly DiscParameters _hddvdRParameters =
+        new(120, 15, 33, 46, 48, 116, 44, 46, 7864320, new SKColor(0xff, 0x91, 0x00));
+    static readonly DiscParameters _hddvdRwParameters =
+        new(120, 15, 33, 46, 48, 116, 44, 46, 7864320, new SKColor(0x30, 0x30, 0x30));
     readonly SKCanvas      _canvas;
     readonly List<SKPoint> _leadInPoints;
     readonly long          _maxSector;
@@ -221,7 +228,6 @@ public sealed class Spiral
 
     public static DiscParameters DiscParametersFromMediaType(MediaType mediaType, bool smallDisc = false) =>
 
-        // TODO: HD DVD
         // TODO: UMD
         // TODO: GD-ROM
         mediaType switch
@@ -286,6 +292,12 @@ public sealed class Spiral
             MediaType.PS3BD       => _bdParameters,
             MediaType.PS4BD       => _bdParameters,
             MediaType.PS5BD       => _bdParameters,
+            MediaType.HDDVDROM    => _hddvdParameters,
+            MediaType.HDDVDR      => _hddvdRParameters,
+            MediaType.HDDVDRDL    => _hddvdRParameters,
+            MediaType.HDDVDRW     => _hddvdRwParameters,
+            MediaType.HDDVDRWDL   => _hddvdRwParameters,
+            MediaType.CBHD        => _hddvdParameters,
             _                     => null
         };
 
