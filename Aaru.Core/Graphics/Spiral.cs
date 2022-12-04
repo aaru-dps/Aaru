@@ -86,10 +86,17 @@ public sealed class Spiral
         new(120, 15, 33, 46, 48, 116, 44, 46, 7864320, new SKColor(0xff, 0x91, 0x00));
     static readonly DiscParameters _hddvdRwParameters =
         new(120, 15, 33, 46, 48, 116, 44, 46, 7864320, new SKColor(0x30, 0x30, 0x30));
+    static readonly DiscParameters _umdParameters =
+        new(60, 11.025f, 16.2f, 28, 32, 56, 0, 0, 471872, new SKColor(0x6f, 0x0A, 0xCA));
+    static readonly DiscParameters _gdParameters = new(120, 15, 33, 46, 50, 116, 0, 0, 550000, SKColors.Silver);
+    static readonly DiscParameters _gdRecordableParameters =
+        new(120, 15, 33, 46, 50, 116, 45, 46, 550000, new SKColor(0xBD, 0xA0, 0x00));
     readonly SKCanvas      _canvas;
+    readonly bool          _gdrom;
     readonly List<SKPoint> _leadInPoints;
     readonly long          _maxSector;
     readonly List<SKPoint> _points;
+    readonly List<SKPoint> _pointsLowDensity;
     readonly List<SKPoint> _recordableInformationPoints;
 
     /// <summary>Initializes a spiral</summary>
@@ -99,6 +106,12 @@ public sealed class Spiral
     /// <param name="lastSector">Last sector that will be drawn into the spiral</param>
     public Spiral(int width, int height, DiscParameters parameters, ulong lastSector)
     {
+        if(parameters == _gdParameters ||
+           parameters == _gdRecordableParameters)
+            _gdrom = true;
+
+        // GD-ROM LD area ends at 29mm, HD area starts at 30mm radius
+
         Bitmap  = new SKBitmap(width, height);
         _canvas = new SKCanvas(Bitmap);
 
@@ -165,11 +178,12 @@ public sealed class Spiral
             StrokeWidth = 4
         });
 
-        // Some trigonometry thing I do not understand fully
+        // Some trigonometry thing I do not understand fully but it controls the space between the spiral turns
         const float a = 1f;
 
         // Draw the Lead-In
-        _leadInPoints = GetSpiralPoints(center, informationAreaStartDiameter / 2, leadInEndDiameter / 2, a);
+        _leadInPoints = GetSpiralPoints(center, informationAreaStartDiameter / 2, leadInEndDiameter / 2,
+                                        _gdrom ? a : a * 1.5f);
 
         var path = new SKPath();
 
@@ -186,24 +200,65 @@ public sealed class Spiral
         });
 
         // If there's a recordable information area, get its points
-        if(recordableAreaEndDiameter   > 0 &&
+        if(recordableAreaEndDiameter > 0 &&
            recordableAreaStartDiameter > 0)
-            _recordableInformationPoints =
-                GetSpiralPoints(center, recordableAreaStartDiameter / 2, recordableAreaEndDiameter / 2, a);
+            _recordableInformationPoints = GetSpiralPoints(center, recordableAreaStartDiameter / 2,
+                                                           recordableAreaEndDiameter / 2, _gdrom ? a : a * 1.5f);
 
-        _points = GetSpiralPoints(center, leadInEndDiameter / 2, informationAreaEndDiameter / 2, a);
+        if(_gdrom)
+        {
+            float lowDensityEndDiameter    = smallerDimension * 29 * 2 / parameters.DiscDiameter;
+            float highDensityStartDiameter = smallerDimension * 30 * 2 / parameters.DiscDiameter;
+
+            _pointsLowDensity = GetSpiralPoints(center, leadInEndDiameter / 2, lowDensityEndDiameter / 2, a * 1.5f);
+            _points = GetSpiralPoints(center, highDensityStartDiameter / 2, informationAreaEndDiameter / 2, a);
+        }
+        else
+            _points = GetSpiralPoints(center, leadInEndDiameter / 2, informationAreaEndDiameter / 2, a);
 
         path = new SKPath();
 
+        if(_gdrom && _pointsLowDensity is not null)
+        {
+            path.MoveTo(_pointsLowDensity[0]);
+
+            foreach(SKPoint point in _pointsLowDensity)
+                path.LineTo(point);
+
+            _canvas.DrawPath(path, new SKPaint
+            {
+                Style       = SKPaintStyle.Stroke,
+                Color       = SKColors.Gray,
+                StrokeWidth = 2
+            });
+        }
+
         path.MoveTo(_points[0]);
 
-        long pointsPerSector = _points.Count / _maxSector;
-        long sectorsPerPoint = _maxSector    / _points.Count;
+        long pointsPerSector;
+        long sectorsPerPoint;
 
-        if(_maxSector % _points.Count > 0)
-            sectorsPerPoint++;
+        if(_gdrom)
+        {
+            pointsPerSector = _points.Count / (_maxSector - 45000);
+            sectorsPerPoint = (_maxSector                 - 45000) / _points.Count;
+
+            if((_maxSector - 45000) % _points.Count > 0)
+                sectorsPerPoint++;
+        }
+        else
+        {
+            pointsPerSector = _points.Count / _maxSector;
+            sectorsPerPoint = _maxSector    / _points.Count;
+
+            if(_maxSector % _points.Count > 0)
+                sectorsPerPoint++;
+        }
 
         long lastPoint;
+
+        if(_gdrom)
+            lastSector1 -= 45000;
 
         if(pointsPerSector > 0)
             lastPoint = lastSector1 * pointsPerSector;
@@ -227,9 +282,6 @@ public sealed class Spiral
     public SKBitmap Bitmap { get; }
 
     public static DiscParameters DiscParametersFromMediaType(MediaType mediaType, bool smallDisc = false) =>
-
-        // TODO: UMD
-        // TODO: GD-ROM
         mediaType switch
         {
             MediaType.CD          => _cdParameters,
@@ -303,6 +355,9 @@ public sealed class Spiral
             MediaType.CVD         => _cdParameters,
             MediaType.Playdia     => _cdParameters,
             MediaType.WUOD        => _bdParameters,
+            MediaType.UMD         => _umdParameters,
+            MediaType.GDROM       => _gdParameters,
+            MediaType.GDR         => _gdRecordableParameters,
             _                     => null
         };
 
@@ -348,11 +403,38 @@ public sealed class Spiral
     /// <param name="color">Color to paint the segment</param>
     public void PaintSector(ulong sector, SKColor color)
     {
-        long pointsPerSector = _points.Count / _maxSector;
-        long sectorsPerPoint = _maxSector    / _points.Count;
+        long          pointsPerSector;
+        long          sectorsPerPoint;
+        List<SKPoint> points = _gdrom && sector <= 45000 ? _pointsLowDensity : _points;
 
-        if(_maxSector % _points.Count > 0)
-            sectorsPerPoint++;
+        if(_gdrom)
+        {
+            if(sector <= 45000)
+            {
+                pointsPerSector = points.Count / 45000;
+                sectorsPerPoint = 45000        / points.Count;
+
+                if(45000 % points.Count > 0)
+                    sectorsPerPoint++;
+            }
+            else
+            {
+                sector          -= 45000;
+                pointsPerSector =  points.Count / (_maxSector - 45000);
+                sectorsPerPoint =  (_maxSector                - 45000) / points.Count;
+
+                if((_maxSector - 45000) % points.Count > 0)
+                    sectorsPerPoint++;
+            }
+        }
+        else
+        {
+            pointsPerSector = points.Count / _maxSector;
+            sectorsPerPoint = _maxSector   / points.Count;
+
+            if(_maxSector % points.Count > 0)
+                sectorsPerPoint++;
+        }
 
         var paint = new SKPaint
         {
@@ -367,10 +449,10 @@ public sealed class Spiral
         {
             long firstPoint = (long)sector * pointsPerSector;
 
-            path.MoveTo(_points[(int)firstPoint]);
+            path.MoveTo(points[(int)firstPoint]);
 
             for(int i = (int)firstPoint; i < firstPoint + pointsPerSector; i++)
-                path.LineTo(_points[i]);
+                path.LineTo(points[i]);
 
             _canvas.DrawPath(path, paint);
 
@@ -381,18 +463,18 @@ public sealed class Spiral
 
         if(point == 0)
         {
-            path.MoveTo(_points[0]);
-            path.LineTo(_points[1]);
+            path.MoveTo(points[0]);
+            path.LineTo(points[1]);
         }
-        else if(point >= _points.Count - 1)
+        else if(point >= points.Count - 1)
         {
-            path.MoveTo(_points[^2]);
-            path.LineTo(_points[^1]);
+            path.MoveTo(points[^2]);
+            path.LineTo(points[^1]);
         }
         else
         {
-            path.MoveTo(_points[(int)point]);
-            path.LineTo(_points[(int)point + 1]);
+            path.MoveTo(points[(int)point]);
+            path.LineTo(points[(int)point + 1]);
         }
 
         _canvas.DrawPath(path, paint);
@@ -476,7 +558,7 @@ public sealed class Spiral
     {
         // Get the points.
         List<SKPoint> points = new();
-        const float   dtheta = (float)(0.5 * Math.PI / 180); // Five degrees.
+        const float   dtheta = (float)(0.5f * Math.PI / 180);
 
         for(float theta = 0;; theta += dtheta)
         {
@@ -504,8 +586,6 @@ public sealed class Spiral
 
         return points;
     }
-
-    // GD-ROM LD area ends at 29mm, HD area starts at 30mm radius
 
     /// <summary>Defines the physical disc parameters</summary>
     /// <param name="DiscDiameter">Diameter of the whole disc</param>
