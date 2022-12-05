@@ -1120,14 +1120,15 @@ sealed partial class Dump
             Spiral.DiscParameters discSpiralParameters = Spiral.DiscParametersFromMediaType(dskType);
 
             if(discSpiralParameters is not null)
-            {
                 _mediaGraph = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, blocks);
+            else
+                _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, blocks);
 
+            if(_mediaGraph is not null)
                 foreach(Tuple<ulong, ulong> e in extents.ToArray())
                     _mediaGraph?.PaintSectorsGood(e.Item1, (uint)(e.Item2 - e.Item1 + 2));
 
-                _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
-            }
+            _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
         }
 
         audioExtents = new ExtentsULong();

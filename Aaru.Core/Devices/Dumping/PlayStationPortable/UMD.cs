@@ -41,6 +41,7 @@ using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
+using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
@@ -208,6 +209,22 @@ public partial class Dump
         if(_resume.NextBlock > 0)
             _dumpLog.WriteLine(Localization.Core.Resuming_from_block_0, _resume.NextBlock);
 
+        if(_createGraph)
+        {
+            Spiral.DiscParameters discSpiralParameters = Spiral.DiscParametersFromMediaType(dskType);
+
+            if(discSpiralParameters is not null)
+                _mediaGraph = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, blocks);
+            else
+                _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, blocks);
+
+            if(_mediaGraph is not null)
+                foreach(Tuple<ulong, ulong> e in extents.ToArray())
+                    _mediaGraph?.PaintSectorsGood(e.Item1, (uint)(e.Item2 - e.Item1 + 2));
+
+            _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
+        }
+
         bool newTrim = false;
 
         DateTime timeSpeedStart   = DateTime.UtcNow;
@@ -254,6 +271,7 @@ public partial class Dump
                 outputOptical.WriteSectors(readBuffer, i, blocksToRead);
                 imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                 extents.Add(i, blocksToRead, true);
+                _mediaGraph?.PaintSectorsGood(i, blocksToRead);
             }
             else
             {
@@ -357,6 +375,7 @@ public partial class Dump
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
                 outputOptical.WriteSector(readBuffer, badSector);
+                _mediaGraph?.PaintSectorGood(badSector);
             }
 
             EndProgress?.Invoke();
@@ -509,6 +528,7 @@ public partial class Dump
                     _resume.BadBlocks.Remove(badSector);
                     extents.Add(badSector);
                     outputOptical.WriteSector(readBuffer, badSector);
+                    _mediaGraph?.PaintSectorGood(badSector);
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector,
                                                        pass));

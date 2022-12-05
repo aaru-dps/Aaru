@@ -43,6 +43,7 @@ using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
+using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
@@ -528,6 +529,22 @@ partial class Dump
            extents    == null)
             StoppingErrorMessage?.Invoke(Localization.Core.Could_not_process_resume_file_not_continuing);
 
+        if(_createGraph)
+        {
+            Spiral.DiscParameters discSpiralParameters = Spiral.DiscParametersFromMediaType(dskType);
+
+            if(discSpiralParameters is not null)
+                _mediaGraph = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, blocks);
+            else
+                _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, blocks);
+
+            if(_mediaGraph is not null)
+                foreach(Tuple<ulong, ulong> e in extents.ToArray())
+                    _mediaGraph?.PaintSectorsGood(e.Item1, (uint)(e.Item2 - e.Item1 + 2));
+
+            _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
+        }
+
         (outputFormat as IWritableOpticalImage).SetTracks(new List<Track>
         {
             new()
@@ -643,6 +660,7 @@ partial class Dump
                     outputFormat.WriteSectors(readBuffer, i, blocksToRead);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     extents.Add(i, blocksToRead, true);
+                    _mediaGraph?.PaintSectorsGood(i, blocksToRead);
                 }
                 else
                 {
@@ -726,6 +744,7 @@ partial class Dump
                 extents.Add(i, blocksToRead, true);
                 currentSector     = i + 1;
                 _resume.NextBlock = currentSector;
+                _mediaGraph?.PaintSectorsGood(i, blocksToRead);
             }
 
             if(!_aborted)
@@ -842,6 +861,7 @@ partial class Dump
                 outputFormat.WriteSectors(readBuffer, currentSector, blocksToRead);
                 imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                 extents.Add(currentSector, blocksToRead, true);
+                _mediaGraph?.PaintSectorsGood(currentSector, blocksToRead);
             }
             else
             {
@@ -976,6 +996,7 @@ partial class Dump
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
                 outputFormat.WriteSector(readBuffer, badSector);
+                _mediaGraph?.PaintSectorGood(badSector);
             }
 
             EndProgress?.Invoke();
@@ -1149,6 +1170,7 @@ partial class Dump
                     _resume.BadBlocks.Remove(badSector);
                     extents.Add(badSector);
                     outputFormat.WriteSector(readBuffer, badSector);
+                    _mediaGraph?.PaintSectorGood(badSector);
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector,
                                                        pass));
