@@ -3006,4 +3006,10 @@ Do you want to continue?</value>
   <data name="Verify_dimensions_paramater_help" xml:space="preserve">
     <value>Dimensions, as a square, in pixels, for the graph of verified disc.</value>
   </data>
+  <data name="Create_graph_of_dumped_media" xml:space="preserve">
+    <value>Create graph of dumped media. Currently only supported for CD/DVD/BD/GD/UMD.</value>
+  </data>
+  <data name="Dump_graph_dimensions_argument_help" xml:space="preserve">
+    <value>Dimensions in pixels of the square that will contain the graph of dumped media.</value>
+  </data>
 </root>

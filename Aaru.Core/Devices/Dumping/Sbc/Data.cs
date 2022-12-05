@@ -214,6 +214,10 @@ partial class Dump
                 outputFormat.WriteSectors(buffer, i, blocksToRead);
                 imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                 extents.Add(i, blocksToRead, true);
+
+                if(_opticalDiscSpiral is not null)
+                    for(int b = 0; b < blocksToRead; b++)
+                        _opticalDiscSpiral.PaintSectorGood(i + (ulong)b);
             }
             else
             {

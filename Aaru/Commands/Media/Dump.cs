@@ -203,6 +203,16 @@ sealed class DumpMediaCommand : Command
             "--ignore-cdr-runouts"
         }, () => 10, UI.How_many_CDRW_run_out_sectors_to_ignore_and_regenerate));
 
+        Add(new Option<bool>(new[]
+        {
+            "--create-graph", "-g"
+        }, () => true, UI.Create_graph_of_dumped_media));
+
+        Add(new Option<uint>(new[]
+        {
+            "--dimensions"
+        }, () => 1080, UI.Dump_graph_dimensions_argument_help));
+
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
@@ -213,7 +223,7 @@ sealed class DumpMediaCommand : Command
                              bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
                              bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject,
                              uint maxBlocks, bool useBufferedReads, bool storeEncrypted, bool titleKeys,
-                             uint ignoreCdrRunOuts)
+                             uint ignoreCdrRunOuts, bool createGraph, uint dimensions)
     {
         MainClass.PrintCopyright();
 
@@ -282,6 +292,8 @@ sealed class DumpMediaCommand : Command
         AaruConsole.DebugWriteLine("Dump-Media command", "--store-encrypted={0}", storeEncrypted);
         AaruConsole.DebugWriteLine("Dump-Media command", "--title-keys={0}", titleKeys);
         AaruConsole.DebugWriteLine("Dump-Media command", "--ignore-cdr-runouts={0}", ignoreCdrRunOuts);
+        AaruConsole.DebugWriteLine("Dump-Media command", "--create-graph={0}", createGraph);
+        AaruConsole.DebugWriteLine("Dump-Media command", "--dimensions={0}", dimensions);
 
         // TODO: Disabled temporarily
         //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -557,7 +569,7 @@ sealed class DumpMediaCommand : Command
                                   fixOffset, debug, wantedSubchannel, speed, @private, fixSubchannelPosition,
                                   retrySubchannel, fixSubchannel, fixSubchannelCrc, skipCdiReadyHole, errorLog,
                                   generateSubchannels, maxBlocks, useBufferedReads, storeEncrypted, titleKeys,
-                                  ignoreCdrRunOuts);
+                                  ignoreCdrRunOuts, createGraph, dimensions);
 
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).

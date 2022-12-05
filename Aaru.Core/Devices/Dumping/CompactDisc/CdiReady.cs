@@ -284,6 +284,8 @@ partial class Dump
                             outputOptical.WriteSectorsLong(cmdBuf, i + r, 1);
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+
+                        _opticalDiscSpiral?.PaintSectorGood(i + r);
                     }
                     else
                     {
@@ -395,6 +397,10 @@ partial class Dump
                 }
 
                 imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+
+                if(_opticalDiscSpiral is not null)
+                    for(ulong p = 0; p < blocksToRead; p++)
+                        _opticalDiscSpiral?.PaintSectorGood(i + p);
             }
             else
             {

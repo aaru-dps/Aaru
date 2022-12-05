@@ -44,8 +44,10 @@ using Aaru.CommonTypes.Metadata;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
+using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Core.Media.Detection;
+using Aaru.Decoders.Bluray;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
@@ -701,6 +703,29 @@ partial class Dump
         ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
                               _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
                               _private, _force);
+
+        if(_createGraph)
+        {
+            bool discIs80Mm =
+                (mediaTags?.TryGetValue(MediaTagType.DVD_PFI, out byte[] pfiBytes) == true &&
+                 PFI.Decode(pfiBytes, dskType)?.DiscSize                           == DVDSize.Eighty) ||
+                (mediaTags?.TryGetValue(MediaTagType.BD_DI, out byte[] diBytes) == true && DI.
+                     Decode(diBytes)?.Units?.Any(s => s.DiscSize == DI.BluSize.Eighty) == true);
+
+            Spiral.DiscParameters discSpiralParameters = Spiral.DiscParametersFromMediaType(dskType, discIs80Mm);
+
+            if(discSpiralParameters is not null)
+            {
+                _opticalDiscSpiral = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, blocks);
+
+                foreach(Tuple<ulong, ulong> e in extents.ToArray())
+                    for(ulong b = e.Item1; b <= e.Item2; b++)
+                        _opticalDiscSpiral?.PaintSectorGood(b);
+
+                foreach(ulong b in _resume.BadBlocks)
+                    _opticalDiscSpiral?.PaintSectorBad(b);
+            }
+        }
 
         if(currentTry == null ||
            extents    == null)

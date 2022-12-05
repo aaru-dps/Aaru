@@ -555,6 +555,8 @@ partial class Dump
                             }
                         }
 
+                        _opticalDiscSpiral?.PaintSectorGood(i + r);
+
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     }
                     else
@@ -586,6 +588,8 @@ partial class Dump
                         }
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+
+                        _opticalDiscSpiral?.PaintSectorBad(i + r);
 
                         _resume.BadBlocks.Add(i + r);
 
@@ -713,6 +717,10 @@ partial class Dump
                         outputFormat.WriteSectors(cooked.ToArray(), i, blocksToRead);
                     }
                 }
+
+                if(_opticalDiscSpiral is not null)
+                    for(int p = 0; p < blocksToRead; p++)
+                        _opticalDiscSpiral?.PaintSectorGood(i + (ulong)p);
 
                 imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
             }

@@ -41,6 +41,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
+using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Database;
 using Aaru.Devices;
@@ -95,11 +96,14 @@ public partial class Dump
     readonly bool                       _titleKeys;
     readonly bool                       _trim;
     bool                                _aborted;
+    readonly bool                       _createGraph;
     AaruContext                         _ctx;   // Main database context
     Database.Models.Device              _dbDev; // Device database entry
+    readonly uint                       _dimensions;
     bool                                _dumpFirstTrackPregap;
     bool                                _fixOffset;
     uint                                _maximumReadable; // Maximum number of sectors drive can read at once
+    Spiral                              _opticalDiscSpiral;
     Resume                              _resume;
     Sidecar                             _sidecarClass;
     uint                                _skip;
@@ -157,7 +161,8 @@ public partial class Dump
                 bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
                 bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc,
                 bool skipCdireadyHole, ErrorLog errorLog, bool generateSubchannels, uint maximumReadable,
-                bool useBufferedReads, bool storeEncrypted, bool titleKeys, uint ignoreCdrRunOuts)
+                bool useBufferedReads, bool storeEncrypted, bool titleKeys, uint ignoreCdrRunOuts, bool createGraph,
+                uint dimensions)
     {
         _doResume              = doResume;
         _dev                   = dev;
@@ -198,6 +203,8 @@ public partial class Dump
         _storeEncrypted        = storeEncrypted;
         _titleKeys             = titleKeys;
         _ignoreCdrRunOuts      = ignoreCdrRunOuts;
+        _createGraph           = createGraph;
+        _dimensions            = dimensions;
     }
 
     /// <summary>Starts dumping with the established fields and autodetecting the device type</summary>
@@ -276,6 +283,17 @@ public partial class Dump
 
         _resume.LastWriteDate = DateTime.UtcNow;
         _resume.BadBlocks.Sort();
+
+        if(_createGraph && _opticalDiscSpiral is not null)
+        {
+            foreach(ulong b in _resume.BadBlocks)
+                _opticalDiscSpiral?.PaintSectorBad(b);
+
+            string spiralFilename = $"{_outputPrefix}.graph.png";
+            var    spiralFs       = new FileStream(spiralFilename, FileMode.Create);
+            _opticalDiscSpiral.WriteToStream(spiralFs);
+            spiralFs.Close();
+        }
 
         if(File.Exists(_outputPrefix + ".resume.xml"))
             File.Delete(_outputPrefix + ".resume.xml");

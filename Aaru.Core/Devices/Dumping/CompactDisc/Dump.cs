@@ -44,6 +44,7 @@ using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
+using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Core.Media.Detection;
 using Aaru.Database.Models;
@@ -1113,6 +1114,23 @@ sealed partial class Dump
 
         mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, _maximumReadable, _private);
         ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008);
+
+        if(_createGraph)
+        {
+            Spiral.DiscParameters discSpiralParameters = Spiral.DiscParametersFromMediaType(dskType);
+
+            if(discSpiralParameters is not null)
+            {
+                _opticalDiscSpiral = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, blocks);
+
+                foreach(Tuple<ulong, ulong> e in extents.ToArray())
+                    for(ulong b = e.Item1; b <= e.Item2; b++)
+                        _opticalDiscSpiral?.PaintSectorGood(b);
+
+                foreach(ulong b in _resume.BadBlocks)
+                    _opticalDiscSpiral?.PaintSectorBad(b);
+            }
+        }
 
         audioExtents = new ExtentsULong();
 

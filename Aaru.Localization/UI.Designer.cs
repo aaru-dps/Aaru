@@ -5865,5 +5865,17 @@ namespace Aaru.Localization {
                 return ResourceManager.GetString("Verify_dimensions_paramater_help", resourceCulture);
             }
         }
+        
+        public static string Create_graph_of_dumped_media {
+            get {
+                return ResourceManager.GetString("Create_graph_of_dumped_media", resourceCulture);
+            }
+        }
+        
+        public static string Dump_graph_dimensions_argument_help {
+            get {
+                return ResourceManager.GetString("Dump_graph_dimensions_argument_help", resourceCulture);
+            }
+        }
     }
 }

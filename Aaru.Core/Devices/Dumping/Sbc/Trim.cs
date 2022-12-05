@@ -91,6 +91,7 @@ partial class Dump
             _resume.BadBlocks.Remove(badSector);
             extents.Add(badSector);
             outputFormat.WriteSector(buffer, badSector);
+            _opticalDiscSpiral?.PaintSectorGood(badSector);
         }
 
         if(newBlank)

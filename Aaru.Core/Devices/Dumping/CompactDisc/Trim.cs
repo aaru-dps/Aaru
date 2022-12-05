@@ -223,6 +223,7 @@ partial class Dump
             {
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
+                _opticalDiscSpiral?.PaintSectorGood(badSector);
             }
 
             // Because one block has been partially used to fix the offset
