@@ -70,6 +70,7 @@
     <Compile Include="Interfaces\IArchive.cs"/>
     <Compile Include="Interfaces\IFilter.cs"/>
     <Compile Include="Interfaces\IFloppyImage.cs"/>
+    <Compile Include="Interfaces\IMediaGraph.cs"/>
     <Compile Include="Interfaces\IMediaImage.cs"/>
     <Compile Include="Interfaces\IOpticalMediaImage.cs"/>
     <Compile Include="Interfaces\IPartition.cs"/>
