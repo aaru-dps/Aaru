@@ -2,14 +2,10 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : IFloppyImage.cs
+// Filename       : IMediaGraph.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disc image plugins.
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Defines the interface to be implemented by floppy image plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //
