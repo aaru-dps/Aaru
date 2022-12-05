@@ -62,10 +62,8 @@ public sealed class Spiral
     static readonly DiscParameters _ps1CdParameters = new(120, 15, 33, 46, 50, 116, 0, 0, 360000, SKColors.Black);
     static readonly DiscParameters _ps2CdParameters =
         new(120, 15, 33, 46, 50, 116, 0, 0, 360000, new SKColor(0x0c, 0x08, 0xc3));
-    static readonly DiscParameters _dvdParameters =
-        new(120, 15, 33, 44, 48, 116, 0, 0, 2294922, new SKColor(0x6f, 0x0A, 0xCA));
-    static readonly DiscParameters _dvdParameters80 =
-        new(120, 15, 33, 44, 48, 76, 0, 0, 714544, new SKColor(0x6f, 0x0A, 0xCA));
+    static readonly DiscParameters _dvdParameters   = new(120, 15, 33, 44, 48, 116, 0, 0, 2294922, SKColors.Silver);
+    static readonly DiscParameters _dvdParameters80 = new(120, 15, 33, 44, 48, 76, 0, 0, 714544, SKColors.Silver);
     static readonly DiscParameters _dvdRParameters =
         new(120, 15, 33, 46, 48, 116, 44, 46, 2294922, new SKColor(0x6f, 0x0A, 0xCA));
     static readonly DiscParameters _dvdRParameters80 =
