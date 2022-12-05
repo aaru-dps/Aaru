@@ -35,6 +35,8 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Core.Graphics;
 using Aaru.Devices;
 
 namespace Aaru.Core.Logging;
@@ -45,6 +47,7 @@ sealed class MhddLog
     const    string       MHDD_VER = "VER:2 ";
     readonly string       _logFile;
     readonly MemoryStream _mhddFs;
+    readonly IMediaGraph  _mediaGraph;
 
     /// <summary>Initializes the MHDD log</summary>
     /// <param name="outputFile">Log file</param>
@@ -53,11 +56,14 @@ sealed class MhddLog
     /// <param name="blockSize">Bytes per block</param>
     /// <param name="blocksToRead">How many blocks read at once</param>
     /// <param name="private">Disable saving paths or serial numbers in log</param>
-    internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead, bool @private)
+    internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead, bool @private, uint mediaGraphDimensions = 0)
     {
         if(dev == null ||
            string.IsNullOrEmpty(outputFile))
             return;
+
+        if(mediaGraphDimensions > 0)
+            _mediaGraph = new BlockMap((int)mediaGraphDimensions, (int)mediaGraphDimensions, blocks);
 
         _mhddFs  = new MemoryStream();
         _logFile = outputFile;
@@ -142,7 +148,7 @@ sealed class MhddLog
     /// <summary>Logs a new read</summary>
     /// <param name="sector">Starting sector</param>
     /// <param name="duration">Duration in milliseconds</param>
-    internal void Write(ulong sector, double duration)
+    internal void Write(ulong sector, double duration, uint length = 1)
     {
         if(_logFile == null)
             return;
@@ -152,6 +158,28 @@ sealed class MhddLog
 
         _mhddFs.Write(sectorBytes, 0, 8);
         _mhddFs.Write(durationBytes, 0, 8);
+
+        switch(duration)
+        {
+            case < 3:              _mediaGraph?.PaintSectors(sector, length, 0x00, 0xFF, 0x00);
+
+                break;
+            case >= 3 and < 10:    _mediaGraph?.PaintSectors(sector, length, 0x80, 0xFF, 0x00);
+
+                break;
+            case >= 10 and < 50:   _mediaGraph?.PaintSectors(sector, length, 0xFF, 0xFF, 0x00);
+
+                break;
+            case >= 50 and < 150:  _mediaGraph?.PaintSectors(sector, length, 0xFF, 0xAB, 0x00);
+
+                break;
+            case >= 150 and < 500: _mediaGraph?.PaintSectors(sector, length, 0xFF, 0x56, 0x00);
+
+                break;
+            case >= 500:           _mediaGraph?.PaintSectors(sector, length, 0xFF, 0x00, 0x00);
+
+                break;
+        }
     }
 
     /// <summary>Closes and writes to file the MHDD log</summary>
@@ -164,5 +192,7 @@ sealed class MhddLog
         _mhddFs.WriteTo(fs);
         _mhddFs.Close();
         fs.Close();
+
+        _mediaGraph?.WriteTo(Path.GetFileNameWithoutExtension(_logFile) + ".png");
     }
 }

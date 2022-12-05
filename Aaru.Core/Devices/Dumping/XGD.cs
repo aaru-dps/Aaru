@@ -498,7 +498,7 @@ partial class Dump
         _dumpLog.WriteLine(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead);
         UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
 
-        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
+        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private, _dimensions);
         var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0010);
         ret = outputFormat.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
@@ -654,7 +654,7 @@ partial class Dump
                 if(!sense &&
                    !_dev.Error)
                 {
-                    mhddLog.Write(i, cmdDuration);
+                    mhddLog.Write(i, cmdDuration, blocksToRead);
                     ibgLog.Write(i, currentSpeed * 1024);
                     DateTime writeStart = DateTime.Now;
                     outputFormat.WriteSectors(readBuffer, i, blocksToRead);
@@ -684,7 +684,7 @@ partial class Dump
                     AaruConsole.DebugWriteLine("Dump-Media", Localization.Core.READ_error_0,
                                                Sense.PrettifySense(senseBuf));
 
-                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
                     ibgLog.Write(i, 0);
 
@@ -733,7 +733,7 @@ partial class Dump
                 if(extentEnd - i < blocksToRead)
                     blocksToRead = (uint)(extentEnd - i) + 1;
 
-                mhddLog.Write(i, cmdDuration);
+                mhddLog.Write(i, cmdDuration, blocksToRead);
                 ibgLog.Write(i, currentSpeed * 1024);
 
                 // Write empty data
@@ -778,7 +778,7 @@ partial class Dump
                 Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, middle + currentSector, totalSize, currentSpeed),
                        (long)(middle + currentSector), (long)totalSize);
 
-            mhddLog.Write(middle + currentSector, cmdDuration);
+            mhddLog.Write(middle + currentSector, cmdDuration, blocksToRead);
             ibgLog.Write(middle  + currentSector, currentSpeed * 1024);
 
             // Write empty data
@@ -855,7 +855,7 @@ partial class Dump
             if(!sense &&
                !_dev.Error)
             {
-                mhddLog.Write(currentSector, cmdDuration);
+                mhddLog.Write(currentSector, cmdDuration, blocksToRead);
                 ibgLog.Write(currentSector, currentSpeed * 1024);
                 DateTime writeStart = DateTime.Now;
                 outputFormat.WriteSectors(readBuffer, currentSector, blocksToRead);
@@ -880,7 +880,7 @@ partial class Dump
                 //errored += blocksToRead;
                 //resume.BadBlocks.Add(l1);
                 AaruConsole.DebugWriteLine("Dump-Media", Localization.Core.READ_error_0, Sense.PrettifySense(senseBuf));
-                mhddLog.Write(l1, cmdDuration < 500 ? 65535 : cmdDuration);
+                mhddLog.Write(l1, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
                 ibgLog.Write(l1, 0);
                 _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, _skip, l1);

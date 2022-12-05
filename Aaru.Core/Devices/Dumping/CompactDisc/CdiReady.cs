@@ -242,7 +242,7 @@ partial class Dump
                     if(!sense &&
                        !_dev.Error)
                     {
-                        mhddLog.Write(i + r, cmdDuration);
+                        mhddLog.Write(i + r, cmdDuration, 1);
                         ibgLog.Write(i  + r, currentSpeed * 1024);
                         extents.Add(i   + r, 1, true);
                         DateTime writeStart = DateTime.Now;
@@ -324,7 +324,7 @@ partial class Dump
                     FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
                                   subSize, ref cmdBuf, blockSize, false);
 
-                mhddLog.Write(i, cmdDuration);
+                mhddLog.Write(i, cmdDuration, 1);
                 ibgLog.Write(i, currentSpeed * 1024);
                 extents.Add(i, blocksToRead, true);
                 DateTime writeStart = DateTime.Now;

@@ -369,7 +369,7 @@ partial class Dump
         UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
         _dumpLog.WriteLine(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead);
 
-        var  mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
+        var  mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private, _dimensions);
         var  ibgLog = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
         bool imageCreated = false;
 

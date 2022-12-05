@@ -1112,7 +1112,7 @@ sealed partial class Dump
             sectorsForOffset = 0;
         }
 
-        mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, _maximumReadable, _private);
+        mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, _maximumReadable, _private, _dimensions);
         ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008);
 
         if(_createGraph)

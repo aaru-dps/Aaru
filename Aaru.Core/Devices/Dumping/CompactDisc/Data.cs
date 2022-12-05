@@ -476,7 +476,7 @@ partial class Dump
                     if(!sense &&
                        !_dev.Error)
                     {
-                        mhddLog.Write(i + r, cmdDuration);
+                        mhddLog.Write(i + r, cmdDuration, 1);
                         ibgLog.Write(i  + r, currentSpeed * 1024);
                         extents.Add(i   + r, 1, true);
                         DateTime writeStart = DateTime.Now;
@@ -596,7 +596,7 @@ partial class Dump
                         AaruConsole.DebugWriteLine("Dump-Media", Localization.Core.READ_error_0,
                                                    Sense.PrettifySense(senseBuf));
 
-                        mhddLog.Write(i + r, cmdDuration < 500 ? 65535 : cmdDuration);
+                        mhddLog.Write(i + r, cmdDuration < 500 ? 65535 : cmdDuration, 1);
 
                         ibgLog.Write(i                                                                    + r, 0);
                         _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, 1, i + r);
@@ -636,7 +636,7 @@ partial class Dump
                     FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
                                   subSize, ref cmdBuf, blockSize, failedCrossingLeadOut);
 
-                mhddLog.Write(i, cmdDuration);
+                mhddLog.Write(i, cmdDuration, blocksToRead);
                 ibgLog.Write(i, currentSpeed * 1024);
                 extents.Add(i, blocksToRead, true);
                 DateTime writeStart = DateTime.Now;
@@ -774,7 +774,7 @@ partial class Dump
                     _resume.BadBlocks.Add(b);
 
                 AaruConsole.DebugWriteLine("Dump-Media", Localization.Core.READ_error_0, Sense.PrettifySense(senseBuf));
-                mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+                mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
                 ibgLog.Write(i, 0);
                 _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, _skip, i);

@@ -267,7 +267,7 @@ public partial class Dump
                         _skip = blocksToRead;
 
                     mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead,
-                                          _private);
+                                          _private, _dimensions);
 
                     ibgLog = new IbgLog(_outputPrefix + ".ibg", ataProfile);
 
@@ -330,7 +330,7 @@ public partial class Dump
 
                         if(!error)
                         {
-                            mhddLog.Write(i, duration);
+                            mhddLog.Write(i, duration, blocksToRead);
                             ibgLog.Write(i, currentSpeed * 1024);
                             DateTime writeStart = DateTime.Now;
                             outputFormat.WriteSectors(cmdBuf, i, blocksToRead);
@@ -346,7 +346,7 @@ public partial class Dump
                             for(ulong b = i; b < i + _skip; b++)
                                 _resume.BadBlocks.Add(b);
 
-                            mhddLog.Write(i, duration < 500 ? 65535 : duration);
+                            mhddLog.Write(i, duration < 500 ? 65535 : duration, _skip);
 
                             ibgLog.Write(i, 0);
                             DateTime writeStart = DateTime.Now;
@@ -534,7 +534,7 @@ public partial class Dump
                 else
                 {
                     mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead,
-                                          _private);
+                                          _private, _dimensions);
 
                     ibgLog = new IbgLog(_outputPrefix + ".ibg", ataProfile);
 
@@ -595,7 +595,7 @@ public partial class Dump
 
                                 if(!error || recoveredError)
                                 {
-                                    mhddLog.Write(currentBlock, duration);
+                                    mhddLog.Write(currentBlock, duration, 1);
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                                     DateTime writeStart = DateTime.Now;
 
@@ -612,7 +612,7 @@ public partial class Dump
                                 else
                                 {
                                     _resume.BadBlocks.Add(currentBlock);
-                                    mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration);
+                                    mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration, 1);
 
                                     ibgLog.Write(currentBlock, 0);
                                     DateTime writeStart = DateTime.Now;

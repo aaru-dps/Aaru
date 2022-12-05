@@ -158,7 +158,7 @@ public partial class Dump
 
         bool ret;
 
-        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
+        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private, _dimensions);
         var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0010);
         ret = outputOptical.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
@@ -265,7 +265,7 @@ public partial class Dump
             if(!sense &&
                !_dev.Error)
             {
-                mhddLog.Write(i, cmdDuration);
+                mhddLog.Write(i, cmdDuration, blocksToRead);
                 ibgLog.Write(i, currentSpeed * 1024);
                 DateTime writeStart = DateTime.Now;
                 outputOptical.WriteSectors(readBuffer, i, blocksToRead);
@@ -292,7 +292,7 @@ public partial class Dump
                 for(ulong b = i; b < i + _skip; b++)
                     _resume.BadBlocks.Add(b);
 
-                mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+                mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
                 ibgLog.Write(i, 0);
                 _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, _skip, i);

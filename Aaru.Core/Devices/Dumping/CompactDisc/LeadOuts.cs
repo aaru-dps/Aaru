@@ -145,7 +145,7 @@ partial class Dump
                 if(!sense &&
                    !_dev.Error)
                 {
-                    mhddLog.Write(i, cmdDuration);
+                    mhddLog.Write(i, cmdDuration, 1);
                     ibgLog.Write(i, currentSpeed * 1024);
                     extents.Add(i, _maximumReadable, true);
                     leadOutExtents.Remove(i);
@@ -207,7 +207,7 @@ partial class Dump
 
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
-                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
                     ibgLog.Write(i, 0);
                 }
@@ -317,7 +317,7 @@ partial class Dump
                 if(!sense &&
                    !_dev.Error)
                 {
-                    mhddLog.Write(i, cmdDuration);
+                    mhddLog.Write(i, cmdDuration, _maximumReadable);
                     ibgLog.Write(i, currentSpeed * 1024);
                     extents.Add(i, _maximumReadable, true);
                     leadOutExtents.Remove(i);
@@ -380,7 +380,7 @@ partial class Dump
 
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
-                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, 1);
 
                     ibgLog.Write(i, 0);
                 }
