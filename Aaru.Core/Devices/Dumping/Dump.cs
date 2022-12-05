@@ -41,7 +41,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
-using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Database;
 using Aaru.Devices;
@@ -66,9 +65,11 @@ public enum DumpSubchannel
 
 public partial class Dump
 {
+    readonly bool                       _createGraph;
     readonly bool                       _debug;
     readonly Device                     _dev;
     readonly string                     _devicePath;
+    readonly uint                       _dimensions;
     readonly bool                       _doResume;
     readonly DumpLog                    _dumpLog;
     readonly bool                       _dumpRaw;
@@ -96,14 +97,12 @@ public partial class Dump
     readonly bool                       _titleKeys;
     readonly bool                       _trim;
     bool                                _aborted;
-    readonly bool                       _createGraph;
     AaruContext                         _ctx;   // Main database context
     Database.Models.Device              _dbDev; // Device database entry
-    readonly uint                       _dimensions;
     bool                                _dumpFirstTrackPregap;
     bool                                _fixOffset;
     uint                                _maximumReadable; // Maximum number of sectors drive can read at once
-    Spiral                              _opticalDiscSpiral;
+    IMediaGraph                         _mediaGraph;
     Resume                              _resume;
     Sidecar                             _sidecarClass;
     uint                                _skip;
@@ -284,15 +283,10 @@ public partial class Dump
         _resume.LastWriteDate = DateTime.UtcNow;
         _resume.BadBlocks.Sort();
 
-        if(_createGraph && _opticalDiscSpiral is not null)
+        if(_createGraph && _mediaGraph is not null)
         {
-            foreach(ulong b in _resume.BadBlocks)
-                _opticalDiscSpiral?.PaintSectorBad(b);
-
-            string spiralFilename = $"{_outputPrefix}.graph.png";
-            var    spiralFs       = new FileStream(spiralFilename, FileMode.Create);
-            _opticalDiscSpiral.WriteToStream(spiralFs);
-            spiralFs.Close();
+            _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
+            _mediaGraph?.WriteTo($"{_outputPrefix}.graph.png");
         }
 
         if(File.Exists(_outputPrefix + ".resume.xml"))

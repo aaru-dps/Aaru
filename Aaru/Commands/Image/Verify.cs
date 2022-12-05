@@ -428,13 +428,7 @@ sealed class VerifyCommand : Command
         AaruConsole.WriteLine($"[italic]{UI.Total_unknowns}[/] {unknownLbas.Count}");
         AaruConsole.WriteLine($"[italic]{UI.Total_errors_plus_unknowns}[/] {failingLbas.Count + unknownLbas.Count}");
 
-        if(spiral is not null)
-        {
-            string spiralFilename = $"{Path.GetFileNameWithoutExtension(inputFilter.Filename)}.verify.png";
-            var    spiralFs       = new FileStream(spiralFilename, FileMode.Create);
-            spiral.WriteToStream(spiralFs);
-            spiralFs.Close();
-        }
+        spiral?.WriteTo($"{Path.GetFileNameWithoutExtension(inputFilter.Filename)}.verify.png");
 
         if(failingLbas.Count > 0)
             correctSectors = false;

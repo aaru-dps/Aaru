@@ -1121,14 +1121,12 @@ sealed partial class Dump
 
             if(discSpiralParameters is not null)
             {
-                _opticalDiscSpiral = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, blocks);
+                _mediaGraph = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, blocks);
 
                 foreach(Tuple<ulong, ulong> e in extents.ToArray())
-                    for(ulong b = e.Item1; b <= e.Item2; b++)
-                        _opticalDiscSpiral?.PaintSectorGood(b);
+                    _mediaGraph?.PaintSectorsGood(e.Item1, (uint)(e.Item2 - e.Item1 + 2));
 
-                foreach(ulong b in _resume.BadBlocks)
-                    _opticalDiscSpiral?.PaintSectorBad(b);
+                _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
             }
         }
 

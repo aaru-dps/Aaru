@@ -285,7 +285,7 @@ partial class Dump
 
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
-                        _opticalDiscSpiral?.PaintSectorGood(i + r);
+                        _mediaGraph?.PaintSectorGood(i + r);
                     }
                     else
                     {
@@ -398,9 +398,7 @@ partial class Dump
 
                 imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
-                if(_opticalDiscSpiral is not null)
-                    for(ulong p = 0; p < blocksToRead; p++)
-                        _opticalDiscSpiral?.PaintSectorGood(i + p);
+                _mediaGraph?.PaintSectorsGood(i, blocksToRead);
             }
             else
             {

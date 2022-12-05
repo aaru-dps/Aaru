@@ -77,7 +77,7 @@ partial class Dump
                 tmpBuf = new byte[cmdBuf.Length - 4];
                 Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                 mediaTags.Add(MediaTagType.CD_ATIP, tmpBuf);
-                _opticalDiscSpiral?.PaintRecordableInformationGood();
+                _mediaGraph?.PaintRecordableInformationGood();
             }
         }
 
@@ -111,7 +111,7 @@ partial class Dump
             tmpBuf = new byte[cmdBuf.Length - 4];
             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
             mediaTags.Add(MediaTagType.CD_PMA, tmpBuf);
-            _opticalDiscSpiral?.PaintRecordableInformationGood();
+            _mediaGraph?.PaintRecordableInformationGood();
         }
 
         _dumpLog.WriteLine(Localization.Core.Reading_Session_Information);

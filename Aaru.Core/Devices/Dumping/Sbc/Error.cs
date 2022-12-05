@@ -278,7 +278,7 @@ partial class Dump
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
                 outputFormat.WriteSector(buffer, badSector);
-                _opticalDiscSpiral?.PaintSectorGood(badSector);
+                _mediaGraph?.PaintSectorGood(badSector);
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector,
                                                    pass));
