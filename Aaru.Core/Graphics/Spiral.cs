@@ -2,14 +2,10 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : DataFile.cs
+// Filename       : Spiral.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Core algorithms.
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Abstracts writing to files.
 //
 // --[ License ] --------------------------------------------------------------
 //
