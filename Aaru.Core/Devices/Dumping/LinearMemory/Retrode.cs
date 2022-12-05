@@ -35,6 +35,7 @@ using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Core.Graphics;
 using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.Core.Devices.Dumping;
@@ -285,6 +286,9 @@ public partial class Dump
             return;
         }
 
+        if(_createGraph)
+            _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, romSectors);
+
         DateTime start              = DateTime.UtcNow;
         double   imageWriteDuration = 0;
 
@@ -328,6 +332,7 @@ public partial class Dump
                 DateTime writeStart = DateTime.Now;
                 outputBai.WriteBytes(readBuffer, 0, readBuffer.Length, out _);
                 imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                _mediaGraph.PaintSectorsGood(i, blocksToRead);
             }
             else
             {

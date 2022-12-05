@@ -235,7 +235,7 @@ sealed class VerifyCommand : Command
         DateTime    endCheck    = startCheck;
         List<ulong> failingLbas = new();
         List<ulong> unknownLbas = new();
-        Spiral      spiral      = null;
+        IMediaGraph mediaGraph  = null;
 
         if(verifiableSectorsImage is IOpticalMediaImage { Tracks: {} } opticalMediaImage)
         {
@@ -245,7 +245,10 @@ sealed class VerifyCommand : Command
                 spiralParameters = Spiral.DiscParametersFromMediaType(opticalMediaImage.Info.MediaType);
 
             if(spiralParameters is not null)
-                spiral = new Spiral((int)dimensions, (int)dimensions, spiralParameters, opticalMediaImage.Info.Sectors);
+                mediaGraph = new Spiral((int)dimensions, (int)dimensions, spiralParameters,
+                                        opticalMediaImage.Info.Sectors);
+            else if(createGraph)
+                mediaGraph = new BlockMap((int)dimensions, (int)dimensions, opticalMediaImage.Info.Sectors);
 
             List<Track> inputTracks      = opticalMediaImage.Tracks;
             ulong       currentSectorAll = 0;
@@ -288,27 +291,27 @@ sealed class VerifyCommand : Command
                                         opticalMediaImage.VerifySectors(currentSector, 512, currentTrack.Sequence,
                                                                         out tempFailingLbas, out tempUnknownLbas);
 
-                                    List<ulong> tempCorrectLbas = new();
-
-                                    for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
-                                        tempCorrectLbas.Add(currentSector + l);
-
-                                    if(spiral != null)
+                                    if(mediaGraph != null)
                                     {
+                                        List<ulong> tempCorrectLbas = new();
+
+                                        for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
+                                            tempCorrectLbas.Add(currentSector + l);
+
                                         foreach(ulong f in tempFailingLbas)
                                             tempCorrectLbas.Remove(f);
 
                                         foreach(ulong u in tempUnknownLbas)
                                         {
                                             tempCorrectLbas.Remove(u);
-                                            spiral.PaintSectorUnknown(currentTrack.StartSector + u);
+                                            mediaGraph.PaintSectorUnknown(currentTrack.StartSector + u);
                                         }
 
                                         foreach(ulong lba in tempCorrectLbas)
-                                            spiral.PaintSectorGood(currentTrack.StartSector + lba);
+                                            mediaGraph.PaintSectorGood(currentTrack.StartSector + lba);
 
                                         foreach(ulong f in tempFailingLbas)
-                                            spiral.PaintSectorBad(currentTrack.StartSector + f);
+                                            mediaGraph.PaintSectorBad(currentTrack.StartSector + f);
                                     }
 
                                     failingLbas.AddRange(tempFailingLbas);
@@ -371,6 +374,24 @@ sealed class VerifyCommand : Command
 
                                 unknownLbas.AddRange(tempUnknownLbas);
 
+                                if(mediaGraph != null)
+                                {
+                                    List<ulong> tempCorrectLbas = new();
+
+                                    for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
+                                        tempCorrectLbas.Add(currentSector + l);
+
+                                    foreach(ulong f in tempFailingLbas)
+                                        tempCorrectLbas.Remove(f);
+
+                                    foreach(ulong u in tempUnknownLbas)
+                                        tempCorrectLbas.Remove(u);
+
+                                    mediaGraph.PaintSectorsUnknown(tempUnknownLbas);
+                                    mediaGraph.PaintSectorsGood(tempCorrectLbas);
+                                    mediaGraph.PaintSectorsBad(tempFailingLbas);
+                                }
+
                                 if(remainingSectors < 512)
                                 {
                                     currentSector    += remainingSectors;
@@ -428,7 +449,7 @@ sealed class VerifyCommand : Command
         AaruConsole.WriteLine($"[italic]{UI.Total_unknowns}[/] {unknownLbas.Count}");
         AaruConsole.WriteLine($"[italic]{UI.Total_errors_plus_unknowns}[/] {failingLbas.Count + unknownLbas.Count}");
 
-        spiral?.WriteTo($"{Path.GetFileNameWithoutExtension(inputFilter.Filename)}.verify.png");
+        mediaGraph?.WriteTo($"{Path.GetFileNameWithoutExtension(inputFilter.Filename)}.verify.png");
 
         if(failingLbas.Count > 0)
             correctSectors = false;

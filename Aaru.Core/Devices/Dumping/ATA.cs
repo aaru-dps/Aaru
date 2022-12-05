@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core.Devices.Report;
+using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Decoders.ATA;
 using Aaru.Decoders.PCMCIA;
@@ -276,6 +277,22 @@ public partial class Dump
                         _dumpLog.WriteLine(Localization.Core.Resuming_from_block_0, _resume.NextBlock);
                     }
 
+                    if(_createGraph)
+                    {
+                        Spiral.DiscParameters discSpiralParameters = Spiral.DiscParametersFromMediaType(mediaType);
+
+                        if(discSpiralParameters is not null)
+                            _mediaGraph = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, blocks);
+                        else
+                            _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, blocks);
+
+                        if(_mediaGraph is not null)
+                            foreach(Tuple<ulong, ulong> e in extents.ToArray())
+                                _mediaGraph?.PaintSectorsGood(e.Item1, (uint)(e.Item2 - e.Item1 + 2));
+
+                        _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
+                    }
+
                     bool newTrim = false;
 
                     start = DateTime.UtcNow;
@@ -319,6 +336,7 @@ public partial class Dump
                             outputFormat.WriteSectors(cmdBuf, i, blocksToRead);
                             imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                             extents.Add(i, blocksToRead, true);
+                            _mediaGraph?.PaintSectorsGood(i, blocksToRead);
                         }
                         else
                         {
@@ -416,6 +434,7 @@ public partial class Dump
                             _resume.BadBlocks.Remove(badSector);
                             extents.Add(badSector);
                             outputFormat.WriteSector(cmdBuf, badSector);
+                            _mediaGraph?.PaintSectorGood(badSector);
                         }
 
                         EndProgress?.Invoke();
@@ -479,6 +498,7 @@ public partial class Dump
                                 _resume.BadBlocks.Remove(badSector);
                                 extents.Add(badSector);
                                 outputFormat.WriteSector(cmdBuf, badSector);
+                                _mediaGraph?.PaintSectorGood(badSector);
 
                                 UpdateStatus?.
                                     Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1,
@@ -517,6 +537,22 @@ public partial class Dump
                                           _private);
 
                     ibgLog = new IbgLog(_outputPrefix + ".ibg", ataProfile);
+
+                    if(_createGraph)
+                    {
+                        Spiral.DiscParameters discSpiralParameters = Spiral.DiscParametersFromMediaType(mediaType);
+
+                        if(discSpiralParameters is not null)
+                            _mediaGraph = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, blocks);
+                        else
+                            _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, blocks);
+
+                        if(_mediaGraph is not null)
+                            foreach(Tuple<ulong, ulong> e in extents.ToArray())
+                                _mediaGraph?.PaintSectorsGood(e.Item1, (uint)(e.Item2 - e.Item1 + 2));
+
+                        _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
+                    }
 
                     ulong currentBlock = 0;
                     blocks = (ulong)(cylinders * heads * sectors);
@@ -568,6 +604,7 @@ public partial class Dump
 
                                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                                     extents.Add(currentBlock);
+                                    _mediaGraph?.PaintSectorGood((ulong)((((cy * heads) + hd) * sectors) + (sc - 1)));
 
                                     _dumpLog.WriteLine(Localization.Core.Error_reading_cylinder_0_head_1_sector_2, cy,
                                                        hd, sc);
