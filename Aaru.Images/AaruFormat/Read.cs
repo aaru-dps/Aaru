@@ -1321,13 +1321,20 @@ namespace Aaru.DiscImages
 
                 foreach(Track track in Tracks.OrderBy(t => t.TrackStartSector))
                 {
-                    if(track.TrackSequence == 1)
+                    switch(track.TrackSequence)
                     {
-                        track.TrackPregap = 150;
-                        track.Indexes[0]  = -150;
-                        track.Indexes[1]  = (int)track.TrackStartSector;
+                        case 0:
+                            track.TrackPregap = 150;
+                            track.Indexes[0]  = -150;
+                            track.Indexes[1]  = (int)track.TrackStartSector;
 
-                        continue;
+                            continue;
+                        case 1 when Tracks.All(t => t.TrackSequence != 0):
+                            track.TrackPregap = 150;
+                            track.Indexes[0]  = -150;
+                            track.Indexes[1]  = (int)track.TrackStartSector;
+
+                            continue;
                     }
 
                     if(track.TrackPregap > 0)
