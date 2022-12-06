@@ -7,7 +7,6 @@
     <RootNamespace>Aaru.Helpers</RootNamespace>
     <AssemblyName>Aaru.Helpers</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
     <Company>Claunia.com</Company>
@@ -42,27 +41,6 @@
     <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="ArrayFill.cs"/>
-    <Compile Include="BigEndianBitConverter.cs"/>
-    <Compile Include="BitEndian.cs"/>
-    <Compile Include="DateHandlers.cs"/>
-    <Compile Include="Extensions.cs"/>
-    <Compile Include="Localization\Localization.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Localization.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Marshal.cs"/>
-    <Compile Include="MarshallingPropertiesAttribute.cs"/>
-    <Compile Include="PrintHex.cs"/>
-    <Compile Include="StringHandlers.cs"/>
-    <Compile Include="Swapping.cs"/>
-    <Compile Include="ArrayIsEmpty.cs"/>
-    <Compile Include="CompareBytes.cs"/>
-    <Compile Include="CountBits.cs"/>
-    <Compile Include="CHS.cs"/>
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
   </ItemGroup>
