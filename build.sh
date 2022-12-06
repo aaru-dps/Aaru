@@ -12,17 +12,37 @@ do
  do
   dotnet publish -f netcoreapp3.1 -r ${distro} -c ${conf}
 
-# Package the Linux packages
+# Package the Linux packages (stopped working)
+#  if [[ ${distro} == alpine* ]] || [[ ${distro} == linux* ]]; then
+#    pkg="tarball"
+#  elif [[ ${distro} == win* ]] || [[ ${distro} == osx* ]]; then
+#    pkg="zip"
+#  elif [[ ${distro} == rhel* ]] || [[ ${distro} == sles* ]]; then
+#    pkg="rpm"
+#  else
+#    pkg="deb"
+#  fi
+#  dotnet ${pkg} -f netcoreapp3.1 -r ${distro} -c ${conf} -o ../build
+#
+
+# Package the Linux packages using MSBuild
   if [[ ${distro} == alpine* ]] || [[ ${distro} == linux* ]]; then
-    pkg="tarball"
+    task="CreateTarball"
+    extension="tar.gz"
   elif [[ ${distro} == win* ]] || [[ ${distro} == osx* ]]; then
-    pkg="zip"
+    task="CreateZip"
+    extension="zip"
   elif [[ ${distro} == rhel* ]] || [[ ${distro} == sles* ]]; then
-    pkg="rpm"
+    task="CreateRpm"
+    extension="rpm"
   else
-    pkg="deb"
+    task="CreateDeb"
+    extension="deb"
   fi
-  dotnet ${pkg} -f netcoreapp3.1 -r ${distro} -c ${conf} -o ../build
+
+  dotnet msbuild Aaru.csproj /t:${task} /p:TargetFramework=netcoreapp3.1 /p:RuntimeIdentifier=${distro} /p:Configuration=${conf}
+  mv bin/${conf}/netcoreapp3.1/${distro}/*.${extension} ../build
+
  done
 done
 
