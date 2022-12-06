@@ -21,8 +21,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
-// Copyright © 2020-2022 Rebecca Wallander
+// Copyright © 2011-2023 Natalia Portillo
+// Copyright © 2020-2023 Rebecca Wallander
 // ****************************************************************************/
 
 using System;

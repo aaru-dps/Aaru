@@ -2,7 +2,7 @@ Aaru Data Preservation Suite v5.3.1
 
 Aaru
 
-Copyright © 2011-2022 Natalia Portillo <claunia@claunia.com>
+Copyright © 2011-2023 Natalia Portillo <claunia@claunia.com>
 
 [![Build Status](https://dev.azure.com/Aaru-dps/aaru/_apis/build/status/aaru-dps.Aaru?branchName=master)](https://dev.azure.com/Aaru-dps/aaru/_build/latest?definitionId=7&branchName=master)
 [![Build Status](https://travis-ci.org/aaru-dps/Aaru.svg?branch=master)](https://travis-ci.org/github/aaru-dps/Aaru)
