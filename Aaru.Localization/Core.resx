@@ -3499,4 +3499,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
   <data name="CompactDisc_Power_Management_Area_contained_in_image_WithMarkup" xml:space="preserve">
     <value>[bold]CompactDisc Power Management Area contained in image:[/]</value>
   </data>
+  <data name="Output_format_does_not_support_hidden_tracks" xml:space="preserve">
+    <value>Output format does not properly support storing hidden tracks, this will end in a loss of data, not continuing...</value>
+  </data>
 </root>

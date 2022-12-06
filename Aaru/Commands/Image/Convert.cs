@@ -564,6 +564,21 @@ sealed class ConvertImageCommand : Command
             AaruConsole.ErrorWriteLine("Output format does not support sessions, this will end in a loss of data, continuing...");*/
         }
 
+        if((outputFormat as IWritableOpticalImage)?.OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+                                                                                    CanStoreHiddenTracks) != true &&
+           (inputFormat as IOpticalMediaImage)?.Tracks?.Any(t => t.Sequence == 0) == true)
+        {
+            // TODO: Disabled until 6.0
+            /*if(!_force)
+            {*/
+            AaruConsole.ErrorWriteLine(Localization.Core.Output_format_does_not_support_hidden_tracks);
+
+            return (int)ErrorNumber.UnsupportedMedia;
+            /*}
+
+            AaruConsole.ErrorWriteLine("Output format does not support sessions, this will end in a loss of data, continuing...");*/
+        }
+
         bool created = false;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>

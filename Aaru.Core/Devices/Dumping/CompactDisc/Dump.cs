@@ -548,6 +548,14 @@ sealed partial class Dump
             _dumpLog.WriteLine(Localization.Core.Disc_contains_a_hidden_track);
             UpdateStatus?.Invoke(Localization.Core.Disc_contains_a_hidden_track);
 
+            if(!outputOptical.OpticalCapabilities.HasFlag(OpticalImageCapabilities.CanStoreHiddenTracks))
+            {
+                StoppingErrorMessage?.Invoke(Localization.Core.Output_format_does_not_support_hidden_tracks);
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_hidden_tracks);
+
+                return;
+            }
+
             List<Track> trkList = new()
             {
                 new Track
@@ -1112,8 +1120,10 @@ sealed partial class Dump
             sectorsForOffset = 0;
         }
 
-        mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, _maximumReadable, _private, _dimensions);
-        ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008);
+        mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, _maximumReadable, _private,
+                              _dimensions);
+
+        ibgLog = new IbgLog(_outputPrefix + ".ibg", 0x0008);
 
         if(_createGraph)
         {

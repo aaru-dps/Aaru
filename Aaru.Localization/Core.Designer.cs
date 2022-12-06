@@ -6875,5 +6875,11 @@ namespace Aaru.Localization {
                 return ResourceManager.GetString("CompactDisc_Power_Management_Area_contained_in_image_WithMarkup", resourceCulture);
             }
         }
+        
+        public static string Output_format_does_not_support_hidden_tracks {
+            get {
+                return ResourceManager.GetString("Output_format_does_not_support_hidden_tracks", resourceCulture);
+            }
+        }
     }
 }
