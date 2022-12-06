@@ -1370,13 +1370,20 @@ public sealed partial class AaruFormat
 
             foreach(Track track in Tracks.OrderBy(t => t.StartSector))
             {
-                if(track.Sequence == 1)
+                switch(track.Sequence)
                 {
-                    track.Pregap     = 150;
-                    track.Indexes[0] = -150;
-                    track.Indexes[1] = (int)track.StartSector;
+                    case 0:
+                        track.Pregap     = 150;
+                        track.Indexes[0] = -150;
+                        track.Indexes[1] = (int)track.StartSector;
 
-                    continue;
+                        continue;
+                    case 1 when Tracks.All(t => t.Sequence != 0):
+                        track.Pregap     = 150;
+                        track.Indexes[0] = -150;
+                        track.Indexes[1] = (int)track.StartSector;
+
+                        continue;
                 }
 
                 if(track.Pregap > 0)
