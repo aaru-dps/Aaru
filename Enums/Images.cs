@@ -381,6 +381,8 @@ public enum OpticalImageCapabilities : ulong
     CanStoreNotCdSessions = 0x2000,
     /// <summary>Can store more than 1 track in media that is not CD based (DVD et al)?</summary>
     CanStoreNotCdTracks = 0x4000,
+    /// <summary>Can store hidden tracks with a type different from track 1?</summary>
+    CanStoreHiddenTracks = 0x8000,
 
     // TODO: Implement
     /// <summary>Can store scrambled data?</summary>
