@@ -565,6 +565,14 @@ namespace Aaru.Core.Devices.Dumping
                 _dumpLog.WriteLine("Disc contains a hidden track...");
                 UpdateStatus?.Invoke("Disc contains a hidden track...");
 
+                if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.CanStoreHiddenTracks))
+                {
+                    StoppingErrorMessage?.Invoke("Output format does not properly support storing hidden tracks, this will end in a loss of data, not continuing...");
+                    _dumpLog.WriteLine("Output format does not properly support storing hidden tracks, this will end in a loss of data, not continuing...");
+
+                    return;
+                }
+
                 List<Track> trkList = new List<Track>
                 {
                     new Track

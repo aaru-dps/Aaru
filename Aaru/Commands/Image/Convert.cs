@@ -633,6 +633,21 @@ namespace Aaru.Commands.Image
                 AaruConsole.ErrorWriteLine("Output format does not support sessions, this will end in a loss of data, continuing...");*/
             }
 
+            if((outputFormat as IWritableOpticalImage)?.OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+                   CanStoreHiddenTracks) != true &&
+               (inputFormat as IOpticalMediaImage)?.Tracks?.Any(t => t.TrackSequence == 0) == true)
+            {
+                // TODO: Disabled until 6.0
+                /*if(!_force)
+                {*/
+                AaruConsole.ErrorWriteLine("Output format does not support hidden tracks, this will end in a loss of data, not continuing...");
+
+                return (int)ErrorNumber.UnsupportedMedia;
+                /*}
+
+                AaruConsole.ErrorWriteLine("Output format does not support hidden tracks, this will end in a loss of data, continuing...");*/
+            }
+
             if(!outputFormat.Create(outputPath, mediaType, parsedOptions, inputFormat.Info.Sectors,
                                     inputFormat.Info.SectorSize))
             {

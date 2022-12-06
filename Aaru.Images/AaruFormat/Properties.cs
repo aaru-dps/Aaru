@@ -56,7 +56,8 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreMultipleTracks |
                                                                OpticalImageCapabilities.CanStoreNotCdSessions  |
                                                                OpticalImageCapabilities.CanStoreNotCdTracks    |
-                                                               OpticalImageCapabilities.CanStoreIndexes;
+                                                               OpticalImageCapabilities.CanStoreIndexes        |
+                                                               OpticalImageCapabilities.CanStoreHiddenTracks;
         /// <inheritdoc />
         public ImageInfo Info => _imageInfo;
         /// <inheritdoc />
