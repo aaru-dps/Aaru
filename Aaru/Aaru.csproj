@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>5.3.2-rc1</Version>
+    <Version>5.3.2~rc1</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2023 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -266,5 +266,12 @@
 
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-x64'">
     <PackageName>$(PackagePrefix)-$(PackageVersion).sles.x86_64$(DebugPackage)</PackageName>
+    <SkipRpmDependencies>true</SkipRpmDependencies>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'sles-x64'">
+    <RpmDotNetDependency Include="openssl-1_1" Version="" />
+    <RpmDotNetDependency Include="libicu" Version="" />
+    <RpmDotNetDependency Include="krb5" Version="" />
+  </ItemGroup>
 </Project>
