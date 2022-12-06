@@ -7,7 +7,6 @@
     <RootNamespace>Aaru.Console</RootNamespace>
     <AssemblyName>Aaru.Console</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
     <Company>Claunia.com</Company>
@@ -42,9 +41,6 @@
     <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="AaruConsole.cs"/>
-  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
       <Link>LICENSE.LGPL</Link>
