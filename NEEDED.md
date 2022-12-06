@@ -13,7 +13,6 @@ Drives are preferred in ATA/ATAPI, SCSI, USB or FireWire buses. Parallel port dr
 and there is no guarantee it can work, at all, with other drives. If in doubt, please contact us.
 
 - 8" shugart floppy drive (preferibly the 240VAC one)
-- ADR tape drive
 - AIT tape drive
 - Apple FileWare "twiggy"
 - Castlewood Orb 5.7
@@ -45,7 +44,6 @@ This is the media for the drives listed above, or media for drives we do have, b
 hardware.
 
 - 5.25" magneto-optical media: 128MiB
-- ADR tapes
 - AIT tapes
 - Apple FileWare "twiggy" floppies
 - Castlewood Orb 5.7
