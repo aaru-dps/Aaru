@@ -1,3 +1,26 @@
+# [5.3.2-rc1] - 2022-12-06
+
+## Fixed
+
+### - Aaru Image Format
+- DDT verification when its size on-image is bigger than 1MiB.
+- Parent block identifier in AaruFormat.
+- Track indexes in when a disc contains a hidden track.
+
+### - Device report
+- Add workaround for device report the AccessTek/Optorite DD0203 drive.
+
+### - Devices
+- Add transfer size to ATA(PI) IDENTIFY (PACKET) DEVICE commands as required by a recent change in the Linux kernel API.
+
+### - Dumping
+- Do not set INDEX 1 to a value higher than what the TOC already said.
+
+## Changes
+
+- Do not allow dumping or converting to image formats that do not properly support hidden tracks when there is a hidden track in the media.
+- Update Newtonson.Json dependency due to security issues.
+
 # [5.3.1] - 2022-03-06
 
 ## Added
@@ -2251,6 +2274,8 @@
 - Apple Partition Map (aka APM).
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
+
+[5.3.2-rc1]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.2-rc1
 
 [5.3.1]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.1
 
