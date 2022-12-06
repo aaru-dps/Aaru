@@ -6,7 +6,6 @@
     <RootNamespace>Aaru.Database</RootNamespace>
     <AssemblyName>Aaru.Database</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
     <Company>Claunia.com</Company>
@@ -56,96 +55,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="2.0.0-preview1-final"/>
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Context.cs"/>
-    <Compile Include="ContextFactory.cs"/>
-    <Compile Include="Migrations\20181126222301_DeviceReportV2.cs"/>
-    <Compile Include="Migrations\20181126222301_DeviceReportV2.Designer.cs"/>
-    <Compile Include="Migrations\20181127001622_AddDeviceBasicFields.cs"/>
-    <Compile Include="Migrations\20181127001622_AddDeviceBasicFields.Designer.cs"/>
-    <Compile Include="Migrations\20181127013131_CorrectReportsDbSet.cs"/>
-    <Compile Include="Migrations\20181127013131_CorrectReportsDbSet.Designer.cs"/>
-    <Compile Include="Migrations\20181221015906_NameValueStatistics.cs"/>
-    <Compile Include="Migrations\20181221015906_NameValueStatistics.Designer.cs"/>
-    <Compile Include="Migrations\20181221032605_MediaStatistics.cs"/>
-    <Compile Include="Migrations\20181221032605_MediaStatistics.Designer.cs"/>
-    <Compile Include="Migrations\20181221034941_SeenDevicesStatistics.cs"/>
-    <Compile Include="Migrations\20181221034941_SeenDevicesStatistics.Designer.cs"/>
-    <Compile Include="Migrations\20181221040408_OperatingSystemStatistics.cs"/>
-    <Compile Include="Migrations\20181221040408_OperatingSystemStatistics.Designer.cs"/>
-    <Compile Include="Migrations\20181221041242_VersionStatistics.cs"/>
-    <Compile Include="Migrations\20181221041242_VersionStatistics.Designer.cs"/>
-    <Compile Include="Migrations\20181221125353_AddStatsCounters.cs"/>
-    <Compile Include="Migrations\20181221125353_AddStatsCounters.Designer.cs"/>
-    <Compile Include="Migrations\20181223183913_FixUnsignedFields.cs"/>
-    <Compile Include="Migrations\20181223183913_FixUnsignedFields.Designer.cs"/>
-    <Compile Include="Migrations\20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.cs"/>
-    <Compile Include="Migrations\20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs"/>
-    <Compile Include="Migrations\20181224044809_StoreUsbIdsInDatabase.cs"/>
-    <Compile Include="Migrations\20181224044809_StoreUsbIdsInDatabase.Designer.cs"/>
-    <Compile Include="Migrations\20181224172147_FixUsbIdsAndIndexes.cs"/>
-    <Compile Include="Migrations\20181224172147_FixUsbIdsAndIndexes.Designer.cs"/>
-    <Compile Include="Migrations\20181225002740_AddCdOffsets.cs"/>
-    <Compile Include="Migrations\20181225002740_AddCdOffsets.Designer.cs"/>
-    <Compile Include="Migrations\20181225152947_StoreMmcGetConfigurationResponse.cs"/>
-    <Compile Include="Migrations\20181225152947_StoreMmcGetConfigurationResponse.Designer.cs"/>
-    <Compile Include="Migrations\20181225214500_StoreReadResultsInReportDatabase.cs"/>
-    <Compile Include="Migrations\20181225214500_StoreReadResultsInReportDatabase.Designer.cs"/>
-    <Compile Include="Migrations\20190102061236_AddMultisessionLeadTest.cs"/>
-    <Compile Include="Migrations\20190102061236_AddMultisessionLeadTest.Designer.cs"/>
-    <Compile Include="Migrations\20190102230036_AddOptimalReadMultipleCount.cs"/>
-    <Compile Include="Migrations\20190102230036_AddOptimalReadMultipleCount.Designer.cs"/>
-    <Compile Include="Migrations\20190108013456_AddChangeableScsiModes.cs"/>
-    <Compile Include="Migrations\20190108013456_AddChangeableScsiModes.Designer.cs"/>
-    <Compile Include="Migrations\20190525183723_IdForDensityCode.cs"/>
-    <Compile Include="Migrations\20190525183723_IdForDensityCode.Designer.cs"/>
-    <Compile Include="Migrations\20191103000828_MakeFieldsUnsigned.cs"/>
-    <Compile Include="Migrations\20191103000828_MakeFieldsUnsigned.Designer.cs"/>
-    <Compile Include="Migrations\20191207175444_SyncWithServerChanges.cs"/>
-    <Compile Include="Migrations\20191207175444_SyncWithServerChanges.Designer.cs"/>
-    <Compile Include="Migrations\20191207183522_AddNameCountModel.cs"/>
-    <Compile Include="Migrations\20191207183522_AddNameCountModel.Designer.cs"/>
-    <Compile Include="Migrations\20191207184342_AddRemoteStats.cs"/>
-    <Compile Include="Migrations\20191207184342_AddRemoteStats.Designer.cs"/>
-    <Compile Include="Migrations\20200710140320_FixIndexes.cs"/>
-    <Compile Include="Migrations\20200710140320_FixIndexes.Designer.cs"/>
-    <Compile Include="Migrations\20200710164101_AddCanReadGdRomUsingSwapDisc.cs"/>
-    <Compile Include="Migrations\20200710164101_AddCanReadGdRomUsingSwapDisc.Designer.cs"/>
-    <Compile Include="Migrations\20200710170129_AddGdRomSwapDiscCapabilities.cs"/>
-    <Compile Include="Migrations\20200710170129_AddGdRomSwapDiscCapabilities.Designer.cs"/>
-    <Compile Include="Migrations\20200710192426_MakeCanReadGdRomUsingSwapDiscNullable.cs"/>
-    <Compile Include="Migrations\20200710192426_MakeCanReadGdRomUsingSwapDiscNullable.Designer.cs"/>
-    <Compile Include="Migrations\20200710194507_AddAudioFieldsToGdromReadCapabilities.cs"/>
-    <Compile Include="Migrations\20200710194507_AddAudioFieldsToGdromReadCapabilities.Designer.cs"/>
-    <Compile Include="Migrations\20200711182425_AddFieldsForF1hCommand06hSubcommand.cs"/>
-    <Compile Include="Migrations\20200711182425_AddFieldsForF1hCommand06hSubcommand.Designer.cs"/>
-    <Compile Include="Migrations\20200711230202_FixGdRomCapabilitiesFieldName.cs"/>
-    <Compile Include="Migrations\20200711230202_FixGdRomCapabilitiesFieldName.Designer.cs"/>
-    <Compile Include="Migrations\20211208214543_AddNesHeaders.cs"/>
-    <Compile Include="Migrations\20211208214543_AddNesHeaders.Designer.cs"/>
-    <Compile Include="Migrations\AaruContextModelSnapshot.cs"/>
-    <Compile Include="Models\BaseModel.cs"/>
-    <Compile Include="Models\BaseOperatingSystem.cs"/>
-    <Compile Include="Models\CdOffset.cs"/>
-    <Compile Include="Models\Command.cs"/>
-    <Compile Include="Models\Device.cs"/>
-    <Compile Include="Models\DeviceStat.cs"/>
-    <Compile Include="Models\Filesystem.cs"/>
-    <Compile Include="Models\Filter.cs"/>
-    <Compile Include="Models\Media.cs"/>
-    <Compile Include="Models\MediaFormat.cs"/>
-    <Compile Include="Models\NameCountModel.cs"/>
-    <Compile Include="Models\NesHeaderInfo.cs"/>
-    <Compile Include="Models\OperatingSystem.cs"/>
-    <Compile Include="Models\Partition.cs"/>
-    <Compile Include="Models\RemoteApplication.cs"/>
-    <Compile Include="Models\RemoteArchitecture.cs"/>
-    <Compile Include="Models\RemoteOperatingSystem.cs"/>
-    <Compile Include="Models\Report.cs"/>
-    <Compile Include="Models\UsbProduct.cs"/>
-    <Compile Include="Models\UsbVendor.cs"/>
-    <Compile Include="Models\Version.cs"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>

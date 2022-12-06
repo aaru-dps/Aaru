@@ -7,7 +7,6 @@
     <RootNamespace>Aaru.Filters</RootNamespace>
     <AssemblyName>Aaru.Filters</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
     <Company>Claunia.com</Company>
@@ -42,27 +41,6 @@
     <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Authors.cs"/>
-    <Compile Include="Localization\Localization.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Localization.resx</DependentUpon>
-    </Compile>
-    <Compile Include="OffsetStream.cs"/>
-    <Compile Include="Register.cs"/>
-    <Compile Include="SplitJoinStream.cs"/>
-    <Compile Include="ZZZNoFilter.cs"/>
-    <Compile Include="ForcedSeekStream.cs"/>
-    <Compile Include="GZip.cs"/>
-    <Compile Include="AppleSingle.cs"/>
-    <Compile Include="AppleDouble.cs"/>
-    <Compile Include="MacBinary.cs"/>
-    <Compile Include="BZip2.cs"/>
-    <Compile Include="PCExchange.cs"/>
-    <Compile Include="LZip.cs"/>
-    <Compile Include="XZ.cs"/>
-  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
       <Link>LICENSE.LGPL</Link>

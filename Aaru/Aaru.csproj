@@ -7,7 +7,6 @@
     <RootNamespace>Aaru</RootNamespace>
     <AssemblyName>aaru</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net7.0</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
@@ -33,46 +32,6 @@
   <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
     <InternalsVisibleTo Include="Aaru.Tests"/>
     <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Commands\Database\DatabaseFamily.cs"/>
-    <Compile Include="Commands\Database\Statistics.cs"/>
-    <Compile Include="Commands\Database\Update.cs"/>
-    <Compile Include="Commands\Device\DeviceFamily.cs"/>
-    <Compile Include="Commands\Device\Info.cs"/>
-    <Compile Include="Commands\Device\DeviceReport.cs"/>
-    <Compile Include="Commands\Device\List.cs"/>
-    <Compile Include="Commands\Filesystem\Info.cs"/>
-    <Compile Include="Commands\Filesystem\ExtractFiles.cs"/>
-    <Compile Include="Commands\Filesystem\FilesystemFamily.cs"/>
-    <Compile Include="Commands\Filesystem\Options.cs"/>
-    <Compile Include="Commands\Filesystem\Ls.cs"/>
-    <Compile Include="Commands\Formats.cs"/>
-    <Compile Include="Commands\Image\Checksum.cs"/>
-    <Compile Include="Commands\Image\Compare.cs"/>
-    <Compile Include="Commands\Image\Convert.cs"/>
-    <Compile Include="Commands\Image\CreateSidecar.cs"/>
-    <Compile Include="Commands\Image\Decode.cs"/>
-    <Compile Include="Commands\Image\Entropy.cs"/>
-    <Compile Include="Commands\Image\ImageFamily.cs"/>
-    <Compile Include="Commands\Image\Info.cs"/>
-    <Compile Include="Commands\Image\Options.cs"/>
-    <Compile Include="Commands\Image\Print.cs"/>
-    <Compile Include="Commands\Image\Verify.cs"/>
-    <Compile Include="Commands\ListNamespaces.cs"/>
-    <Compile Include="Commands\Media\Dump.cs"/>
-    <Compile Include="Commands\Media\MediaFamily.cs"/>
-    <Compile Include="Commands\Media\Info.cs"/>
-    <Compile Include="Commands\Media\Scan.cs"/>
-    <Compile Include="Commands\Archive\ArchiveFamily.cs"/>
-    <Compile Include="Commands\Archive\Info.cs"/>
-    <Compile Include="Commands\Remote.cs"/>
-    <Compile Include="Main.cs"/>
-    <Compile Include="Commands\Configure.cs"/>
-    <Compile Include="Commands\ListEncodings.cs"/>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\"/>
   </ItemGroup>
   <ItemGroup>
     <None Remove="Packaging.Targets"/>

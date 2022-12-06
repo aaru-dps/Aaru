@@ -7,7 +7,6 @@
     <RootNamespace>Aaru.Partitions</RootNamespace>
     <AssemblyName>Aaru.Partitions</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
     <Company>Claunia.com</Company>
@@ -43,36 +42,6 @@
     <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="AppleMap.cs"/>
-    <Compile Include="Atari.cs"/>
-    <Compile Include="Authors.cs"/>
-    <Compile Include="Localization\Localization.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Localization.resx</DependentUpon>
-    </Compile>
-    <Compile Include="MBR.cs"/>
-    <Compile Include="NeXT.cs"/>
-    <Compile Include="RDB.cs"/>
-    <Compile Include="Register.cs"/>
-    <Compile Include="Sun.cs"/>
-    <Compile Include="GPT.cs"/>
-    <Compile Include="RioKarma.cs"/>
-    <Compile Include="BSD.cs"/>
-    <Compile Include="PC98.cs"/>
-    <Compile Include="DEC.cs"/>
-    <Compile Include="SGI.cs"/>
-    <Compile Include="Acorn.cs"/>
-    <Compile Include="DragonFlyBSD.cs"/>
-    <Compile Include="VTOC.cs"/>
-    <Compile Include="Human68k.cs"/>
-    <Compile Include="Xbox.cs"/>
-    <Compile Include="UNIX.cs"/>
-    <Compile Include="XENIX.cs"/>
-    <Compile Include="Plan9.cs"/>
-    <Compile Include="Apricot.cs"/>
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
     <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>

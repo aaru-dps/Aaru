@@ -6,7 +6,6 @@
     <RootNamespace>Aaru.Tests.Devices</RootNamespace>
     <AssemblyName>Aaru.Tests.Devices</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net7.0</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
@@ -27,51 +26,6 @@
     <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Localization\Localization.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Localization.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Main.cs"/>
-    <Compile Include="Device.cs"/>
-    <Compile Include="Command.cs"/>
-    <Compile Include="SCSI.cs"/>
-    <Compile Include="ATA.cs"/>
-    <Compile Include="NVMe.cs"/>
-    <Compile Include="SCSI_MMC\GdRom.cs"/>
-    <Compile Include="SCSI_MMC\LeadOutTrap.cs"/>
-    <Compile Include="SCSI_MMC\MediaTek.cs"/>
-    <Compile Include="SCSI_MMC\SCSI_MMC.cs"/>
-    <Compile Include="SecureDigital.cs"/>
-    <Compile Include="SCSI\Adaptec.cs"/>
-    <Compile Include="SCSI\ArchiveCorp.cs"/>
-    <Compile Include="SCSI\Certance.cs"/>
-    <Compile Include="SCSI\Fujitsu.cs"/>
-    <Compile Include="SCSI\HL-DT-ST.cs"/>
-    <Compile Include="SCSI\HP.cs"/>
-    <Compile Include="SCSI\Kreon.cs"/>
-    <Compile Include="SCSI\MMC.cs"/>
-    <Compile Include="SCSI\NEC.cs"/>
-    <Compile Include="SCSI\Pioneer.cs"/>
-    <Compile Include="SCSI\Plasmon.cs"/>
-    <Compile Include="SCSI\Plextor.cs"/>
-    <Compile Include="SCSI\SBC.cs"/>
-    <Compile Include="SCSI\SMC.cs"/>
-    <Compile Include="SCSI\SPC.cs"/>
-    <Compile Include="SCSI\SSC.cs"/>
-    <Compile Include="SCSI\SyQuest.cs"/>
-    <Compile Include="ATA\Ata28.cs"/>
-    <Compile Include="ATA\Ata48.cs"/>
-    <Compile Include="ATA\AtaCHS.cs"/>
-    <Compile Include="ATA\Atapi.cs"/>
-    <Compile Include="ATA\Cfa.cs"/>
-    <Compile Include="ATA\MCPT.cs"/>
-    <Compile Include="ATA\Smart.cs"/>
-    <Compile Include="SecureDigital\SecureDigital.cs"/>
-    <Compile Include="SecureDigital\MultiMediaCard.cs"/>
-    <Compile Include="DecodeATARegisters.cs"/>
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
     <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"/>

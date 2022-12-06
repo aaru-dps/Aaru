@@ -7,7 +7,6 @@
     <RootNamespace>Aaru.Core</RootNamespace>
     <AssemblyName>Aaru.Core</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
     <Company>Claunia.com</Company>
@@ -42,98 +41,6 @@
     <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Devices\Dumping\CompactDisc\CdiReady.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Data.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Dump.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Error.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\LeadOuts.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Offset.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Plextor.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Pregap.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Recordable.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Subchannel.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Tags.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Tracks.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc\Trim.cs" />
-    <Compile Include="Devices\Dumping\Dump.cs" />
-    <Compile Include="Devices\Dumping\LinearMemory\Retrode.cs" />
-    <Compile Include="Devices\Dumping\Metadata.cs" />
-    <Compile Include="Devices\Dumping\MiniDisc.cs" />
-    <Compile Include="Devices\Dumping\PlayStationPortable\MemoryStick.cs" />
-    <Compile Include="Devices\Dumping\PlayStationPortable\PlayStationPortable.cs" />
-    <Compile Include="Devices\Dumping\PlayStationPortable\UMD.cs" />
-    <Compile Include="Devices\Dumping\Sbc\Data.cs" />
-    <Compile Include="Devices\Dumping\Sbc\Error.cs" />
-    <Compile Include="Devices\Dumping\Sbc\Dump.cs" />
-    <Compile Include="Devices\Dumping\Sbc\Optical.cs" />
-    <Compile Include="Devices\Dumping\Sbc\Trim.cs" />
-    <Compile Include="Devices\Info\DeviceInfo.cs" />
-    <Compile Include="Devices\Info\Plextor.cs" />
-    <Compile Include="Devices\Info\Properties.cs" />
-    <Compile Include="Devices\Report\DeviceReport.cs" />
-    <Compile Include="Devices\Report\GdRomSwapTrick.cs" />
-    <Compile Include="Devices\Report\Scsi.cs" />
-    <Compile Include="Devices\Report\MMC.cs" />
-    <Compile Include="Devices\Report\SSC.cs" />
-    <Compile Include="Devices\Scanning\MediaScan.cs" />
-    <Compile Include="Entropy.cs" />
-    <Compile Include="GetPluginBase.cs" />
-    <Compile Include="Graphics\BlockMap.cs" />
-    <Compile Include="Graphics\Spiral.cs" />
-    <Compile Include="ImageInfo.cs" />
-    <Compile Include="Logging\ErrorLog.cs" />
-    <Compile Include="Logging\SubchannelLog.cs" />
-    <Compile Include="Media\CompactDisc.cs" />
-    <Compile Include="Media\Detection\MMC.cs" />
-    <Compile Include="Media\Info\CompactDisc.cs" />
-    <Compile Include="Media\Info\ScsiInfo.cs" />
-    <Compile Include="Media\Info\XgdInfo.cs" />
-    <Compile Include="Options.cs" />
-    <Compile Include="ImageFormat.cs" />
-    <Compile Include="Error.cs" />
-    <Compile Include="PrintScsiModePages.cs" />
-    <Compile Include="Sidecar\Files.cs" />
-    <Compile Include="Spectre.cs" />
-    <Compile Include="Statistics.cs" />
-    <Compile Include="Checksum.cs" />
-    <Compile Include="Logging\IBGLog.cs" />
-    <Compile Include="Logging\MHDDLog.cs" />
-    <Compile Include="Devices\Scanning\ATA.cs" />
-    <Compile Include="Devices\Scanning\SecureDigital.cs" />
-    <Compile Include="Devices\Scanning\NVMe.cs" />
-    <Compile Include="Devices\Scanning\SCSI.cs" />
-    <Compile Include="Devices\Dumping\ATA.cs" />
-    <Compile Include="Devices\Dumping\NVMe.cs" />
-    <Compile Include="Devices\Dumping\SCSI.cs" />
-    <Compile Include="Devices\Dumping\SecureDigital.cs" />
-    <Compile Include="DataFile.cs" />
-    <Compile Include="Filesystems.cs" />
-    <Compile Include="Devices\Scanning\ScanResults.cs" />
-    <Compile Include="Devices\Report\ATA.cs" />
-    <Compile Include="Devices\Report\FireWire.cs" />
-    <Compile Include="Devices\Report\USB.cs" />
-    <Compile Include="Devices\Report\SecureDigital.cs" />
-    <Compile Include="Remote.cs" />
-    <Compile Include="Devices\Report\PCMCIA.cs" />
-    <Compile Include="Devices\Reader.cs" />
-    <Compile Include="Devices\ReaderATA.cs" />
-    <Compile Include="Devices\ReaderSCSI.cs" />
-    <Compile Include="Devices\Dumping\SSC.cs" />
-    <Compile Include="Devices\Dumping\MMC.cs" />
-    <Compile Include="Devices\Dumping\XGD.cs" />
-    <Compile Include="Devices\Dumping\ResumeSupport.cs" />
-    <Compile Include="Partitions.cs" />
-    <Compile Include="Sidecar\Events.cs" />
-    <Compile Include="Sidecar\Helpers.cs" />
-    <Compile Include="Sidecar\Sidecar.cs" />
-    <Compile Include="Sidecar\OpticalDisc.cs" />
-    <Compile Include="Sidecar\BlockMedia.cs" />
-    <Compile Include="Sidecar\LinearMedia.cs" />
-    <Compile Include="Sidecar\AudioMedia.cs" />
-    <Compile Include="Sidecar\BlockTape.cs" />
-    <Compile Include="Logging\DumpLog.cs" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aaru.Archives\Aaru.Archives.csproj" />
     <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
