@@ -7,7 +7,6 @@
     <RootNamespace>Aaru.Dto</RootNamespace>
     <AssemblyName>Aaru.Dto</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0-alpha8</Version>
     <Company>Claunia.com</Company>
@@ -49,14 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CdOffsetDto.cs"/>
-    <Compile Include="DeviceDto.cs"/>
-    <Compile Include="NesHeaderDto.cs"/>
-    <Compile Include="SyncDto.cs"/>
-    <Compile Include="UsbProductDto.cs"/>
-    <Compile Include="UsbVendorDto.cs"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
