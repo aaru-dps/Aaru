@@ -59,7 +59,7 @@ if [[ ${OS_NAME} == Linux ]]; then
  tar --exclude-vcs --exclude="*/bin" --exclude="*/obj" --exclude="build" --exclude="pkg/pacman/*/*.tar.xz" \
   --exclude="pkg/pacman/*/src" --exclude="pkg/pacman/*/pkg"  --exclude="pkg/pacman/*/*.tar" \
   --exclude="pkg/pacman/*/*.asc" --exclude="*.user" --exclude=".idea" --exclude=".vs" --exclude=".vscode" \
-  -cvf pkg/pacman/stable/aaru-src-${AARU_VERSION}.tar .
+  --exclude="build.iso" --exclude=".DS_Store" -cvf pkg/pacman/stable/aaru-src-${AARU_VERSION}.tar .
  cd pkg/pacman/stable
  xz -v9e aaru-src-${AARU_VERSION}.tar
  gpg --armor --detach-sign aaru-src-${AARU_VERSION}.tar.xz
