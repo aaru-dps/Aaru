@@ -11,7 +11,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>5.3.1</Version>
+    <Version>5.3.2-rc1</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2023 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -21,7 +21,7 @@
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
   </PropertyGroup>
   <PropertyGroup>
-    <NrtRevisionFormat>$(Version)+{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
     <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
