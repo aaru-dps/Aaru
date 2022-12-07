@@ -7,10 +7,6 @@
 //
 // Component      : Apple Lisa filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Identifies the Apple Lisa filesystem and shows information.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

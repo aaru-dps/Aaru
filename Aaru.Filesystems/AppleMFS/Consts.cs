@@ -7,10 +7,6 @@
 //
 // Component      : Apple Macintosh File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Apple Macintosh File System constants.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

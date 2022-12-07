@@ -7,10 +7,6 @@
 //
 // Component      : Apple DOS filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Identifies the Apple DOS filesystem and shows information.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

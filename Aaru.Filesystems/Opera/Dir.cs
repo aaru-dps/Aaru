@@ -7,10 +7,6 @@
 //
 // Component      : Opera filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Methods to handle Opera filesystem directories.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

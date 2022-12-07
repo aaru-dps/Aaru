@@ -7,10 +7,6 @@
 //
 // Component      : Microsoft FAT filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Identifies the Microsoft FAT Boot Parameter Block variant.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

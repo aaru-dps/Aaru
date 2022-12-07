@@ -7,10 +7,6 @@
 //
 // Component      : Apple Lisa filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Handles mounting and umounting the Apple Lisa filesystem.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

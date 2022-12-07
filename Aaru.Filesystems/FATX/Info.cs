@@ -7,10 +7,6 @@
 //
 // Component      : FATX filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Identifies the FATX filesystem and shows information.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

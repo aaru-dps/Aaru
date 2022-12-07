@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Handles file and extents.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

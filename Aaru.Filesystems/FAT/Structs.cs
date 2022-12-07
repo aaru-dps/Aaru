@@ -7,10 +7,6 @@
 //
 // Component      : Microsoft FAT filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Microsoft FAT filesystem structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

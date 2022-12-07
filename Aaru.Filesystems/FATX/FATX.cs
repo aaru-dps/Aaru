@@ -7,10 +7,6 @@
 //
 // Component      : FATX filesystem plugin
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Constructors and common variables for the FATX filesystem plugin.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

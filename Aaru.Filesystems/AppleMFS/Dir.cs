@@ -7,10 +7,6 @@
 //
 // Component      : Apple Macintosh File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Methods to handle the Apple Macintosh File System directory.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

@@ -7,10 +7,6 @@
 //
 // Component      : Apple Macintosh File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Handles mounting and umounting the Apple Macintosh File System.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

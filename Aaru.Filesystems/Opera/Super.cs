@@ -7,10 +7,6 @@
 //
 // Component      : Opera filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Handles mounting and umounting the Opera filesystem.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

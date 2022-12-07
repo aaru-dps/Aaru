@@ -7,10 +7,6 @@
 //
 // Component      : Apple DOS filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Handles mounting and umounting the Apple DOS filesystem.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

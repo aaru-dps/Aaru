@@ -7,10 +7,6 @@
 //
 // Component      : FATX filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Handles mounting and umounting the FATX filesystem.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

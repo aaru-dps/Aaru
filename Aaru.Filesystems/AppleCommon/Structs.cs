@@ -7,10 +7,6 @@
 //
 // Component      : Common Apple file systems.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Common Apple file systems structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Decodes path tables.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

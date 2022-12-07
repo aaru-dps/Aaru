@@ -7,10 +7,6 @@
 //
 // Component      : Apple Lisa filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Methods to handle Apple Lisa filesystem extents.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

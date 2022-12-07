@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Constructors and common variables for the ISO9660 filesystem plugin.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

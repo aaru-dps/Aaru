@@ -7,10 +7,6 @@
 //
 // Component      : Apple Hierarchical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Apple Hierarchical File System constants.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify

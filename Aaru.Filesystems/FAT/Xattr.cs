@@ -7,10 +7,6 @@
 //
 // Component      : Microsoft FAT filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Methods to handle Microsoft FAT extended attributes.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
