@@ -813,7 +813,7 @@ public sealed partial class FAT
                     _             => Localization.Microsoft_FAT16
                 });
 
-                XmlFsType.Type = FS_TYPE_FAT12;
+                XmlFsType.Type = FS_TYPE_FAT16;
             }
 
             if(bpbKind == BpbKind.Atari)
