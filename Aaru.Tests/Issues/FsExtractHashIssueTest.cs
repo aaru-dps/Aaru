@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -9,8 +11,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using FluentAssertions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
@@ -75,17 +75,20 @@ public abstract class FsExtractHashIssueTest
 
         Assert.True(File.Exists($"{TestFile}.unittest.json"));
 
-        var serializer = new JsonSerializer
+        var serializerOptions = new JsonSerializerOptions
         {
-            Formatting        = Formatting.Indented,
-            MaxDepth          = 16384,
-            NullValueHandling = NullValueHandling.Ignore
+            Converters =
+            {
+                new JsonStringEnumConverter()
+            },
+            MaxDepth                    = 1536, // More than this an we get a StackOverflowException
+            WriteIndented               = true,
+            DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+            PropertyNameCaseInsensitive = true
         };
 
-        serializer.Converters.Add(new StringEnumConverter());
-
-        var               sr           = new StreamReader($"{TestFile}.unittest.json");
-        FsExtractHashData expectedData = serializer.Deserialize<FsExtractHashData>(new JsonTextReader(sr));
+        var               sr           = new FileStream($"{TestFile}.unittest.json", FileMode.Open);
+        FsExtractHashData expectedData = JsonSerializer.Deserialize<FsExtractHashData>(sr, serializerOptions);
 
         Assert.NotNull(expectedData);
 

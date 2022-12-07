@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
@@ -13,8 +15,6 @@ using Aaru.Core;
 using Aaru.Tests.Filesystems;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images;
@@ -251,29 +251,31 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 Assert.AreEqual(ErrorNumber.NoError, ret,
                                                 string.Format(Localization.Unmountable_0, testFile));
 
-                                var serializer = new JsonSerializer
+                                var serializerOptions = new JsonSerializerOptions
                                 {
-                                    Formatting        = Formatting.Indented,
-                                    MaxDepth          = 16384,
-                                    NullValueHandling = NullValueHandling.Ignore
+                                    Converters =
+                                    {
+                                        new JsonStringEnumConverter()
+                                    },
+                                    MaxDepth = 1536, // More than this an we get a StackOverflowException
+                                    WriteIndented = true,
+                                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                                    PropertyNameCaseInsensitive = true
                                 };
-
-                                serializer.Converters.Add(new StringEnumConverter());
 
                                 if(track.FileSystems[i].ContentsJson != null)
                                     track.FileSystems[i].Contents =
-                                        serializer.
-                                            Deserialize<
-                                                Dictionary<string, FileData>>(new JsonTextReader(new StringReader(track.
-                                                                                  FileSystems[i].
-                                                                                  ContentsJson)));
+                                        JsonSerializer.
+                                            Deserialize<Dictionary<string, FileData>>(track.FileSystems[i].ContentsJson,
+                                                serializerOptions);
                                 else if(File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
                                 {
-                                    var sr = new StreamReader($"{testFile}.track{track.Number}.filesystem{i
-                                    }.contents.json");
+                                    var sr =
+                                        new FileStream($"{testFile}.track{track.Number}.filesystem{i}.contents.json",
+                                                       FileMode.Open);
 
                                     track.FileSystems[i].Contents =
-                                        serializer.Deserialize<Dictionary<string, FileData>>(new JsonTextReader(sr));
+                                        JsonSerializer.Deserialize<Dictionary<string, FileData>>(sr, serializerOptions);
                                 }
 
                                 if(track.FileSystems[i].Contents is null)
@@ -285,8 +287,8 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 // Uncomment to generate JSON file
                                 /*    var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/");
 
-                                    var sw = new StreamWriter($"{testFile}.track{track.Number}.filesystem{i}.contents.json");
-                                    serializer.Serialize(sw, contents);
+                                    var sw = new FileStream($"{testFile}.track{track.Number}.filesystem{i}.contents.json", FileMode.Create);
+                                    JsonSerializer.Serialize(sw, contents, serializerOptions);
                                     sw.Close();*/
                             }
                         }

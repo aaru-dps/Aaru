@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -9,8 +11,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using FluentAssertions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
@@ -115,24 +115,25 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
                 Assert.AreEqual(ErrorNumber.NoError, ret, string.Format(Localization.Unmountable_0, testFile));
 
-                var serializer = new JsonSerializer
+                var serializerOptions = new JsonSerializerOptions
                 {
-                    Formatting        = Formatting.Indented,
-                    MaxDepth          = 16384,
-                    NullValueHandling = NullValueHandling.Ignore
+                    Converters =
+                    {
+                        new JsonStringEnumConverter()
+                    },
+                    MaxDepth                    = 1536, // More than this an we get a StackOverflowException
+                    WriteIndented               = true,
+                    DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                    PropertyNameCaseInsensitive = true
                 };
-
-                serializer.Converters.Add(new StringEnumConverter());
 
                 if(test.ContentsJson != null)
                     test.Contents =
-                        serializer.
-                            Deserialize<
-                                Dictionary<string, FileData>>(new JsonTextReader(new StringReader(test.ContentsJson)));
+                        JsonSerializer.Deserialize<Dictionary<string, FileData>>(test.ContentsJson, serializerOptions);
                 else if(File.Exists($"{testFile}.contents.json"))
                 {
-                    var sr = new StreamReader($"{testFile}.contents.json");
-                    test.Contents = serializer.Deserialize<Dictionary<string, FileData>>(new JsonTextReader(sr));
+                    var sr = new FileStream($"{testFile}.contents.json", FileMode.Open);
+                    test.Contents = JsonSerializer.Deserialize<Dictionary<string, FileData>>(sr, serializerOptions);
                 }
 
                 if(test.Contents is null)
@@ -222,17 +223,20 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
             Dictionary<string, FileData> contents = BuildDirectory(fs, "/");
 
-            var serializer = new JsonSerializer
+            var serializerOptions = new JsonSerializerOptions
             {
-                Formatting        = Formatting.Indented,
-                MaxDepth          = 16384,
-                NullValueHandling = NullValueHandling.Ignore
+                Converters =
+                {
+                    new JsonStringEnumConverter()
+                },
+                MaxDepth                    = 1536,
+                WriteIndented               = true,
+                DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                PropertyNameCaseInsensitive = true
             };
 
-            serializer.Converters.Add(new StringEnumConverter());
-
-            var sw = new StreamWriter($"{testFile}.contents.json");
-            serializer.Serialize(sw, contents);
+            var sw = new FileStream($"{testFile}.contents.json", FileMode.Create);
+            JsonSerializer.Serialize(sw, contents, serializerOptions);
             sw.Close();
         }
     }

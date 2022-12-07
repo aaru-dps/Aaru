@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -8,8 +10,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using Aaru.Tests.Filesystems;
 using FluentAssertions.Execution;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Images;
@@ -205,18 +205,20 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                             if(!File.Exists(expectedDataFilename))
                                 continue;
 
-                            var serializer = new JsonSerializer
+                            var serializerOptions = new JsonSerializerOptions
                             {
-                                Formatting        = Formatting.Indented,
-                                MaxDepth          = 16384,
-                                NullValueHandling = NullValueHandling.Ignore
+                                Converters =
+                                {
+                                    new JsonStringEnumConverter()
+                                },
+                                MaxDepth                    = 1536, // More than this an we get a StackOverflowException
+                                WriteIndented               = true,
+                                DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                                PropertyNameCaseInsensitive = true
                             };
 
-                            serializer.Converters.Add(new StringEnumConverter());
-
-                            var sr = new StreamReader(expectedDataFilename);
-
-                            VolumeData[] expectedData = serializer.Deserialize<VolumeData[]>(new JsonTextReader(sr));
+                            var          sr           = new FileStream(expectedDataFilename, FileMode.Open);
+                            VolumeData[] expectedData = JsonSerializer.Deserialize<VolumeData[]>(sr, serializerOptions);
 
                             Assert.NotNull(expectedData);
 
@@ -259,8 +261,8 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                                     };
                                 }
 
-                                var sw = new StreamWriter(expectedDataFilename);
-                                serializer.Serialize(sw, expectedData);
+                                var sw = new FileStream(expectedDataFilename, FileMode.Create);
+                                JsonSerializer.Serialize(sw, expectedData, serializerOptions);
                                 sw.Close();
                                 */
 
