@@ -281,8 +281,30 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 if(track.FileSystems[i].Contents is null)
                                     continue;
 
+                                int currentDepth = 0;
+
                                 ReadOnlyFilesystemTest.TestDirectory(rofs, "/", track.FileSystems[i].Contents, testFile,
-                                                                     false);
+                                                                     true,
+                                                                     out List<ReadOnlyFilesystemTest.NextLevel>
+                                                                             currentLevel, currentDepth);
+
+                                while(currentLevel.Count > 0)
+                                {
+                                    currentDepth++;
+                                    List<ReadOnlyFilesystemTest.NextLevel> nextLevels = new();
+
+                                    foreach(ReadOnlyFilesystemTest.NextLevel subLevel in currentLevel)
+                                    {
+                                        ReadOnlyFilesystemTest.TestDirectory(rofs, subLevel.Path, subLevel.Children,
+                                                                             testFile, true,
+                                                                             out List<ReadOnlyFilesystemTest.NextLevel>
+                                                                                 nextLevel, currentDepth);
+
+                                        nextLevels.AddRange(nextLevel);
+                                    }
+
+                                    currentLevel = nextLevels;
+                                }
 
                                 // Uncomment to generate JSON file
                                 /*    var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/");

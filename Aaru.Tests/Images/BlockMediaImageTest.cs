@@ -247,7 +247,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                                     Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 
-                                    Errno error = fs.Mount(image, partitions[i], null, null, null);
+                                    ErrorNumber error = fs.Mount(image, partitions[i], null, null, null);
 
                                     Assert.AreEqual(ErrorNumber.NoError, error,
                                                     string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
@@ -297,7 +297,29 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                                 VolumeData volumeData = expectedData[j];
 
-                                ReadOnlyFilesystemTest.TestDirectory(fs, "/", volumeData.Files, testFile, false);
+                                int currentDepth = 0;
+
+                                ReadOnlyFilesystemTest.TestDirectory(fs, "/", volumeData.Files, testFile, true,
+                                                                     out List<ReadOnlyFilesystemTest.NextLevel>
+                                                                             currentLevel, currentDepth);
+
+                                while(currentLevel.Count > 0)
+                                {
+                                    currentDepth++;
+                                    List<ReadOnlyFilesystemTest.NextLevel> nextLevels = new();
+
+                                    foreach(ReadOnlyFilesystemTest.NextLevel subLevel in currentLevel)
+                                    {
+                                        ReadOnlyFilesystemTest.TestDirectory(fs, subLevel.Path, subLevel.Children,
+                                                                             testFile, true,
+                                                                             out List<ReadOnlyFilesystemTest.NextLevel>
+                                                                                 nextLevel, currentDepth);
+
+                                        nextLevels.AddRange(nextLevel);
+                                    }
+
+                                    currentLevel = nextLevels;
+                                }
                             }
                         }
                     });
