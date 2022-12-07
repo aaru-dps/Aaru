@@ -52,7 +52,7 @@ public class NeXT_Floppy : FilesystemTest
             SectorSize  = 512,
             Clusters    = 624,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -62,7 +62,7 @@ public class NeXT_Floppy : FilesystemTest
             SectorSize  = 512,
             Clusters    = 1344,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -72,7 +72,7 @@ public class NeXT_Floppy : FilesystemTest
             SectorSize  = 512,
             Clusters    = 624,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -82,7 +82,7 @@ public class NeXT_Floppy : FilesystemTest
             SectorSize  = 512,
             Clusters    = 1344,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -92,7 +92,7 @@ public class NeXT_Floppy : FilesystemTest
             SectorSize  = 512,
             Clusters    = 624,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -102,7 +102,7 @@ public class NeXT_Floppy : FilesystemTest
             SectorSize  = 512,
             Clusters    = 1344,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -112,7 +112,7 @@ public class NeXT_Floppy : FilesystemTest
             SectorSize  = 512,
             Clusters    = 624,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -122,7 +122,7 @@ public class NeXT_Floppy : FilesystemTest
             SectorSize  = 512,
             Clusters    = 1344,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -132,7 +132,7 @@ public class NeXT_Floppy : FilesystemTest
             SectorSize  = 512,
             Clusters    = 624,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -142,7 +142,7 @@ public class NeXT_Floppy : FilesystemTest
             SectorSize  = 512,
             Clusters    = 1344,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         }
     };
 }

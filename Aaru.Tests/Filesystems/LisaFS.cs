@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class LisaFs : ReadOnlyFilesystemTest
 {
-    public LisaFs() : base("LisaFS") {}
+    public LisaFs() : base("lisafs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple Lisa filesystem");
     public override IFilesystem Plugin => new LisaFS();

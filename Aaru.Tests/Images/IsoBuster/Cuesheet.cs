@@ -66,7 +66,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 469652,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "New Volume"
                         }
                     }
@@ -438,7 +438,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
                     }
@@ -475,7 +475,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
                     }
@@ -506,7 +506,7 @@ public class Cuesheet : OpticalMediaImageTest
                             Bootable    = true,
                             Clusters    = 308224,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
                     }
@@ -651,7 +651,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 18853,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "New"
                         }
                     }
@@ -681,14 +681,14 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 600,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "INCD"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 402107,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "InCD",
                             VolumeSerial = "40888C15CA13D401InCD"
                         }
@@ -719,7 +719,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 1587,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = ""
                         }
                     }
@@ -920,14 +920,14 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 7876,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 1"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 9340,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 1",
                             VolumeSerial = "50958B61AF6A749E"
                         }
@@ -947,14 +947,14 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 6170,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 2"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 7381,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 2",
                             VolumeSerial = "50958BBBAF6A7444"
                         }
@@ -974,14 +974,14 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 5360,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 3"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 6451,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "Session 3",
                             VolumeSerial = "50958C19AF6A73E6"
                         }
@@ -1001,14 +1001,14 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 45796,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 4"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 6649,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.60",
+                            Type         = "udf",
                             VolumeName   = "Session 4",
                             VolumeSerial = "50958C82AF6A737D"
                         }
@@ -1038,7 +1038,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 22016,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 1"
                         }
                     }
@@ -1055,7 +1055,7 @@ public class Cuesheet : OpticalMediaImageTest
                             {
                                 Clusters    = 222,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = ""
                             }
                         }*/
@@ -1084,7 +1084,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 206560,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 1"
                         }
                     }
@@ -1101,7 +1101,7 @@ public class Cuesheet : OpticalMediaImageTest
                             {
                                 Clusters    = 222,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = ""
                             }
                         }*/
@@ -1131,7 +1131,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 1102,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "VIDEOCD"
                         }
                     }

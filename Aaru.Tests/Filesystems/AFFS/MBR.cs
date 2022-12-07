@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.AFFS;
 [TestFixture]
 public class MBR : FilesystemTest
 {
-    public MBR() : base("Amiga FFS") {}
+    public MBR() : base("affs") {}
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System (MBR)");

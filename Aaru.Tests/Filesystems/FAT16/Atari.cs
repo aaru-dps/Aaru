@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.FAT16;
 [TestFixture]
 public class Atari : ReadOnlyFilesystemTest
 {
-    public Atari() : base("FAT16") {}
+    public Atari() : base("fat16") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (Atari)");
     public override IFilesystem Plugin     => new FAT();

@@ -382,7 +382,7 @@ public class Alcohol : OpticalMediaImageTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
                     }
@@ -472,7 +472,7 @@ public class Alcohol : OpticalMediaImageTest
                         {
                             Clusters     = 3455920,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Test DVD",
                             VolumeSerial = "483E25D50034BBB0"
                         }

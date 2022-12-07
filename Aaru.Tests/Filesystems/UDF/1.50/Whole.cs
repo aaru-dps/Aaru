@@ -53,7 +53,7 @@ public class Whole : FilesystemTest
             Clusters     = 1024000,
             ClusterSize  = 512,
             SystemId     = "*Linux UDFFS",
-            Type         = "UDF v1.50",
+            Type         = "udf",
             VolumeName   = "Volume label",
             VolumeSerial = "595c5d00c5b3405aLinuxUDF"
         },
@@ -66,7 +66,7 @@ public class Whole : FilesystemTest
             Clusters     = 409600,
             ClusterSize  = 512,
             SystemId     = "*Apple Mac OS X UDF FS",
-            Type         = "UDF v1.50",
+            Type         = "udf",
             VolumeName   = "Volume label",
             VolumeSerial = "4DD0458B (Mac OS X newfs_udf) UDF Volume Set"
         },
@@ -79,7 +79,7 @@ public class Whole : FilesystemTest
             Clusters     = 8388608,
             ClusterSize  = 512,
             SystemId     = "*SUN SOLARIS UDF",
-            Type         = "UDF v1.50",
+            Type         = "udf",
             VolumeName   = "*NoLabel*",
             VolumeSerial = "595EB55A"
         },
@@ -92,7 +92,7 @@ public class Whole : FilesystemTest
             Clusters     = 1024000,
             ClusterSize  = 512,
             SystemId     = "*Linux UDFFS",
-            Type         = "UDF v2.01",
+            Type         = "udf",
             VolumeName   = "DicSetter",
             VolumeSerial = "5cc78f8bba4dfe00LinuxUDF"
         },
@@ -105,7 +105,7 @@ public class Whole : FilesystemTest
             Clusters     = 262144,
             ClusterSize  = 512,
             SystemId     = "*NetBSD userland UDF",
-            Type         = "UDF v1.50",
+            Type         = "udf",
             VolumeName   = "anonymous",
             VolumeSerial = "441072592d72c6e9"
         },
@@ -118,7 +118,7 @@ public class Whole : FilesystemTest
             Clusters     = 262144,
             ClusterSize  = 512,
             SystemId     = "*NetBSD userland UDF",
-            Type         = "UDF v1.50",
+            Type         = "udf",
             VolumeName   = "anonymous",
             VolumeSerial = "5b2ab9f9605af1ae"
         },
@@ -131,7 +131,7 @@ public class Whole : FilesystemTest
             Clusters     = 65536,
             ClusterSize  = 2048,
             SystemId     = "*Apple Computer, Inc.",
-            Type         = "UDF v1.50",
+            Type         = "udf",
             VolumeName   = "Volume label",
             VolumeSerial = "DCC41202AppleUDF"
         }

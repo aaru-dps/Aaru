@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.FAT32;
 [TestFixture]
 public class Whole : ReadOnlyFilesystemTest
 {
-    public Whole() : base("FAT32") {}
+    public Whole() : base("fat32") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT32");
 

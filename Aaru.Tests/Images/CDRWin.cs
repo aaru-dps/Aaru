@@ -609,7 +609,7 @@ public class CDRWin : OpticalMediaImageTest
                         {
                             Clusters     = 402107,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "InCD",
                             VolumeSerial = "40888C15CA13D401InCD"
                         }

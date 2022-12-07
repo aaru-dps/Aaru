@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Mfs : ReadOnlyFilesystemTest
 {
-    public Mfs() : base("MFS") {}
+    public Mfs() : base("mfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Macintosh File System");
     public override IFilesystem Plugin => new AppleMFS();

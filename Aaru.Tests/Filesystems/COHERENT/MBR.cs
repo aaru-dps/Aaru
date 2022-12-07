@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.COHERENT;
 [TestFixture]
 public class MBR : FilesystemTest
 {
-    public MBR() : base("Coherent fs") {}
+    public MBR() : base("coherent") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "COHERENT filesystem (MBR)");
     public override IFilesystem Plugin => new SysVfs();

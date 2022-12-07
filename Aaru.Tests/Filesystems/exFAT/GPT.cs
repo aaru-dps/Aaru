@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.exFAT;
 [TestFixture]
 public class GPT : FilesystemTest
 {
-    public GPT() : base("exFAT") {}
+    public GPT() : base("exfat") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (GPT)");
     public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();

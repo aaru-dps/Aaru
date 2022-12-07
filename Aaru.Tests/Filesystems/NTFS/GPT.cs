@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.NTFS;
 [TestFixture]
 public class GPT : FilesystemTest
 {
-    public GPT() : base("NTFS") {}
+    public GPT() : base("ntfs") {}
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "New Technology File System (GPT)");

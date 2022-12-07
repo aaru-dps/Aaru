@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Locus : FilesystemTest
 {
-    public Locus() : base("Locus filesystem") {}
+    public Locus() : base("locus") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Locus filesystem");
     public override IFilesystem Plugin     => new Aaru.Filesystems.Locus();

@@ -52,7 +52,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 90,
             ClusterSize = 4096,
-            Type        = "Minix v3"
+            Type        = "minix3"
         },
         new FileSystemTest
         {
@@ -62,7 +62,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 300,
             ClusterSize = 4096,
-            Type        = "Minix v3"
+            Type        = "minix3"
         },
         new FileSystemTest
         {
@@ -72,7 +72,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 180,
             ClusterSize = 4096,
-            Type        = "Minix v3"
+            Type        = "minix3"
         },
         new FileSystemTest
         {
@@ -82,7 +82,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 360,
             ClusterSize = 4096,
-            Type        = "Minix v3"
+            Type        = "minix3"
         }
     };
 }

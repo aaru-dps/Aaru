@@ -1145,7 +1145,7 @@ public class DiscJuggler : OpticalMediaImageTest
                         {
                             Clusters     = 3455936,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Test DVD",
                             VolumeSerial = "483E25D50034BBB0"
                         }
@@ -1553,7 +1553,7 @@ public class DiscJuggler : OpticalMediaImageTest
                         {
                             Clusters     = 399371,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "InCD",
                             VolumeSerial = "40888C15CA13D401InCD"
                         }
@@ -1793,7 +1793,7 @@ public class DiscJuggler : OpticalMediaImageTest
                         {
                             Clusters     = 9276,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 1",
                             VolumeSerial = "50958B61AF6A749E"
                         }
@@ -1820,7 +1820,7 @@ public class DiscJuggler : OpticalMediaImageTest
                         {
                             Clusters     = 7330,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 2",
                             VolumeSerial = "50958BBBAF6A7444"
                         }
@@ -1847,7 +1847,7 @@ public class DiscJuggler : OpticalMediaImageTest
                         {
                             Clusters     = 6408,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "Session 3",
                             VolumeSerial = "50958C19AF6A73E6"
                         }

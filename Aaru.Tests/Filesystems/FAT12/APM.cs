@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.FAT12;
 [TestFixture]
 public class APM : ReadOnlyFilesystemTest
 {
-    public APM() : base("FAT12") {}
+    public APM() : base("fat12") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT12 (APM)");
     public override IFilesystem Plugin     => new FAT();

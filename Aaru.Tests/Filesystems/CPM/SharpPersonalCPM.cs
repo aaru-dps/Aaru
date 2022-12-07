@@ -35,7 +35,7 @@ namespace Aaru.Tests.Filesystems.CPM;
 [TestFixture]
 public class SharpPersonalCPM : ReadOnlyFilesystemTest
 {
-    public SharpPersonalCPM() : base("CP/M") {}
+    public SharpPersonalCPM() : base("cpmfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Sharp Personal CPM");
 

@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.ProDOS;
 [TestFixture]
 public class APM : FilesystemTest
 {
-    public APM() : base("ProDOS") {}
+    public APM() : base("prodos") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "ProDOS filesystem (APM)");
 

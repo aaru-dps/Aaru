@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.SFS;
 [TestFixture]
 public class MBR : FilesystemTest
 {
-    public MBR() : base("SmartFileSystem") {}
+    public MBR() : base("sfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (MBR)");
     public override IFilesystem Plugin => new Aaru.Filesystems.SFS();

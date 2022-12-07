@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.HFS;
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public Whole() : base("HFS") {}
+    public Whole() : base("hfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS");
 

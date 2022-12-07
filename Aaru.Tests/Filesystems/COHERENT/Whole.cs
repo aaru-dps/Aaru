@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.COHERENT;
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public Whole() : base("Coherent fs") {}
+    public Whole() : base("coherent") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "COHERENT filesystem");
 

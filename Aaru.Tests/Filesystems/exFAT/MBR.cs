@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.exFAT;
 [TestFixture]
 public class MBR : FilesystemTest
 {
-    public MBR() : base("exFAT") {}
+    public MBR() : base("exfat") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (MBR)");
 

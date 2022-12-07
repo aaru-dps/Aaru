@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.AFFS;
 [TestFixture]
 public class APM : FilesystemTest
 {
-    public APM() : base("Amiga FFS") {}
+    public APM() : base("affs") {}
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System (APM)");

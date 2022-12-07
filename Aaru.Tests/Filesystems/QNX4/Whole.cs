@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.QNX4;
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public Whole() : base("QNX4 filesystem") {}
+    public Whole() : base("qnx4") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem");
 

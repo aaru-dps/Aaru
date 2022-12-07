@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.CPM;
 [TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
 public class Plus3DOS : FilesystemTest
 {
-    public Plus3DOS() : base("CP/M") {}
+    public Plus3DOS() : base("cpmfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "+3DOS");
 

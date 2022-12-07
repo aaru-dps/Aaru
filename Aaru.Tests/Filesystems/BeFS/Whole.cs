@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.BeFS;
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public Whole() : base("BeFS") {}
+    public Whole() : base("befs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Be File System");
 

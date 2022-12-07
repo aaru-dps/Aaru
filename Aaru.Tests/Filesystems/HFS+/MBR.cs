@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems.HFSPlus;
 [TestFixture]
 public class MBR : FilesystemTest
 {
-    public MBR() : base("HFS+") {}
+    public MBR() : base("hfsplus") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS+ (MBR)");
 

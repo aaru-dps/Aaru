@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.PFS3;
 [TestFixture]
 public class RDB : FilesystemTest
 {
-    public RDB() : base("PFS v3") {}
+    public RDB() : base("pfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
                                                       "Professional File System 3 (RDB)");

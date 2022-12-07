@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.BeFS;
 [TestFixture]
 public class APM : FilesystemTest
 {
-    public APM() : base("BeFS") {}
+    public APM() : base("befs") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Be File System (APM)");
     public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();

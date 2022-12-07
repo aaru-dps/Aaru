@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.exFAT;
 [TestFixture]
 public class APM : FilesystemTest
 {
-    public APM() : base("exFAT") {}
+    public APM() : base("exfat") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (APM)");
     public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();

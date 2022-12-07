@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.UNIXBFS;
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public Whole() : base("BFS") {}
+    public Whole() : base("bfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Boot File System");
 

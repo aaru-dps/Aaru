@@ -51,7 +51,7 @@ public class NeXT : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130912,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -61,7 +61,7 @@ public class NeXT : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130912,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -71,7 +71,7 @@ public class NeXT : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130912,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -81,7 +81,7 @@ public class NeXT : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130912,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -91,7 +91,7 @@ public class NeXT : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130880,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -101,7 +101,7 @@ public class NeXT : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130912,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -111,7 +111,7 @@ public class NeXT : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130912,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -121,7 +121,7 @@ public class NeXT : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130912,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -131,7 +131,7 @@ public class NeXT : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130912,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         }
     };
 }

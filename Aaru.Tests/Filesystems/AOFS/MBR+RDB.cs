@@ -38,7 +38,7 @@ namespace Aaru.Tests.Filesystems.AOFS;
 [TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
 public class MBR_RDB : FilesystemTest
 {
-    public MBR_RDB() : base("Amiga OFS") {}
+    public MBR_RDB() : base("aofs") {}
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (MBR+RDB)");

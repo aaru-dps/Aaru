@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Zfs : FilesystemTest
 {
-    public Zfs() : base("ZFS filesystem") {}
+    public Zfs() : base("zfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Zettabyte File System");
 

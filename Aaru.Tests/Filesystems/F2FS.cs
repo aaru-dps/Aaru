@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class F2Fs : FilesystemTest
 {
-    public F2Fs() : base("F2FS filesystem") {}
+    public F2Fs() : base("f2fs") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "F2FS");
     public override IFilesystem Plugin     => new F2FS();

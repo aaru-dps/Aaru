@@ -35,7 +35,7 @@ namespace Aaru.Tests.Filesystems.CPM;
 [TestFixture]
 public class Bondwell : FilesystemTest
 {
-    public Bondwell() : base("CP/M") {}
+    public Bondwell() : base("cpmfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Bondwell");
 

@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.FATX;
 [TestFixture]
 public class Xbox360 : ReadOnlyFilesystemTest
 {
-    public Xbox360() : base("FATX filesystem") {}
+    public Xbox360() : base("fatx") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xbox FAT16", "be");
 

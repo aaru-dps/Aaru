@@ -51,7 +51,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130156,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -61,7 +61,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130156,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -71,7 +71,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130156,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -81,7 +81,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 121448,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -91,7 +91,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 122328,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -101,7 +101,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -111,7 +111,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -121,7 +121,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -131,7 +131,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -141,7 +141,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -151,7 +151,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -161,7 +161,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -171,7 +171,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -181,7 +181,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -191,7 +191,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -201,7 +201,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -211,7 +211,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -221,7 +221,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -231,7 +231,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -241,7 +241,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130156,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -251,7 +251,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130156,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -261,7 +261,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130156,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -271,7 +271,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 121448,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -281,7 +281,7 @@ public class APM : FilesystemTest
             SectorSize  = 512,
             Clusters    = 122328,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         }
     };
 }

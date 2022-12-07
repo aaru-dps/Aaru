@@ -383,7 +383,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
                     }
@@ -414,7 +414,7 @@ public class Cuesheet : OpticalMediaImageTest
                             Bootable    = true,
                             Clusters    = 308224,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
                     }

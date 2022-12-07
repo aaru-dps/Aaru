@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Xia : FilesystemTest
 {
-    public Xia() : base("Xia filesystem") {}
+    public Xia() : base("xia") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xia filesystem");
     public override IFilesystem Plugin     => new Aaru.Filesystems.Xia();

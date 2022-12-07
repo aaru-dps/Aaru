@@ -35,7 +35,7 @@ namespace Aaru.Tests.Filesystems.CPM;
 [TestFixture]
 public class ParaDOS : FilesystemTest
 {
-    public ParaDOS() : base("CP/M") {}
+    public ParaDOS() : base("cpmfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "ParaDOS");
 

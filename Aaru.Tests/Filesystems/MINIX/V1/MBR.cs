@@ -51,7 +51,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 50399,
             ClusterSize = 1024,
-            Type        = "Minix 3 v1"
+            Type        = "minix3"
         },
         new FileSystemTest
         {
@@ -61,7 +61,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 64512,
             ClusterSize = 1024,
-            Type        = "Minix v1"
+            Type        = "minix"
         },
         new FileSystemTest
         {
@@ -71,7 +71,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65535,
             ClusterSize = 1024,
-            Type        = "Minix v1"
+            Type        = "minix"
         },
         new FileSystemTest
         {
@@ -81,7 +81,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65535,
             ClusterSize = 1024,
-            Type        = "Minix v1"
+            Type        = "minix"
         },
         new FileSystemTest
         {
@@ -91,7 +91,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65535,
             ClusterSize = 1024,
-            Type        = "Minix v1"
+            Type        = "minix"
         },
         new FileSystemTest
         {
@@ -101,7 +101,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65535,
             ClusterSize = 1024,
-            Type        = "Minix v1"
+            Type        = "minix"
         },
         new FileSystemTest
         {
@@ -111,7 +111,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65535,
             ClusterSize = 1024,
-            Type        = "Minix v1"
+            Type        = "minix"
         },
         new FileSystemTest
         {
@@ -121,7 +121,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65535,
             ClusterSize = 1024,
-            Type        = "Minix v1"
+            Type        = "minix"
         },
         new FileSystemTest
         {
@@ -131,7 +131,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65535,
             ClusterSize = 1024,
-            Type        = "Minix v1"
+            Type        = "minix"
         },
         new FileSystemTest
         {
@@ -141,7 +141,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65535,
             ClusterSize = 1024,
-            Type        = "Minix v1"
+            Type        = "minix"
         }
     };
 }

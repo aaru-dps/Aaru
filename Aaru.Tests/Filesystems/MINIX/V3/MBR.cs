@@ -51,7 +51,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 523151,
             ClusterSize = 4096,
-            Type        = "Minix v3"
+            Type        = "minix3"
         },
         new FileSystemTest
         {
@@ -61,7 +61,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 510976,
             ClusterSize = 1024,
-            Type        = "Minix v3"
+            Type        = "minix3"
         }
     };
 }

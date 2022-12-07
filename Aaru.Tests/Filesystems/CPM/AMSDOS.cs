@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.CPM;
 [TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
 public class AMSDOS : FilesystemTest
 {
-    public AMSDOS() : base("CP/M") {}
+    public AMSDOS() : base("cpmfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "AMSDOS");
 

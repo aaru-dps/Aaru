@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.HFS;
 [TestFixture]
 public class RDB : FilesystemTest
 {
-    public RDB() : base("HFS") {}
+    public RDB() : base("hfs") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (RDB)");
     public override IFilesystem Plugin     => new AppleHFS();

@@ -37,6 +37,8 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Reiser3 : FilesystemTest
 {
+    public Reiser3() : base("reiserfs") {}
+
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Reiser filesystem v3");
     public override IFilesystem Plugin     => new Reiser();
     public override bool        Partitions => true;
@@ -50,8 +52,7 @@ public class Reiser3 : FilesystemTest
             Sectors     = 262144,
             SectorSize  = 512,
             Clusters    = 32752,
-            ClusterSize = 4096,
-            Type        = "Reiser 3.5 filesystem"
+            ClusterSize = 4096
         },
         new FileSystemTest
         {
@@ -60,8 +61,7 @@ public class Reiser3 : FilesystemTest
             Sectors     = 262144,
             SectorSize  = 512,
             Clusters    = 32752,
-            ClusterSize = 4096,
-            Type        = "Reiser 3.5 filesystem"
+            ClusterSize = 4096
         },
         new FileSystemTest
         {
@@ -71,7 +71,6 @@ public class Reiser3 : FilesystemTest
             SectorSize   = 512,
             Clusters     = 32752,
             ClusterSize  = 4096,
-            Type         = "Reiser 3.6 filesystem",
             VolumeName   = "VolumeLabel",
             VolumeSerial = "43c72111-6512-e747-b626-63704e65352a"
         },
@@ -82,8 +81,7 @@ public class Reiser3 : FilesystemTest
             Sectors     = 1024000,
             SectorSize  = 512,
             Clusters    = 127744,
-            ClusterSize = 4096,
-            Type        = "Reiser 3.5 filesystem"
+            ClusterSize = 4096
         },
         new FileSystemTest
         {
@@ -93,7 +91,6 @@ public class Reiser3 : FilesystemTest
             SectorSize   = 512,
             Clusters     = 127744,
             ClusterSize  = 4096,
-            Type         = "Reiser 3.6 filesystem",
             VolumeName   = "DicSetter",
             VolumeSerial = "8902ac3c-3e0c-4c4c-84ec-03405c1710f1"
         }

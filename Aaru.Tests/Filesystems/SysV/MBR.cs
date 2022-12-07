@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.SysV;
 [TestFixture]
 public class MBR : FilesystemTest
 {
-    public MBR() : base("SVR4 fs") {}
+    public MBR() : base("sysv_r4") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (MBR)");
     public override IFilesystem Plugin => new SysVfs();

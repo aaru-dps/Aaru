@@ -35,7 +35,7 @@ namespace Aaru.Tests.Filesystems.CPM;
 [TestFixture]
 public class Excalibur64 : FilesystemTest
 {
-    public Excalibur64() : base("CP/M") {}
+    public Excalibur64() : base("cpmfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Excalibur 64");
 

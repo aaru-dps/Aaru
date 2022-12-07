@@ -35,7 +35,7 @@ namespace Aaru.Tests.Filesystems.CPM;
 [TestFixture]
 public class Attache : FilesystemTest
 {
-    public Attache() : base("CP/M") {}
+    public Attache() : base("cpmfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Otrona Attaché");
 

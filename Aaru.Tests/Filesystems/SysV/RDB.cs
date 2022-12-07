@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.SysV;
 [TestFixture]
 public class RDB : FilesystemTest
 {
-    public RDB() : base("SVR4 fs") {}
+    public RDB() : base("sysv_r4") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (RDB)");
     public override IFilesystem Plugin => new SysVfs();

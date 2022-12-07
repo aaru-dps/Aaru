@@ -53,7 +53,7 @@ public class Whole : FilesystemTest
             Clusters     = 1024000,
             ClusterSize  = 512,
             SystemId     = "*Linux UDFFS",
-            Type         = "UDF v2.00",
+            Type         = "udf",
             VolumeName   = "Volume label",
             VolumeSerial = "595c5d07f4fc8e8dLinuxUDF"
         },
@@ -66,7 +66,7 @@ public class Whole : FilesystemTest
             Clusters     = 614400,
             ClusterSize  = 512,
             SystemId     = "*Apple Mac OS X UDF FS",
-            Type         = "UDF v2.00",
+            Type         = "udf",
             VolumeName   = "Volume label",
             VolumeSerial = "5D91CB4F (Mac OS X newfs_udf) UDF Volume Set"
         },
@@ -79,7 +79,7 @@ public class Whole : FilesystemTest
             Clusters     = 1024000,
             ClusterSize  = 512,
             SystemId     = "*Linux UDFFS",
-            Type         = "UDF v2.01",
+            Type         = "udf",
             VolumeName   = "DicSetter",
             VolumeSerial = "5cc7f4183e0d5f7aLinuxUDF"
         }

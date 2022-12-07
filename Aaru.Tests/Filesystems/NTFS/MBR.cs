@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.NTFS;
 [TestFixture]
 public class MBR : FilesystemTest
 {
-    public MBR() : base("NTFS") {}
+    public MBR() : base("ntfs") {}
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "New Technology File System (MBR)");

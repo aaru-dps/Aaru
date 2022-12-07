@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Atheos : FilesystemTest
 {
-    public Atheos() : base("AtheOS filesystem") {}
+    public Atheos() : base("atheos") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "AtheOS (MBR)");
     public override IFilesystem Plugin     => new AtheOS();

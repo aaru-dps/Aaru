@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.HFS;
 [TestFixture]
 public class Optical : FilesystemTest
 {
-    public Optical() : base("HFS") {}
+    public Optical() : base("hfs") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (CD-ROM)");
     public override IFilesystem Plugin     => new AppleHFS();

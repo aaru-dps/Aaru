@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class XFS : FilesystemTest
 {
-    public XFS() : base("XFS filesystem") {}
+    public XFS() : base("xfs") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "XFS");
     public override IFilesystem Plugin     => new Aaru.Filesystems.XFS();

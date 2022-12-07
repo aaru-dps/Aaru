@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Reiser4 : FilesystemTest
 {
-    public Reiser4() : base("Reiser 4 filesystem") {}
+    public Reiser4() : base("reiser4") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Reiser filesystem v4");
     public override IFilesystem Plugin     => new Aaru.Filesystems.Reiser4();

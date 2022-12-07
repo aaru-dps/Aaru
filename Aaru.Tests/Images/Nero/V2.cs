@@ -505,7 +505,7 @@ public class V2 : OpticalMediaImageTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
                     }
@@ -567,7 +567,7 @@ public class V2 : OpticalMediaImageTest
                         {
                             Clusters     = 3455936,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Test DVD",
                             VolumeSerial = "483E25D50034BBB0"
                         }
@@ -965,7 +965,7 @@ public class V2 : OpticalMediaImageTest
                         {
                             Clusters     = 418519,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "InCD",
                             VolumeSerial = "40888C15CA13D401InCD"
                         }
@@ -1207,7 +1207,7 @@ public class V2 : OpticalMediaImageTest
                         {
                             Clusters     = 9721,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 1",
                             VolumeSerial = "50958B61AF6A749E"
                         }
@@ -1234,7 +1234,7 @@ public class V2 : OpticalMediaImageTest
                         {
                             Clusters     = 7682,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 2",
                             VolumeSerial = "50958BBBAF6A7444"
                         }
@@ -1261,7 +1261,7 @@ public class V2 : OpticalMediaImageTest
                         {
                             Clusters     = 6715,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "Session 3",
                             VolumeSerial = "50958C19AF6A73E6"
                         }
@@ -1288,7 +1288,7 @@ public class V2 : OpticalMediaImageTest
                         {
                             Clusters     = 6920,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.60",
+                            Type         = "udf",
                             VolumeName   = "Session 4",
                             VolumeSerial = "50958C82AF6A737D"
                         }

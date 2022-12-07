@@ -1076,7 +1076,7 @@ public class CloneCD : OpticalMediaImageTest
                         {
                             Clusters     = 402107,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "InCD",
                             VolumeSerial = "40888C15CA13D401InCD"
                         }
@@ -1318,7 +1318,7 @@ public class CloneCD : OpticalMediaImageTest
                         {
                             Clusters     = 9340,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 1",
                             VolumeSerial = "50958B61AF6A749E"
                         }
@@ -1345,7 +1345,7 @@ public class CloneCD : OpticalMediaImageTest
                         {
                             Clusters     = 7381,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 2",
                             VolumeSerial = "50958BBBAF6A7444"
                         }
@@ -1372,7 +1372,7 @@ public class CloneCD : OpticalMediaImageTest
                         {
                             Clusters     = 6451,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "Session 3",
                             VolumeSerial = "50958C19AF6A73E6"
                         }

@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.AFFS;
 [TestFixture]
 public class RDB : FilesystemTest
 {
-    public RDB() : base("Amiga FFS") {}
+    public RDB() : base("affs") {}
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System (RDB)");

@@ -35,7 +35,7 @@ namespace Aaru.Tests.Filesystems.CPM;
 [TestFixture]
 public class AmstradCPM : ReadOnlyFilesystemTest
 {
-    public AmstradCPM() : base("CP/M") {}
+    public AmstradCPM() : base("cpmfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Amstrad CPM");
 

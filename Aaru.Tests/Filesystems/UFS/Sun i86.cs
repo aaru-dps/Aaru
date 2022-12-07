@@ -53,7 +53,7 @@ public class Sun_i86 : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2063376,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         }
     };
 }

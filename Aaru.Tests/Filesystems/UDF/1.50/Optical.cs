@@ -53,7 +53,7 @@ public class Optical : FilesystemTest
             Clusters     = 2295104,
             ClusterSize  = 2048,
             SystemId     = "*ExpressUDF",
-            Type         = "UDF v2.01",
+            Type         = "udf",
             VolumeName   = "Volume label",
             VolumeSerial = "Volume Set ID not specified"
         }

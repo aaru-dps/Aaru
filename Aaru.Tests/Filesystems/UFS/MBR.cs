@@ -51,7 +51,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65024,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -61,7 +61,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65024,
             ClusterSize = 2048,
-            Type        = "UFS2",
+            Type        = "ufs2",
             VolumeName  = "VolumeLabel"
         },
         new FileSystemTest
@@ -72,7 +72,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131008,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -82,7 +82,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131008,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -92,7 +92,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131008,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -102,7 +102,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -112,7 +112,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -122,7 +122,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 511950,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -132,7 +132,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 255470,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -142,7 +142,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 255470,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -152,7 +152,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130032,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -162,7 +162,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -172,7 +172,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -182,7 +182,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -192,7 +192,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65504,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -202,7 +202,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131008,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -212,7 +212,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131008,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -222,7 +222,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131008,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -232,7 +232,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -242,7 +242,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -252,7 +252,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 1048500,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -262,7 +262,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 523758,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -272,7 +272,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 523758,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -282,7 +282,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65500,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -292,7 +292,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65500,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -302,7 +302,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65500,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -312,7 +312,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130032,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -322,7 +322,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -332,7 +332,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -342,7 +342,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -352,7 +352,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 1038240,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -362,7 +362,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 1046808,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -372,7 +372,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65500,
             ClusterSize = 2048,
-            Type        = "UFS2",
+            Type        = "ufs2",
             VolumeName  = ""
         },
         new FileSystemTest
@@ -383,7 +383,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65500,
             ClusterSize = 2048,
-            Type        = "UFS2",
+            Type        = "ufs2",
             VolumeName  = ""
         },
         new FileSystemTest
@@ -394,7 +394,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65500,
             ClusterSize = 2048,
-            Type        = "UFS2",
+            Type        = "ufs2",
             VolumeName  = ""
         },
         new FileSystemTest
@@ -405,7 +405,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS2",
+            Type        = "ufs2",
             VolumeName  = ""
         },
         new FileSystemTest
@@ -416,7 +416,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS2",
+            Type        = "ufs2",
             VolumeName  = ""
         },
         new FileSystemTest
@@ -427,7 +427,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS2",
+            Type        = "ufs2",
             VolumeName  = ""
         },
         new FileSystemTest
@@ -438,7 +438,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65254,
             ClusterSize = 2048,
-            Type        = "UFS2",
+            Type        = "ufs2",
             VolumeName  = ""
         },
         new FileSystemTest
@@ -449,7 +449,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 130504,
             ClusterSize = 1024,
-            Type        = "UFS",
+            Type        = "ufs",
             VolumeName  = null
         },
         new FileSystemTest
@@ -460,7 +460,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131008,
             ClusterSize = 1024,
-            Type        = "UFS",
+            Type        = "ufs",
             VolumeName  = null
         },
         new FileSystemTest
@@ -471,7 +471,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 65504,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -481,7 +481,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131068,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -491,7 +491,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131068,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -501,7 +501,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -511,7 +511,7 @@ public class MBR : FilesystemTest
             SectorSize  = 512,
             Clusters    = 131040,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         }
     };
 }

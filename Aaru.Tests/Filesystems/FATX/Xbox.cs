@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems.FATX;
 [TestFixture]
 public class Xbox : ReadOnlyFilesystemTest
 {
-    public Xbox() : base("FATX filesystem") {}
+    public Xbox() : base("fatx") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xbox FAT16", "le");
     public override IFilesystem Plugin     => new XboxFatPlugin();

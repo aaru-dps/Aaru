@@ -35,7 +35,7 @@ namespace Aaru.Tests.Filesystems.CPM;
 [TestFixture]
 public class XtalDOS : ReadOnlyFilesystemTest
 {
-    public XtalDOS() : base("CP/M") {}
+    public XtalDOS() : base("cpmfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "XtalDOS");
 

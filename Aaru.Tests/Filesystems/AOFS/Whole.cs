@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.AOFS;
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public Whole() : base("Amiga OFS") {}
+    public Whole() : base("aofs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System");
 

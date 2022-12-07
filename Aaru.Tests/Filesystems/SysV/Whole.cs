@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.SysV;
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public Whole() : base("SVR4 fs") {}
+    public Whole() : base("sysv_r4") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem");
 

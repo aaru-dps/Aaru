@@ -38,7 +38,7 @@ namespace Aaru.Tests.Filesystems.AFFS;
 [TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
 public class MBR_RDB : FilesystemTest
 {
-    public MBR_RDB() : base("Amiga FFS") {}
+    public MBR_RDB() : base("affs") {}
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System (MBR+RDB)");

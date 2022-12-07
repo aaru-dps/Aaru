@@ -844,7 +844,7 @@ public class BlindWrite5 : OpticalMediaImageTest
                         {
                             Clusters     = 399371,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "InCD",
                             VolumeSerial = "40888C15CA13D401InCD"
                         }
@@ -934,7 +934,7 @@ public class BlindWrite5 : OpticalMediaImageTest
                         {
                             Clusters     = 8133,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 1",
                             VolumeSerial = "50958B61AF6A749E"
                         }
@@ -961,7 +961,7 @@ public class BlindWrite5 : OpticalMediaImageTest
                         {
                             Clusters     = 6427,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 2",
                             VolumeSerial = "50958BBBAF6A7444"
                         }
@@ -988,7 +988,7 @@ public class BlindWrite5 : OpticalMediaImageTest
                         {
                             Clusters     = 5618,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "Session 3",
                             VolumeSerial = "50958C19AF6A73E6"
                         }
@@ -1015,7 +1015,7 @@ public class BlindWrite5 : OpticalMediaImageTest
                         {
                             Clusters     = 5790,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.60",
+                            Type         = "udf",
                             VolumeName   = "Session 4",
                             VolumeSerial = "50958C82AF6A737D"
                         }

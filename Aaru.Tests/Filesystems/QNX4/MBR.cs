@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.QNX4;
 [TestFixture]
 public class MBR : FilesystemTest
 {
-    public MBR() : base("QNX4 filesystem") {}
+    public MBR() : base("qnx4") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem (MBR)");
     public override IFilesystem Plugin => new Aaru.Filesystems.QNX4();

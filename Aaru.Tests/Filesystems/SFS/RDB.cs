@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems.SFS;
 [TestFixture]
 public class RDB : FilesystemTest
 {
-    public RDB() : base("SmartFileSystem") {}
+    public RDB() : base("sfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (RDB)");
 

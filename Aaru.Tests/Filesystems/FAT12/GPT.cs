@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.FAT12;
 [TestFixture]
 public class GPT : ReadOnlyFilesystemTest
 {
-    public GPT() : base("FAT12") {}
+    public GPT() : base("fat12") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT12 (GPT)");
     public override IFilesystem Plugin     => new FAT();

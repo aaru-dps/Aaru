@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.AFS;
 [TestFixture]
 public class MBR : FilesystemTest
 {
-    public MBR() : base("Acer Fast Filesystem") {}
+    public MBR() : base("sysv_r4") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Acer File System (MBR)");
     public override IFilesystem Plugin => new SysVfs();

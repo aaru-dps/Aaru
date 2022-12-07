@@ -51,7 +51,7 @@ public class RDB : FilesystemTest
             SectorSize  = 512,
             Clusters    = 511424,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         }
     };
 }

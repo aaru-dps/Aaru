@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Hammer : FilesystemTest
 {
-    public Hammer() : base("HAMMER") {}
+    public Hammer() : base("hammer") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "HAMMER (MBR)");
     public override IFilesystem Plugin     => new HAMMER();

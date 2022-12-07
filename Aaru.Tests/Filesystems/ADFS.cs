@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Adfs : FilesystemTest
 {
-    public Adfs() : base("Acorn Advanced Disc Filing System") {}
+    public Adfs() : base("adfs") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
                                                       "Acorn Advanced Disc Filing System");

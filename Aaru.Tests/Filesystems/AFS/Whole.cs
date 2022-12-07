@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.AFS;
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public Whole() : base("Acer Fast Filesystem") {}
+    public Whole() : base("sysv_r4") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Acer File System");
 
