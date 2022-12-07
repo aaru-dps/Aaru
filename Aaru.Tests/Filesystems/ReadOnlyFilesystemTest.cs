@@ -239,7 +239,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
             fs?.Mount(image, partition, test.Encoding, null, test.Namespace);
 
-            Dictionary<string, FileData> contents = BuildDirectory(fs, "/");
+            Dictionary<string, FileData> contents = BuildDirectory(fs, "/", 0);
 
             var serializerOptions = new JsonSerializerOptions
             {
@@ -259,8 +259,10 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         }
     }
 
-    internal static Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path)
+    static Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path, int currentDepth)
     {
+        currentDepth++;
+
         if(path == "/")
             path = "";
 
@@ -281,7 +283,11 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             };
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory))
-                data.Children = BuildDirectory(fs, childPath);
+            {
+                // Cannot serialize to JSON too many depth levels 🤷‍♀️
+                if(currentDepth < 384)
+                    data.Children = BuildDirectory(fs, childPath, currentDepth);
+            }
             else if(stat.Attributes.HasFlag(FileAttributes.Symlink))
             {
                 if(fs.ReadLink(childPath, out string link) == ErrorNumber.NoError)
