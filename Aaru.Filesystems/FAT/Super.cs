@@ -315,7 +315,7 @@ public sealed partial class FAT
             {
                 if(clusters < 4089)
                 {
-                    ushort[] fat12 = new ushort[clusters];
+                    ushort[] fat12 = new ushort[clusters + 1];
 
                     _reservedSectors     = fakeBpb.rsectors;
                     sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
@@ -782,8 +782,9 @@ public sealed partial class FAT
 
         _bytesPerCluster = _sectorsPerCluster * imagePlugin.Info.SectorSize;
 
-        ushort[] firstFatEntries  = new ushort[_statfs.Blocks];
-        ushort[] secondFatEntries = new ushort[_statfs.Blocks];
+        // The first 2 FAT entries do not count as allocation clusters in FAT12 and FAT16
+        ushort[] firstFatEntries  = new ushort[_statfs.Blocks + 2];
+        ushort[] secondFatEntries = new ushort[_statfs.Blocks + 2];
         bool     firstFatValid    = true;
         bool     secondFatValid   = true;
 
@@ -813,7 +814,7 @@ public sealed partial class FAT
             if(errno != ErrorNumber.NoError)
                 return errno;
 
-            _fatEntries = new ushort[_statfs.Blocks];
+            _fatEntries = new ushort[_statfs.Blocks + 2];
 
             pos = 0;
 
@@ -827,10 +828,10 @@ public sealed partial class FAT
                 secondFatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
             }
 
-            if(firstFatEntries.Any(entry => entry < FAT12_RESERVED && entry > _statfs.Blocks))
+            if(firstFatEntries.Any(entry => entry < FAT12_RESERVED && entry > _statfs.Blocks + 2))
                 firstFatValid = false;
 
-            if(secondFatEntries.Any(entry => entry < FAT12_RESERVED && entry > _statfs.Blocks))
+            if(secondFatEntries.Any(entry => entry < FAT12_RESERVED && entry > _statfs.Blocks + 2))
                 secondFatValid = false;
 
             if(firstFatValid == secondFatValid)
@@ -860,10 +861,10 @@ public sealed partial class FAT
             AaruConsole.DebugWriteLine("FAT plugin", Localization.Casting_FAT);
             secondFatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
 
-            if(firstFatEntries.Any(entry => entry < FAT16_RESERVED && entry > _statfs.Blocks))
+            if(firstFatEntries.Any(entry => entry < FAT16_RESERVED && entry > _statfs.Blocks + 2))
                 firstFatValid = false;
 
-            if(secondFatEntries.Any(entry => entry < FAT16_RESERVED && entry > _statfs.Blocks))
+            if(secondFatEntries.Any(entry => entry < FAT16_RESERVED && entry > _statfs.Blocks + 2))
                 secondFatValid = false;
 
             if(firstFatValid == secondFatValid)

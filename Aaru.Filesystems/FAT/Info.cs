@@ -726,7 +726,8 @@ public sealed partial class FAT
             {
                 if(clusters < 4089)
                 {
-                    ushort[] fat12 = new ushort[clusters];
+                    // The first 2 FAT entries do not count as allocation clusters in FAT12 and FAT16
+                    ushort[] fat12 = new ushort[clusters + 2];
 
                     _reservedSectors     = fakeBpb.rsectors;
                     sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
@@ -751,14 +752,14 @@ public sealed partial class FAT
 
                     bool fat12Valid = fat12[0] >= FAT12_RESERVED && fat12[1] >= FAT12_RESERVED;
 
-                    if(fat12.Any(entry => entry < FAT12_RESERVED && entry > clusters))
+                    if(fat12.Any(entry => entry < FAT12_RESERVED && entry > clusters + 2))
                         fat12Valid = false;
 
                     ushort[] fat16 = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
 
                     bool fat16Valid = fat16[0] >= FAT16_RESERVED && fat16[1] >= 0x3FF0;
 
-                    if(fat16.Any(entry => entry < FAT16_RESERVED && entry > clusters))
+                    if(fat16.Any(entry => entry < FAT16_RESERVED && entry > clusters + 2))
                         fat16Valid = false;
 
                     isFat12 = fat12Valid;
