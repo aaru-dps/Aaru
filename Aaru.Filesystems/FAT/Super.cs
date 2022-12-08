@@ -317,7 +317,7 @@ namespace Aaru.Filesystems
                 {
                     if(clusters < 4089)
                     {
-                        ushort[] fat12 = new ushort[clusters];
+                        ushort[] fat12 = new ushort[clusters + 1];
 
                         _reservedSectors     = fakeBpb.rsectors;
                         sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
@@ -839,8 +839,8 @@ namespace Aaru.Filesystems
 
             _bytesPerCluster = _sectorsPerCluster * imagePlugin.Info.SectorSize;
 
-            ushort[] firstFatEntries  = new ushort[_statfs.Blocks];
-            ushort[] secondFatEntries = new ushort[_statfs.Blocks];
+            ushort[] firstFatEntries  = new ushort[_statfs.Blocks + 2];
+            ushort[] secondFatEntries = new ushort[_statfs.Blocks + 2];
             bool     firstFatValid    = true;
             bool     secondFatValid   = true;
 
@@ -864,7 +864,7 @@ namespace Aaru.Filesystems
 
                 fatBytes = imagePlugin.ReadSectors(_fatFirstSector + _sectorsPerFat, _sectorsPerFat);
 
-                _fatEntries = new ushort[_statfs.Blocks];
+                _fatEntries = new ushort[_statfs.Blocks + 2];
 
                 pos = 0;
 
@@ -881,7 +881,7 @@ namespace Aaru.Filesystems
                 foreach(ushort entry in firstFatEntries)
                 {
                     if(entry >= FAT12_RESERVED ||
-                       entry <= _statfs.Blocks)
+                       entry <= _statfs.Blocks + 2)
                         continue;
 
                     firstFatValid = false;
@@ -892,7 +892,7 @@ namespace Aaru.Filesystems
                 foreach(ushort entry in secondFatEntries)
                 {
                     if(entry >= FAT12_RESERVED ||
-                       entry <= _statfs.Blocks)
+                       entry <= _statfs.Blocks + 2)
                         continue;
 
                     secondFatValid = false;
@@ -924,7 +924,7 @@ namespace Aaru.Filesystems
                 foreach(ushort entry in firstFatEntries)
                 {
                     if(entry >= FAT16_RESERVED ||
-                       entry <= _statfs.Blocks)
+                       entry <= _statfs.Blocks + 2)
                         continue;
 
                     firstFatValid = false;
@@ -935,7 +935,7 @@ namespace Aaru.Filesystems
                 foreach(ushort entry in secondFatEntries)
                 {
                     if(entry >= FAT16_RESERVED ||
-                       entry <= _statfs.Blocks)
+                       entry <= _statfs.Blocks + 2)
                         continue;
 
                     secondFatValid = false;

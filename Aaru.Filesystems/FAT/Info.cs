@@ -710,7 +710,8 @@ namespace Aaru.Filesystems
                 {
                     if(clusters < 4089)
                     {
-                        ushort[] fat12 = new ushort[clusters];
+                        // The first 2 FAT entries do not count as allocation clusters in FAT12 and FAT16
+                        ushort[] fat12 = new ushort[clusters + 2];
 
                         _reservedSectors     = fakeBpb.rsectors;
                         sectorsPerRealSector = fakeBpb.bps / imagePlugin.Info.SectorSize;
@@ -735,7 +736,7 @@ namespace Aaru.Filesystems
                         foreach(ushort entry in fat12)
                         {
                             if(entry >= FAT12_RESERVED ||
-                               entry <= clusters)
+                               entry <= clusters + 2)
                                 continue;
 
                             fat12Valid = false;
@@ -750,7 +751,7 @@ namespace Aaru.Filesystems
                         foreach(ushort entry in fat16)
                         {
                             if(entry >= FAT16_RESERVED ||
-                               entry <= clusters)
+                               entry <= clusters + 2)
                                 continue;
 
                             fat16Valid = false;
