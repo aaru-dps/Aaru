@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.HFSX;
 [TestFixture]
 public class APM : FilesystemTest
 {
-    public APM() : base("HFSX") {}
+    public APM() : base("hfsx") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFSX (APM)");
     public override IFilesystem Plugin     => new AppleHFSPlus();

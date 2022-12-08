@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.HFSX;
 [TestFixture]
 public class MBR : FilesystemTest
 {
-    public MBR() : base("HFSX") {}
+    public MBR() : base("hfsx") {}
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFSX (MBR)");
 

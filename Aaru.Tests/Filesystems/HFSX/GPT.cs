@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.HFSX;
 [TestFixture]
 public class GPT : FilesystemTest
 {
-    public GPT() : base("HFSX") {}
+    public GPT() : base("hfsx") {}
 
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFSX (GPT)");
     public override IFilesystem Plugin     => new AppleHFSPlus();
