@@ -268,8 +268,8 @@ public sealed partial class FAT
         else if(_fat16)
             while(nextCluster is > 0 and <= FAT16_RESERVED)
             {
-                if(nextCluster > _fatEntries.Length)
-                    return null;
+                if(nextCluster >= _fatEntries.Length)
+                    break;
 
                 clusters.Add(nextCluster);
                 nextCluster = _fatEntries[nextCluster];
@@ -277,8 +277,8 @@ public sealed partial class FAT
         else
             while(nextCluster is > 0 and <= FAT12_RESERVED)
             {
-                if(nextCluster > _fatEntries.Length)
-                    return null;
+                if(nextCluster >= _fatEntries.Length)
+                    break;
 
                 clusters.Add(nextCluster);
                 nextCluster = _fatEntries[nextCluster];
