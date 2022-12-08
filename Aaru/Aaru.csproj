@@ -92,7 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0"/>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2"/>
     <PackageReference Include="Spectre.Console" Version="0.45.0"/>
     <PackageReference Include="Spectre.Console.Analyzer" Version="0.45.0">
       <PrivateAssets>all</PrivateAssets>
