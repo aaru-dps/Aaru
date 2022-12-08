@@ -296,6 +296,10 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             else
                 data.Md5 = BuildFile(fs, childPath, stat.Length);
 
+            if(fs.ListXAttr(childPath, out List<string> xattrs) == ErrorNumber.NoError &&
+               xattrs.Count                                     > 0)
+                data.XattrsWithMd5 = BuildFileXattrs(fs, childPath);
+
             children[child] = data;
         }
 
@@ -308,6 +312,30 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         fs.Read(path, 0, length, ref buffer);
 
         return Md5Context.Data(buffer, out _);
+    }
+
+    static Dictionary<string, string> BuildFileXattrs(IReadOnlyFilesystem fs, string path)
+    {
+        fs.ListXAttr(path, out List<string> contents);
+
+        if(contents.Count == 0)
+            return null;
+
+        Dictionary<string, string> xattrs = new();
+
+        foreach(string xattr in contents)
+        {
+            byte[]      buffer = Array.Empty<byte>();
+            ErrorNumber ret    = fs.GetXattr(path, xattr, ref buffer);
+            string      data;
+
+            data = ret != ErrorNumber.NoError ? Md5Context.Data(Array.Empty<byte>(), out _)
+                       : Md5Context.Data(buffer, out _);
+
+            xattrs[xattr] = data;
+        }
+
+        return xattrs;
     }
 
     internal static void TestDirectory(IReadOnlyFilesystem fs, string path, Dictionary<string, FileData> children,
