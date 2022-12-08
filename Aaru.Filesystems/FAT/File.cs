@@ -264,7 +264,7 @@ namespace Aaru.Filesystems
                       nextCluster <= FAT16_RESERVED)
                 {
                     if(nextCluster > _fatEntries.Length)
-                        return null;
+                        break;
 
                     clusters.Add(nextCluster);
                     nextCluster = _fatEntries[nextCluster];
@@ -274,7 +274,7 @@ namespace Aaru.Filesystems
                       nextCluster <= FAT12_RESERVED)
                 {
                     if(nextCluster > _fatEntries.Length)
-                        return null;
+                        break;
 
                     clusters.Add(nextCluster);
                     nextCluster = _fatEntries[nextCluster];
