@@ -957,7 +957,9 @@ namespace Aaru.Filesystems
 
                         byte[] caData = ReadSingleExtent(ca.offset, ca.ca_length, ca.block);
 
-                        DecodeSystemArea(caData, 0, (int)ca.ca_length, ref entry, out hasResourceFork);
+                        // TODO: Check continuation area definition, this is not a proper fix
+                        if(caData.Length > 0)
+                            DecodeSystemArea(caData, 0, (int)ca.ca_length, ref entry, out hasResourceFork);
 
                         systemAreaOff += ceLength;
 
