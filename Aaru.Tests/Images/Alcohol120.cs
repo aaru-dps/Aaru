@@ -44,7 +44,7 @@ public class Alcohol120 : OpticalMediaImageTest
         new OpticalImageTestExpected
         {
             TestFile      = "cdiready_the_apprentice.mds",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CDDA,
             Sectors       = 279300,
             Md5           = "556d7d32e3c01c2087cc56b25fe5f66d",
             LongMd5       = "556d7d32e3c01c2087cc56b25fe5f66d",
@@ -263,7 +263,7 @@ public class Alcohol120 : OpticalMediaImageTest
         new OpticalImageTestExpected
         {
             TestFile      = "jaguarcd.mds",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CDDA,
             Sectors       = 243587,
             Md5           = "1dee46e2fa0de388d1f225ab8fa6d0b4",
             LongMd5       = "1dee46e2fa0de388d1f225ab8fa6d0b4",
@@ -363,7 +363,7 @@ public class Alcohol120 : OpticalMediaImageTest
         new OpticalImageTestExpected
         {
             TestFile      = "pcengine.mds",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CD,
             Sectors       = 160956,
             Md5           = "248ff28ea147ecdf0724fdfb0e59174a",
             LongMd5       = "eb48e46f5bd085dd6f9936d89afe6e9b",
@@ -513,7 +513,7 @@ public class Alcohol120 : OpticalMediaImageTest
         new OpticalImageTestExpected
         {
             TestFile      = "pcfx.mds",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CD,
             Sectors       = 246680,
             Md5           = "64d6baf711d2e0f24499d284ac2bc580",
             LongMd5       = "f0af56f9d093b214e1b7c9148a869eb3",
@@ -601,7 +601,7 @@ public class Alcohol120 : OpticalMediaImageTest
         new OpticalImageTestExpected
         {
             TestFile      = "report_audiocd.mds",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CDDA,
             Sectors       = 247073,
             Md5           = "ff35cfa013871b322ef54612e719c185",
             LongMd5       = "ff35cfa013871b322ef54612e719c185",
@@ -788,14 +788,14 @@ public class Alcohol120 : OpticalMediaImageTest
                             {
                                 Clusters    = 63562,
                                 ClusterSize = 8192,
-                                Type        = "HFS",
+                                Type        = "hfs",
                                 VolumeName  = "Winpower"
                             },
                             new FileSystemTest
                             {
                                 Clusters    = 254265,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "Winpower"
                             }
                         }*/
@@ -827,7 +827,7 @@ public class Alcohol120 : OpticalMediaImageTest
                             Bootable    = true,
                             Clusters    = 308224,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
                     }
@@ -859,7 +859,7 @@ public class Alcohol120 : OpticalMediaImageTest
                             Bootable    = true,
                             Clusters    = 308224,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
                     }
@@ -890,14 +890,14 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 63562,
                             ClusterSize = 8192,
-                            Type        = "HFS",
+                            Type        = "hfs",
                             VolumeName  = "Winpower"
                         },
                         new FileSystemTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
                     }
@@ -959,7 +959,7 @@ public class Alcohol120 : OpticalMediaImageTest
                                 Bootable    = true,
                                 Clusters    = 2146357,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "SU1100.001"
                             }
                         }*/
@@ -991,7 +991,7 @@ public class Alcohol120 : OpticalMediaImageTest
                                 Bootable    = true,
                                 Clusters    = 2146357,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "SU1100.001"
                             }
                         }*/
@@ -1023,7 +1023,7 @@ public class Alcohol120 : OpticalMediaImageTest
                                 Bootable    = true,
                                 Clusters    = 2146357,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "SU1100.001"
                             }
                         }*/
@@ -1055,7 +1055,7 @@ public class Alcohol120 : OpticalMediaImageTest
                                 Bootable    = true,
                                 Clusters    = 2146357,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "SU1100.001"
                             }
                         }*/
@@ -1087,7 +1087,7 @@ public class Alcohol120 : OpticalMediaImageTest
                                 Bootable    = true,
                                 Clusters    = 2146357,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "SU1100.001"
                             }
                         }*/
@@ -1222,7 +1222,7 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 69136,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Melanie C"
                         }
                     }
@@ -1369,7 +1369,7 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 18853,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "New"
                         }
                     }
@@ -1400,7 +1400,7 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 600,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "INCD"
                         },
                         new FileSystemTest
@@ -1441,7 +1441,7 @@ public class Alcohol120 : OpticalMediaImageTest
                             {
                                 Clusters    = 1587,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = ""
                             }
                         }*/
@@ -1642,7 +1642,7 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 22016,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 1"
                         }
                     }
@@ -1671,7 +1671,7 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 206560,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 1"
                         }
                     }
@@ -1702,7 +1702,7 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 7876,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 1"
                         },
                         new FileSystemTest
@@ -1729,7 +1729,7 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 6170,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 2"
                         },
                         new FileSystemTest
@@ -1756,7 +1756,7 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 5360,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 3"
                         },
                         new FileSystemTest
@@ -1783,7 +1783,7 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 45796,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 4"
                         },
                         new FileSystemTest
@@ -1822,7 +1822,7 @@ public class Alcohol120 : OpticalMediaImageTest
                         {
                             Clusters    = 1102,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "VIDEOCD"
                         }
                     }
