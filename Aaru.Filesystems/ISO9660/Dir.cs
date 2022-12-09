@@ -982,7 +982,8 @@ public sealed partial class ISO9660
 
                     errno = ReadSingleExtent(ca.offset, ca.ca_length, ca.block, out byte[] caData);
 
-                    if(errno == ErrorNumber.NoError)
+                    // TODO: Check continuation area definition, this is not a proper fix
+                    if(errno == ErrorNumber.NoError && caData.Length > 0)
                         DecodeSystemArea(caData, 0, (int)ca.ca_length, ref entry, out hasResourceFork);
 
                     systemAreaOff += ceLength;
