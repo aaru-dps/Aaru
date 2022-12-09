@@ -84,7 +84,8 @@ public abstract class FsExtractHashIssueTest
             MaxDepth                    = 1536, // More than this an we get a StackOverflowException
             WriteIndented               = true,
             DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true,
+            IncludeFields               = true
         };
 
         var               sr           = new FileStream($"{TestFile}.unittest.json", FileMode.Open);

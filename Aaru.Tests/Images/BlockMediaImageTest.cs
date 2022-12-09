@@ -214,7 +214,8 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                                 MaxDepth                    = 1536, // More than this an we get a StackOverflowException
                                 WriteIndented               = true,
                                 DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-                                PropertyNameCaseInsensitive = true
+                                PropertyNameCaseInsensitive = true,
+                                IncludeFields               = true
                             };
 
                             var          sr           = new FileStream(expectedDataFilename, FileMode.Open);
