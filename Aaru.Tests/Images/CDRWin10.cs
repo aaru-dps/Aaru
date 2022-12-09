@@ -45,7 +45,7 @@ public class CDRWin10 : OpticalMediaImageTest
         new OpticalImageTestExpected
         {
             TestFile      = "report_audiocd.xmd",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CDDA,
             Sectors       = 247073,
             Md5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
             LongMd5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
