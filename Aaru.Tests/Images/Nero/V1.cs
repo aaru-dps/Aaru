@@ -361,7 +361,7 @@ public class V1 : OpticalMediaImageTest
                         {
                             Clusters    = 28672,
                             ClusterSize = 2048,
-                            Type        = "PC Engine filesystem"
+                            Type        = "pcengine"
                         }
                     }
                 },
@@ -512,7 +512,7 @@ public class V1 : OpticalMediaImageTest
                             Bootable    = true,
                             Clusters    = 364,
                             ClusterSize = 2048,
-                            Type        = "PC-FX",
+                            Type        = "pcfx",
                             VolumeName  = "同級生２"
                         }
                     }
@@ -715,7 +715,7 @@ public class V1 : OpticalMediaImageTest
                         {
                             Clusters    = 63562,
                             ClusterSize = 8192,
-                            Type        = "HFS",
+                            Type        = "hfs",
                             VolumeName  = "Winpower"
                         },
                         new FileSystemTest

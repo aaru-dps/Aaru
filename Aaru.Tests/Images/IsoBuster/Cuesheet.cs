@@ -203,7 +203,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 34816,
                             ClusterSize = 2048,
-                            Type        = "PC Engine filesystem"
+                            Type        = "pcengine"
                         }
                     }
                 },
@@ -353,7 +353,7 @@ public class Cuesheet : OpticalMediaImageTest
                             Bootable    = true,
                             Clusters    = 514,
                             ClusterSize = 2048,
-                            Type        = "PC-FX",
+                            Type        = "pcfx",
                             VolumeName  = "同級生２"
                         }
                     }
@@ -431,7 +431,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 63562,
                             ClusterSize = 8192,
-                            Type        = "HFS",
+                            Type        = "hfs",
                             VolumeName  = "Winpower"
                         },
                         new FileSystemTest
@@ -468,7 +468,7 @@ public class Cuesheet : OpticalMediaImageTest
                         {
                             Clusters    = 63562,
                             ClusterSize = 8192,
-                            Type        = "HFS",
+                            Type        = "hfs",
                             VolumeName  = "Winpower"
                         },
                         new FileSystemTest
