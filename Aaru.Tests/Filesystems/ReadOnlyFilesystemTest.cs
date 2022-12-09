@@ -259,7 +259,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         }
     }
 
-    static Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path, int currentDepth)
+    internal static Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path, int currentDepth)
     {
         currentDepth++;
 
