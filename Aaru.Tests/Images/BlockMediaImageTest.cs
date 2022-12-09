@@ -258,7 +258,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                                     expectedData[j] = new VolumeData
                                     {
-                                        Files = ReadOnlyFilesystemTest.BuildDirectory(fs, "/")
+                                        Files = ReadOnlyFilesystemTest.BuildDirectory(fs, "/", 0)
                                     };
                                 }
 

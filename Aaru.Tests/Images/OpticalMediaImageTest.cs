@@ -307,7 +307,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 }
 
                                 // Uncomment to generate JSON file
-                                /*    var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/");
+                                /*  var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/", 0);
 
                                     var sw = new FileStream($"{testFile}.track{track.Number}.filesystem{i}.contents.json", FileMode.Create);
                                     JsonSerializer.Serialize(sw, contents, serializerOptions);
