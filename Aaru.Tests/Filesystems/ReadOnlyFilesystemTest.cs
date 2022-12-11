@@ -386,6 +386,39 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                             string.Format(Localization.Unexpected_error_0_retrieving_stats_for_1_in_2, ret, childPath,
                                           testFile));
 
+            if(child.Value.Info is not null)
+            {
+                if((stat.AccessTime - child.Value.Info.AccessTime)?.Hours is 1 or -1)
+                    stat.AccessTime = child.Value.Info.AccessTime;
+
+                if((stat.AccessTimeUtc - child.Value.Info.AccessTimeUtc)?.Hours is 1 or -1)
+                    stat.AccessTimeUtc = child.Value.Info.AccessTimeUtc;
+
+                if((stat.BackupTime - child.Value.Info.BackupTime)?.Hours is 1 or -1)
+                    stat.BackupTime = child.Value.Info.BackupTime;
+
+                if((stat.BackupTimeUtc - child.Value.Info.BackupTimeUtc)?.Hours is 1 or -1)
+                    stat.BackupTimeUtc = child.Value.Info.BackupTimeUtc;
+
+                if((stat.CreationTime - child.Value.Info.CreationTime)?.Hours is 1 or -1)
+                    stat.CreationTime = child.Value.Info.CreationTime;
+
+                if((stat.CreationTimeUtc - child.Value.Info.CreationTimeUtc)?.Hours is 1 or -1)
+                    stat.CreationTimeUtc = child.Value.Info.CreationTimeUtc;
+
+                if((stat.LastWriteTime - child.Value.Info.LastWriteTime)?.Hours is 1 or -1)
+                    stat.LastWriteTime = child.Value.Info.LastWriteTime;
+
+                if((stat.LastWriteTimeUtc - child.Value.Info.LastWriteTimeUtc)?.Hours is 1 or -1)
+                    stat.LastWriteTimeUtc = child.Value.Info.LastWriteTimeUtc;
+
+                if((stat.StatusChangeTime - child.Value.Info.StatusChangeTime)?.Hours is 1 or -1)
+                    stat.StatusChangeTime = child.Value.Info.StatusChangeTime;
+
+                if((stat.StatusChangeTimeUtc - child.Value.Info.StatusChangeTimeUtc)?.Hours is 1 or -1)
+                    stat.StatusChangeTimeUtc = child.Value.Info.StatusChangeTimeUtc;
+            }
+
             stat.Should().BeEquivalentTo(child.Value.Info,
                                          string.Format(Localization.Wrong_info_for_0_in_1, childPath, testFile));
 
