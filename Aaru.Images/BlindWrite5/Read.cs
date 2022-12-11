@@ -968,7 +968,7 @@ namespace Aaru.DiscImages
                         {
                             splitStream.
                                 Add(Path.Combine(basePath, $"{filename}.{(lowerCaseExtension ? firstExtensionLower : firstExtension)}"),
-                                    FileMode.Open);
+                                    FileMode.Open, FileAccess.Read);
 
                             splitStream.AddRange(basePath, $"{filename}.{extension}");
                         }
