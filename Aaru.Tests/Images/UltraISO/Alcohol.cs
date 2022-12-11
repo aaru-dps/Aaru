@@ -45,7 +45,7 @@ public class Alcohol : OpticalMediaImageTest
         new OpticalImageTestExpected
         {
             TestFile  = "cdiready_the_apprentice.mds",
-            MediaType = MediaType.CDROMXA,
+            MediaType = MediaType.CDDA,
             Sectors   = 279300,
             Md5       = "556d7d32e3c01c2087cc56b25fe5f66d",
             LongMd5   = "556d7d32e3c01c2087cc56b25fe5f66d",
@@ -232,7 +232,7 @@ public class Alcohol : OpticalMediaImageTest
         new OpticalImageTestExpected
         {
             TestFile  = "report_audiocd.mds",
-            MediaType = MediaType.CDROMXA,
+            MediaType = MediaType.CDDA,
             Sectors   = 247073,
             Md5       = "c96a7bf12427078bab252d941716cc32",
             LongMd5   = "c96a7bf12427078bab252d941716cc32",
