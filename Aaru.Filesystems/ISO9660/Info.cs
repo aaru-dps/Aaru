@@ -909,9 +909,9 @@ public sealed partial class ISO9660
         if(refareas.Count > 0)
             isoMetadata.Append(suspInformation);
 
-        if(_highSierra)
+        if(highSierraInfo)
             XmlFsType.Type = FS_TYPE_HSF;
-        else if(_cdi)
+        else if(cdiInfo)
             XmlFsType.Type = FS_TYPE_CDI;
         else
             XmlFsType.Type = FS_TYPE_ISO;
