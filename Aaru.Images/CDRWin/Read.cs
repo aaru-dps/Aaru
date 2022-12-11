@@ -1520,6 +1520,9 @@ namespace Aaru.DiscImages
                     throw new
                         FeatureUnsupportedImageException("This image is missing vital multi-session data and cannot be read correctly.");
 
+                if(_discImage.Tracks.All(t => t.Isrc == null))
+                    _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
+
                 if(!_isCd)
                 {
                     _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdSectorSync);
