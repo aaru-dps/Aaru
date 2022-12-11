@@ -57,7 +57,7 @@ public class V1 : OpticalMediaImageTest
                     Session = 1,
                     Start   = 0,
                     End     = 69149,
-                    Pregap  = 0,
+                    Pregap  = 150,
                     Flags   = 4,
                     Number  = 0,
                     FileSystems = new[]
@@ -66,7 +66,7 @@ public class V1 : OpticalMediaImageTest
                         {
                             Clusters    = 279300,
                             ClusterSize = 2048,
-                            Type        = "CD-i",
+                            Type        = "cdi",
                             VolumeName  = "The Apprentice"
                         }
                     }
