@@ -96,7 +96,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                                 errno = image.ReadSectorTag(currentTrack.Sequence, SectorTagType.CdTrackFlags,
                                                             out byte[] tmp);
 
-                                if(errno != ErrorNumber.NoError)
+                                if(errno == ErrorNumber.NoError)
                                     flags[trackNo] = tmp[0];
                             }
 
