@@ -55,9 +55,15 @@ public sealed partial class ZZZRawImage
             case ".64kn": return imageFilter.DataForkLength % 65536 == 0;
             case ".512":
             case ".512e": return imageFilter.DataForkLength % 512 == 0;
-            case ".128": return imageFilter.DataForkLength % 128 == 0;
-            case ".256": return imageFilter.DataForkLength % 256 == 0;
-            case ".2352" when imageFilter.DataForkLength % 2352 == 0 && imageFilter.DataForkLength <= 846720000:
+            case ".128":                                               return imageFilter.DataForkLength % 128 == 0;
+            case ".256":                                               return imageFilter.DataForkLength % 256 == 0;
+            case ".toast" when imageFilter.DataForkLength % 2048 == 0: return true;
+            case ".toast" when imageFilter.DataForkLength % 2056 == 0: return true;
+
+            // Handle this properly on Open()
+            //case ".toast" when imageFilter.DataForkLength % 2336 == 0: return true;
+            case ".2352" or ".toast"
+                when imageFilter.DataForkLength % 2352 == 0 && imageFilter.DataForkLength <= 846720000:
             case ".2448" when imageFilter.DataForkLength % 2448 == 0 && imageFilter.DataForkLength <= 881280000:
                 byte[] sync   = new byte[12];
                 Stream stream = imageFilter.GetDataForkStream();

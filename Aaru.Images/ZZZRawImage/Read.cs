@@ -132,6 +132,11 @@ public sealed partial class ZZZRawImage
                 _imageInfo.SectorSize = 2352;
 
                 break;
+            case ".toast" when imageFilter.DataForkLength % 2056 == 0:
+                _imageInfo.SectorSize = 2352;
+                _toastXa              = true;
+
+                break;
             case ".d81" when imageFilter.DataForkLength == 819200:
                 _imageInfo.SectorSize = 256;
 
@@ -365,6 +370,9 @@ public sealed partial class ZZZRawImage
                 _imageInfo.SectorSize = (uint)(_mode2 ? 2336 : 2048);
             }
         }
+
+        if(_toastXa)
+            _imageInfo.MediaType = MediaType.CD;
 
         // Sharp X68000 SASI hard disks
         if(_extension == ".hdf")
@@ -1133,14 +1141,15 @@ public sealed partial class ZZZRawImage
 
         _imageInfo.ReadableMediaTags = new List<MediaTagType>(_mediaTags.Keys);
 
-        if(!_rawCompactDisc)
+        if(!_rawCompactDisc &&
+           !_toastXa)
             return ErrorNumber.NoError;
 
         if(_hasSubchannel)
             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
-        if(_mode2)
+        if(_mode2 || _toastXa)
         {
             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -1209,6 +1218,14 @@ public sealed partial class ZZZRawImage
             sectorOffset = (uint)(_mode2 ? 0 : 16);
             sectorSize   = (uint)(_mode2 ? 2352 : 2048);
             sectorSkip   = (uint)(_mode2 ? 0 : 288);
+        }
+
+        // TODO: Handle 2336 bps images
+        if(_toastXa)
+        {
+            sectorOffset = 8;
+            sectorSize   = 2048;
+            sectorSkip   = 0;
         }
 
         if(_hasSubchannel)
@@ -1366,7 +1383,7 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-           (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
+           (!_rawCompactDisc && !_toastXa && tag != SectorTagType.CdTrackFlags))
             return ErrorNumber.NotSupported;
 
         return ReadSectorsTag(sectorAddress, 1, tag, out buffer);
@@ -1378,7 +1395,7 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-           (!_rawCompactDisc && tag != SectorTagType.CdTrackFlags))
+           (!_rawCompactDisc && !_toastXa && tag != SectorTagType.CdTrackFlags))
             return ErrorNumber.NotSupported;
 
         if(tag == SectorTagType.CdTrackFlags)
@@ -1413,6 +1430,20 @@ public sealed partial class ZZZRawImage
 
             sectorOffset = 2352;
             sectorSize   = 96;
+        }
+        else if(_toastXa)
+        {
+            switch(tag)
+            {
+                case SectorTagType.CdSectorSubHeader:
+                    sectorOffset = 0;
+                    sectorSize   = 8;
+                    sectorSkip   = 2048;
+
+                    break;
+
+                default: return ErrorNumber.NotSupported;
+            }
         }
         else
             switch(tag)
@@ -1514,7 +1545,7 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-           !_rawCompactDisc)
+           (!_rawCompactDisc && !_toastXa))
             return ErrorNumber.NotSupported;
 
         if(sectorAddress > _imageInfo.Sectors - 1)
@@ -1523,8 +1554,8 @@ public sealed partial class ZZZRawImage
         if(sectorAddress + length > _imageInfo.Sectors)
             return ErrorNumber.OutOfRange;
 
-        const uint sectorSize = 2352;
-        uint       sectorSkip = 0;
+        uint sectorSize = _toastXa ? 2056u : 2352u;
+        uint sectorSkip = 0;
 
         if(_hasSubchannel)
             sectorSkip += 96;
@@ -1536,7 +1567,21 @@ public sealed partial class ZZZRawImage
 
         br.BaseStream.Seek((long)(sectorAddress * (sectorSize + sectorSkip)), SeekOrigin.Begin);
 
-        if(sectorSkip == 0)
+        if(_toastXa)
+        {
+            buffer = new byte[2352 * length];
+
+            for(int i = 0; i < length; i++)
+            {
+                byte[] fullSector = new byte[2352];
+                stream.EnsureRead(fullSector, 16, (int)sectorSize);
+                SectorBuilder sb = new();
+                sb.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1, (long)(sectorAddress + length));
+                sb.ReconstructEcc(ref fullSector, TrackType.CdMode2Form1);
+                Array.Copy(fullSector, 0, buffer, i * 2352, 2352);
+            }
+        }
+        else if(sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
             for(int i = 0; i < length; i++)

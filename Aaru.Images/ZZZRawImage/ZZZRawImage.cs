@@ -51,6 +51,7 @@ public sealed partial class ZZZRawImage : IWritableOpticalImage
     ImageInfo                        _imageInfo;
     Dictionary<MediaTagType, byte[]> _mediaTags;
     bool                             _mode2;
+    bool                             _toastXa;
     bool                             _rawCompactDisc;
     IFilter                          _rawImageFilter;
     FileStream                       _writingStream;
