@@ -99,9 +99,9 @@ sealed class LsCommand : Command
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
             {
                 if(objects is null)
-                    stderrConsole.MarkupLine(format);
+                    stderrConsole.MarkupLine(Markup.Escape(format));
                 else
-                    stderrConsole.MarkupLine(format, objects);
+                    stderrConsole.MarkupLine(Markup.Escape(format), objects);
             };
         }
 
