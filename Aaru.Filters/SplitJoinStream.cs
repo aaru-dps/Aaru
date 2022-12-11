@@ -229,7 +229,8 @@ public class SplitJoinStream : Stream
     /// <param name="basePath">Base file path, directory path only</param>
     /// <param name="counterFormat">Counter format, includes filename and a formatting string</param>
     /// <param name="counterStart">Counter start, defaults to 0</param>
-    public void AddRange(string basePath, string counterFormat = "{0:D3}", int counterStart = 0)
+    public void AddRange(string basePath, string counterFormat = "{0:D3}", int counterStart = 0,
+                         FileAccess access = FileAccess.Read)
     {
         while(true)
         {
@@ -238,7 +239,7 @@ public class SplitJoinStream : Stream
             if(!File.Exists(filePath))
                 break;
 
-            Add(filePath, FileMode.Open);
+            Add(filePath, FileMode.Open, access);
 
             counterStart++;
         }
