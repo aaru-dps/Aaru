@@ -102,6 +102,9 @@ public sealed partial class BlindWrite5
         public uint   Unknown3;
 
         public string Filename;
+
+        /// <inheritdoc />
+        public readonly override string ToString() => Filename;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
