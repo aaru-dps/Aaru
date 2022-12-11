@@ -1627,6 +1627,9 @@ public sealed partial class CdrWin
                 return ErrorNumber.InvalidArgument;
             }
 
+            if(_discImage.Tracks.All(t => t.Isrc == null))
+                _imageInfo.ReadableSectorTags.Remove(SectorTagType.CdTrackIsrc);
+
             if(_isCd)
                 return ErrorNumber.NoError;
 
