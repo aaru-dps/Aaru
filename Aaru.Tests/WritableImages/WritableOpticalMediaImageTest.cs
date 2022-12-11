@@ -57,29 +57,37 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 using(new AssertionScope())
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors, image.Info.Sectors, string.Format(Localization.Sectors_0, testFile));
+                        Assert.AreEqual(test.Sectors, image.Info.Sectors,
+                                        string.Format(Localization.Sectors_0, testFile));
 
                         if(test.SectorSize > 0)
-                            Assert.AreEqual(test.SectorSize, image.Info.SectorSize, string.Format(Localization.Sector_size_0, testFile));
+                            Assert.AreEqual(test.SectorSize, image.Info.SectorSize,
+                                            string.Format(Localization.Sector_size_0, testFile));
 
-                        Assert.AreEqual(test.MediaType, image.Info.MediaType, string.Format(Localization.Media_type_0, testFile));
+                        Assert.AreEqual(test.MediaType, image.Info.MediaType,
+                                        string.Format(Localization.Media_type_0, testFile));
 
                         if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
                             return;
 
-                        Assert.AreEqual(test.Tracks.Length, image.Tracks.Count, string.Format(Localization.Tracks_0, testFile));
+                        Assert.AreEqual(test.Tracks.Length, image.Tracks.Count,
+                                        string.Format(Localization.Tracks_0, testFile));
 
                         image.Tracks.Select(t => t.Session).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Session), string.Format(Localization.Track_session_0, testFile));
+                              BeEquivalentTo(test.Tracks.Select(s => s.Session),
+                                             string.Format(Localization.Track_session_0, testFile));
 
                         image.Tracks.Select(t => t.StartSector).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Start), string.Format(Localization.Track_start_0, testFile));
+                              BeEquivalentTo(test.Tracks.Select(s => s.Start),
+                                             string.Format(Localization.Track_start_0, testFile));
 
                         image.Tracks.Select(t => t.EndSector).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.End), string.Format(Localization.Track_end_0, testFile));
+                              BeEquivalentTo(test.Tracks.Select(s => s.End),
+                                             string.Format(Localization.Track_end_0, testFile));
 
                         image.Tracks.Select(t => t.Pregap).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Pregap), string.Format(Localization.Track_pregap_0, testFile));
+                              BeEquivalentTo(test.Tracks.Select(s => s.Pregap),
+                                             string.Format(Localization.Track_pregap_0, testFile));
 
                         int trackNo = 0;
 
@@ -103,10 +111,12 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                             trackNo++;
                         }
 
-                        flags.Should().BeEquivalentTo(test.Tracks.Select(s => s.Flags), string.Format(Localization.Track_flags_0, testFile));
+                        flags.Should().BeEquivalentTo(test.Tracks.Select(s => s.Flags),
+                                                      string.Format(Localization.Track_flags_0, testFile));
 
                         Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
-                                        string.Format(Localization.Last_sector_for_tracks_is_0_but_it_is_1_for_image, latestEndSector, image.Info.Sectors));
+                                        string.Format(Localization.Last_sector_for_tracks_is_0_but_it_is_1_for_image,
+                                                      latestEndSector, image.Info.Sectors));
                     });
             }
         });
@@ -137,7 +147,9 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 filter.Open(testFile);
 
                 var inputFormat = Activator.CreateInstance(InputPlugin.GetType()) as IOpticalMediaImage;
-                Assert.NotNull(inputFormat, string.Format(Localization.Could_not_instantiate_input_plugin_for_0, testFile));
+
+                Assert.NotNull(inputFormat,
+                               string.Format(Localization.Could_not_instantiate_input_plugin_for_0, testFile));
 
                 ErrorNumber opened = inputFormat.Open(filter);
                 Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
@@ -148,12 +160,18 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 string outputPath = Path.Combine(Path.GetTempPath(), $"{Path.GetRandomFileName()}.{OutputExtension}");
 
                 var outputFormat = Activator.CreateInstance(OutputPlugin.GetType()) as IWritableOpticalImage;
-                Assert.NotNull(outputFormat, string.Format(Localization.Could_not_instantiate_output_plugin_for_0, testFile));
+
+                Assert.NotNull(outputFormat,
+                               string.Format(Localization.Could_not_instantiate_output_plugin_for_0, testFile));
 
                 Assert.IsTrue(outputFormat.SupportedMediaTypes.Contains(inputFormat.Info.MediaType),
-                              string.Format(Localization.Trying_to_convert_unsupported_media_type_0_for_1, inputFormat.Info.MediaType, testFile));
+                              string.Format(Localization.Trying_to_convert_unsupported_media_type_0_for_1,
+                                            inputFormat.Info.MediaType, testFile));
 
-                bool useLong = inputFormat.Info.ReadableSectorTags.Count != 0;
+                bool useLong = inputFormat.Info.ReadableSectorTags.Except(new[]
+                {
+                    SectorTagType.CdTrackFlags
+                }).Any();
 
                 foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags.Where(sectorTag =>
                             !outputFormat.SupportedSectorTags.Contains(sectorTag)))
@@ -171,7 +189,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         outputFormat.WriteMediaTag(buffer, mediaTag);
 
                 Assert.IsTrue(outputFormat.SetTracks(inputFormat.Tracks),
-                              string.Format(Localization.Error_0_sending_tracks_list_to_output_image, outputFormat.ErrorMessage));
+                              string.Format(Localization.Error_0_sending_tracks_list_to_output_image,
+                                            outputFormat.ErrorMessage));
 
                 ulong doneSectors;
 
@@ -230,7 +249,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         }
 
                         Assert.IsTrue(result,
-                                      string.Format(Localization.Error_0_writing_sector_1, outputFormat.ErrorMessage, doneSectors + track.StartSector));
+                                      string.Format(Localization.Error_0_writing_sector_1, outputFormat.ErrorMessage,
+                                                    doneSectors + track.StartSector));
 
                         doneSectors += sectorsToDo;
                     }
@@ -339,7 +359,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                                 result = outputFormat.WriteSectorTag(sector, track.Sequence, tag);
 
                                 Assert.IsTrue(result,
-                                              string.Format(Localization.Error_0_writing_tag_not_continuing, outputFormat.ErrorMessage));
+                                              string.Format(Localization.Error_0_writing_tag_not_continuing,
+                                                            outputFormat.ErrorMessage));
 
                                 continue;
                         }
@@ -403,7 +424,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                             }
 
                             Assert.IsTrue(result,
-                                          string.Format(Localization.Error_0_writing_tag_for_sector_1_not_continuing, outputFormat.ErrorMessage, doneSectors + track.StartSector));
+                                          string.Format(Localization.Error_0_writing_tag_for_sector_1_not_continuing,
+                                                        outputFormat.ErrorMessage, doneSectors + track.StartSector));
 
                             doneSectors += sectorsToDo;
                         }
@@ -439,7 +461,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                                                     null, null, null, null, null, outputFormat);
 
                 Assert.IsTrue(outputFormat.Close(),
-                              string.Format(Localization.Error_0_closing_output_image_Contents_are_not_correct, outputFormat.ErrorMessage));
+                              string.Format(Localization.Error_0_closing_output_image_Contents_are_not_correct,
+                                            outputFormat.ErrorMessage));
 
                 filtersList = new FiltersList();
                 filter      = filtersList.GetFilter(outputPath);
@@ -460,25 +483,31 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 using(new AssertionScope())
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors, image.Info.Sectors, string.Format(Localization.Sectors_output_0, testFile));
+                        Assert.AreEqual(test.Sectors, image.Info.Sectors,
+                                        string.Format(Localization.Sectors_output_0, testFile));
 
                         if(test.SectorSize > 0)
                             Assert.AreEqual(test.SectorSize, image.Info.SectorSize,
                                             string.Format(Localization.Sector_size_output_0, testFile));
 
-                        Assert.AreEqual(test.Tracks.Length, image.Tracks.Count, string.Format(Localization.Tracks_output_0, testFile));
+                        Assert.AreEqual(test.Tracks.Length, image.Tracks.Count,
+                                        string.Format(Localization.Tracks_output_0, testFile));
 
                         image.Tracks.Select(t => t.Session).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Session), string.Format(Localization.Track_session_output_0, testFile));
+                              BeEquivalentTo(test.Tracks.Select(s => s.Session),
+                                             string.Format(Localization.Track_session_output_0, testFile));
 
                         image.Tracks.Select(t => t.StartSector).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Start), string.Format(Localization.Track_start_output_0, testFile));
+                              BeEquivalentTo(test.Tracks.Select(s => s.Start),
+                                             string.Format(Localization.Track_start_output_0, testFile));
 
                         image.Tracks.Select(t => t.EndSector).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.End), string.Format(Localization.Track_end_output_0, testFile));
+                              BeEquivalentTo(test.Tracks.Select(s => s.End),
+                                             string.Format(Localization.Track_end_output_0, testFile));
 
                         image.Tracks.Select(t => t.Pregap).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Pregap), string.Format(Localization.Track_pregap_output_0, testFile));
+                              BeEquivalentTo(test.Tracks.Select(s => s.Pregap),
+                                             string.Format(Localization.Track_pregap_output_0, testFile));
 
                         int trackNo = 0;
 
@@ -506,7 +535,9 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                                                       string.Format(Localization.Track_flags_output_0, testFile));
 
                         Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
-                                        string.Format(Localization.Last_sector_for_tracks_is_0_but_it_is_1_for_image_output, latestEndSector, image.Info.Sectors));
+                                        string.
+                                            Format(Localization.Last_sector_for_tracks_is_0_but_it_is_1_for_image_output,
+                                                   latestEndSector, image.Info.Sectors));
                     });
 
                 Md5Context ctx;
@@ -553,7 +584,9 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                     }
 
                     Assert.AreEqual(@long ? test.LongMd5 : test.Md5, ctx.End(),
-                                    string.Format("{0}: {1}", (@long ? Localization.Long_hash_output : Localization.Hash_output), testFile));
+                                    string.Format("{0}: {1}",
+                                                  @long ? Localization.Long_hash_output : Localization.Hash_output,
+                                                  testFile));
                 }
 
                 if(!image.Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
@@ -592,7 +625,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                     }
                 }
 
-                Assert.AreEqual(test.SubchannelMd5, ctx.End(), string.Format(Localization.Subchannel_hash_output_0, testFile));
+                Assert.AreEqual(test.SubchannelMd5, ctx.End(),
+                                string.Format(Localization.Subchannel_hash_output_0, testFile));
             }
         });
     }
