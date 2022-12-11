@@ -946,7 +946,7 @@ public sealed partial class BlindWrite5
                     {
                         splitStream.
                             Add(Path.Combine(basePath, $"{filename}.{(lowerCaseExtension ? firstExtensionLower : firstExtension)}"),
-                                FileMode.Open);
+                                FileMode.Open, FileAccess.Read);
 
                         splitStream.AddRange(basePath, $"{filename}.{extension}");
                     }
