@@ -50,7 +50,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 336,
             SectorSize = 512,
-            Md5        = "c109e802e65365245dedd1737ec65c92"
+            Md5        = "aeef05636add7b371b5128073b36f945"
         },
         new BlockImageTestExpected
         {
@@ -58,7 +58,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 336,
             SectorSize = 512,
-            Md5        = "d6eb723ac53eb469f64d8df69efef3dd",
+            Md5        = "59e3fecd9501694f897dbce45aa41946",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -74,7 +74,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 378,
             SectorSize = 512,
-            Md5        = "a327c34060570e1a917eb1d88716a11a"
+            Md5        = "c064dc6c091ebfd811223e0f25ba76c9"
         },
         new BlockImageTestExpected
         {
@@ -82,7 +82,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 378,
             SectorSize = 512,
-            Md5        = "b9807f1c25bf472633e7e80fa947a4d1",
+            Md5        = "d37559bca656484e2c91cee941f9d22b",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -98,7 +98,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 672,
             SectorSize = 512,
-            Md5        = "8b9e6662ef25a08d167f7ec4436efac8"
+            Md5        = "b9d1e5d5dd5bb7d1d865ed138d87ec00"
         },
         new BlockImageTestExpected
         {
@@ -106,7 +106,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 672,
             SectorSize = 512,
-            Md5        = "532694cde41f1553587b65c528bc185b",
+            Md5        = "d865778a7b9294045d3341be57fa9278",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -122,7 +122,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 756,
             SectorSize = 512,
-            Md5        = "a0b2aa16acaab9f521dff74ba93485ae"
+            Md5        = "f63b977a86a9f8ef46151a1ace30b755"
         },
         new BlockImageTestExpected
         {
@@ -130,7 +130,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 756,
             SectorSize = 512,
-            Md5        = "934e3a0f07410d0f4750f2beb3ce48f1",
+            Md5        = "efe65433ade25ce4d03d0f6a0c199b85",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -146,7 +146,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 2460,
             SectorSize = 512,
-            Md5        = "78819708381987b3120fc777a5f08f2d"
+            Md5        = "76d507db9dde141d79296c93d009bcc3"
         },
         new BlockImageTestExpected
         {
@@ -154,7 +154,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 2460,
             SectorSize = 512,
-            Md5        = "37dbeabaf72384870284ccd102b85eb7",
+            Md5        = "84b0b7b0b13f10b719ad3ff3ddf1b8ac",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -674,7 +674,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3528,
             SectorSize = 512,
-            Md5        = "a7688d6be942272ce866736e6007bc46",
+            Md5        = "a9bacb3d24afd8894b4857d4ca15f1a2",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -706,7 +706,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3612,
             SectorSize = 512,
-            Md5        = "ef0c3da4749da2f79d7d623d9b6f3d4d",
+            Md5        = "df4f196d4133f29e2735c05bb15ff6bf",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -722,7 +722,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 5120,
             SectorSize = 512,
-            Md5        = "5231d2e8a99ba5f8dfd16ca1a05f40cd",
+            Md5        = "630f017f692e853278ab108474fc1fa5",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -906,7 +906,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3024,
             SectorSize = 512,
-            Md5        = "952f33314fb930c2d02ef4604585c0e6",
+            Md5        = "0373d3d489e98cc1160da9b0412f6df0",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -938,7 +938,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3528,
             SectorSize = 512,
-            Md5        = "53dfcaceed8203ee629fc7fe520e1217",
+            Md5        = "2e9910e2d637eb88d58056b61a25401c",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -1314,7 +1314,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.DOS_525_DS_DD_9,
             Sectors    = 720,
             SectorSize = 512,
-            Md5        = "3a7f25fa38019109e89051993076063a"
+            Md5        = "b4955c463dcbe0744c4ac0bee23d62fe"
         },
         new BlockImageTestExpected
         {
@@ -1410,7 +1410,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.DOS_35_HD,
             Sectors    = 2880,
             SectorSize = 512,
-            Md5        = "0c043ceba489ef80c1b7f58534af12f5"
+            Md5        = "60fef9861bd893150aafd7751f886155"
         },
         new BlockImageTestExpected
         {
@@ -1466,7 +1466,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.CBM_35_DD,
             Sectors    = 1600,
             SectorSize = 512,
-            Md5        = "ca53f9cc4dcd04d06f5c4c3df09195ab"
+            Md5        = "a4337668ae19b79276fba4f7499ea936"
         },
         new BlockImageTestExpected
         {
@@ -1474,7 +1474,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.CBM_35_DD,
             Sectors    = 1600,
             SectorSize = 512,
-            Md5        = "fde94075cb3fd1c52af32062b0251af0"
+            Md5        = "b592e975a673226ba0880aece6ebc9e2"
         },
         new BlockImageTestExpected
         {
@@ -1498,7 +1498,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.DMF,
             Sectors    = 3360,
             SectorSize = 512,
-            Md5        = "4375fe3d7e50a5044b4850d8542363fb",
+            Md5        = "63b68958663987b2281b2105e704d3ce",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -1610,7 +1610,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 630,
             SectorSize = 512,
-            Md5        = "53a50481d90228f527b72f058de257da",
+            Md5        = "ed03778299e16ace99383487bff2228a",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -1690,7 +1690,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1680,
             SectorSize = 512,
-            Md5        = "2b2c891ef5edee8518a1ae2ed3ab71a0",
+            Md5        = "83e62bbb301ed40d9744593b7dc05f9e",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -1770,7 +1770,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3360,
             SectorSize = 512,
-            Md5        = "092308e5df684702dd0ec393b6d3563a",
+            Md5        = "700eadd757992f5da3c6c984a2f9470e",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -1818,7 +1818,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3528,
             SectorSize = 512,
-            Md5        = "963f3aa8d4468d4373054f842d0e2245",
+            Md5        = "ac3f34b034b9f8f488379d3a4f277a3b",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -1948,7 +1948,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1512,
             SectorSize = 512,
-            Md5        = "be89d2aab865a1217a3dda86e99bed97",
+            Md5        = "ba3045cda36dd47443ff68c10efae573",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -2252,7 +2252,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1404,
             SectorSize = 512,
-            Md5        = "1f6a23974b29d525706a2b0228325656",
+            Md5        = "5e0ecf953104621b0465163205d8e9c7",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -2596,7 +2596,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1476,
             SectorSize = 512,
-            Md5        = "259ff90e41e60682d948dd7d6af89735"
+            Md5        = "14c5ba6812de510b5839bcdf7fa1eb2e"
         },
         new BlockImageTestExpected
         {
@@ -2604,7 +2604,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1476,
             SectorSize = 512,
-            Md5        = "b40f8273fa7492bfe71c3d743269b97c",
+            Md5        = "affca3d8a008f74e515e11ed404214c2",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -2700,7 +2700,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1512,
             SectorSize = 512,
-            Md5        = "34b7b99ef6fba2235eedbd8ae406d7d3",
+            Md5        = "9b194e5ec9cd4221bf42ae4eb1d0a7f3",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -2732,7 +2732,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 1680,
             SectorSize = 512,
-            Md5        = "3b74e367926181152c3499de8dd9b914",
+            Md5        = "aed103aaad0025f7010f73057d2d5765",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -2748,7 +2748,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 5904,
             SectorSize = 512,
-            Md5        = "82825116ffe6d68b4d920ad4875bd709"
+            Md5        = "1145056a4b890bc8929fd4f93c5d8a90"
         },
         new BlockImageTestExpected
         {
@@ -2756,7 +2756,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 5904,
             SectorSize = 512,
-            Md5        = "e7cdd1123b08eac4e9571825b1f6172f",
+            Md5        = "72f6e8f92c6edb55217a897dcfd8d69a",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -2772,7 +2772,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 2952,
             SectorSize = 512,
-            Md5        = "3b16537076c5517306dc672f8f1e376e"
+            Md5        = "42d0fd9960c4016c1463e92cf555cadb"
         },
         new BlockImageTestExpected
         {
@@ -2780,7 +2780,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 2952,
             SectorSize = 512,
-            Md5        = "022893d7766205894fca41bcde3c9f6c",
+            Md5        = "6d505db2da80950248c66b05ab29fdd1",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -2988,7 +2988,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3024,
             SectorSize = 512,
-            Md5        = "67391c3750f17a806503be3f9d514b1f",
+            Md5        = "0a72fbb53701d31125adf37eef85623f",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -3020,7 +3020,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3360,
             SectorSize = 512,
-            Md5        = "c7764476489072dd053d5ec878171423",
+            Md5        = "81c604e56882d8e58b855fbc8f0b7519",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -3052,7 +3052,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3528,
             SectorSize = 512,
-            Md5        = "f725bc714c3204e835e23c726ce77b89",
+            Md5        = "b1326b772a804b51001ed4f5cb0e6a18",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -3068,7 +3068,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3772,
             SectorSize = 512,
-            Md5        = "02d7c237c6ac1fbcd2fbbfb45c5fb767"
+            Md5        = "a1678e57a7e474dfaeb6f710f9cfe523"
         },
         new BlockImageTestExpected
         {
@@ -3076,7 +3076,7 @@ public class RayDIM : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 3772,
             SectorSize = 512,
-            Md5        = "99f83e846c5106dd4992646726e91636",
+            Md5        = "a5bb324b948e477ca6fdeee6c429752d",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
