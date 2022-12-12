@@ -295,7 +295,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 640,
             SectorSize = 128,
-            Md5        = "b903ea7e0c9d7e4c6251df4825212db4"
+            Md5        = "c14ca79c13d605e44374bd6072f33ed7"
         },
         new BlockImageTestExpected
         {
@@ -535,7 +535,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 332,
             SectorSize = 512,
-            Md5        = "62b900808c3e9f91f8361fd1716155a1"
+            Md5        = "323ea79c83432663669b9bc29f13785c"
         },
         new BlockImageTestExpected
         {
@@ -823,7 +823,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.XDF_35,
             Sectors    = 640,
             SectorSize = 512,
-            Md5        = "728f9361203dc39961b1413aa050f70d"
+            Md5        = "a8142f403d972f96787eb76655f5d42c"
         },
         new BlockImageTestExpected
         {
@@ -831,7 +831,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.XDF_35,
             Sectors    = 640,
             SectorSize = 512,
-            Md5        = "728f9361203dc39961b1413aa050f70d"
+            Md5        = "a8142f403d972f96787eb76655f5d42c"
         }
     };
 }

@@ -223,7 +223,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 332,
             SectorSize = 512,
-            Md5        = "62b900808c3e9f91f8361fd1716155a1",
+            Md5        = "323ea79c83432663669b9bc29f13785c",
             Partitions = new[]
             {
                 new BlockPartitionVolumes
@@ -281,7 +281,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 640,
             SectorSize = 512,
-            Md5        = "57965378275db490527ff8c8fc517adf"
+            Md5        = "95164877cb156ff596f5e948a0a5b83f"
         },
         new BlockImageTestExpected
         {
@@ -289,7 +289,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.XDF_35,
             Sectors    = 640,
             SectorSize = 512,
-            Md5        = "728f9361203dc39961b1413aa050f70d"
+            Md5        = "a8142f403d972f96787eb76655f5d42c"
         },
         /* TODO: Not opening
         new BlockImageTestExpected
