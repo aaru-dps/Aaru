@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
@@ -46,14 +47,15 @@ namespace Aaru.Partitions;
 /// <summary>Implements decoding of Acorn partitions</summary>
 public sealed class Acorn : IPartition
 {
-    const ulong ADFS_SB_POS      = 0xC00;
-    const uint  LINUX_MAGIC      = 0xDEAFA1DE;
-    const uint  SWAP_MAGIC       = 0xDEAFAB1E;
-    const uint  RISCIX_MAGIC     = 0x4A657320;
-    const uint  TYPE_LINUX       = 9;
-    const uint  TYPE_RISCIX_MFM  = 1;
-    const uint  TYPE_RISCIX_SCSI = 2;
-    const uint  TYPE_MASK        = 15;
+    const    ulong  ADFS_SB_POS      = 0xC00;
+    const    uint   LINUX_MAGIC      = 0xDEAFA1DE;
+    const    uint   SWAP_MAGIC       = 0xDEAFAB1E;
+    const    uint   RISCIX_MAGIC     = 0x4A657320;
+    const    uint   TYPE_LINUX       = 9;
+    const    uint   TYPE_RISCIX_MFM  = 1;
+    const    uint   TYPE_RISCIX_SCSI = 2;
+    const    uint   TYPE_MASK        = 15;
+    readonly byte[] _linuxIcsMagic   = "LinuxPart"u8.ToArray();
 
     /// <inheritdoc />
     public string Name => Localization.Acorn_Name;
@@ -67,11 +69,22 @@ public sealed class Acorn : IPartition
     {
         partitions = new List<Partition>();
 
-        ulong sbSector;
+        ulong counter = 0;
 
+        GetFileCorePartitions(imagePlugin, partitions, sectorOffset, ref counter);
+        GetIcsPartitions(imagePlugin, partitions, sectorOffset, ref counter);
+
+        return partitions.Count != 0;
+    }
+
+    static void GetFileCorePartitions(IMediaImage imagePlugin, List<Partition> partitions, ulong sectorOffset,
+                                      ref ulong counter)
+    {
         // RISC OS always checks for the partition on 0. Afaik no emulator chains it.
         if(sectorOffset != 0)
-            return false;
+            return;
+
+        ulong sbSector;
 
         if(imagePlugin.Info.SectorSize > ADFS_SB_POS)
             sbSector = 0;
@@ -82,7 +95,7 @@ public sealed class Acorn : IPartition
 
         if(errno         != ErrorNumber.NoError ||
            sector.Length < 512)
-            return false;
+            return;
 
         AcornBootBlock bootBlock = Marshal.ByteArrayToStructureLittleEndian<AcornBootBlock>(sector);
 
@@ -96,14 +109,12 @@ public sealed class Acorn : IPartition
         int mapSector = bootBlock.startCylinder  * secCyl;
 
         if((ulong)mapSector >= imagePlugin.Info.Sectors)
-            return false;
+            return;
 
         errno = imagePlugin.ReadSector((ulong)mapSector, out byte[] map);
 
         if(errno != ErrorNumber.NoError)
-            return false;
-
-        ulong counter = 0;
+            return;
 
         if(checksum == bootBlock.checksum)
         {
@@ -112,7 +123,7 @@ public sealed class Acorn : IPartition
                 Size = ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000) + bootBlock.discRecord.disc_size,
                 Length = (((ulong)bootBlock.discRecord.disc_size_high * 0x100000000) + bootBlock.discRecord.disc_size) /
                          imagePlugin.Info.SectorSize,
-                Type = "ADFS",
+                Type = Localization.Filecore,
                 Name = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
             };
 
@@ -137,7 +148,13 @@ public sealed class Acorn : IPartition
                         Size     = entry.size,
                         Length   = (ulong)(entry.size * sector.Length),
                         Sequence = counter,
-                        Scheme   = Name
+                        Scheme   = "Filecore/Linux",
+                        Type = entry.magic switch
+                        {
+                            LINUX_MAGIC => Localization.Linux,
+                            SWAP_MAGIC  => Localization.Linux_swap,
+                            _           => Localization.Unknown_partition_type
+                        }
                     };
 
                     part.Offset = part.Start * (ulong)sector.Length;
@@ -167,7 +184,8 @@ public sealed class Acorn : IPartition
                             Length   = (ulong)(entry.length * sector.Length),
                             Name     = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1")),
                             Sequence = counter,
-                            Scheme   = Name
+                            Scheme   = "Filecore/RISCiX",
+                            Type     = Localization.Unknown_partition_type
                         };
 
                         part.Offset = part.Start * (ulong)sector.Length;
@@ -182,8 +200,85 @@ public sealed class Acorn : IPartition
                 break;
             }
         }
+    }
 
-        return partitions.Count != 0;
+    void GetIcsPartitions(IMediaImage imagePlugin, List<Partition> partitions, ulong sectorOffset, ref ulong counter)
+    {
+        // RISC OS always checks for the partition on 0. Afaik no emulator chains it.
+        if(sectorOffset != 0)
+            return;
+
+        ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
+
+        if(errno         != ErrorNumber.NoError ||
+           sector.Length < 512)
+            return;
+
+        uint icsSum = 0x50617274;
+
+        for(int i = 0; i < 508; i++)
+            icsSum += sector[i];
+
+        uint discCheck = BitConverter.ToUInt32(sector, 508);
+
+        if(icsSum != discCheck)
+            return;
+
+        IcsTable table = Marshal.ByteArrayToStructureLittleEndian<IcsTable>(sector);
+
+        foreach(IcsEntry entry in table.entries.Where(entry => entry.size != 0))
+        {
+            // FileCore partition
+            Partition part;
+
+            if(entry.size > 0)
+            {
+                part = new Partition
+                {
+                    Start    = entry.start,
+                    Length   = (ulong)entry.size,
+                    Size     = (ulong)(entry.size * sector.Length),
+                    Type     = Localization.Filecore,
+                    Sequence = counter,
+                    Scheme   = "ICS"
+                };
+
+                part.Offset = part.Start * (ulong)sector.Length;
+                counter++;
+
+                partitions.Add(part);
+
+                continue;
+            }
+
+            // Negative size means Linux partition, first sector needs to be read
+            errno = imagePlugin.ReadSector(entry.start, out sector);
+
+            if(errno != ErrorNumber.NoError)
+                continue;
+
+            if(_linuxIcsMagic.Where((t, i) => t != sector[i]).Any())
+                continue;
+
+            part = new Partition
+            {
+                Start  = entry.start,
+                Length = (ulong)(entry.size * -1),
+                Size   = (ulong)(entry.size * -1 * sector.Length),
+                Type = sector[9] == 'N'
+                           ? Localization.Linux
+                           : sector[9] == 'S'
+                               ? Localization.Linux_swap
+                               : Localization.Unknown_partition_type,
+                Sequence = counter,
+                Scheme   = "ICS"
+            };
+
+            part.Offset = part.Start * (ulong)sector.Length;
+            counter++;
+
+            partitions.Add(part);
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -260,5 +355,19 @@ public sealed class Acorn : IPartition
         public readonly uint one;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public readonly byte[] name;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct IcsTable
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public readonly IcsEntry[] entries;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct IcsEntry
+    {
+        public readonly uint start;
+        public readonly int  size;
     }
 }

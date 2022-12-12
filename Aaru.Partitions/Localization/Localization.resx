@@ -1410,4 +1410,7 @@
   <data name="XENIX_Name" xml:space="preserve">
     <value>XENIX</value>
   </data>
+  <data name="Filecore" xml:space="preserve">
+    <value>Filecore</value>
+  </data>
 </root>
