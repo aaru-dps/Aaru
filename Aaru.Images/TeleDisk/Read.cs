@@ -588,6 +588,10 @@ public sealed partial class TeleDisk
             if(errno != ErrorNumber.NoError)
                 return errno;
 
+            // Sector not in image, TODO for 6.0 return NotDumped status
+            if(sector is null)
+                continue;
+
             ms.Write(sector, 0, sector.Length);
         }
 
