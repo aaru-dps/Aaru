@@ -144,8 +144,6 @@ namespace Aaru.Partitions
                 AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].first_block = {1}", i,
                                            dvh.partitions[i].first_block);
 
-                // TODO: Solve big endian marshal with enumerations
-                dvh.partitions[i].type = (SGIType)Swapping.Swap((uint)dvh.partitions[i].type);
                 AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].type = {1}", i, dvh.partitions[i].type);
 
                 var part = new CommonTypes.Partition
