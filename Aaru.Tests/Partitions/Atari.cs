@@ -63,75 +63,23 @@ public class Atari : PartitionSchemeTest
                 },
                 new Partition
                 {
-                    Length   = 110161,
-                    Offset   = 73400832,
-                    Sequence = 2,
-                    Size     = 56402432,
-                    Start    = 143361,
-                    Type     = "LNX"
+                    Description = "Macintosh partition",
+                    Length      = 102399,
+                    Offset      = 512,
+                    Sequence    = 1,
+                    Size        = 52428288,
+                    Start       = 1,
+                    Type        = "MAC"
                 },
                 new Partition
                 {
-                    Length   = 84400,
-                    Offset   = 129803264,
-                    Sequence = 3,
-                    Size     = 43212800,
-                    Start    = 253522,
-                    Type     = "MAC"
-                },
-                new Partition
-                {
-                    Length   = 112640,
-                    Offset   = 173016064,
-                    Sequence = 4,
-                    Size     = 57671680,
-                    Start    = 337922,
-                    Type     = "MIX"
-                },
-                new Partition
-                {
-                    Length   = 122880,
-                    Offset   = 230687744,
-                    Sequence = 5,
-                    Size     = 62914560,
-                    Start    = 450562,
-                    Type     = "MNX"
-                },
-                new Partition
-                {
-                    Length   = 143360,
-                    Offset   = 293602304,
-                    Sequence = 6,
-                    Size     = 73400320,
-                    Start    = 573442,
-                    Type     = "RAW"
-                },
-                new Partition
-                {
-                    Length   = 153600,
-                    Offset   = 367002624,
-                    Sequence = 7,
-                    Size     = 78643200,
-                    Start    = 716802,
-                    Type     = "SWP"
-                },
-                new Partition
-                {
-                    Length   = 2048,
-                    Offset   = 445645824,
-                    Sequence = 8,
-                    Size     = 1048576,
-                    Start    = 870402,
-                    Type     = "UNX"
-                },
-                new Partition
-                {
-                    Length   = 151550,
-                    Offset   = 446694400,
-                    Sequence = 9,
-                    Size     = 77593600,
-                    Start    = 872450,
-                    Type     = "LNX"
+                    Description = "Linux partition",
+                    Length      = 92160,
+                    Offset      = 73400832,
+                    Sequence    = 3,
+                    Size        = 47185920,
+                    Start       = 143361,
+                    Type        = "LNX"
                 }
             }
         },
