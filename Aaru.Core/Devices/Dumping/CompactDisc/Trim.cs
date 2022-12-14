@@ -137,10 +137,15 @@ partial class Dump
                audioExtents.Contains(badSector) &&
                offsetBytes != 0)
             {
-                if(offsetBytes > 0)
-                    badSectorToRead -= (uint)sectorsForOffset;
+                if(offsetBytes < 0)
+                {
+                    if(badSectorToRead == 0)
+                        badSectorToRead = uint.MaxValue - (uint)(sectorsForOffset - 1); // -1
+                    else
+                        badSectorToRead -= (uint)sectorsForOffset;
+                }
 
-                sectorsToTrim = (byte)(sectorsForOffset + 1);
+                sectorsToTrim += (byte)sectorsForOffset;
             }
 
             if(_supportsPlextorD8 && audioExtents.Contains(badSector))
