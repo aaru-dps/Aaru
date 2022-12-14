@@ -150,12 +150,15 @@ namespace Aaru.Core.Devices.Dumping
                    audioExtents.Contains(badSector) &&
                    offsetBytes != 0)
                 {
-                    if(offsetBytes > 0)
+                    if(offsetBytes < 0)
                     {
-                        badSectorToRead -= (uint)sectorsForOffset;
+                        if(badSectorToRead == 0)
+                            badSectorToRead = uint.MaxValue - (uint)(sectorsForOffset - 1); // -1
+                        else
+                            badSectorToRead -= (uint)sectorsForOffset;
                     }
 
-                    sectorsToTrim = (byte)(sectorsForOffset + 1);
+                    sectorsToTrim += (byte)sectorsForOffset;
                 }
 
                 bool forceFixOffset = false;
