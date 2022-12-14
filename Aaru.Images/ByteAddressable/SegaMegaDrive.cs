@@ -44,7 +44,7 @@ using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.DiscImages.ByteAddressable;
+namespace Aaru.DiscImages;
 
 /// <inheritdoc />
 /// <summary>Implements support for Sega Mega Drive, 32X, Genesis and Pico cartridge dumps</summary>

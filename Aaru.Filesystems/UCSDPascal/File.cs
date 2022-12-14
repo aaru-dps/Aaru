@@ -32,7 +32,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems.UCSDPascal;
+namespace Aaru.Filesystems;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin

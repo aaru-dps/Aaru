@@ -28,7 +28,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.Filesystems.LisaFS;
+namespace Aaru.Filesystems;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class LisaFS

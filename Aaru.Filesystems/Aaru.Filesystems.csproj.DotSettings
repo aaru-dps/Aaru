@@ -65,6 +65,8 @@
     <s:Boolean
         x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=lif/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean
+        x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=lisafs/@EntryIndexedValue">True</s:Boolean>
+    <s:Boolean
         x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=localization/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean
         x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=locus/@EntryIndexedValue">True</s:Boolean>
@@ -109,6 +111,7 @@
         x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=squash/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean
         x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=sysv/@EntryIndexedValue">True</s:Boolean>
+    <s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=ucsdpascal/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean
         x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=udf/@EntryIndexedValue">True</s:Boolean>
     <s:Boolean

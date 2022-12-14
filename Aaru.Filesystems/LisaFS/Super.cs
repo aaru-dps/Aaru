@@ -39,7 +39,7 @@ using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
-namespace Aaru.Filesystems.LisaFS;
+namespace Aaru.Filesystems;
 
 public sealed partial class LisaFS
 {

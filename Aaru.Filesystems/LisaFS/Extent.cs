@@ -32,7 +32,7 @@ using Aaru.Console;
 using Aaru.Decoders;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems.LisaFS;
+namespace Aaru.Filesystems;
 
 public sealed partial class LisaFS
 {

@@ -29,7 +29,7 @@
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems.LisaFS;
+using Aaru.Filesystems;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems;

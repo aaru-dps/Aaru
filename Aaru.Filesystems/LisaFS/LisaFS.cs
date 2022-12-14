@@ -32,7 +32,7 @@ using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace Aaru.Filesystems.LisaFS;
+namespace Aaru.Filesystems;
 
 // All information by Natalia Portillo
 // Variable names from Lisa API

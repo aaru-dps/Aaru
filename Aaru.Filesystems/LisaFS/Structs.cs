@@ -32,7 +32,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 
 #pragma warning disable CS0649
-namespace Aaru.Filesystems.LisaFS;
+namespace Aaru.Filesystems;
 
 public sealed partial class LisaFS
 {

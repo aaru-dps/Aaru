@@ -14,7 +14,7 @@ using Aaru.Database.Models;
 using Aaru.Helpers;
 using Schemas;
 
-namespace Aaru.DiscImages.ByteAddressable;
+namespace Aaru.DiscImages;
 
 public class Nes : IByteAddressableImage
 {

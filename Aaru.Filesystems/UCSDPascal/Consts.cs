@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.Filesystems.UCSDPascal;
+namespace Aaru.Filesystems;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 [SuppressMessage("ReSharper", "UnusedMember.Local")]

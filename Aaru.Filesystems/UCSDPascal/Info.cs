@@ -41,7 +41,7 @@ using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
-namespace Aaru.Filesystems.UCSDPascal;
+namespace Aaru.Filesystems;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin

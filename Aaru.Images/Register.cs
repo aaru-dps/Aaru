@@ -36,61 +36,11 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.DiscImages;
 
+// Needs to have the interface here so the source generator knows THIS IS the class
+// ReSharper disable once RedundantExtendsListEntry
 /// <inheritdoc />
-public sealed class Register : IPluginRegister
-{
-    /// <inheritdoc />
-    public List<Type> GetAllChecksumPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllFilesystemPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllFilterPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllFloppyImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().
-                                                             Where(t => t.GetInterfaces().
-                                                                          Contains(typeof(IFloppyImage))).
-                                                             Where(t => t.IsClass).ToList();
-
-    /// <inheritdoc />
-    public List<Type> GetAllMediaImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().
-                                                            Where(t => t.GetInterfaces().Contains(typeof(IMediaImage))).
-                                                            Where(t => t.IsClass).ToList();
-
-    /// <inheritdoc />
-    public List<Type> GetAllPartitionPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllReadOnlyFilesystemPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllWritableFloppyImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().
-                                                                     Where(t => t.GetInterfaces().
-                                                                               Contains(typeof(IWritableFloppyImage))).
-                                                                     Where(t => t.IsClass).ToList();
-
-    /// <inheritdoc />
-    public List<Type> GetAllWritableImagePlugins() => Assembly.GetExecutingAssembly().GetTypes().
-                                                               Where(t => t.GetInterfaces().
-                                                                            Contains(typeof(IBaseWritableImage))).
-                                                               Where(t => t.IsClass).ToList();
-
-    /// <inheritdoc />
-    public List<Type> GetAllArchivePlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllByteAddressablePlugins() => Assembly.GetExecutingAssembly().GetTypes().
-                                                                 Where(t => t.GetInterfaces().
-                                                                              Contains(typeof(IByteAddressableImage))).
-                                                                 Where(t => t.IsClass).ToList();
-}
+public sealed partial class Register : IPluginRegister {}

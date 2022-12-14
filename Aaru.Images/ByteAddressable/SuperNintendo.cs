@@ -12,7 +12,7 @@ using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.DiscImages.ByteAddressable;
+namespace Aaru.DiscImages;
 
 public class SuperNintendo : IByteAddressableImage
 {
