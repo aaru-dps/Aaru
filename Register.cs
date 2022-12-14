@@ -36,49 +36,11 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Checksums;
 
+// Needs to have the interface here so the source generator knows THIS IS the class
+// ReSharper disable once RedundantExtendsListEntry
 /// <inheritdoc />
-public sealed class Register : IPluginRegister
-{
-    /// <inheritdoc />
-    public List<Type> GetAllChecksumPlugins() => Assembly.GetExecutingAssembly().GetTypes().
-                                                          Where(t => t.GetInterfaces().Contains(typeof(IChecksum))).
-                                                          Where(t => t.IsClass).ToList();
-
-    /// <inheritdoc />
-    public List<Type> GetAllFilesystemPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllFilterPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllFloppyImagePlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllMediaImagePlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllPartitionPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllReadOnlyFilesystemPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllWritableFloppyImagePlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllWritableImagePlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllArchivePlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllByteAddressablePlugins() => null;
-}
+public sealed partial class Register : IPluginRegister {}

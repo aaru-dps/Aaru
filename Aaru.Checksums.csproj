@@ -28,6 +28,7 @@
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <NoWarn>CS1591;CS1574</NoWarn>
@@ -61,5 +62,8 @@
   <ItemGroup>
     <PackageReference Include="Aaru.Checksums.Native" Version="6.0.0-alpha6"/>
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.Generators\Aaru.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
   </ItemGroup>
 </Project>
