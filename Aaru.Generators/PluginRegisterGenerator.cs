@@ -349,6 +349,9 @@ public class PluginRegisterGenerator : ISourceGenerator
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText == "IByteAddressableImage") == true)
                 ByteAddressableImagePlugins.Add(plugin);
+
+            MediaImagePlugins.AddRange(WritableImagePlugins);
+            FileSystems.AddRange(ReadOnlyFileSystems);
         }
     }
 }
