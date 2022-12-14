@@ -14,7 +14,7 @@
         <key>CFBundleIdentifier</key>
         <string>app.aaru</string>
         <key>CFBundleShortVersionString</key>
-        <string>5.3.2-rc1</string>
+        <string>5.3.2-rc2</string>
         <key>CFBundleExecutable</key>
         <string>aaru</string>
         <key>LSExecutableArchitectures</key>
