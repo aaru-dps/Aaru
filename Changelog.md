@@ -1,4 +1,4 @@
-# [5.3.2-rc1] - 2022-12-06
+# [5.3.2-rc2] - 2022-12-14
 
 ## Fixed
 
@@ -7,6 +7,12 @@
 - Parent block identifier in AaruFormat.
 - Track indexes in when a disc contains a hidden track.
 
+### - BlindWrite 5/6/7 disc images
+- Opening split images in Windows
+
+### - CDRWin cuesheet disc images
+- Do not report ISRC as present if no tracks contain ISRC data.
+
 ### - Device report
 - Add workaround for device report the AccessTek/Optorite DD0203 drive.
 
@@ -14,7 +20,18 @@
 - Add transfer size to ATA(PI) IDENTIFY (PACKET) DEVICE commands as required by a recent change in the Linux kernel API.
 
 ### - Dumping
+- Correct offset fixing when trimming or re-reading errored audio sectors.
 - Do not set INDEX 1 to a value higher than what the TOC already said.
+
+### - FAT filesystem
+- Fix that first 2 FAT entries are not considered part of the allocation ones, allocating two more.
+- Return current clusters when a file overflows the FAT.
+
+### - ISO9660 filesystem
+- Do not try to interpret an 0-length Continuation Area.
+
+### - SGI Volume Header
+- Partition types not properly interpreted.
 
 ## Changes
 
@@ -2276,7 +2293,7 @@
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
-[5.3.2-rc1]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.2-rc1
+[5.3.2-rc2]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.2-rc
 
 [5.3.1]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.1
 
