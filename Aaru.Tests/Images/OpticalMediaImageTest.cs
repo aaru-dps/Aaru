@@ -169,7 +169,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                             ulong trackStart = track.Start + track.Pregap;
 
-                            if(track.Number == 1 &&
+                            if(track.Number <= 1 &&
                                track.Pregap >= 150)
                                 trackStart -= 150;
 
