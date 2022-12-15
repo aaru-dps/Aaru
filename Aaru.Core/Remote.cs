@@ -57,7 +57,7 @@ public static class Remote
 {
     /// <summary>Submits a device report</summary>
     /// <param name="report">Device report</param>
-    public static void SubmitReport(DeviceReportV2 report)
+    public static void SubmitReport(DeviceReport report)
     {
         var submitThread = new Thread(() =>
         {

@@ -53,7 +53,6 @@ using Aaru.Localization;
 using Newtonsoft.Json;
 using Spectre.Console;
 using Command = System.CommandLine.Command;
-using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
 using Profile = Aaru.Decoders.SCSI.MMC.Profile;
 
 namespace Aaru.Commands.Device;
@@ -154,7 +153,7 @@ sealed class DeviceReportCommand : Command
             return (int)ErrorNumber.NotPermitted;
         }
 
-        var report = new DeviceReportV2
+        var report = new DeviceReport
         {
             Manufacturer = dev.Manufacturer,
             Model        = dev.Model,
@@ -195,7 +194,7 @@ sealed class DeviceReportCommand : Command
             return (int)ErrorNumber.InvalidArgument;
         }
 
-        var reporter = new DeviceReport(dev);
+        var reporter = new Core.Devices.Report.DeviceReport(dev);
 
         if(dev.IsUsb)
             if(AnsiConsole.Confirm($"[italic]{UI.Is_the_device_natively_USB}[/]"))
@@ -251,7 +250,7 @@ sealed class DeviceReportCommand : Command
 
                 report.ATA = new Ata
                 {
-                    Identify = DeviceReport.ClearIdentify(buffer)
+                    Identify = Core.Devices.Report.DeviceReport.ClearIdentify(buffer)
                 };
 
                 if(report.ATA.IdentifyDevice == null)
@@ -279,7 +278,7 @@ sealed class DeviceReportCommand : Command
                         dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
                     });
 
-                    report.ATA.Identify = DeviceReport.ClearIdentify(buffer);
+                    report.ATA.Identify = Core.Devices.Report.DeviceReport.ClearIdentify(buffer);
                     List<TestedMedia> mediaTests = new();
 
                     while(AnsiConsole.Confirm($"[italic]{UI.Do_you_have_media_you_can_insert}[/]"))
@@ -326,7 +325,7 @@ sealed class DeviceReportCommand : Command
                 if(Identify.Decode(buffer).HasValue)
                     report.ATAPI = new Ata
                     {
-                        Identify = DeviceReport.ClearIdentify(buffer)
+                        Identify = Core.Devices.Report.DeviceReport.ClearIdentify(buffer)
                     };
 
                 goto case DeviceType.SCSI;

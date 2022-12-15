@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Metadata;
 namespace Aaru.Database.Models;
 
 /// <summary>Known device</summary>
-public class Device : DeviceReportV2
+public class Device : DeviceReport
 {
     /// <summary>Builds an empty device</summary>
     public Device() => LastSynchronized = DateTime.UtcNow;
@@ -46,7 +46,7 @@ public class Device : DeviceReportV2
     /// <summary>Builds a device from a device report</summary>
     /// <param name="report">Device report</param>
     [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
-    public Device(DeviceReportV2 report)
+    public Device(DeviceReport report)
     {
         ATA                       = report.ATA;
         ATAPI                     = report.ATAPI;

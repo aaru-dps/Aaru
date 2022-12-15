@@ -215,14 +215,15 @@ public sealed partial class DeviceReport
     /// <param name="report">Device report</param>
     /// <param name="cdromMode">Returns raw MODE SENSE page 2Ah, aka CD-ROM page</param>
     /// <param name="mediumType">Returns decoded list of supported media types response</param>
-    public void ReportScsiModes(ref DeviceReportV2 report, out byte[] cdromMode, out MediumTypes mediumType)
+    public void ReportScsiModes(ref CommonTypes.Metadata.DeviceReport report, out byte[] cdromMode,
+                                out MediumTypes mediumType)
     {
         Modes.DecodedMode?    decMode = null;
         PeripheralDeviceTypes devType = _dev.ScsiType;
         bool                  sense;
         mediumType = 0;
 
-        DeviceReportV2 v2 = report;
+        CommonTypes.Metadata.DeviceReport v2 = report;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {

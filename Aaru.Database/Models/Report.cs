@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Metadata;
 namespace Aaru.Database.Models;
 
 /// <summary>Device report</summary>
-public class Report : DeviceReportV2
+public class Report : DeviceReport
 {
     /// <summary>Builds an empty device report</summary>
     public Report()
@@ -49,7 +49,7 @@ public class Report : DeviceReportV2
     /// <summary>Builds a device report model from a device report</summary>
     /// <param name="report">Device report</param>
     [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
-    public Report(DeviceReportV2 report)
+    public Report(DeviceReport report)
     {
         ATA            = report.ATA;
         ATAPI          = report.ATAPI;
