@@ -67,7 +67,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                         Assert.AreEqual(test.MediaType, image.Info.MediaType,
                                         string.Format(Localization.Media_type_0, testFile));
 
-                        if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
+                        if(image.Info.MetadataMediaType != MetadataMediaType.OpticalDisc)
                             return;
 
                         Assert.AreEqual(test.Tracks.Length, image.Tracks.Count,

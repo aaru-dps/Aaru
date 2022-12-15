@@ -28,10 +28,10 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -122,13 +122,12 @@ public sealed partial class extFS
         sb.AppendFormat(Localization.Log_zone_size_0, extSb.logzonesize);
         sb.AppendFormat(Localization.Max_zone_size_0, extSb.maxsize);
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                  = FS_TYPE,
-            FreeClusters          = extSb.freecountblk,
-            FreeClustersSpecified = true,
-            ClusterSize           = 1024,
-            Clusters              = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024
+            Type         = FS_TYPE,
+            FreeClusters = extSb.freecountblk,
+            ClusterSize  = 1024,
+            Clusters     = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024
         };
 
         information = sb.ToString();

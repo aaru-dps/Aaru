@@ -181,7 +181,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     public string CalculateEntropyLabel     => UI.ButtonLabel_Calculate_entropy;
     public string VerifyImageLabel          => UI.ButtonLabel_Verify;
     public string ChecksumImageLabel        => UI.ButtonLabel_Checksum;
-    public string CreateSidecarLabel        => UI.ButtonLabel_Create_CICM_XML_sidecar;
+    public string CreateSidecarLabel        => UI.ButtonLabel_Create_Aaru_Metadata_sidecar;
     public string ViewImageSectorsLabel     => UI.ButtonLabel_View_sectors;
     public string DecodeImageMediaTagsLabel => UI.ButtonLabel_Decode_media_tags;
 
@@ -577,9 +577,9 @@ public sealed class MainWindowViewModel : ViewModelBase
                     Path = result[0],
                     Icon = _assets.Exists(mediaResource)
                                ? new Bitmap(_assets.Open(mediaResource))
-                               : imageFormat.Info.XmlMediaType == XmlMediaType.BlockMedia
+                               : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
                                    ? _genericHddIcon
-                                   : imageFormat.Info.XmlMediaType == XmlMediaType.OpticalDisc
+                                   : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
                                        ? _genericOpticalIcon
                                        : _genericFolderIcon,
                     FileName  = Path.GetFileName(result[0]),
@@ -655,11 +655,11 @@ public sealed class MainWindowViewModel : ViewModelBase
                                         var filesystemModel = new FileSystemModel
                                         {
                                             VolumeName =
-                                                plugin.XmlFsType.VolumeName is null ? $"{plugin.XmlFsType.Type}"
-                                                    : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
+                                                plugin.Metadata.VolumeName is null ? $"{plugin.Metadata.Type}"
+                                                    : $"{plugin.Metadata.VolumeName} ({plugin.Metadata.Type})",
                                             Filesystem         = plugin,
                                             ReadOnlyFilesystem = fsPlugin,
-                                            ViewModel          = new FileSystemViewModel(plugin.XmlFsType, information)
+                                            ViewModel          = new FileSystemViewModel(plugin.Metadata, information)
                                         };
 
                                         // TODO: Trap expanding item
@@ -675,7 +675,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                             Statistics.AddCommand("ls");
                                         }
 
-                                        Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                        Statistics.AddFilesystem(plugin.Metadata.Type);
                                         partitionModel.FileSystems.Add(filesystemModel);
                                     }
                             }
@@ -722,11 +722,11 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                                 var filesystemModel = new FileSystemModel
                                 {
-                                    VolumeName = plugin.XmlFsType.VolumeName is null ? $"{plugin.XmlFsType.Type}"
-                                                     : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
+                                    VolumeName = plugin.Metadata.VolumeName is null ? $"{plugin.Metadata.Type}"
+                                                     : $"{plugin.Metadata.VolumeName} ({plugin.Metadata.Type})",
                                     Filesystem         = plugin,
                                     ReadOnlyFilesystem = fsPlugin,
-                                    ViewModel          = new FileSystemViewModel(plugin.XmlFsType, information)
+                                    ViewModel          = new FileSystemViewModel(plugin.Metadata, information)
                                 };
 
                                 // TODO: Trap expanding item
@@ -742,7 +742,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                     Statistics.AddCommand("ls");
                                 }
 
-                                Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                Statistics.AddFilesystem(plugin.Metadata.Type);
                                 imageModel.PartitionSchemesOrFileSystems.Add(filesystemModel);
                             }
                     }

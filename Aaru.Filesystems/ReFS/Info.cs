@@ -29,12 +29,12 @@
 using System;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -136,7 +136,7 @@ public sealed partial class ReFS : IFilesystem
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type        = FS_TYPE,
             ClusterSize = vhdr.bytesPerSector * vhdr.sectorsPerCluster,

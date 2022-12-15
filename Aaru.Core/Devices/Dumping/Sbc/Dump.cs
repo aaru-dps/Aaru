@@ -35,13 +35,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
-using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core.Graphics;
@@ -52,11 +53,12 @@ using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
-using Schemas;
 using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
 using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using MediaType = Aaru.CommonTypes.MediaType;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
+using Usb = Aaru.CommonTypes.AaruMetadata.Usb;
 using Version = Aaru.CommonTypes.Interop.Version;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -369,8 +371,10 @@ partial class Dump
         UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
         _dumpLog.WriteLine(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead);
 
-        var  mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private, _dimensions);
-        var  ibgLog = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
+        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private,
+                                  _dimensions);
+
+        var  ibgLog       = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
         bool imageCreated = false;
 
         if(!opticalDisc)
@@ -697,8 +701,8 @@ partial class Dump
             }
         }
 
-        DumpHardwareType currentTry = null;
-        ExtentsULong     extents    = null;
+        DumpHardware currentTry = null;
+        ExtentsULong extents    = null;
 
         ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
                               _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
@@ -1023,12 +1027,12 @@ partial class Dump
             ApplicationVersion = Version.GetVersion()
         };
 
-        if(!outputFormat.SetMetadata(metadata))
+        if(!outputFormat.SetImageInfo(metadata))
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputFormat.ErrorMessage);
 
         if(_preSidecar != null)
-            outputFormat.SetCicmMetadata(_preSidecar);
+            outputFormat.SetMetadata(_preSidecar);
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
@@ -1082,7 +1086,7 @@ partial class Dump
                 _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
                 _sidecarClass.EndProgressEvent2    += EndProgress2;
                 _sidecarClass.UpdateStatusEvent    += UpdateStatus;
-                CICMMetadataType sidecar = _sidecarClass.Create();
+                Metadata sidecar = _sidecarClass.Create();
                 end = DateTime.UtcNow;
 
                 if(!_aborted)
@@ -1103,8 +1107,8 @@ partial class Dump
 
                     if(_preSidecar != null)
                     {
-                        _preSidecar.BlockMedia = sidecar.BlockMedia;
-                        sidecar                = _preSidecar;
+                        _preSidecar.BlockMedias = sidecar.BlockMedias;
+                        sidecar                 = _preSidecar;
                     }
 
                     // All USB flash drives report as removable, even if the media is not removable
@@ -1114,15 +1118,15 @@ partial class Dump
                         if(_dev.IsUsb &&
                            _dev.UsbDescriptors != null)
                             if(outputFormat.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
-                                sidecar.BlockMedia[0].USB = new USBType
+                                sidecar.BlockMedias[0].Usb = new Usb
                                 {
                                     ProductID = _dev.UsbProductId,
                                     VendorID  = _dev.UsbVendorId,
-                                    Descriptors = new DumpType
+                                    Descriptors = new CommonTypes.AaruMetadata.Dump
                                     {
                                         Image     = _outputPath,
                                         Size      = (ulong)_dev.UsbDescriptors.Length,
-                                        Checksums = Checksum.GetChecksums(_dev.UsbDescriptors).ToArray()
+                                        Checksums = Checksum.GetChecksums(_dev.UsbDescriptors)
                                     }
                                 };
 
@@ -1134,13 +1138,13 @@ partial class Dump
 
                             if(!sense)
                                 if(outputFormat.SupportedMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
-                                    sidecar.BlockMedia[0].ATA = new ATAType
+                                    sidecar.BlockMedias[0].ATA = new ATA
                                     {
-                                        Identify = new DumpType
+                                        Identify = new CommonTypes.AaruMetadata.Dump
                                         {
                                             Image     = _outputPath,
                                             Size      = (ulong)cmdBuf.Length,
-                                            Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                                            Checksums = Checksum.GetChecksums(cmdBuf)
                                         }
                                     };
                         }
@@ -1150,13 +1154,13 @@ partial class Dump
                         if(!sense)
                         {
                             if(outputFormat.SupportedMediaTags.Contains(MediaTagType.SCSI_INQUIRY))
-                                sidecar.BlockMedia[0].SCSI = new SCSIType
+                                sidecar.BlockMedias[0].SCSI = new SCSI
                                 {
-                                    Inquiry = new DumpType
+                                    Inquiry = new CommonTypes.AaruMetadata.Dump
                                     {
                                         Image     = _outputPath,
                                         Size      = (ulong)cmdBuf.Length,
-                                        Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                                        Checksums = Checksum.GetChecksums(cmdBuf)
                                     }
                                 };
 
@@ -1171,25 +1175,25 @@ partial class Dump
 
                                 if(pages != null)
                                 {
-                                    List<EVPDType> evpds = new List<EVPDType>();
+                                    List<Evpd> evpds = new();
                                     foreach(byte page in pages)
                                     {
                                         dumpLog.WriteLine("Requesting page {0:X2}h.", page);
                                         sense = dev.ScsiInquiry(out cmdBuf, out _, page);
                                         if(sense) continue;
 
-                                        EVPDType evpd = new EVPDType
+                                        Evpd evpd = new()
                                         {
                                             Image = $"{outputPrefix}.evpd_{page:X2}h.bin",
-                                            Checksums = Checksum.GetChecksums(cmdBuf).ToArray(),
+                                            Checksums = Checksum.GetChecksums(cmdBuf),
                                             Size = cmdBuf.Length
                                         };
-                                        evpd.Checksums = Checksum.GetChecksums(cmdBuf).ToArray();
+                                        evpd.Checksums = Checksum.GetChecksums(cmdBuf);
                                         DataFile.WriteTo("SCSI Dump", evpd.Image, cmdBuf);
                                         evpds.Add(evpd);
                                     }
 
-                                    if(evpds.Count > 0) sidecar.BlockMedia[0].SCSI.EVPD = evpds.ToArray();
+                                    if(evpds.Count > 0) sidecar.BlockMedias[0].SCSI.Evpds = evpds;
                                 }
                             }
                             */
@@ -1209,11 +1213,11 @@ partial class Dump
                                !_dev.Error)
                                 if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
                                     if(outputFormat.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
-                                        sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
+                                        sidecar.BlockMedias[0].SCSI.ModeSense10 = new CommonTypes.AaruMetadata.Dump
                                         {
                                             Image     = _outputPath,
                                             Size      = (ulong)cmdBuf.Length,
-                                            Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                                            Checksums = Checksum.GetChecksums(cmdBuf)
                                         };
 
                             UpdateStatus?.Invoke(Localization.Core.Requesting_MODE_SENSE_6);
@@ -1233,19 +1237,19 @@ partial class Dump
                                !_dev.Error)
                                 if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
                                     if(outputFormat.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
-                                        sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
+                                        sidecar.BlockMedias[0].SCSI.ModeSense = new CommonTypes.AaruMetadata.Dump
                                         {
                                             Image     = _outputPath,
                                             Size      = (ulong)cmdBuf.Length,
-                                            Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                                            Checksums = Checksum.GetChecksums(cmdBuf)
                                         };
                         }
                     }
 
                     List<(ulong start, string type)> filesystems = new();
 
-                    if(sidecar.BlockMedia[0].FileSystemInformation != null)
-                        filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
+                    if(sidecar.BlockMedias[0].FileSystemInformation != null)
+                        filesystems.AddRange(from partition in sidecar.BlockMedias[0].FileSystemInformation
                                              where partition.FileSystems != null
                                              from fileSystem in partition.FileSystems
                                              select (partition.StartSector, fileSystem.Type));
@@ -1264,46 +1268,50 @@ partial class Dump
                                                filesystem.start);
                         }
 
-                    sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
+                    sidecar.BlockMedias[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
 
                     (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
 
-                    sidecar.BlockMedia[0].DiskType    = xmlType.type;
-                    sidecar.BlockMedia[0].DiskSubType = xmlType.subType;
+                    sidecar.BlockMedias[0].MediaType    = xmlType.type;
+                    sidecar.BlockMedias[0].MediaSubType = xmlType.subType;
 
                     // TODO: Implement device firmware revision
                     if(!_dev.IsRemovable ||
                        _dev.IsUsb)
                         if(_dev.Type == DeviceType.ATAPI)
-                            sidecar.BlockMedia[0].Interface = "ATAPI";
+                            sidecar.BlockMedias[0].Interface = "ATAPI";
                         else if(_dev.IsUsb)
-                            sidecar.BlockMedia[0].Interface = "USB";
+                            sidecar.BlockMedias[0].Interface = "USB";
                         else if(_dev.IsFireWire)
-                            sidecar.BlockMedia[0].Interface = "FireWire";
+                            sidecar.BlockMedias[0].Interface = "FireWire";
                         else
-                            sidecar.BlockMedia[0].Interface = "SCSI";
+                            sidecar.BlockMedias[0].Interface = "SCSI";
 
-                    sidecar.BlockMedia[0].LogicalBlocks     = blocks;
-                    sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize;
-                    sidecar.BlockMedia[0].LogicalBlockSize  = logicalBlockSize;
-                    sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
-                    sidecar.BlockMedia[0].Model             = _dev.Model;
+                    sidecar.BlockMedias[0].LogicalBlocks     = blocks;
+                    sidecar.BlockMedias[0].PhysicalBlockSize = physicalBlockSize;
+                    sidecar.BlockMedias[0].LogicalBlockSize  = logicalBlockSize;
+                    sidecar.BlockMedias[0].Manufacturer      = _dev.Manufacturer;
+                    sidecar.BlockMedias[0].Model             = _dev.Model;
 
                     if(!_private)
-                        sidecar.BlockMedia[0].Serial = _dev.Serial;
+                        sidecar.BlockMedias[0].Serial = _dev.Serial;
 
-                    sidecar.BlockMedia[0].Size = blocks * blockSize;
+                    sidecar.BlockMedias[0].Size = blocks * blockSize;
 
                     if(_dev.IsRemovable)
-                        sidecar.BlockMedia[0].DumpHardwareArray = _resume.Tries.ToArray();
+                        sidecar.BlockMedias[0].DumpHardware = _resume.Tries;
 
                     UpdateStatus?.Invoke(Localization.Core.Writing_metadata_sidecar);
 
-                    var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
+                    var jsonFs = new FileStream(_outputPrefix + ".metadata.json", FileMode.Create);
 
-                    var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                    xmlSer.Serialize(xmlFs, sidecar);
-                    xmlFs.Close();
+                    JsonSerializer.Serialize(jsonFs, sidecar, new JsonSerializerOptions
+                    {
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                        WriteIndented          = true
+                    });
+
+                    jsonFs.Close();
                 }
             }
         }

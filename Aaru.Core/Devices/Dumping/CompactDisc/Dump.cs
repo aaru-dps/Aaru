@@ -39,10 +39,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
@@ -50,7 +50,7 @@ using Aaru.Core.Media.Detection;
 using Aaru.Database.Models;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
-using Schemas;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
 
@@ -69,7 +69,7 @@ sealed partial class Dump
         uint                     blockSize; // Size of the read sector in bytes
         CdOffset                 cdOffset; // Read offset from database
         byte[]                   cmdBuf; // Data buffer
-        DumpHardwareType         currentTry   = null; // Current dump hardware try
+        DumpHardware             currentTry   = null; // Current dump hardware try
         double                   currentSpeed = 0; // Current read speed
         int?                     discOffset   = null; // Disc write offset
         DateTime                 dumpStart    = DateTime.UtcNow; // Time of dump start
@@ -1380,14 +1380,14 @@ sealed partial class Dump
             ApplicationVersion = Version.GetVersion()
         };
 
-        if(!outputOptical.SetMetadata(metadata))
+        if(!outputOptical.SetImageInfo(metadata))
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputOptical.ErrorMessage);
 
         outputOptical.SetDumpHardware(_resume.Tries);
 
         if(_preSidecar != null)
-            outputOptical.SetCicmMetadata(_preSidecar);
+            outputOptical.SetMetadata(_preSidecar);
 
         foreach(KeyValuePair<byte, string> isrc in isrcs)
         {

@@ -32,9 +32,9 @@
 
 using System;
 using System.Collections.Generic;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Metadata;
-using Schemas;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
 
@@ -64,7 +64,7 @@ static class ResumeSupport
     ///     progress dump
     /// </exception>
     internal static void Process(bool isLba, bool removable, ulong blocks, string manufacturer, string model,
-                                 string serial, PlatformID platform, ref Resume resume, ref DumpHardwareType currentTry,
+                                 string serial, PlatformID platform, ref Resume resume, ref DumpHardware currentTry,
                                  ref ExtentsULong extents, string firmware, bool @private, bool force,
                                  bool isTape = false)
     {
@@ -102,7 +102,7 @@ static class ResumeSupport
                     InvalidOperationException(string.Format(Localization.Core.Resume_file_different_number_of_blocks_not_continuing,
                                                             resume.LastBlock + 1, blocks));
 
-            foreach(DumpHardwareType oldTry in resume.Tries)
+            foreach(DumpHardware oldTry in resume.Tries)
             {
                 if(!removable &&
                    !force)
@@ -153,9 +153,9 @@ static class ResumeSupport
             if(currentTry != null)
                 return;
 
-            currentTry = new DumpHardwareType
+            currentTry = new DumpHardware
             {
-                Software     = CommonTypes.Metadata.Version.GetSoftwareType(),
+                Software     = CommonTypes.Metadata.Version.GetSoftware(),
                 Manufacturer = manufacturer,
                 Model        = model,
                 Serial       = serial,
@@ -169,16 +169,16 @@ static class ResumeSupport
         {
             resume = new Resume
             {
-                Tries        = new List<DumpHardwareType>(),
+                Tries        = new List<DumpHardware>(),
                 CreationDate = DateTime.UtcNow,
                 BadBlocks    = new List<ulong>(),
                 LastBlock    = isTape ? 0 : blocks - 1,
                 Tape         = isTape
             };
 
-            currentTry = new DumpHardwareType
+            currentTry = new DumpHardware
             {
-                Software     = CommonTypes.Metadata.Version.GetSoftwareType(),
+                Software     = CommonTypes.Metadata.Version.GetSoftware(),
                 Manufacturer = manufacturer,
                 Model        = model,
                 Serial       = serial,

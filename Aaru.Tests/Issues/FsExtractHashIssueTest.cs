@@ -138,11 +138,11 @@ public abstract class FsExtractHashIssueTest
                 Assert.AreEqual(ErrorNumber.NoError, error,
                                 string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
 
-                Assert.AreEqual(expectedData.Partitions[i].Volumes[j].VolumeName, fs.XmlFsType.VolumeName,
+                Assert.AreEqual(expectedData.Partitions[i].Volumes[j].VolumeName, fs.Metadata.VolumeName,
                                 string.
                                     Format(Localization.Excepted_volume_name_0_for_filesystem_1_in_partition_2_but_found_3,
                                            expectedData.Partitions[i].Volumes[j].VolumeName, j, i,
-                                           fs.XmlFsType.VolumeName));
+                                           fs.Metadata.VolumeName));
 
                 VolumeData volumeData = expectedData.Partitions[i].Volumes[j];
 

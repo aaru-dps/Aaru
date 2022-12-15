@@ -38,16 +38,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
-using Schemas;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.Core.Devices.Dumping;
@@ -89,7 +89,7 @@ partial class Dump
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
     void ReadCdData(ExtentsULong audioExtents, ulong blocks, uint blockSize, ref double currentSpeed,
-                    DumpHardwareType currentTry, ExtentsULong extents, IbgLog ibgLog, ref double imageWriteDuration,
+                    DumpHardware currentTry, ExtentsULong extents, IbgLog ibgLog, ref double imageWriteDuration,
                     long lastSector, ExtentsULong leadOutExtents, ref double maxSpeed, MhddLog mhddLog,
                     ref double minSpeed, out bool newTrim, bool nextData, int offsetBytes, bool read6, bool read10,
                     bool read12, bool read16, bool readcd, int sectorsForOffset, uint subSize,
@@ -476,7 +476,7 @@ partial class Dump
                     if(!sense &&
                        !_dev.Error)
                     {
-                        mhddLog.Write(i + r, cmdDuration, 1);
+                        mhddLog.Write(i + r, cmdDuration);
                         ibgLog.Write(i  + r, currentSpeed * 1024);
                         extents.Add(i   + r, 1, true);
                         DateTime writeStart = DateTime.Now;
@@ -596,7 +596,7 @@ partial class Dump
                         AaruConsole.DebugWriteLine("Dump-Media", Localization.Core.READ_error_0,
                                                    Sense.PrettifySense(senseBuf));
 
-                        mhddLog.Write(i + r, cmdDuration < 500 ? 65535 : cmdDuration, 1);
+                        mhddLog.Write(i + r, cmdDuration < 500 ? 65535 : cmdDuration);
 
                         ibgLog.Write(i                                                                    + r, 0);
                         _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, 1, i + r);

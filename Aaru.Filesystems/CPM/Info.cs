@@ -35,11 +35,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -1236,29 +1237,27 @@ public sealed partial class CPM
             sb.AppendFormat(Localization.Volume_updated_on_0, DateHandlers.CpmToDateTime(_labelUpdateDate)).
                AppendLine();
 
-        XmlFsType             =  new FileSystemType();
-        XmlFsType.Bootable    |= _workingDefinition.sofs > 0 || _workingDefinition.ofs > 0;
-        XmlFsType.ClusterSize =  (uint)(128 << _dpb.bsh);
+        Metadata             =  new FileSystem();
+        Metadata.Bootable    |= _workingDefinition.sofs > 0 || _workingDefinition.ofs > 0;
+        Metadata.ClusterSize =  (uint)(128 << _dpb.bsh);
 
         if(_dpb.dsm > 0)
-            XmlFsType.Clusters = _dpb.dsm;
+            Metadata.Clusters = _dpb.dsm;
         else
-            XmlFsType.Clusters = partition.End - partition.Start;
+            Metadata.Clusters = partition.End - partition.Start;
 
         if(_labelCreationDate != null)
         {
-            XmlFsType.CreationDate          = DateHandlers.CpmToDateTime(_labelCreationDate);
-            XmlFsType.CreationDateSpecified = true;
+            Metadata.CreationDate = DateHandlers.CpmToDateTime(_labelCreationDate);
         }
 
         if(_labelUpdateDate != null)
         {
-            XmlFsType.ModificationDate          = DateHandlers.CpmToDateTime(_labelUpdateDate);
-            XmlFsType.ModificationDateSpecified = true;
+            Metadata.ModificationDate = DateHandlers.CpmToDateTime(_labelUpdateDate);
         }
 
-        XmlFsType.Type       = FS_TYPE;
-        XmlFsType.VolumeName = _label;
+        Metadata.Type       = FS_TYPE;
+        Metadata.VolumeName = _label;
 
         information = sb.ToString();
     }

@@ -30,12 +30,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -366,23 +366,20 @@ public sealed partial class UDF
                                    Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10),
                                    Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10)).AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                      = FS_TYPE,
-            ApplicationIdentifier     = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
-            ClusterSize               = lvd.logicalBlockSize,
-            ModificationDate          = EcmaToDateTime(lvid.recordingDateTime),
-            ModificationDateSpecified = true,
-            Files                     = lvidiu.files,
-            FilesSpecified            = true,
-            VolumeName                = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier),
-            VolumeSetIdentifier       = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
-            VolumeSerial              = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
-            SystemIdentifier          = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
+            Type                  = FS_TYPE,
+            ApplicationIdentifier = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
+            ClusterSize           = lvd.logicalBlockSize,
+            ModificationDate      = EcmaToDateTime(lvid.recordingDateTime),
+            Files                 = lvidiu.files,
+            VolumeName            = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier),
+            VolumeSetIdentifier   = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
+            VolumeSerial          = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
+            SystemIdentifier      = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
         };
 
-        XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                             XmlFsType.ClusterSize;
+        Metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / Metadata.ClusterSize;
 
         information = sbInformation.ToString();
     }

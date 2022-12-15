@@ -31,12 +31,12 @@
 // ****************************************************************************/
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -85,7 +85,7 @@ public sealed partial class BTRFS
     {
         Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         var sbInformation = new StringBuilder();
-        XmlFsType   = new FileSystemType();
+        Metadata    = new FileSystem();
         information = "";
 
         ulong sbSectorOff  = 0x10000 / imagePlugin.Info.SectorSize;
@@ -183,17 +183,16 @@ public sealed partial class BTRFS
 
         information = sbInformation.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Clusters              = btrfsSb.total_bytes / btrfsSb.sectorsize,
-            ClusterSize           = btrfsSb.sectorsize,
-            FreeClustersSpecified = true,
-            VolumeName            = btrfsSb.label,
-            VolumeSerial          = $"{btrfsSb.uuid}",
-            VolumeSetIdentifier   = $"{btrfsSb.dev_item.device_uuid}",
-            Type                  = FS_TYPE
+            Clusters            = btrfsSb.total_bytes / btrfsSb.sectorsize,
+            ClusterSize         = btrfsSb.sectorsize,
+            VolumeName          = btrfsSb.label,
+            VolumeSerial        = $"{btrfsSb.uuid}",
+            VolumeSetIdentifier = $"{btrfsSb.dev_item.device_uuid}",
+            Type                = FS_TYPE
         };
 
-        XmlFsType.FreeClusters = XmlFsType.Clusters - (btrfsSb.bytes_used / btrfsSb.sectorsize);
+        Metadata.FreeClusters = Metadata.Clusters - (btrfsSb.bytes_used / btrfsSb.sectorsize);
     }
 }

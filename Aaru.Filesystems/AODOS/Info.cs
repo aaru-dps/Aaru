@@ -32,11 +32,11 @@
 
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -88,17 +88,15 @@ public sealed partial class AODOS
 
         sbInformation.AppendLine(Localization.Alexander_Osipov_DOS_file_system);
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                  = FS_TYPE,
-            Clusters              = imagePlugin.Info.Sectors,
-            ClusterSize           = imagePlugin.Info.SectorSize,
-            Files                 = bb.files,
-            FilesSpecified        = true,
-            FreeClusters          = imagePlugin.Info.Sectors - bb.usedSectors,
-            FreeClustersSpecified = true,
-            VolumeName            = StringHandlers.SpacePaddedToString(bb.volumeLabel, Encoding),
-            Bootable              = true
+            Type         = FS_TYPE,
+            Clusters     = imagePlugin.Info.Sectors,
+            ClusterSize  = imagePlugin.Info.SectorSize,
+            Files        = bb.files,
+            FreeClusters = imagePlugin.Info.Sectors - bb.usedSectors,
+            VolumeName   = StringHandlers.SpacePaddedToString(bb.volumeLabel, Encoding),
+            Bootable     = true
         };
 
         sbInformation.AppendFormat(Localization._0_files_on_volume, bb.files).AppendLine();

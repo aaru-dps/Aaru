@@ -231,26 +231,26 @@ public abstract class FilesystemTest
                 fs.GetInformation(image, partition, out _, null);
 
                 if(test.ApplicationId != null)
-                    Assert.AreEqual(test.ApplicationId, fs.XmlFsType.ApplicationIdentifier,
+                    Assert.AreEqual(test.ApplicationId, fs.Metadata.ApplicationIdentifier,
                                     string.Format(Localization.Application_ID_0, testFile));
 
-                Assert.AreEqual(test.Bootable, fs.XmlFsType.Bootable, string.Format(Localization.Bootable_0, testFile));
-                Assert.AreEqual(test.Clusters, fs.XmlFsType.Clusters, string.Format(Localization.Clusters_0, testFile));
+                Assert.AreEqual(test.Bootable, fs.Metadata.Bootable, string.Format(Localization.Bootable_0, testFile));
+                Assert.AreEqual(test.Clusters, fs.Metadata.Clusters, string.Format(Localization.Clusters_0, testFile));
 
-                Assert.AreEqual(test.ClusterSize, fs.XmlFsType.ClusterSize,
+                Assert.AreEqual(test.ClusterSize, fs.Metadata.ClusterSize,
                                 string.Format(Localization.Cluster_size_0, testFile));
 
                 if(test.SystemId != null)
-                    Assert.AreEqual(test.SystemId, fs.XmlFsType.SystemIdentifier,
+                    Assert.AreEqual(test.SystemId, fs.Metadata.SystemIdentifier,
                                     string.Format(Localization.System_ID_0, testFile));
 
-                Assert.AreEqual(_fileSystemType ?? test.Type, fs.XmlFsType.Type,
+                Assert.AreEqual(_fileSystemType ?? test.Type, fs.Metadata.Type,
                                 string.Format(Localization.Filesystem_type_0, testFile));
 
-                Assert.AreEqual(test.VolumeName, fs.XmlFsType.VolumeName,
+                Assert.AreEqual(test.VolumeName, fs.Metadata.VolumeName,
                                 string.Format(Localization.Volume_name_0, testFile));
 
-                Assert.AreEqual(test.VolumeSerial, fs.XmlFsType.VolumeSerial,
+                Assert.AreEqual(test.VolumeSerial, fs.Metadata.VolumeSerial,
                                 string.Format(Localization.Volume_serial_0, testFile));
             }
         });

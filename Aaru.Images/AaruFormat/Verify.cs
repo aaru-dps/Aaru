@@ -212,7 +212,7 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public bool? VerifySector(ulong sectorAddress)
     {
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return null;
 
         ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
@@ -228,7 +228,7 @@ public sealed partial class AaruFormat
         unknownLbas = new List<ulong>();
 
         // Right now only CompactDisc sectors are verifiable
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
         {
             for(ulong i = sectorAddress; i < sectorAddress + length; i++)
                 unknownLbas.Add(i);
@@ -275,7 +275,7 @@ public sealed partial class AaruFormat
                                out List<ulong> unknownLbas)
     {
         // Right now only CompactDisc sectors are verifiable
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
         {
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();

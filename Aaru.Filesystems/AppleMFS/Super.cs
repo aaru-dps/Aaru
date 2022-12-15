@@ -29,12 +29,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -178,30 +178,26 @@ public sealed partial class AppleMFS
         if(bbSig != AppleCommon.BB_MAGIC)
             _bootBlocks = null;
 
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         if(_volMdb.drLsBkUp > 0)
         {
-            XmlFsType.BackupDate          = DateHandlers.MacToDateTime(_volMdb.drLsBkUp);
-            XmlFsType.BackupDateSpecified = true;
+            Metadata.BackupDate = DateHandlers.MacToDateTime(_volMdb.drLsBkUp);
         }
 
-        XmlFsType.Bootable    = bbSig == AppleCommon.BB_MAGIC;
-        XmlFsType.Clusters    = _volMdb.drNmAlBlks;
-        XmlFsType.ClusterSize = _volMdb.drAlBlkSiz;
+        Metadata.Bootable    = bbSig == AppleCommon.BB_MAGIC;
+        Metadata.Clusters    = _volMdb.drNmAlBlks;
+        Metadata.ClusterSize = _volMdb.drAlBlkSiz;
 
         if(_volMdb.drCrDate > 0)
         {
-            XmlFsType.CreationDate          = DateHandlers.MacToDateTime(_volMdb.drCrDate);
-            XmlFsType.CreationDateSpecified = true;
+            Metadata.CreationDate = DateHandlers.MacToDateTime(_volMdb.drCrDate);
         }
 
-        XmlFsType.Files                 = _volMdb.drNmFls;
-        XmlFsType.FilesSpecified        = true;
-        XmlFsType.FreeClusters          = _volMdb.drFreeBks;
-        XmlFsType.FreeClustersSpecified = true;
-        XmlFsType.Type                  = FS_TYPE;
-        XmlFsType.VolumeName            = _volMdb.drVN;
+        Metadata.Files        = _volMdb.drNmFls;
+        Metadata.FreeClusters = _volMdb.drFreeBks;
+        Metadata.Type         = FS_TYPE;
+        Metadata.VolumeName   = _volMdb.drVN;
 
         return ErrorNumber.NoError;
     }

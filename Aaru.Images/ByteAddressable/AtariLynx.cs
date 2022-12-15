@@ -5,11 +5,11 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.DiscImages;
@@ -23,9 +23,9 @@ public class AtariLynx : IByteAddressableImage
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
     /// <inheritdoc />
     public string Format => "Atari Lynx cartridge dump";
     /// <inheritdoc />
@@ -91,7 +91,7 @@ public class AtariLynx : IByteAddressableImage
             MediaType            = MediaType.AtariLynxCard,
             LastModificationTime = imageFilter.LastWriteTime,
             Sectors              = (ulong)imageFilter.DataForkLength,
-            XmlMediaType         = XmlMediaType.LinearMedia
+            MetadataMediaType    = MetadataMediaType.LinearMedia
         };
 
         HandyHeader header = Marshal.ByteArrayToStructureBigEndian<HandyHeader>(headerBytes, 0, 64);
@@ -195,13 +195,13 @@ public class AtariLynx : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata)
+    public bool SetImageInfo(ImageInfo imageInfo)
     {
         if(!_opened)
         {
@@ -217,11 +217,11 @@ public class AtariLynx : IByteAddressableImage
             return false;
         }
 
-        if(!string.IsNullOrWhiteSpace(metadata.MediaTitle))
-            _imageInfo.MediaTitle = metadata.MediaTitle[..32];
+        if(!string.IsNullOrWhiteSpace(imageInfo.MediaTitle))
+            _imageInfo.MediaTitle = imageInfo.MediaTitle[..32];
 
-        if(!string.IsNullOrWhiteSpace(metadata.MediaManufacturer))
-            _imageInfo.MediaManufacturer = metadata.MediaManufacturer[..16];
+        if(!string.IsNullOrWhiteSpace(imageInfo.MediaManufacturer))
+            _imageInfo.MediaManufacturer = imageInfo.MediaManufacturer[..16];
 
         return true;
     }

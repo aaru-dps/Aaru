@@ -5,11 +5,11 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.DiscImages;
@@ -183,7 +183,7 @@ public class SuperNintendo : IByteAddressableImage
             MediaType            = _header.Region == 1 ? MediaType.SNESGamePakUS : MediaType.SNESGamePak,
             LastModificationTime = imageFilter.LastWriteTime,
             Sectors              = (ulong)imageFilter.DataForkLength,
-            XmlMediaType         = XmlMediaType.LinearMedia,
+            MetadataMediaType    = MetadataMediaType.LinearMedia,
             MediaTitle           = StringHandlers.SpacePaddedToString(_header.Title, encoding),
             MediaManufacturer    = DecodeManufacturer(_header.OldMakerCode, _header.MakerCode)
         };
@@ -239,9 +239,9 @@ public class SuperNintendo : IByteAddressableImage
     /// <inheritdoc />
     public string Format => "Super Nintendo Cartridge Dump";
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
     /// <inheritdoc />
@@ -296,13 +296,13 @@ public class SuperNintendo : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
 
     /// <inheritdoc />
     public long Position { get; set; }

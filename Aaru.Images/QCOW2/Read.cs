@@ -193,7 +193,7 @@ public sealed partial class Qcow2
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = _qHdr.size / 512;
         _imageInfo.SectorSize           = 512;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.MediaType            = MediaType.GENERIC_HDD;
         _imageInfo.ImageSize            = _qHdr.size;
         _imageInfo.Version              = $"{_qHdr.version}";

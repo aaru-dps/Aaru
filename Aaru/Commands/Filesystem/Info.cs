@@ -310,7 +310,7 @@ sealed class FilesystemInfoCommand : Command
                                                               encodingClass);
 
                                         AaruConsole.Write(information);
-                                        Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                        Statistics.AddFilesystem(plugin.Metadata.Type);
                                     }
 
                                 break;
@@ -325,7 +325,7 @@ sealed class FilesystemInfoCommand : Command
                                 AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, plugin.Name)}[/]");
                                 plugin.GetInformation(imageFormat, partitionsList[i], out information, encodingClass);
                                 AaruConsole.Write("{0}", information);
-                                Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                Statistics.AddFilesystem(plugin.Metadata.Type);
 
                                 break;
                             }
@@ -368,7 +368,7 @@ sealed class FilesystemInfoCommand : Command
                                 AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, plugin.Name)}[/]");
                                 plugin.GetInformation(imageFormat, wholePart, out information, encodingClass);
                                 AaruConsole.Write(information);
-                                Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                Statistics.AddFilesystem(plugin.Metadata.Type);
                             }
 
                         break;
@@ -382,7 +382,7 @@ sealed class FilesystemInfoCommand : Command
                             AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, plugin.Name)}[/]");
                             plugin.GetInformation(imageFormat, wholePart, out information, encodingClass);
                             AaruConsole.Write(information);
-                            Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                            Statistics.AddFilesystem(plugin.Metadata.Type);
                         }
 
                         break;

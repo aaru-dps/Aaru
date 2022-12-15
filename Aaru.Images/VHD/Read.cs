@@ -506,7 +506,7 @@ public sealed partial class Vhd
             AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Bitmap_is_0_sectors, _bitmapSize);
         }
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         switch(_thisFooter.DiskType)
         {

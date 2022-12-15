@@ -79,7 +79,7 @@ public sealed class GuidPartitionTable : IPartition
         AaruConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", signature);
 
         if(signature != GPT_MAGIC)
-            if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
             {
                 errno = imagePlugin.ReadSector(sectorOffset, out hdrBytes);
 

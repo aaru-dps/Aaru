@@ -136,8 +136,8 @@ public sealed partial class AaruFormat
             _imageInfo.DriveSerialNumber = identify.SerialNumber;
     }
 
-    // Get the CICM XML media type from Aaru media type
-    static XmlMediaType GetXmlMediaType(MediaType type)
+    // Get the Aaru Metadata media type from Aaru media type
+    static MetadataMediaType GetMetadataMediaType(MediaType type)
     {
         switch(type)
         {
@@ -235,8 +235,8 @@ public sealed partial class AaruFormat
             case MediaType.VideoNow:
             case MediaType.VideoNowColor:
             case MediaType.VideoNowXp:
-            case MediaType.CVD: return XmlMediaType.OpticalDisc;
-            default: return XmlMediaType.BlockMedia;
+            case MediaType.CVD: return MetadataMediaType.OpticalDisc;
+            default: return MetadataMediaType.BlockMedia;
         }
     }
 

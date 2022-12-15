@@ -241,7 +241,7 @@ sealed class EntropyCommand : Command
                         if(!wholeDisc)
                             return;
 
-                        EntropyResults entropy = inputFormat.Info.XmlMediaType == XmlMediaType.LinearMedia
+                        EntropyResults entropy = inputFormat.Info.MetadataMediaType == MetadataMediaType.LinearMedia
                                                      ? entropyCalculator.CalculateLinearMediaEntropy()
                                                      : entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
 

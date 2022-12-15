@@ -428,7 +428,7 @@ public sealed partial class Udif
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.SectorSize           = SECTOR_SIZE;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.MediaType            = MediaType.GENERIC_HDD;
         _imageInfo.ImageSize            = _imageInfo.Sectors * SECTOR_SIZE;
         _imageInfo.Version              = $"{_footer.version}";

@@ -195,8 +195,8 @@ public sealed partial class CisCopy
                 break;
         }
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-        _decodedDisk            = decodedImage.ToArray();
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
+        _decodedDisk                 = decodedImage.ToArray();
 
         decodedImage.Close();
 

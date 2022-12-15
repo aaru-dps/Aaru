@@ -114,7 +114,7 @@ public sealed partial class DriDiskCopy
                 break;
         }
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         AaruConsole.VerboseWriteLine(Localization.Digital_Research_DiskCopy_image_contains_a_disk_of_type_0,
                                      _imageInfo.MediaType);

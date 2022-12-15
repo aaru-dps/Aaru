@@ -29,11 +29,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -177,17 +177,15 @@ public sealed partial class QNX4
                       string.Format(Localization.Created_on_0,
                                     DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime)) + "\n";
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                      = FS_TYPE,
-            Clusters                  = partition.Length,
-            ClusterSize               = 512,
-            CreationDate              = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime),
-            CreationDateSpecified     = true,
-            ModificationDate          = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_mtime),
-            ModificationDateSpecified = true
+            Type             = FS_TYPE,
+            Clusters         = partition.Length,
+            ClusterSize      = 512,
+            CreationDate     = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime),
+            ModificationDate = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_mtime)
         };
 
-        XmlFsType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
+        Metadata.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
     }
 }

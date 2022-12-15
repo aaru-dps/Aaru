@@ -30,12 +30,12 @@ using System;
 using System.Linq;
 using System.Text;
 using Aaru.Checksums;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -169,7 +169,7 @@ public sealed partial class AmigaDOSPlugin
     {
         Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         var sbInformation = new StringBuilder();
-        XmlFsType   = new FileSystemType();
+        Metadata    = new FileSystem();
         information = null;
         ErrorNumber errno = imagePlugin.ReadSectors(0 + partition.Start, 2, out byte[] bootBlockSectors);
 
@@ -278,42 +278,42 @@ public sealed partial class AmigaDOSPlugin
         {
             case 0:
                 sbInformation.Append(Localization.Amiga_Original_File_System);
-                XmlFsType.Type = FS_TYPE_OFS;
+                Metadata.Type = FS_TYPE_OFS;
 
                 break;
             case 1:
                 sbInformation.Append(Localization.Amiga_Fast_File_System);
-                XmlFsType.Type = FS_TYPE_FFS;
+                Metadata.Type = FS_TYPE_FFS;
 
                 break;
             case 2:
                 sbInformation.Append(Localization.Amiga_Original_File_System_with_international_characters);
-                XmlFsType.Type = FS_TYPE_OFS;
+                Metadata.Type = FS_TYPE_OFS;
 
                 break;
             case 3:
                 sbInformation.Append(Localization.Amiga_Fast_File_System_with_international_characters);
-                XmlFsType.Type = FS_TYPE_FFS;
+                Metadata.Type = FS_TYPE_FFS;
 
                 break;
             case 4:
                 sbInformation.Append(Localization.Amiga_Original_File_System_with_directory_cache);
-                XmlFsType.Type = FS_TYPE_OFS;
+                Metadata.Type = FS_TYPE_OFS;
 
                 break;
             case 5:
                 sbInformation.Append(Localization.Amiga_Fast_File_System_with_directory_cache);
-                XmlFsType.Type = FS_TYPE_FFS;
+                Metadata.Type = FS_TYPE_FFS;
 
                 break;
             case 6:
                 sbInformation.Append(Localization.Amiga_Original_File_System_with_long_filenames);
-                XmlFsType.Type = FS_TYPE_OFS2;
+                Metadata.Type = FS_TYPE_OFS2;
 
                 break;
             case 7:
                 sbInformation.Append(Localization.Amiga_Fast_File_System_with_long_filenames);
-                XmlFsType.Type = FS_TYPE_FFS2;
+                Metadata.Type = FS_TYPE_FFS2;
 
                 break;
         }
@@ -365,20 +365,17 @@ public sealed partial class AmigaDOSPlugin
         sbInformation.AppendFormat(Localization.Root_block_checksum_is_0, rootBlk.checksum).AppendLine();
         information = sbInformation.ToString();
 
-        XmlFsType.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
+        Metadata.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
 
-        XmlFsType.CreationDateSpecified = true;
+        Metadata.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
 
-        XmlFsType.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
-
-        XmlFsType.ModificationDateSpecified = true;
-        XmlFsType.Dirty                     = rootBlk.bitmapFlag != 0xFFFFFFFF;
-        XmlFsType.Clusters                  = blocks;
-        XmlFsType.ClusterSize               = blockSize;
-        XmlFsType.VolumeName                = diskName;
-        XmlFsType.Bootable                  = bsum == bootBlk.checksum;
+        Metadata.Dirty       = rootBlk.bitmapFlag != 0xFFFFFFFF;
+        Metadata.Clusters    = blocks;
+        Metadata.ClusterSize = blockSize;
+        Metadata.VolumeName  = diskName;
+        Metadata.Bootable    = bsum == bootBlk.checksum;
 
         // Useful as a serial
-        XmlFsType.VolumeSerial = $"{rootBlk.checksum:X8}";
+        Metadata.VolumeSerial = $"{rootBlk.checksum:X8}";
     }
 }

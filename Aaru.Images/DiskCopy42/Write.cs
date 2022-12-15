@@ -33,11 +33,11 @@
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Claunia.Encoding;
-using Schemas;
 
 namespace Aaru.DiscImages;
 
@@ -425,9 +425,9 @@ public sealed partial class DiskCopy42
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata)
+    public bool SetImageInfo(ImageInfo imageInfo)
     {
-        header.DiskName = metadata.MediaTitle ?? "-Aaru converted image-";
+        header.DiskName = imageInfo.MediaTitle ?? "-Aaru converted image-";
 
         return true;
     }
@@ -452,8 +452,8 @@ public sealed partial class DiskCopy42
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 }

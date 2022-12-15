@@ -37,16 +37,19 @@ using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Xml.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Localization;
 using JetBrains.Annotations;
-using Schemas;
 using Spectre.Console;
+using Directory = System.IO.Directory;
+using File = System.IO.File;
 
 namespace Aaru.Commands.Image;
 
@@ -216,8 +219,8 @@ sealed class CreateSidecarCommand : Command
                 Statistics.AddMediaFormat(imageFormat.Format);
                 Statistics.AddFilter(inputFilter.Name);
 
-                var              sidecarClass = new Sidecar(imageFormat, imagePath, inputFilter.Id, encodingClass);
-                CICMMetadataType sidecar      = new();
+                var      sidecarClass = new Sidecar(imageFormat, imagePath, inputFilter.Id, encodingClass);
+                Metadata sidecar      = new();
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
@@ -279,14 +282,18 @@ sealed class CreateSidecarCommand : Command
                 {
                     ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
 
-                    var xmlFs =
+                    var jsonFs =
                         new
-                            FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".cicm.xml"),
-                                       FileMode.CreateNew);
+                            FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
+                                       FileMode.Create);
 
-                    var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                    xmlSer.Serialize(xmlFs, sidecar);
-                    xmlFs.Close();
+                    JsonSerializer.Serialize(jsonFs, sidecar, new JsonSerializerOptions
+                    {
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                        WriteIndented          = true
+                    });
+
+                    jsonFs.Close();
                 });
             }
             catch(Exception ex)
@@ -311,8 +318,8 @@ sealed class CreateSidecarCommand : Command
 
             files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
-            var              sidecarClass = new Sidecar();
-            CICMMetadataType sidecar      = new();
+            var      sidecarClass = new Sidecar();
+            Metadata sidecar      = new();
 
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
@@ -374,14 +381,18 @@ sealed class CreateSidecarCommand : Command
             {
                 ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
 
-                var xmlFs =
+                var jsonFs =
                     new
-                        FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".cicm.xml"),
-                                   FileMode.CreateNew);
+                        FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
+                                   FileMode.Create);
 
-                var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
+                JsonSerializer.Serialize(jsonFs, sidecar, new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    WriteIndented          = true
+                });
+
+                jsonFs.Close();
             });
         }
         else

@@ -36,21 +36,23 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
-using System.Xml.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
-using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Aaru.Helpers;
-using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
+using TapeFile = Aaru.CommonTypes.Structs.TapeFile;
+using TapePartition = Aaru.CommonTypes.Structs.TapePartition;
 using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.Core.Devices.Dumping;
@@ -498,8 +500,8 @@ partial class Dump
             }
         }
 
-        DumpHardwareType currentTry = null;
-        ExtentsULong     extents    = null;
+        DumpHardware currentTry = null;
+        ExtentsULong extents    = null;
 
         ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
                               _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
@@ -1306,12 +1308,12 @@ partial class Dump
             ApplicationVersion = Version.GetVersion()
         };
 
-        if(!outputTape.SetMetadata(metadata))
+        if(!outputTape.SetImageInfo(metadata))
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputTape.ErrorMessage);
 
         if(_preSidecar != null)
-            outputTape.SetCicmMetadata(_preSidecar);
+            outputTape.SetMetadata(_preSidecar);
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
@@ -1367,7 +1369,7 @@ partial class Dump
             _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
             _sidecarClass.EndProgressEvent2    += EndProgress2;
             _sidecarClass.UpdateStatusEvent    += UpdateStatus;
-            CICMMetadataType sidecar = _sidecarClass.Create();
+            Metadata sidecar = _sidecarClass.Create();
             end = DateTime.UtcNow;
 
             if(!_aborted)
@@ -1388,14 +1390,14 @@ partial class Dump
 
                 if(_preSidecar != null)
                 {
-                    _preSidecar.BlockMedia = sidecar.BlockMedia;
-                    sidecar                = _preSidecar;
+                    _preSidecar.BlockMedias = sidecar.BlockMedias;
+                    sidecar                 = _preSidecar;
                 }
 
                 List<(ulong start, string type)> filesystems = new();
 
-                if(sidecar.BlockMedia[0].FileSystemInformation != null)
-                    filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
+                if(sidecar.BlockMedias[0].FileSystemInformation != null)
+                    filesystems.AddRange(from partition in sidecar.BlockMedias[0].FileSystemInformation
                                          where partition.FileSystems != null from fileSystem in partition.FileSystems
                                          select (partition.StartSector, fileSystem.Type));
 
@@ -1413,44 +1415,48 @@ partial class Dump
                                            filesystem.start);
                     }
 
-                sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
+                sidecar.BlockMedias[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
 
                 (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
 
-                sidecar.BlockMedia[0].DiskType    = xmlType.type;
-                sidecar.BlockMedia[0].DiskSubType = xmlType.subType;
+                sidecar.BlockMedias[0].MediaType    = xmlType.type;
+                sidecar.BlockMedias[0].MediaSubType = xmlType.subType;
 
                 // TODO: Implement device firmware revision
                 if(!_dev.IsRemovable ||
                    _dev.IsUsb)
                     if(_dev.Type == DeviceType.ATAPI)
-                        sidecar.BlockMedia[0].Interface = "ATAPI";
+                        sidecar.BlockMedias[0].Interface = "ATAPI";
                     else if(_dev.IsUsb)
-                        sidecar.BlockMedia[0].Interface = "USB";
+                        sidecar.BlockMedias[0].Interface = "USB";
                     else if(_dev.IsFireWire)
-                        sidecar.BlockMedia[0].Interface = "FireWire";
+                        sidecar.BlockMedias[0].Interface = "FireWire";
                     else
-                        sidecar.BlockMedia[0].Interface = "SCSI";
+                        sidecar.BlockMedias[0].Interface = "SCSI";
 
-                sidecar.BlockMedia[0].LogicalBlocks = blocks;
-                sidecar.BlockMedia[0].Manufacturer  = _dev.Manufacturer;
-                sidecar.BlockMedia[0].Model         = _dev.Model;
+                sidecar.BlockMedias[0].LogicalBlocks = blocks;
+                sidecar.BlockMedias[0].Manufacturer  = _dev.Manufacturer;
+                sidecar.BlockMedias[0].Model         = _dev.Model;
 
                 if(!_private)
-                    sidecar.BlockMedia[0].Serial = _dev.Serial;
+                    sidecar.BlockMedias[0].Serial = _dev.Serial;
 
-                sidecar.BlockMedia[0].Size = blocks * blockSize;
+                sidecar.BlockMedias[0].Size = blocks * blockSize;
 
                 if(_dev.IsRemovable)
-                    sidecar.BlockMedia[0].DumpHardwareArray = _resume.Tries.ToArray();
+                    sidecar.BlockMedias[0].DumpHardware = _resume.Tries;
 
                 UpdateStatus?.Invoke(Localization.Core.Writing_metadata_sidecar);
 
-                var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
+                var jsonFs = new FileStream(_outputPrefix + ".metadata.json", FileMode.Create);
 
-                var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
+                JsonSerializer.Serialize(jsonFs, sidecar, new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    WriteIndented          = true
+                });
+
+                jsonFs.Close();
             }
         }
 

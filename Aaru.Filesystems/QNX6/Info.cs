@@ -27,11 +27,11 @@
 // ****************************************************************************/
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -108,17 +108,15 @@ public sealed partial class QNX6
                             audiSb.freeBlocks * audiSb.blockSize, audiSb.numBlocks,
                             audiSb.numBlocks  * audiSb.blockSize).AppendLine();
 
-            XmlFsType = new FileSystemType
+            Metadata = new FileSystem
             {
-                Type                  = FS_TYPE,
-                Clusters              = audiSb.numBlocks,
-                ClusterSize           = audiSb.blockSize,
-                Bootable              = true,
-                Files                 = audiSb.numInodes - audiSb.freeInodes,
-                FilesSpecified        = true,
-                FreeClusters          = audiSb.freeBlocks,
-                FreeClustersSpecified = true,
-                VolumeSerial          = $"{audiSb.serial:X16}"
+                Type         = FS_TYPE,
+                Clusters     = audiSb.numBlocks,
+                ClusterSize  = audiSb.blockSize,
+                Bootable     = true,
+                Files        = audiSb.numInodes - audiSb.freeInodes,
+                FreeClusters = audiSb.freeBlocks,
+                VolumeSerial = $"{audiSb.serial:X16}"
             };
 
             //xmlFSType.VolumeName = CurrentEncoding.GetString(audiSb.id);
@@ -145,21 +143,17 @@ public sealed partial class QNX6
                         qnxSb.freeBlocks * qnxSb.blockSize, qnxSb.numBlocks, qnxSb.numBlocks * qnxSb.blockSize).
            AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                      = FS_TYPE,
-            Clusters                  = qnxSb.numBlocks,
-            ClusterSize               = qnxSb.blockSize,
-            Bootable                  = true,
-            Files                     = qnxSb.numInodes - qnxSb.freeInodes,
-            FilesSpecified            = true,
-            FreeClusters              = qnxSb.freeBlocks,
-            FreeClustersSpecified     = true,
-            VolumeSerial              = $"{qnxSb.serial:X16}",
-            CreationDate              = DateHandlers.UnixUnsignedToDateTime(qnxSb.ctime),
-            CreationDateSpecified     = true,
-            ModificationDate          = DateHandlers.UnixUnsignedToDateTime(qnxSb.atime),
-            ModificationDateSpecified = true
+            Type             = FS_TYPE,
+            Clusters         = qnxSb.numBlocks,
+            ClusterSize      = qnxSb.blockSize,
+            Bootable         = true,
+            Files            = qnxSb.numInodes - qnxSb.freeInodes,
+            FreeClusters     = qnxSb.freeBlocks,
+            VolumeSerial     = $"{qnxSb.serial:X16}",
+            CreationDate     = DateHandlers.UnixUnsignedToDateTime(qnxSb.ctime),
+            ModificationDate = DateHandlers.UnixUnsignedToDateTime(qnxSb.atime)
         };
 
         //xmlFSType.VolumeName = CurrentEncoding.GetString(qnxSb.volumeid);

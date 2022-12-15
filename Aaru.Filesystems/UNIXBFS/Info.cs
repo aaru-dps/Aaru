@@ -28,12 +28,12 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -106,7 +106,7 @@ public sealed partial class BFS
         sb.AppendFormat(Localization.Filesystem_name_0, bfsSb.s_fsname).AppendLine();
         sb.AppendFormat(Localization.Volume_name_0, bfsSb.s_volume).AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type        = FS_TYPE,
             VolumeName  = bfsSb.s_volume,

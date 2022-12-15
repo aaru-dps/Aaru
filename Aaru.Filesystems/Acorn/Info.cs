@@ -28,12 +28,12 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -263,7 +263,7 @@ public sealed partial class AcornADFS
     {
         Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         var sbInformation = new StringBuilder();
-        XmlFsType   = new FileSystemType();
+        Metadata    = new FileSystem();
         information = "";
         ErrorNumber errno;
 
@@ -321,7 +321,7 @@ public sealed partial class AcornADFS
                     namebytes[(i * 2) + 1] = oldMap1.name[i];
                 }
 
-                XmlFsType = new FileSystemType
+                Metadata = new FileSystem
                 {
                     Bootable    = oldMap1.boot != 0, // Or not?
                     Clusters    = bytes / imagePlugin.Info.SectorSize,
@@ -420,12 +420,12 @@ public sealed partial class AcornADFS
 
                 if(oldMap1.discId > 0)
                 {
-                    XmlFsType.VolumeSerial = $"{oldMap1.discId:X4}";
+                    Metadata.VolumeSerial = $"{oldMap1.discId:X4}";
                     sbInformation.AppendFormat(Localization.Volume_ID_0_X4, oldMap1.discId).AppendLine();
                 }
 
                 if(!ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
-                    XmlFsType.VolumeName = StringHandlers.CToString(namebytes, Encoding);
+                    Metadata.VolumeName = StringHandlers.CToString(namebytes, Encoding);
 
                 information = sbInformation.ToString();
 
@@ -527,7 +527,7 @@ public sealed partial class AcornADFS
         if(bytes > imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize)
             return;
 
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         sbInformation.AppendLine(Localization.Acorn_Advanced_Disc_Filing_System);
         sbInformation.AppendLine();
@@ -548,22 +548,22 @@ public sealed partial class AcornADFS
 
         if(drSb.disc_id > 0)
         {
-            XmlFsType.VolumeSerial = $"{drSb.disc_id:X4}";
+            Metadata.VolumeSerial = $"{drSb.disc_id:X4}";
             sbInformation.AppendFormat(Localization.Volume_ID_0_X4, drSb.disc_id).AppendLine();
         }
 
         if(!ArrayHelpers.ArrayIsNullOrEmpty(drSb.disc_name))
         {
             string discname = StringHandlers.CToString(drSb.disc_name, Encoding);
-            XmlFsType.VolumeName = discname;
+            Metadata.VolumeName = discname;
             sbInformation.AppendFormat(Localization.Volume_name_0, discname).AppendLine();
         }
 
         information = sbInformation.ToString();
 
-        XmlFsType.Bootable    |= drSb.bootoption != 0; // Or not?
-        XmlFsType.Clusters    =  bytes / (ulong)(1 << drSb.log2secsize);
-        XmlFsType.ClusterSize =  (uint)(1 << drSb.log2secsize);
-        XmlFsType.Type        =  FS_TYPE;
+        Metadata.Bootable    |= drSb.bootoption != 0; // Or not?
+        Metadata.Clusters    =  bytes / (ulong)(1 << drSb.log2secsize);
+        Metadata.ClusterSize =  (uint)(1 << drSb.log2secsize);
+        Metadata.Type        =  FS_TYPE;
     }
 }

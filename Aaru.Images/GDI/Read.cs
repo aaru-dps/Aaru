@@ -330,7 +330,7 @@ public sealed partial class Gdi
 
             _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
-            _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+            _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
 
             AaruConsole.VerboseWriteLine(Localization.GDI_image_describes_a_disc_of_type_0, _imageInfo.MediaType);
 

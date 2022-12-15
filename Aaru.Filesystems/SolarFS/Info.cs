@@ -28,12 +28,12 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -154,7 +154,7 @@ public sealed partial class SolarFS
         sb.AppendFormat(Localization._0_sectors_per_track, bpb.sptrk).AppendLine();
         sb.AppendFormat(Localization.Volume_name_0, bpb.vol_name).AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type        = FS_TYPE,
             Clusters    = bpb.sectors,

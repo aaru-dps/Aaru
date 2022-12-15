@@ -28,13 +28,13 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Claunia.Encoding;
-using Schemas;
 using Encoding = System.Text.Encoding;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -153,29 +153,25 @@ public sealed partial class AppleMFS
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         if(mdb.drLsBkUp > 0)
         {
-            XmlFsType.BackupDate          = DateHandlers.MacToDateTime(mdb.drLsBkUp);
-            XmlFsType.BackupDateSpecified = true;
+            Metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drLsBkUp);
         }
 
-        XmlFsType.Bootable    = bootBlockInfo != null;
-        XmlFsType.Clusters    = mdb.drNmAlBlks;
-        XmlFsType.ClusterSize = mdb.drAlBlkSiz;
+        Metadata.Bootable    = bootBlockInfo != null;
+        Metadata.Clusters    = mdb.drNmAlBlks;
+        Metadata.ClusterSize = mdb.drAlBlkSiz;
 
         if(mdb.drCrDate > 0)
         {
-            XmlFsType.CreationDate          = DateHandlers.MacToDateTime(mdb.drCrDate);
-            XmlFsType.CreationDateSpecified = true;
+            Metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
         }
 
-        XmlFsType.Files                 = mdb.drNmFls;
-        XmlFsType.FilesSpecified        = true;
-        XmlFsType.FreeClusters          = mdb.drFreeBks;
-        XmlFsType.FreeClustersSpecified = true;
-        XmlFsType.Type                  = FS_TYPE;
-        XmlFsType.VolumeName            = mdb.drVN;
+        Metadata.Files        = mdb.drNmFls;
+        Metadata.FreeClusters = mdb.drFreeBks;
+        Metadata.Type         = FS_TYPE;
+        Metadata.VolumeName   = mdb.drVN;
     }
 }

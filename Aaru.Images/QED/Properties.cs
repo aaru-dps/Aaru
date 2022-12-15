@@ -33,9 +33,9 @@
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
 
 namespace Aaru.DiscImages;
 
@@ -53,9 +53,9 @@ public sealed partial class Qed
     /// <inheritdoc />
     public string Format => "QEMU Enhanced Disk";
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();

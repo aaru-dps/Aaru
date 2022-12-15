@@ -28,11 +28,11 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -113,7 +113,7 @@ public sealed partial class Xia
 
         sb.AppendFormat(Localization.First_kernel_zone_0, supblk.s_firstkernzone).AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment),
             Clusters    = supblk.s_nzones,

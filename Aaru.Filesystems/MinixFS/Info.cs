@@ -28,11 +28,11 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -47,7 +47,7 @@ public sealed partial class MinixFS
         uint sector = 2;
         uint offset = 0;
 
-        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             sector = 0;
             offset = 0x400;
@@ -91,7 +91,7 @@ public sealed partial class MinixFS
         uint sector = 2;
         uint offset = 0;
 
-        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             sector = 0;
             offset = 0x400;
@@ -115,7 +115,7 @@ public sealed partial class MinixFS
 
         ushort magic = BitConverter.ToUInt16(minixSbSector, 0x018);
 
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         bool littleEndian;
 
@@ -128,19 +128,19 @@ public sealed partial class MinixFS
             {
                 case MINIX3_MAGIC:
                 case MINIX3_CIGAM:
-                    minixVersion   = Localization.Minix_v3_filesystem;
-                    XmlFsType.Type = FS_TYPE_V3;
+                    minixVersion  = Localization.Minix_v3_filesystem;
+                    Metadata.Type = FS_TYPE_V3;
 
                     break;
                 case MINIX2_MAGIC:
                 case MINIX2_CIGAM:
-                    minixVersion   = Localization.Minix_3_v2_filesystem;
-                    XmlFsType.Type = FS_TYPE_V3;
+                    minixVersion  = Localization.Minix_3_v2_filesystem;
+                    Metadata.Type = FS_TYPE_V3;
 
                     break;
                 default:
-                    minixVersion   = Localization.Minix_3_v1_filesystem;
-                    XmlFsType.Type = FS_TYPE_V3;
+                    minixVersion  = Localization.Minix_3_v1_filesystem;
+                    Metadata.Type = FS_TYPE_V3;
 
                     break;
             }
@@ -154,59 +154,59 @@ public sealed partial class MinixFS
             switch(magic)
             {
                 case MINIX_MAGIC:
-                    filenamesize   = 14;
-                    minixVersion   = Localization.Minix_v1_filesystem;
-                    littleEndian   = true;
-                    XmlFsType.Type = FS_TYPE_V1;
+                    filenamesize  = 14;
+                    minixVersion  = Localization.Minix_v1_filesystem;
+                    littleEndian  = true;
+                    Metadata.Type = FS_TYPE_V1;
 
                     break;
                 case MINIX_MAGIC2:
-                    filenamesize   = 30;
-                    minixVersion   = Localization.Minix_v1_filesystem;
-                    littleEndian   = true;
-                    XmlFsType.Type = FS_TYPE_V1;
+                    filenamesize  = 30;
+                    minixVersion  = Localization.Minix_v1_filesystem;
+                    littleEndian  = true;
+                    Metadata.Type = FS_TYPE_V1;
 
                     break;
                 case MINIX2_MAGIC:
-                    filenamesize   = 14;
-                    minixVersion   = Localization.Minix_v2_filesystem;
-                    littleEndian   = true;
-                    XmlFsType.Type = FS_TYPE_V2;
+                    filenamesize  = 14;
+                    minixVersion  = Localization.Minix_v2_filesystem;
+                    littleEndian  = true;
+                    Metadata.Type = FS_TYPE_V2;
 
                     break;
                 case MINIX2_MAGIC2:
-                    filenamesize   = 30;
-                    minixVersion   = Localization.Minix_v2_filesystem;
-                    littleEndian   = true;
-                    XmlFsType.Type = FS_TYPE_V2;
+                    filenamesize  = 30;
+                    minixVersion  = Localization.Minix_v2_filesystem;
+                    littleEndian  = true;
+                    Metadata.Type = FS_TYPE_V2;
 
                     break;
                 case MINIX_CIGAM:
-                    filenamesize   = 14;
-                    minixVersion   = Localization.Minix_v1_filesystem;
-                    littleEndian   = false;
-                    XmlFsType.Type = FS_TYPE_V1;
+                    filenamesize  = 14;
+                    minixVersion  = Localization.Minix_v1_filesystem;
+                    littleEndian  = false;
+                    Metadata.Type = FS_TYPE_V1;
 
                     break;
                 case MINIX_CIGAM2:
-                    filenamesize   = 30;
-                    minixVersion   = Localization.Minix_v1_filesystem;
-                    littleEndian   = false;
-                    XmlFsType.Type = FS_TYPE_V1;
+                    filenamesize  = 30;
+                    minixVersion  = Localization.Minix_v1_filesystem;
+                    littleEndian  = false;
+                    Metadata.Type = FS_TYPE_V1;
 
                     break;
                 case MINIX2_CIGAM:
-                    filenamesize   = 14;
-                    minixVersion   = Localization.Minix_v2_filesystem;
-                    littleEndian   = false;
-                    XmlFsType.Type = FS_TYPE_V2;
+                    filenamesize  = 14;
+                    minixVersion  = Localization.Minix_v2_filesystem;
+                    littleEndian  = false;
+                    Metadata.Type = FS_TYPE_V2;
 
                     break;
                 case MINIX2_CIGAM2:
-                    filenamesize   = 30;
-                    minixVersion   = Localization.Minix_v2_filesystem;
-                    littleEndian   = false;
-                    XmlFsType.Type = FS_TYPE_V2;
+                    filenamesize  = 30;
+                    minixVersion  = Localization.Minix_v2_filesystem;
+                    littleEndian  = false;
+                    Metadata.Type = FS_TYPE_V2;
 
                     break;
                 default: return;
@@ -247,8 +247,8 @@ public sealed partial class MinixFS
             sb.AppendFormat(Localization._0_bytes_maximum_per_file, mnxSb.s_max_size).AppendLine();
             sb.AppendFormat(Localization.On_disk_filesystem_version_0, mnxSb.s_disk_version).AppendLine();
 
-            XmlFsType.ClusterSize = mnxSb.s_blocksize;
-            XmlFsType.Clusters    = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
+            Metadata.ClusterSize = mnxSb.s_blocksize;
+            Metadata.Clusters    = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
         }
         else
         {
@@ -278,8 +278,8 @@ public sealed partial class MinixFS
             //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
             sb.AppendFormat(Localization._0_bytes_maximum_per_file, mnxSb.s_max_size).AppendLine();
             sb.AppendFormat(Localization.Filesystem_state_0, mnxSb.s_state).AppendLine();
-            XmlFsType.ClusterSize = 1024;
-            XmlFsType.Clusters    = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
+            Metadata.ClusterSize = 1024;
+            Metadata.Clusters    = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
         }
 
         information = sb.ToString();

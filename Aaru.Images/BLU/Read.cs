@@ -139,7 +139,7 @@ public sealed partial class Blu
 
         _bluImageFilter = imageFilter;
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         if(_bptag > 0)
             _imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);

@@ -65,7 +65,7 @@ public sealed partial class Virtual98
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = _v98Hdr.totals;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.SectorSize           = _v98Hdr.sectorsize;
         _imageInfo.Cylinders            = _v98Hdr.cylinders;
         _imageInfo.Heads                = _v98Hdr.surfaces;

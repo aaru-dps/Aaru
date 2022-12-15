@@ -36,18 +36,19 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
-using Aaru.CommonTypes.Structs;
-using Aaru.Core.Devices.Dumping;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
-using Schemas;
 using DMI = Aaru.Decoders.Xbox.DMI;
+using Dump = Aaru.Core.Devices.Dumping.Dump;
 using MediaType = Aaru.CommonTypes.MediaType;
+using Partition = Aaru.CommonTypes.Partition;
 using Session = Aaru.CommonTypes.Structs.Session;
-using TrackType = Schemas.TrackType;
+using Track = Aaru.CommonTypes.Structs.Track;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.Core;
 
@@ -63,27 +64,26 @@ public sealed partial class Sidecar
     /// <param name="sidecar">Metadata sidecar</param>
     /// <param name="encoding">Encoding to be used for filesystem plugins</param>
     void OpticalDisc(IOpticalMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
-                     List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
+                     List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar, Encoding encoding)
     {
         if(_aborted)
             return;
 
-        sidecar.OpticalDisc = new[]
+        sidecar.OpticalDiscs = new List<OpticalDisc>
         {
-            new OpticalDiscType
+            new()
             {
-                Checksums = imgChecksums.ToArray(),
-                Image = new ImageType
+                Checksums = imgChecksums,
+                Image = new Image
                 {
-                    format          = image.Format,
-                    offset          = 0,
-                    offsetSpecified = true,
-                    Value           = Path.GetFileName(imagePath)
+                    Format = image.Format,
+                    Offset = 0,
+                    Value  = Path.GetFileName(imagePath)
                 },
                 Size = (ulong)fi.Length,
-                Sequence = new SequenceType
+                Sequence = new Sequence
                 {
-                    MediaTitle = image.Info.MediaTitle
+                    Title = image.Info.MediaTitle
                 }
             }
         };
@@ -91,13 +91,13 @@ public sealed partial class Sidecar
         if(image.Info.MediaSequence     != 0 &&
            image.Info.LastMediaSequence != 0)
         {
-            sidecar.OpticalDisc[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
-            sidecar.OpticalDisc[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
+            sidecar.OpticalDiscs[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
+            sidecar.OpticalDiscs[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
         }
         else
         {
-            sidecar.OpticalDisc[0].Sequence.MediaSequence = 1;
-            sidecar.OpticalDisc[0].Sequence.TotalMedia    = 1;
+            sidecar.OpticalDiscs[0].Sequence.MediaSequence = 1;
+            sidecar.OpticalDiscs[0].Sequence.TotalMedia    = 1;
         }
 
         MediaType   dskType = image.Info.MediaType;
@@ -134,7 +134,7 @@ public sealed partial class Sidecar
                     {
                         dskType = MediaType.XGD;
 
-                        sidecar.OpticalDisc[0].Dimensions = new DimensionsType
+                        sidecar.OpticalDiscs[0].Dimensions = new DimensionsNew
                         {
                             Diameter  = 120,
                             Thickness = 1.2
@@ -144,7 +144,7 @@ public sealed partial class Sidecar
                     {
                         dskType = MediaType.XGD2;
 
-                        sidecar.OpticalDisc[0].Dimensions = new DimensionsType
+                        sidecar.OpticalDiscs[0].Dimensions = new DimensionsNew
                         {
                             Diameter  = 120,
                             Thickness = 1.2
@@ -194,29 +194,25 @@ public sealed partial class Sidecar
                                pfi.Value.DiscSize == DVDSize.OneTwenty)
                                 dskType = MediaType.WOD;
 
-                            sidecar.OpticalDisc[0].Dimensions = new DimensionsType();
+                            sidecar.OpticalDiscs[0].Dimensions = new DimensionsNew();
 
                             if(dskType == MediaType.UMD)
                             {
-                                sidecar.OpticalDisc[0].Dimensions.Height          = 64;
-                                sidecar.OpticalDisc[0].Dimensions.HeightSpecified = true;
-                                sidecar.OpticalDisc[0].Dimensions.Width           = 63;
-                                sidecar.OpticalDisc[0].Dimensions.WidthSpecified  = true;
-                                sidecar.OpticalDisc[0].Dimensions.Thickness       = 4;
+                                sidecar.OpticalDiscs[0].Dimensions.Height    = 64;
+                                sidecar.OpticalDiscs[0].Dimensions.Width     = 63;
+                                sidecar.OpticalDiscs[0].Dimensions.Thickness = 4;
                             }
                             else
                                 switch(pfi.Value.DiscSize)
                                 {
                                     case DVDSize.Eighty:
-                                        sidecar.OpticalDisc[0].Dimensions.Diameter          = 80;
-                                        sidecar.OpticalDisc[0].Dimensions.DiameterSpecified = true;
-                                        sidecar.OpticalDisc[0].Dimensions.Thickness         = 1.2;
+                                        sidecar.OpticalDiscs[0].Dimensions.Diameter  = 80;
+                                        sidecar.OpticalDiscs[0].Dimensions.Thickness = 1.2;
 
                                         break;
                                     case DVDSize.OneTwenty:
-                                        sidecar.OpticalDisc[0].Dimensions.Diameter          = 120;
-                                        sidecar.OpticalDisc[0].Dimensions.DiameterSpecified = true;
-                                        sidecar.OpticalDisc[0].Dimensions.Thickness         = 1.2;
+                                        sidecar.OpticalDiscs[0].Dimensions.Diameter  = 120;
+                                        sidecar.OpticalDiscs[0].Dimensions.Thickness = 1.2;
 
                                         break;
                                 }
@@ -229,26 +225,26 @@ public sealed partial class Sidecar
         try
         {
             List<Session> sessions = image.Sessions;
-            sidecar.OpticalDisc[0].Sessions = (uint)(sessions?.Count ?? 1);
+            sidecar.OpticalDiscs[0].Sessions = (uint)(sessions?.Count ?? 1);
         }
         catch
         {
-            sidecar.OpticalDisc[0].Sessions = 1;
+            sidecar.OpticalDiscs[0].Sessions = 1;
         }
 
-        List<Track>     tracks  = image.Tracks;
-        List<TrackType> trksLst = null;
+        List<Track>                          tracks  = image.Tracks;
+        List<CommonTypes.AaruMetadata.Track> trksLst = null;
 
         if(tracks != null)
         {
-            sidecar.OpticalDisc[0].Tracks    = new uint[1];
-            sidecar.OpticalDisc[0].Tracks[0] = (uint)tracks.Count;
-            trksLst                          = new List<TrackType>();
+            sidecar.OpticalDiscs[0].Tracks    = new uint[1];
+            sidecar.OpticalDiscs[0].Tracks[0] = (uint)tracks.Count;
+            trksLst                           = new List<CommonTypes.AaruMetadata.Track>();
         }
 
-        if(sidecar.OpticalDisc[0].Dimensions == null &&
-           image.Info.MediaType              != MediaType.Unknown)
-            sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
+        if(sidecar.OpticalDiscs[0].Dimensions == null &&
+           image.Info.MediaType               != MediaType.Unknown)
+            sidecar.OpticalDiscs[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
 
         if(_aborted)
             return;
@@ -270,30 +266,30 @@ public sealed partial class Sidecar
                 return;
             }
 
-            var xmlTrk = new TrackType();
+            var xmlTrk = new CommonTypes.AaruMetadata.Track();
 
-            xmlTrk.TrackType1 = trk.Type switch
+            xmlTrk.Type = trk.Type switch
             {
-                CommonTypes.Enums.TrackType.Audio           => TrackTypeTrackType.audio,
-                CommonTypes.Enums.TrackType.CdMode2Form2    => TrackTypeTrackType.m2f2,
-                CommonTypes.Enums.TrackType.CdMode2Formless => TrackTypeTrackType.mode2,
-                CommonTypes.Enums.TrackType.CdMode2Form1    => TrackTypeTrackType.m2f1,
-                CommonTypes.Enums.TrackType.CdMode1         => TrackTypeTrackType.mode1,
-                CommonTypes.Enums.TrackType.Data => sidecar.OpticalDisc[0].DiscType switch
+                TrackType.Audio           => CommonTypes.AaruMetadata.TrackType.Audio,
+                TrackType.CdMode2Form2    => CommonTypes.AaruMetadata.TrackType.Mode2Form2,
+                TrackType.CdMode2Formless => CommonTypes.AaruMetadata.TrackType.Mode2,
+                TrackType.CdMode2Form1    => CommonTypes.AaruMetadata.TrackType.Mode2Form1,
+                TrackType.CdMode1         => CommonTypes.AaruMetadata.TrackType.Mode1,
+                TrackType.Data => sidecar.OpticalDiscs[0].DiscType switch
                 {
-                    "BD"     => TrackTypeTrackType.bluray,
-                    "DDCD"   => TrackTypeTrackType.ddcd,
-                    "DVD"    => TrackTypeTrackType.dvd,
-                    "HD DVD" => TrackTypeTrackType.hddvd,
-                    _        => TrackTypeTrackType.mode1
+                    "BD"     => CommonTypes.AaruMetadata.TrackType.Bluray,
+                    "DDCD"   => CommonTypes.AaruMetadata.TrackType.Ddcd,
+                    "DVD"    => CommonTypes.AaruMetadata.TrackType.Dvd,
+                    "HD DVD" => CommonTypes.AaruMetadata.TrackType.HdDvd,
+                    _        => CommonTypes.AaruMetadata.TrackType.Mode1
                 },
-                _ => xmlTrk.TrackType1
+                _ => xmlTrk.Type
             };
 
-            xmlTrk.Sequence = new TrackSequenceType
+            xmlTrk.Sequence = new TrackSequence
             {
-                Session     = trk.Session,
-                TrackNumber = trk.Sequence
+                Session = trk.Session,
+                Number  = trk.Sequence
             };
 
             xmlTrk.StartSector = trk.StartSector;
@@ -303,32 +299,29 @@ public sealed partial class Sidecar
                idx0                                      >= 0)
                 xmlTrk.StartSector = (ulong)idx0;
 
-            switch(sidecar.OpticalDisc[0].DiscType)
+            switch(sidecar.OpticalDiscs[0].DiscType)
             {
                 case "CD":
                 case "GD":
-                    xmlTrk.StartMSF = LbaToMsf((long)xmlTrk.StartSector);
-                    xmlTrk.EndMSF   = LbaToMsf((long)xmlTrk.EndSector);
+                    xmlTrk.StartMsf = LbaToMsf((long)xmlTrk.StartSector);
+                    xmlTrk.EndMsf   = LbaToMsf((long)xmlTrk.EndSector);
 
                     break;
                 case "DDCD":
-                    xmlTrk.StartMSF = DdcdLbaToMsf((long)xmlTrk.StartSector);
-                    xmlTrk.EndMSF   = DdcdLbaToMsf((long)xmlTrk.EndSector);
+                    xmlTrk.StartMsf = DdcdLbaToMsf((long)xmlTrk.StartSector);
+                    xmlTrk.EndMsf   = DdcdLbaToMsf((long)xmlTrk.EndSector);
 
                     break;
             }
 
-            xmlTrk.Image = new ImageType
+            xmlTrk.Image = new Image
             {
                 Value  = Path.GetFileName(trk.File),
-                format = trk.FileType
+                Format = trk.FileType
             };
 
             if(trk.FileOffset > 0)
-            {
-                xmlTrk.Image.offset          = trk.FileOffset;
-                xmlTrk.Image.offsetSpecified = true;
-            }
+                xmlTrk.Image.Offset = trk.FileOffset;
 
             xmlTrk.Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * (ulong)trk.RawBytesPerSector;
 
@@ -346,7 +339,7 @@ public sealed partial class Sidecar
 
                 // ...or AppleDouble
                 filterId == new Guid("1b2165ee-c9df-4b21-bbbb-9e5892b2df4d")))
-                xmlTrk.Checksums = sidecar.OpticalDisc[0].Checksums;
+                xmlTrk.Checksums = sidecar.OpticalDiscs[0].Checksums;
             else
             {
                 UpdateProgress(Localization.Core.Track_0_of_1, trk.Sequence, tracks.Count);
@@ -372,8 +365,7 @@ public sealed partial class Sidecar
 
                     if(sectors - doneSectors >= sectorsToRead)
                     {
-                        errno = image.ReadSectorsLong(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber,
-                                                      out sector);
+                        errno = image.ReadSectorsLong(doneSectors, sectorsToRead, xmlTrk.Sequence.Number, out sector);
 
                         UpdateProgress2(Localization.Core.Hashing_sector_0_of_1, (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
@@ -391,7 +383,7 @@ public sealed partial class Sidecar
                     else
                     {
                         errno = image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                      xmlTrk.Sequence.TrackNumber, out sector);
+                                                      xmlTrk.Sequence.Number, out sector);
 
                         UpdateProgress2(Localization.Core.Hashing_sector_0_of_1, (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
@@ -410,18 +402,16 @@ public sealed partial class Sidecar
                     trkChkWorker.Update(sector);
                 }
 
-                List<ChecksumType> trkChecksums = trkChkWorker.End();
-
-                xmlTrk.Checksums = trkChecksums.ToArray();
+                xmlTrk.Checksums = trkChkWorker.End();
 
                 EndProgress2();
             }
 
             if(trk.SubchannelType != TrackSubchannelType.None)
             {
-                xmlTrk.SubChannel = new SubChannelType
+                xmlTrk.SubChannel = new SubChannel
                 {
-                    Image = new ImageType
+                    Image = new Image
                     {
                         Value = trk.SubchannelFile
                     },
@@ -434,26 +424,23 @@ public sealed partial class Sidecar
                 {
                     case TrackSubchannelType.Packed:
                     case TrackSubchannelType.PackedInterleaved:
-                        xmlTrk.SubChannel.Image.format = "rw";
+                        xmlTrk.SubChannel.Image.Format = "rw";
 
                         break;
                     case TrackSubchannelType.Raw:
                     case TrackSubchannelType.RawInterleaved:
-                        xmlTrk.SubChannel.Image.format = "rw_raw";
+                        xmlTrk.SubChannel.Image.Format = "rw_raw";
 
                         break;
                     case TrackSubchannelType.Q16:
                     case TrackSubchannelType.Q16Interleaved:
-                        xmlTrk.SubChannel.Image.format = "q16";
+                        xmlTrk.SubChannel.Image.Format = "q16";
 
                         break;
                 }
 
                 if(trk.FileOffset > 0)
-                {
-                    xmlTrk.SubChannel.Image.offset          = trk.SubchannelOffset;
-                    xmlTrk.SubChannel.Image.offsetSpecified = true;
-                }
+                    xmlTrk.SubChannel.Image.Offset = trk.SubchannelOffset;
 
                 var subChkWorker = new Checksum();
 
@@ -476,7 +463,7 @@ public sealed partial class Sidecar
 
                     if(sectors - doneSectors >= sectorsToRead)
                     {
-                        errno = image.ReadSectorsTag(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber,
+                        errno = image.ReadSectorsTag(doneSectors, sectorsToRead, xmlTrk.Sequence.Number,
                                                      SectorTagType.CdSectorSubchannel, out sector);
 
                         UpdateProgress2(Localization.Core.Hashing_subchannel_sector_0_of_1, (long)doneSectors,
@@ -494,9 +481,8 @@ public sealed partial class Sidecar
                     }
                     else
                     {
-                        errno = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                     xmlTrk.Sequence.TrackNumber, SectorTagType.CdSectorSubchannel,
-                                                     out sector);
+                        errno = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors), xmlTrk.Sequence.Number,
+                                                     SectorTagType.CdSectorSubchannel, out sector);
 
                         UpdateProgress2(Localization.Core.Hashing_subchannel_sector_0_of_1, (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
@@ -515,9 +501,7 @@ public sealed partial class Sidecar
                     subChkWorker.Update(sector);
                 }
 
-                List<ChecksumType> subChecksums = subChkWorker.End();
-
-                xmlTrk.SubChannel.Checksums = subChecksums.ToArray();
+                xmlTrk.SubChannel.Checksums = subChkWorker.End();
 
                 EndProgress2();
             }
@@ -528,25 +512,23 @@ public sealed partial class Sidecar
             List<Partition> trkPartitions =
                 partitions.Where(p => p.Start >= trk.StartSector && p.End <= trk.EndSector).ToList();
 
-            xmlTrk.FileSystemInformation = new PartitionType[1];
+            xmlTrk.FileSystemInformation = new List<CommonTypes.AaruMetadata.Partition>();
 
             if(trkPartitions.Count > 0)
             {
-                xmlTrk.FileSystemInformation = new PartitionType[trkPartitions.Count];
-
-                for(int i = 0; i < trkPartitions.Count; i++)
+                foreach(Partition partition in trkPartitions)
                 {
-                    xmlTrk.FileSystemInformation[i] = new PartitionType
+                    var metadataPartition = new CommonTypes.AaruMetadata.Partition
                     {
-                        Description = trkPartitions[i].Description,
-                        EndSector   = trkPartitions[i].End,
-                        Name        = trkPartitions[i].Name,
-                        Sequence    = (uint)trkPartitions[i].Sequence,
-                        StartSector = trkPartitions[i].Start,
-                        Type        = trkPartitions[i].Type
+                        Description = partition.Description,
+                        EndSector   = partition.End,
+                        Name        = partition.Name,
+                        Sequence    = (uint)partition.Sequence,
+                        StartSector = partition.Start,
+                        Type        = partition.Type
                     };
 
-                    List<FileSystemType> lstFs = new();
+                    List<FileSystem> lstFs = new();
 
                     foreach(IFilesystem plugin in plugins.PluginsList.Values)
                         try
@@ -558,14 +540,14 @@ public sealed partial class Sidecar
                                 return;
                             }
 
-                            if(!plugin.Identify(image, trkPartitions[i]))
+                            if(!plugin.Identify(image, partition))
                                 continue;
 
-                            plugin.GetInformation(image, trkPartitions[i], out _, encoding);
-                            lstFs.Add(plugin.XmlFsType);
-                            Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                            plugin.GetInformation(image, partition, out _, encoding);
+                            lstFs.Add(plugin.Metadata);
+                            Statistics.AddFilesystem(plugin.Metadata.Type);
 
-                            dskType = plugin.XmlFsType.Type switch
+                            dskType = plugin.Metadata.Type switch
                             {
                                 "Opera"                        => MediaType.ThreeDO,
                                 "PC Engine filesystem"         => MediaType.SuperCDROM2,
@@ -582,26 +564,28 @@ public sealed partial class Sidecar
                         }
 
                     if(lstFs.Count > 0)
-                        xmlTrk.FileSystemInformation[i].FileSystems = lstFs.ToArray();
+                        metadataPartition.FileSystems = lstFs;
+
+                    xmlTrk.FileSystemInformation.Add(metadataPartition);
                 }
             }
             else
             {
-                xmlTrk.FileSystemInformation[0] = new PartitionType
+                var metadataPartition = new CommonTypes.AaruMetadata.Partition
                 {
                     EndSector   = xmlTrk.EndSector,
                     StartSector = xmlTrk.StartSector
                 };
 
-                List<FileSystemType> lstFs = new();
+                List<FileSystem> lstFs = new();
 
                 var xmlPart = new Partition
                 {
                     Start    = xmlTrk.StartSector,
                     Length   = xmlTrk.EndSector - xmlTrk.StartSector + 1,
-                    Type     = xmlTrk.TrackType1.ToString(),
+                    Type     = xmlTrk.Type.ToString(),
                     Size     = xmlTrk.Size,
-                    Sequence = xmlTrk.Sequence.TrackNumber
+                    Sequence = xmlTrk.Sequence.Number
                 };
 
                 foreach(IFilesystem plugin in plugins.PluginsList.Values)
@@ -618,10 +602,10 @@ public sealed partial class Sidecar
                             continue;
 
                         plugin.GetInformation(image, xmlPart, out _, encoding);
-                        lstFs.Add(plugin.XmlFsType);
-                        Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                        lstFs.Add(plugin.Metadata);
+                        Statistics.AddFilesystem(plugin.Metadata.Type);
 
-                        dskType = plugin.XmlFsType.Type switch
+                        dskType = plugin.Metadata.Type switch
                         {
                             "Opera"                        => MediaType.ThreeDO,
                             "PC Engine filesystem"         => MediaType.SuperCDROM2,
@@ -638,7 +622,9 @@ public sealed partial class Sidecar
                     }
 
                 if(lstFs.Count > 0)
-                    xmlTrk.FileSystemInformation[0].FileSystems = lstFs.ToArray();
+                    metadataPartition.FileSystems = lstFs;
+
+                xmlTrk.FileSystemInformation.Add(metadataPartition);
             }
 
             errno = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackIsrc, out byte[] isrcData);
@@ -652,7 +638,7 @@ public sealed partial class Sidecar
             {
                 var trackFlags = (CdFlags)flagsData[0];
 
-                xmlTrk.Flags = new TrackFlagsType
+                xmlTrk.Flags = new TrackFlags
                 {
                     PreEmphasis   = trackFlags.HasFlag(CdFlags.PreEmphasis),
                     CopyPermitted = trackFlags.HasFlag(CdFlags.CopyPermitted),
@@ -662,11 +648,11 @@ public sealed partial class Sidecar
             }
 
             if(trk.Indexes?.Count > 0)
-                xmlTrk.Indexes = trk.Indexes?.OrderBy(i => i.Key).Select(i => new TrackIndexType
+                xmlTrk.Indexes = trk.Indexes?.OrderBy(i => i.Key).Select(i => new TrackIndex
                 {
-                    index = i.Key,
+                    Index = i.Key,
                     Value = i.Value
-                }).ToArray();
+                }).ToList();
 
             trksLst.Add(xmlTrk);
         }
@@ -674,36 +660,37 @@ public sealed partial class Sidecar
         EndProgress();
 
         if(trksLst != null)
-            sidecar.OpticalDisc[0].Track = trksLst.ToArray();
+            sidecar.OpticalDiscs[0].Track = trksLst;
 
         // All XGD3 all have the same number of blocks
         if(dskType                             == MediaType.XGD2 &&
-           sidecar.OpticalDisc[0].Track.Length == 1)
+           sidecar.OpticalDiscs[0].Track.Count == 1)
         {
-            ulong blocks = sidecar.OpticalDisc[0].Track[0].EndSector - sidecar.OpticalDisc[0].Track[0].StartSector + 1;
+            ulong blocks = sidecar.OpticalDiscs[0].Track[0].EndSector - sidecar.OpticalDiscs[0].Track[0].StartSector +
+                           1;
 
             if(blocks is 25063 or 4229664 or 4246304) // Wxripper unlock
                 dskType = MediaType.XGD3;
         }
 
         (string type, string subType) discType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
-        sidecar.OpticalDisc[0].DiscType    = discType.type;
-        sidecar.OpticalDisc[0].DiscSubType = discType.subType;
+        sidecar.OpticalDiscs[0].DiscType    = discType.type;
+        sidecar.OpticalDiscs[0].DiscSubType = discType.subType;
         Statistics.AddMedia(dskType, false);
 
         if(image.DumpHardware != null)
-            sidecar.OpticalDisc[0].DumpHardwareArray = image.DumpHardware.ToArray();
+            sidecar.OpticalDiscs[0].DumpHardware = image.DumpHardware;
         else if(!string.IsNullOrEmpty(image.Info.DriveManufacturer)     ||
                 !string.IsNullOrEmpty(image.Info.DriveModel)            ||
                 !string.IsNullOrEmpty(image.Info.DriveFirmwareRevision) ||
                 !string.IsNullOrEmpty(image.Info.DriveSerialNumber))
-            sidecar.OpticalDisc[0].DumpHardwareArray = new[]
+            sidecar.OpticalDiscs[0].DumpHardware = new List<DumpHardware>
             {
-                new DumpHardwareType
+                new()
                 {
-                    Extents = new[]
+                    Extents = new List<Extent>
                     {
-                        new ExtentType
+                        new()
                         {
                             Start = 0,
                             End   = image.Info.Sectors
@@ -713,7 +700,7 @@ public sealed partial class Sidecar
                     Model        = image.Info.DriveModel,
                     Firmware     = image.Info.DriveFirmwareRevision,
                     Serial       = image.Info.DriveSerialNumber,
-                    Software = new SoftwareType
+                    Software = new Software
                     {
                         Name    = image.Info.Application,
                         Version = image.Info.ApplicationVersion

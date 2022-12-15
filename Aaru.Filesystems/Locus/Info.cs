@@ -29,12 +29,11 @@
 // Commit count
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 using commitcnt_t = System.Int32;
 
 // Disk address
@@ -48,6 +47,7 @@ using gfs_t = System.Int32;
 
 // Inode number
 using ino_t = System.Int32;
+using Partition = Aaru.CommonTypes.Partition;
 
 // Filesystem pack number
 using pckno_t = System.Int16;
@@ -238,19 +238,17 @@ public sealed partial class Locus
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type        = FS_TYPE,
             ClusterSize = (uint)blockSize,
             Clusters    = (ulong)locusSb.s_fsize,
 
             // Sometimes it uses one, or the other. Use the bigger
-            VolumeName = string.IsNullOrEmpty(s_fsmnt) ? s_fpack : s_fsmnt,
+            VolumeName       = string.IsNullOrEmpty(s_fsmnt) ? s_fpack : s_fsmnt,
             ModificationDate = DateHandlers.UnixToDateTime(locusSb.s_time),
-            ModificationDateSpecified = true,
-            Dirty = !locusSb.s_flags.HasFlag(Flags.SB_CLEAN) || locusSb.s_flags.HasFlag(Flags.SB_DIRTY),
-            FreeClusters = (ulong)locusSb.s_tfree,
-            FreeClustersSpecified = true
+            Dirty            = !locusSb.s_flags.HasFlag(Flags.SB_CLEAN) || locusSb.s_flags.HasFlag(Flags.SB_DIRTY),
+            FreeClusters     = (ulong)locusSb.s_tfree
         };
     }
 }

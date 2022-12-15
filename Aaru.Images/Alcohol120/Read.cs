@@ -636,7 +636,7 @@ public sealed partial class Alcohol120
         _imageInfo.ImageSize            = (ulong)_alcImage.DataForkLength;
         _imageInfo.CreationTime         = _alcImage.CreationTime;
         _imageInfo.LastModificationTime = _alcImage.LastWriteTime;
-        _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.OpticalDisc;
         _imageInfo.Version              = $"{_header.version[0]}.{_header.version[1]}";
 
         if(!_isDvd)

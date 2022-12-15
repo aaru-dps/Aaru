@@ -33,8 +33,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
 using ufs_daddr_t = System.Int32;
 
 namespace Aaru.Filesystems;
@@ -51,7 +51,7 @@ public sealed partial class dump : IFilesystem
     /// <inheritdoc />
     public Guid Id => new("E53B4D28-C858-4800-B092-DDAE80D361B9");
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 }

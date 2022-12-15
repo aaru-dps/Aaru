@@ -34,9 +34,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.DiscImages;
 
@@ -69,7 +70,8 @@ public sealed partial class ZZZRawImage
             case ".128" when sectorSize  != 128:
             case ".256" when sectorSize  != 256:
             case ".iso" when sectorSize  != 2048:
-                ErrorMessage = Localization.The_specified_sector_size_does_not_correspond_with_the_requested_image_extension;
+                ErrorMessage = Localization.
+                    The_specified_sector_size_does_not_correspond_with_the_requested_image_extension;
 
                 return false;
         }
@@ -128,10 +130,10 @@ public sealed partial class ZZZRawImage
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
     public bool WriteMediaTag(byte[] data, MediaTagType tag)
@@ -274,5 +276,5 @@ public sealed partial class ZZZRawImage
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
 }

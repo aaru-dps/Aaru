@@ -34,9 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages;
@@ -64,7 +66,7 @@ public sealed partial class ZZZRawImage
     {
         get
         {
-            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
                 return null;
 
             var trk = new Track
@@ -110,7 +112,7 @@ public sealed partial class ZZZRawImage
     {
         get
         {
-            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
                 return null;
 
             var sess = new Session
@@ -136,7 +138,7 @@ public sealed partial class ZZZRawImage
     {
         get
         {
-            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
                 return null;
 
             List<Partition> parts = new();
@@ -162,9 +164,9 @@ public sealed partial class ZZZRawImage
     }
 
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata { get; private set; }
+    public Metadata AaruMetadata { get; private set; }
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.Concat(_writeOnlySidecars).
                                                                               OrderBy(t => t.tag).Select(t => t.tag).

@@ -367,7 +367,7 @@ public sealed partial class Partimage
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = localHeader.qwBlocksCount + 1;
         _imageInfo.SectorSize           = (uint)localHeader.qwBlockSize;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.MediaType            = MediaType.GENERIC_HDD;
         _imageInfo.Version              = StringHandlers.CToString(_cMainHeader.szVersion);
         _imageInfo.Comments             = StringHandlers.CToString(_cMainHeader.szPartDescription);

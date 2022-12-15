@@ -30,9 +30,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using Schemas;
 
 namespace Aaru.Filesystems;
 
@@ -64,7 +64,7 @@ public sealed partial class FAT : IReadOnlyFilesystem
     bool                                                           _useFirstFat;
 
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />

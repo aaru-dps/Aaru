@@ -27,11 +27,11 @@
 // ****************************************************************************/
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -103,7 +103,7 @@ public sealed partial class XboxFatPlugin
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type = FS_TYPE,
             ClusterSize = (uint)(fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
@@ -112,7 +112,6 @@ public sealed partial class XboxFatPlugin
             VolumeSerial = $"{fatxSb.id:X8}"
         };
 
-        XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                             XmlFsType.ClusterSize;
+        Metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / Metadata.ClusterSize;
     }
 }

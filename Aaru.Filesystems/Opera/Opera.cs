@@ -29,10 +29,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using Schemas;
 
 namespace Aaru.Filesystems;
 
@@ -49,7 +49,7 @@ public sealed partial class OperaFS : IReadOnlyFilesystem
     uint                                                               _volumeBlockSizeRatio;
 
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />

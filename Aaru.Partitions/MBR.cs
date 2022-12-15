@@ -325,7 +325,7 @@ public sealed class MBR : IPartition
         // Divider of sector size in MBR between real sector size
         ulong divider = 1;
 
-        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             sectorSize = 512;
             divider    = 4;
@@ -348,7 +348,7 @@ public sealed class MBR : IPartition
         DiskManagerMasterBootRecord mbrOntrack =
             Marshal.ByteArrayToStructureLittleEndian<DiskManagerMasterBootRecord>(sector);
 
-        AaruConsole.DebugWriteLine("MBR plugin", "xmlmedia = {0}", imagePlugin.Info.XmlMediaType);
+        AaruConsole.DebugWriteLine("MBR plugin", "xmlmedia = {0}", imagePlugin.Info.MetadataMediaType);
         AaruConsole.DebugWriteLine("MBR plugin", "mbr.magic = {0:X4}", mbr.magic);
 
         if(mbr.magic != MBR_MAGIC)
@@ -366,7 +366,7 @@ public sealed class MBR : IPartition
         if(signature == GPT_MAGIC)
             return false;
 
-        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             errno = imagePlugin.ReadSector(sectorOffset, out hdrBytes);
 
@@ -474,7 +474,7 @@ public sealed class MBR : IPartition
             {
                 var part = new Partition();
 
-                if((lbaStart > 0 || imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc) &&
+                if((lbaStart > 0 || imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc) &&
                    lbaSectors > 0)
                 {
                     part.Start  = lbaStart + sectorOffset;

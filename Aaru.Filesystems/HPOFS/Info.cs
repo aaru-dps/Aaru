@@ -33,12 +33,12 @@
 
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -212,12 +212,11 @@ public sealed partial class HPOFS
         sb.AppendFormat(Localization.Filesystem_version_0_1, mib.major, mib.minor).AppendLine();
         sb.AppendFormat(Localization.Volume_can_be_filled_up_to_0, vib.percentFull).AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Clusters               = mib.sectors / bpb.spc,
             ClusterSize            = (uint)(bpb.bps * bpb.spc),
             CreationDate           = DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime),
-            CreationDateSpecified  = true,
             DataPreparerIdentifier = StringHandlers.SpacePaddedToString(vib.owner, Encoding),
             Type                   = FS_TYPE,
             VolumeName             = StringHandlers.SpacePaddedToString(mib.volumeLabel, Encoding),

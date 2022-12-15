@@ -39,10 +39,10 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Media;
@@ -50,8 +50,12 @@ using Aaru.Devices;
 using Aaru.Localization;
 using Schemas;
 using Spectre.Console;
+using File = System.IO.File;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using MediaType = Aaru.CommonTypes.MediaType;
+using TapeFile = Aaru.CommonTypes.Structs.TapeFile;
+using TapePartition = Aaru.CommonTypes.Structs.TapePartition;
+using Track = Aaru.CommonTypes.Structs.Track;
 using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.Commands.Image;
@@ -286,9 +290,9 @@ sealed class ConvertImageCommand : Command
             geometryValues = (cylinders, heads, spt);
         }
 
-        Resume           resume  = null;
-        CICMMetadataType sidecar = null;
-        MediaType        mediaType;
+        Resume    resume  = null;
+        Metadata  sidecar = null;
+        MediaType mediaType;
 
         var xs = new XmlSerializer(typeof(CICMMetadataType));
 
@@ -297,7 +301,8 @@ sealed class ConvertImageCommand : Command
                 try
                 {
                     var sr = new StreamReader(cicmXml);
-                    sidecar = (CICMMetadataType)xs.Deserialize(sr);
+
+                    //sidecar = (CICMMetadataType)xs.Deserialize(sr);
                     sr.Close();
                 }
                 catch(Exception ex)
@@ -616,7 +621,7 @@ sealed class ConvertImageCommand : Command
             MediaTitle            = mediaTitle        ?? inputFormat.Info.MediaTitle
         };
 
-        if(!outputFormat.SetMetadata(metadata))
+        if(!outputFormat.SetImageInfo(metadata))
         {
             if(!force)
             {
@@ -628,8 +633,8 @@ sealed class ConvertImageCommand : Command
             AaruConsole.ErrorWriteLine(Localization.Core.Error_0_setting_metadata, outputFormat.ErrorMessage);
         }
 
-        CICMMetadataType       cicmMetadata = inputFormat.CicmMetadata;
-        List<DumpHardwareType> dumpHardware = inputFormat.DumpHardware;
+        Metadata           aaruMetadata = inputFormat.AaruMetadata;
+        List<DumpHardware> dumpHardware = inputFormat.DumpHardware;
 
         foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
                     !force || outputFormat.SupportedMediaTags.Contains(mediaTag)))
@@ -1429,20 +1434,20 @@ sealed class ConvertImageCommand : Command
         ret = false;
 
         if(sidecar      != null ||
-           cicmMetadata != null)
+           aaruMetadata != null)
         {
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask(UI.Writing_metadata).IsIndeterminate();
 
                 if(sidecar != null)
-                    ret = outputFormat.SetCicmMetadata(sidecar);
-                else if(cicmMetadata != null)
-                    ret = outputFormat.SetCicmMetadata(cicmMetadata);
+                    ret = outputFormat.SetMetadata(sidecar);
+                else if(aaruMetadata != null)
+                    ret = outputFormat.SetMetadata(aaruMetadata);
             });
 
             if(ret)
-                AaruConsole.WriteLine(UI.Written_CICM_XML_metadata_to_output_image);
+                AaruConsole.WriteLine(UI.Written_Aaru_Metadata_to_output_image);
         }
 
         bool closed = false;

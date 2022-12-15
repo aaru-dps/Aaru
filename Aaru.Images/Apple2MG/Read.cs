@@ -212,7 +212,7 @@ public sealed partial class Apple2Mg
 
         _a2MgImageFilter = imageFilter;
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         AaruConsole.VerboseWriteLine(Localization._2MG_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 

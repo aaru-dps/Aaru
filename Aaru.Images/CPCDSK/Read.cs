@@ -271,7 +271,7 @@ public sealed partial class Cpcdsk
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = (ulong)_sectors.Count;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.MediaType            = MediaType.CompactFloppy;
         _imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
 

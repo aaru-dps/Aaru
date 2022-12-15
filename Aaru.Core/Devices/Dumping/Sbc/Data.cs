@@ -27,6 +27,7 @@
 
 using System;
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
@@ -34,7 +35,6 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.DVD;
 using Aaru.Decryption;
 using Aaru.Decryption.DVD;
-using Schemas;
 using DVDDecryption = Aaru.Decryption.DVD.Dump;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -62,7 +62,7 @@ partial class Dump
     /// <param name="newTrim">Set if we need to start a trim</param>
     /// <param name="dvdDecrypt">DVD CSS decryption module</param>
     /// <param name="discKey">The DVD disc key</param>
-    void ReadSbcData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardwareType currentTry,
+    void ReadSbcData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardware currentTry,
                      ExtentsULong extents, ref double currentSpeed, ref double minSpeed, ref double maxSpeed,
                      ref double totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
                      ref double imageWriteDuration, ref bool newTrim, ref DVDDecryption dvdDecrypt, byte[] discKey)

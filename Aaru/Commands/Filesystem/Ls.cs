@@ -310,7 +310,7 @@ sealed class LsCommand : Command
                                 {
                                     ListFilesInDir("/", fs, longFormat);
 
-                                    Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                    Statistics.AddFilesystem(fs.Metadata.Type);
                                 }
                                 else
                                     AaruConsole.ErrorWriteLine(UI.Unable_to_mount_volume_error_0, error.ToString());
@@ -341,7 +341,7 @@ sealed class LsCommand : Command
                         {
                             ListFilesInDir("/", fs, longFormat);
 
-                            Statistics.AddFilesystem(fs.XmlFsType.Type);
+                            Statistics.AddFilesystem(fs.Metadata.Type);
                         }
                         else
                             AaruConsole.ErrorWriteLine(UI.Unable_to_mount_volume_error_0, error.ToString());

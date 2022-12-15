@@ -27,11 +27,11 @@
 // ****************************************************************************/
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -106,13 +106,12 @@ public sealed partial class SFS
 
         information = sbInformation.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            CreationDate          = DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
-            CreationDateSpecified = true,
-            Clusters              = rootBlock.totalblocks,
-            ClusterSize           = rootBlock.blocksize,
-            Type                  = FS_TYPE
+            CreationDate = DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
+            Clusters     = rootBlock.totalblocks,
+            ClusterSize  = rootBlock.blocksize,
+            Type         = FS_TYPE
         };
     }
 }

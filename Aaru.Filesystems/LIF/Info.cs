@@ -27,12 +27,12 @@
 // ****************************************************************************/
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -94,14 +94,13 @@ public sealed partial class LIF
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                  = FS_TYPE,
-            ClusterSize           = 256,
-            Clusters              = partition.Size / 256,
-            CreationDate          = DateHandlers.LifToDateTime(lifSb.creationDate),
-            CreationDateSpecified = true,
-            VolumeName            = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
+            Type         = FS_TYPE,
+            ClusterSize  = 256,
+            Clusters     = partition.Size / 256,
+            CreationDate = DateHandlers.LifToDateTime(lifSb.creationDate),
+            VolumeName   = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
         };
     }
 }

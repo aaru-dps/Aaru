@@ -29,11 +29,11 @@
 // ReSharper disable UnusedMember.Local
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -166,20 +166,19 @@ public sealed partial class JFS
 
         sb.AppendFormat(Localization.Volume_UUID_0, jfsSb.s_uuid).AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type = FS_TYPE,
-            Clusters = jfsSb.s_size,
-            ClusterSize = jfsSb.s_bsize,
-            Bootable = true,
-            VolumeName = StringHandlers.CToString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label, Encoding),
-            VolumeSerial = $"{jfsSb.s_uuid}",
-            ModificationDate = DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec),
-            ModificationDateSpecified = true
+            Type             = FS_TYPE,
+            Clusters         = jfsSb.s_size,
+            ClusterSize      = jfsSb.s_bsize,
+            Bootable         = true,
+            VolumeName       = StringHandlers.CToString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label, Encoding),
+            VolumeSerial     = $"{jfsSb.s_uuid}",
+            ModificationDate = DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec)
         };
 
         if(jfsSb.s_state != 0)
-            XmlFsType.Dirty = true;
+            Metadata.Dirty = true;
 
         information = sb.ToString();
     }

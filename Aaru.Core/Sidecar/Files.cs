@@ -34,27 +34,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
-using Schemas;
 
 namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
-    FilesystemContentsType Files(IReadOnlyFilesystem filesystem)
+    FilesystemContents Files(IReadOnlyFilesystem filesystem)
     {
-        var contents = new FilesystemContentsType();
+        var contents = new FilesystemContents();
 
         ErrorNumber ret = filesystem.ReadDir("/", out List<string> dirents);
 
         if(ret != ErrorNumber.NoError)
             return null;
 
-        List<DirectoryType>    directories = new();
-        List<ContentsFileType> files       = new();
+        List<Directory>    directories = new();
+        List<ContentsFile> files       = new();
 
         foreach(string dirent in dirents)
         {
@@ -78,86 +78,40 @@ public sealed partial class Sidecar
         }
 
         if(files.Count > 0)
-            contents.File = files.OrderBy(f => f.name).ToArray();
+            contents.Files = files.OrderBy(f => f.Name).ToList();
 
         if(directories.Count > 0)
-            contents.Directory = directories.OrderBy(d => d.name).ToArray();
+            contents.Directories = directories.OrderBy(d => d.Name).ToList();
 
         return contents;
     }
 
-    DirectoryType SidecarDirectory(IReadOnlyFilesystem filesystem, string path, string filename, FileEntryInfo stat)
+    Directory SidecarDirectory(IReadOnlyFilesystem filesystem, string path, string filename, FileEntryInfo stat)
     {
-        var directory = new DirectoryType();
-
-        if(stat.AccessTimeUtc.HasValue)
+        var directory = new Directory
         {
-            directory.accessTime          = stat.AccessTimeUtc.Value;
-            directory.accessTimeSpecified = true;
-        }
-
-        directory.attributes = (ulong)stat.Attributes;
-
-        if(stat.BackupTimeUtc.HasValue)
-        {
-            directory.backupTime          = stat.BackupTimeUtc.Value;
-            directory.backupTimeSpecified = true;
-        }
-
-        if(stat.CreationTimeUtc.HasValue)
-        {
-            directory.creationTime          = stat.CreationTimeUtc.Value;
-            directory.creationTimeSpecified = true;
-        }
-
-        if(stat.DeviceNo.HasValue)
-        {
-            directory.deviceNumber          = stat.DeviceNo.Value;
-            directory.deviceNumberSpecified = true;
-        }
-
-        directory.inode = stat.Inode;
-
-        if(stat.LastWriteTimeUtc.HasValue)
-        {
-            directory.lastWriteTime          = stat.LastWriteTimeUtc.Value;
-            directory.lastWriteTimeSpecified = true;
-        }
-
-        directory.links = stat.Links;
-        directory.name  = filename;
-
-        if(stat.GID.HasValue)
-        {
-            directory.posixGroupId          = stat.GID.Value;
-            directory.posixGroupIdSpecified = true;
-        }
-
-        if(stat.Mode.HasValue)
-        {
-            directory.posixMode          = stat.Mode.Value;
-            directory.posixModeSpecified = true;
-        }
-
-        if(stat.UID.HasValue)
-        {
-            directory.posixUserId          = stat.UID.Value;
-            directory.posixUserIdSpecified = true;
-        }
-
-        if(stat.StatusChangeTimeUtc.HasValue)
-        {
-            directory.statusChangeTime          = stat.StatusChangeTimeUtc.Value;
-            directory.statusChangeTimeSpecified = true;
-        }
+            AccessTime       = stat.AccessTimeUtc,
+            Attributes       = (ulong)stat.Attributes,
+            BackupTime       = stat.BackupTimeUtc,
+            CreationTime     = stat.CreationTimeUtc,
+            DeviceNumber     = stat.DeviceNo,
+            Inode            = stat.Inode,
+            LastWriteTime    = stat.LastWriteTimeUtc,
+            Links            = stat.Links,
+            Name             = filename,
+            PosixGroupId     = stat.GID,
+            PosixMode        = stat.Mode,
+            PosixUserId      = stat.UID,
+            StatusChangeTime = stat.StatusChangeTimeUtc
+        };
 
         ErrorNumber ret = filesystem.ReadDir(path + "/" + filename, out List<string> dirents);
 
         if(ret != ErrorNumber.NoError)
             return null;
 
-        List<DirectoryType>    directories = new();
-        List<ContentsFileType> files       = new();
+        List<Directory>    directories = new();
+        List<ContentsFile> files       = new();
 
         foreach(string dirent in dirents)
         {
@@ -181,80 +135,35 @@ public sealed partial class Sidecar
         }
 
         if(files.Count > 0)
-            directory.File = files.OrderBy(f => f.name).ToArray();
+            directory.Files = files.OrderBy(f => f.Name).ToList();
 
         if(directories.Count > 0)
-            directory.Directory = directories.OrderBy(d => d.name).ToArray();
+            directory.Directories = directories.OrderBy(d => d.Name).ToList();
 
         return directory;
     }
 
-    ContentsFileType SidecarFile(IReadOnlyFilesystem filesystem, string path, string filename, FileEntryInfo stat)
+    ContentsFile SidecarFile(IReadOnlyFilesystem filesystem, string path, string filename, FileEntryInfo stat)
     {
-        var file          = new ContentsFileType();
         var fileChkWorker = new Checksum();
 
-        if(stat.AccessTimeUtc.HasValue)
+        var file = new ContentsFile
         {
-            file.accessTime          = stat.AccessTimeUtc.Value;
-            file.accessTimeSpecified = true;
-        }
-
-        file.attributes = (ulong)stat.Attributes;
-
-        if(stat.BackupTimeUtc.HasValue)
-        {
-            file.backupTime          = stat.BackupTimeUtc.Value;
-            file.backupTimeSpecified = true;
-        }
-
-        if(stat.CreationTimeUtc.HasValue)
-        {
-            file.creationTime          = stat.CreationTimeUtc.Value;
-            file.creationTimeSpecified = true;
-        }
-
-        if(stat.DeviceNo.HasValue)
-        {
-            file.deviceNumber          = stat.DeviceNo.Value;
-            file.deviceNumberSpecified = true;
-        }
-
-        file.inode = stat.Inode;
-
-        if(stat.LastWriteTimeUtc.HasValue)
-        {
-            file.lastWriteTime          = stat.LastWriteTimeUtc.Value;
-            file.lastWriteTimeSpecified = true;
-        }
-
-        file.length = (ulong)stat.Length;
-        file.links  = stat.Links;
-        file.name   = filename;
-
-        if(stat.GID.HasValue)
-        {
-            file.posixGroupId          = stat.GID.Value;
-            file.posixGroupIdSpecified = true;
-        }
-
-        if(stat.Mode.HasValue)
-        {
-            file.posixMode          = stat.Mode.Value;
-            file.posixModeSpecified = true;
-        }
-
-        if(stat.UID.HasValue)
-        {
-            file.posixUserId          = stat.UID.Value;
-            file.posixUserIdSpecified = true;
-        }
-
-        if(stat.StatusChangeTimeUtc.HasValue)
-        {
-            file.statusChangeTime          = stat.StatusChangeTimeUtc.Value;
-            file.statusChangeTimeSpecified = true;
-        }
+            AccessTime       = stat.AccessTimeUtc,
+            Attributes       = (ulong)stat.Attributes,
+            BackupTime       = stat.BackupTimeUtc,
+            CreationTime     = stat.CreationTimeUtc,
+            DeviceNumber     = stat.DeviceNo,
+            Inode            = stat.Inode,
+            LastWriteTime    = stat.LastWriteTimeUtc,
+            Length           = (ulong)stat.Length,
+            Links            = stat.Links,
+            Name             = filename,
+            PosixGroupId     = stat.GID,
+            PosixMode        = stat.Mode,
+            PosixUserId      = stat.UID,
+            StatusChangeTime = stat.StatusChangeTimeUtc
+        };
 
         byte[] data = Array.Empty<byte>();
 
@@ -288,7 +197,7 @@ public sealed partial class Sidecar
 
             EndProgress2();
 
-            file.Checksums = fileChkWorker.End().ToArray();
+            file.Checksums = fileChkWorker.End();
         }
         else
             file.Checksums = _emptyChecksums;
@@ -298,7 +207,7 @@ public sealed partial class Sidecar
         if(ret != ErrorNumber.NoError)
             return file;
 
-        List<ExtendedAttributeType> xattrTypes = new();
+        List<ExtendedAttribute> xattrTypes = new();
 
         foreach(string xattr in xattrs)
         {
@@ -310,16 +219,16 @@ public sealed partial class Sidecar
             var xattrChkWorker = new Checksum();
             xattrChkWorker.Update(data);
 
-            xattrTypes.Add(new ExtendedAttributeType
+            xattrTypes.Add(new ExtendedAttribute
             {
-                Checksums = xattrChkWorker.End().ToArray(),
-                length    = (ulong)data.Length,
-                name      = xattr
+                Checksums = xattrChkWorker.End(),
+                Length    = (ulong)data.Length,
+                Name      = xattr
             });
         }
 
         if(xattrTypes.Count > 0)
-            file.ExtendedAttributes = xattrTypes.OrderBy(x => x.name).ToArray();
+            file.ExtendedAttributes = xattrTypes.OrderBy(x => x.Name).ToList();
 
         return file;
     }

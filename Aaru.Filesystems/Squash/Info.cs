@@ -28,11 +28,11 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -134,17 +134,14 @@ public sealed partial class Squash
 
         information = sbInformation.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type = FS_TYPE,
+            Type         = FS_TYPE,
             CreationDate = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),
-            CreationDateSpecified = true,
-            Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / sqSb.block_size,
-            ClusterSize = sqSb.block_size,
-            Files = sqSb.inodes,
-            FilesSpecified = true,
-            FreeClusters = 0,
-            FreeClustersSpecified = true
+            Clusters     = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / sqSb.block_size,
+            ClusterSize  = sqSb.block_size,
+            Files        = sqSb.inodes,
+            FreeClusters = 0
         };
     }
 }

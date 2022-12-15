@@ -183,7 +183,7 @@ public sealed partial class CopyTape
         _imageInfo.Application          = "CopyTape";
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         IsTape                          = true;
 
         return ErrorNumber.NoError;

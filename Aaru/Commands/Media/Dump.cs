@@ -44,6 +44,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Interop;
@@ -56,6 +57,8 @@ using Aaru.Core.Logging;
 using Aaru.Localization;
 using Schemas;
 using Spectre.Console;
+using Dump = Aaru.Core.Devices.Dumping.Dump;
+using File = System.IO.File;
 
 namespace Aaru.Commands.Media;
 
@@ -91,7 +94,7 @@ sealed class DumpMediaCommand : Command
             "--format", "-t"
         }, () => null, UI.Format_of_the_output_image_as_plugin_name_or_plugin_id));
 
-        Add(new Option<bool>("--metadata", () => true, UI.Enables_creating_CICM_XML_sidecar));
+        Add(new Option<bool>("--metadata", () => true, UI.Enables_creating_Aaru_Metadata_sidecar));
 
         Add(new Option<bool>("--trim", () => true, UI.Enables_trimming_errored_from_skipped_sectors));
 
@@ -519,15 +522,16 @@ sealed class DumpMediaCommand : Command
                 return (int)ErrorNumber.AlreadyDumped;
             }
 
-            CICMMetadataType sidecar   = null;
-            var              sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+            Metadata sidecar   = null;
+            var      sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
 
             if(cicmXml != null)
                 if(File.Exists(cicmXml))
                     try
                     {
                         var sr = new StreamReader(cicmXml);
-                        sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
+
+                        //sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
                         sr.Close();
                     }
                     catch

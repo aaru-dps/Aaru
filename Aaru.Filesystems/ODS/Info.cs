@@ -32,12 +32,12 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -78,7 +78,7 @@ public sealed partial class ODS
             return true;
 
         // Optical disc
-        if(imagePlugin.Info.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return false;
 
         if(hbSector.Length < 0x400)
@@ -113,8 +113,8 @@ public sealed partial class ODS
         HomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<HomeBlock>(hbSector);
 
         // Optical disc
-        if(imagePlugin.Info.XmlMediaType              == XmlMediaType.OpticalDisc &&
-           StringHandlers.CToString(homeblock.format) != "DECFILE11A  "           &&
+        if(imagePlugin.Info.MetadataMediaType         == MetadataMediaType.OpticalDisc &&
+           StringHandlers.CToString(homeblock.format) != "DECFILE11A  "                &&
            StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
         {
             if(hbSector.Length < 0x400)
@@ -257,7 +257,7 @@ public sealed partial class ODS
         sb.AppendFormat(Localization.File_protection_0, homeblock.fileprot).AppendLine();
         sb.AppendFormat(Localization.Record_protection_0, homeblock.recprot).AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type         = FS_TYPE,
             ClusterSize  = (uint)(homeblock.cluster * 512),
@@ -268,14 +268,12 @@ public sealed partial class ODS
 
         if(homeblock.credate > 0)
         {
-            XmlFsType.CreationDate          = DateHandlers.VmsToDateTime(homeblock.credate);
-            XmlFsType.CreationDateSpecified = true;
+            Metadata.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
         }
 
         if(homeblock.revdate > 0)
         {
-            XmlFsType.ModificationDate          = DateHandlers.VmsToDateTime(homeblock.revdate);
-            XmlFsType.ModificationDateSpecified = true;
+            Metadata.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
         }
 
         information = sb.ToString();

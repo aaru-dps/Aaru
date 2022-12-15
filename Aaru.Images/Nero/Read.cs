@@ -1478,7 +1478,7 @@ public sealed partial class Nero
                     _imageInfo.MediaType = CommonTypes.MediaType.CD;
             }
 
-            _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+            _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
             AaruConsole.VerboseWriteLine(Localization.Nero_image_contains_a_disc_of_type_0, _imageInfo.MediaType);
 
             _sectorBuilder = new SectorBuilder();

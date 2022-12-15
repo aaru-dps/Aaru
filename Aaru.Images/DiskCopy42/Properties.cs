@@ -33,9 +33,9 @@
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
 
 namespace Aaru.DiscImages;
 
@@ -50,9 +50,9 @@ public sealed partial class DiskCopy42
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
     /// <inheritdoc />
     public string Format => Localization.DiskCopy42_Name;
     /// <inheritdoc />

@@ -33,11 +33,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -113,13 +113,13 @@ public sealed partial class ext2FS
         Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
         SuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sblock);
 
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         switch(supblk.magic)
         {
             case EXT2_MAGIC_OLD:
                 sb.AppendLine(Localization.ext2_old_filesystem);
-                XmlFsType.Type = FS_TYPE_EXT2;
+                Metadata.Type = FS_TYPE_EXT2;
 
                 break;
             case EXT2_MAGIC:
@@ -146,19 +146,19 @@ public sealed partial class ext2FS
                 if(newExt2)
                 {
                     sb.AppendLine(Localization.ext2_filesystem);
-                    XmlFsType.Type = FS_TYPE_EXT2;
+                    Metadata.Type = FS_TYPE_EXT2;
                 }
 
                 if(ext3)
                 {
                     sb.AppendLine(Localization.ext3_filesystem);
-                    XmlFsType.Type = FS_TYPE_EXT3;
+                    Metadata.Type = FS_TYPE_EXT3;
                 }
 
                 if(ext4)
                 {
                     sb.AppendLine(Localization.ext4_filesystem);
-                    XmlFsType.Type = FS_TYPE_EXT4;
+                    Metadata.Type = FS_TYPE_EXT4;
                 }
 
                 break;
@@ -178,15 +178,14 @@ public sealed partial class ext2FS
             _               => string.Format(Localization.Unknown_OS_0, supblk.creator_os)
         };
 
-        XmlFsType.SystemIdentifier = extOs;
+        Metadata.SystemIdentifier = extOs;
 
         if(supblk.mkfs_t > 0)
         {
             sb.AppendFormat(Localization.Volume_was_created_on_0_for_1,
                             DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t), extOs).AppendLine();
 
-            XmlFsType.CreationDate          = DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t);
-            XmlFsType.CreationDateSpecified = true;
+            Metadata.CreationDate = DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t);
         }
         else
             sb.AppendFormat(Localization.Volume_was_created_for_0, extOs).AppendLine();
@@ -245,8 +244,8 @@ public sealed partial class ext2FS
         sb.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_for_a_total_of_2_bytes, blocks,
                         1024 << (int)supblk.block_size, blocks * (ulong)(1024 << (int)supblk.block_size)).AppendLine();
 
-        XmlFsType.Clusters    = blocks;
-        XmlFsType.ClusterSize = (uint)(1024 << (int)supblk.block_size);
+        Metadata.Clusters    = blocks;
+        Metadata.ClusterSize = (uint)(1024 << (int)supblk.block_size);
 
         if(supblk.mount_t > 0 ||
            supblk.mount_c > 0)
@@ -303,19 +302,18 @@ public sealed partial class ext2FS
             sb.AppendFormat(Localization.Last_written_on_0, DateHandlers.UnixUnsignedToDateTime(supblk.write_t)).
                AppendLine();
 
-            XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(supblk.write_t);
-            XmlFsType.ModificationDateSpecified = true;
+            Metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(supblk.write_t);
         }
         else
             sb.AppendLine("Volume has never been written");
 
-        XmlFsType.Dirty = true;
+        Metadata.Dirty = true;
 
         switch(supblk.state)
         {
             case EXT2_VALID_FS:
                 sb.AppendLine(Localization.Volume_is_clean);
-                XmlFsType.Dirty = false;
+                Metadata.Dirty = false;
 
                 break;
             case EXT2_ERROR_FS:
@@ -337,7 +335,7 @@ public sealed partial class ext2FS
             sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(supblk.volume_name, Encoding)).
                AppendLine();
 
-            XmlFsType.VolumeName = StringHandlers.CToString(supblk.volume_name, Encoding);
+            Metadata.VolumeName = StringHandlers.CToString(supblk.volume_name, Encoding);
         }
 
         switch(supblk.err_behaviour)
@@ -367,15 +365,14 @@ public sealed partial class ext2FS
         if(supblk.uuid != Guid.Empty)
         {
             sb.AppendFormat(Localization.Volume_UUID_0, supblk.uuid).AppendLine();
-            XmlFsType.VolumeSerial = supblk.uuid.ToString();
+            Metadata.VolumeSerial = supblk.uuid.ToString();
         }
 
         if(supblk.kbytes_written > 0)
             sb.AppendFormat(Localization._0_KiB_has_been_written_on_volume, supblk.kbytes_written).AppendLine();
 
         sb.AppendFormat(Localization._0_reserved_and_1_free_blocks, reserved, free).AppendLine();
-        XmlFsType.FreeClusters          = free;
-        XmlFsType.FreeClustersSpecified = true;
+        Metadata.FreeClusters = free;
 
         sb.AppendFormat(Localization._0_inodes_with_1_free_inodes_2, supblk.inodes, supblk.free_inodes,
                         supblk.free_inodes * 100 / supblk.inodes).AppendLine();

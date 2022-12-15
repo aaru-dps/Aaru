@@ -36,16 +36,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
-using Schemas;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
 
@@ -158,8 +158,10 @@ public partial class Dump
 
         bool ret;
 
-        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private, _dimensions);
-        var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0010);
+        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private,
+                                  _dimensions);
+
+        var ibgLog = new IbgLog(_outputPrefix + ".ibg", 0x0010);
         ret = outputOptical.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
         // Cannot create image
@@ -191,8 +193,8 @@ public partial class Dump
             }
         });
 
-        DumpHardwareType currentTry = null;
-        ExtentsULong     extents    = null;
+        DumpHardware currentTry = null;
+        ExtentsULong extents    = null;
 
         ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
                               _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
@@ -589,14 +591,14 @@ public partial class Dump
             MediaPartNumber    = mediaPartNumber
         };
 
-        if(!outputOptical.SetMetadata(metadata))
+        if(!outputOptical.SetImageInfo(metadata))
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputOptical.ErrorMessage);
 
         outputOptical.SetDumpHardware(_resume.Tries);
 
         if(_preSidecar != null)
-            outputOptical.SetCicmMetadata(_preSidecar);
+            outputOptical.SetMetadata(_preSidecar);
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);

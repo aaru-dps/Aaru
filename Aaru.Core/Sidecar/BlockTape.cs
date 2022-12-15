@@ -32,8 +32,8 @@
 
 using System.Collections.Generic;
 using System.IO;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.Helpers;
-using Schemas;
 
 namespace Aaru.Core;
 
@@ -44,37 +44,35 @@ public sealed partial class Sidecar
     /// <param name="files">List of files</param>
     /// <param name="folderName">Dump path</param>
     /// <param name="blockSize">Expected block size in bytes</param>
-    public CICMMetadataType BlockTape(string folderName, List<string> files, uint blockSize)
+    public Metadata BlockTape(string folderName, List<string> files, uint blockSize)
     {
-        _sidecar = new CICMMetadataType
+        _sidecar = new Metadata
         {
-            BlockMedia = new[]
+            BlockMedias = new List<BlockMedia>
             {
-                new BlockMediaType
+                new()
                 {
-                    Image = new ImageType
+                    Image = new Image
                     {
-                        format          = "Directory",
-                        offsetSpecified = false,
-                        Value           = folderName
+                        Format = "Directory",
+                        Value  = folderName
                     },
-                    Sequence = new SequenceType
+                    Sequence = new Sequence
                     {
-                        MediaTitle    = folderName,
+                        Title         = folderName,
                         MediaSequence = 1,
                         TotalMedia    = 1
                     },
                     PhysicalBlockSize = blockSize,
                     LogicalBlockSize  = blockSize,
-                    TapeInformation = new[]
+                    TapeInformation = new List<TapePartition>
                     {
-                        new TapePartitionType
+                        new()
                         {
-                            Image = new ImageType
+                            Image = new Image
                             {
-                                format          = "Directory",
-                                offsetSpecified = false,
-                                Value           = folderName
+                                Format = "Directory",
+                                Value  = folderName
                             }
                         }
                     }
@@ -85,10 +83,10 @@ public sealed partial class Sidecar
         if(_aborted)
             return _sidecar;
 
-        ulong              currentBlock = 0;
-        ulong              totalSize    = 0;
-        var                tapeWorker   = new Checksum();
-        List<TapeFileType> tapeFiles    = new();
+        ulong          currentBlock = 0;
+        ulong          totalSize    = 0;
+        var            tapeWorker   = new Checksum();
+        List<TapeFile> tapeFiles    = new();
 
         UpdateStatus(Localization.Core.Hashing_files);
 
@@ -100,12 +98,12 @@ public sealed partial class Sidecar
             _fs = new FileStream(files[i], FileMode.Open, FileAccess.Read);
             var fileWorker = new Checksum();
 
-            var tapeFile = new TapeFileType
+            var tapeFile = new TapeFile
             {
-                Image = new ImageType
+                Image = new Image
                 {
-                    format = "Raw disk image (sector by sector copy)",
-                    offset = 0,
+                    Format = "Raw disk image (sector by sector copy)",
+                    Offset = 0,
                     Value  = Path.GetFileName(files[i])
                 },
                 Size       = (ulong)_fs.Length,
@@ -159,92 +157,92 @@ public sealed partial class Sidecar
             tapeFile.EndBlock  =  tapeFile.StartBlock + sectors - 1;
             currentBlock       += sectors;
             totalSize          += (ulong)_fs.Length;
-            tapeFile.Checksums =  fileWorker.End().ToArray();
+            tapeFile.Checksums =  fileWorker.End();
             tapeFiles.Add(tapeFile);
 
             EndProgress2();
         }
 
         UpdateStatus("Setting metadata...");
-        _sidecar.BlockMedia[0].Checksums                    = tapeWorker.End().ToArray();
-        _sidecar.BlockMedia[0].ContentChecksums             = _sidecar.BlockMedia[0].Checksums;
-        _sidecar.BlockMedia[0].Size                         = totalSize;
-        _sidecar.BlockMedia[0].LogicalBlocks                = currentBlock;
-        _sidecar.BlockMedia[0].TapeInformation[0].EndBlock  = currentBlock - 1;
-        _sidecar.BlockMedia[0].TapeInformation[0].Size      = totalSize;
-        _sidecar.BlockMedia[0].TapeInformation[0].Checksums = _sidecar.BlockMedia[0].Checksums;
-        _sidecar.BlockMedia[0].TapeInformation[0].File      = tapeFiles.ToArray();
+        _sidecar.BlockMedias[0].Checksums                    = tapeWorker.End();
+        _sidecar.BlockMedias[0].ContentChecksums             = _sidecar.BlockMedias[0].Checksums;
+        _sidecar.BlockMedias[0].Size                         = totalSize;
+        _sidecar.BlockMedias[0].LogicalBlocks                = currentBlock;
+        _sidecar.BlockMedias[0].TapeInformation[0].EndBlock  = currentBlock - 1;
+        _sidecar.BlockMedias[0].TapeInformation[0].Size      = totalSize;
+        _sidecar.BlockMedias[0].TapeInformation[0].Checksums = _sidecar.BlockMedias[0].Checksums;
+        _sidecar.BlockMedias[0].TapeInformation[0].File      = tapeFiles;
 
         // This is purely for convenience, as typically these kind of data represents QIC tapes
         if(blockSize == 512)
         {
-            _sidecar.BlockMedia[0].DiskType = "Quarter-inch cartridge";
+            _sidecar.BlockMedias[0].MediaType = "Quarter-inch cartridge";
 
             switch(totalSize)
             {
                 case <= 20 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-11";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-11";
 
                     break;
                 case <= 40 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-40";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-40";
 
                     break;
                 case <= 60 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-24";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-24";
 
                     break;
                 case <= 80 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-80";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-80";
 
                     break;
                 case <= 120 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-120";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-120";
 
                     break;
                 case <= 150 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-150";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-150";
 
                     break;
                 case <= 320 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-320";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-320";
 
                     break;
                 case <= 340 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-3010";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-3010";
 
                     break;
                 case <= 525 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-525";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-525";
 
                     break;
                 case <= 670 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-3020";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-3020";
 
                     break;
                 case <= 1200 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-3080";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-3080";
 
                     break;
                 case <= 1350 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-1350";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-1350";
 
                     break;
                 case <= (long)4000 * 1048576:
-                    _sidecar.BlockMedia[0].DiskSubType = "QIC-3095";
+                    _sidecar.BlockMedias[0].MediaSubType = "QIC-3095";
 
                     break;
                 default:
-                    _sidecar.BlockMedia[0].DiskType    = "Unknown tape";
-                    _sidecar.BlockMedia[0].DiskSubType = "Unknown tape";
+                    _sidecar.BlockMedias[0].MediaType    = "Unknown tape";
+                    _sidecar.BlockMedias[0].MediaSubType = "Unknown tape";
 
                     break;
             }
         }
         else
         {
-            _sidecar.BlockMedia[0].DiskType    = "Unknown tape";
-            _sidecar.BlockMedia[0].DiskSubType = "Unknown tape";
+            _sidecar.BlockMedias[0].MediaType    = "Unknown tape";
+            _sidecar.BlockMedias[0].MediaSubType = "Unknown tape";
         }
 
         return _sidecar;

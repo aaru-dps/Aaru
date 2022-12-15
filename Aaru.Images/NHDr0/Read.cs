@@ -65,7 +65,7 @@ public sealed partial class Nhdr0
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = (ulong)(_nhdhdr.dwCylinder * _nhdhdr.wHead * _nhdhdr.wSect);
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.SectorSize           = (uint)_nhdhdr.wSectLen;
         _imageInfo.Cylinders            = (uint)_nhdhdr.dwCylinder;
         _imageInfo.Heads                = (uint)_nhdhdr.wHead;

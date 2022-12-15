@@ -154,7 +154,7 @@ public sealed partial class FAT
             bool correctSpcApricot = apricotBpb.mainBPB.spc is 1 or 2 or 4 or 8 or 16 or 32 or 64;
 
             // This is to support FAT partitions on hybrid ISO/USB images
-            if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
             {
                 atariBpb.sectors           /= 4;
                 msxBpb.sectors             /= 4;

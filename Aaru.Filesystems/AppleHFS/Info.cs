@@ -29,11 +29,11 @@
 using System;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -273,43 +273,38 @@ public sealed partial class AppleHFS
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         if(mdb.drVolBkUp > 0)
         {
-            XmlFsType.BackupDate          = DateHandlers.MacToDateTime(mdb.drVolBkUp);
-            XmlFsType.BackupDateSpecified = true;
+            Metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drVolBkUp);
         }
 
-        XmlFsType.Bootable = bootBlockInfo   != null || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
-                             mdb.drFndrInfo5 != 0;
+        Metadata.Bootable = bootBlockInfo   != null || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
+                            mdb.drFndrInfo5 != 0;
 
-        XmlFsType.Clusters    = mdb.drNmAlBlks;
-        XmlFsType.ClusterSize = mdb.drAlBlkSiz;
+        Metadata.Clusters    = mdb.drNmAlBlks;
+        Metadata.ClusterSize = mdb.drAlBlkSiz;
 
         if(mdb.drCrDate > 0)
         {
-            XmlFsType.CreationDate          = DateHandlers.MacToDateTime(mdb.drCrDate);
-            XmlFsType.CreationDateSpecified = true;
+            Metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
         }
 
-        XmlFsType.Dirty                 = !mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted);
-        XmlFsType.Files                 = mdb.drFilCnt;
-        XmlFsType.FilesSpecified        = true;
-        XmlFsType.FreeClusters          = mdb.drFreeBks;
-        XmlFsType.FreeClustersSpecified = true;
+        Metadata.Dirty        = !mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted);
+        Metadata.Files        = mdb.drFilCnt;
+        Metadata.FreeClusters = mdb.drFreeBks;
 
         if(mdb.drLsMod > 0)
         {
-            XmlFsType.ModificationDate          = DateHandlers.MacToDateTime(mdb.drLsMod);
-            XmlFsType.ModificationDateSpecified = true;
+            Metadata.ModificationDate = DateHandlers.MacToDateTime(mdb.drLsMod);
         }
 
-        XmlFsType.Type       = FS_TYPE;
-        XmlFsType.VolumeName = StringHandlers.PascalToString(mdb.drVN, Encoding);
+        Metadata.Type       = FS_TYPE;
+        Metadata.VolumeName = StringHandlers.PascalToString(mdb.drVN, Encoding);
 
         if(mdb.drFndrInfo6 != 0 &&
            mdb.drFndrInfo7 != 0)
-            XmlFsType.VolumeSerial = $"{mdb.drFndrInfo6:X8}{mdb.drFndrInfo7:X8}";
+            Metadata.VolumeSerial = $"{mdb.drFndrInfo6:X8}{mdb.drFndrInfo7:X8}";
     }
 }

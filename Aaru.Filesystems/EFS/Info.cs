@@ -28,12 +28,12 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -48,7 +48,7 @@ public sealed partial class EFS
             return false;
 
         // Misaligned
-        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
 
@@ -114,7 +114,7 @@ public sealed partial class EFS
         Superblock efsSb;
 
         // Misaligned
-        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
@@ -200,18 +200,16 @@ public sealed partial class EFS
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                  = FS_TYPE,
-            ClusterSize           = 512,
-            Clusters              = (ulong)efsSb.sb_size,
-            FreeClusters          = (ulong)efsSb.sb_tfree,
-            FreeClustersSpecified = true,
-            Dirty                 = efsSb.sb_dirty > 0,
-            VolumeName            = StringHandlers.CToString(efsSb.sb_fname, Encoding),
-            VolumeSerial          = $"{efsSb.sb_checksum:X8}",
-            CreationDate          = DateHandlers.UnixToDateTime(efsSb.sb_time),
-            CreationDateSpecified = true
+            Type         = FS_TYPE,
+            ClusterSize  = 512,
+            Clusters     = (ulong)efsSb.sb_size,
+            FreeClusters = (ulong)efsSb.sb_tfree,
+            Dirty        = efsSb.sb_dirty > 0,
+            VolumeName   = StringHandlers.CToString(efsSb.sb_fname, Encoding),
+            VolumeSerial = $"{efsSb.sb_checksum:X8}",
+            CreationDate = DateHandlers.UnixToDateTime(efsSb.sb_time)
         };
     }
 }

@@ -37,11 +37,11 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.DiscImages;
@@ -60,9 +60,9 @@ public class SegaMegaDrive : IByteAddressableImage
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
     /// <inheritdoc />
     public string Format => !_opened
                                 ? "Mega Drive cartridge dump"
@@ -337,8 +337,8 @@ public class SegaMegaDrive : IByteAddressableImage
             _           => MediaType.MegaDriveCartridge
         };
 
-        _imageInfo.Sectors      = (ulong)_data.Length;
-        _imageInfo.XmlMediaType = XmlMediaType.LinearMedia;
+        _imageInfo.Sectors           = (ulong)_data.Length;
+        _imageInfo.MetadataMediaType = MetadataMediaType.LinearMedia;
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -449,13 +449,13 @@ public class SegaMegaDrive : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
 
     /// <inheritdoc />
     public long Position { get; set; }

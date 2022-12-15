@@ -36,9 +36,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.DiscImages;
@@ -261,10 +261,10 @@ public sealed partial class Apridisk
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata)
+    public bool SetImageInfo(ImageInfo imageInfo)
     {
-        _imageInfo.Comments = metadata.Comments;
-        _imageInfo.Creator  = metadata.Creator;
+        _imageInfo.Comments = imageInfo.Comments;
+        _imageInfo.Creator  = imageInfo.Creator;
 
         return true;
     }
@@ -327,8 +327,8 @@ public sealed partial class Apridisk
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 }

@@ -325,7 +325,7 @@ public sealed partial class DiskCopy42
         AaruConsole.DebugWriteLine("DC42 plugin", Localization.Image_application_0_version_1, imageInfo.Application,
                                    imageInfo.ApplicationVersion);
 
-        imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
         AaruConsole.VerboseWriteLine(Localization.DiskCopy_4_2_image_contains_a_disk_of_type_0, imageInfo.MediaType);
 
         switch(imageInfo.MediaType)

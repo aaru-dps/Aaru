@@ -28,14 +28,14 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
 using hammer_crc_t = System.UInt32;
 using hammer_off_t = System.UInt64;
 using hammer_tid_t = System.UInt64;
+using Partition = Aaru.CommonTypes.Partition;
 
 #pragma warning disable 169
 
@@ -107,7 +107,7 @@ public sealed partial class HAMMER
         sb.AppendFormat(Localization.First_volume_buffer_starts_at_0, superBlock.vol_buf_beg).AppendLine();
         sb.AppendFormat(Localization.Volume_ends_at_0, superBlock.vol_buf_end).AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Clusters     = partition.Size / HAMMER_BIGBLOCK_SIZE,
             ClusterSize  = HAMMER_BIGBLOCK_SIZE,
@@ -127,11 +127,9 @@ public sealed partial class HAMMER
 
             sb.AppendFormat(Localization.Filesystem_has_0_inodes_used, superBlock.vol0_stat_inodes).AppendLine();
 
-            XmlFsType.Clusters              = (ulong)superBlock.vol0_stat_bigblocks;
-            XmlFsType.FreeClusters          = (ulong)superBlock.vol0_stat_freebigblocks;
-            XmlFsType.FreeClustersSpecified = true;
-            XmlFsType.Files                 = (ulong)superBlock.vol0_stat_inodes;
-            XmlFsType.FilesSpecified        = true;
+            Metadata.Clusters     = (ulong)superBlock.vol0_stat_bigblocks;
+            Metadata.FreeClusters = (ulong)superBlock.vol0_stat_freebigblocks;
+            Metadata.Files        = (ulong)superBlock.vol0_stat_inodes;
         }
 
         // 0 ?

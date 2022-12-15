@@ -29,17 +29,17 @@
 // UNICOS is ILP64 so let's think everything is 64-bit
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 using blkno_t = System.Int64;
 using daddr_t = System.Int64;
 using dev_t = System.Int64;
 using extent_t = System.Int64;
 using ino_t = System.Int64;
+using Partition = Aaru.CommonTypes.Partition;
 using time_t = System.Int64;
 
 namespace Aaru.Filesystems;
@@ -129,16 +129,15 @@ public sealed partial class UNICOS
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                      = FS_TYPE,
-            ClusterSize               = 4096,
-            Clusters                  = (ulong)unicosSb.s_fsize,
-            VolumeName                = StringHandlers.CToString(unicosSb.s_fname, Encoding),
-            ModificationDate          = DateHandlers.UnixToDateTime(unicosSb.s_time),
-            ModificationDateSpecified = true
+            Type             = FS_TYPE,
+            ClusterSize      = 4096,
+            Clusters         = (ulong)unicosSb.s_fsize,
+            VolumeName       = StringHandlers.CToString(unicosSb.s_fname, Encoding),
+            ModificationDate = DateHandlers.UnixToDateTime(unicosSb.s_time)
         };
 
-        XmlFsType.Dirty |= unicosSb.s_error > 0;
+        Metadata.Dirty |= unicosSb.s_error > 0;
     }
 }

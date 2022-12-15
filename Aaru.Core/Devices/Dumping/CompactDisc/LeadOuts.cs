@@ -38,13 +38,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Devices;
-using Schemas;
+using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -79,7 +79,7 @@ partial class Dump
 
     // TODO: Use it
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    void DumpCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
+    void DumpCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardware currentTry, ExtentsULong extents,
                         IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents, ref double maxSpeed,
                         MhddLog mhddLog, ref double minSpeed, bool read6, bool read10, bool read12, bool read16,
                         bool readcd, MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
@@ -145,7 +145,7 @@ partial class Dump
                 if(!sense &&
                    !_dev.Error)
                 {
-                    mhddLog.Write(i, cmdDuration, 1);
+                    mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
                     extents.Add(i, _maximumReadable, true);
                     leadOutExtents.Remove(i);
@@ -252,7 +252,7 @@ partial class Dump
 
     // TODO: Use it
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    void RetryCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
+    void RetryCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardware currentTry, ExtentsULong extents,
                          IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents, ref double maxSpeed,
                          MhddLog mhddLog, ref double minSpeed, bool read6, bool read10, bool read12, bool read16,
                          bool readcd, MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
@@ -380,7 +380,7 @@ partial class Dump
 
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
-                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, 1);
+                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                     ibgLog.Write(i, 0);
                 }

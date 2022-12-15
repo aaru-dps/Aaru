@@ -32,11 +32,11 @@
 
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -87,7 +87,7 @@ public sealed partial class ECMA67
 
         sbInformation.AppendFormat(Localization.Volume_owner_0, Encoding.ASCII.GetString(vol.owner)).AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type        = FS_TYPE,
             ClusterSize = 256,

@@ -36,7 +36,8 @@ using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using DumpHardware = Aaru.CommonTypes.AaruMetadata.DumpHardware;
+using Metadata = Aaru.CommonTypes.AaruMetadata.Metadata;
 
 namespace Aaru.DiscImages;
 
@@ -160,9 +161,9 @@ public sealed partial class Cdrdao
     }
 
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
 
     // TODO: Decode CD-Text to text
     /// <inheritdoc />

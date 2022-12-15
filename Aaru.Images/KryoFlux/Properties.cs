@@ -32,8 +32,8 @@
 
 using System;
 using System.Collections.Generic;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Structs;
-using Schemas;
 
 namespace Aaru.DiscImages;
 
@@ -51,7 +51,7 @@ public sealed partial class KryoFlux
     /// <inheritdoc />
     public string Format => "KryoFlux STREAM";
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
 }

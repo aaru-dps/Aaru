@@ -535,7 +535,7 @@ public sealed partial class TeleDisk
         _imageInfo.Sectors   = _imageInfo.Cylinders * _imageInfo.Heads * _imageInfo.SectorsPerTrack;
         _imageInfo.MediaType = DecodeTeleDiskDiskType();
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         AaruConsole.VerboseWriteLine(Localization.TeleDisk_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 

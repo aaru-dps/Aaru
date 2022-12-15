@@ -32,14 +32,14 @@
 
 using System;
 using System.Collections.Generic;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Claunia.Encoding;
-using Schemas;
 using Encoding = System.Text.Encoding;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -133,15 +133,14 @@ public sealed partial class PascalPlugin
         if(errno != ErrorNumber.NoError)
             return errno;
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Bootable       = !ArrayHelpers.ArrayIsNullOrEmpty(_bootBlocks),
-            Clusters       = (ulong)_mountedVolEntry.Blocks,
-            ClusterSize    = _device.Info.SectorSize,
-            Files          = (ulong)_mountedVolEntry.Files,
-            FilesSpecified = true,
-            Type           = FS_TYPE,
-            VolumeName     = StringHandlers.PascalToString(_mountedVolEntry.VolumeName, Encoding)
+            Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(_bootBlocks),
+            Clusters    = (ulong)_mountedVolEntry.Blocks,
+            ClusterSize = _device.Info.SectorSize,
+            Files       = (ulong)_mountedVolEntry.Files,
+            Type        = FS_TYPE,
+            VolumeName  = StringHandlers.PascalToString(_mountedVolEntry.VolumeName, Encoding)
         };
 
         _mounted = true;

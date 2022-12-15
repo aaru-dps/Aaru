@@ -193,8 +193,9 @@
                 </TabControl>
                 <TextBlock Text="{Binding CicmXmlLabel}" />
                 <StackPanel Orientation="Horizontal">
-                    <TextBox Text="{Binding CicmXmlText}" IsReadOnly="True" />
-                    <Button Command="{Binding CicmXmlFromImageCommand}" IsVisible="{Binding CicmXmlFromImageVisible}">
+                    <TextBox Text="{Binding MetadataJsonText}" IsReadOnly="True" />
+                    <Button Command="{Binding AaruMetadataFromImageCommand}"
+                            IsVisible="{Binding AaruMetadataFromImageVisible}">
                         <TextBlock Text="{Binding FromImageLabel}" />
                     </Button>
                     <Button Command="{Binding CicmXmlCommand}">

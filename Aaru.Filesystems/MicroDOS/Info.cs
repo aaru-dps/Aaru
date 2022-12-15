@@ -30,11 +30,11 @@
 // ReSharper disable UnusedMember.Local
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -88,15 +88,13 @@ public sealed partial class MicroDOS
         sb.AppendFormat(Localization.Volume_contains_0_files, block0.files).AppendLine();
         sb.AppendFormat(Localization.First_used_block_is_0, block0.firstUsedBlock).AppendLine();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                  = FS_TYPE,
-            ClusterSize           = 512,
-            Clusters              = block0.blocks,
-            Files                 = block0.files,
-            FilesSpecified        = true,
-            FreeClusters          = (ulong)(block0.blocks - block0.usedBlocks),
-            FreeClustersSpecified = true
+            Type         = FS_TYPE,
+            ClusterSize  = 512,
+            Clusters     = block0.blocks,
+            Files        = block0.files,
+            FreeClusters = (ulong)(block0.blocks - block0.usedBlocks)
         };
 
         information = sb.ToString();

@@ -174,7 +174,7 @@ public sealed partial class Qed
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = _qHdr.image_size / 512;
         _imageInfo.SectorSize           = 512;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.MediaType            = MediaType.GENERIC_HDD;
         _imageInfo.ImageSize            = _qHdr.image_size;
 

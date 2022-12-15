@@ -28,11 +28,11 @@
 
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -136,20 +136,19 @@ public sealed partial class Reiser : IFilesystem
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                  = FS_TYPE,
-            ClusterSize           = reiserSb.blocksize,
-            Clusters              = reiserSb.block_count,
-            FreeClusters          = reiserSb.free_blocks,
-            FreeClustersSpecified = true,
-            Dirty                 = reiserSb.umount_state == 2
+            Type         = FS_TYPE,
+            ClusterSize  = reiserSb.blocksize,
+            Clusters     = reiserSb.block_count,
+            FreeClusters = reiserSb.free_blocks,
+            Dirty        = reiserSb.umount_state == 2
         };
 
         if(reiserSb.version < 2)
             return;
 
-        XmlFsType.VolumeName   = StringHandlers.CToString(reiserSb.label, Encoding);
-        XmlFsType.VolumeSerial = reiserSb.uuid.ToString();
+        Metadata.VolumeName   = StringHandlers.CToString(reiserSb.label, Encoding);
+        Metadata.VolumeSerial = reiserSb.uuid.ToString();
     }
 }

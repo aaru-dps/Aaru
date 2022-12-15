@@ -30,8 +30,8 @@
 
 using System;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
 using blkno_t = System.Int64;
 using daddr_t = System.Int64;
 using dev_t = System.Int64;
@@ -46,7 +46,7 @@ namespace Aaru.Filesystems;
 public sealed partial class UNICOS : IFilesystem
 {
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />

@@ -337,12 +337,12 @@ sealed class ExtractFilesCommand : Command
 
                                 if(error == ErrorNumber.NoError)
                                 {
-                                    string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
-                                                            : fs.XmlFsType.VolumeName;
+                                    string volumeName = string.IsNullOrEmpty(fs.Metadata.VolumeName) ? "NO NAME"
+                                                            : fs.Metadata.VolumeName;
 
                                     ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
 
-                                    Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                    Statistics.AddFilesystem(fs.Metadata.Type);
                                 }
                                 else
                                     AaruConsole.ErrorWriteLine(UI.Unable_to_mount_volume_error_0, error.ToString());
@@ -371,12 +371,12 @@ sealed class ExtractFilesCommand : Command
 
                         if(error == ErrorNumber.NoError)
                         {
-                            string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
-                                                    : fs.XmlFsType.VolumeName;
+                            string volumeName = string.IsNullOrEmpty(fs.Metadata.VolumeName) ? "NO NAME"
+                                                    : fs.Metadata.VolumeName;
 
                             ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
 
-                            Statistics.AddFilesystem(fs.XmlFsType.Type);
+                            Statistics.AddFilesystem(fs.Metadata.Type);
                         }
                         else
                             AaruConsole.ErrorWriteLine(UI.Unable_to_mount_volume_error_0, error.ToString());
@@ -426,7 +426,7 @@ sealed class ExtractFilesCommand : Command
 
                 if(stat.Attributes.HasFlag(FileAttributes.Directory))
                 {
-                    outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path, entry);
+                    outputPath = Path.Combine(outputDir, fs.Metadata.Type, volumeName, path, entry);
 
                     if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                         outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
@@ -502,7 +502,7 @@ sealed class ExtractFilesCommand : Command
                             if(error != ErrorNumber.NoError)
                                 continue;
 
-                            outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, ".xattrs", path, xattr);
+                            outputPath = Path.Combine(outputDir, fs.Metadata.Type, volumeName, ".xattrs", path, xattr);
 
                             if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                                 outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').
@@ -576,7 +576,7 @@ sealed class ExtractFilesCommand : Command
                         }
                 }
 
-                outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path);
+                outputPath = Path.Combine(outputDir, fs.Metadata.Type, volumeName, path);
 
                 if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').

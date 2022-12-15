@@ -267,7 +267,7 @@ public sealed partial class Dart
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.SectorSize           = SECTOR_SIZE;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.ImageSize            = _imageInfo.Sectors * SECTOR_SIZE;
         _imageInfo.Version              = header.srcCmp == COMPRESS_NONE ? "1.4" : "1.5";
 

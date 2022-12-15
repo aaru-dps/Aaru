@@ -37,13 +37,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
-using Schemas;
+using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -146,7 +146,7 @@ partial class Dump
     /// <param name="mcn">Disc media catalogue number</param>
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
-    void ReadCdiReady(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
+    void ReadCdiReady(uint blockSize, ref double currentSpeed, DumpHardware currentTry, ExtentsULong extents,
                       IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents, ref double maxSpeed,
                       MhddLog mhddLog, ref double minSpeed, uint subSize, MmcSubchannel supportedSubchannel,
                       ref double totalDuration, Track[] tracks, SubchannelLog subLog, MmcSubchannel desiredSubchannel,
@@ -242,7 +242,7 @@ partial class Dump
                     if(!sense &&
                        !_dev.Error)
                     {
-                        mhddLog.Write(i + r, cmdDuration, 1);
+                        mhddLog.Write(i + r, cmdDuration);
                         ibgLog.Write(i  + r, currentSpeed * 1024);
                         extents.Add(i   + r, 1, true);
                         DateTime writeStart = DateTime.Now;
@@ -324,7 +324,7 @@ partial class Dump
                     FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
                                   subSize, ref cmdBuf, blockSize, false);
 
-                mhddLog.Write(i, cmdDuration, 1);
+                mhddLog.Write(i, cmdDuration);
                 ibgLog.Write(i, currentSpeed * 1024);
                 extents.Add(i, blocksToRead, true);
                 DateTime writeStart = DateTime.Now;

@@ -93,7 +93,7 @@ public sealed partial class MaxiDisk
                                                       (ushort)_imageInfo.SectorsPerTrack, _imageInfo.SectorSize,
                                                       MediaEncoding.MFM, false));
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         return ErrorNumber.NoError;
     }

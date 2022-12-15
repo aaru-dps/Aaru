@@ -148,7 +148,7 @@ public sealed partial class CPM
         stat = new FileEntryInfo
         {
             Attributes = FileAttributes.Directory,
-            BlockSize  = XmlFsType.ClusterSize
+            BlockSize  = Metadata.ClusterSize
         };
 
         if(_labelCreationDate != null)

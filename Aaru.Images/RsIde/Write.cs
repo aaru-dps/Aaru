@@ -35,11 +35,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Helpers;
-using Schemas;
 using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.DiscImages;
@@ -323,12 +323,12 @@ public sealed partial class RsIde
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata)
+    public bool SetImageInfo(ImageInfo imageInfo)
     {
-        _imageInfo.DriveManufacturer     = metadata.DriveManufacturer;
-        _imageInfo.DriveModel            = metadata.DriveModel;
-        _imageInfo.DriveFirmwareRevision = metadata.DriveFirmwareRevision;
-        _imageInfo.DriveSerialNumber     = metadata.DriveSerialNumber;
+        _imageInfo.DriveManufacturer     = imageInfo.DriveManufacturer;
+        _imageInfo.DriveModel            = imageInfo.DriveModel;
+        _imageInfo.DriveFirmwareRevision = imageInfo.DriveFirmwareRevision;
+        _imageInfo.DriveSerialNumber     = imageInfo.DriveSerialNumber;
 
         return true;
     }
@@ -381,8 +381,8 @@ public sealed partial class RsIde
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 }

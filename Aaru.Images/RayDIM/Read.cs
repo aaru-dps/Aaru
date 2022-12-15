@@ -101,7 +101,7 @@ public sealed partial class RayDim
                 break;
         }
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         return ErrorNumber.NoError;
     }

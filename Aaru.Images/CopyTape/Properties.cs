@@ -33,9 +33,11 @@
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using TapeFile = Aaru.CommonTypes.Structs.TapeFile;
+using TapePartition = Aaru.CommonTypes.Structs.TapePartition;
 
 namespace Aaru.DiscImages;
 
@@ -52,9 +54,9 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public string Format => "CopyTape";
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
     /// <inheritdoc />
     public List<TapeFile> Files { get; private set; }
     /// <inheritdoc />

@@ -69,7 +69,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                         Assert.AreEqual(test.MediaType, image.Info.MediaType,
                                         string.Format(Localization.Media_type_0, testFile));
 
-                        if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
+                        if(image.Info.MetadataMediaType != MetadataMediaType.OpticalDisc)
                             return;
 
                         Assert.AreEqual(test.Tracks.Length, image.Tracks.Count,
@@ -205,29 +205,29 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                                 if(track.FileSystems[i].ApplicationId != null)
                                     Assert.AreEqual(track.FileSystems[i].ApplicationId,
-                                                    fs.XmlFsType.ApplicationIdentifier,
+                                                    fs.Metadata.ApplicationIdentifier,
                                                     string.Format(Localization.Application_ID_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].Bootable, fs.XmlFsType.Bootable,
+                                Assert.AreEqual(track.FileSystems[i].Bootable, fs.Metadata.Bootable,
                                                 string.Format(Localization.Bootable_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].Clusters, fs.XmlFsType.Clusters,
+                                Assert.AreEqual(track.FileSystems[i].Clusters, fs.Metadata.Clusters,
                                                 string.Format(Localization.Clusters_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].ClusterSize, fs.XmlFsType.ClusterSize,
+                                Assert.AreEqual(track.FileSystems[i].ClusterSize, fs.Metadata.ClusterSize,
                                                 string.Format(Localization.Cluster_size_0, testFile));
 
                                 if(track.FileSystems[i].SystemId != null)
-                                    Assert.AreEqual(track.FileSystems[i].SystemId, fs.XmlFsType.SystemIdentifier,
+                                    Assert.AreEqual(track.FileSystems[i].SystemId, fs.Metadata.SystemIdentifier,
                                                     string.Format(Localization.System_ID_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].Type, fs.XmlFsType.Type,
+                                Assert.AreEqual(track.FileSystems[i].Type, fs.Metadata.Type,
                                                 string.Format(Localization.Filesystem_type_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].VolumeName, fs.XmlFsType.VolumeName,
+                                Assert.AreEqual(track.FileSystems[i].VolumeName, fs.Metadata.VolumeName,
                                                 string.Format(Localization.Volume_name_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].VolumeSerial, fs.XmlFsType.VolumeSerial,
+                                Assert.AreEqual(track.FileSystems[i].VolumeSerial, fs.Metadata.VolumeSerial,
                                                 string.Format(Localization.Volume_serial_0, testFile));
 
                                 if(Activator.CreateInstance(plugin.GetType()) is not IReadOnlyFilesystem rofs)
@@ -354,7 +354,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                 Md5Context ctx;
 
-                if(image.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+                if(image.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
                 {
                     foreach(bool @long in new[]
                             {

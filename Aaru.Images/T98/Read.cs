@@ -66,7 +66,7 @@ public sealed partial class T98
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = (ulong)((stream.Length / 256) - 1);
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.SectorSize           = 256;
         _imageInfo.Cylinders            = (uint)cylinders;
         _imageInfo.Heads                = 8;

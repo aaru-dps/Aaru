@@ -29,8 +29,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
 
 namespace Aaru.Filesystems;
 
@@ -59,7 +59,7 @@ public sealed partial class AppleMFS : IReadOnlyFilesystem
     byte[]                      _bitmapTags;
 
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.AppleMFS_Name;
     /// <inheritdoc />

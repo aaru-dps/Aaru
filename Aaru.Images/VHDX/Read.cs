@@ -471,7 +471,7 @@ public sealed partial class Vhdx
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.SectorSize           = _logicalSectorSize;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.MediaType            = MediaType.GENERIC_HDD;
         _imageInfo.ImageSize            = _virtualDiskSize;
         _imageInfo.Sectors              = _imageInfo.ImageSize / _imageInfo.SectorSize;

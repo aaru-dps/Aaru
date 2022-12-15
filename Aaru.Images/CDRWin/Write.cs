@@ -36,9 +36,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.DiscImages;
 
@@ -651,7 +652,7 @@ public sealed partial class CdrWin
         WriteSectorTag(data, sectorAddress, tag);
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware)
     {
         DumpHardware = dumpHardware;
 
@@ -659,16 +660,16 @@ public sealed partial class CdrWin
     }
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata)
+    public bool SetImageInfo(ImageInfo imageInfo)
     {
-        _discImage.Barcode            = metadata.MediaBarcode;
-        _discImage.Comment            = metadata.Comments;
-        _discImage.Title              = metadata.MediaTitle;
-        _imageInfo.Application        = metadata.Application;
-        _imageInfo.ApplicationVersion = metadata.ApplicationVersion;
+        _discImage.Barcode            = imageInfo.MediaBarcode;
+        _discImage.Comment            = imageInfo.Comments;
+        _discImage.Title              = imageInfo.MediaTitle;
+        _imageInfo.Application        = imageInfo.Application;
+        _imageInfo.ApplicationVersion = imageInfo.ApplicationVersion;
 
         return true;
     }

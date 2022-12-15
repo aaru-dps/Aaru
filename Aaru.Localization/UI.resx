@@ -1158,8 +1158,8 @@ In you are unsure, please press N to not continue.</value>
   <data name="Writing_metadata" xml:space="preserve">
     <value>Writing metadata...</value>
   </data>
-  <data name="Written_CICM_XML_metadata_to_output_image" xml:space="preserve">
-    <value>Written CICM XML metadata to output image.</value>
+  <data name="Written_Aaru_Metadata_to_output_image" xml:space="preserve">
+    <value>Written Aaru Metadata to output image.</value>
   </data>
   <data name="Closing_output_image" xml:space="preserve">
     <value>Closing output image...</value>
@@ -1436,8 +1436,8 @@ In you are unsure, please press N to not continue.</value>
   <data name="Continue_dump_whatever_happens" xml:space="preserve">
     <value>Continue dump whatever happens.</value>
   </data>
-  <data name="Enables_creating_CICM_XML_sidecar" xml:space="preserve">
-    <value>Enables creating CICM XML sidecar.</value>
+  <data name="Enables_creating_Aaru_Metadata_sidecar" xml:space="preserve">
+    <value>Enables creating Aaru Metadata sidecar.</value>
   </data>
   <data name="Enables_trimming_errored_from_skipped_sectors" xml:space="preserve">
     <value>Enables trimming errored from skipped sectors.</value>
@@ -1576,7 +1576,7 @@ specified otherwise.</value>
   </data>
   <data name="Configure_enable_decryption_disclaimer" xml:space="preserve">
     <value>Do you want to enable the decryption of copy protected media (also known as DRM),
-like for example DVD Video CSS encryption.                                        
+like for example DVD Video CSS encryption.
 Consult your local laws before enabling it, as this is illegal in some countries, or
 only legal under some circumstances.</value>
   </data>
@@ -2191,8 +2191,8 @@ Testers:
   <data name="ButtonLabel_Convert_to" xml:space="preserve">
     <value>Convert to...</value>
   </data>
-  <data name="ButtonLabel_Create_CICM_XML_sidecar" xml:space="preserve">
-    <value>Create CICM XML sidecar...</value>
+  <data name="ButtonLabel_Create_Aaru_Metadata_sidecar" xml:space="preserve">
+    <value>Create Aaru Metadata sidecar...</value>
   </data>
   <data name="ButtonLabel_View_sectors" xml:space="preserve">
     <value>View sectors</value>
@@ -2751,11 +2751,11 @@ Do you want to continue?</value>
   <data name="Error_0_writing_dump_hardware_list_to_output_image" xml:space="preserve">
     <value>Error {0} writing dump hardware list to output image.</value>
   </data>
-  <data name="Writing_CICM_XML_metadata_to_output_image" xml:space="preserve">
-    <value>Writing CICM XML metadata to output image.</value>
+  <data name="Writing_Aaru_Metadata_to_output_image" xml:space="preserve">
+    <value>Writing Aaru Metadata to output image.</value>
   </data>
-  <data name="Error_0_writing_CICM_XML_metadata_to_output_image" xml:space="preserve">
-    <value>Error {0} writing CICM XML metadata to output image.</value>
+  <data name="Error_0_writing_Aaru_Metadata_to_output_image" xml:space="preserve">
+    <value>Error {0} writing Aaru Metadata to output image.</value>
   </data>
   <data name="Operation_canceled_the_output_file_is_not_correct" xml:space="preserve">
     <value>Operation canceled, the output file is not correct.</value>
@@ -2778,8 +2778,8 @@ Do you want to continue?</value>
   <data name="Dialog_Choose_existing_metadata_sidecar" xml:space="preserve">
     <value>Choose existing metadata sidecar</value>
   </data>
-  <data name="Dialog_CICM_XML_metadata" xml:space="preserve">
-    <value>CICM XML metadata</value>
+  <data name="Dialog_Aaru_Metadata" xml:space="preserve">
+    <value>Aaru Metadata</value>
   </data>
   <data name="Incorrect_metadata_sidecar_file" xml:space="preserve">
     <value>Incorrect metadata sidecar file...</value>
@@ -2934,8 +2934,8 @@ Do you want to continue?</value>
   <data name="Skipped_sectors_on_error" xml:space="preserve">
     <value>Skipped sectors on error</value>
   </data>
-  <data name="Create_CICM_XML_metadata_sidecar" xml:space="preserve">
-    <value>Create CICM XML metadata sidecar</value>
+  <data name="Create_Aaru_Metadata_sidecar" xml:space="preserve">
+    <value>Create Aaru Metadata sidecar</value>
   </data>
   <data name="Trim_errors_from_skipped_sectors" xml:space="preserve">
     <value>Trim errors from skipped sectors</value>

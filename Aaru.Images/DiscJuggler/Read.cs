@@ -779,7 +779,7 @@ public sealed partial class DiscJuggler
         _imageInfo.ImageSize            = (ulong)imageFilter.DataForkLength;
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-        _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.OpticalDisc;
 
         _sectorBuilder = new SectorBuilder();
 

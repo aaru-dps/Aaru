@@ -30,12 +30,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 using time_t = System.Int32;
 using ufs_daddr_t = System.Int32;
 
@@ -152,50 +152,50 @@ public sealed partial class FFSPlugin
             return;
         }
 
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         switch(magic)
         {
             case UFS_MAGIC:
                 sbInformation.AppendLine(Localization.UFS_filesystem);
-                XmlFsType.Type = FS_TYPE_UFS;
+                Metadata.Type = FS_TYPE_UFS;
 
                 break;
             case UFS_CIGAM:
                 sbInformation.AppendLine(Localization.Big_endian_UFS_filesystem);
-                XmlFsType.Type = FS_TYPE_UFS;
+                Metadata.Type = FS_TYPE_UFS;
 
                 break;
             case UFS_MAGIC_BW:
                 sbInformation.AppendLine(Localization.BorderWare_UFS_filesystem);
-                XmlFsType.Type = FS_TYPE_UFS;
+                Metadata.Type = FS_TYPE_UFS;
 
                 break;
             case UFS_CIGAM_BW:
                 sbInformation.AppendLine(Localization.Big_endian_BorderWare_UFS_filesystem);
-                XmlFsType.Type = FS_TYPE_UFS;
+                Metadata.Type = FS_TYPE_UFS;
 
                 break;
             case UFS2_MAGIC:
                 sbInformation.AppendLine(Localization.UFS2_filesystem);
-                XmlFsType.Type = FS_TYPE_UFS2;
+                Metadata.Type = FS_TYPE_UFS2;
 
                 break;
             case UFS2_CIGAM:
                 sbInformation.AppendLine(Localization.Big_endian_UFS2_filesystem);
-                XmlFsType.Type = FS_TYPE_UFS2;
+                Metadata.Type = FS_TYPE_UFS2;
 
                 break;
             case UFS_BAD_MAGIC:
                 sbInformation.AppendLine(Localization.Incompletely_initialized_UFS_filesystem);
                 sbInformation.AppendLine(Localization.BEWARE_Following_information_may_be_completely_wrong);
-                XmlFsType.Type = FS_TYPE_UFS;
+                Metadata.Type = FS_TYPE_UFS;
 
                 break;
             case UFS_BAD_CIGAM:
                 sbInformation.AppendLine(Localization.Incompletely_initialized_big_endian_UFS_filesystem);
                 sbInformation.AppendLine(Localization.BEWARE_Following_information_may_be_completely_wrong);
-                XmlFsType.Type = FS_TYPE_UFS;
+                Metadata.Type = FS_TYPE_UFS;
 
                 break;
         }
@@ -359,14 +359,13 @@ public sealed partial class FFSPlugin
         sbInformation.AppendFormat(Localization.Volume_last_written_on_0, DateHandlers.UnixToDateTime(sb.fs_old_time)).
                       AppendLine();
 
-        XmlFsType.ModificationDate          = DateHandlers.UnixToDateTime(sb.fs_old_time);
-        XmlFsType.ModificationDateSpecified = true;
+        Metadata.ModificationDate = DateHandlers.UnixToDateTime(sb.fs_old_time);
 
         sbInformation.AppendFormat(Localization._0_blocks_in_volume_1_bytes, sb.fs_old_size,
                                    (long)sb.fs_old_size * sb.fs_fsize).AppendLine();
 
-        XmlFsType.Clusters    = (ulong)sb.fs_old_size;
-        XmlFsType.ClusterSize = (uint)sb.fs_fsize;
+        Metadata.Clusters    = (ulong)sb.fs_old_size;
+        Metadata.ClusterSize = (uint)sb.fs_fsize;
 
         sbInformation.AppendFormat(Localization._0_data_blocks_in_volume_1_bytes, sb.fs_old_dsize,
                                    (long)sb.fs_old_dsize * sb.fs_fsize).AppendLine();
@@ -446,15 +445,14 @@ public sealed partial class FFSPlugin
         sbInformation.AppendFormat(Localization._0_free_blocks_1_bytes, sb.fs_old_cstotal.cs_nbfree,
                                    (long)sb.fs_old_cstotal.cs_nbfree * sb.fs_fsize).AppendLine();
 
-        XmlFsType.FreeClusters          = (ulong)sb.fs_old_cstotal.cs_nbfree;
-        XmlFsType.FreeClustersSpecified = true;
+        Metadata.FreeClusters = (ulong)sb.fs_old_cstotal.cs_nbfree;
         sbInformation.AppendFormat(Localization._0_free_inodes, sb.fs_old_cstotal.cs_nifree).AppendLine();
         sbInformation.AppendFormat(Localization._0_free_frags, sb.fs_old_cstotal.cs_nffree).AppendLine();
 
         if(sb.fs_fmod == 1)
         {
             sbInformation.AppendLine(Localization.Superblock_is_under_modification);
-            XmlFsType.Dirty = true;
+            Metadata.Dirty = true;
         }
 
         if(sb.fs_clean == 1)
@@ -476,7 +474,7 @@ public sealed partial class FFSPlugin
             sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(sb.fs_volname)).
                           AppendLine();
 
-            XmlFsType.VolumeName = StringHandlers.CToString(sb.fs_volname);
+            Metadata.VolumeName = StringHandlers.CToString(sb.fs_volname);
             sbInformation.AppendFormat(Localization.Volume_ID_0_X16, sb.fs_swuid).AppendLine();
 
             //xmlFSType.VolumeSerial = string.Format("{0:X16}", sb.fs_swuid);
@@ -491,8 +489,7 @@ public sealed partial class FFSPlugin
             sbInformation.AppendFormat(Localization._0_free_blocks_1_bytes, sb.fs_cstotal.cs_nbfree,
                                        sb.fs_cstotal.cs_nbfree * sb.fs_fsize).AppendLine();
 
-            XmlFsType.FreeClusters          = (ulong)sb.fs_cstotal.cs_nbfree;
-            XmlFsType.FreeClustersSpecified = true;
+            Metadata.FreeClusters = (ulong)sb.fs_cstotal.cs_nbfree;
             sbInformation.AppendFormat(Localization._0_free_inodes, sb.fs_cstotal.cs_nifree).AppendLine();
             sbInformation.AppendFormat(Localization._0_free_frags, sb.fs_cstotal.cs_nffree).AppendLine();
             sbInformation.AppendFormat(Localization._0_free_clusters, sb.fs_cstotal.cs_numclusters).AppendLine();
@@ -500,13 +497,12 @@ public sealed partial class FFSPlugin
             sbInformation.AppendFormat(Localization.Volume_last_written_on_0, DateHandlers.UnixToDateTime(sb.fs_time)).
                           AppendLine();
 
-            XmlFsType.ModificationDate          = DateHandlers.UnixToDateTime(sb.fs_time);
-            XmlFsType.ModificationDateSpecified = true;
+            Metadata.ModificationDate = DateHandlers.UnixToDateTime(sb.fs_time);
 
             sbInformation.AppendFormat(Localization._0_blocks_1_bytes, sb.fs_size, sb.fs_size * sb.fs_fsize).
                           AppendLine();
 
-            XmlFsType.Clusters = (ulong)sb.fs_size;
+            Metadata.Clusters = (ulong)sb.fs_size;
 
             sbInformation.AppendFormat(Localization._0_data_blocks_1_bytes, sb.fs_dsize, sb.fs_dsize * sb.fs_fsize).
                           AppendLine();

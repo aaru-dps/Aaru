@@ -27,15 +27,15 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
 using Claunia.Encoding;
-using Schemas;
 using Encoding = System.Text.Encoding;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -104,18 +104,16 @@ public sealed partial class AppleDOS
         }
 
         // Create XML metadata for mounted filesystem
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Bootable              = true,
-            Clusters              = _device.Info.Sectors,
-            ClusterSize           = _vtoc.bytesPerSector,
-            Files                 = (ulong)_catalogCache.Count,
-            FilesSpecified        = true,
-            FreeClustersSpecified = true,
-            Type                  = FS_TYPE
+            Bootable    = true,
+            Clusters    = _device.Info.Sectors,
+            ClusterSize = _vtoc.bytesPerSector,
+            Files       = (ulong)_catalogCache.Count,
+            Type        = FS_TYPE
         };
 
-        XmlFsType.FreeClusters = XmlFsType.Clusters - _usedSectors;
+        Metadata.FreeClusters = Metadata.Clusters - _usedSectors;
 
         options ??= GetDefaultOptions();
 

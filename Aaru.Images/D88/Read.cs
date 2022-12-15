@@ -244,7 +244,7 @@ public sealed partial class D88
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = (ulong)_sectorsData.Count;
         _imageInfo.Comments             = StringHandlers.CToString(hdr.name, shiftjis);
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.SectorSize           = (uint)(128 << (int)bps);
 
         switch(_imageInfo.MediaType)

@@ -33,13 +33,13 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.Checksums;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -197,7 +197,7 @@ public sealed partial class FAT
         AaruConsole.DebugWriteLine("FAT plugin", "apricot_fat_sectors = {0}", apricotFatSectors);
 
         // This is to support FAT partitions on hybrid ISO/USB images
-        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             sectors     /= 4;
             bigSectors  /= 4;
@@ -427,7 +427,7 @@ public sealed partial class FAT
         information = "";
 
         var sb = new StringBuilder();
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
 
@@ -446,7 +446,7 @@ public sealed partial class FAT
         ulong  rootDirectorySector = 0;
         string extraInfo           = null;
         string bootChk             = null;
-        XmlFsType.Bootable = bootable;
+        Metadata.Bootable = bootable;
 
         // This is needed because for FAT16, GEMDOS increases bytes per sector count instead of using big_sectors field.
         uint sectorsPerRealSector;
@@ -474,7 +474,7 @@ public sealed partial class FAT
                     Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlockShort>(bpbSector);
 
                 // This is to support FAT partitions on hybrid ISO/USB images
-                if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+                if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
                 {
                     fat32Bpb.bps       *= 4;
                     fat32Bpb.spc       /= 4;
@@ -486,12 +486,12 @@ public sealed partial class FAT
                 if(fat32Bpb.version != 0)
                 {
                     sb.AppendLine(Localization.FAT_Plus);
-                    XmlFsType.Type = FS_TYPE_FAT_PLUS;
+                    Metadata.Type = FS_TYPE_FAT_PLUS;
                 }
                 else
                 {
                     sb.AppendLine(Localization.Microsoft_FAT32);
-                    XmlFsType.Type = FS_TYPE_FAT32;
+                    Metadata.Type = FS_TYPE_FAT32;
                 }
 
                 if(fat32Bpb.oem_name != null)
@@ -500,14 +500,14 @@ public sealed partial class FAT
                        fat32Bpb.oem_name[7] == 0x43)
                         sb.AppendLine(Localization.Volume_has_been_modified_by_Windows_9x_Me_Volume_Tracker);
                     else
-                        XmlFsType.SystemIdentifier = StringHandlers.CToString(fat32Bpb.oem_name);
+                        Metadata.SystemIdentifier = StringHandlers.CToString(fat32Bpb.oem_name);
 
-                if(!string.IsNullOrEmpty(XmlFsType.SystemIdentifier))
-                    sb.AppendFormat(Localization.OEM_name_0, XmlFsType.SystemIdentifier.Trim()).AppendLine();
+                if(!string.IsNullOrEmpty(Metadata.SystemIdentifier))
+                    sb.AppendFormat(Localization.OEM_name_0, Metadata.SystemIdentifier.Trim()).AppendLine();
 
                 sb.AppendFormat(Localization._0_bytes_per_sector, fat32Bpb.bps).AppendLine();
                 sb.AppendFormat(Localization._0_sectors_per_cluster, fat32Bpb.spc).AppendLine();
-                XmlFsType.ClusterSize = (uint)(fat32Bpb.bps * fat32Bpb.spc);
+                Metadata.ClusterSize = (uint)(fat32Bpb.bps * fat32Bpb.spc);
                 sb.AppendFormat(Localization._0_sectors_reserved_between_BPB_and_FAT, fat32Bpb.rsectors).AppendLine();
 
                 if(fat32Bpb is { big_sectors: 0, signature: 0x28 })
@@ -515,24 +515,24 @@ public sealed partial class FAT
                     sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, shortFat32Bpb.huge_sectors,
                                     shortFat32Bpb.huge_sectors * shortFat32Bpb.bps).AppendLine();
 
-                    XmlFsType.Clusters = shortFat32Bpb.huge_sectors / shortFat32Bpb.spc;
+                    Metadata.Clusters = shortFat32Bpb.huge_sectors / shortFat32Bpb.spc;
                 }
                 else if(fat32Bpb.sectors == 0)
                 {
                     sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, fat32Bpb.big_sectors,
                                     fat32Bpb.big_sectors * fat32Bpb.bps).AppendLine();
 
-                    XmlFsType.Clusters = fat32Bpb.big_sectors / fat32Bpb.spc;
+                    Metadata.Clusters = fat32Bpb.big_sectors / fat32Bpb.spc;
                 }
                 else
                 {
                     sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, fat32Bpb.sectors,
                                     fat32Bpb.sectors * fat32Bpb.bps).AppendLine();
 
-                    XmlFsType.Clusters = (ulong)(fat32Bpb.sectors / fat32Bpb.spc);
+                    Metadata.Clusters = (ulong)(fat32Bpb.sectors / fat32Bpb.spc);
                 }
 
-                sb.AppendFormat(Localization._0_clusters_on_volume, XmlFsType.Clusters).AppendLine();
+                sb.AppendFormat(Localization._0_clusters_on_volume, Metadata.Clusters).AppendLine();
                 sb.AppendFormat(Localization.Media_descriptor_0, fat32Bpb.media).AppendLine();
                 sb.AppendFormat(Localization._0_sectors_per_FAT, fat32Bpb.big_spfat).AppendLine();
                 sb.AppendFormat(Localization._0_sectors_per_track, fat32Bpb.sptrk).AppendLine();
@@ -546,14 +546,14 @@ public sealed partial class FAT
 
                 sb.AppendFormat(Localization.Drive_number_0, fat32Bpb.drive_no).AppendLine();
                 sb.AppendFormat(Localization.Volume_Serial_Number_0, fat32Bpb.serial_no).AppendLine();
-                XmlFsType.VolumeSerial = $"{fat32Bpb.serial_no:X8}";
+                Metadata.VolumeSerial = $"{fat32Bpb.serial_no:X8}";
 
                 if((fat32Bpb.flags & 0xF8) == 0x00)
                 {
                     if((fat32Bpb.flags & 0x01) == 0x01)
                     {
                         sb.AppendLine(Localization.Volume_should_be_checked_on_next_mount);
-                        XmlFsType.Dirty = true;
+                        Metadata.Dirty = true;
                     }
 
                     if((fat32Bpb.flags & 0x02) == 0x02)
@@ -573,8 +573,8 @@ public sealed partial class FAT
 
                 if(fat32Bpb.signature == 0x29)
                 {
-                    XmlFsType.VolumeName = StringHandlers.SpacePaddedToString(fat32Bpb.volume_label, Encoding);
-                    XmlFsType.VolumeName = XmlFsType.VolumeName?.Replace("\0", "");
+                    Metadata.VolumeName = StringHandlers.SpacePaddedToString(fat32Bpb.volume_label, Encoding);
+                    Metadata.VolumeName = Metadata.VolumeName?.Replace("\0", "");
 
                     sb.AppendFormat(Localization.Filesystem_type_0, Encoding.ASCII.GetString(fat32Bpb.fs_type)).
                        AppendLine();
@@ -586,7 +586,7 @@ public sealed partial class FAT
 
                 // Check that jumps to a correct boot code position and has boot signature set.
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
-                XmlFsType.Bootable =
+                Metadata.Bootable =
                     (fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] >= minBootNearJump && fat32Bpb.jump[1] < 0x80) ||
                     (fat32Bpb.jump[0]                        == 0xE9            && fat32Bpb.jump.Length >= 3 &&
                      BitConverter.ToUInt16(fat32Bpb.jump, 1) >= minBootNearJump &&
@@ -616,8 +616,7 @@ public sealed partial class FAT
                         if(fsInfo.free_clusters < 0xFFFFFFFF)
                         {
                             sb.AppendFormat(Localization._0_free_clusters, fsInfo.free_clusters).AppendLine();
-                            XmlFsType.FreeClusters          = fsInfo.free_clusters;
-                            XmlFsType.FreeClustersSpecified = true;
+                            Metadata.FreeClusters = fsInfo.free_clusters;
                         }
 
                         if(fsInfo.last_cluster is > 2 and < 0xFFFFFFFF)
@@ -639,7 +638,7 @@ public sealed partial class FAT
                 // TODO: Check this
                 if(sum == 0x1234)
                 {
-                    XmlFsType.Bootable = true;
+                    Metadata.Bootable = true;
                     var atariSb = new StringBuilder();
 
                     atariSb.AppendFormat(Localization.cmdload_will_be_loaded_with_value_0,
@@ -680,7 +679,7 @@ public sealed partial class FAT
             }
 
             case BpbKind.Human:
-                XmlFsType.Bootable = true;
+                Metadata.Bootable = true;
 
                 break;
         }
@@ -688,7 +687,7 @@ public sealed partial class FAT
         if(!isFat32)
         {
             // This is to support FAT partitions on hybrid ISO/USB images
-            if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
             {
                 fakeBpb.bps      *= 4;
                 fakeBpb.spc      /= 4;
@@ -803,7 +802,7 @@ public sealed partial class FAT
                         break;
                 }
 
-                XmlFsType.Type = FS_TYPE_FAT12;
+                Metadata.Type = FS_TYPE_FAT12;
             }
             else if(isFat16)
             {
@@ -814,7 +813,7 @@ public sealed partial class FAT
                     _             => Localization.Microsoft_FAT16
                 });
 
-                XmlFsType.Type = FS_TYPE_FAT16;
+                Metadata.Type = FS_TYPE_FAT16;
             }
 
             if(bpbKind == BpbKind.Atari)
@@ -824,13 +823,13 @@ public sealed partial class FAT
                    atariBpb.serial_no[2] == 0x43)
                     sb.AppendLine(Localization.Volume_has_been_modified_by_Windows_9x_Me_Volume_Tracker);
                 else
-                    XmlFsType.VolumeSerial = $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{
-                        atariBpb.serial_no[2]:X2}";
+                    Metadata.VolumeSerial = $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{atariBpb.serial_no[2]
+                        :X2}";
 
-                XmlFsType.SystemIdentifier = StringHandlers.CToString(atariBpb.oem_name);
+                Metadata.SystemIdentifier = StringHandlers.CToString(atariBpb.oem_name);
 
-                if(string.IsNullOrEmpty(XmlFsType.SystemIdentifier))
-                    XmlFsType.SystemIdentifier = null;
+                if(string.IsNullOrEmpty(Metadata.SystemIdentifier))
+                    Metadata.SystemIdentifier = null;
             }
             else if(fakeBpb.oem_name != null)
             {
@@ -839,7 +838,7 @@ public sealed partial class FAT
                    fakeBpb.oem_name[7] == 0x43)
                     sb.AppendLine(Localization.Volume_has_been_modified_by_Windows_9x_Me_Volume_Tracker);
                 else
-                    XmlFsType.SystemIdentifier = fakeBpb.oem_name[0] switch
+                    Metadata.SystemIdentifier = fakeBpb.oem_name[0] switch
                     {
                         // Later versions of Windows create a DOS 3 BPB without OEM name on 8 sectors/track floppies
                         // OEM ID should be ASCII, otherwise ignore it
@@ -861,15 +860,15 @@ public sealed partial class FAT
                                     fakeBpb.oem_name[7] >= 0x20 &&
                                     fakeBpb.oem_name[7] <= 0x7F => StringHandlers.CToString(fakeBpb.oem_name, Encoding,
                             start: 1),
-                        _ => XmlFsType.SystemIdentifier
+                        _ => Metadata.SystemIdentifier
                     };
 
                 if(fakeBpb.signature is 0x28 or 0x29)
-                    XmlFsType.VolumeSerial = $"{fakeBpb.serial_no:X8}";
+                    Metadata.VolumeSerial = $"{fakeBpb.serial_no:X8}";
             }
 
-            if(XmlFsType.SystemIdentifier != null)
-                sb.AppendFormat(Localization.OEM_name_0, XmlFsType.SystemIdentifier.Trim()).AppendLine();
+            if(Metadata.SystemIdentifier != null)
+                sb.AppendFormat(Localization.OEM_name_0, Metadata.SystemIdentifier.Trim()).AppendLine();
 
             sb.AppendFormat(Localization._0_bytes_per_sector, fakeBpb.bps).AppendLine();
 
@@ -885,10 +884,10 @@ public sealed partial class FAT
                                 clusters * humanBpb.bpc / imagePlugin.Info.SectorSize, clusters * humanBpb.bpc).
                    AppendLine();
 
-            XmlFsType.Clusters = clusters;
+            Metadata.Clusters = clusters;
             sb.AppendFormat(Localization._0_sectors_per_cluster, fakeBpb.spc).AppendLine();
-            sb.AppendFormat(Localization._0_clusters_on_volume, XmlFsType.Clusters).AppendLine();
-            XmlFsType.ClusterSize = (uint)(fakeBpb.bps * fakeBpb.spc);
+            sb.AppendFormat(Localization._0_clusters_on_volume, Metadata.Clusters).AppendLine();
+            Metadata.ClusterSize = (uint)(fakeBpb.bps * fakeBpb.spc);
             sb.AppendFormat(Localization._0_sectors_reserved_between_BPB_and_FAT, fakeBpb.rsectors).AppendLine();
             sb.AppendFormat(Localization._0_FATs, fakeBpb.fats_no).AppendLine();
             sb.AppendFormat(Localization._0_entries_on_root_directory, fakeBpb.root_ent).AppendLine();
@@ -912,15 +911,15 @@ public sealed partial class FAT
             {
                 sb.AppendFormat(Localization.Drive_number_0, fakeBpb.drive_no).AppendLine();
 
-                if(XmlFsType.VolumeSerial != null)
-                    sb.AppendFormat(Localization.Volume_Serial_Number_0, XmlFsType.VolumeSerial).AppendLine();
+                if(Metadata.VolumeSerial != null)
+                    sb.AppendFormat(Localization.Volume_Serial_Number_0, Metadata.VolumeSerial).AppendLine();
 
                 if((fakeBpb.flags & 0xF8) == 0x00)
                 {
                     if((fakeBpb.flags & 0x01) == 0x01)
                     {
                         sb.AppendLine(Localization.Volume_should_be_checked_on_next_mount);
-                        XmlFsType.Dirty = true;
+                        Metadata.Dirty = true;
                     }
 
                     if((fakeBpb.flags & 0x02) == 0x02)
@@ -929,28 +928,28 @@ public sealed partial class FAT
 
                 if(fakeBpb.signature == 0x29 || andosOemCorrect)
                 {
-                    XmlFsType.VolumeName = StringHandlers.SpacePaddedToString(fakeBpb.volume_label, Encoding);
-                    XmlFsType.VolumeName = XmlFsType.VolumeName?.Replace("\0", "");
+                    Metadata.VolumeName = StringHandlers.SpacePaddedToString(fakeBpb.volume_label, Encoding);
+                    Metadata.VolumeName = Metadata.VolumeName?.Replace("\0", "");
 
                     sb.AppendFormat(Localization.Filesystem_type_0, Encoding.ASCII.GetString(fakeBpb.fs_type)).
                        AppendLine();
                 }
             }
-            else if(bpbKind                == BpbKind.Atari &&
-                    XmlFsType.VolumeSerial != null)
-                sb.AppendFormat(Localization.Volume_Serial_Number_0, XmlFsType.VolumeSerial).AppendLine();
+            else if(bpbKind               == BpbKind.Atari &&
+                    Metadata.VolumeSerial != null)
+                sb.AppendFormat(Localization.Volume_Serial_Number_0, Metadata.VolumeSerial).AppendLine();
 
             bootChk = Sha1Context.Data(fakeBpb.boot_code, out _);
 
             // Workaround that PCExchange jumps into "FAT16   "...
-            if(XmlFsType.SystemIdentifier == "PCX 2.0 ")
+            if(Metadata.SystemIdentifier == "PCX 2.0 ")
                 fakeBpb.jump[1] += 8;
 
             // Check that jumps to a correct boot code position and has boot signature set.
             // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
-            if(XmlFsType.Bootable == false &&
-               fakeBpb.jump       != null)
-                XmlFsType.Bootable |=
+            if(Metadata.Bootable == false &&
+               fakeBpb.jump      != null)
+                Metadata.Bootable |=
                     (fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] >= minBootNearJump && fakeBpb.jump[1] < 0x80) ||
                     (fakeBpb.jump[0]                        == 0xE9            && fakeBpb.jump.Length >= 3 &&
                      BitConverter.ToUInt16(fakeBpb.jump, 1) >= minBootNearJump &&
@@ -968,7 +967,7 @@ public sealed partial class FAT
             sb.Append(extraInfo);
 
         if(rootDirectorySector + partition.Start < partition.End &&
-           imagePlugin.Info.XmlMediaType         != XmlMediaType.OpticalDisc)
+           imagePlugin.Info.MetadataMediaType    != MetadataMediaType.OpticalDisc)
         {
             errno = imagePlugin.ReadSectors(rootDirectorySector + partition.Start, sectorsForRootDirectory,
                                             out byte[] rootDirectory);
@@ -1021,24 +1020,22 @@ public sealed partial class FAT
                 string volname = Encoding.GetString(fullname).Trim();
 
                 if(!string.IsNullOrEmpty(volname))
-                    XmlFsType.VolumeName = entry.caseinfo.HasFlag(CaseInfo.AllLowerCase) ? volname.ToLower() : volname;
+                    Metadata.VolumeName = entry.caseinfo.HasFlag(CaseInfo.AllLowerCase) ? volname.ToLower() : volname;
 
                 if(entry is { ctime: > 0, cdate: > 0 })
                 {
-                    XmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
+                    Metadata.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
 
                     if(entry.ctime_ms > 0)
-                        XmlFsType.CreationDate = XmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
+                        Metadata.CreationDate = Metadata.CreationDate?.AddMilliseconds(entry.ctime_ms * 10);
 
-                    XmlFsType.CreationDateSpecified = true;
-                    sb.AppendFormat(Localization.Volume_created_on_0, XmlFsType.CreationDate).AppendLine();
+                    sb.AppendFormat(Localization.Volume_created_on_0, Metadata.CreationDate).AppendLine();
                 }
 
                 if(entry is { mtime: > 0, mdate: > 0 })
                 {
-                    XmlFsType.ModificationDate          = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
-                    XmlFsType.ModificationDateSpecified = true;
-                    sb.AppendFormat(Localization.Volume_last_modified_on_0, XmlFsType.ModificationDate).AppendLine();
+                    Metadata.ModificationDate = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
+                    sb.AppendFormat(Localization.Volume_last_modified_on_0, Metadata.ModificationDate).AppendLine();
                 }
 
                 if(entry.adate > 0)
@@ -1049,10 +1046,10 @@ public sealed partial class FAT
             }
         }
 
-        if(!string.IsNullOrEmpty(XmlFsType.VolumeName))
-            sb.AppendFormat(Localization.Volume_label_0, XmlFsType.VolumeName).AppendLine();
+        if(!string.IsNullOrEmpty(Metadata.VolumeName))
+            sb.AppendFormat(Localization.Volume_label_0, Metadata.VolumeName).AppendLine();
 
-        if(XmlFsType.Bootable)
+        if(Metadata.Bootable)
         {
             switch(bpbSector[0])
             {

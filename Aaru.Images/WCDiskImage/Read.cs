@@ -68,7 +68,7 @@ public sealed partial class WCDiskImage
         _imageInfo.Sectors         = _imageInfo.Heads   * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
         _imageInfo.ImageSize       = _imageInfo.Sectors * _imageInfo.SectorSize;
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;

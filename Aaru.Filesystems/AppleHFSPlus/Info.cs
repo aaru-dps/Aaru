@@ -28,11 +28,11 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -259,48 +259,43 @@ public sealed partial class AppleHFSPlus
                vh.drFndrInfo7 != 0)
                 sb.AppendFormat(Localization.Mac_OS_X_Volume_ID_0_1, vh.drFndrInfo6, vh.drFndrInfo7).AppendLine();
 
-            XmlFsType = new FileSystemType();
+            Metadata = new FileSystem();
 
             if(vh.backupDate > 0)
             {
-                XmlFsType.BackupDate          = DateHandlers.MacToDateTime(vh.backupDate);
-                XmlFsType.BackupDateSpecified = true;
+                Metadata.BackupDate = DateHandlers.MacToDateTime(vh.backupDate);
             }
 
-            XmlFsType.Bootable    |= vh.drFndrInfo0 != 0 || vh.drFndrInfo3 != 0 || vh.drFndrInfo5 != 0;
-            XmlFsType.Clusters    =  vh.totalBlocks;
-            XmlFsType.ClusterSize =  vh.blockSize;
+            Metadata.Bootable    |= vh.drFndrInfo0 != 0 || vh.drFndrInfo3 != 0 || vh.drFndrInfo5 != 0;
+            Metadata.Clusters    =  vh.totalBlocks;
+            Metadata.ClusterSize =  vh.blockSize;
 
             if(vh.createDate > 0)
             {
-                XmlFsType.CreationDate          = DateHandlers.MacToDateTime(vh.createDate);
-                XmlFsType.CreationDateSpecified = true;
+                Metadata.CreationDate = DateHandlers.MacToDateTime(vh.createDate);
             }
 
-            XmlFsType.Dirty                 = (vh.attributes & 0x100) != 0x100;
-            XmlFsType.Files                 = vh.fileCount;
-            XmlFsType.FilesSpecified        = true;
-            XmlFsType.FreeClusters          = vh.freeBlocks;
-            XmlFsType.FreeClustersSpecified = true;
+            Metadata.Dirty        = (vh.attributes & 0x100) != 0x100;
+            Metadata.Files        = vh.fileCount;
+            Metadata.FreeClusters = vh.freeBlocks;
 
             if(vh.modifyDate > 0)
             {
-                XmlFsType.ModificationDate          = DateHandlers.MacToDateTime(vh.modifyDate);
-                XmlFsType.ModificationDateSpecified = true;
+                Metadata.ModificationDate = DateHandlers.MacToDateTime(vh.modifyDate);
             }
 
-            XmlFsType.Type = vh.signature switch
+            Metadata.Type = vh.signature switch
             {
                 0x482B => FS_TYPE_HFSP,
                 0x4858 => FS_TYPE_HFSX,
-                _      => XmlFsType.Type
+                _      => Metadata.Type
             };
 
             if(vh.drFndrInfo6 != 0 &&
                vh.drFndrInfo7 != 0)
-                XmlFsType.VolumeSerial = $"{vh.drFndrInfo6:X8}{vh.drFndrInfo7:X8}";
+                Metadata.VolumeSerial = $"{vh.drFndrInfo6:X8}{vh.drFndrInfo7:X8}";
 
-            XmlFsType.SystemIdentifier = Encoding.ASCII.GetString(vh.lastMountedVersion);
+            Metadata.SystemIdentifier = Encoding.ASCII.GetString(vh.lastMountedVersion);
         }
         else
         {

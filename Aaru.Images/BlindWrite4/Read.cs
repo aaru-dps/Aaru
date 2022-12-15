@@ -736,7 +736,7 @@ public sealed partial class BlindWrite4
         _imageInfo.ImageSize            = (ulong)_dataFilter.DataForkLength;
         _imageInfo.CreationTime         = _dataFilter.CreationTime;
         _imageInfo.LastModificationTime = _dataFilter.LastWriteTime;
-        _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.OpticalDisc;
 
         bool data       = false;
         bool mode2      = false;

@@ -32,11 +32,11 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -48,8 +48,8 @@ public sealed partial class PCFX
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start           >= partition.End ||
-           imagePlugin.Info.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(2 + partition.Start                >= partition.End ||
+           imagePlugin.Info.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] sector);
@@ -112,17 +112,16 @@ public sealed partial class PCFX
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                  = FS_TYPE,
-            Clusters              = partition.Length,
-            ClusterSize           = 2048,
-            Bootable              = true,
-            CreationDate          = dateTime,
-            CreationDateSpecified = date != null,
-            PublisherIdentifier   = StringHandlers.CToString(header.makerName, Encoding),
-            VolumeName            = StringHandlers.CToString(header.title, Encoding),
-            SystemIdentifier      = "PC-FX"
+            Type                = FS_TYPE,
+            Clusters            = partition.Length,
+            ClusterSize         = 2048,
+            Bootable            = true,
+            CreationDate        = date != null ? dateTime : null,
+            PublisherIdentifier = StringHandlers.CToString(header.makerName, Encoding),
+            VolumeName          = StringHandlers.CToString(header.title, Encoding),
+            SystemIdentifier    = "PC-FX"
         };
     }
 }

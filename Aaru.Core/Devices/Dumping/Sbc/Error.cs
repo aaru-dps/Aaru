@@ -26,6 +26,7 @@
 // ****************************************************************************/
 
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
@@ -36,7 +37,6 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decryption;
 using Aaru.Decryption.DVD;
 using Aaru.Devices;
-using Schemas;
 using DVDDecryption = Aaru.Decryption.DVD.Dump;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -53,7 +53,7 @@ partial class Dump
     /// <param name="totalDuration">Total time spent in commands</param>
     /// <param name="scsiReader">SCSI reader</param>
     /// <param name="blankExtents">Blank extents</param>
-    void RetrySbcData(Reader scsiReader, DumpHardwareType currentTry, ExtentsULong extents, ref double totalDuration,
+    void RetrySbcData(Reader scsiReader, DumpHardware currentTry, ExtentsULong extents, ref double totalDuration,
                       ExtentsULong blankExtents)
     {
         int             pass              = 1;
@@ -326,7 +326,7 @@ partial class Dump
         }
 
         if(newBlank)
-            _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
+            _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents).ToArray();
 
         EndProgress?.Invoke();
     }

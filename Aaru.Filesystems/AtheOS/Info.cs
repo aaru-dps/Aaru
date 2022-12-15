@@ -29,11 +29,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -145,15 +145,14 @@ public sealed partial class AtheOS
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Clusters              = (ulong)afsSb.num_blocks,
-            ClusterSize           = afsSb.block_size,
-            Dirty                 = false,
-            FreeClusters          = (ulong)(afsSb.num_blocks - afsSb.used_blocks),
-            FreeClustersSpecified = true,
-            Type                  = FS_TYPE,
-            VolumeName            = StringHandlers.CToString(afsSb.name, Encoding)
+            Clusters     = (ulong)afsSb.num_blocks,
+            ClusterSize  = afsSb.block_size,
+            Dirty        = false,
+            FreeClusters = (ulong)(afsSb.num_blocks - afsSb.used_blocks),
+            Type         = FS_TYPE,
+            VolumeName   = StringHandlers.CToString(afsSb.name, Encoding)
         };
     }
 }

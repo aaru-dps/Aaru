@@ -36,11 +36,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Interop;
-using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core.Graphics;
@@ -49,9 +49,10 @@ using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.Xbox;
 using Aaru.Devices;
-using Schemas;
 using Device = Aaru.Devices.Remote.Device;
+using Layers = Aaru.CommonTypes.AaruMetadata.Layers;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
 
@@ -498,8 +499,10 @@ partial class Dump
         _dumpLog.WriteLine(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead);
         UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
 
-        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private, _dimensions);
-        var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0010);
+        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private,
+                                  _dimensions);
+
+        var ibgLog = new IbgLog(_outputPrefix + ".ibg", 0x0010);
         ret = outputFormat.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
         // Cannot create image
@@ -517,10 +520,10 @@ partial class Dump
         start = DateTime.UtcNow;
         double imageWriteDuration = 0;
 
-        double           cmdDuration      = 0;
-        uint             saveBlocksToRead = blocksToRead;
-        DumpHardwareType currentTry       = null;
-        ExtentsULong     extents          = null;
+        double       cmdDuration      = 0;
+        uint         saveBlocksToRead = blocksToRead;
+        DumpHardware currentTry       = null;
+        ExtentsULong extents          = null;
 
         ResumeSupport.Process(true, true, totalSize, _dev.Manufacturer, _dev.Model, _dev.Serial, _dev.PlatformId,
                               ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision, _private, _force);
@@ -1262,12 +1265,12 @@ partial class Dump
             ApplicationVersion = Version.GetVersion()
         };
 
-        if(!outputFormat.SetMetadata(metadata))
+        if(!outputFormat.SetImageInfo(metadata))
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputFormat.ErrorMessage);
 
         if(_preSidecar != null)
-            outputFormat.SetCicmMetadata(_preSidecar);
+            outputFormat.SetMetadata(_preSidecar);
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
@@ -1292,16 +1295,16 @@ partial class Dump
 
         if(_metadata)
         {
-            var layers = new LayersType
+            var layers = new Layers
             {
-                type          = LayersTypeType.OTP,
-                typeSpecified = true,
-                Sectors       = new SectorsType[1]
-            };
-
-            layers.Sectors[0] = new SectorsType
-            {
-                Value = layerBreak
+                Type = LayerType.OTP,
+                Sectors = new List<Sectors>
+                {
+                    new()
+                    {
+                        Value = layerBreak
+                    }
+                }
             };
 
             WriteOpticalSidecar(blockSize, blocks, dskType, layers, mediaTags, 1, out totalChkDuration, null);

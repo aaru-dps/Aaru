@@ -28,12 +28,12 @@
 
 using System.Collections.Generic;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -70,7 +70,7 @@ public sealed partial class OperaFS
         else
             _volumeBlockSizeRatio = sb.block_size / imagePlugin.Info.SectorSize;
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type         = FS_TYPE,
             VolumeName   = StringHandlers.CToString(sb.volume_label, Encoding),

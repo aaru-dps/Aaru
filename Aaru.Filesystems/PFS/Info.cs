@@ -29,11 +29,11 @@
 // ReSharper disable UnusedType.Local
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -70,25 +70,25 @@ public sealed partial class PFS
         RootBlock rootBlock = Marshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
         var sbInformation = new StringBuilder();
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         switch(rootBlock.diskType)
         {
             case AFS_DISK:
             case MUAF_DISK:
                 sbInformation.Append(Localization.Professional_File_System_v1);
-                XmlFsType.Type = FS_TYPE;
+                Metadata.Type = FS_TYPE;
 
                 break;
             case PFS2_DISK:
                 sbInformation.Append(Localization.Professional_File_System_v2);
-                XmlFsType.Type = FS_TYPE;
+                Metadata.Type = FS_TYPE;
 
                 break;
             case PFS_DISK:
             case MUPFS_DISK:
                 sbInformation.Append(Localization.Professional_File_System_v3);
-                XmlFsType.Type = FS_TYPE;
+                Metadata.Type = FS_TYPE;
 
                 break;
         }
@@ -116,14 +116,12 @@ public sealed partial class PFS
 
         information = sbInformation.ToString();
 
-        XmlFsType.CreationDate =
+        Metadata.CreationDate =
             DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick);
 
-        XmlFsType.CreationDateSpecified = true;
-        XmlFsType.FreeClusters          = rootBlock.blocksfree;
-        XmlFsType.FreeClustersSpecified = true;
-        XmlFsType.Clusters              = rootBlock.diskSize;
-        XmlFsType.ClusterSize           = imagePlugin.Info.SectorSize;
-        XmlFsType.VolumeName            = StringHandlers.PascalToString(rootBlock.diskname, Encoding);
+        Metadata.FreeClusters = rootBlock.blocksfree;
+        Metadata.Clusters     = rootBlock.diskSize;
+        Metadata.ClusterSize  = imagePlugin.Info.SectorSize;
+        Metadata.VolumeName   = StringHandlers.PascalToString(rootBlock.diskname, Encoding);
     }
 }

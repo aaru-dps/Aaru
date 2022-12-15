@@ -42,6 +42,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Compression;
@@ -51,7 +52,11 @@ using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+using Partition = Aaru.CommonTypes.Partition;
 using Session = Aaru.CommonTypes.Structs.Session;
+using TapeFile = Aaru.CommonTypes.Structs.TapeFile;
+using TapePartition = Aaru.CommonTypes.Structs.TapePartition;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages;
@@ -217,10 +222,10 @@ public sealed partial class AaruFormat
 
         _imageInfo = new ImageInfo
         {
-            MediaType    = mediaType,
-            SectorSize   = sectorSize,
-            Sectors      = sectors,
-            XmlMediaType = GetXmlMediaType(mediaType)
+            MediaType         = mediaType,
+            SectorSize        = sectorSize,
+            Sectors           = sectors,
+            MetadataMediaType = GetMetadataMediaType(mediaType)
         };
 
         try
@@ -1068,7 +1073,8 @@ public sealed partial class AaruFormat
                         try
                         {
                             var sr = new StreamReader(cicmMs);
-                            CicmMetadata = (CICMMetadataType)cicmXs.Deserialize(sr);
+
+                            //AaruMetadata = (CICMMetadataType)cicmXs.Deserialize(sr);
                             sr.Close();
                         }
                         catch(XmlException ex)
@@ -1077,7 +1083,7 @@ public sealed partial class AaruFormat
                                                        Localization.Exception_0_processing_CICM_XML_metadata_block,
                                                        ex.Message);
 
-                            CicmMetadata = null;
+                            AaruMetadata = null;
                         }
 
                         break;
@@ -1112,7 +1118,7 @@ public sealed partial class AaruFormat
 
                         _imageStream.Position -= _structureBytes.Length;
 
-                        DumpHardware = new List<DumpHardwareType>();
+                        DumpHardware = new List<DumpHardware>();
 
                         for(ushort i = 0; i < dumpBlock.entries; i++)
                         {
@@ -1122,10 +1128,10 @@ public sealed partial class AaruFormat
                             DumpHardwareEntry dumpEntry =
                                 Marshal.SpanToStructureLittleEndian<DumpHardwareEntry>(_structureBytes);
 
-                            var dump = new DumpHardwareType
+                            var dump = new DumpHardware
                             {
-                                Software = new SoftwareType(),
-                                Extents  = new ExtentType[dumpEntry.extents]
+                                Software = new Software(),
+                                Extents  = new List<Extent>()
                             };
 
                             byte[] tmp;
@@ -1200,16 +1206,16 @@ public sealed partial class AaruFormat
                             {
                                 _imageStream.EnsureRead(tmp, 0, tmp.Length);
 
-                                dump.Extents[j] = new ExtentType
+                                dump.Extents.Add(new Extent
                                 {
                                     Start = BitConverter.ToUInt64(tmp, 0),
                                     End   = BitConverter.ToUInt64(tmp, 8)
-                                };
+                                });
                             }
 
-                            dump.Extents = dump.Extents.OrderBy(t => t.Start).ToArray();
+                            dump.Extents = dump.Extents.OrderBy(t => t.Start).ToList();
 
-                            if(dump.Extents.Length > 0)
+                            if(dump.Extents.Count > 0)
                                 DumpHardware.Add(dump);
                         }
 
@@ -1363,7 +1369,7 @@ public sealed partial class AaruFormat
                 _ddtEntryCache = new Dictionary<ulong, ulong>();
 
             // Initialize tracks, sessions and partitions
-            if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(_imageInfo.MetadataMediaType == MetadataMediaType.OpticalDisc)
             {
                 if(Tracks != null &&
                    _mediaTags.TryGetValue(MediaTagType.CD_FullTOC, out byte[] fullToc))
@@ -1691,7 +1697,7 @@ public sealed partial class AaruFormat
             return false;
         }
 
-        if((_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc || !_writingLong) &&
+        if((_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc || !_writingLong) &&
            !_rewinded)
         {
             if(sectorAddress <= _lastWrittenBlock && _alreadyWrittenZero)
@@ -1743,7 +1749,7 @@ public sealed partial class AaruFormat
         var trk = new Track();
 
         // If optical disc check track
-        if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             trk = Tracks.FirstOrDefault(t => sectorAddress >= t.StartSector && sectorAddress <= t.EndSector) ??
                   new Track();
@@ -1869,8 +1875,8 @@ public sealed partial class AaruFormat
                 sectorSize  = (uint)data.Length
             };
 
-            if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc &&
-               trk.Type                == TrackType.Audio          &&
+            if(_imageInfo.MetadataMediaType == MetadataMediaType.OpticalDisc &&
+               trk.Type                     == TrackType.Audio               &&
                _compress)
                 _currentBlockHeader.compression = CompressionType.Flac;
 
@@ -1958,9 +1964,9 @@ public sealed partial class AaruFormat
 
         byte[] sector;
 
-        switch(_imageInfo.XmlMediaType)
+        switch(_imageInfo.MetadataMediaType)
         {
-            case XmlMediaType.OpticalDisc:
+            case MetadataMediaType.OpticalDisc:
                 Track track =
                     Tracks.FirstOrDefault(trk => sectorAddress >= trk.StartSector && sectorAddress <= trk.EndSector);
 
@@ -2250,7 +2256,7 @@ public sealed partial class AaruFormat
                 }
 
                 break;
-            case XmlMediaType.BlockMedia:
+            case MetadataMediaType.BlockMedia:
                 switch(_imageInfo.MediaType)
                 {
                     // Split user data from Apple tags
@@ -2369,9 +2375,9 @@ public sealed partial class AaruFormat
     {
         byte[] sector;
 
-        switch(_imageInfo.XmlMediaType)
+        switch(_imageInfo.MetadataMediaType)
         {
-            case XmlMediaType.OpticalDisc:
+            case MetadataMediaType.OpticalDisc:
                 if(data.Length % 2352 != 0)
                 {
                     ErrorMessage = Localization.Incorrect_data_size;
@@ -2392,7 +2398,7 @@ public sealed partial class AaruFormat
                 ErrorMessage = "";
 
                 return true;
-            case XmlMediaType.BlockMedia:
+            case MetadataMediaType.BlockMedia:
                 switch(_imageInfo.MediaType)
                 {
                     case MediaType.AppleFileWare:
@@ -2443,7 +2449,7 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public bool SetTracks(List<Track> tracks)
     {
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
         {
             ErrorMessage = Localization.Unsupported_feature;
 
@@ -2699,7 +2705,7 @@ public sealed partial class AaruFormat
         {
             var dumpMs = new MemoryStream();
 
-            foreach(DumpHardwareType dump in DumpHardware)
+            foreach(DumpHardware dump in DumpHardware)
             {
                 byte[] dumpManufacturer            = null;
                 byte[] dumpModel                   = null;
@@ -2744,7 +2750,7 @@ public sealed partial class AaruFormat
                     softwareNameLength            = (uint)(dumpSoftwareName?.Length            + 1 ?? 0),
                     softwareVersionLength         = (uint)(dumpSoftwareVersion?.Length         + 1 ?? 0),
                     softwareOperatingSystemLength = (uint)(dumpSoftwareOperatingSystem?.Length + 1 ?? 0),
-                    extents                       = (uint)dump.Extents.Length
+                    extents                       = (uint)dump.Extents.Count
                 };
 
                 _structureBytes = new byte[Marshal.SizeOf<DumpHardwareEntry>()];
@@ -2799,7 +2805,7 @@ public sealed partial class AaruFormat
                     dumpMs.WriteByte(0);
                 }
 
-                foreach(ExtentType extent in dump.Extents)
+                foreach(Extent extent in dump.Extents)
                 {
                     dumpMs.Write(BitConverter.GetBytes(extent.Start), 0, sizeof(ulong));
                     dumpMs.Write(BitConverter.GetBytes(extent.End), 0, sizeof(ulong));
@@ -2837,11 +2843,11 @@ public sealed partial class AaruFormat
         }
 
         // If we have CICM XML metadata, write it
-        if(CicmMetadata != null)
+        if(AaruMetadata != null)
         {
             var cicmMs = new MemoryStream();
             var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-            xmlSer.Serialize(cicmMs, CicmMetadata);
+            xmlSer.Serialize(cicmMs, AaruMetadata);
 
             idxEntry = new IndexEntry
             {
@@ -3155,9 +3161,9 @@ public sealed partial class AaruFormat
         }
 
         // Write the sector prefix, suffix and subchannels if present
-        switch(_imageInfo.XmlMediaType)
+        switch(_imageInfo.MetadataMediaType)
         {
-            case XmlMediaType.OpticalDisc when Tracks is { Count: > 0 }:
+            case MetadataMediaType.OpticalDisc when Tracks is { Count: > 0 }:
                 DateTime startCompress;
                 DateTime endCompress;
 
@@ -4321,7 +4327,7 @@ public sealed partial class AaruFormat
                 }
 
                 break;
-            case XmlMediaType.BlockMedia:
+            case MetadataMediaType.BlockMedia:
                 if(_sectorSubchannel != null &&
                    _imageInfo.MediaType is MediaType.AppleFileWare or MediaType.AppleSonySS or MediaType.AppleSonyDS
                        or MediaType.AppleProfile or MediaType.AppleWidget or MediaType.PriamDataTower)
@@ -4722,22 +4728,22 @@ public sealed partial class AaruFormat
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata)
+    public bool SetImageInfo(ImageInfo imageInfo)
     {
-        _imageInfo.Creator               = metadata.Creator;
-        _imageInfo.Comments              = metadata.Comments;
-        _imageInfo.MediaManufacturer     = metadata.MediaManufacturer;
-        _imageInfo.MediaModel            = metadata.MediaModel;
-        _imageInfo.MediaSerialNumber     = metadata.MediaSerialNumber;
-        _imageInfo.MediaBarcode          = metadata.MediaBarcode;
-        _imageInfo.MediaPartNumber       = metadata.MediaPartNumber;
-        _imageInfo.MediaSequence         = metadata.MediaSequence;
-        _imageInfo.LastMediaSequence     = metadata.LastMediaSequence;
-        _imageInfo.DriveManufacturer     = metadata.DriveManufacturer;
-        _imageInfo.DriveModel            = metadata.DriveModel;
-        _imageInfo.DriveSerialNumber     = metadata.DriveSerialNumber;
-        _imageInfo.DriveFirmwareRevision = metadata.DriveFirmwareRevision;
-        _imageInfo.MediaTitle            = metadata.MediaTitle;
+        _imageInfo.Creator               = imageInfo.Creator;
+        _imageInfo.Comments              = imageInfo.Comments;
+        _imageInfo.MediaManufacturer     = imageInfo.MediaManufacturer;
+        _imageInfo.MediaModel            = imageInfo.MediaModel;
+        _imageInfo.MediaSerialNumber     = imageInfo.MediaSerialNumber;
+        _imageInfo.MediaBarcode          = imageInfo.MediaBarcode;
+        _imageInfo.MediaPartNumber       = imageInfo.MediaPartNumber;
+        _imageInfo.MediaSequence         = imageInfo.MediaSequence;
+        _imageInfo.LastMediaSequence     = imageInfo.LastMediaSequence;
+        _imageInfo.DriveManufacturer     = imageInfo.DriveManufacturer;
+        _imageInfo.DriveModel            = imageInfo.DriveModel;
+        _imageInfo.DriveSerialNumber     = imageInfo.DriveSerialNumber;
+        _imageInfo.DriveFirmwareRevision = imageInfo.DriveFirmwareRevision;
+        _imageInfo.MediaTitle            = imageInfo.MediaTitle;
 
         return true;
     }
@@ -4752,7 +4758,7 @@ public sealed partial class AaruFormat
             return false;
         }
 
-        if(_imageInfo.XmlMediaType != XmlMediaType.BlockMedia)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.BlockMedia)
         {
             ErrorMessage = Localization.Tried_to_set_geometry_on_a_media_that_doesnt_support_it;
 
@@ -4795,7 +4801,7 @@ public sealed partial class AaruFormat
         {
             case SectorTagType.CdTrackFlags:
             case SectorTagType.CdTrackIsrc:
-                if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
                 {
                     ErrorMessage = Localization.Incorrect_tag_for_disk_type;
 
@@ -4814,7 +4820,7 @@ public sealed partial class AaruFormat
 
                 break;
             case SectorTagType.CdSectorSubchannel:
-                if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
                 {
                     ErrorMessage = Localization.Incorrect_tag_for_disk_type;
 
@@ -4975,7 +4981,7 @@ public sealed partial class AaruFormat
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware)
     {
         DumpHardware = dumpHardware;
 
@@ -4983,9 +4989,9 @@ public sealed partial class AaruFormat
     }
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata)
+    public bool SetMetadata(Metadata metadata)
     {
-        CicmMetadata = metadata;
+        AaruMetadata = metadata;
 
         return true;
     }

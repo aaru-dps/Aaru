@@ -31,11 +31,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -103,15 +103,13 @@ public sealed partial class Cram
 
         information = sbInformation.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            VolumeName            = StringHandlers.CToString(crSb.name, Encoding),
-            Type                  = FS_TYPE,
-            Clusters              = crSb.blocks,
-            Files                 = crSb.files,
-            FilesSpecified        = true,
-            FreeClusters          = 0,
-            FreeClustersSpecified = true
+            VolumeName   = StringHandlers.CToString(crSb.name, Encoding),
+            Type         = FS_TYPE,
+            Clusters     = crSb.blocks,
+            Files        = crSb.files,
+            FreeClusters = 0
         };
     }
 }

@@ -35,27 +35,27 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 
 namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
-    readonly ChecksumType[] _emptyChecksums;
-    readonly Encoding       _encoding;
-    readonly FileInfo       _fi;
-    readonly Guid           _filterId;
-    readonly IBaseImage     _image;
-    readonly string         _imagePath;
-    readonly Checksum       _imgChkWorker;
-    readonly PluginBase     _plugins;
-    bool                    _aborted;
-    FileStream              _fs;
-    CICMMetadataType        _sidecar;
+    readonly List<CommonTypes.AaruMetadata.Checksum> _emptyChecksums;
+    readonly Encoding                                _encoding;
+    readonly FileInfo                                _fi;
+    readonly Guid                                    _filterId;
+    readonly IBaseImage                              _image;
+    readonly string                                  _imagePath;
+    readonly Checksum                                _imgChkWorker;
+    readonly PluginBase                              _plugins;
+    bool                                             _aborted;
+    FileStream                                       _fs;
+    Metadata                                         _sidecar;
 
     /// <summary>Initializes a new instance of this class</summary>
     public Sidecar()
@@ -66,7 +66,7 @@ public sealed partial class Sidecar
 
         var emptyChkWorker = new Checksum();
         emptyChkWorker.Update(Array.Empty<byte>());
-        _emptyChecksums = emptyChkWorker.End().ToArray();
+        _emptyChecksums = emptyChkWorker.End();
     }
 
     /// <param name="image">Image</param>
@@ -79,7 +79,7 @@ public sealed partial class Sidecar
         _imagePath    = imagePath;
         _filterId     = filterId;
         _encoding     = encoding;
-        _sidecar      = image.CicmMetadata ?? new CICMMetadataType();
+        _sidecar      = image.AaruMetadata ?? new Metadata();
         _plugins      = GetPluginBase.Instance;
         _fi           = new FileInfo(imagePath);
         _fs           = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
@@ -89,7 +89,7 @@ public sealed partial class Sidecar
 
     /// <summary>Implements creating a metadata sidecar</summary>
     /// <returns>The metadata sidecar</returns>
-    public CICMMetadataType Create()
+    public Metadata Create()
     {
         // For fast debugging, skip checksum
         //goto skipImageChecksum;
@@ -127,19 +127,14 @@ public sealed partial class Sidecar
         EndProgress();
         _fs.Close();
 
-        List<ChecksumType> imgChecksums = _imgChkWorker.End();
-
-        _sidecar.OpticalDisc = null;
-        _sidecar.BlockMedia  = null;
-        _sidecar.AudioMedia  = null;
-        _sidecar.LinearMedia = null;
+        List<CommonTypes.AaruMetadata.Checksum> imgChecksums = _imgChkWorker.End();
 
         if(_aborted)
             return _sidecar;
 
-        switch(_image.Info.XmlMediaType)
+        switch(_image.Info.MetadataMediaType)
         {
-            case XmlMediaType.OpticalDisc:
+            case MetadataMediaType.OpticalDisc:
                 if(_image is IOpticalMediaImage opticalImage)
                     OpticalDisc(opticalImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
                                 _encoding);
@@ -152,7 +147,7 @@ public sealed partial class Sidecar
                 }
 
                 break;
-            case XmlMediaType.BlockMedia:
+            case MetadataMediaType.BlockMedia:
                 if(_image is IMediaImage blockImage)
                     BlockMedia(blockImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
                 else
@@ -164,7 +159,7 @@ public sealed partial class Sidecar
                 }
 
                 break;
-            case XmlMediaType.LinearMedia:
+            case MetadataMediaType.LinearMedia:
                 if(_image is IByteAddressableImage byteAddressableImage)
                     LinearMedia(byteAddressableImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
                                 _encoding);
@@ -177,7 +172,7 @@ public sealed partial class Sidecar
                 }
 
                 break;
-            case XmlMediaType.AudioMedia:
+            case MetadataMediaType.AudioMedia:
                 AudioMedia(_image, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
 
                 break;

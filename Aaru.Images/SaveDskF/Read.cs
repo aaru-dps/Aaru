@@ -111,7 +111,7 @@ public sealed partial class SaveDskF
         _imageInfo.MediaType = Geometry.GetMediaType((_header.cylinders, (byte)_header.heads, _header.sectorsPerTrack,
                                                       _header.sectorSize, MediaEncoding.MFM, false));
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         AaruConsole.VerboseWriteLine(Localization.SaveDskF_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 

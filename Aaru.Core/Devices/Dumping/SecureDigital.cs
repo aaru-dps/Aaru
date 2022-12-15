@@ -36,8 +36,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
@@ -46,7 +48,6 @@ using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
 using Aaru.Decoders.SecureDigital;
-using Schemas;
 using CSD = Aaru.Decoders.MMC.CSD;
 using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
 using MediaType = Aaru.CommonTypes.MediaType;
@@ -418,8 +419,8 @@ public partial class Dump
         if(_skip < blocksToRead)
             _skip = blocksToRead;
 
-        DumpHardwareType currentTry = null;
-        ExtentsULong     extents    = null;
+        DumpHardware currentTry = null;
+        ExtentsULong extents    = null;
 
         ResumeSupport.Process(true, false, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial, _dev.PlatformId,
                               ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision, _private, _force);
@@ -457,8 +458,10 @@ public partial class Dump
             }
         }
 
-        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private, _dimensions);
-        var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", sdProfile);
+        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private,
+                                  _dimensions);
+
+        var ibgLog = new IbgLog(_outputPrefix + ".ibg", sdProfile);
 
         ret = outputFormat.Create(_outputPath,
                                   _dev.Type == DeviceType.SecureDigital ? MediaType.SecureDigital : MediaType.MMC,
@@ -867,12 +870,12 @@ public partial class Dump
             ApplicationVersion = Version.GetVersion()
         };
 
-        if(!outputFormat.SetMetadata(metadata))
+        if(!outputFormat.SetImageInfo(metadata))
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputFormat.ErrorMessage);
 
         if(_preSidecar != null)
-            outputFormat.SetCicmMetadata(_preSidecar);
+            outputFormat.SetMetadata(_preSidecar);
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
@@ -916,14 +919,14 @@ public partial class Dump
             _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
             _sidecarClass.EndProgressEvent2    += EndProgress2;
             _sidecarClass.UpdateStatusEvent    += UpdateStatus;
-            CICMMetadataType sidecar = _sidecarClass.Create();
+            Metadata sidecar = _sidecarClass.Create();
 
             if(!_aborted)
             {
                 if(_preSidecar != null)
                 {
-                    _preSidecar.BlockMedia = sidecar.BlockMedia;
-                    sidecar                = _preSidecar;
+                    _preSidecar.BlockMedias = sidecar.BlockMedias;
+                    sidecar                 = _preSidecar;
                 }
 
                 end = DateTime.UtcNow;
@@ -949,39 +952,43 @@ public partial class Dump
                     case DeviceType.MMC:
                         xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.MMC);
 
-                        sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.MMC);
+                        sidecar.BlockMedias[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.MMC);
 
                         break;
                     case DeviceType.SecureDigital:
                         CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital);
 
-                        sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
+                        sidecar.BlockMedias[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
 
                         break;
                 }
 
-                sidecar.BlockMedia[0].DiskType    = xmlType.type;
-                sidecar.BlockMedia[0].DiskSubType = xmlType.subType;
+                sidecar.BlockMedias[0].MediaType    = xmlType.type;
+                sidecar.BlockMedias[0].MediaSubType = xmlType.subType;
 
                 // TODO: Implement device firmware revision
-                sidecar.BlockMedia[0].LogicalBlocks     = blocks;
-                sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize > 0 ? physicalBlockSize : blockSize;
-                sidecar.BlockMedia[0].LogicalBlockSize  = blockSize;
-                sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
-                sidecar.BlockMedia[0].Model             = _dev.Model;
+                sidecar.BlockMedias[0].LogicalBlocks     = blocks;
+                sidecar.BlockMedias[0].PhysicalBlockSize = physicalBlockSize > 0 ? physicalBlockSize : blockSize;
+                sidecar.BlockMedias[0].LogicalBlockSize  = blockSize;
+                sidecar.BlockMedias[0].Manufacturer      = _dev.Manufacturer;
+                sidecar.BlockMedias[0].Model             = _dev.Model;
 
                 if(!_private)
-                    sidecar.BlockMedia[0].Serial = _dev.Serial;
+                    sidecar.BlockMedias[0].Serial = _dev.Serial;
 
-                sidecar.BlockMedia[0].Size = blocks * blockSize;
+                sidecar.BlockMedias[0].Size = blocks * blockSize;
 
                 UpdateStatus?.Invoke(Localization.Core.Writing_metadata_sidecar);
 
-                var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
+                var jsonFs = new FileStream(_outputPrefix + ".metadata.json", FileMode.Create);
 
-                var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
+                JsonSerializer.Serialize(jsonFs, sidecar, new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    WriteIndented          = true
+                });
+
+                jsonFs.Close();
             }
         }
 

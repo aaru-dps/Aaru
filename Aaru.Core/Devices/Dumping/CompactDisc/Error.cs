@@ -37,16 +37,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
-using Schemas;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.Core.Devices.Dumping;
@@ -72,7 +72,7 @@ partial class Dump
     /// <param name="mcn">Disc media catalogue number</param>
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
-    void RetryCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry, ExtentsULong extents,
+    void RetryCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardware currentTry, ExtentsULong extents,
                          int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
                          MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
                          MmcSubchannel desiredSubchannel, Track[] tracks, Dictionary<byte, string> isrcs,

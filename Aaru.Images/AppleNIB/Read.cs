@@ -143,8 +143,8 @@ public sealed partial class AppleNib
             _   => MediaType.Unknown
         };
 
-        _imageInfo.SectorSize   = 256;
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.SectorSize        = 256;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
         _imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
 
         switch(_imageInfo.MediaType)

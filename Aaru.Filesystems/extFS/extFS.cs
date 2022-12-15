@@ -28,8 +28,8 @@
 
 using System;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
 
 namespace Aaru.Filesystems;
 
@@ -41,7 +41,7 @@ namespace Aaru.Filesystems;
 public sealed partial class extFS : IFilesystem
 {
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.extFS_Name;
     /// <inheritdoc />

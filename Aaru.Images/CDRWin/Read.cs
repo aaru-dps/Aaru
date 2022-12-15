@@ -37,14 +37,15 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 using Session = Aaru.CommonTypes.Structs.Session;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages;
@@ -288,9 +289,9 @@ public sealed partial class CdrWin
                     AaruConsole.DebugWriteLine("CDRWin plugin", Localization.Found_REM_METADATA_DUMP_EXTENT_at_line_0,
                                                lineNumber);
 
-                    DumpHardware ??= new List<DumpHardwareType>();
+                    DumpHardware ??= new List<DumpHardware>();
 
-                    DumpHardwareType existingDump =
+                    DumpHardware existingDump =
                         DumpHardware.FirstOrDefault(d =>
                                                         d.Manufacturer == matchDumpExtent.Groups["manufacturer"].
                                                             Value && d.Model == matchDumpExtent.Groups["model"].Value &&
@@ -303,11 +304,11 @@ public sealed partial class CdrWin
                                                             Groups["os"].Value);
 
                     if(existingDump is null)
-                        DumpHardware.Add(new DumpHardwareType
+                        DumpHardware.Add(new DumpHardware
                         {
-                            Extents = new[]
+                            Extents = new List<Extent>
                             {
-                                new ExtentType
+                                new()
                                 {
                                     Start = extentStart,
                                     End   = extentEnd
@@ -317,7 +318,7 @@ public sealed partial class CdrWin
                             Manufacturer = matchDumpExtent.Groups["manufacturer"].Value,
                             Model        = matchDumpExtent.Groups["model"].Value,
                             Serial       = matchDumpExtent.Groups["serial"].Value,
-                            Software = new SoftwareType
+                            Software = new Software
                             {
                                 Name            = matchDumpExtent.Groups["application"].Value,
                                 Version         = matchDumpExtent.Groups["version"].Value,
@@ -325,14 +326,14 @@ public sealed partial class CdrWin
                             }
                         });
                     else
-                        existingDump.Extents = new List<ExtentType>(existingDump.Extents)
+                        existingDump.Extents = new List<Extent>(existingDump.Extents)
                         {
                             new()
                             {
                                 Start = extentStart,
                                 End   = extentEnd
                             }
-                        }.OrderBy(e => e.Start).ToArray();
+                        }.OrderBy(e => e.Start).ToList();
                 }
                 else if(matchDicMediaType.Success &&
                         !inTrack)
@@ -1602,7 +1603,7 @@ public sealed partial class CdrWin
                     }
                 }
 
-            _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+            _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
 
             AaruConsole.VerboseWriteLine(Localization.CDRWIN_image_describes_a_disc_of_type_0, _imageInfo.MediaType);
 

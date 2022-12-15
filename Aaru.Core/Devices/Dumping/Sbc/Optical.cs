@@ -4,13 +4,13 @@
 
 using System;
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Helpers;
-using Schemas;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -35,7 +35,7 @@ partial class Dump
     /// <param name="imageWriteDuration">Total time spent writing to image</param>
     /// <param name="newTrim">Set if we need to start a trim</param>
     /// <param name="blankExtents">Blank extents</param>
-    void ReadOpticalData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardwareType currentTry,
+    void ReadOpticalData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardware currentTry,
                          ExtentsULong extents, ref double currentSpeed, ref double minSpeed, ref double maxSpeed,
                          ref double totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
                          ref double imageWriteDuration, ref bool newTrim, ref ExtentsULong blankExtents)
@@ -148,7 +148,7 @@ partial class Dump
             }
 
             if(_resume != null && canMediumScan)
-                _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
+                _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents).ToArray();
 
             EndProgress?.Invoke();
         }

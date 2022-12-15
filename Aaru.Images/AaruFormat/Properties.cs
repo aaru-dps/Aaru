@@ -34,9 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
+using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.DiscImages;
 
@@ -75,9 +77,9 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public List<Session> Sessions { get; private set; }
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware { get; private set; }
+    public List<DumpHardware> DumpHardware { get; private set; }
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata { get; private set; }
+    public Metadata AaruMetadata { get; private set; }
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Enum.GetValues(typeof(MediaTagType)).Cast<MediaTagType>();
     /// <inheritdoc />

@@ -35,8 +35,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
 
 namespace Aaru.Core;
 
@@ -53,24 +53,24 @@ public sealed partial class Sidecar
     /// <param name="sidecar">Metadata sidecar</param>
     /// <param name="encoding">Encoding to be used for filesystem plugins</param>
     static void AudioMedia(IBaseImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
-                           List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
+                           List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar,
+                           Encoding encoding)
     {
-        sidecar.AudioMedia = new[]
+        sidecar.AudioMedia = new List<AudioMedia>
         {
-            new AudioMediaType
+            new()
             {
-                Checksums = imgChecksums.ToArray(),
-                Image = new ImageType
+                Checksums = imgChecksums,
+                Image = new Image
                 {
-                    format          = image.Format,
-                    offset          = 0,
-                    offsetSpecified = true,
-                    Value           = Path.GetFileName(imagePath)
+                    Format = image.Format,
+                    Offset = 0,
+                    Value  = Path.GetFileName(imagePath)
                 },
                 Size = (ulong)fi.Length,
-                Sequence = new SequenceType
+                Sequence = new Sequence
                 {
-                    MediaTitle = image.Info.MediaTitle
+                    Title = image.Info.MediaTitle
                 }
             }
         };

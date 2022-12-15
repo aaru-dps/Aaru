@@ -115,7 +115,7 @@ public sealed partial class Vdi
         _imageInfo.Sectors              = _vHdr.size / _vHdr.sectorSize;
         _imageInfo.ImageSize            = _vHdr.size;
         _imageInfo.SectorSize           = _vHdr.sectorSize;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.MediaType            = MediaType.GENERIC_HDD;
         _imageInfo.Comments             = _vHdr.comments;
         _imageInfo.Version              = $"{_vHdr.majorVersion}.{_vHdr.minorVersion}";

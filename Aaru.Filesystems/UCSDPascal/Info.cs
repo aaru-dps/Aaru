@@ -32,14 +32,14 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Claunia.Encoding;
-using Schemas;
 using Encoding = System.Text.Encoding;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -202,15 +202,14 @@ public sealed partial class PascalPlugin
 
         imagePlugin.ReadSectors(partition.Start, _multiplier * 2, out byte[] boot);
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Bootable       = !ArrayHelpers.ArrayIsNullOrEmpty(boot),
-            Clusters       = (ulong)volEntry.Blocks,
-            ClusterSize    = imagePlugin.Info.SectorSize,
-            Files          = (ulong)volEntry.Files,
-            FilesSpecified = true,
-            Type           = FS_TYPE,
-            VolumeName     = StringHandlers.PascalToString(volEntry.VolumeName, Encoding)
+            Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(boot),
+            Clusters    = (ulong)volEntry.Blocks,
+            ClusterSize = imagePlugin.Info.SectorSize,
+            Files       = (ulong)volEntry.Files,
+            Type        = FS_TYPE,
+            VolumeName  = StringHandlers.PascalToString(volEntry.VolumeName, Encoding)
         };
     }
 }

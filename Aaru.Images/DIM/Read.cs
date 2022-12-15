@@ -196,7 +196,7 @@ public sealed partial class Dim
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = _imageInfo.ImageSize / _imageInfo.SectorSize;
         _imageInfo.Comments             = StringHandlers.CToString(_comment, Encoding.GetEncoding(932));
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
 
         switch(_imageInfo.MediaType)
         {

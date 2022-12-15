@@ -28,12 +28,12 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -48,7 +48,7 @@ public sealed partial class XFS
             return false;
 
         // Misaligned
-        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
@@ -126,7 +126,7 @@ public sealed partial class XFS
         var xfsSb = new Superblock();
 
         // Misaligned
-        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
@@ -207,18 +207,16 @@ public sealed partial class XFS
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                  = FS_TYPE,
-            ClusterSize           = xfsSb.blocksize,
-            Clusters              = xfsSb.dblocks,
-            FreeClusters          = xfsSb.fdblocks,
-            FreeClustersSpecified = true,
-            Files                 = xfsSb.icount - xfsSb.ifree,
-            FilesSpecified        = true,
-            Dirty                 = xfsSb.inprogress > 0,
-            VolumeName            = StringHandlers.CToString(xfsSb.fname, Encoding),
-            VolumeSerial          = xfsSb.uuid.ToString()
+            Type         = FS_TYPE,
+            ClusterSize  = xfsSb.blocksize,
+            Clusters     = xfsSb.dblocks,
+            FreeClusters = xfsSb.fdblocks,
+            Files        = xfsSb.icount - xfsSb.ifree,
+            Dirty        = xfsSb.inprogress > 0,
+            VolumeName   = StringHandlers.CToString(xfsSb.fname, Encoding),
+            VolumeSerial = xfsSb.uuid.ToString()
         };
     }
 }

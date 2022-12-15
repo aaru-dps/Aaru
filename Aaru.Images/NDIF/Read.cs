@@ -258,7 +258,7 @@ public sealed partial class Ndif
         _imageInfo.MediaTitle = StringHandlers.PascalToString(_header.name, Encoding.GetEncoding("macintosh"));
 
         _imageInfo.SectorSize         = SECTOR_SIZE;
-        _imageInfo.XmlMediaType       = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType  = MetadataMediaType.BlockMedia;
         _imageInfo.ImageSize          = _imageInfo.Sectors * SECTOR_SIZE;
         _imageInfo.ApplicationVersion = "6";
         _imageInfo.Application        = "Apple DiskCopy";

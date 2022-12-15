@@ -28,9 +28,9 @@
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -41,7 +41,7 @@ partial class Dump
     /// <param name="extents">Correctly dump extents</param>
     /// <param name="currentTry">Resume information</param>
     /// <param name="blankExtents">Blank extents</param>
-    void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardwareType currentTry, ExtentsULong blankExtents)
+    void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardware currentTry, ExtentsULong blankExtents)
     {
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
         bool    sense;
@@ -95,6 +95,6 @@ partial class Dump
         }
 
         if(newBlank)
-            _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
+            _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents).ToArray();
     }
 }

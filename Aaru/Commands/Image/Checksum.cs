@@ -41,7 +41,6 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Localization;
-using Schemas;
 using Spectre.Console;
 
 namespace Aaru.Commands.Image;
@@ -378,9 +377,9 @@ sealed class ChecksumCommand : Command
                                         if(trackChecksum == null)
                                             continue;
 
-                                        foreach(ChecksumType chk in trackChecksum.End())
+                                        foreach(CommonTypes.AaruMetadata.Checksum chk in trackChecksum.End())
                                             AaruConsole.WriteLine($"[bold]{string.Format(UI.Checksums_Track_0_has_1,
-                                                currentTrack.Sequence, chk.type)}[/] {chk.Value}");
+                                                currentTrack.Sequence, chk.Type)}[/] {chk.Value}");
 
                                         discTask.Increment(1);
                                     }
@@ -404,8 +403,8 @@ sealed class ChecksumCommand : Command
 
                                     AaruConsole.WriteLine();
 
-                                    foreach(ChecksumType chk in mediaChecksum.End())
-                                        AaruConsole.WriteLine($"[bold]{string.Format(UI.Checksums_Disc_has_0, chk.type)
+                                    foreach(CommonTypes.AaruMetadata.Checksum chk in mediaChecksum.End())
+                                        AaruConsole.WriteLine($"[bold]{string.Format(UI.Checksums_Disc_has_0, chk.Type)
                                         }:[/] {chk.Value}");
                                 });
 
@@ -547,9 +546,9 @@ sealed class ChecksumCommand : Command
 
                                     if(separatedTracks)
                                         if(trackChecksum != null)
-                                            foreach(ChecksumType chk in trackChecksum.End())
+                                            foreach(CommonTypes.AaruMetadata.Checksum chk in trackChecksum.End())
                                                 AaruConsole.WriteLine($"[bold]{string.Format(UI.Checksums_File_0_has_1,
-                                                    currentFile.File, chk.type)}[/]: {chk.Value}");
+                                                    currentFile.File, chk.Type)}[/]: {chk.Value}");
 
                                     previousFileEnd = currentFile.LastBlock;
 
@@ -589,15 +588,15 @@ sealed class ChecksumCommand : Command
                 {
                     AaruConsole.WriteLine();
 
-                    foreach(ChecksumType chk in mediaChecksum.End())
-                        AaruConsole.WriteLine($"[bold]{string.Format(UI.Checksums_Tape_has_0, chk.type)}[/] {chk.Value
+                    foreach(CommonTypes.AaruMetadata.Checksum chk in mediaChecksum.End())
+                        AaruConsole.WriteLine($"[bold]{string.Format(UI.Checksums_Tape_has_0, chk.Type)}[/] {chk.Value
                         }");
                 }
 
                 break;
             }
 
-            case IByteAddressableImage { Info.XmlMediaType: XmlMediaType.LinearMedia } byteAddressableImage:
+            case IByteAddressableImage { Info.MetadataMediaType: MetadataMediaType.LinearMedia } byteAddressableImage:
             {
                 mediaChecksum = new Checksum(enabledChecksums);
 
@@ -668,8 +667,8 @@ sealed class ChecksumCommand : Command
 
                 AaruConsole.WriteLine();
 
-                foreach(ChecksumType chk in mediaChecksum.End())
-                    AaruConsole.WriteLine($"[bold]{string.Format(UI.Checksums_Media_has_0, chk.type)}[/] {chk.Value}");
+                foreach(CommonTypes.AaruMetadata.Checksum chk in mediaChecksum.End())
+                    AaruConsole.WriteLine($"[bold]{string.Format(UI.Checksums_Media_has_0, chk.Type)}[/] {chk.Value}");
 
                 break;
             }
@@ -744,8 +743,8 @@ sealed class ChecksumCommand : Command
 
                 AaruConsole.WriteLine();
 
-                foreach(ChecksumType chk in mediaChecksum.End())
-                    AaruConsole.WriteLine($"[bold]{string.Format(UI.Checksums_Disk_has_0, chk.type)}[/] {chk.Value}");
+                foreach(CommonTypes.AaruMetadata.Checksum chk in mediaChecksum.End())
+                    AaruConsole.WriteLine($"[bold]{string.Format(UI.Checksums_Disk_has_0, chk.Type)}[/] {chk.Value}");
 
                 break;
             }

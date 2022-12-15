@@ -28,7 +28,7 @@
 
 using System;
 using System.Collections.Generic;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -36,8 +36,8 @@ using Aaru.Console;
 using Aaru.Decoders;
 using Aaru.Helpers;
 using Claunia.Encoding;
-using Schemas;
 using Encoding = System.Text.Encoding;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -320,31 +320,27 @@ public sealed partial class LisaFS
                 }
 
                 // Create XML metadata for mounted filesystem
-                XmlFsType = new FileSystemType();
+                Metadata = new FileSystem();
 
                 if(DateTime.Compare(_mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
                 {
-                    XmlFsType.BackupDate          = _mddf.dtvb;
-                    XmlFsType.BackupDateSpecified = true;
+                    Metadata.BackupDate = _mddf.dtvb;
                 }
 
-                XmlFsType.Clusters    = _mddf.vol_size;
-                XmlFsType.ClusterSize = (uint)(_mddf.clustersize * _mddf.datasize);
+                Metadata.Clusters    = _mddf.vol_size;
+                Metadata.ClusterSize = (uint)(_mddf.clustersize * _mddf.datasize);
 
                 if(DateTime.Compare(_mddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
                 {
-                    XmlFsType.CreationDate          = _mddf.dtvc;
-                    XmlFsType.CreationDateSpecified = true;
+                    Metadata.CreationDate = _mddf.dtvc;
                 }
 
-                XmlFsType.Dirty                 = _mddf.vol_left_mounted != 0;
-                XmlFsType.Files                 = _mddf.filecount;
-                XmlFsType.FilesSpecified        = true;
-                XmlFsType.FreeClusters          = _mddf.freecount;
-                XmlFsType.FreeClustersSpecified = true;
-                XmlFsType.Type                  = FS_TYPE;
-                XmlFsType.VolumeName            = _mddf.volname;
-                XmlFsType.VolumeSerial          = $"{_mddf.volid:X16}";
+                Metadata.Dirty        = _mddf.vol_left_mounted != 0;
+                Metadata.Files        = _mddf.filecount;
+                Metadata.FreeClusters = _mddf.freecount;
+                Metadata.Type         = FS_TYPE;
+                Metadata.VolumeName   = _mddf.volname;
+                Metadata.VolumeSerial = $"{_mddf.volid:X16}";
 
                 return ErrorNumber.NoError;
             }

@@ -36,9 +36,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reactive;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
@@ -46,7 +48,6 @@ using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
-using Schemas;
 
 namespace Aaru.Gui.ViewModels.Windows;
 
@@ -88,7 +89,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         _encoding    = encoding;
 
         DestinationText = Path.Combine(Path.GetDirectoryName(imageSource) ?? "",
-                                       Path.GetFileNameWithoutExtension(imageSource) + ".cicm.xml");
+                                       Path.GetFileNameWithoutExtension(imageSource) + ".metadata.json");
 
         DestinationEnabled = true;
         StartVisible       = true;
@@ -250,15 +251,19 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         _sidecarClass.InitProgressEvent2   += InitProgress2;
         _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
         _sidecarClass.EndProgressEvent2    += EndProgress2;
-        CICMMetadataType sidecar = _sidecarClass.Create();
+        Metadata sidecar = _sidecarClass.Create();
 
         AaruConsole.WriteLine(Localization.Core.Writing_metadata_sidecar);
 
-        var xmlFs = new FileStream(DestinationText, FileMode.Create);
+        var jsonFs = new FileStream(DestinationText, FileMode.Create);
 
-        var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-        xmlSer.Serialize(xmlFs, sidecar);
-        xmlFs.Close();
+        await JsonSerializer.SerializeAsync(jsonFs, sidecar, new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            WriteIndented          = true
+        });
+
+        jsonFs.Close();
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -339,10 +344,10 @@ public sealed class ImageSidecarViewModel : ViewModelBase
 
         dlgDestination.Filters?.Add(new FileDialogFilter
         {
-            Name = UI.Dialog_CICM_XML_metadata,
+            Name = UI.Dialog_Aaru_Metadata,
             Extensions = new List<string>(new[]
             {
-                "*.xml"
+                "*.json"
             })
         });
 
@@ -356,7 +361,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         }
 
         if(string.IsNullOrEmpty(Path.GetExtension(result)))
-            result += ".xml";
+            result += ".json";
 
         DestinationText = result;
     }

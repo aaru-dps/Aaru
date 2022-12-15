@@ -187,12 +187,12 @@ public sealed partial class Qcow
         _imageInfo.LastModificationTime = _qHdr.mtime > 0 ? DateHandlers.UnixUnsignedToDateTime(_qHdr.mtime)
                                               : imageFilter.LastWriteTime;
 
-        _imageInfo.MediaTitle   = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-        _imageInfo.Sectors      = _qHdr.size / 512;
-        _imageInfo.SectorSize   = 512;
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-        _imageInfo.MediaType    = MediaType.GENERIC_HDD;
-        _imageInfo.ImageSize    = _qHdr.size;
+        _imageInfo.MediaTitle        = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+        _imageInfo.Sectors           = _qHdr.size / 512;
+        _imageInfo.SectorSize        = 512;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
+        _imageInfo.MediaType         = MediaType.GENERIC_HDD;
+        _imageInfo.ImageSize         = _qHdr.size;
 
         _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
         _imageInfo.Heads           = 16;

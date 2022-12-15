@@ -42,10 +42,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Media;
@@ -59,6 +59,7 @@ using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 using Schemas;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
+using Track = Aaru.CommonTypes.Structs.Track;
 using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.Gui.ViewModels.Windows;
@@ -66,68 +67,68 @@ namespace Aaru.Gui.ViewModels.Windows;
 [SuppressMessage("ReSharper", "AsyncVoidLambda")]
 public sealed class ImageConvertViewModel : ViewModelBase
 {
-    readonly IMediaImage   _inputFormat;
-    readonly Window        _view;
-    bool                   _cancel;
-    CICMMetadataType       _cicmMetadata;
-    bool                   _cicmXmlFromImageVisible;
-    string                 _cicmXmlText;
-    bool                   _closeVisible;
-    string                 _commentsText;
-    bool                   _commentsVisible;
-    string                 _creatorText;
-    bool                   _creatorVisible;
-    bool                   _destinationEnabled;
-    string                 _destinationText;
-    bool                   _destinationVisible;
-    string                 _driveFirmwareRevisionText;
-    bool                   _driveFirmwareRevisionVisible;
-    string                 _driveManufacturerText;
-    bool                   _driveManufacturerVisible;
-    string                 _driveModelText;
-    bool                   _driveModelVisible;
-    string                 _driveSerialNumberText;
-    bool                   _driveSerialNumberVisible;
-    List<DumpHardwareType> _dumpHardware;
-    bool                   _forceChecked;
-    bool                   _formatReadOnly;
-    double                 _lastMediaSequenceValue;
-    bool                   _lastMediaSequenceVisible;
-    string                 _mediaBarcodeText;
-    bool                   _mediaBarcodeVisible;
-    string                 _mediaManufacturerText;
-    bool                   _mediaManufacturerVisible;
-    string                 _mediaModelText;
-    bool                   _mediaModelVisible;
-    string                 _mediaPartNumberText;
-    bool                   _mediaPartNumberVisible;
-    double                 _mediaSequenceValue;
-    bool                   _mediaSequenceVisible;
-    string                 _mediaSerialNumberText;
-    bool                   _mediaSerialNumberVisible;
-    string                 _mediaTitleText;
-    bool                   _mediaTitleVisible;
-    bool                   _optionsVisible;
-    bool                   _progress1Visible;
-    bool                   _progress2Indeterminate;
-    double                 _progress2MaxValue;
-    string                 _progress2Text;
-    double                 _progress2Value;
-    bool                   _progress2Visible;
-    bool                   _progressIndeterminate;
-    double                 _progressMaxValue;
-    string                 _progressText;
-    double                 _progressValue;
-    bool                   _progressVisible;
-    bool                   _resumeFileFromImageVisible;
-    string                 _resumeFileText;
-    double                 _sectorsValue;
-    ImagePluginModel       _selectedPlugin;
-    string                 _sourceText;
-    bool                   _startVisible;
-    bool                   _stopEnabled;
-    bool                   _stopVisible;
-    string                 _title;
+    readonly IMediaImage _inputFormat;
+    readonly Window      _view;
+    bool                 _cancel;
+    Metadata             _aaruMetadata;
+    bool                 _aaruMetadataFromImageVisible;
+    string               _metadataJsonText;
+    bool                 _closeVisible;
+    string               _commentsText;
+    bool                 _commentsVisible;
+    string               _creatorText;
+    bool                 _creatorVisible;
+    bool                 _destinationEnabled;
+    string               _destinationText;
+    bool                 _destinationVisible;
+    string               _driveFirmwareRevisionText;
+    bool                 _driveFirmwareRevisionVisible;
+    string               _driveManufacturerText;
+    bool                 _driveManufacturerVisible;
+    string               _driveModelText;
+    bool                 _driveModelVisible;
+    string               _driveSerialNumberText;
+    bool                 _driveSerialNumberVisible;
+    List<DumpHardware>   _dumpHardware;
+    bool                 _forceChecked;
+    bool                 _formatReadOnly;
+    double               _lastMediaSequenceValue;
+    bool                 _lastMediaSequenceVisible;
+    string               _mediaBarcodeText;
+    bool                 _mediaBarcodeVisible;
+    string               _mediaManufacturerText;
+    bool                 _mediaManufacturerVisible;
+    string               _mediaModelText;
+    bool                 _mediaModelVisible;
+    string               _mediaPartNumberText;
+    bool                 _mediaPartNumberVisible;
+    double               _mediaSequenceValue;
+    bool                 _mediaSequenceVisible;
+    string               _mediaSerialNumberText;
+    bool                 _mediaSerialNumberVisible;
+    string               _mediaTitleText;
+    bool                 _mediaTitleVisible;
+    bool                 _optionsVisible;
+    bool                 _progress1Visible;
+    bool                 _progress2Indeterminate;
+    double               _progress2MaxValue;
+    string               _progress2Text;
+    double               _progress2Value;
+    bool                 _progress2Visible;
+    bool                 _progressIndeterminate;
+    double               _progressMaxValue;
+    string               _progressText;
+    double               _progressValue;
+    bool                 _progressVisible;
+    bool                 _resumeFileFromImageVisible;
+    string               _resumeFileText;
+    double               _sectorsValue;
+    ImagePluginModel     _selectedPlugin;
+    string               _sourceText;
+    bool                 _startVisible;
+    bool                 _stopEnabled;
+    bool                 _stopVisible;
+    string               _title;
 
     public string SourceImageLabel            => UI.Source_image;
     public string OutputFormatLabel           => UI.Output_format;
@@ -177,7 +178,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         DriveSerialNumberCommand     = ReactiveCommand.Create(ExecuteDriveSerialNumberCommand);
         DriveFirmwareRevisionCommand = ReactiveCommand.Create(ExecuteDriveFirmwareRevisionCommand);
         CommentsCommand              = ReactiveCommand.Create(ExecuteCommentsCommand);
-        CicmXmlFromImageCommand      = ReactiveCommand.Create(ExecuteCicmXmlFromImageCommand);
+        AaruMetadataFromImageCommand = ReactiveCommand.Create(ExecuteAaruMetadataFromImageCommand);
         CicmXmlCommand               = ReactiveCommand.Create(ExecuteCicmXmlCommand);
         ResumeFileFromImageCommand   = ReactiveCommand.Create(ExecuteResumeFileFromImageCommand);
         ResumeFileCommand            = ReactiveCommand.Create(ExecuteResumeFileCommand);
@@ -211,14 +212,14 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 Plugin = plugin
             });
 
-        CicmXmlFromImageVisible    = inputFormat.CicmMetadata        != null;
-        ResumeFileFromImageVisible = inputFormat.DumpHardware?.Any() == true;
-        _cicmMetadata              = inputFormat.CicmMetadata;
+        AaruMetadataFromImageVisible = inputFormat.AaruMetadata        != null;
+        ResumeFileFromImageVisible   = inputFormat.DumpHardware?.Any() == true;
+        _aaruMetadata                = inputFormat.AaruMetadata;
 
         _dumpHardware = inputFormat.DumpHardware?.Any() == true ? inputFormat.DumpHardware : null;
 
-        CicmXmlText    = _cicmMetadata == null ? "" : UI._From_image_;
-        ResumeFileText = _dumpHardware == null ? "" : UI._From_image_;
+        MetadataJsonText = _aaruMetadata == null ? "" : UI._From_image_;
+        ResumeFileText   = _dumpHardware == null ? "" : UI._From_image_;
     }
 
     public string Title
@@ -349,10 +350,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _commentsText, value);
     }
 
-    public string CicmXmlText
+    public string MetadataJsonText
     {
-        get => _cicmXmlText;
-        set => this.RaiseAndSetIfChanged(ref _cicmXmlText, value);
+        get => _metadataJsonText;
+        set => this.RaiseAndSetIfChanged(ref _metadataJsonText, value);
     }
 
     public string ResumeFileText
@@ -535,10 +536,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _driveFirmwareRevisionVisible, value);
     }
 
-    public bool CicmXmlFromImageVisible
+    public bool AaruMetadataFromImageVisible
     {
-        get => _cicmXmlFromImageVisible;
-        set => this.RaiseAndSetIfChanged(ref _cicmXmlFromImageVisible, value);
+        get => _aaruMetadataFromImageVisible;
+        set => this.RaiseAndSetIfChanged(ref _aaruMetadataFromImageVisible, value);
     }
 
     public bool ResumeFileFromImageVisible
@@ -568,7 +569,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> DriveSerialNumberCommand     { get; }
     public ReactiveCommand<Unit, Unit> DriveFirmwareRevisionCommand { get; }
     public ReactiveCommand<Unit, Unit> CommentsCommand              { get; }
-    public ReactiveCommand<Unit, Unit> CicmXmlFromImageCommand      { get; }
+    public ReactiveCommand<Unit, Unit> AaruMetadataFromImageCommand { get; }
     public ReactiveCommand<Unit, Task> CicmXmlCommand               { get; }
     public ReactiveCommand<Unit, Unit> ResumeFileFromImageCommand   { get; }
     public ReactiveCommand<Unit, Task> ResumeFileCommand            { get; }
@@ -703,7 +704,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             if(_dumpHardware != null)
                 ProgressMaxValue++;
 
-            if(_cicmMetadata != null)
+            if(_aaruMetadata != null)
                 ProgressMaxValue++;
 
             ProgressMaxValue++;
@@ -836,7 +837,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         };
 
         if(!_cancel)
-            if(!outputFormat.SetMetadata(metadata))
+            if(!outputFormat.SetImageInfo(metadata))
             {
                 if(ForceChecked != true)
                 {
@@ -1729,19 +1730,19 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         ret = false;
 
-        if(_cicmMetadata != null &&
+        if(_aaruMetadata != null &&
            !_cancel)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ProgressText = UI.Writing_CICM_XML_metadata_to_output_image;
+                ProgressText = UI.Writing_Aaru_Metadata_to_output_image;
                 ProgressValue++;
             });
 
-            outputFormat.SetCicmMetadata(_cicmMetadata);
+            outputFormat.SetMetadata(_aaruMetadata);
 
             if(!ret)
-                AaruConsole.WriteLine(UI.Error_0_writing_CICM_XML_metadata_to_output_image, outputFormat.ErrorMessage);
+                AaruConsole.WriteLine(UI.Error_0_writing_Aaru_Metadata_to_output_image, outputFormat.ErrorMessage);
         }
 
         await Dispatcher.UIThread.InvokeAsync(() =>
@@ -1998,16 +1999,16 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
     void ExecuteDriveFirmwareRevisionCommand() => DriveFirmwareRevisionText = _inputFormat.Info.DriveFirmwareRevision;
 
-    void ExecuteCicmXmlFromImageCommand()
+    void ExecuteAaruMetadataFromImageCommand()
     {
-        CicmXmlText   = UI._From_image_;
-        _cicmMetadata = _inputFormat.CicmMetadata;
+        MetadataJsonText = UI._From_image_;
+        _aaruMetadata    = _inputFormat.AaruMetadata;
     }
 
     async Task ExecuteCicmXmlCommand()
     {
-        _cicmMetadata = null;
-        CicmXmlText   = "";
+        _aaruMetadata    = null;
+        MetadataJsonText = "";
 
         var dlgMetadata = new OpenFileDialog
         {
@@ -2016,7 +2017,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         dlgMetadata.Filters?.Add(new FileDialogFilter
         {
-            Name = UI.Dialog_CICM_XML_metadata,
+            Name = UI.Dialog_Aaru_Metadata,
             Extensions = new List<string>(new[]
             {
                 ".xml"
@@ -2034,9 +2035,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
         try
         {
             var sr = new StreamReader(result[0]);
-            _cicmMetadata = (CICMMetadataType)sidecarXs.Deserialize(sr);
+
+            //            _aaruMetadata = (CICMMetadataType)sidecarXs.Deserialize(sr);
             sr.Close();
-            CicmXmlText = result[0];
+            MetadataJsonText = result[0];
         }
         catch
         {
@@ -2063,7 +2065,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         dlgMetadata.Filters?.Add(new FileDialogFilter
         {
-            Name = UI.Dialog_CICM_XML_metadata,
+            Name = UI.Dialog_Aaru_Metadata,
             Extensions = new List<string>(new[]
             {
                 ".xml"

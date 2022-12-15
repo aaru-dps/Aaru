@@ -32,10 +32,10 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -66,7 +66,7 @@ public sealed partial class PCEnginePlugin
         Encoding    = encoding ?? Encoding.GetEncoding("shift_jis");
         information = "";
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type        = FS_TYPE,
             Clusters    = (partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048,

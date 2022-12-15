@@ -41,16 +41,20 @@ using System.Xml;
 using System.Xml.Serialization;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Compression;
 using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+using Partition = Aaru.CommonTypes.Partition;
 using Session = Aaru.CommonTypes.Structs.Session;
+using TapeFile = Aaru.CommonTypes.Structs.TapeFile;
+using TapePartition = Aaru.CommonTypes.Structs.TapePartition;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages;
@@ -883,7 +887,8 @@ public sealed partial class AaruFormat
                     try
                     {
                         var sr = new StreamReader(cicmMs);
-                        CicmMetadata = (CICMMetadataType)cicmXs.Deserialize(sr);
+
+                        //AaruMetadata = (CICMMetadataType)cicmXs.Deserialize(sr);
                         sr.Close();
                     }
                     catch(XmlException ex)
@@ -892,7 +897,7 @@ public sealed partial class AaruFormat
                                                    Localization.Exception_0_processing_CICM_XML_metadata_block,
                                                    ex.Message);
 
-                        CicmMetadata = null;
+                        AaruMetadata = null;
                     }
 
                     AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
@@ -933,7 +938,7 @@ public sealed partial class AaruFormat
 
                     _imageStream.Position -= _structureBytes.Length;
 
-                    DumpHardware = new List<DumpHardwareType>();
+                    DumpHardware = new List<DumpHardware>();
 
                     for(ushort i = 0; i < dumpBlock.entries; i++)
                     {
@@ -943,10 +948,10 @@ public sealed partial class AaruFormat
                         DumpHardwareEntry dumpEntry =
                             Marshal.SpanToStructureLittleEndian<DumpHardwareEntry>(_structureBytes);
 
-                        var dump = new DumpHardwareType
+                        var dump = new DumpHardware
                         {
-                            Software = new SoftwareType(),
-                            Extents  = new ExtentType[dumpEntry.extents]
+                            Software = new Software(),
+                            Extents  = new List<Extent>()
                         };
 
                         byte[] tmp;
@@ -1021,16 +1026,16 @@ public sealed partial class AaruFormat
                         {
                             _imageStream.EnsureRead(tmp, 0, tmp.Length);
 
-                            dump.Extents[j] = new ExtentType
+                            dump.Extents.Add(new Extent
                             {
                                 Start = BitConverter.ToUInt64(tmp, 0),
                                 End   = BitConverter.ToUInt64(tmp, 8)
-                            };
+                            });
                         }
 
-                        dump.Extents = dump.Extents.OrderBy(t => t.Start).ToArray();
+                        dump.Extents = dump.Extents.OrderBy(t => t.Start).ToList();
 
-                        if(dump.Extents.Length > 0)
+                        if(dump.Extents.Count > 0)
                             DumpHardware.Add(dump);
                     }
 
@@ -1178,10 +1183,10 @@ public sealed partial class AaruFormat
         AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Image_last_written_on_0,
                                    _imageInfo.LastModificationTime);
 
-        _imageInfo.XmlMediaType = GetXmlMediaType(_header.mediaType);
+        _imageInfo.MetadataMediaType = GetMetadataMediaType(_header.mediaType);
 
-        if(_geometryBlock.identifier != BlockType.GeometryBlock &&
-           _imageInfo.XmlMediaType   == XmlMediaType.BlockMedia)
+        if(_geometryBlock.identifier    != BlockType.GeometryBlock &&
+           _imageInfo.MetadataMediaType == MetadataMediaType.BlockMedia)
         {
             _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
             _imageInfo.Heads           = 16;
@@ -1205,7 +1210,7 @@ public sealed partial class AaruFormat
                                    GC.GetTotalMemory(false));
 
         // Initialize tracks, sessions and partitions
-        if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             if(Tracks != null)
             {
@@ -1476,7 +1481,7 @@ public sealed partial class AaruFormat
         AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
                                    GC.GetTotalMemory(false));
 
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return ErrorNumber.NoError;
 
         if(_imageInfo.MediaType is MediaType.CD or MediaType.CDDA or MediaType.CDG or MediaType.CDEG or MediaType.CDI
@@ -1635,7 +1640,7 @@ public sealed partial class AaruFormat
     {
         buffer = null;
 
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return ErrorNumber.NotSupported;
 
         Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
@@ -1649,7 +1654,7 @@ public sealed partial class AaruFormat
     {
         buffer = null;
 
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return ErrorNumber.NotSupported;
 
         Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
@@ -1695,7 +1700,7 @@ public sealed partial class AaruFormat
         byte[] dataSource;
         buffer = null;
 
-        if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.StartSector && sectorAddress <= t.EndSector);
 
@@ -1971,7 +1976,7 @@ public sealed partial class AaruFormat
     {
         buffer = null;
 
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return ErrorNumber.NotSupported;
 
         Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
@@ -1989,7 +1994,7 @@ public sealed partial class AaruFormat
     {
         buffer = null;
 
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return ErrorNumber.NotSupported;
 
         Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
@@ -2006,9 +2011,9 @@ public sealed partial class AaruFormat
     {
         buffer = null;
 
-        switch(_imageInfo.XmlMediaType)
+        switch(_imageInfo.MetadataMediaType)
         {
-            case XmlMediaType.OpticalDisc:
+            case MetadataMediaType.OpticalDisc:
                 Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.StartSector && sectorAddress <= t.EndSector);
 
                 if(trk is null)
@@ -2189,7 +2194,7 @@ public sealed partial class AaruFormat
                 }
 
                 break;
-            case XmlMediaType.BlockMedia:
+            case MetadataMediaType.BlockMedia:
                 switch(_imageInfo.MediaType)
                 {
                     case MediaType.AppleFileWare:
@@ -2211,7 +2216,7 @@ public sealed partial class AaruFormat
     {
         buffer = null;
 
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return ErrorNumber.NotSupported;
 
         Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
@@ -2227,9 +2232,9 @@ public sealed partial class AaruFormat
         ErrorNumber errno;
         buffer = null;
 
-        switch(_imageInfo.XmlMediaType)
+        switch(_imageInfo.MetadataMediaType)
         {
-            case XmlMediaType.OpticalDisc:
+            case MetadataMediaType.OpticalDisc:
                 Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.StartSector && sectorAddress <= t.EndSector);
 
                 if(trk is null)
@@ -2334,7 +2339,7 @@ public sealed partial class AaruFormat
                 }
 
                 break;
-            case XmlMediaType.BlockMedia:
+            case MetadataMediaType.BlockMedia:
                 switch(_imageInfo.MediaType)
                 {
                     // Join user data with tags
@@ -2398,7 +2403,7 @@ public sealed partial class AaruFormat
     {
         buffer = null;
 
-        if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return ErrorNumber.NotSupported;
 
         Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);

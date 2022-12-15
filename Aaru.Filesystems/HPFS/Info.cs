@@ -33,11 +33,11 @@
 using System;
 using System.Text;
 using Aaru.Checksums;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -223,7 +223,7 @@ public sealed partial class HPFS
         if((sp.flags2 & 0x80) == 0x80)
             sb.AppendLine(Localization.Unknown_flag_0x80_on_flags2_is_active);
 
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         // Theoretically everything from BPB to SB is boot code, should I hash everything or only the sector loaded by BIOS itself?
         if(bpb.jump[0]    == 0xEB &&
@@ -231,19 +231,19 @@ public sealed partial class HPFS
            bpb.jump[1]    < 0x80  &&
            bpb.signature2 == 0xAA55)
         {
-            XmlFsType.Bootable = true;
+            Metadata.Bootable = true;
             string bootChk = Sha1Context.Data(bpb.boot_code, out byte[] _);
             sb.AppendLine(Localization.Volume_is_bootable);
             sb.AppendFormat(Localization.Boot_code_SHA1_0, bootChk).AppendLine();
         }
 
-        XmlFsType.Dirty            |= (sp.flags1 & 0x01) == 0x01;
-        XmlFsType.Clusters         =  hpfsSb.sectors;
-        XmlFsType.ClusterSize      =  bpb.bps;
-        XmlFsType.Type             =  FS_TYPE;
-        XmlFsType.VolumeName       =  StringHandlers.CToString(bpb.volume_label, Encoding);
-        XmlFsType.VolumeSerial     =  $"{bpb.serial_no:X8}";
-        XmlFsType.SystemIdentifier =  StringHandlers.CToString(bpb.oem_name);
+        Metadata.Dirty            |= (sp.flags1 & 0x01) == 0x01;
+        Metadata.Clusters         =  hpfsSb.sectors;
+        Metadata.ClusterSize      =  bpb.bps;
+        Metadata.Type             =  FS_TYPE;
+        Metadata.VolumeName       =  StringHandlers.CToString(bpb.volume_label, Encoding);
+        Metadata.VolumeSerial     =  $"{bpb.serial_no:X8}";
+        Metadata.SystemIdentifier =  StringHandlers.CToString(bpb.oem_name);
 
         information = sb.ToString();
     }

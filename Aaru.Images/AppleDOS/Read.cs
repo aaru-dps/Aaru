@@ -86,7 +86,7 @@ public sealed partial class AppleDos
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = _dos32 ? 455u : 560u;
         _imageInfo.MediaType            = _dos32 ? MediaType.Apple32SS : MediaType.Apple33SS;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.Cylinders            = 35;
         _imageInfo.Heads                = 1;
         _imageInfo.SectorsPerTrack      = _dos32 ? 13u : 16u;

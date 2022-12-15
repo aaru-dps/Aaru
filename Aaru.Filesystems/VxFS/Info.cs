@@ -28,11 +28,11 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -98,18 +98,15 @@ public sealed partial class VxFS
 
         information = sbInformation.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                      = FS_TYPE,
-            CreationDate              = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
-            CreationDateSpecified     = true,
-            ModificationDate          = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
-            ModificationDateSpecified = true,
-            Clusters                  = (ulong)vxSb.vs_size,
-            ClusterSize               = (uint)vxSb.vs_bsize,
-            Dirty                     = vxSb.vs_clean != 0,
-            FreeClusters              = (ulong)vxSb.vs_free,
-            FreeClustersSpecified     = true
+            Type             = FS_TYPE,
+            CreationDate     = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
+            ModificationDate = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
+            Clusters         = (ulong)vxSb.vs_size,
+            ClusterSize      = (uint)vxSb.vs_bsize,
+            Dirty            = vxSb.vs_clean != 0,
+            FreeClusters     = (ulong)vxSb.vs_free
         };
     }
 }

@@ -45,7 +45,6 @@ using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
-using Schemas;
 
 namespace Aaru.Gui.ViewModels.Windows;
 
@@ -611,11 +610,11 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                         if(trackChecksum == null)
                             return;
 
-                        foreach(ChecksumType chk in trackChecksum.End())
+                        foreach(CommonTypes.AaruMetadata.Checksum chk in trackChecksum.End())
                             TrackChecksums.Add(new ChecksumModel
                             {
                                 Track     = currentTrack.Sequence.ToString(),
-                                Algorithm = chk.type.ToString(),
+                                Algorithm = chk.Type.ToString(),
                                 Hash      = chk.Value
                             });
                     });
@@ -654,10 +653,10 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                     if(mediaChecksum == null)
                         return;
 
-                    foreach(ChecksumType chk in mediaChecksum.End())
+                    foreach(CommonTypes.AaruMetadata.Checksum chk in mediaChecksum.End())
                         MediaChecksums.Add(new ChecksumModel
                         {
-                            Algorithm = chk.type.ToString(),
+                            Algorithm = chk.Type.ToString(),
                             Hash      = chk.Value
                         });
                 });
@@ -754,10 +753,10 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                foreach(ChecksumType chk in mediaChecksum.End())
+                foreach(CommonTypes.AaruMetadata.Checksum chk in mediaChecksum.End())
                     MediaChecksums.Add(new ChecksumModel
                     {
-                        Algorithm = chk.type.ToString(),
+                        Algorithm = chk.Type.ToString(),
                         Hash      = chk.Value
                     });
             });

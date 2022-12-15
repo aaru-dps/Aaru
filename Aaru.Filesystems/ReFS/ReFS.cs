@@ -28,8 +28,8 @@
 
 using System;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
 
 namespace Aaru.Filesystems;
 
@@ -42,7 +42,7 @@ public sealed partial class ReFS : IFilesystem
     /// <inheritdoc />
     public Guid Id => new("37766C4E-EBF5-4113-A712-B758B756ABD6");
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />

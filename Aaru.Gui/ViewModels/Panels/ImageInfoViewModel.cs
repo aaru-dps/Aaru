@@ -35,9 +35,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
@@ -55,9 +55,9 @@ using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using ReactiveUI;
-using Schemas;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
+using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.Gui.ViewModels.Panels;
 
@@ -107,9 +107,9 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         MediaLogo = assets.Exists(mediaResource)
                         ? new Bitmap(assets.Open(mediaResource))
-                        : imageFormat.Info.XmlMediaType == XmlMediaType.BlockMedia
+                        : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
                             ? genericHddIcon
-                            : imageFormat.Info.XmlMediaType == XmlMediaType.OpticalDisc
+                            : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
                                 ? genericOpticalIcon
                                 : genericFolderIcon;
 
@@ -130,7 +130,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
                           imageFormat.Info.Sectors * imageFormat.Info.SectorSize);
 
         MediaTypeText = string.Format(Localization.Core.Contains_a_media_of_type_0_and_XML_type_1,
-                                      imageFormat.Info.MediaType, imageFormat.Info.XmlMediaType);
+                                      imageFormat.Info.MediaType, imageFormat.Info.MetadataMediaType);
 
         HasPartitionsText = imageFormat.Info.HasPartitions ? UI.Has_partitions : UI.Doesnt_have_partitions;
         HasSessionsText   = imageFormat.Info.HasSessions ? UI.Has_sessions : UI.Doesnt_have_sessions;
@@ -189,9 +189,9 @@ public sealed class ImageInfoViewModel : ViewModelBase
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
             DriveFirmwareRevisionText = string.Format(UI.Drive_firmware_info_0, imageFormat.Info.DriveFirmwareRevision);
 
-        if(imageFormat.Info.Cylinders > 0                            &&
-           imageFormat.Info is { Heads: > 0, SectorsPerTrack: > 0 }  &&
-           imageFormat.Info.XmlMediaType != XmlMediaType.OpticalDisc &&
+        if(imageFormat.Info.Cylinders > 0                                      &&
+           imageFormat.Info is { Heads: > 0, SectorsPerTrack: > 0 }            &&
+           imageFormat.Info.MetadataMediaType != MetadataMediaType.OpticalDisc &&
            imageFormat is not ITapeImage { IsTape: true })
             MediaGeometryText = string.Format(UI.Media_geometry_0_cylinders_1_heads_2_sectors_per_track,
                                               imageFormat.Info.Cylinders, imageFormat.Info.Heads,
@@ -655,9 +655,9 @@ public sealed class ImageInfoViewModel : ViewModelBase
         if(imageFormat.DumpHardware is null)
             return;
 
-        foreach(DumpHardwareType dump in imageFormat.DumpHardware)
+        foreach(DumpHardware dump in imageFormat.DumpHardware)
         {
-            foreach(ExtentType extent in dump.Extents)
+            foreach(Extent extent in dump.Extents)
                 DumpHardwareList.Add(new DumpHardwareModel
                 {
                     Manufacturer    = dump.Manufacturer,
@@ -770,7 +770,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
     public string VerifyLabel             => UI.ButtonLabel_Verify;
     public string ChecksumLabel           => UI.ButtonLabel_Checksum;
     public string ConvertLabel            => UI.ButtonLabel_Convert_to;
-    public string CreateSidecarLabel      => UI.ButtonLabel_Create_CICM_XML_sidecar;
+    public string CreateSidecarLabel      => UI.ButtonLabel_Create_Aaru_Metadata_sidecar;
     public string ViewSectorsLabel        => UI.ButtonLabel_View_sectors;
     public string DecodeMediaTagLabel     => UI.ButtonLabel_Decode_media_tags;
 

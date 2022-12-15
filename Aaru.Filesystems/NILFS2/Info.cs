@@ -29,11 +29,11 @@
 // ReSharper disable UnusedMember.Local
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -136,21 +136,19 @@ public sealed partial class NILFS2
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                      = FS_TYPE,
-            ClusterSize               = (uint)(1 << (int)(nilfsSb.log_block_size + 10)),
-            VolumeName                = StringHandlers.CToString(nilfsSb.volume_name, Encoding),
-            VolumeSerial              = nilfsSb.uuid.ToString(),
-            CreationDate              = DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime),
-            CreationDateSpecified     = true,
-            ModificationDate          = DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime),
-            ModificationDateSpecified = true
+            Type             = FS_TYPE,
+            ClusterSize      = (uint)(1 << (int)(nilfsSb.log_block_size + 10)),
+            VolumeName       = StringHandlers.CToString(nilfsSb.volume_name, Encoding),
+            VolumeSerial     = nilfsSb.uuid.ToString(),
+            CreationDate     = DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime),
+            ModificationDate = DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime)
         };
 
         if(nilfsSb.creator_os == 0)
-            XmlFsType.SystemIdentifier = "Linux";
+            Metadata.SystemIdentifier = "Linux";
 
-        XmlFsType.Clusters = nilfsSb.dev_size / XmlFsType.ClusterSize;
+        Metadata.Clusters = nilfsSb.dev_size / Metadata.ClusterSize;
     }
 }

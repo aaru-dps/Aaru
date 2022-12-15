@@ -29,11 +29,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -217,15 +217,14 @@ public sealed partial class BeFS
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Clusters              = (ulong)besb.num_blocks,
-            ClusterSize           = besb.block_size,
-            Dirty                 = besb.flags == BEFS_DIRTY,
-            FreeClusters          = (ulong)(besb.num_blocks - besb.used_blocks),
-            FreeClustersSpecified = true,
-            Type                  = FS_TYPE,
-            VolumeName            = StringHandlers.CToString(besb.name, Encoding)
+            Clusters     = (ulong)besb.num_blocks,
+            ClusterSize  = besb.block_size,
+            Dirty        = besb.flags == BEFS_DIRTY,
+            FreeClusters = (ulong)(besb.num_blocks - besb.used_blocks),
+            Type         = FS_TYPE,
+            VolumeName   = StringHandlers.CToString(besb.name, Encoding)
         };
     }
 }

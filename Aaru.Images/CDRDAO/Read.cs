@@ -871,7 +871,7 @@ public sealed partial class Cdrdao
                 }
             }
 
-            _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+            _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
 
             AaruConsole.VerboseWriteLine(Localization.CDRDAO_image_describes_a_disc_of_type_0, _imageInfo.MediaType);
 

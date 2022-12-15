@@ -30,59 +30,57 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.Localization;
 using JetBrains.Annotations;
-using Schemas;
 
 namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class FileSystemViewModel
 {
-    public FileSystemViewModel([NotNull] FileSystemType xmlFsType, string information)
+    public FileSystemViewModel([NotNull] FileSystem metadata, string information)
     {
-        TypeText         = string.Format(Localization.Core.Filesystem_type_0, xmlFsType.Type);
-        VolumeNameText   = string.Format(Localization.Core.Volume_name_0, xmlFsType.VolumeName);
-        SerialNumberText = string.Format(Localization.Core.Volume_serial_0, xmlFsType.VolumeSerial);
+        TypeText         = string.Format(Localization.Core.Filesystem_type_0, metadata.Type);
+        VolumeNameText   = string.Format(Localization.Core.Volume_name_0, metadata.VolumeName);
+        SerialNumberText = string.Format(Localization.Core.Volume_serial_0, metadata.VolumeSerial);
 
         ApplicationIdentifierText =
-            string.Format(Localization.Core.Application_identifier_0, xmlFsType.ApplicationIdentifier);
+            string.Format(Localization.Core.Application_identifier_0, metadata.ApplicationIdentifier);
 
-        SystemIdentifierText = string.Format(Localization.Core.System_identifier_0, xmlFsType.SystemIdentifier);
+        SystemIdentifierText = string.Format(Localization.Core.System_identifier_0, metadata.SystemIdentifier);
 
         VolumeSetIdentifierText =
-            string.Format(Localization.Core.Volume_set_identifier_0, xmlFsType.VolumeSetIdentifier);
+            string.Format(Localization.Core.Volume_set_identifier_0, metadata.VolumeSetIdentifier);
 
         DataPreparerIdentifierText =
-            string.Format(Localization.Core.Data_preparer_identifier_0, xmlFsType.DataPreparerIdentifier);
+            string.Format(Localization.Core.Data_preparer_identifier_0, metadata.DataPreparerIdentifier);
 
-        PublisherIdentifierText =
-            string.Format(Localization.Core.Publisher_identifier_0, xmlFsType.PublisherIdentifier);
+        PublisherIdentifierText = string.Format(Localization.Core.Publisher_identifier_0, metadata.PublisherIdentifier);
 
-        CreationDateText     = string.Format(Localization.Core.Volume_created_on_0, xmlFsType.CreationDate);
-        EffectiveDateText    = string.Format(Localization.Core.Volume_effective_from_0, xmlFsType.EffectiveDate);
-        ModificationDateText = string.Format(Localization.Core.Volume_last_modified_on_0, xmlFsType.ModificationDate);
-        ExpirationDateText   = string.Format(Localization.Core.Volume_expired_on_0, xmlFsType.ExpirationDate);
-        BackupDateText       = string.Format(Localization.Core.Volume_last_backed_up_on_0, xmlFsType.BackupDate);
+        CreationDateText     = string.Format(Localization.Core.Volume_created_on_0, metadata.CreationDate);
+        EffectiveDateText    = string.Format(Localization.Core.Volume_effective_from_0, metadata.EffectiveDate);
+        ModificationDateText = string.Format(Localization.Core.Volume_last_modified_on_0, metadata.ModificationDate);
+        ExpirationDateText   = string.Format(Localization.Core.Volume_expired_on_0, metadata.ExpirationDate);
+        BackupDateText       = string.Format(Localization.Core.Volume_last_backed_up_on_0, metadata.BackupDate);
 
         ClustersText = string.Format(Localization.Core.Volume_has_0_clusters_of_1_bytes_each_total_of_2_bytes,
-                                     xmlFsType.Clusters, xmlFsType.ClusterSize,
-                                     xmlFsType.Clusters * xmlFsType.ClusterSize);
+                                     metadata.Clusters, metadata.ClusterSize, metadata.Clusters * metadata.ClusterSize);
 
-        FreeClustersText = string.Format(Localization.Core.Volume_has_0_clusters_free_1, xmlFsType.FreeClusters,
-                                         xmlFsType.FreeClusters / xmlFsType.Clusters);
+        FreeClustersText = string.Format(Localization.Core.Volume_has_0_clusters_free_1, metadata.FreeClusters,
+                                         metadata.FreeClusters / metadata.Clusters);
 
-        FilesText       = string.Format(Localization.Core.Volume_contains_0_files, xmlFsType.Files);
-        BootableChecked = xmlFsType.Bootable;
-        DirtyChecked    = xmlFsType.Dirty;
+        FilesText       = string.Format(Localization.Core.Volume_contains_0_files, metadata.Files);
+        BootableChecked = metadata.Bootable;
+        DirtyChecked    = metadata.Dirty;
         InformationText = information;
 
-        CreationDateVisible     = xmlFsType.CreationDateSpecified;
-        EffectiveDateVisible    = xmlFsType.EffectiveDateSpecified;
-        ModificationDateVisible = xmlFsType.ModificationDateSpecified;
-        ExpirationDateVisible   = xmlFsType.ExpirationDateSpecified;
-        BackupDateVisible       = xmlFsType.BackupDateSpecified;
-        FreeClustersVisible     = xmlFsType.FreeClustersSpecified;
-        FilesVisible            = xmlFsType.FilesSpecified;
+        CreationDateVisible     = metadata.CreationDate     != null;
+        EffectiveDateVisible    = metadata.EffectiveDate    != null;
+        ModificationDateVisible = metadata.ModificationDate != null;
+        ExpirationDateVisible   = metadata.ExpirationDate   != null;
+        BackupDateVisible       = metadata.BackupDate       != null;
+        FreeClustersVisible     = metadata.FreeClusters     != null;
+        FilesVisible            = metadata.Files            != null;
     }
 
     public string BootableLabel => Localization.Core.Filesystem_contains_boot_code;

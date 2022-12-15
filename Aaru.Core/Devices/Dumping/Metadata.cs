@@ -34,12 +34,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
-using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
 
 namespace Aaru.Core.Devices.Dumping;
@@ -55,7 +56,7 @@ partial class Dump
     /// <param name="sessions">Disc sessions</param>
     /// <param name="totalChkDuration">Total time spent doing checksums</param>
     /// <param name="discOffset">Disc write offset</param>
-    void WriteOpticalSidecar(uint blockSize, ulong blocks, MediaType mediaType, LayersType layers,
+    void WriteOpticalSidecar(uint blockSize, ulong blocks, MediaType mediaType, Layers layers,
                              Dictionary<MediaTagType, byte[]> mediaTags, int sessions, out double totalChkDuration,
                              int? discOffset)
     {
@@ -91,8 +92,8 @@ partial class Dump
         _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
         _sidecarClass.EndProgressEvent2    += EndProgress2;
         _sidecarClass.UpdateStatusEvent    += UpdateStatus;
-        CICMMetadataType sidecar = _sidecarClass.Create();
-        DateTime         end     = DateTime.UtcNow;
+        Metadata sidecar = _sidecarClass.Create();
+        DateTime end     = DateTime.UtcNow;
 
         if(_aborted)
             return;
@@ -105,14 +106,14 @@ partial class Dump
 
         if(_preSidecar != null)
         {
-            _preSidecar.OpticalDisc = sidecar.OpticalDisc;
-            sidecar                 = _preSidecar;
+            _preSidecar.OpticalDiscs = sidecar.OpticalDiscs;
+            sidecar                  = _preSidecar;
         }
 
         List<(ulong start, string type)> filesystems = new();
 
-        if(sidecar.OpticalDisc[0].Track != null)
-            filesystems.AddRange(from xmlTrack in sidecar.OpticalDisc[0].Track
+        if(sidecar.OpticalDiscs[0].Track != null)
+            filesystems.AddRange(from xmlTrack in sidecar.OpticalDiscs[0].Track
                                  where xmlTrack.FileSystemInformation                                         != null
                                  from partition in xmlTrack.FileSystemInformation where partition.FileSystems != null
                                  from fileSystem in partition.FileSystems
@@ -126,19 +127,16 @@ partial class Dump
                     }).Distinct())
                 _dumpLog.WriteLine(Localization.Core.Found_filesystem_0_at_sector_1, filesystem.type, filesystem.start);
 
-        sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(mediaType);
+        sidecar.OpticalDiscs[0].Dimensions = Dimensions.DimensionsFromMediaType(mediaType);
         (string type, string subType) discType = CommonTypes.Metadata.MediaType.MediaTypeToString(mediaType);
-        sidecar.OpticalDisc[0].DiscType          = discType.type;
-        sidecar.OpticalDisc[0].DiscSubType       = discType.subType;
-        sidecar.OpticalDisc[0].DumpHardwareArray = _resume.Tries.ToArray();
-        sidecar.OpticalDisc[0].Sessions          = (uint)sessions;
-        sidecar.OpticalDisc[0].Layers            = layers;
+        sidecar.OpticalDiscs[0].DiscType     = discType.type;
+        sidecar.OpticalDiscs[0].DiscSubType  = discType.subType;
+        sidecar.OpticalDiscs[0].DumpHardware = _resume.Tries;
+        sidecar.OpticalDiscs[0].Sessions     = (uint)sessions;
+        sidecar.OpticalDiscs[0].Layers       = layers;
 
         if(discOffset.HasValue)
-        {
-            sidecar.OpticalDisc[0].Offset          = (int)(discOffset / 4);
-            sidecar.OpticalDisc[0].OffsetSpecified = true;
-        }
+            sidecar.OpticalDiscs[0].Offset = (int)(discOffset / 4);
 
         if(mediaTags != null)
             foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags.Where(tag => _outputPlugin.SupportedMediaTags.
@@ -147,10 +145,14 @@ partial class Dump
 
         UpdateStatus?.Invoke(Localization.Core.Writing_metadata_sidecar);
 
-        var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
+        var jsonFs = new FileStream(_outputPrefix + ".metadata.json", FileMode.Create);
 
-        var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-        xmlSer.Serialize(xmlFs, sidecar);
-        xmlFs.Close();
+        JsonSerializer.Serialize(jsonFs, sidecar, new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            WriteIndented          = true
+        });
+
+        jsonFs.Close();
     }
 }

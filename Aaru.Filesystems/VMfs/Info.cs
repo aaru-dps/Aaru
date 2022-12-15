@@ -29,11 +29,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -104,16 +104,14 @@ public sealed partial class VMfs
 
         information = sbInformation.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type                      = FS_TYPE,
-            CreationDate              = DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs),
-            CreationDateSpecified     = true,
-            ModificationDate          = DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
-            ModificationDateSpecified = true,
-            Clusters                  = volInfo.size * 256 / imagePlugin.Info.SectorSize,
-            ClusterSize               = imagePlugin.Info.SectorSize,
-            VolumeSerial              = volInfo.uuid.ToString()
+            Type             = FS_TYPE,
+            CreationDate     = DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs),
+            ModificationDate = DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
+            Clusters         = volInfo.size * 256 / imagePlugin.Info.SectorSize,
+            ClusterSize      = imagePlugin.Info.SectorSize,
+            VolumeSerial     = volInfo.uuid.ToString()
         };
     }
 }

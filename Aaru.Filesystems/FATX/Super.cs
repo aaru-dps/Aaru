@@ -31,14 +31,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -90,7 +90,7 @@ public sealed partial class XboxFatPlugin
                                                       !_littleEndian ? Encoding.BigEndianUnicode : Encoding.Unicode,
                                                       true);
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type = Localization.FATX_filesystem,
             ClusterSize = (uint)(_superblock.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
@@ -99,12 +99,11 @@ public sealed partial class XboxFatPlugin
             VolumeSerial = $"{_superblock.id:X8}"
         };
 
-        XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                             XmlFsType.ClusterSize;
+        Metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / Metadata.ClusterSize;
 
         _statfs = new FileSystemInfo
         {
-            Blocks         = XmlFsType.Clusters,
+            Blocks         = Metadata.Clusters,
             FilenameLength = MAX_FILENAME,
             Files          = 0, // Requires traversing all directories
             FreeFiles      = 0,
@@ -118,9 +117,9 @@ public sealed partial class XboxFatPlugin
             FreeBlocks = 0 // Requires traversing the FAT
         };
 
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.ClusterSize: {0}", XmlFsType.ClusterSize);
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.VolumeName: {0}", XmlFsType.VolumeName);
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.VolumeSerial: {0}", XmlFsType.VolumeSerial);
+        AaruConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.ClusterSize: {0}", Metadata.ClusterSize);
+        AaruConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.VolumeName: {0}", Metadata.VolumeName);
+        AaruConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.VolumeSerial: {0}", Metadata.VolumeSerial);
         AaruConsole.DebugWriteLine("Xbox FAT plugin", "stat.Blocks: {0}", _statfs.Blocks);
         AaruConsole.DebugWriteLine("Xbox FAT plugin", "stat.FilenameLength: {0}", _statfs.FilenameLength);
         AaruConsole.DebugWriteLine("Xbox FAT plugin", "stat.Id: {0}", _statfs.Id.Serial32);

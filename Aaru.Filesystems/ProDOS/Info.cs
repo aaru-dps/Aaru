@@ -32,13 +32,13 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Claunia.Encoding;
-using Schemas;
 using Encoding = System.Text.Encoding;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -294,22 +294,20 @@ public sealed partial class ProDOSPlugin
 
         information = sbInformation.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            VolumeName     = rootDirectoryKeyBlock.header.volume_name,
-            Files          = rootDirectoryKeyBlock.header.file_count,
-            FilesSpecified = true,
-            Clusters       = rootDirectoryKeyBlock.header.total_blocks,
-            Type           = FS_TYPE
+            VolumeName = rootDirectoryKeyBlock.header.volume_name,
+            Files      = rootDirectoryKeyBlock.header.file_count,
+            Clusters   = rootDirectoryKeyBlock.header.total_blocks,
+            Type       = FS_TYPE
         };
 
-        XmlFsType.ClusterSize = (uint)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                                       XmlFsType.Clusters);
+        Metadata.ClusterSize = (uint)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                      Metadata.Clusters);
 
         if(!dateCorrect)
             return;
 
-        XmlFsType.CreationDate          = rootDirectoryKeyBlock.header.creation_time;
-        XmlFsType.CreationDateSpecified = true;
+        Metadata.CreationDate = rootDirectoryKeyBlock.header.creation_time;
     }
 }

@@ -185,8 +185,8 @@ public sealed partial class CopyQm
                 break;
         }
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-        _decodedDisk            = _decodedImage.ToArray();
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
+        _decodedDisk                 = _decodedImage.ToArray();
 
         _decodedImage.Close();
 

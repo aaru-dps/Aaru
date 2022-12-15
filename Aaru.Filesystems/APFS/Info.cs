@@ -28,11 +28,11 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -71,7 +71,7 @@ public sealed partial class APFS
     {
         Encoding = Encoding.UTF8;
         var sbInformation = new StringBuilder();
-        XmlFsType   = new FileSystemType();
+        Metadata    = new FileSystem();
         information = "";
 
         if(partition.Start >= partition.End)
@@ -105,7 +105,7 @@ public sealed partial class APFS
 
         information = sbInformation.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Bootable    = false,
             Clusters    = nxSb.containerBlocks,

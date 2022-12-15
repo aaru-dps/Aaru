@@ -131,12 +131,12 @@ public sealed partial class Chd
                 DateTime end = DateTime.UtcNow;
                 AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
 
-                _imageInfo.MediaType    = MediaType.GENERIC_HDD;
-                _imageInfo.Sectors      = hdrV1.hunksize * hdrV1.totalhunks;
-                _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-                _imageInfo.SectorSize   = 512;
-                _imageInfo.Version      = "1";
-                _imageInfo.ImageSize    = _imageInfo.SectorSize * hdrV1.hunksize * hdrV1.totalhunks;
+                _imageInfo.MediaType         = MediaType.GENERIC_HDD;
+                _imageInfo.Sectors           = hdrV1.hunksize * hdrV1.totalhunks;
+                _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
+                _imageInfo.SectorSize        = 512;
+                _imageInfo.Version           = "1";
+                _imageInfo.ImageSize         = _imageInfo.SectorSize * hdrV1.hunksize * hdrV1.totalhunks;
 
                 _totalHunks     = hdrV1.totalhunks;
                 _sectorsPerHunk = hdrV1.hunksize;
@@ -206,12 +206,12 @@ public sealed partial class Chd
                 DateTime end = DateTime.UtcNow;
                 AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
 
-                _imageInfo.MediaType    = MediaType.GENERIC_HDD;
-                _imageInfo.Sectors      = hdrV2.hunksize * hdrV2.totalhunks;
-                _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-                _imageInfo.SectorSize   = hdrV2.seclen;
-                _imageInfo.Version      = "2";
-                _imageInfo.ImageSize    = _imageInfo.SectorSize * hdrV2.hunksize * hdrV2.totalhunks;
+                _imageInfo.MediaType         = MediaType.GENERIC_HDD;
+                _imageInfo.Sectors           = hdrV2.hunksize * hdrV2.totalhunks;
+                _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
+                _imageInfo.SectorSize        = hdrV2.seclen;
+                _imageInfo.Version           = "2";
+                _imageInfo.ImageSize         = _imageInfo.SectorSize * hdrV2.hunksize * hdrV2.totalhunks;
 
                 _totalHunks     = hdrV2.totalhunks;
                 _sectorsPerHunk = hdrV2.hunksize;
@@ -1181,17 +1181,17 @@ public sealed partial class Chd
 
             if(_isHdd)
             {
-                _sectorsPerHunk         = _bytesPerHunk        / _imageInfo.SectorSize;
-                _imageInfo.Sectors      = _imageInfo.ImageSize / _imageInfo.SectorSize;
-                _imageInfo.MediaType    = MediaType.GENERIC_HDD;
-                _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+                _sectorsPerHunk              = _bytesPerHunk        / _imageInfo.SectorSize;
+                _imageInfo.Sectors           = _imageInfo.ImageSize / _imageInfo.SectorSize;
+                _imageInfo.MediaType         = MediaType.GENERIC_HDD;
+                _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
             }
             else if(_isCdrom)
             {
                 // Hardcoded on MAME for CD-ROM
-                _sectorsPerHunk         = 8;
-                _imageInfo.MediaType    = MediaType.CDROM;
-                _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                _sectorsPerHunk              = 8;
+                _imageInfo.MediaType         = MediaType.CDROM;
+                _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
 
                 foreach(Track aaruTrack in _tracks.Values)
                     _imageInfo.Sectors += aaruTrack.EndSector - aaruTrack.StartSector + 1;
@@ -1199,9 +1199,9 @@ public sealed partial class Chd
             else if(_isGdrom)
             {
                 // Hardcoded on MAME for GD-ROM
-                _sectorsPerHunk         = 8;
-                _imageInfo.MediaType    = MediaType.GDROM;
-                _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                _sectorsPerHunk              = 8;
+                _imageInfo.MediaType         = MediaType.GDROM;
+                _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
 
                 foreach(Track aaruTrack in _tracks.Values)
                     _imageInfo.Sectors += aaruTrack.EndSector - aaruTrack.StartSector + 1;

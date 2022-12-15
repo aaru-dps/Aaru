@@ -30,11 +30,11 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -72,7 +72,7 @@ public sealed partial class exFAT
         information = "";
 
         var sb = new StringBuilder();
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] vbrSector);
 
@@ -160,11 +160,11 @@ public sealed partial class exFAT
 
         sb.AppendFormat(Localization.Checksum_0_X8, chksector.checksum[0]).AppendLine();
 
-        XmlFsType.ClusterSize  = (uint)((1 << vbr.sectorShift) * (1 << vbr.clusterShift));
-        XmlFsType.Clusters     = vbr.clusterHeapLength;
-        XmlFsType.Dirty        = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
-        XmlFsType.Type         = FS_TYPE;
-        XmlFsType.VolumeSerial = $"{vbr.volumeSerial:X8}";
+        Metadata.ClusterSize  = (uint)((1 << vbr.sectorShift) * (1 << vbr.clusterShift));
+        Metadata.Clusters     = vbr.clusterHeapLength;
+        Metadata.Dirty        = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
+        Metadata.Type         = FS_TYPE;
+        Metadata.VolumeSerial = $"{vbr.volumeSerial:X8}";
 
         information = sb.ToString();
     }

@@ -34,8 +34,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
@@ -44,7 +46,6 @@ using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Decoders.ATA;
 using Aaru.Decoders.PCMCIA;
-using Schemas;
 using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -175,8 +176,8 @@ public partial class Dump
                 bool removable = !_dev.IsCompactFlash &&
                                  ataId.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.Removable);
 
-                DumpHardwareType currentTry = null;
-                ExtentsULong     extents    = null;
+                DumpHardware currentTry = null;
+                ExtentsULong extents    = null;
 
                 ResumeSupport.Process(ataReader.IsLba, removable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
                                       _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
@@ -595,7 +596,7 @@ public partial class Dump
 
                                 if(!error || recoveredError)
                                 {
-                                    mhddLog.Write(currentBlock, duration, 1);
+                                    mhddLog.Write(currentBlock, duration);
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                                     DateTime writeStart = DateTime.Now;
 
@@ -612,7 +613,7 @@ public partial class Dump
                                 else
                                 {
                                     _resume.BadBlocks.Add(currentBlock);
-                                    mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration, 1);
+                                    mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration);
 
                                     ibgLog.Write(currentBlock, 0);
                                     DateTime writeStart = DateTime.Now;
@@ -679,12 +680,12 @@ public partial class Dump
                     ApplicationVersion = Version.GetVersion()
                 };
 
-                if(!outputFormat.SetMetadata(metadata))
+                if(!outputFormat.SetImageInfo(metadata))
                     ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                          outputFormat.ErrorMessage);
 
                 if(_preSidecar != null)
-                    outputFormat.SetCicmMetadata(_preSidecar);
+                    outputFormat.SetMetadata(_preSidecar);
 
                 _dumpLog.WriteLine(Localization.Core.Closing_output_file);
                 UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
@@ -745,14 +746,14 @@ public partial class Dump
                     _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
                     _sidecarClass.EndProgressEvent2    += EndProgress2;
                     _sidecarClass.UpdateStatusEvent    += UpdateStatus;
-                    CICMMetadataType sidecar = _sidecarClass.Create();
+                    Metadata sidecar = _sidecarClass.Create();
 
                     if(!_aborted)
                     {
                         if(_preSidecar != null)
                         {
-                            _preSidecar.BlockMedia = sidecar.BlockMedia;
-                            sidecar                = _preSidecar;
+                            _preSidecar.BlockMedias = sidecar.BlockMedias;
+                            sidecar                 = _preSidecar;
                         }
 
                         if(_dev.IsUsb &&
@@ -761,15 +762,15 @@ public partial class Dump
                             _dumpLog.WriteLine(Localization.Core.Reading_USB_descriptors);
                             UpdateStatus?.Invoke(Localization.Core.Reading_USB_descriptors);
 
-                            sidecar.BlockMedia[0].USB = new USBType
+                            sidecar.BlockMedias[0].Usb = new Usb
                             {
                                 ProductID = _dev.UsbProductId,
                                 VendorID  = _dev.UsbVendorId,
-                                Descriptors = new DumpType
+                                Descriptors = new CommonTypes.AaruMetadata.Dump
                                 {
                                     Image     = _outputPath,
                                     Size      = (ulong)_dev.UsbDescriptors.Length,
-                                    Checksums = Checksum.GetChecksums(_dev.UsbDescriptors).ToArray()
+                                    Checksums = Checksum.GetChecksums(_dev.UsbDescriptors)
                                 }
                             };
                         }
@@ -780,13 +781,13 @@ public partial class Dump
                             _dumpLog.WriteLine(Localization.Core.Reading_PCMCIA_CIS);
                             UpdateStatus?.Invoke(Localization.Core.Reading_PCMCIA_CIS);
 
-                            sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
+                            sidecar.BlockMedias[0].Pcmcia = new Pcmcia
                             {
-                                CIS = new DumpType
+                                Cis = new CommonTypes.AaruMetadata.Dump
                                 {
                                     Image     = _outputPath,
                                     Size      = (ulong)_dev.Cis.Length,
-                                    Checksums = Checksum.GetChecksums(_dev.Cis).ToArray()
+                                    Checksums = Checksum.GetChecksums(_dev.Cis)
                                 }
                             };
 
@@ -804,12 +805,10 @@ public partial class Dump
 
                                             if(manufacturerId != null)
                                             {
-                                                sidecar.BlockMedia[0].PCMCIA.ManufacturerCode =
+                                                sidecar.BlockMedias[0].Pcmcia.ManufacturerCode =
                                                     manufacturerId.ManufacturerID;
 
-                                                sidecar.BlockMedia[0].PCMCIA.CardCode = manufacturerId.CardID;
-                                                sidecar.BlockMedia[0].PCMCIA.ManufacturerCodeSpecified = true;
-                                                sidecar.BlockMedia[0].PCMCIA.CardCodeSpecified = true;
+                                                sidecar.BlockMedias[0].Pcmcia.CardCode = manufacturerId.CardID;
                                             }
 
                                             break;
@@ -818,14 +817,14 @@ public partial class Dump
 
                                             if(version != null)
                                             {
-                                                sidecar.BlockMedia[0].PCMCIA.Manufacturer = version.Manufacturer;
-                                                sidecar.BlockMedia[0].PCMCIA.ProductName  = version.Product;
+                                                sidecar.BlockMedias[0].Pcmcia.Manufacturer = version.Manufacturer;
+                                                sidecar.BlockMedias[0].Pcmcia.ProductName  = version.Product;
 
-                                                sidecar.BlockMedia[0].PCMCIA.Compliance =
+                                                sidecar.BlockMedias[0].Pcmcia.Compliance =
                                                     $"{version.MajorVersion}.{version.MinorVersion}";
 
-                                                sidecar.BlockMedia[0].PCMCIA.AdditionalInformation =
-                                                    version.AdditionalInformation;
+                                                sidecar.BlockMedias[0].Pcmcia.AdditionalInformation =
+                                                    new List<string>(version.AdditionalInformation);
                                             }
 
                                             break;
@@ -835,13 +834,13 @@ public partial class Dump
                         if(_private)
                             DeviceReport.ClearIdentify(ataIdentify);
 
-                        sidecar.BlockMedia[0].ATA = new ATAType
+                        sidecar.BlockMedias[0].ATA = new ATA
                         {
-                            Identify = new DumpType
+                            Identify = new CommonTypes.AaruMetadata.Dump
                             {
                                 Image     = _outputPath,
                                 Size      = (ulong)cmdBuf.Length,
-                                Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
+                                Checksums = Checksum.GetChecksums(cmdBuf)
                             }
                         };
 
@@ -864,8 +863,8 @@ public partial class Dump
 
                         List<(ulong start, string type)> filesystems = new();
 
-                        if(sidecar.BlockMedia[0].FileSystemInformation != null)
-                            filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
+                        if(sidecar.BlockMedias[0].FileSystemInformation != null)
+                            filesystems.AddRange(from partition in sidecar.BlockMedias[0].FileSystemInformation
                                                  where partition.FileSystems != null
                                                  from fileSystem in partition.FileSystems
                                                  select (partition.StartSector, fileSystem.Type));
@@ -886,39 +885,40 @@ public partial class Dump
 
                         (string type, string subType) = CommonTypes.Metadata.MediaType.MediaTypeToString(mediaType);
 
-                        sidecar.BlockMedia[0].DiskType          = type;
-                        sidecar.BlockMedia[0].DiskSubType       = subType;
-                        sidecar.BlockMedia[0].Interface         = "ATA";
-                        sidecar.BlockMedia[0].LogicalBlocks     = blocks;
-                        sidecar.BlockMedia[0].PhysicalBlockSize = physicalSectorSize;
-                        sidecar.BlockMedia[0].LogicalBlockSize  = blockSize;
-                        sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
-                        sidecar.BlockMedia[0].Model             = _dev.Model;
+                        sidecar.BlockMedias[0].MediaType         = type;
+                        sidecar.BlockMedias[0].MediaSubType      = subType;
+                        sidecar.BlockMedias[0].Interface         = "ATA";
+                        sidecar.BlockMedias[0].LogicalBlocks     = blocks;
+                        sidecar.BlockMedias[0].PhysicalBlockSize = physicalSectorSize;
+                        sidecar.BlockMedias[0].LogicalBlockSize  = blockSize;
+                        sidecar.BlockMedias[0].Manufacturer      = _dev.Manufacturer;
+                        sidecar.BlockMedias[0].Model             = _dev.Model;
 
                         if(!_private)
-                            sidecar.BlockMedia[0].Serial = _dev.Serial;
+                            sidecar.BlockMedias[0].Serial = _dev.Serial;
 
-                        sidecar.BlockMedia[0].Size = blocks * blockSize;
+                        sidecar.BlockMedias[0].Size = blocks * blockSize;
 
                         if(cylinders > 0 &&
                            heads     > 0 &&
                            sectors   > 0)
                         {
-                            sidecar.BlockMedia[0].Cylinders                = cylinders;
-                            sidecar.BlockMedia[0].CylindersSpecified       = true;
-                            sidecar.BlockMedia[0].Heads                    = heads;
-                            sidecar.BlockMedia[0].HeadsSpecified           = true;
-                            sidecar.BlockMedia[0].SectorsPerTrack          = sectors;
-                            sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
+                            sidecar.BlockMedias[0].Cylinders       = cylinders;
+                            sidecar.BlockMedias[0].Heads           = heads;
+                            sidecar.BlockMedias[0].SectorsPerTrack = sectors;
                         }
 
                         UpdateStatus?.Invoke(Localization.Core.Writing_metadata_sidecar);
 
-                        var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
+                        var jsonFs = new FileStream(_outputPrefix + ".metadata.json", FileMode.Create);
 
-                        var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                        xmlSer.Serialize(xmlFs, sidecar);
-                        xmlFs.Close();
+                        JsonSerializer.Serialize(jsonFs, sidecar, new JsonSerializerOptions
+                        {
+                            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                            WriteIndented          = true
+                        });
+
+                        jsonFs.Close();
                     }
                 }
 

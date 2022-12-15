@@ -165,7 +165,7 @@ sealed class PrintHexCommand : Command
             return (int)opened;
         }
 
-        if(inputFormat.Info.XmlMediaType == XmlMediaType.LinearMedia)
+        if(inputFormat.Info.MetadataMediaType == MetadataMediaType.LinearMedia)
         {
             var byteAddressableImage = inputFormat as IByteAddressableImage;
 

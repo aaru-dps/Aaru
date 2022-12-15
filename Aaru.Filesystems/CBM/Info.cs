@@ -28,13 +28,13 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Claunia.Encoding;
-using Schemas;
 using Encoding = System.Text.Encoding;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -99,7 +99,7 @@ public sealed partial class CBM
 
         sbInformation.AppendLine(Localization.Commodore_file_system);
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type        = FS_TYPE,
             Clusters    = imagePlugin.Info.Sectors,
@@ -138,8 +138,8 @@ public sealed partial class CBM
             sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmHdr.name, Encoding)).
                           AppendLine();
 
-            XmlFsType.VolumeName   = StringHandlers.CToString(cbmHdr.name, Encoding);
-            XmlFsType.VolumeSerial = $"{cbmHdr.diskId}";
+            Metadata.VolumeName   = StringHandlers.CToString(cbmHdr.name, Encoding);
+            Metadata.VolumeSerial = $"{cbmHdr.diskId}";
         }
         else
         {
@@ -166,8 +166,8 @@ public sealed partial class CBM
             sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmBam.name, Encoding)).
                           AppendLine();
 
-            XmlFsType.VolumeName   = StringHandlers.CToString(cbmBam.name, Encoding);
-            XmlFsType.VolumeSerial = $"{cbmBam.diskId}";
+            Metadata.VolumeName   = StringHandlers.CToString(cbmBam.name, Encoding);
+            Metadata.VolumeSerial = $"{cbmBam.diskId}";
         }
 
         information = sbInformation.ToString();

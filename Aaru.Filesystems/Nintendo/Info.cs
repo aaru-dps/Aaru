@@ -28,12 +28,12 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -67,7 +67,7 @@ public sealed partial class NintendoPlugin
         Encoding = encoding ?? Encoding.GetEncoding("shift_jis");
         var sbInformation = new StringBuilder();
         information = "";
-        XmlFsType   = new FileSystemType();
+        Metadata    = new FileSystem();
 
         var fields = new NintendoFields();
 
@@ -323,12 +323,12 @@ public sealed partial class NintendoPlugin
             sbInformation.AppendFormat(Localization.FST_starts_at_0_and_has_1_bytes, fields.FstOff, fields.FstSize).
                           AppendLine();
 
-        information            = sbInformation.ToString();
-        XmlFsType.Bootable     = true;
-        XmlFsType.Clusters     = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048;
-        XmlFsType.ClusterSize  = 2048;
-        XmlFsType.Type         = wii ? FS_TYPE_WII : FS_TYPE_NGC;
-        XmlFsType.VolumeName   = fields.Title;
-        XmlFsType.VolumeSerial = fields.DiscId;
+        information           = sbInformation.ToString();
+        Metadata.Bootable     = true;
+        Metadata.Clusters     = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048;
+        Metadata.ClusterSize  = 2048;
+        Metadata.Type         = wii ? FS_TYPE_WII : FS_TYPE_NGC;
+        Metadata.VolumeName   = fields.Title;
+        Metadata.VolumeSerial = fields.DiscId;
     }
 }

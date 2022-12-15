@@ -32,12 +32,12 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 using ufs_daddr_t = System.Int32;
 
 namespace Aaru.Filesystems;
@@ -151,7 +151,7 @@ public sealed partial class dump
 
         var sb = new StringBuilder();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             ClusterSize = 1024,
             Clusters    = partition.Size / 1024
@@ -159,75 +159,70 @@ public sealed partial class dump
 
         if(useOld)
         {
-            XmlFsType.Type = Localization.Old_16_bit_dump_8;
-            sb.AppendLine(XmlFsType.Type);
+            Metadata.Type = Localization.Old_16_bit_dump_8;
+            sb.AppendLine(Metadata.Type);
 
             if(oldHdr.c_date > 0)
             {
-                XmlFsType.CreationDate          = DateHandlers.UnixToDateTime(oldHdr.c_date);
-                XmlFsType.CreationDateSpecified = true;
-                sb.AppendFormat(Localization.Dump_created_on_0, XmlFsType.CreationDate).AppendLine();
+                Metadata.CreationDate = DateHandlers.UnixToDateTime(oldHdr.c_date);
+                sb.AppendFormat(Localization.Dump_created_on_0, Metadata.CreationDate).AppendLine();
             }
 
             if(oldHdr.c_ddate > 0)
             {
-                XmlFsType.BackupDate          = DateHandlers.UnixToDateTime(oldHdr.c_ddate);
-                XmlFsType.BackupDateSpecified = true;
-                sb.AppendFormat(Localization.Previous_dump_created_on_0, XmlFsType.BackupDate).AppendLine();
+                Metadata.BackupDate = DateHandlers.UnixToDateTime(oldHdr.c_ddate);
+                sb.AppendFormat(Localization.Previous_dump_created_on_0, Metadata.BackupDate).AppendLine();
             }
 
             sb.AppendFormat(Localization.Dump_volume_number_0, oldHdr.c_volume).AppendLine();
         }
         else if(useAix)
         {
-            XmlFsType.Type = FS_TYPE;
-            sb.AppendLine(XmlFsType.Type);
+            Metadata.Type = FS_TYPE;
+            sb.AppendLine(Metadata.Type);
 
             if(aixHdr.c_date > 0)
             {
-                XmlFsType.CreationDate          = DateHandlers.UnixToDateTime(aixHdr.c_date);
-                XmlFsType.CreationDateSpecified = true;
-                sb.AppendFormat(Localization.Dump_created_on_0, XmlFsType.CreationDate).AppendLine();
+                Metadata.CreationDate = DateHandlers.UnixToDateTime(aixHdr.c_date);
+
+                sb.AppendFormat(Localization.Dump_created_on_0, Metadata.CreationDate).AppendLine();
             }
 
             if(aixHdr.c_ddate > 0)
             {
-                XmlFsType.BackupDate          = DateHandlers.UnixToDateTime(aixHdr.c_ddate);
-                XmlFsType.BackupDateSpecified = true;
-                sb.AppendFormat(Localization.Previous_dump_created_on_0, XmlFsType.BackupDate).AppendLine();
+                Metadata.BackupDate = DateHandlers.UnixToDateTime(aixHdr.c_ddate);
+                sb.AppendFormat(Localization.Previous_dump_created_on_0, Metadata.BackupDate).AppendLine();
             }
 
             sb.AppendFormat(Localization.Dump_volume_number_0, aixHdr.c_volume).AppendLine();
         }
         else
         {
-            XmlFsType.Type = FS_TYPE;
-            sb.AppendLine(XmlFsType.Type);
+            Metadata.Type = FS_TYPE;
+            sb.AppendLine(Metadata.Type);
 
             if(newHdr.c_ndate > 0)
             {
-                XmlFsType.CreationDate          = DateHandlers.UnixToDateTime(newHdr.c_ndate);
-                XmlFsType.CreationDateSpecified = true;
-                sb.AppendFormat(Localization.Dump_created_on_0, XmlFsType.CreationDate).AppendLine();
+                Metadata.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_ndate);
+
+                sb.AppendFormat(Localization.Dump_created_on_0, Metadata.CreationDate).AppendLine();
             }
             else if(newHdr.c_date > 0)
             {
-                XmlFsType.CreationDate          = DateHandlers.UnixToDateTime(newHdr.c_date);
-                XmlFsType.CreationDateSpecified = true;
-                sb.AppendFormat(Localization.Dump_created_on_0, XmlFsType.CreationDate).AppendLine();
+                Metadata.CreationDate = DateHandlers.UnixToDateTime(newHdr.c_date);
+
+                sb.AppendFormat(Localization.Dump_created_on_0, Metadata.CreationDate).AppendLine();
             }
 
             if(newHdr.c_nddate > 0)
             {
-                XmlFsType.BackupDate          = DateHandlers.UnixToDateTime(newHdr.c_nddate);
-                XmlFsType.BackupDateSpecified = true;
-                sb.AppendFormat(Localization.Previous_dump_created_on_0, XmlFsType.BackupDate).AppendLine();
+                Metadata.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_nddate);
+                sb.AppendFormat(Localization.Previous_dump_created_on_0, Metadata.BackupDate).AppendLine();
             }
             else if(newHdr.c_ddate > 0)
             {
-                XmlFsType.BackupDate          = DateHandlers.UnixToDateTime(newHdr.c_ddate);
-                XmlFsType.BackupDateSpecified = true;
-                sb.AppendFormat(Localization.Previous_dump_created_on_0, XmlFsType.BackupDate).AppendLine();
+                Metadata.BackupDate = DateHandlers.UnixToDateTime(newHdr.c_ddate);
+                sb.AppendFormat(Localization.Previous_dump_created_on_0, Metadata.BackupDate).AppendLine();
             }
 
             sb.AppendFormat(Localization.Dump_volume_number_0, newHdr.c_volume).AppendLine();
@@ -236,7 +231,7 @@ public sealed partial class dump
 
             if(!string.IsNullOrEmpty(dumpname))
             {
-                XmlFsType.VolumeName = dumpname;
+                Metadata.VolumeName = dumpname;
                 sb.AppendFormat(Localization.Dump_label_0, dumpname).AppendLine();
             }
 

@@ -27,12 +27,12 @@
 // ****************************************************************************/
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -93,7 +93,7 @@ public sealed partial class Fossil
 
         ulong sbLocation = (hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize)) + partition.Start;
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type        = FS_TYPE,
             ClusterSize = hdr.blockSize,
@@ -116,7 +116,7 @@ public sealed partial class Fossil
                 sb.AppendFormat(Localization.Next_root_block_0, fsb.next).AppendLine();
                 sb.AppendFormat(Localization.Current_root_block_0, fsb.current).AppendLine();
                 sb.AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(fsb.name, Encoding)).AppendLine();
-                XmlFsType.VolumeName = StringHandlers.CToString(fsb.name, Encoding);
+                Metadata.VolumeName = StringHandlers.CToString(fsb.name, Encoding);
             }
         }
 

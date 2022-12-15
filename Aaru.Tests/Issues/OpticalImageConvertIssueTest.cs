@@ -5,17 +5,18 @@ using System.Linq;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Media;
 using Aaru.Devices;
 using NUnit.Framework;
-using Schemas;
+using File = System.IO.File;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
+using Track = Aaru.CommonTypes.Structs.Track;
 using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.Tests.Issues;
@@ -42,9 +43,9 @@ public abstract class OpticalImageConvertIssueTest
     {
         Environment.CurrentDirectory = DataFolder;
 
-        Resume           resume  = null;
-        CICMMetadataType sidecar = null;
-        ErrorNumber      errno;
+        Resume      resume  = null;
+        Metadata    sidecar = null;
+        ErrorNumber errno;
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = filtersList.GetFilter(InputPath);
@@ -97,11 +98,11 @@ public abstract class OpticalImageConvertIssueTest
             MediaTitle            = inputFormat.Info.MediaTitle
         };
 
-        Assert.IsTrue(outputOptical.SetMetadata(metadata),
+        Assert.IsTrue(outputOptical.SetImageInfo(metadata),
                       string.Format(Localization.Error_0_setting_metadata, outputOptical.ErrorMessage));
 
-        CICMMetadataType       cicmMetadata = inputFormat.CicmMetadata;
-        List<DumpHardwareType> dumpHardware = inputFormat.DumpHardware;
+        Metadata           aaruMetadata = inputFormat.AaruMetadata;
+        List<DumpHardware> dumpHardware = inputFormat.DumpHardware;
 
         foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
                     outputOptical.SupportedMediaTags.Contains(mediaTag)))
@@ -376,12 +377,12 @@ public abstract class OpticalImageConvertIssueTest
         }
 
         if(sidecar      != null ||
-           cicmMetadata != null)
+           aaruMetadata != null)
         {
             if(sidecar != null)
-                outputOptical.SetCicmMetadata(sidecar);
-            else if(cicmMetadata != null)
-                outputOptical.SetCicmMetadata(cicmMetadata);
+                outputOptical.SetMetadata(sidecar);
+            else if(aaruMetadata != null)
+                outputOptical.SetMetadata(aaruMetadata);
         }
 
         Assert.True(outputOptical.Close(),

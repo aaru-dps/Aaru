@@ -225,7 +225,7 @@ public sealed partial class FAT
         if(startCluster == 0)
             return Array.Empty<uint>();
 
-        if(startCluster >= XmlFsType.Clusters)
+        if(startCluster >= Metadata.Clusters)
             return null;
 
         List<uint> clusters = new();

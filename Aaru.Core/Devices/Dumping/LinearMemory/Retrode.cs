@@ -423,7 +423,7 @@ public partial class Dump
             ApplicationVersion = Version.GetVersion()
         };
 
-        if(!outputBai.SetMetadata(metadata))
+        if(!outputBai.SetImageInfo(metadata))
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputBai.ErrorMessage);
 
@@ -431,7 +431,7 @@ public partial class Dump
         //outputBAI.SetDumpHardware();
 
         if(_preSidecar != null)
-            outputBai.SetCicmMetadata(_preSidecar);
+            outputBai.SetMetadata(_preSidecar);
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);

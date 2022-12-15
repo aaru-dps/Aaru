@@ -36,6 +36,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -49,12 +50,12 @@ using Aaru.Decoders.PCMCIA;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.Xbox;
 using Aaru.Helpers;
-using Schemas;
 using Spectre.Console;
 using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Inquiry = Aaru.Decoders.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
+using Track = Aaru.CommonTypes.Structs.Track;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 
 namespace Aaru.Core;
@@ -105,7 +106,7 @@ public static class ImageInfo
             AaruConsole.WriteLine(Localization.Core.Last_modified_on_0, imageFormat.Info.LastModificationTime);
 
         AaruConsole.WriteLine(Localization.Core.Contains_a_media_of_type_0_and_XML_type_1_WithMarkup,
-                              imageFormat.Info.MediaType, imageFormat.Info.XmlMediaType);
+                              imageFormat.Info.MediaType, imageFormat.Info.MetadataMediaType);
 
         AaruConsole.WriteLine(imageFormat.Info.HasPartitions ? Localization.Core.Has_partitions
                                   : Localization.Core.Doesnt_have_partitions);
@@ -161,9 +162,9 @@ public static class ImageInfo
             AaruConsole.WriteLine(Localization.Core.Drive_firmware_info_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.DriveFirmwareRevision));
 
-        if(imageFormat.Info.Cylinders > 0                            &&
-           imageFormat.Info is { Heads: > 0, SectorsPerTrack: > 0 }  &&
-           imageFormat.Info.XmlMediaType != XmlMediaType.OpticalDisc &&
+        if(imageFormat.Info.Cylinders > 0                                      &&
+           imageFormat.Info is { Heads: > 0, SectorsPerTrack: > 0 }            &&
+           imageFormat.Info.MetadataMediaType != MetadataMediaType.OpticalDisc &&
            imageFormat is not ITapeImage { IsTape: true })
             AaruConsole.WriteLine(Localization.Core.Media_geometry_0_cylinders_1_heads_2_sectors_per_track_WithMarkup,
                                   imageFormat.Info.Cylinders, imageFormat.Info.Heads, imageFormat.Info.SectorsPerTrack);
@@ -192,7 +193,7 @@ public static class ImageInfo
 
         AaruConsole.WriteLine();
 
-        if(imageFormat.Info.XmlMediaType == XmlMediaType.LinearMedia)
+        if(imageFormat.Info.MetadataMediaType == MetadataMediaType.LinearMedia)
             PrintByteAddressableImageInfo(imageFormat as IByteAddressableImage);
         else
             PrintBlockImageInfo(imageFormat as IMediaImage);
@@ -208,7 +209,7 @@ public static class ImageInfo
         int osLen           = Localization.Core.Title_Operating_system.Length;
         int sectorLen       = Localization.Core.Title_Start.Length;
 
-        foreach(DumpHardwareType dump in imageFormat.DumpHardware)
+        foreach(DumpHardware dump in imageFormat.DumpHardware)
         {
             if(dump.Manufacturer?.Length > manufacturerLen)
                 manufacturerLen = dump.Manufacturer.Length;
@@ -228,7 +229,7 @@ public static class ImageInfo
             if(dump.Software?.OperatingSystem?.Length > osLen)
                 osLen = dump.Software.OperatingSystem.Length;
 
-            foreach(ExtentType extent in dump.Extents)
+            foreach(Extent extent in dump.Extents)
             {
                 if($"{extent.Start}".Length > sectorLen)
                     sectorLen = $"{extent.Start}".Length;
@@ -252,9 +253,9 @@ public static class ImageInfo
         table.AddColumn(Localization.Core.Title_Start);
         table.AddColumn(Localization.Core.Title_End);
 
-        foreach(DumpHardwareType dump in imageFormat.DumpHardware)
+        foreach(DumpHardware dump in imageFormat.DumpHardware)
         {
-            foreach(ExtentType extent in dump.Extents)
+            foreach(Extent extent in dump.Extents)
                 table.AddRow(Markup.Escape(dump.Manufacturer ?? ""), Markup.Escape(dump.Model ?? ""),
                              Markup.Escape(dump.Serial ?? ""), Markup.Escape(dump.Software.Name ?? ""),
                              Markup.Escape(dump.Software.Version ?? ""),
@@ -527,7 +528,9 @@ public static class ImageInfo
 
             if(errno == ErrorNumber.NoError)
             {
-                AaruConsole.WriteLine(Localization.Core.DVD_RAM_Disc_Definition_Structure_contained_in_image_WithMarkup);
+                AaruConsole.WriteLine(Localization.Core.
+                                                   DVD_RAM_Disc_Definition_Structure_contained_in_image_WithMarkup);
+
                 AaruConsole.Write("{0}", DDS.Prettify(dds));
                 AaruConsole.WriteLine();
             }

@@ -37,15 +37,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -782,31 +782,27 @@ public sealed partial class CPM
         _cpmStat.Type           = FS_TYPE;
 
         // Generate XML info
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Clusters              = _cpmStat.Blocks,
-            ClusterSize           = (uint)blockSize,
-            Files                 = (ulong)_fileCache.Count,
-            FilesSpecified        = true,
-            FreeClusters          = _cpmStat.FreeBlocks,
-            FreeClustersSpecified = true,
-            Type                  = FS_TYPE
+            Clusters     = _cpmStat.Blocks,
+            ClusterSize  = (uint)blockSize,
+            Files        = (ulong)_fileCache.Count,
+            FreeClusters = _cpmStat.FreeBlocks,
+            Type         = FS_TYPE
         };
 
         if(_labelCreationDate != null)
         {
-            XmlFsType.CreationDate          = DateHandlers.CpmToDateTime(_labelCreationDate);
-            XmlFsType.CreationDateSpecified = true;
+            Metadata.CreationDate = DateHandlers.CpmToDateTime(_labelCreationDate);
         }
 
         if(_labelUpdateDate != null)
         {
-            XmlFsType.ModificationDate          = DateHandlers.CpmToDateTime(_labelUpdateDate);
-            XmlFsType.ModificationDateSpecified = true;
+            Metadata.ModificationDate = DateHandlers.CpmToDateTime(_labelUpdateDate);
         }
 
         if(!string.IsNullOrEmpty(_label))
-            XmlFsType.VolumeName = _label;
+            Metadata.VolumeName = _label;
 
         _mounted = true;
 

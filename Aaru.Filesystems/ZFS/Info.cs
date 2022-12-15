@@ -30,10 +30,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -154,18 +154,18 @@ public sealed partial class ZFS
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
             Type = FS_TYPE
         };
 
         if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj))
-            XmlFsType.VolumeName = (string)tmpObj.value;
+            Metadata.VolumeName = (string)tmpObj.value;
 
         if(decodedNvList.TryGetValue("guid", out tmpObj))
-            XmlFsType.VolumeSerial = $"{(ulong)tmpObj.value}";
+            Metadata.VolumeSerial = $"{(ulong)tmpObj.value}";
 
         if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
-            XmlFsType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
+            Metadata.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
     }
 }

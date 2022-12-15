@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.Bluray;
@@ -43,7 +44,6 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decryption;
 using Aaru.Decryption.DVD;
 using Aaru.Devices;
-using Schemas;
 using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using DVDDecryption = Aaru.Decryption.DVD.Dump;
@@ -802,36 +802,35 @@ partial class Dump
     }
 
     // TODO: Move somewhere else
-    internal static void AddMediaTagToSidecar(string outputPath, MediaTagType tagType, byte[] tag,
-                                              ref CICMMetadataType sidecar)
+    internal static void AddMediaTagToSidecar(string outputPath, MediaTagType tagType, byte[] tag, ref Metadata sidecar)
     {
         switch(tagType)
         {
             case MediaTagType.DVD_PFI:
-                sidecar.OpticalDisc[0].PFI = new DumpType
+                sidecar.OpticalDiscs[0].Pfi = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.DVD_DMI:
-                sidecar.OpticalDisc[0].DMI = new DumpType
+                sidecar.OpticalDiscs[0].Dmi = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.DVD_CMI:
             case MediaTagType.HDDVD_CPI:
-                sidecar.OpticalDisc[0].CMI = new DumpType
+                sidecar.OpticalDiscs[0].Cmi = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 byte[] tmp = new byte[tag.Length + 4];
@@ -843,190 +842,190 @@ partial class Dump
 
                 if(cpy.HasValue &&
                    cpy.Value.CopyrightType != CopyrightType.NoProtection)
-                    sidecar.OpticalDisc[0].CopyProtection = cpy.Value.CopyrightType.ToString();
+                    sidecar.OpticalDiscs[0].CopyProtection = cpy.Value.CopyrightType.ToString();
 
                 break;
             case MediaTagType.DVD_BCA:
             case MediaTagType.BD_BCA:
-                sidecar.OpticalDisc[0].BCA = new DumpType
+                sidecar.OpticalDiscs[0].Bca = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.BD_DDS:
             case MediaTagType.DVDRAM_DDS:
-                sidecar.OpticalDisc[0].DDS = new DumpType
+                sidecar.OpticalDiscs[0].Dds = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.DVDRAM_SpareArea:
             case MediaTagType.BD_SpareArea:
-                sidecar.OpticalDisc[0].SAI = new DumpType
+                sidecar.OpticalDiscs[0].Sai = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.DVDR_PreRecordedInfo:
-                sidecar.OpticalDisc[0].PRI = new DumpType
+                sidecar.OpticalDiscs[0].Pri = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.DVD_MediaIdentifier:
-                sidecar.OpticalDisc[0].MediaID = new DumpType
+                sidecar.OpticalDiscs[0].MediaID = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.DVDR_PFI:
-                sidecar.OpticalDisc[0].PFIR = new DumpType
+                sidecar.OpticalDiscs[0].Pfir = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.DVD_ADIP:
-                sidecar.OpticalDisc[0].ADIP = new DumpType
+                sidecar.OpticalDiscs[0].Adip = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.DCB:
-                sidecar.OpticalDisc[0].DCB = new DumpType
+                sidecar.OpticalDiscs[0].Dcb = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.BD_DI:
-                sidecar.OpticalDisc[0].DI = new DumpType
+                sidecar.OpticalDiscs[0].Di = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.Xbox_SecuritySector:
-                sidecar.OpticalDisc[0].Xbox ??= new XboxType();
+                sidecar.OpticalDiscs[0].Xbox ??= new Xbox();
 
-                sidecar.OpticalDisc[0].Xbox.SecuritySectors = new[]
+                sidecar.OpticalDiscs[0].Xbox.SecuritySectors = new List<XboxSecuritySector>
                 {
-                    new XboxSecuritySectorsType
+                    new()
                     {
                         RequestNumber  = 0,
                         RequestVersion = 1,
-                        SecuritySectors = new DumpType
+                        SecuritySectors = new CommonTypes.AaruMetadata.Dump
                         {
                             Image     = outputPath,
                             Size      = (ulong)tag.Length,
-                            Checksums = Checksum.GetChecksums(tag).ToArray()
+                            Checksums = Checksum.GetChecksums(tag)
                         }
                     }
                 };
 
                 break;
             case MediaTagType.Xbox_PFI:
-                sidecar.OpticalDisc[0].Xbox ??= new XboxType();
+                sidecar.OpticalDiscs[0].Xbox ??= new Xbox();
 
-                sidecar.OpticalDisc[0].Xbox.PFI = new DumpType
+                sidecar.OpticalDiscs[0].Xbox.Pfi = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.Xbox_DMI:
-                sidecar.OpticalDisc[0].Xbox ??= new XboxType();
+                sidecar.OpticalDiscs[0].Xbox ??= new Xbox();
 
-                sidecar.OpticalDisc[0].Xbox.DMI = new DumpType
+                sidecar.OpticalDiscs[0].Xbox.Dmi = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.CD_FullTOC:
-                sidecar.OpticalDisc[0].TOC = new DumpType
+                sidecar.OpticalDiscs[0].Toc = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.CD_ATIP:
-                sidecar.OpticalDisc[0].ATIP = new DumpType
+                sidecar.OpticalDiscs[0].Atip = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.CD_PMA:
-                sidecar.OpticalDisc[0].PMA = new DumpType
+                sidecar.OpticalDiscs[0].Pma = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.CD_TEXT:
-                sidecar.OpticalDisc[0].LeadInCdText = new DumpType
+                sidecar.OpticalDiscs[0].LeadInCdText = new CommonTypes.AaruMetadata.Dump
                 {
                     Image     = outputPath,
                     Size      = (ulong)tag.Length,
-                    Checksums = Checksum.GetChecksums(tag).ToArray()
+                    Checksums = Checksum.GetChecksums(tag)
                 };
 
                 break;
             case MediaTagType.CD_FirstTrackPregap:
-                sidecar.OpticalDisc[0].FirstTrackPregrap = new[]
+                sidecar.OpticalDiscs[0].FirstTrackPregrap = new List<Border>
                 {
-                    new BorderType
+                    new()
                     {
                         Image     = outputPath,
                         Size      = (ulong)tag.Length,
-                        Checksums = Checksum.GetChecksums(tag).ToArray()
+                        Checksums = Checksum.GetChecksums(tag)
                     }
                 };
 
                 break;
             case MediaTagType.CD_LeadIn:
-                sidecar.OpticalDisc[0].LeadIn = new[]
+                sidecar.OpticalDiscs[0].LeadIn = new List<Border>
                 {
-                    new BorderType
+                    new()
                     {
                         Image     = outputPath,
                         Size      = (ulong)tag.Length,
-                        Checksums = Checksum.GetChecksums(tag).ToArray()
+                        Checksums = Checksum.GetChecksums(tag)
                     }
                 };
 

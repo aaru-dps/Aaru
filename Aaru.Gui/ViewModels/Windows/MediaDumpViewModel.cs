@@ -44,6 +44,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
@@ -63,6 +64,8 @@ using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 using Schemas;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
+using Dump = Aaru.Core.Devices.Dumping.Dump;
+using File = System.IO.File;
 using MediaType = Aaru.CommonTypes.MediaType;
 
 namespace Aaru.Gui.ViewModels.Windows;
@@ -100,7 +103,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
     double           _retries;
     EncodingModel    _selectedEncoding;
     ImagePluginModel _selectedPlugin;
-    CICMMetadataType _sidecar;
+    Metadata         _sidecar;
     double           _skipped;
     bool             _startVisible;
     bool             _stopEnabled;
@@ -252,7 +255,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
     public string ResumeLabel           => UI.Create_use_resume_mapfile;
     public string Track1PregapLabel     => UI.Try_to_read_track_1_pregap;
     public string SkippedLabel          => UI.Skipped_sectors_on_error;
-    public string SidecarLabel          => UI.Create_CICM_XML_metadata_sidecar;
+    public string SidecarLabel          => UI.Create_Aaru_Metadata_sidecar;
     public string TrimLabel             => UI.Trim_errors_from_skipped_sectors;
     public string ExistingMetadataLabel => UI.Take_metadata_from_existing_CICM_XML_sidecar;
     public string EncodingLabel         => UI.Encoding_to_use_on_metadata_sidecar_creation;
@@ -509,7 +512,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
             dlgMetadata.Filters?.Add(new FileDialogFilter
             {
-                Name = UI.Dialog_CICM_XML_metadata,
+                Name = UI.Dialog_Aaru_Metadata,
                 Extensions = new List<string>(new[]
                 {
                     ".xml"
@@ -530,7 +533,8 @@ public sealed class MediaDumpViewModel : ViewModelBase
             try
             {
                 var sr = new StreamReader(result[0]);
-                _sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
+
+                //       _sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
                 sr.Close();
             }
             catch

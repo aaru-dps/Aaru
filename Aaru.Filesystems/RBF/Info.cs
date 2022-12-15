@@ -27,12 +27,12 @@
 // ****************************************************************************/
 
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -192,18 +192,16 @@ public sealed partial class RBF : IFilesystem
             sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(rbf9000Sb.rid_name, Encoding)).
                AppendLine();
 
-            XmlFsType = new FileSystemType
+            Metadata = new FileSystem
             {
-                Type                      = FS_TYPE,
-                Bootable                  = rbf9000Sb.rid_bootfile > 0,
-                ClusterSize               = rbf9000Sb.rid_blocksize,
-                Clusters                  = rbf9000Sb.rid_totblocks,
-                CreationDate              = DateHandlers.UnixToDateTime(rbf9000Sb.rid_ctime),
-                CreationDateSpecified     = true,
-                ModificationDate          = DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime),
-                ModificationDateSpecified = true,
-                VolumeName                = StringHandlers.CToString(rbf9000Sb.rid_name, Encoding),
-                VolumeSerial              = $"{rbf9000Sb.rid_diskid:X8}"
+                Type             = FS_TYPE,
+                Bootable         = rbf9000Sb.rid_bootfile > 0,
+                ClusterSize      = rbf9000Sb.rid_blocksize,
+                Clusters         = rbf9000Sb.rid_totblocks,
+                CreationDate     = DateHandlers.UnixToDateTime(rbf9000Sb.rid_ctime),
+                ModificationDate = DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime),
+                VolumeName       = StringHandlers.CToString(rbf9000Sb.rid_name, Encoding),
+                VolumeSerial     = $"{rbf9000Sb.rid_diskid:X8}"
             };
         }
         else
@@ -257,16 +255,15 @@ public sealed partial class RBF : IFilesystem
             sb.AppendFormat(Localization.Path_descriptor_options_0, StringHandlers.CToString(rbfSb.dd_opt, Encoding)).
                AppendLine();
 
-            XmlFsType = new FileSystemType
+            Metadata = new FileSystem
             {
-                Type                  = FS_TYPE,
-                Bootable              = LSNToUInt32(rbfSb.dd_bt) > 0 && rbfSb.dd_bsz > 0,
-                ClusterSize           = (uint)(rbfSb.dd_bit * (256 << rbfSb.dd_lsnsize)),
-                Clusters              = LSNToUInt32(rbfSb.dd_tot),
-                CreationDate          = DateHandlers.Os9ToDateTime(rbfSb.dd_dat),
-                CreationDateSpecified = true,
-                VolumeName            = StringHandlers.CToString(rbfSb.dd_nam, Encoding),
-                VolumeSerial          = $"{rbfSb.dd_dsk:X4}"
+                Type         = FS_TYPE,
+                Bootable     = LSNToUInt32(rbfSb.dd_bt) > 0 && rbfSb.dd_bsz > 0,
+                ClusterSize  = (uint)(rbfSb.dd_bit * (256 << rbfSb.dd_lsnsize)),
+                Clusters     = LSNToUInt32(rbfSb.dd_tot),
+                CreationDate = DateHandlers.Os9ToDateTime(rbfSb.dd_dat),
+                VolumeName   = StringHandlers.CToString(rbfSb.dd_nam, Encoding),
+                VolumeSerial = $"{rbfSb.dd_dsk:X4}"
             };
         }
 

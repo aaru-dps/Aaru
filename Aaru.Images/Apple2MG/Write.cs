@@ -35,10 +35,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
-using Schemas;
 
 namespace Aaru.DiscImages;
 
@@ -243,11 +243,11 @@ public sealed partial class Apple2Mg
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata)
+    public bool SetImageInfo(ImageInfo imageInfo)
     {
-        _imageInfo.Comments          = metadata.Comments;
-        _imageInfo.LastMediaSequence = metadata.LastMediaSequence;
-        _imageInfo.MediaSequence     = metadata.MediaSequence;
+        _imageInfo.Comments          = imageInfo.Comments;
+        _imageInfo.LastMediaSequence = imageInfo.LastMediaSequence;
+        _imageInfo.MediaSequence     = imageInfo.MediaSequence;
 
         return true;
     }
@@ -272,8 +272,8 @@ public sealed partial class Apple2Mg
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 }

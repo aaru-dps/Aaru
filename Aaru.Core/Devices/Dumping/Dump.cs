@@ -39,13 +39,14 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Core.Logging;
 using Aaru.Database;
 using Aaru.Devices;
-using Schemas;
+using File = System.IO.File;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -88,7 +89,7 @@ public partial class Dump
     readonly IBaseWritableImage         _outputPlugin;
     readonly string                     _outputPrefix;
     readonly bool                       _persistent;
-    readonly CICMMetadataType           _preSidecar;
+    readonly Metadata                   _preSidecar;
     readonly bool                       _private;
     readonly ushort                     _retryPasses;
     readonly bool                       _retrySubchannel;
@@ -157,12 +158,11 @@ public partial class Dump
     public Dump(bool doResume, Device dev, string devicePath, IBaseWritableImage outputPlugin, ushort retryPasses,
                 bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                 Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
-                CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,
-                bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
-                bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc,
-                bool skipCdireadyHole, ErrorLog errorLog, bool generateSubchannels, uint maximumReadable,
-                bool useBufferedReads, bool storeEncrypted, bool titleKeys, uint ignoreCdrRunOuts, bool createGraph,
-                uint dimensions)
+                Metadata preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap, bool fixOffset,
+                bool debug, DumpSubchannel subchannel, int speed, bool @private, bool fixSubchannelPosition,
+                bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc, bool skipCdireadyHole,
+                ErrorLog errorLog, bool generateSubchannels, uint maximumReadable, bool useBufferedReads,
+                bool storeEncrypted, bool titleKeys, uint ignoreCdrRunOuts, bool createGraph, uint dimensions)
     {
         _doResume              = doResume;
         _dev                   = dev;

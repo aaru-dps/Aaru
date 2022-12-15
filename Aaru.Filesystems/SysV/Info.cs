@@ -32,11 +32,11 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
 
@@ -336,7 +336,7 @@ public sealed partial class SysVfs
            !xenix3)
             return;
 
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
         if(xenix || xenix3)
         {
@@ -417,25 +417,25 @@ public sealed partial class SysVfs
 
             uint bs = 512;
             sb.AppendLine(Localization.XENIX_filesystem);
-            XmlFsType.Type = FS_TYPE_XENIX;
+            Metadata.Type = FS_TYPE_XENIX;
 
             switch(xnx_sb.s_type)
             {
                 case 1:
                     sb.AppendLine(Localization._512_bytes_per_block);
-                    XmlFsType.ClusterSize = 512;
+                    Metadata.ClusterSize = 512;
 
                     break;
                 case 2:
                     sb.AppendLine(Localization._1024_bytes_per_block);
-                    bs                    = 1024;
-                    XmlFsType.ClusterSize = 1024;
+                    bs                   = 1024;
+                    Metadata.ClusterSize = 1024;
 
                     break;
                 case 3:
                     sb.AppendLine(Localization._2048_bytes_per_block);
-                    bs                    = 2048;
-                    XmlFsType.ClusterSize = 2048;
+                    bs                   = 2048;
+                    Metadata.ClusterSize = 2048;
 
                     break;
                 default:
@@ -494,12 +494,11 @@ public sealed partial class SysVfs
 
             if(xnx_sb.s_time != 0)
             {
-                XmlFsType.ModificationDate          = DateHandlers.UnixToDateTime(xnx_sb.s_time);
-                XmlFsType.ModificationDateSpecified = true;
+                Metadata.ModificationDate = DateHandlers.UnixToDateTime(xnx_sb.s_time);
             }
 
             sb.AppendFormat(Localization.Volume_name_0, xnx_sb.s_fname).AppendLine();
-            XmlFsType.VolumeName = xnx_sb.s_fname;
+            Metadata.VolumeName = xnx_sb.s_fname;
             sb.AppendFormat(Localization.Pack_name_0, xnx_sb.s_fpack).AppendLine();
 
             if(xnx_sb.s_clean == 0x46)
@@ -507,7 +506,7 @@ public sealed partial class SysVfs
             else
             {
                 sb.AppendLine(Localization.Volume_is_dirty);
-                XmlFsType.Dirty = true;
+                Metadata.Dirty = true;
             }
         }
 
@@ -533,17 +532,17 @@ public sealed partial class SysVfs
             switch(sysv_sb.s_type)
             {
                 case 1:
-                    XmlFsType.ClusterSize = 512;
+                    Metadata.ClusterSize = 512;
 
                     break;
                 case 2:
-                    bs                    = 1024;
-                    XmlFsType.ClusterSize = 1024;
+                    bs                   = 1024;
+                    Metadata.ClusterSize = 1024;
 
                     break;
                 case 3:
-                    bs                    = 2048;
-                    XmlFsType.ClusterSize = 2048;
+                    bs                   = 2048;
+                    Metadata.ClusterSize = 2048;
 
                     break;
                 default:
@@ -583,7 +582,7 @@ public sealed partial class SysVfs
                 Array.Copy(sb_sector, 0x1BC + offset, sysv_strings, 0, 6);
                 sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, Encoding);
                 sb.AppendLine(Localization.System_V_Release_4_filesystem);
-                XmlFsType.Type = FS_TYPE_SVR4;
+                Metadata.Type = FS_TYPE_SVR4;
             }
             else
             {
@@ -609,7 +608,7 @@ public sealed partial class SysVfs
                 Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
                 sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, Encoding);
                 sb.AppendLine(Localization.System_V_Release_2_filesystem);
-                XmlFsType.Type = FS_TYPE_SVR2;
+                Metadata.Type = FS_TYPE_SVR2;
             }
 
             if(bigEndian)
@@ -631,7 +630,7 @@ public sealed partial class SysVfs
 
             sb.AppendFormat(Localization._0_bytes_per_block, bs).AppendLine();
 
-            XmlFsType.Clusters = sysv_sb.s_fsize;
+            Metadata.Clusters = sysv_sb.s_fsize;
 
             sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, sysv_sb.s_fsize, sysv_sb.s_fsize * bs).
                AppendLine();
@@ -669,12 +668,11 @@ public sealed partial class SysVfs
 
             if(sysv_sb.s_time != 0)
             {
-                XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time);
-                XmlFsType.ModificationDateSpecified = true;
+                Metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time);
             }
 
             sb.AppendFormat(Localization.Volume_name_0, sysv_sb.s_fname).AppendLine();
-            XmlFsType.VolumeName = sysv_sb.s_fname;
+            Metadata.VolumeName = sysv_sb.s_fname;
             sb.AppendFormat(Localization.Pack_name_0, sysv_sb.s_fpack).AppendLine();
 
             if(sysv_sb.s_state == 0x7C269D38 - sysv_sb.s_time)
@@ -682,7 +680,7 @@ public sealed partial class SysVfs
             else
             {
                 sb.AppendLine(Localization.Volume_is_dirty);
-                XmlFsType.Dirty = true;
+                Metadata.Dirty = true;
             }
         }
 
@@ -714,9 +712,9 @@ public sealed partial class SysVfs
             Array.Copy(sb_sector, 0x1EA, coh_strings, 0, 6);
             coh_sb.s_fpack = StringHandlers.CToString(coh_strings, Encoding);
 
-            XmlFsType.Type        = FS_TYPE_COHERENT;
-            XmlFsType.ClusterSize = 512;
-            XmlFsType.Clusters    = coh_sb.s_fsize;
+            Metadata.Type        = FS_TYPE_COHERENT;
+            Metadata.ClusterSize = 512;
+            Metadata.Clusters    = coh_sb.s_fsize;
 
             sb.AppendLine(Localization.Coherent_UNIX_filesystem);
 
@@ -754,12 +752,11 @@ public sealed partial class SysVfs
 
             if(coh_sb.s_time != 0)
             {
-                XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time);
-                XmlFsType.ModificationDateSpecified = true;
+                Metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time);
             }
 
             sb.AppendFormat(Localization.Volume_name_0, coh_sb.s_fname).AppendLine();
-            XmlFsType.VolumeName = coh_sb.s_fname;
+            Metadata.VolumeName = coh_sb.s_fname;
             sb.AppendFormat(Localization.Pack_name_0, coh_sb.s_fpack).AppendLine();
         }
 
@@ -791,9 +788,9 @@ public sealed partial class SysVfs
             Array.Copy(sb_sector, 0x1B2, sys7_strings, 0, 6);
             v7_sb.s_fpack = StringHandlers.CToString(sys7_strings, Encoding);
 
-            XmlFsType.Type        = FS_TYPE_UNIX7;
-            XmlFsType.ClusterSize = 512;
-            XmlFsType.Clusters    = v7_sb.s_fsize;
+            Metadata.Type        = FS_TYPE_UNIX7;
+            Metadata.ClusterSize = 512;
+            Metadata.Clusters    = v7_sb.s_fsize;
             sb.AppendLine(Localization.UNIX_7th_Edition_filesystem);
 
             if(imagePlugin.Info.SectorSize != 512)
@@ -830,12 +827,11 @@ public sealed partial class SysVfs
 
             if(v7_sb.s_time != 0)
             {
-                XmlFsType.ModificationDate          = DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time);
-                XmlFsType.ModificationDateSpecified = true;
+                Metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time);
             }
 
             sb.AppendFormat(Localization.Volume_name_0, v7_sb.s_fname).AppendLine();
-            XmlFsType.VolumeName = v7_sb.s_fname;
+            Metadata.VolumeName = v7_sb.s_fname;
             sb.AppendFormat(Localization.Pack_name_0, v7_sb.s_fpack).AppendLine();
         }
 
