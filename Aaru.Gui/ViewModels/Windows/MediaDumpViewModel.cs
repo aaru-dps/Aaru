@@ -38,6 +38,8 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -692,13 +694,32 @@ public sealed class MediaDumpViewModel : ViewModelBase
     async Task CheckResumeFile()
     {
         _resume = null;
-        var xs = new XmlSerializer(typeof(Resume));
 
         try
         {
-            var sr = new StreamReader(_outputPrefix + ".resume.xml");
-            _resume = (Resume)xs.Deserialize(sr);
-            sr.Close();
+            if(File.Exists(_outputPrefix + ".resume.json"))
+            {
+                var fs = new FileStream(_outputPrefix + ".resume.json", FileMode.Open);
+
+                _resume = JsonSerializer.Deserialize<ResumeJson>(fs, new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    IncludeFields          = true,
+                    WriteIndented          = true
+                })?.Resume;
+
+                fs.Close();
+            }
+
+            // DEPRECATED: To be removed in Aaru 7
+            else if(File.Exists(_outputPrefix + ".resume.xml"))
+            {
+                var xs = new XmlSerializer(typeof(Resume));
+
+                var sr = new StreamReader(_outputPrefix + ".resume.xml");
+                _resume = (Resume)xs.Deserialize(sr);
+                sr.Close();
+            }
         }
         catch
         {

@@ -39,6 +39,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
@@ -465,12 +467,31 @@ sealed class DumpMediaCommand : Command
             Resume resumeClass = null;
             var    xs          = new XmlSerializer(typeof(Resume));
 
-            if(File.Exists(outputPrefix + ".resume.xml") && resume)
+            if(resume)
+            {
                 try
                 {
-                    var sr = new StreamReader(outputPrefix + ".resume.xml");
-                    resumeClass = (Resume)xs.Deserialize(sr);
-                    sr.Close();
+                    if(File.Exists(outputPrefix + "resume.json"))
+                    {
+                        var fs = new FileStream(outputPrefix + ".resume.json", FileMode.Open);
+
+                        resumeClass = JsonSerializer.Deserialize<ResumeJson>(fs, new JsonSerializerOptions
+                        {
+                            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                            IncludeFields          = true,
+                            WriteIndented          = true
+                        })?.Resume;
+
+                        fs.Close();
+                    }
+
+                    // DEPRECATED: To be removed in Aaru 7
+                    else if(File.Exists(outputPrefix + ".resume.xml") && resume)
+                    {
+                        var sr = new StreamReader(outputPrefix + ".resume.xml");
+                        resumeClass = (Resume)xs.Deserialize(sr);
+                        sr.Close();
+                    }
                 }
                 catch
                 {
@@ -481,6 +502,7 @@ sealed class DumpMediaCommand : Command
 
                     return (int)ErrorNumber.InvalidResume;
                 }
+            }
 
             if(resumeClass                 != null                                               &&
                resumeClass.NextBlock       > resumeClass.LastBlock                               &&

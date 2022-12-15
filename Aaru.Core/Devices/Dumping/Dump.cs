@@ -36,7 +36,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Xml.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -292,9 +293,21 @@ public partial class Dump
         if(File.Exists(_outputPrefix + ".resume.xml"))
             File.Delete(_outputPrefix + ".resume.xml");
 
-        var fs = new FileStream(_outputPrefix + ".resume.xml", FileMode.Create, FileAccess.ReadWrite);
-        var xs = new XmlSerializer(_resume.GetType());
-        xs.Serialize(fs, _resume);
+        if(File.Exists(_outputPrefix + ".resume.json"))
+            File.Delete(_outputPrefix + ".resume.json");
+
+        var fs = new FileStream(_outputPrefix + ".resume.json", FileMode.Create, FileAccess.ReadWrite);
+
+        JsonSerializer.Serialize(fs, new ResumeJson
+        {
+            Resume = _resume
+        }, new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IncludeFields          = true,
+            WriteIndented          = true
+        });
+
         fs.Close();
     }
 
