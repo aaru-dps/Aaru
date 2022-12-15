@@ -38,10 +38,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using Schemas;
 
 namespace Aaru.CommonTypes.Metadata;
+
+public class ResumeJson
+{
+    [JsonPropertyName("AaruResume")]
+    public Resume Resume { get; init; }
+}
 
 /// <summary>Information that allows to resume a dump</summary>
 [Serializable, XmlRoot("DicResume", Namespace = "", IsNullable = false)]
