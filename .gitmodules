@@ -1,6 +1,3 @@
-[submodule "CICMMetadata"]
-	path = CICMMetadata
-	url = https://github.com/claunia/CICMMetadata
 [submodule "Aaru.Checksums"]
 	path = Aaru.Checksums
 	url = https://github.com/aaru-dps/Aaru.Checksums
