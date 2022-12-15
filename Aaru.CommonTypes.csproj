@@ -63,9 +63,4 @@
       <LastGenOutput>Localization.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\CICMMetadata\dotnet\cicm.cs">
-      <Link>Metadata\cicm.cs</Link>
-    </Compile>
-  </ItemGroup>
 </Project>
