@@ -37,6 +37,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Xml.Serialization;
 using Aaru.CommonTypes.Interop;
@@ -46,7 +48,6 @@ using Aaru.Database;
 using Aaru.Database.Models;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Device = Aaru.Devices.Device;
 using MediaType = Aaru.CommonTypes.MediaType;
 using OperatingSystem = Aaru.Database.Models.OperatingSystem;
@@ -793,10 +794,10 @@ public static class Statistics
                 #else
                             Aaru.Console.AaruConsole.DebugWriteLine("Submit stats", Localization.Core.Uploading_statistics);
                 #endif
-
-                    string json = JsonConvert.SerializeObject(dto, Formatting.Indented, new JsonSerializerSettings
+                    string json = JsonSerializer.Serialize(dto, new JsonSerializerOptions()
                     {
-                        NullValueHandling = NullValueHandling.Ignore
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                        WriteIndented          = true
                     });
 
                     byte[] jsonBytes = Encoding.UTF8.GetBytes(json);

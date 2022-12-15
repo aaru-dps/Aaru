@@ -38,6 +38,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
@@ -45,7 +47,6 @@ using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Dto;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Spectre.Console;
 using CdOffset = Aaru.Database.Models.CdOffset;
 using Version = Aaru.CommonTypes.Metadata.Version;
@@ -67,9 +68,10 @@ public static class Remote
 
                 try
                 {
-                    string json = JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings
+                    string json = JsonSerializer.Serialize(report, new JsonSerializerOptions()
                     {
-                        NullValueHandling = NullValueHandling.Ignore
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                        WriteIndented          = true
                     });
 
                     var httpClient = new HttpClient();
@@ -194,7 +196,7 @@ public static class Remote
 
             Stream  data   = response.Content.ReadAsStream();
             var     reader = new StreamReader(data);
-            SyncDto sync   = JsonConvert.DeserializeObject<SyncDto>(reader.ReadToEnd()) ?? new SyncDto();
+            SyncDto sync   = JsonSerializer.Deserialize<SyncDto>(reader.ReadToEnd())     ?? new SyncDto();
 
             if(create)
             {

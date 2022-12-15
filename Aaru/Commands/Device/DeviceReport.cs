@@ -36,6 +36,8 @@ using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
@@ -50,7 +52,6 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Helpers;
 using Aaru.Localization;
-using Newtonsoft.Json;
 using Spectre.Console;
 using Command = System.CommandLine.Command;
 using Profile = Aaru.Decoders.SCSI.MMC.Profile;
@@ -1574,14 +1575,13 @@ sealed class DeviceReportCommand : Command
         }
 
         var jsonFs = new FileStream(jsonFile, FileMode.Create);
-        var jsonSw = new StreamWriter(jsonFs);
 
-        jsonSw.Write(JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings
+        JsonSerializer.Serialize(jsonFs, report, new JsonSerializerOptions()
         {
-            NullValueHandling = NullValueHandling.Ignore
-        }));
+            WriteIndented          = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        });
 
-        jsonSw.Close();
         jsonFs.Close();
 
         using(var ctx = AaruContext.Create(Settings.Settings.LocalDbPath))
