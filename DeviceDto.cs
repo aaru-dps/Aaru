@@ -38,14 +38,14 @@ using Aaru.CommonTypes.Metadata;
 namespace Aaru.Dto;
 
 /// <summary>DTO for known device</summary>
-public class DeviceDto : DeviceReportV2
+public class DeviceDto : DeviceReport
 {
     /// <summary>Build an empty DTO</summary>
     public DeviceDto() {}
 
     /// <summary>Build a DTO from a device report</summary>
     /// <param name="report">Device report</param>
-    public DeviceDto(DeviceReportV2 report)
+    public DeviceDto(DeviceReport report)
     {
         ATA                       = report.ATA;
         ATAPI                     = report.ATAPI;
@@ -68,7 +68,7 @@ public class DeviceDto : DeviceReportV2
     /// <param name="id">Database ID</param>
     /// <param name="optimalMultipleSectorsRead">Optimal number of blocks for read</param>
     /// <param name="canReadGdRomUsingSwapDisc">Can read GD-ROM using swap trick?</param>
-    public DeviceDto(DeviceReportV2 report, int id, int optimalMultipleSectorsRead, bool? canReadGdRomUsingSwapDisc)
+    public DeviceDto(DeviceReport report, int id, int optimalMultipleSectorsRead, bool? canReadGdRomUsingSwapDisc)
     {
         ATA                       = report.ATA;
         ATAPI                     = report.ATAPI;
