@@ -102,7 +102,7 @@ public struct ImageInfo
     /// <summary>Firmware revision of the drive used to read the media represented by the image</summary>
     public string DriveFirmwareRevision;
     /// <summary>Type of the media represented by the image to use in XML sidecars</summary>
-    public XmlMediaType XmlMediaType;
+    public MetadataMediaType MetadataMediaType;
 
     // CHS geometry...
     /// <summary>Cylinders of the media represented by the image</summary>

@@ -38,9 +38,9 @@
 
 using System;
 using System.Collections.Generic;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
 
 namespace Aaru.CommonTypes.Interfaces;
 
@@ -79,14 +79,14 @@ public interface IBaseWritableImage : IBaseImage
     /// <returns>Error number</returns>
     bool Close();
 
-    /// <summary>Sets the CICM XML metadata for the image</summary>
-    bool SetCicmMetadata(CICMMetadataType metadata);
+    /// <summary>Sets the Aaru Metadata for the image</summary>
+    bool SetMetadata(AaruMetadata.Metadata metadata);
 
     /// <summary>Sets the list of dump hardware used to create the image from real media</summary>
-    bool SetDumpHardware(List<DumpHardwareType> dumpHardware);
+    bool SetDumpHardware(List<DumpHardware> dumpHardware);
 
     /// <summary>Sets image metadata</summary>
-    /// <param name="metadata"><see cref="ImageInfo" /> containing image metadata</param>
+    /// <param name="imageInfo"><see cref="ImageInfo" /> containing image metadata</param>
     /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
-    bool SetMetadata(ImageInfo metadata);
+    bool SetImageInfo(ImageInfo imageInfo);
 }

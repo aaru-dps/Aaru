@@ -36,8 +36,8 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interop;
-using Schemas;
 
 namespace Aaru.CommonTypes.Metadata;
 
@@ -46,7 +46,7 @@ public static class Version
 {
     /// <summary>Gets XML software type for the running version</summary>
     /// <returns>XML software type</returns>
-    public static SoftwareType GetSoftwareType() => new()
+    public static Software GetSoftware() => new()
     {
         Name            = "Aaru",
         OperatingSystem = DetectOS.GetRealPlatformID().ToString(),

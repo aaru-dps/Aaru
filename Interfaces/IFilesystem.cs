@@ -38,7 +38,7 @@
 
 using System;
 using System.Text;
-using Schemas;
+using Aaru.CommonTypes.AaruMetadata;
 
 namespace Aaru.CommonTypes.Interfaces;
 
@@ -51,9 +51,8 @@ public interface IFilesystem
     string Name { get; }
     /// <summary>Plugin UUID.</summary>
     Guid Id { get; }
-    /// <summary>Information about the filesystem as expected by CICM Metadata XML</summary>
-    /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
-    FileSystemType XmlFsType { get; }
+    /// <summary>Information about the filesystem as expected by Aaru Metadata</summary>
+    FileSystem Metadata { get; }
     /// <summary>Plugin author</summary>
     string Author { get; }
 

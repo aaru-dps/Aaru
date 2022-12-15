@@ -40,7 +40,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
-using Schemas;
+using Aaru.CommonTypes.AaruMetadata;
 
 namespace Aaru.CommonTypes.Metadata;
 
@@ -76,11 +76,11 @@ public class Resume
     public List<int> BadSubchannels;
     /// <summary>Extents of BLANK sectors for magneto-opticals</summary>
     [XmlArrayItem("Extent")]
-    public ExtentType[] BlankExtents;
+    public Extent[] BlankExtents;
     /// <summary>Title keys that has not been read</summary>
     [XmlArrayItem("Block")]
     public List<ulong> MissingTitleKeys;
     /// <summary>List of dump tries</summary>
     [XmlArrayItem("DumpTry")]
-    public List<DumpHardwareType> Tries;
+    public List<DumpHardware> Tries;
 }

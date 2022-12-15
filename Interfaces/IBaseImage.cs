@@ -38,9 +38,9 @@
 
 using System;
 using System.Collections.Generic;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
 
 namespace Aaru.CommonTypes.Interfaces;
 
@@ -49,10 +49,10 @@ public interface IBaseImage
 {
     /// <summary>Plugin author</summary>
     string Author { get; }
-    /// <summary>Gets the CICM XML metadata for the image</summary>
-    CICMMetadataType CicmMetadata { get; }
+    /// <summary>Gets the Aaru Metadata for the image</summary>
+    AaruMetadata.Metadata AaruMetadata { get; }
     /// <summary>List of dump hardware used to create the image from real media</summary>
-    List<DumpHardwareType> DumpHardware { get; }
+    List<DumpHardware> DumpHardware { get; }
     /// <summary>Gets the image format.</summary>
     /// <value>The image format.</value>
     string Format { get; }

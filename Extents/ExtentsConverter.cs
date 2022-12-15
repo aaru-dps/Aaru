@@ -39,7 +39,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Schemas;
+using Aaru.CommonTypes.AaruMetadata;
 
 namespace Aaru.CommonTypes.Extents;
 
@@ -49,28 +49,28 @@ public static class ExtentsConverter
     /// <summary>Converts unsigned long integer extents into XML based extents</summary>
     /// <param name="extents">Extents</param>
     /// <returns>XML based extents</returns>
-    public static ExtentType[] ToMetadata(ExtentsULong extents)
+    public static List<Extent> ToMetadata(ExtentsULong extents)
     {
         if(extents == null)
             return null;
 
         Tuple<ulong, ulong>[] tuples = extents.ToArray();
-        ExtentType[]          array  = new ExtentType[tuples.Length];
+        List<Extent>          list   = new();
 
-        for(ulong i = 0; i < (ulong)array.LongLength; i++)
-            array[i] = new ExtentType
+        for(ulong i = 0; i < (ulong)tuples.LongLength; i++)
+            list.Add(new Extent
             {
                 Start = tuples[i].Item1,
                 End   = tuples[i].Item2
-            };
+            });
 
-        return array;
+        return list;
     }
 
     /// <summary>Converts XML based extents into unsigned long integer extents</summary>
     /// <param name="extents">XML based extents</param>
     /// <returns>Extents</returns>
-    public static ExtentsULong FromMetadata(ExtentType[] extents)
+    public static ExtentsULong FromMetadata(IEnumerable<Extent> extents)
     {
         if(extents == null)
             return null;

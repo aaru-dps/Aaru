@@ -274,8 +274,8 @@ public enum MediaTagType
     DVD_DiscKey_Decrypted = 73
 }
 
-/// <summary>Enumeration of media types defined in CICM metadata</summary>
-public enum XmlMediaType : byte
+/// <summary>Enumeration of media types defined in metadata</summary>
+public enum MetadataMediaType : byte
 {
     /// <summary>Purely optical discs</summary>
     OpticalDisc = 0,

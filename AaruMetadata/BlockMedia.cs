@@ -78,8 +78,8 @@ public class BlockMedia
     public DimensionsNew       Dimensions            { get; set; }
     public List<Partition>     FileSystemInformation { get; set; }
     public List<DumpHardware>  DumpHardware          { get; set; }
-    public string              DiskType              { get; set; }
-    public string              DiskSubType           { get; set; }
+    public string              MediaType             { get; set; }
+    public string              MediaSubType          { get; set; }
     public string              Interface             { get; set; }
 }
 
