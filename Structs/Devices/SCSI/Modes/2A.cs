@@ -33,7 +33,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 

@@ -39,7 +39,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Aaru.CommonTypes.Structs;
 
