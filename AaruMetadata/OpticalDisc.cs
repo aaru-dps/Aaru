@@ -38,6 +38,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Schemas;
 
 // ReSharper disable UnusedMember.Global
@@ -345,6 +346,7 @@ public class TrackFlags
     };
 }
 
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum TrackType
 {
     Audio, Mode0, Mode1,

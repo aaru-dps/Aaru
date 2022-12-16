@@ -39,6 +39,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 using Schemas;
 
 // ReSharper disable UnusedMember.Global
@@ -74,7 +75,7 @@ public class Layers
     }
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "InconsistentNaming"), JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum LayerType
 {
     PTP, OTP

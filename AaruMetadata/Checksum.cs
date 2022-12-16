@@ -40,6 +40,7 @@
 // ReSharper disable ClassNeverInstantiated.Global
 
 using System;
+using System.Text.Json.Serialization;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
@@ -56,6 +57,7 @@ public class Checksum
     };
 }
 
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ChecksumType
 {
     Fletcher16, Fletcher32, Adler32,

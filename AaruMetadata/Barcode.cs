@@ -40,9 +40,11 @@
 // ReSharper disable ClassNeverInstantiated.Global
 
 using System;
+using System.Text.Json.Serialization;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum BarcodeType
 {
     Aztec, Codabar, Code11,

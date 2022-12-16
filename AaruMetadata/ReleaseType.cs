@@ -36,13 +36,14 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 
+using System.Text.Json.Serialization;
+
 namespace Aaru.CommonTypes.AaruMetadata;
 
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ReleaseType
 {
     Retail, Bundle, Coverdisc,

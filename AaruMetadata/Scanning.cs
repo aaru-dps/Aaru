@@ -38,6 +38,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Schemas;
 
 // ReSharper disable UnusedMember.Global
@@ -141,6 +142,7 @@ public class Case
     };
 }
 
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum CaseType
 {
     Jewel, BigJewel, SlimJewel,
@@ -180,6 +182,7 @@ public class CaseScan
     };
 }
 
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum CaseScanElement
 {
     Sleeve, Inner, Inlay,
@@ -200,6 +203,7 @@ public class MediaScan
     };
 }
 
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum MediaScanElement
 {
     Up, Down, Front,
