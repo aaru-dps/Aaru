@@ -34,6 +34,8 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using Aaru.CommonTypes.Interop;
 using Claunia.PropertyList;
@@ -41,6 +43,11 @@ using Microsoft.Win32;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 namespace Aaru.Settings;
+
+[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                             IncludeFields = true)]
+[JsonSerializable(typeof(DicSettings))]
+public partial class SettingsContext : JsonSerializerContext {}
 
 /// <summary>Settings</summary>
 public class DicSettings
@@ -457,20 +464,39 @@ public static class Settings
                                      Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ?? XDG_CONFIG_HOME_RESOLVED);
 
                     string dicSettingsPath = Path.Combine(xdgConfigPath, "DiscImageChef.xml");
-                    string settingsPath    = Path.Combine(xdgConfigPath, "Aaru.xml");
+                    string xmlSettingsPath = Path.Combine(xdgConfigPath, "Aaru.xml");
+                    string settingsPath    = Path.Combine(xdgConfigPath, "Aaru.json");
 
                     if(File.Exists(oldSettingsPath) &&
-                       !File.Exists(settingsPath))
+                       !File.Exists(xmlSettingsPath))
                     {
                         if(!Directory.Exists(xdgConfigPath))
                             Directory.CreateDirectory(xdgConfigPath);
 
-                        File.Move(oldSettingsPath, settingsPath);
+                        File.Move(oldSettingsPath, xmlSettingsPath);
                     }
 
                     if(File.Exists(dicSettingsPath) &&
-                       !File.Exists(settingsPath))
-                        File.Move(dicSettingsPath, settingsPath);
+                       !File.Exists(xmlSettingsPath))
+                        File.Move(dicSettingsPath, xmlSettingsPath);
+
+                    if(File.Exists(xmlSettingsPath))
+                    {
+                        // Should be working due to source generator for json below
+                        #pragma warning disable IL2026
+                        var xs = new XmlSerializer(Current.GetType());
+                        #pragma warning restore IL2026
+
+                        prefsSr = new StreamReader(xmlSettingsPath);
+
+                        // Should be working due to source generator for json below
+                        #pragma warning disable IL2026
+                        Current = (DicSettings)xs.Deserialize(prefsSr);
+                        #pragma warning restore IL2026
+
+                        prefsSr.Close();
+                        File.Delete(xmlSettingsPath);
+                    }
 
                     if(!File.Exists(settingsPath))
                     {
@@ -480,9 +506,12 @@ public static class Settings
                         return;
                     }
 
-                    var xs = new XmlSerializer(Current.GetType());
-                    prefsSr = new StreamReader(settingsPath);
-                    Current = (DicSettings)xs.Deserialize(prefsSr);
+                    var fs = new FileStream(settingsPath, FileMode.Open);
+
+                    Current =
+                        JsonSerializer.Deserialize(fs, typeof(DicSettings), SettingsContext.Default) as DicSettings;
+
+                    fs.Close();
                 }
 
                     break;
@@ -640,14 +669,13 @@ public static class Settings
                         Path.Combine(homePath,
                                      Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ?? XDG_CONFIG_HOME_RESOLVED);
 
-                    string settingsPath = Path.Combine(xdgConfigPath, "Aaru.xml");
+                    string settingsPath = Path.Combine(xdgConfigPath, "Aaru.json");
 
                     if(!Directory.Exists(xdgConfigPath))
                         Directory.CreateDirectory(xdgConfigPath);
 
-                    var fs = new FileStream(settingsPath, FileMode.Create);
-                    var xs = new XmlSerializer(Current.GetType());
-                    xs.Serialize(fs, Current);
+                    var fs = new FileStream(settingsPath, FileMode.Create, FileAccess.ReadWrite);
+                    JsonSerializer.Serialize(fs, Current, Current.GetType(), SettingsContext.Default);
                     fs.Close();
                 }
 
