@@ -171,7 +171,7 @@ public sealed partial class Sidecar
         _sidecar.BlockMedias[0].TapeInformation[0].EndBlock  = currentBlock - 1;
         _sidecar.BlockMedias[0].TapeInformation[0].Size      = totalSize;
         _sidecar.BlockMedias[0].TapeInformation[0].Checksums = _sidecar.BlockMedias[0].Checksums;
-        _sidecar.BlockMedias[0].TapeInformation[0].File      = tapeFiles;
+        _sidecar.BlockMedias[0].TapeInformation[0].Files     = tapeFiles;
 
         // This is purely for convenience, as typically these kind of data represents QIC tapes
         if(blockSize == 512)

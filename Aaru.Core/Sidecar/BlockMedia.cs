@@ -673,7 +673,7 @@ public sealed partial class Sidecar
                     filesInPartition.Add(thisFile);
                 }
 
-                thisPartition.File = filesInPartition;
+                thisPartition.Files = filesInPartition;
                 tapePartitions.Add(thisPartition);
             }
 

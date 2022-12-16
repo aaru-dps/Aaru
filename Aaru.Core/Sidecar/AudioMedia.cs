@@ -56,7 +56,7 @@ public sealed partial class Sidecar
                            List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar,
                            Encoding encoding)
     {
-        sidecar.AudioMedia = new List<AudioMedia>
+        sidecar.AudioMedias = new List<AudioMedia>
         {
             new()
             {
@@ -78,13 +78,13 @@ public sealed partial class Sidecar
         if(image.Info.MediaSequence     != 0 &&
            image.Info.LastMediaSequence != 0)
         {
-            sidecar.AudioMedia[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
-            sidecar.AudioMedia[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
+            sidecar.AudioMedias[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
+            sidecar.AudioMedias[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
         }
         else
         {
-            sidecar.AudioMedia[0].Sequence.MediaSequence = 1;
-            sidecar.AudioMedia[0].Sequence.TotalMedia    = 1;
+            sidecar.AudioMedias[0].Sequence.MediaSequence = 1;
+            sidecar.AudioMedias[0].Sequence.TotalMedia    = 1;
         }
     }
 }
