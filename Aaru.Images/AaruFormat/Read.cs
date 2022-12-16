@@ -37,6 +37,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using Aaru.Checksums;
@@ -903,6 +905,47 @@ public sealed partial class AaruFormat
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                    Localization.Exception_0_processing_CICM_XML_metadata_block,
                                                    ex.Message);
+
+                        AaruMetadata = null;
+                    }
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
+                                               GC.GetTotalMemory(false));
+
+                    break;
+
+                // Aaru Metadata JSON block
+                case BlockType.AaruMetadataJsonBlock:
+                    _structureBytes = new byte[Marshal.SizeOf<AaruMetadataJsonBlock>()];
+                    _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
+
+                    AaruMetadataJsonBlock aaruMetadataBlock =
+                        Marshal.SpanToStructureLittleEndian<AaruMetadataJsonBlock>(_structureBytes);
+
+                    if(aaruMetadataBlock.identifier != BlockType.AaruMetadataJsonBlock)
+                        break;
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                               Localization.Found_Aaru_Metadata_block_at_position_0, entry.offset);
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
+                                               GC.GetTotalMemory(false));
+
+                    byte[] jsonBytes = new byte[aaruMetadataBlock.length];
+                    _imageStream.EnsureRead(jsonBytes, 0, jsonBytes.Length);
+
+                    try
+                    {
+                        AaruMetadata = JsonSerializer.Deserialize<MetadataJson>(jsonBytes, new JsonSerializerOptions
+                        {
+                            DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                            PropertyNameCaseInsensitive = true
+                        })?.AaruMetadata;
+                    }
+                    catch(JsonException ex)
+                    {
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                   Localization.Exception_0_processing_Aaru_Metadata_block, ex.Message);
 
                         AaruMetadata = null;
                     }

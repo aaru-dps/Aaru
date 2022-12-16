@@ -2903,4 +2903,13 @@
   <data name="The_specified_sector_size_does_not_correspond_with_the_requested_image_extension" xml:space="preserve">
     <value>The specified sector size does not correspond with the requested image extension.</value>
   </data>
+  <data name="Found_Aaru_Metadata_block_at_position_0" xml:space="preserve">
+    <value>Found Aaru Metadata block at position {0}</value>
+  </data>
+  <data name="Exception_0_processing_Aaru_Metadata_block" xml:space="preserve">
+    <value>Exception {0} processing Aaru Metadata block</value>
+  </data>
+  <data name="Writing_Aaru_Metadata_block_to_position_0" xml:space="preserve">
+    <value>Writing Aaru Metadata block to position {0}</value>
+  </data>
 </root>

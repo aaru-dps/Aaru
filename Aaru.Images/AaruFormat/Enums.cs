@@ -254,7 +254,9 @@ public sealed partial class AaruFormat
         /// <summary>Block containing list of partitions for a tape image</summary>
         TapePartitionBlock = 0x54425054,
         /// <summary>Block containing list of indexes for Compact Disc tracks</summary>
-        CompactDiscIndexesBlock = 0x58494443
+        CompactDiscIndexesBlock = 0x58494443,
+        /// <summary>Block containing JSON version of Aaru Metadata</summary>
+        AaruMetadataJsonBlock = 0x444D534A
     }
 
     enum ChecksumAlgorithm : byte

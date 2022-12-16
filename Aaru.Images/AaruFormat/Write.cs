@@ -38,6 +38,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using Aaru.Checksums;
@@ -1092,6 +1094,48 @@ public sealed partial class AaruFormat
 
                             AaruMetadata = null;
                         }
+
+                        break;
+
+                    // Aaru Metadata JSON block
+                    case BlockType.AaruMetadataJsonBlock:
+                        _structureBytes = new byte[Marshal.SizeOf<AaruMetadataJsonBlock>()];
+                        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
+
+                        AaruMetadataJsonBlock aaruMetadataBlock =
+                            Marshal.SpanToStructureLittleEndian<AaruMetadataJsonBlock>(_structureBytes);
+
+                        if(aaruMetadataBlock.identifier != BlockType.AaruMetadataJsonBlock)
+                            break;
+
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                   Localization.Found_Aaru_Metadata_block_at_position_0, entry.offset);
+
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
+                                                   GC.GetTotalMemory(false));
+
+                        byte[] jsonBytes = new byte[aaruMetadataBlock.length];
+                        _imageStream.EnsureRead(jsonBytes, 0, jsonBytes.Length);
+
+                        try
+                        {
+                            AaruMetadata = JsonSerializer.Deserialize<MetadataJson>(jsonBytes, new JsonSerializerOptions
+                            {
+                                DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                                PropertyNameCaseInsensitive = true
+                            })?.AaruMetadata;
+                        }
+                        catch(JsonException ex)
+                        {
+                            AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                       Localization.Exception_0_processing_Aaru_Metadata_block,
+                                                       ex.Message);
+
+                            AaruMetadata = null;
+                        }
+
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
+                                                   GC.GetTotalMemory(false));
 
                         break;
 
@@ -2849,35 +2893,44 @@ public sealed partial class AaruFormat
             _index.Add(idxEntry);
         }
 
-        // If we have CICM XML metadata, write it
+        // If we have Aaru Metadata, write it
         if(AaruMetadata != null)
         {
-            var cicmMs = new MemoryStream();
-            var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-            xmlSer.Serialize(cicmMs, AaruMetadata);
+            var jsonMs = new MemoryStream();
+
+            JsonSerializer.Serialize(jsonMs, new MetadataJson
+            {
+                AaruMetadata = AaruMetadata
+            }, new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                WriteIndented          = true
+            });
 
             idxEntry = new IndexEntry
             {
-                blockType = BlockType.CicmBlock,
+                blockType = BlockType.AaruMetadataJsonBlock,
                 dataType  = DataType.NoData,
                 offset    = (ulong)_imageStream.Position
             };
 
-            AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Writing_CICM_XML_block_to_position_0,
+            AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Writing_Aaru_Metadata_block_to_position_0,
                                        idxEntry.offset);
 
-            var cicmBlock = new CicmMetadataBlock
+            var jsonBlock = new AaruMetadataJsonBlock
             {
-                identifier = BlockType.CicmBlock,
-                length     = (uint)cicmMs.Length
+                identifier = BlockType.AaruMetadataJsonBlock,
+                length     = (uint)jsonMs.Length
             };
 
-            _structureBytes = new byte[Marshal.SizeOf<CicmMetadataBlock>()];
-            MemoryMarshal.Write(_structureBytes, ref cicmBlock);
+            _structureBytes = new byte[Marshal.SizeOf<AaruMetadataJsonBlock>()];
+            MemoryMarshal.Write(_structureBytes, ref jsonBlock);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
-            _imageStream.Write(cicmMs.ToArray(), 0, (int)cicmMs.Length);
+            _imageStream.Write(jsonMs.ToArray(), 0, (int)jsonMs.Length);
 
-            _index.RemoveAll(t => t is { blockType: BlockType.CicmBlock, dataType: DataType.NoData });
+            // Ensure no CICM XML block is recorded altogether
+            _index.RemoveAll(t => t is { blockType: BlockType.CicmBlock, dataType            : DataType.NoData });
+            _index.RemoveAll(t => t is { blockType: BlockType.AaruMetadataJsonBlock, dataType: DataType.NoData });
 
             _index.Add(idxEntry);
         }

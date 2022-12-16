@@ -255,11 +255,20 @@ public sealed partial class AaruFormat
         public byte flags;
     }
 
-    /// <summary>Geometry block, contains physical geometry information</summary>
+    /// <summary>CICM Metadata XML block</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct CicmMetadataBlock
     {
         /// <summary>Identifier, <see cref="BlockType.CicmBlock" /></summary>
+        public readonly BlockType identifier;
+        public readonly uint length;
+    }
+
+    /// <summary>Aaru Metadata JSON block</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct AaruMetadataJsonBlock
+    {
+        /// <summary>Identifier, <see cref="BlockType.AaruMetadataJsonBlock" /></summary>
         public BlockType identifier;
         public uint length;
     }
