@@ -38,12 +38,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace Aaru.CommonTypes.AaruMetadata;
+
+[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
+[JsonSerializable(typeof(MetadataJson))]
+public partial class MetadataJsonContext : JsonSerializerContext {}
 
 public class MetadataJson
 {
