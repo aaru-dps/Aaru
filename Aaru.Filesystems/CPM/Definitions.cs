@@ -35,26 +35,23 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
-using System.Xml;
-using System.Xml.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Aaru.Filesystems;
 
 public sealed partial class CPM
 {
-    /// <summary>Loads all the known CP/M disk definitions from an XML stored as an embedded resource.</summary>
+    /// <summary>Loads all the known CP/M disk definitions from an JSON stored as an embedded resource.</summary>
     /// <returns>The definitions.</returns>
     bool LoadDefinitions()
     {
         try
         {
-            var defsReader =
-                XmlReader.Create(Assembly.GetExecutingAssembly().
-                                          GetManifestResourceStream("Aaru.Filesystems.CPM.cpmdefs.xml") ??
-                                 new MemoryStream());
-
-            var defsSerializer = new XmlSerializer(typeof(CpmDefinitions));
-            _definitions = (CpmDefinitions)defsSerializer.Deserialize(defsReader);
+            _definitions =
+                JsonSerializer.
+                    Deserialize(Assembly.GetExecutingAssembly().GetManifestResourceStream("Aaru.Filesystems.CPM.cpmdefs.json") ?? new MemoryStream(),
+                                typeof(CpmDefinitions), CpmDefinitionsContext.Default) as CpmDefinitions;
 
             if(_definitions is null)
                 return false;
@@ -98,6 +95,11 @@ public sealed partial class CPM
         }
     }
 }
+
+[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                             IncludeFields = true)]
+[JsonSerializable(typeof(CpmDefinitions))]
+public class CpmDefinitionsContext : JsonSerializerContext {}
 
 /// <summary>CP/M disk definitions</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
