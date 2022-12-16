@@ -36,10 +36,11 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
+using System;
+using Schemas;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
@@ -49,4 +50,13 @@ public class MultiMediaCard
     public Dump CSD         { get; set; }
     public Dump ExtendedCSD { get; set; }
     public Dump OCR         { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator MultiMediaCard(MultiMediaCardType cicm) => cicm is null ? null : new MultiMediaCard
+    {
+        CSD         = cicm.CSD,
+        CID         = cicm.CID,
+        ExtendedCSD = cicm.ExtendedCSD,
+        OCR         = cicm.OCR
+    };
 }

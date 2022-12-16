@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -48,6 +50,14 @@ public class Image
     public string Format { get; set; }
     public ulong? Offset { get; set; }
     public string Value  { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Image(ImageType cicm) => cicm is null ? null : new Image
+    {
+        Format = cicm.format,
+        Offset = cicm.offsetSpecified ? cicm.offset : null,
+        Value  = cicm.Value
+    };
 }
 
 public class Dump
@@ -55,6 +65,29 @@ public class Dump
     public string         Image     { get; set; }
     public ulong          Size      { get; set; }
     public List<Checksum> Checksums { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Dump(DumpType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        Dump dump = new()
+        {
+            Image = cicm.Image,
+            Size  = cicm.Size
+        };
+
+        if(cicm.Checksums is null)
+            return dump;
+
+        dump.Checksums = new List<Checksum>();
+
+        foreach(Schemas.ChecksumType chk in cicm.Checksums)
+            dump.Checksums.Add(chk);
+
+        return dump;
+    }
 }
 
 public class Border
@@ -63,16 +96,54 @@ public class Border
     public ulong          Size      { get; set; }
     public List<Checksum> Checksums { get; set; }
     public uint?          Session   { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Border(BorderType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var border = new Border
+        {
+            Image   = cicm.Image,
+            Size    = cicm.Size,
+            Session = cicm.sessionSpecified ? cicm.session : null
+        };
+
+        if(cicm.Checksums is null)
+            return border;
+
+        border.Checksums = new List<Checksum>();
+
+        foreach(Schemas.ChecksumType chk in cicm.Checksums)
+            border.Checksums.Add(chk);
+
+        return border;
+    }
 }
 
 public class File
 {
     public string Format { get; set; }
     public string Value  { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator File(FileType cicm) => cicm is null ? null : new File
+    {
+        Format = cicm.format,
+        Value  = cicm.Value
+    };
 }
 
 public class BlockSize
 {
     public uint StartingBlock { get; set; }
     public uint Value         { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator BlockSize(BlockSizeType cicm) => cicm is null ? null : new BlockSize
+    {
+        StartingBlock = cicm.startingBlock,
+        Value         = cicm.Value
+    };
 }

@@ -36,10 +36,11 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
+using System;
+using Schemas;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
@@ -52,4 +53,13 @@ public class Pci
     public Dump Configuration { get; set; }
 
     public LinearMedia ExpansionRom { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Pci(PCIType cicm) => cicm is null ? null : new Pci
+    {
+        VendorID      = cicm.VendorID,
+        DeviceID      = cicm.DeviceID,
+        Configuration = cicm.Configuration,
+        ExpansionRom  = cicm.ExpansionROM
+    };
 }

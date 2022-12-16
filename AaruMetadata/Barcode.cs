@@ -36,10 +36,10 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
+using System;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
@@ -61,4 +61,11 @@ public class Barcode
 {
     public BarcodeType Type  { get; set; }
     public string      Value { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Barcode(Schemas.BarcodeType cicm) => cicm is null ? null : new Barcode
+    {
+        Type  = (BarcodeType)cicm.type,
+        Value = cicm.Value
+    };
 }

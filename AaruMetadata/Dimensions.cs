@@ -36,10 +36,11 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
+using System;
+using Schemas;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
@@ -49,4 +50,13 @@ public class DimensionsNew
     public double? Height    { get; set; }
     public double? Width     { get; set; }
     public double  Thickness { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator DimensionsNew(DimensionsType cicm) => cicm is null ? null : new DimensionsNew
+    {
+        Diameter  = cicm.DiameterSpecified ? cicm.Diameter : null,
+        Height    = cicm.HeightSpecified ? cicm.Height : null,
+        Width     = cicm.WidthSpecified ? cicm.Width : null,
+        Thickness = cicm.Thickness
+    };
 }

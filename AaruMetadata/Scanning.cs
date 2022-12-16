@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -50,6 +52,50 @@ public class Scan
     public List<Scanner>        Scanner        { get; set; }
     public List<ScanProcessing> ScanProcessing { get; set; }
     public List<OCR>            OCR            { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Scan(ScanType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var scan = new Scan();
+        scan.File = cicm.File;
+
+        if(cicm.Checksums is not null)
+        {
+            scan.Checksums = new List<Checksum>();
+
+            foreach(Schemas.ChecksumType chk in cicm.Checksums)
+                scan.Checksums.Add(chk);
+        }
+
+        if(cicm.Scanner is not null)
+        {
+            scan.Scanner = new List<Scanner>();
+
+            foreach(ScannerType scanner in cicm.Scanner)
+                scan.Scanner.Add(scanner);
+        }
+
+        if(cicm.ScanProcessing is not null)
+        {
+            scan.ScanProcessing = new List<ScanProcessing>();
+
+            foreach(ScanProcessingType processing in cicm.ScanProcessing)
+                scan.ScanProcessing.Add(processing);
+        }
+
+        if(cicm.OCR is null)
+            return scan;
+
+        scan.OCR = new List<OCR>();
+
+        foreach(OCRType ocr in cicm.OCR)
+            scan.OCR.Add(ocr);
+
+        return scan;
+    }
 }
 
 public class Cover
@@ -57,12 +103,42 @@ public class Cover
     public File           File      { get; set; }
     public List<Checksum> Checksums { get; set; }
     public byte[]         Thumbnail { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Cover(CoverType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var cover = new Cover
+        {
+            File      = cicm.File,
+            Thumbnail = cicm.Thumbnail
+        };
+
+        if(cicm.Checksums is null)
+            return cover;
+
+        cover.Checksums = new List<Checksum>();
+
+        foreach(Schemas.ChecksumType chk in cicm.Checksums)
+            cover.Checksums.Add(chk);
+
+        return cover;
+    }
 }
 
 public class Case
 {
     public CaseType Type  { get; set; }
     public Scans    Scans { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Case(Schemas.CaseType cicm) => cicm is null ? null : new Case
+    {
+        Type  = (CaseType)cicm.CaseType1,
+        Scans = cicm.Scans
+    };
 }
 
 public enum CaseType
@@ -82,12 +158,26 @@ public class Scans
 {
     public CaseScan  Case  { get; set; }
     public MediaScan Media { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Scans(ScansType cicm) => cicm is null ? null : new Scans
+    {
+        Case  = cicm.CaseScan,
+        Media = cicm.Scan
+    };
 }
 
 public class CaseScan
 {
     public CaseScanElement Element { get; set; }
     public Scan            Scan    { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator CaseScan(CaseScanType cicm) => cicm is null ? null : new CaseScan
+    {
+        Element = (CaseScanElement)cicm.CaseScanElement,
+        Scan    = cicm.Scan
+    };
 }
 
 public enum CaseScanElement
@@ -101,6 +191,13 @@ public class MediaScan
 {
     public MediaScanElement Element { get; set; }
     public Scan             Scan    { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator MediaScan(MediaScanType cicm) => cicm is null ? null : new MediaScan
+    {
+        Element = (MediaScanElement)cicm.MediaScanElement,
+        Scan    = cicm.Scan
+    };
 }
 
 public enum MediaScanElement
@@ -117,6 +214,17 @@ public class Scanner
     public string Serial          { get; set; }
     public string Software        { get; set; }
     public string SoftwareVersion { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Scanner(ScannerType cicm) => cicm is null ? null : new Scanner
+    {
+        Author          = cicm.Author,
+        Manufacturer    = cicm.Manufacturer,
+        Model           = cicm.Model,
+        Serial          = cicm.Serial,
+        Software        = cicm.Software,
+        SoftwareVersion = cicm.SoftwareVersion
+    };
 }
 
 public class ScanProcessing
@@ -124,6 +232,14 @@ public class ScanProcessing
     public string Author          { get; set; }
     public string Software        { get; set; }
     public string SoftwareVersion { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator ScanProcessing(ScanProcessingType cicm) => cicm is null ? null : new ScanProcessing
+    {
+        Author          = cicm.Author,
+        Software        = cicm.Software,
+        SoftwareVersion = cicm.SoftwareVersion
+    };
 }
 
 public class OCR
@@ -132,4 +248,28 @@ public class OCR
     public string         Software        { get; set; }
     public string         SoftwareVersion { get; set; }
     public List<Language> Language        { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator OCR(OCRType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var ocr = new OCR
+        {
+            Author          = cicm.Author,
+            Software        = cicm.Software,
+            SoftwareVersion = cicm.SoftwareVersion
+        };
+
+        if(cicm.Language is null)
+            return ocr;
+
+        ocr.Language = new List<Language>();
+
+        foreach(Language lng in cicm.Language)
+            ocr.Language.Add(lng);
+
+        return ocr;
+    }
 }

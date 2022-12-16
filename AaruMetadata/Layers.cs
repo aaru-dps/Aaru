@@ -36,8 +36,10 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -48,6 +50,28 @@ public class Layers
 {
     public List<Sectors> Sectors { get; set; }
     public LayerType?    Type    { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Layers(LayersType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var layers = new Layers
+        {
+            Type = cicm.typeSpecified ? (LayerType)cicm.type : null
+        };
+
+        if(cicm.Sectors is null)
+            return layers;
+
+        layers.Sectors = new List<Sectors>();
+
+        foreach(SectorsType sec in cicm.Sectors)
+            layers.Sectors.Add(sec);
+
+        return layers;
+    }
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -60,10 +84,24 @@ public class LayeredText
 {
     public uint?  Layer { get; set; }
     public string Text  { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator LayeredText(LayeredTextType cicm) => cicm is null ? null : new LayeredText
+    {
+        Layer = cicm.layerSpecified ? cicm.layer : null,
+        Text  = cicm.Value
+    };
 }
 
 public class Sectors
 {
     public uint? Layer { get; set; }
     public ulong Value { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Sectors(SectorsType cicm) => cicm is null ? null : new Sectors
+    {
+        Layer = cicm.layerSpecified ? cicm.layer : null,
+        Value = cicm.Value
+    };
 }

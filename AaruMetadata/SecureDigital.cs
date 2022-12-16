@@ -36,10 +36,11 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
+using System;
+using Schemas;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
@@ -49,4 +50,13 @@ public class SecureDigital
     public Dump CSD { get; set; }
     public Dump SCR { get; set; }
     public Dump OCR { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator SecureDigital(SecureDigitalType cicm) => cicm is null ? null : new SecureDigital
+    {
+        CID = cicm.CID,
+        CSD = cicm.CSD,
+        SCR = cicm.SCR,
+        OCR = cicm.OCR
+    };
 }

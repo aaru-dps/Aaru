@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -52,12 +54,46 @@ public class DumpHardware
     public string       Serial       { get; set; }
     public List<Extent> Extents      { get; set; }
     public Software     Software     { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator DumpHardware(DumpHardwareType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var hw = new DumpHardware
+        {
+            Manufacturer = cicm.Manufacturer,
+            Model        = cicm.Model,
+            Revision     = cicm.Revision,
+            Firmware     = cicm.Firmware,
+            Serial       = cicm.Serial,
+            Software     = cicm.Software
+        };
+
+        if(cicm.Extents is null)
+            return hw;
+
+        hw.Extents = new List<Extent>();
+
+        foreach(ExtentType ext in cicm.Extents)
+            hw.Extents.Add(ext);
+
+        return hw;
+    }
 }
 
 public class Extent
 {
     public ulong Start { get; set; }
     public ulong End   { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Extent(ExtentType cicm) => cicm is null ? null : new Extent
+    {
+        Start = cicm.Start,
+        End   = cicm.End
+    };
 }
 
 public class Software
@@ -65,4 +101,12 @@ public class Software
     public string Name            { get; set; }
     public string Version         { get; set; }
     public string OperatingSystem { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Software(SoftwareType cicm) => cicm is null ? null : new Software
+    {
+        Name            = cicm.Name,
+        Version         = cicm.Version,
+        OperatingSystem = cicm.OperatingSystem
+    };
 }

@@ -36,10 +36,11 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
+using System;
+using Schemas;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
@@ -48,4 +49,12 @@ public class Usb
     public ushort VendorID    { get; set; }
     public ushort ProductID   { get; set; }
     public Dump   Descriptors { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Usb(USBType cicm) => cicm is null ? null : new Usb
+    {
+        VendorID    = cicm.VendorID,
+        ProductID   = cicm.ProductID,
+        Descriptors = cicm.Descriptors
+    };
 }

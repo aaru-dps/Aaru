@@ -38,6 +38,7 @@
 
 using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -49,6 +50,36 @@ public class FilesystemContents
     public List<ContentsFile> Files       { get; set; }
     public List<Directory>    Directories { get; set; }
     public string             Namespace   { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator FilesystemContents(FilesystemContentsType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var fs = new FilesystemContents
+        {
+            Namespace = cicm.@namespace
+        };
+
+        if(cicm.File is not null)
+        {
+            fs.Files = new List<ContentsFile>();
+
+            foreach(ContentsFileType file in cicm.File)
+                fs.Files.Add(file);
+        }
+
+        if(cicm.Directory is null)
+            return fs;
+
+        fs.Directories = new List<Directory>();
+
+        foreach(DirectoryType dir in cicm.Directory)
+            fs.Directories.Add(dir);
+
+        return fs;
+    }
 }
 
 public class ContentsFile
@@ -69,6 +100,49 @@ public class ContentsFile
     public ulong                   Links              { get; set; }
     public ulong?                  PosixUserId        { get; set; }
     public ulong                   Length             { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator ContentsFile(ContentsFileType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var file = new ContentsFile
+        {
+            Name             = cicm.name,
+            CreationTime     = cicm.creationTimeSpecified ? cicm.creationTime : null,
+            AccessTime       = cicm.accessTimeSpecified ? cicm.accessTime : null,
+            StatusChangeTime = cicm.statusChangeTimeSpecified ? cicm.statusChangeTime : null,
+            BackupTime       = cicm.backupTimeSpecified ? cicm.backupTime : null,
+            LastWriteTime    = cicm.lastWriteTimeSpecified ? cicm.lastWriteTime : null,
+            Attributes       = cicm.attributes,
+            PosixMode        = cicm.posixModeSpecified ? cicm.posixMode : null,
+            DeviceNumber     = cicm.deviceNumberSpecified ? cicm.deviceNumber : null,
+            PosixGroupId     = cicm.posixGroupIdSpecified ? cicm.posixGroupId : null,
+            Inode            = cicm.inode,
+            Links            = cicm.links,
+            PosixUserId      = cicm.posixUserIdSpecified ? cicm.posixUserId : null,
+            Length           = cicm.length
+        };
+
+        if(cicm.Checksums is not null)
+        {
+            file.Checksums = new List<Checksum>();
+
+            foreach(Schemas.ChecksumType chk in cicm.Checksums)
+                file.Checksums.Add(chk);
+        }
+
+        if(cicm.ExtendedAttributes is null)
+            return file;
+
+        file.ExtendedAttributes = new List<ExtendedAttribute>();
+
+        foreach(ExtendedAttributeType xa in cicm.ExtendedAttributes)
+            file.ExtendedAttributes.Add(xa);
+
+        return file;
+    }
 }
 
 public class ExtendedAttribute
@@ -76,6 +150,29 @@ public class ExtendedAttribute
     public List<Checksum> Checksums { get; set; }
     public string         Name      { get; set; }
     public ulong          Length    { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator ExtendedAttribute(ExtendedAttributeType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var xa = new ExtendedAttribute
+        {
+            Name   = cicm.name,
+            Length = cicm.length
+        };
+
+        if(cicm.Checksums is null)
+            return xa;
+
+        xa.Checksums = new List<Checksum>();
+
+        foreach(Schemas.ChecksumType chk in cicm.Checksums)
+            xa.Checksums.Add(chk);
+
+        return xa;
+    }
 }
 
 public class Directory
@@ -95,4 +192,46 @@ public class Directory
     public ulong?             Inode            { get; set; }
     public ulong?             Links            { get; set; }
     public ulong?             PosixUserId      { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Directory(DirectoryType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var dir = new Directory
+        {
+            Name             = cicm.name,
+            CreationTime     = cicm.creationTimeSpecified ? cicm.creationTime : null,
+            AccessTime       = cicm.accessTimeSpecified ? cicm.accessTime : null,
+            StatusChangeTime = cicm.statusChangeTimeSpecified ? cicm.statusChangeTime : null,
+            BackupTime       = cicm.backupTimeSpecified ? cicm.backupTime : null,
+            LastWriteTime    = cicm.lastWriteTimeSpecified ? cicm.lastWriteTime : null,
+            Attributes       = cicm.attributes,
+            PosixMode        = cicm.posixModeSpecified ? cicm.posixMode : null,
+            DeviceNumber     = cicm.deviceNumberSpecified ? cicm.deviceNumber : null,
+            PosixGroupId     = cicm.posixGroupIdSpecified ? cicm.posixGroupId : null,
+            Inode            = cicm.inodeSpecified ? cicm.inode : null,
+            Links            = cicm.linksSpecified ? cicm.links : null,
+            PosixUserId      = cicm.posixUserIdSpecified ? cicm.posixUserId : null
+        };
+
+        if(cicm.Directory is not null)
+        {
+            dir.Directories = new List<Directory>();
+
+            foreach(DirectoryType d in cicm.Directory)
+                dir.Directories.Add(d);
+        }
+
+        if(cicm.File is null)
+            return dir;
+
+        dir.Files = new List<ContentsFile>();
+
+        foreach(ContentsFileType file in cicm.File)
+            dir.Files.Add(file);
+
+        return dir;
+    }
 }

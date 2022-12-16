@@ -37,6 +37,7 @@
 // ****************************************************************************/
 
 using System;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -65,4 +66,29 @@ public class FileSystem
     public string             DataPreparerIdentifier { get; set; }
     public string             ApplicationIdentifier  { get; set; }
     public FilesystemContents Contents               { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator FileSystem(FileSystemType cicm) => cicm is null ? null : new FileSystem
+    {
+        Type                   = cicm.Type,
+        CreationDate           = cicm.CreationDateSpecified ? cicm.CreationDate : null,
+        ModificationDate       = cicm.ModificationDateSpecified ? cicm.ModificationDate : null,
+        BackupDate             = cicm.BackupDateSpecified ? cicm.BackupDate : null,
+        ClusterSize            = cicm.ClusterSize,
+        Clusters               = cicm.Clusters,
+        Files                  = cicm.FilesSpecified ? cicm.Files : null,
+        Bootable               = cicm.Bootable,
+        VolumeSerial           = cicm.VolumeSerial,
+        VolumeName             = cicm.VolumeName,
+        FreeClusters           = cicm.FreeClustersSpecified ? cicm.FreeClusters : null,
+        Dirty                  = cicm.Dirty,
+        ExpirationDate         = cicm.ExpirationDateSpecified ? cicm.ExpirationDate : null,
+        EffectiveDate          = cicm.EffectiveDateSpecified ? cicm.EffectiveDate : null,
+        SystemIdentifier       = cicm.SystemIdentifier,
+        VolumeSetIdentifier    = cicm.VolumeSetIdentifier,
+        PublisherIdentifier    = cicm.PublisherIdentifier,
+        DataPreparerIdentifier = cicm.DataPreparerIdentifier,
+        ApplicationIdentifier  = cicm.ApplicationIdentifier,
+        Contents               = cicm.Contents
+    };
 }

@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -48,6 +50,25 @@ public class Xbox
     public Dump                     Pfi             { get; set; }
     public Dump                     Dmi             { get; set; }
     public List<XboxSecuritySector> SecuritySectors { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Xbox(XboxType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        Xbox xbox = new();
+        xbox.Pfi = cicm.PFI;
+        xbox.Dmi = cicm.DMI;
+
+        if(cicm.SecuritySectors is null)
+            return xbox;
+
+        foreach(XboxSecuritySectorsType ss in cicm.SecuritySectors)
+            xbox.SecuritySectors.Add(ss);
+
+        return xbox;
+    }
 }
 
 public class XboxSecuritySector
@@ -55,4 +76,13 @@ public class XboxSecuritySector
     public uint RequestVersion  { get; set; }
     public uint RequestNumber   { get; set; }
     public Dump SecuritySectors { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator XboxSecuritySector(XboxSecuritySectorsType cicm) =>
+        cicm is null ? null : new XboxSecuritySector
+        {
+            RequestNumber   = cicm.RequestNumber,
+            RequestVersion  = cicm.RequestVersion,
+            SecuritySectors = cicm.SecuritySectors
+        };
 }

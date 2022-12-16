@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -92,6 +94,142 @@ public class OpticalDisc
     public string             MediaCatalogueNumber { get; set; }
     public List<Track>        Track                { get; set; }
     public List<DumpHardware> DumpHardware         { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator OpticalDisc(OpticalDiscType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var disc = new OpticalDisc
+        {
+            Image                = cicm.Image,
+            Size                 = cicm.Size,
+            Sequence             = cicm.Sequence,
+            Layers               = cicm.Layers,
+            PartNumber           = cicm.PartNumber,
+            SerialNumber         = cicm.SerialNumber,
+            DiscType             = cicm.DiscType,
+            DiscSubType          = cicm.DiscSubType,
+            Offset               = cicm.OffsetSpecified ? cicm.Offset : null,
+            Tracks               = cicm.Tracks,
+            Sessions             = cicm.Sessions,
+            CopyProtection       = cicm.CopyProtection,
+            Dimensions           = cicm.Dimensions,
+            Case                 = cicm.Case,
+            Scans                = cicm.Scans,
+            Pfi                  = cicm.PFI,
+            Dmi                  = cicm.DMI,
+            Cmi                  = cicm.CMI,
+            Bca                  = cicm.BCA,
+            Atip                 = cicm.ATIP,
+            Adip                 = cicm.ADIP,
+            Pma                  = cicm.PMA,
+            Dds                  = cicm.DDS,
+            Sai                  = cicm.SAI,
+            LastRmd              = cicm.LastRMD,
+            Pri                  = cicm.PRI,
+            MediaID              = cicm.MediaID,
+            Pfir                 = cicm.PFIR,
+            Dcb                  = cicm.DCB,
+            Pac                  = cicm.PAC,
+            Toc                  = cicm.TOC,
+            LeadInCdText         = cicm.LeadInCdText,
+            Xbox                 = cicm.Xbox,
+            Ps3Encryption        = cicm.PS3Encryption,
+            MediaCatalogueNumber = cicm.MediaCatalogueNumber
+        };
+
+        if(cicm.Checksums is not null)
+        {
+            disc.Checksums = new List<Checksum>();
+
+            foreach(Schemas.ChecksumType chk in cicm.Checksums)
+                disc.Checksums.Add(chk);
+        }
+
+        if(cicm.RingCode is not null)
+        {
+            disc.RingCode = new List<LayeredText>();
+
+            foreach(LayeredTextType lt in cicm.RingCode)
+                disc.RingCode.Add(lt);
+        }
+
+        if(cicm.MasteringSID is not null)
+        {
+            disc.MasteringSid = new List<LayeredText>();
+
+            foreach(LayeredTextType lt in cicm.MasteringSID)
+                disc.MasteringSid.Add(lt);
+        }
+
+        if(cicm.Toolstamp is not null)
+        {
+            disc.Toolstamp = new List<LayeredText>();
+
+            foreach(LayeredTextType lt in cicm.Toolstamp)
+                disc.Toolstamp.Add(lt);
+        }
+
+        if(cicm.MouldSID is not null)
+        {
+            disc.MouldSid = new List<LayeredText>();
+
+            foreach(LayeredTextType lt in cicm.MouldSID)
+                disc.MouldSid.Add(lt);
+        }
+
+        if(cicm.MouldText is not null)
+        {
+            disc.MouldText = new List<LayeredText>();
+
+            foreach(LayeredTextType lt in cicm.MouldText)
+                disc.MouldText.Add(lt);
+        }
+
+        if(cicm.FirstTrackPregrap is not null)
+        {
+            disc.FirstTrackPregrap = new List<Border>();
+
+            foreach(BorderType lt in cicm.FirstTrackPregrap)
+                disc.FirstTrackPregrap.Add(lt);
+        }
+
+        if(cicm.LeadIn is not null)
+        {
+            disc.LeadIn = new List<Border>();
+
+            foreach(BorderType lt in cicm.LeadIn)
+                disc.LeadIn.Add(lt);
+        }
+
+        if(cicm.LeadOut is not null)
+        {
+            disc.LeadOut = new List<Border>();
+
+            foreach(BorderType lt in cicm.LeadOut)
+                disc.LeadOut.Add(lt);
+        }
+
+        if(cicm.Track is not null)
+        {
+            disc.Track = new List<Track>();
+
+            foreach(Schemas.TrackType lt in cicm.Track)
+                disc.Track.Add(lt);
+        }
+
+        if(cicm.DumpHardwareArray is null)
+            return cicm;
+
+        disc.DumpHardware = new List<DumpHardware>();
+
+        foreach(DumpHardwareType hw in cicm.DumpHardwareArray)
+            disc.DumpHardware.Add(hw);
+
+        return cicm;
+    }
 }
 
 public class Track
@@ -112,18 +250,82 @@ public class Track
     public List<Checksum>   Checksums             { get; set; }
     public SubChannel       SubChannel            { get; set; }
     public List<Partition>  FileSystemInformation { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Track(Schemas.TrackType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var trk = new Track
+        {
+            Image          = cicm.Image,
+            Size           = cicm.Size,
+            Sequence       = cicm.Sequence,
+            StartMsf       = cicm.StartMSF,
+            EndMsf         = cicm.EndMSF,
+            StartSector    = cicm.StartSector,
+            EndSector      = cicm.EndSector,
+            Flags          = cicm.Flags,
+            ISRC           = cicm.ISRC,
+            Type           = (TrackType)cicm.TrackType1,
+            BytesPerSector = cicm.BytesPerSector,
+            AccoustID      = cicm.AccoustID,
+            SubChannel     = cicm.SubChannel
+        };
+
+        if(cicm.Indexes is not null)
+        {
+            trk.Indexes = new List<TrackIndex>();
+
+            foreach(TrackIndexType idx in cicm.Indexes)
+                trk.Indexes.Add(idx);
+        }
+
+        if(cicm.Checksums is not null)
+        {
+            trk.Checksums = new List<Checksum>();
+
+            foreach(Schemas.ChecksumType chk in cicm.Checksums)
+                trk.Checksums.Add(chk);
+        }
+
+        if(cicm.FileSystemInformation is null)
+            return trk;
+
+        trk.FileSystemInformation = new List<Partition>();
+
+        foreach(PartitionType fs in cicm.FileSystemInformation)
+            trk.FileSystemInformation.Add(fs);
+
+        return trk;
+    }
 }
 
 public class TrackSequence
 {
     public uint Number  { get; set; }
     public uint Session { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator TrackSequence(TrackSequenceType cicm) => cicm is null ? null : new TrackSequence
+    {
+        Number  = cicm.TrackNumber,
+        Session = cicm.Session
+    };
 }
 
 public class TrackIndex
 {
     public ushort Index { get; set; }
     public int    Value { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator TrackIndex(TrackIndexType cicm) => cicm is null ? null : new TrackIndex
+    {
+        Index = cicm.index,
+        Value = cicm.Value
+    };
 }
 
 public class TrackFlags
@@ -132,6 +334,15 @@ public class TrackFlags
     public bool Data          { get; set; }
     public bool CopyPermitted { get; set; }
     public bool PreEmphasis   { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator TrackFlags(TrackFlagsType cicm) => cicm is null ? null : new TrackFlags
+    {
+        CopyPermitted = cicm.CopyPermitted,
+        Data          = cicm.Data,
+        PreEmphasis   = cicm.PreEmphasis,
+        Quadraphonic  = cicm.Quadraphonic
+    };
 }
 
 public enum TrackType
@@ -147,4 +358,27 @@ public class SubChannel
     public Image          Image     { get; set; }
     public ulong          Size      { get; set; }
     public List<Checksum> Checksums { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator SubChannel(SubChannelType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var subchannel = new SubChannel
+        {
+            Image = cicm.Image,
+            Size  = cicm.Size
+        };
+
+        if(cicm.Checksums is null)
+            return subchannel;
+
+        subchannel.Checksums = new List<Checksum>();
+
+        foreach(Schemas.ChecksumType chk in cicm.Checksums)
+            subchannel.Checksums.Add(chk);
+
+        return subchannel;
+    }
 }

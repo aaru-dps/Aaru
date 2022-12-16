@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -50,6 +52,31 @@ public class SCSI
     public Dump       ModeSense   { get; set; }
     public Dump       ModeSense10 { get; set; }
     public Dump       LogSense    { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator SCSI(SCSIType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var scsi = new SCSI
+        {
+            Inquiry     = cicm.Inquiry,
+            LogSense    = cicm.LogSense,
+            ModeSense   = cicm.ModeSense,
+            ModeSense10 = cicm.ModeSense10
+        };
+
+        if(cicm.EVPD is null)
+            return cicm;
+
+        scsi.Evpds = new List<Evpd>();
+
+        foreach(EVPDType evpd in cicm.EVPD)
+            scsi.Evpds.Add(evpd);
+
+        return scsi;
+    }
 }
 
 public class Evpd
@@ -58,4 +85,28 @@ public class Evpd
     public ulong          Size      { get; set; }
     public List<Checksum> Checksums { get; set; }
     public byte?          Page      { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Evpd(EVPDType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var evpd = new Evpd
+        {
+            Image = cicm.Image,
+            Size  = cicm.Size,
+            Page  = cicm.pageSpecified ? cicm.page : null
+        };
+
+        if(cicm.Checksums is null)
+            return evpd;
+
+        evpd.Checksums = new List<Checksum>();
+
+        foreach(Schemas.ChecksumType chk in cicm.Checksums)
+            evpd.Checksums.Add(chk);
+
+        return evpd;
+    }
 }

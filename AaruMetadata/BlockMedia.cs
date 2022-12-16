@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -81,6 +83,96 @@ public class BlockMedia
     public string              MediaType             { get; set; }
     public string              MediaSubType          { get; set; }
     public string              Interface             { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator BlockMedia(BlockMediaType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var media = new BlockMedia
+        {
+            Image             = cicm.Image,
+            Size              = cicm.Size,
+            Sequence          = cicm.Sequence,
+            Manufacturer      = cicm.Manufacturer,
+            Model             = cicm.Model,
+            Serial            = cicm.Serial,
+            Firmware          = cicm.Firmware,
+            PartNumber        = cicm.PartNumber,
+            SerialNumber      = cicm.SerialNumber,
+            PhysicalBlockSize = cicm.PhysicalBlockSize,
+            LogicalBlockSize  = cicm.LogicalBlockSize,
+            LogicalBlocks     = cicm.LogicalBlocks,
+            Scans             = cicm.Scans,
+            ATA               = cicm.ATA,
+            Pci               = cicm.PCI,
+            Pcmcia            = cicm.PCMCIA,
+            SecureDigital     = cicm.SecureDigital,
+            MultiMediaCard    = cicm.MultiMediaCard,
+            SCSI              = cicm.SCSI,
+            Usb               = cicm.USB,
+            Mam               = cicm.MAM,
+            Heads             = cicm.HeadsSpecified ? cicm.Heads : null,
+            Cylinders         = cicm.CylindersSpecified ? cicm.Cylinders : null,
+            SectorsPerTrack   = cicm.SectorsPerTrackSpecified ? cicm.SectorsPerTrack : null,
+            CopyProtection    = cicm.CopyProtection,
+            Dimensions        = cicm.Dimensions,
+            MediaType         = cicm.DiskType,
+            MediaSubType      = cicm.DiskSubType,
+            Interface         = cicm.Interface
+        };
+
+        if(cicm.Checksums is not null)
+        {
+            media.Checksums = new List<Checksum>();
+
+            foreach(Schemas.ChecksumType chk in cicm.Checksums)
+                media.Checksums.Add(chk);
+        }
+
+        if(cicm.ContentChecksums is not null)
+        {
+            media.ContentChecksums = new List<Checksum>();
+
+            foreach(Schemas.ChecksumType chk in cicm.ContentChecksums)
+                media.ContentChecksums.Add(chk);
+        }
+
+        if(cicm.VariableBlockSize is not null)
+        {
+            media.VariableBlockSize = new List<BlockSize>();
+
+            foreach(BlockSizeType blkSize in cicm.VariableBlockSize)
+                media.VariableBlockSize.Add(blkSize);
+        }
+
+        if(cicm.TapeInformation is not null)
+        {
+            media.TapeInformation = new List<TapePartition>();
+
+            foreach(TapePartitionType tapeInformation in cicm.TapeInformation)
+                media.TapeInformation.Add(tapeInformation);
+        }
+
+        if(cicm.FileSystemInformation is not null)
+        {
+            media.FileSystemInformation = new List<Partition>();
+
+            foreach(PartitionType fsInfo in cicm.FileSystemInformation)
+                media.FileSystemInformation.Add(fsInfo);
+        }
+
+        if(cicm.DumpHardwareArray is null)
+            return media;
+
+        media.DumpHardware = new List<DumpHardware>();
+
+        foreach(DumpHardwareType hw in cicm.DumpHardwareArray)
+            media.DumpHardware.Add(hw);
+
+        return media;
+    }
 }
 
 public class BlockTrack
@@ -95,4 +187,34 @@ public class BlockTrack
     public uint           BytesPerSector { get; set; }
     public List<Checksum> Checksums      { get; set; }
     public string         Format         { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator BlockTrack(BlockTrackType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var trk = new BlockTrack
+        {
+            Image          = cicm.Image,
+            Size           = cicm.Size,
+            Head           = cicm.Head,
+            Cylinder       = cicm.Cylinder,
+            StartSector    = cicm.StartSector,
+            EndSector      = cicm.EndSector,
+            Sectors        = cicm.Sectors,
+            BytesPerSector = cicm.BytesPerSector,
+            Format         = cicm.Format
+        };
+
+        if(cicm.Checksums is null)
+            return trk;
+
+        trk.Checksums = new List<Checksum>();
+
+        foreach(Schemas.ChecksumType chk in cicm.Checksums)
+            trk.Checksums.Add(chk);
+
+        return trk;
+    }
 }

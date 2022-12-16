@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -52,4 +54,31 @@ public class Partition
     public ulong            EndSector   { get; set; }
     public string           Description { get; set; }
     public List<FileSystem> FileSystems { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Partition(PartitionType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var part = new Partition
+        {
+            Sequence    = cicm.Sequence,
+            Name        = cicm.Name,
+            Type        = cicm.Type,
+            StartSector = cicm.StartSector,
+            EndSector   = cicm.EndSector,
+            Description = cicm.Description
+        };
+
+        if(cicm.FileSystems is null)
+            return part;
+
+        part.FileSystems = new List<FileSystem>();
+
+        foreach(FileSystemType fs in cicm.FileSystems)
+            part.FileSystems.Add(fs);
+
+        return part;
+    }
 }

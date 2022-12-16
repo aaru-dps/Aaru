@@ -40,6 +40,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -55,6 +56,33 @@ public class AudioTrack
     public uint           Channels    { get; set; }
     public double         SampleRate  { get; set; }
     public long           MeanBitrate { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator AudioTrack(AudioTracksType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var trk = new AudioTrack
+        {
+            Number      = cicm.TrackNumber,
+            AccoustID   = cicm.AccoustID,
+            Codec       = cicm.Codec,
+            Channels    = cicm.Channels,
+            SampleRate  = cicm.SampleRate,
+            MeanBitrate = cicm.MeanBitrate
+        };
+
+        if(cicm.Languages is null)
+            return trk;
+
+        trk.Languages = new List<Language>();
+
+        foreach(LanguagesTypeLanguage lng in cicm.Languages)
+            trk.Languages.Add((Language)lng);
+
+        return trk;
+    }
 }
 
 public class VideoTrack
@@ -67,6 +95,33 @@ public class VideoTrack
     public long           MeanBitrate { get; set; }
     [JsonPropertyName("3D")]
     public bool ThreeD { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator VideoTrack(VideoTracksType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var trk = new VideoTrack
+        {
+            Number      = cicm.TrackNumber,
+            Codec       = cicm.Codec,
+            Horizontal  = cicm.Horizontal,
+            Vertical    = cicm.Vertical,
+            MeanBitrate = cicm.MeanBitrate,
+            ThreeD      = cicm.ThreeD
+        };
+
+        if(cicm.Languages is null)
+            return trk;
+
+        trk.Languages = new List<Language>();
+
+        foreach(LanguagesTypeLanguage lng in cicm.Languages)
+            trk.Languages.Add((Language)lng);
+
+        return trk;
+    }
 }
 
 public class SubtitleTrack
@@ -74,6 +129,29 @@ public class SubtitleTrack
     public List<Language> Languages { get; set; }
     public uint           Number    { get; set; }
     public string         Codec     { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator SubtitleTrack(SubtitleTracksType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var sub = new SubtitleTrack
+        {
+            Number = cicm.TrackNumber,
+            Codec  = cicm.Codec
+        };
+
+        if(cicm.Languages is null)
+            return sub;
+
+        sub.Languages = new List<Language>();
+
+        foreach(LanguagesTypeLanguage lng in cicm.Languages)
+            sub.Languages.Add((Language)lng);
+
+        return sub;
+    }
 }
 
 public class Recording
@@ -84,12 +162,45 @@ public class Recording
     public DateTime       Timestamp         { get; set; }
     public List<Software> Software          { get; set; }
     public Coordinates    Coordinates       { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Recording(RecordingType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var recording = new Recording
+        {
+            Broadcaster       = cicm.Broadcaster,
+            BroadcastPlatform = cicm.BroadcastPlatform,
+            SourceFormat      = (SourceFormat)cicm.SourceFormat,
+            Timestamp         = cicm.Timestamp,
+            Coordinates       = cicm.Coordinates
+        };
+
+        if(cicm.Software is null)
+            return recording;
+
+        recording.Software = new List<Software>();
+
+        foreach(SoftwareType sw in cicm.Software)
+            recording.Software.Add(sw);
+
+        return recording;
+    }
 }
 
 public class Coordinates
 {
     public double Latitude  { get; set; }
     public double Longitude { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Coordinates(CoordinatesType cicm) => cicm is null ? null : new Coordinates
+    {
+        Latitude  = cicm.Latitude,
+        Longitude = cicm.Longitude
+    };
 }
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter)), SuppressMessage("ReSharper", "InconsistentNaming")]

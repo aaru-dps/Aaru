@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -51,7 +53,41 @@ public class TapePartition
     public ulong          StartBlock { get; set; }
     public ulong          EndBlock   { get; set; }
     public List<Checksum> Checksums  { get; set; }
-    public List<TapeFile> File       { get; set; }
+    public List<TapeFile> Files      { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator TapePartition(TapePartitionType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        TapePartition partition = new()
+        {
+            Image      = cicm.Image,
+            Size       = cicm.Size,
+            Sequence   = cicm.Sequence,
+            StartBlock = cicm.StartBlock,
+            EndBlock   = cicm.EndBlock
+        };
+
+        if(cicm.Checksums is not null)
+        {
+            partition.Checksums = new List<Checksum>();
+
+            foreach(Schemas.ChecksumType chk in cicm.Checksums)
+                partition.Checksums.Add(chk);
+        }
+
+        if(cicm.File is null)
+            return partition;
+
+        partition.Files = new List<TapeFile>();
+
+        foreach(TapeFileType file in cicm.File)
+            partition.Files.Add(file);
+
+        return partition;
+    }
 }
 
 public class TapeFile
@@ -63,4 +99,31 @@ public class TapeFile
     public ulong          StartBlock { get; set; }
     public ulong          EndBlock   { get; set; }
     public List<Checksum> Checksums  { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator TapeFile(TapeFileType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var file = new TapeFile
+        {
+            Image      = cicm.Image,
+            Size       = cicm.Size,
+            Sequence   = cicm.Sequence,
+            BlockSize  = cicm.BlockSize,
+            StartBlock = cicm.StartBlock,
+            EndBlock   = cicm.EndBlock
+        };
+
+        if(cicm.Checksums is null)
+            return file;
+
+        file.Checksums = new List<Checksum>();
+
+        foreach(Schemas.ChecksumType chk in cicm.Checksums)
+            file.Checksums.Add(chk);
+
+        return file;
+    }
 }

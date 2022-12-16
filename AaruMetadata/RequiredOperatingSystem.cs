@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -47,4 +49,12 @@ public class RequiredOperatingSystem
 {
     public string       Name     { get; set; }
     public List<string> Versions { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator RequiredOperatingSystem(RequiredOperatingSystemType cicm) =>
+        cicm is null ? null : new RequiredOperatingSystem
+        {
+            Name     = cicm.Name,
+            Versions = cicm.Version is null ? null : new List<string>(cicm.Version)
+        };
 }

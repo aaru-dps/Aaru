@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -64,4 +66,57 @@ public class LinearMedia
     public List<DumpHardware> DumpHardware    { get; set; }
     public Pcmcia             Pcmcia          { get; set; }
     public string             CopyProtection  { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator LinearMedia(LinearMediaType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var linearMedia = new LinearMedia
+        {
+            Image           = cicm.Image,
+            Size            = cicm.Size,
+            PartNumber      = cicm.PartNumber,
+            SerialNumber    = cicm.SerialNumber,
+            Title           = cicm.Title,
+            Sequence        = cicm.SequenceSpecified ? cicm.Sequence : null,
+            ImageInterleave = cicm.ImageInterleaveSpecified ? cicm.ImageInterleave : null,
+            Interleave      = cicm.InterleaveSpecified ? cicm.Interleave : null,
+            Manufacturer    = cicm.Manufacturer,
+            Model           = cicm.Model,
+            Package         = cicm.Package,
+            Interface       = cicm.Interface,
+            Dimensions      = cicm.Dimensions,
+            Scans           = cicm.Scans,
+            Pcmcia          = cicm.PCMCIA,
+            CopyProtection  = cicm.CopyProtection
+        };
+
+        if(cicm.ImageChecksums is not null)
+        {
+            linearMedia.ImageChecksums = new List<Checksum>();
+
+            foreach(Schemas.ChecksumType chk in cicm.ImageChecksums)
+                linearMedia.ImageChecksums.Add(chk);
+        }
+
+        if(cicm.Checksums is not null)
+        {
+            linearMedia.Checksums = new List<Checksum>();
+
+            foreach(Schemas.ChecksumType chk in cicm.Checksums)
+                linearMedia.Checksums.Add(chk);
+        }
+
+        if(cicm.DumpHardwareArray is null)
+            return linearMedia;
+
+        linearMedia.DumpHardware = new List<DumpHardware>();
+
+        foreach(DumpHardwareType hw in cicm.DumpHardwareArray)
+            linearMedia.DumpHardware.Add(hw);
+
+        return linearMedia;
+    }
 }

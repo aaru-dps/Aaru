@@ -38,6 +38,7 @@
 
 using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -56,4 +57,41 @@ public class Book
     public uint?          Pages           { get; set; }
     public string         PageSize        { get; set; }
     public Scan           Scan            { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Book(BookType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var book = new Book
+        {
+            Cover           = cicm.Cover,
+            Name            = cicm.Name,
+            Editorial       = cicm.Editorial,
+            Author          = cicm.Author,
+            PublicationDate = cicm.PublicationDateSpecified ? cicm.PublicationDate : null,
+            Pages           = cicm.PagesSpecified ? cicm.Pages : null,
+            PageSize        = cicm.PageSize,
+            Scan            = cicm.Scan
+        };
+
+        if(cicm.Barcodes is not null)
+        {
+            book.Barcodes = new List<Barcode>();
+
+            foreach(Schemas.BarcodeType code in cicm.Barcodes)
+                book.Barcodes.Add(code);
+        }
+
+        if(cicm.Language is null)
+            return book;
+
+        book.Languages = new List<Language>();
+
+        foreach(LanguagesTypeLanguage lng in cicm.Language)
+            book.Languages.Add((Language)lng);
+
+        return book;
+    }
 }

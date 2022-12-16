@@ -36,10 +36,10 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
+using System;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
@@ -47,6 +47,13 @@ public class Checksum
 {
     public ChecksumType Type  { get; set; }
     public string       Value { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Checksum(Schemas.ChecksumType cicm) => cicm is null ? null : new Checksum
+    {
+        Value = cicm.Value,
+        Type  = (ChecksumType)cicm.type
+    };
 }
 
 public enum ChecksumType

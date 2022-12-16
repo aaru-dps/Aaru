@@ -38,6 +38,7 @@
 
 using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -56,4 +57,38 @@ public class Magazine
     public uint?          Pages           { get; set; }
     public string         PageSize        { get; set; }
     public Scan           Scan            { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Magazine(MagazineType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var magazine = new Magazine
+        {
+            Cover           = cicm.Cover,
+            Name            = cicm.Name,
+            Editorial       = cicm.Editorial,
+            PublicationDate = cicm.PublicationDateSpecified ? cicm.PublicationDate : null,
+            Number          = cicm.NumberSpecified ? cicm.Number : null,
+            Pages           = cicm.PagesSpecified ? cicm.Pages : null,
+            Scan            = cicm.Scan
+        };
+
+        if(cicm.Barcodes is not null)
+        {
+            magazine.Barcodes = new List<Barcode>();
+
+            foreach(Schemas.BarcodeType code in cicm.Barcodes)
+                magazine.Barcodes.Add(code);
+        }
+
+        if(cicm.Language is null)
+            return magazine;
+
+        foreach(LanguagesTypeLanguage lng in cicm.Language)
+            magazine.Languages.Add((Language)lng);
+
+        return magazine;
+    }
 }

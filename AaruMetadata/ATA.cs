@@ -36,14 +36,21 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
+using System;
+using Schemas;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
 public class ATA
 {
     public Dump Identify { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator ATA(ATAType cicm) => cicm is null ? null : new ATA
+    {
+        Identify = cicm.Identify
+    };
 }

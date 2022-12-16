@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -49,4 +51,26 @@ public class UserManual
     public uint           Pages    { get; set; }
     public string         PageSize { get; set; }
     public Scan           Scan     { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator UserManual(UserManualType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var manual = new UserManual();
+        manual.Pages    = cicm.Pages;
+        manual.PageSize = cicm.PageSize;
+        manual.Scan     = cicm.Scan;
+
+        if(cicm.Language is null)
+            return manual;
+
+        manual.Language = new List<Language>();
+
+        foreach(LanguagesTypeLanguage lng in cicm.Language)
+            manual.Language.Add((Language)lng);
+
+        return manual;
+    }
 }

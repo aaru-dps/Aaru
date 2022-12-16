@@ -36,7 +36,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using Schemas;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -59,6 +61,54 @@ public class AudioMedia
     public DimensionsNew      Dimensions     { get; set; }
     public Scans              Scans          { get; set; }
     public List<DumpHardware> DumpHardware   { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator AudioMedia(AudioMediaType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var media = new AudioMedia
+        {
+            Image          = cicm.Image,
+            Size           = cicm.Size,
+            Sequence       = cicm.Sequence,
+            PartNumber     = cicm.PartNumber,
+            SerialNumber   = cicm.SerialNumber,
+            Manufacturer   = cicm.Manufacturer,
+            Model          = cicm.Model,
+            AccoustID      = cicm.AccoustID,
+            CopyProtection = cicm.CopyProtection,
+            Dimensions     = cicm.Dimensions,
+            Scans          = cicm.Scans
+        };
+
+        if(cicm.Checksums is not null)
+        {
+            media.Checksums = new List<Checksum>();
+
+            foreach(Schemas.ChecksumType chk in cicm.Checksums)
+                media.Checksums.Add(chk);
+        }
+
+        if(cicm.Block is not null)
+        {
+            media.Blocks = new List<AudioBlock>();
+
+            foreach(AudioBlockType blk in cicm.Block)
+                media.Blocks.Add(blk);
+        }
+
+        if(cicm.DumpHardwareArray is null)
+            return media;
+
+        media.DumpHardware = new List<DumpHardware>();
+
+        foreach(DumpHardwareType hw in cicm.DumpHardwareArray)
+            media.DumpHardware.Add(hw);
+
+        return media;
+    }
 }
 
 public class AudioBlock
@@ -68,4 +118,29 @@ public class AudioBlock
     public string         AccoustID { get; set; }
     public List<Checksum> Checksums { get; set; }
     public string         Format    { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator AudioBlock(AudioBlockType cicm)
+    {
+        if(cicm is null)
+            return null;
+
+        var blk = new AudioBlock
+        {
+            Image     = cicm.Image,
+            Size      = cicm.Size,
+            AccoustID = cicm.AccoustID,
+            Format    = cicm.Format
+        };
+
+        if(cicm.Checksums is null)
+            return blk;
+
+        blk.Checksums = new List<Checksum>();
+
+        foreach(Schemas.ChecksumType chk in cicm.Checksums)
+            blk.Checksums.Add(chk);
+
+        return blk;
+    }
 }

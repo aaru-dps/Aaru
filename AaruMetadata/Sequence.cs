@@ -36,10 +36,11 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
+
+using System;
+using Schemas;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
@@ -50,4 +51,14 @@ public class Sequence
     public uint   TotalMedia    { get; set; }
     public byte?  Side          { get; set; }
     public byte?  Layer         { get; set; }
+
+    [Obsolete("Will be removed in Aaru 7")]
+    public static implicit operator Sequence(SequenceType cicm) => cicm is null ? null : new Sequence
+    {
+        Title         = cicm.MediaTitle,
+        MediaSequence = cicm.MediaSequence,
+        TotalMedia    = cicm.TotalMedia,
+        Side          = cicm.SideSpecified ? cicm.Side : null,
+        Layer         = cicm.LayerSpecified ? cicm.Layer : null
+    };
 }
