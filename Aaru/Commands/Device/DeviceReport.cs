@@ -1576,11 +1576,7 @@ sealed class DeviceReportCommand : Command
 
         var jsonFs = new FileStream(jsonFile, FileMode.Create);
 
-        JsonSerializer.Serialize(jsonFs, report, new JsonSerializerOptions()
-        {
-            WriteIndented          = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        });
+        JsonSerializer.Serialize(jsonFs, report, typeof(DeviceReport), DeviceReportContext.Default);
 
         jsonFs.Close();
 

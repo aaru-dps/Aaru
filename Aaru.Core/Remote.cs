@@ -68,11 +68,7 @@ public static class Remote
 
                 try
                 {
-                    string json = JsonSerializer.Serialize(report, new JsonSerializerOptions()
-                    {
-                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                        WriteIndented          = true
-                    });
+                    string json = JsonSerializer.Serialize(report, typeof(DeviceReport), DeviceReportContext.Default);
 
                     var httpClient = new HttpClient();
 
