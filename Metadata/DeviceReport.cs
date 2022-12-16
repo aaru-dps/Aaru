@@ -59,6 +59,13 @@ using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 
 namespace Aaru.CommonTypes.Metadata;
 
+
+// ReSharper disable once PartialTypeWithSinglePart
+[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                             IncludeFields = true)]
+[JsonSerializable(typeof(DeviceReport))]
+public partial class DeviceReportContext : JsonSerializerContext {}
+
 public class DeviceReport
 {
     [JsonIgnore]
