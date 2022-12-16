@@ -309,11 +309,9 @@ sealed class ConvertImageCommand : Command
                 {
                     var fs = new FileStream(aaruMetadata, FileMode.Open);
 
-                    sidecar = JsonSerializer.Deserialize<MetadataJson>(fs, new JsonSerializerOptions
-                    {
-                        DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-                        PropertyNameCaseInsensitive = true
-                    })?.AaruMetadata;
+                    sidecar =
+                        (JsonSerializer.Deserialize(fs, typeof(MetadataJson), MetadataJsonContext.Default) as
+                             MetadataJson)?.AaruMetadata;
 
                     fs.Close();
                 }

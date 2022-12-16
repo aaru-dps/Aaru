@@ -37,7 +37,6 @@ using System.IO;
 using System.Reactive;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Aaru.CommonTypes.AaruMetadata;
@@ -257,11 +256,10 @@ public sealed class ImageSidecarViewModel : ViewModelBase
 
         var jsonFs = new FileStream(DestinationText, FileMode.Create);
 
-        await JsonSerializer.SerializeAsync(jsonFs, sidecar, new JsonSerializerOptions
+        await JsonSerializer.SerializeAsync(jsonFs, new MetadataJson
         {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            WriteIndented          = true
-        });
+            AaruMetadata = sidecar
+        }, typeof(MetadataJson), MetadataJsonContext.Default);
 
         jsonFs.Close();
 

@@ -39,7 +39,6 @@ using System.Linq;
 using System.Reactive;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -2035,11 +2034,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
         {
             var fs = new FileStream(result[0], FileMode.Open);
 
-            _aaruMetadata = JsonSerializer.Deserialize<MetadataJson>(fs, new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-                PropertyNameCaseInsensitive = true
-            })?.AaruMetadata;
+            _aaruMetadata =
+                (await JsonSerializer.DeserializeAsync(fs, typeof(MetadataJson), MetadataJsonContext.Default) as
+                     MetadataJson)?.AaruMetadata;
 
             fs.Close();
             MetadataJsonText = result[0];

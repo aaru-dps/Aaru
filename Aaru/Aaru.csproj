@@ -100,6 +100,7 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
     <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1"/>
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0"/>
+    <PackageReference Include="System.Text.Json" Version="7.0.0"/>
     <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3">
       <PrivateAssets>all</PrivateAssets>

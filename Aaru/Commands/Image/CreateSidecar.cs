@@ -38,7 +38,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
@@ -287,11 +286,10 @@ sealed class CreateSidecarCommand : Command
                             FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
                                        FileMode.Create);
 
-                    JsonSerializer.Serialize(jsonFs, sidecar, new JsonSerializerOptions
+                    JsonSerializer.Serialize(jsonFs, new MetadataJson
                     {
-                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                        WriteIndented          = true
-                    });
+                        AaruMetadata = sidecar
+                    }, typeof(MetadataJson), MetadataJsonContext.Default);
 
                     jsonFs.Close();
                 });
@@ -386,11 +384,10 @@ sealed class CreateSidecarCommand : Command
                         FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
                                    FileMode.Create);
 
-                JsonSerializer.Serialize(jsonFs, sidecar, new JsonSerializerOptions
+                JsonSerializer.Serialize(jsonFs, new MetadataJson
                 {
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                    WriteIndented          = true
-                });
+                    AaruMetadata = sidecar
+                }, typeof(MetadataJson), MetadataJsonContext.Default);
 
                 jsonFs.Close();
             });

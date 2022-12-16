@@ -49,6 +49,7 @@
     <PackageReference Include="DotNetZip" Version="1.16.0"/>
     <PackageReference Include="plist-cil" Version="2.2.0"/>
     <PackageReference Include="SharpCompress" Version="0.32.2"/>
+    <PackageReference Include="System.Text.Json" Version="7.0.0"/>
     <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
   </ItemGroup>

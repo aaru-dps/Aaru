@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
@@ -1135,11 +1134,9 @@ public sealed partial class ZZZRawImage
             {
                 var fs = new FileStream(basename + ".metadata.json", FileMode.Open);
 
-                AaruMetadata = JsonSerializer.Deserialize<MetadataJson>(fs, new JsonSerializerOptions
-                {
-                    DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-                    PropertyNameCaseInsensitive = true
-                })?.AaruMetadata;
+                AaruMetadata =
+                    (JsonSerializer.Deserialize(fs, typeof(MetadataJson), MetadataJsonContext.Default) as MetadataJson)?
+                   .AaruMetadata;
 
                 fs.Close();
             }
