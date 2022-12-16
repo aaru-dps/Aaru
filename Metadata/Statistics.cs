@@ -41,6 +41,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace Aaru.CommonTypes.Metadata;
@@ -82,6 +83,12 @@ public class Stats
     /// <summary>Image verification statistics</summary>
     public VerifyStats Verify { get; set; }
 }
+
+[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                             IncludeFields = true)]
+[JsonSerializable(typeof(StatsDto))]
+// ReSharper disable once PartialTypeWithSinglePart
+public partial class StatsDtoContext : JsonSerializerContext {}
 
 /// <summary>DTO for statistics</summary>
 [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
