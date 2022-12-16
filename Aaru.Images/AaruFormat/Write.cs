@@ -39,7 +39,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using Aaru.Checksums;
@@ -1119,11 +1118,9 @@ public sealed partial class AaruFormat
 
                         try
                         {
-                            AaruMetadata = JsonSerializer.Deserialize<MetadataJson>(jsonBytes, new JsonSerializerOptions
-                            {
-                                DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-                                PropertyNameCaseInsensitive = true
-                            })?.AaruMetadata;
+                            AaruMetadata =
+                                (JsonSerializer.Deserialize(jsonBytes, typeof(MetadataJson),
+                                                            MetadataJsonContext.Default) as MetadataJson)?.AaruMetadata;
                         }
                         catch(JsonException ex)
                         {
@@ -2901,11 +2898,7 @@ public sealed partial class AaruFormat
             JsonSerializer.Serialize(jsonMs, new MetadataJson
             {
                 AaruMetadata = AaruMetadata
-            }, new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                WriteIndented          = true
-            });
+            }, typeof(MetadataJson), MetadataJsonContext.Default);
 
             idxEntry = new IndexEntry
             {

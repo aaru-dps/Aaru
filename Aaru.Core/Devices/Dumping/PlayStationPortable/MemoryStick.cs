@@ -37,7 +37,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
@@ -721,11 +720,7 @@ public partial class Dump
                 JsonSerializer.Serialize(jsonFs, new MetadataJson
                 {
                     AaruMetadata = sidecar
-                }, new JsonSerializerOptions
-                {
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                    WriteIndented          = true
-                });
+                }, typeof(MetadataJson), MetadataJsonContext.Default);
 
                 jsonFs.Close();
             }

@@ -531,11 +531,9 @@ public sealed class MediaDumpViewModel : ViewModelBase
             {
                 var fs = new FileStream(result[0], FileMode.Open);
 
-                _sidecar = JsonSerializer.Deserialize<MetadataJson>(fs, new JsonSerializerOptions
-                {
-                    DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-                    PropertyNameCaseInsensitive = true
-                })?.AaruMetadata;
+                _sidecar =
+                    (JsonSerializer.Deserialize(fs, typeof(MetadataJson), MetadataJsonContext.Default) as MetadataJson)?
+                   .AaruMetadata;
 
                 fs.Close();
             }
