@@ -47,6 +47,7 @@ namespace Aaru.CommonTypes.Metadata;
 [JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                              IncludeFields = true)]
 [JsonSerializable(typeof(ResumeJson))]
+// ReSharper disable once PartialTypeWithSinglePart
 public partial class ResumeJsonContext : JsonSerializerContext {}
 
 public class ResumeJson
