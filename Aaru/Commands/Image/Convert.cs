@@ -38,7 +38,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
@@ -333,11 +332,18 @@ sealed class ConvertImageCommand : Command
             if(File.Exists(cicmXml))
                 try
                 {
+                    // Should be covered by virtue of being the same exact class as the JSON above
+                    #pragma warning disable IL2026
                     var xs = new XmlSerializer(typeof(CICMMetadataType));
+                    #pragma warning restore IL2026
 
                     var sr = new StreamReader(cicmXml);
 
+                    // Should be covered by virtue of being the same exact class as the JSON above
+                    #pragma warning disable IL2026
                     sidecar = (CICMMetadataType)xs.Deserialize(sr);
+                    #pragma warning restore IL2026
+
                     sr.Close();
                 }
                 catch(Exception ex)
@@ -364,11 +370,9 @@ sealed class ConvertImageCommand : Command
                     {
                         var fs = new FileStream(resumeFile, FileMode.Open);
 
-                        resume = JsonSerializer.Deserialize<ResumeJson>(fs, new JsonSerializerOptions
-                        {
-                            DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-                            PropertyNameCaseInsensitive = true
-                        })?.Resume;
+                        resume =
+                            (JsonSerializer.Deserialize(fs, typeof(ResumeJson),
+                                                        ResumeJsonContext.Default) as ResumeJson)?.Resume;
 
                         fs.Close();
                     }

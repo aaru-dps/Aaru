@@ -37,7 +37,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
@@ -301,12 +300,7 @@ public partial class Dump
         JsonSerializer.Serialize(fs, new ResumeJson
         {
             Resume = _resume
-        }, new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            IncludeFields          = true,
-            WriteIndented          = true
-        });
+        }, typeof(ResumeJson), ResumeJsonContext.Default);
 
         fs.Close();
     }

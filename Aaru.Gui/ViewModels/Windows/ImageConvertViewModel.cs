@@ -41,7 +41,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
@@ -2069,7 +2068,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             Name = UI.Dialog_Choose_existing_resume_file,
             Extensions = new List<string>(new[]
             {
-                ".xml"
+                ".json"
             })
         });
 
@@ -2079,12 +2078,15 @@ public sealed class ImageConvertViewModel : ViewModelBase
            result.Length != 1)
             return;
 
-        var sidecarXs = new XmlSerializer(typeof(Resume));
-
         try
         {
-            var sr     = new StreamReader(result[0]);
-            var resume = (Resume)sidecarXs.Deserialize(sr);
+            var fs = new FileStream(result[0], FileMode.Open);
+
+            Resume resume =
+                (await JsonSerializer.DeserializeAsync(fs, typeof(ResumeJson),
+                                                       ResumeJsonContext.Default) as ResumeJson)?.Resume;
+
+            fs.Close();
 
             if(resume?.Tries?.Any() == false)
             {
@@ -2096,8 +2098,6 @@ public sealed class ImageConvertViewModel : ViewModelBase
                       GetMessageBoxStandardWindow(UI.Title_Error,
                                                   UI.Resume_file_does_not_contain_dump_hardware_information,
                                                   icon: Icon.Error).ShowDialog(_view);
-
-            sr.Close();
         }
         catch
         {

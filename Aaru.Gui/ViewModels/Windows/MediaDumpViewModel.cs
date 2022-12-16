@@ -39,7 +39,6 @@ using System.Linq;
 using System.Reactive;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -705,12 +704,9 @@ public sealed class MediaDumpViewModel : ViewModelBase
             {
                 var fs = new FileStream(_outputPrefix + ".resume.json", FileMode.Open);
 
-                _resume = JsonSerializer.Deserialize<ResumeJson>(fs, new JsonSerializerOptions
-                {
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                    IncludeFields          = true,
-                    WriteIndented          = true
-                })?.Resume;
+                _resume =
+                    (await JsonSerializer.DeserializeAsync(fs, typeof(ResumeJson), ResumeJsonContext.Default) as
+                         ResumeJson)?.Resume;
 
                 fs.Close();
             }
@@ -718,10 +714,18 @@ public sealed class MediaDumpViewModel : ViewModelBase
             // DEPRECATED: To be removed in Aaru 7
             else if(File.Exists(_outputPrefix + ".resume.xml"))
             {
+                // Should be covered by virtue of being the same exact class as the JSON above
+                #pragma warning disable IL2026
                 var xs = new XmlSerializer(typeof(Resume));
+                #pragma warning restore IL2026
 
                 var sr = new StreamReader(_outputPrefix + ".resume.xml");
+
+                // Should be covered by virtue of being the same exact class as the JSON above
+                #pragma warning disable IL2026
                 _resume = (Resume)xs.Deserialize(sr);
+                #pragma warning restore IL2026
+
                 sr.Close();
             }
         }

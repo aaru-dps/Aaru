@@ -40,7 +40,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
@@ -479,16 +478,13 @@ sealed class DumpMediaCommand : Command
             {
                 try
                 {
-                    if(File.Exists(outputPrefix + "resume.json"))
+                    if(File.Exists(outputPrefix + ".resume.json"))
                     {
                         var fs = new FileStream(outputPrefix + ".resume.json", FileMode.Open);
 
-                        resumeClass = JsonSerializer.Deserialize<ResumeJson>(fs, new JsonSerializerOptions
-                        {
-                            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                            IncludeFields          = true,
-                            WriteIndented          = true
-                        })?.Resume;
+                        resumeClass =
+                            (JsonSerializer.Deserialize(fs, typeof(ResumeJson),
+                                                        ResumeJsonContext.Default) as ResumeJson)?.Resume;
 
                         fs.Close();
                     }
@@ -496,9 +492,18 @@ sealed class DumpMediaCommand : Command
                     // DEPRECATED: To be removed in Aaru 7
                     else if(File.Exists(outputPrefix + ".resume.xml") && resume)
                     {
+                        // Should be covered by virtue of being the same exact class as the JSON above
+                        #pragma warning disable IL2026
                         var xs = new XmlSerializer(typeof(Resume));
+                        #pragma warning restore IL2026
+
                         var sr = new StreamReader(outputPrefix + ".resume.xml");
+
+                        // Should be covered by virtue of being the same exact class as the JSON above
+                        #pragma warning disable IL2026
                         resumeClass = (Resume)xs.Deserialize(sr);
+                        #pragma warning restore IL2026
+
                         sr.Close();
                     }
                 }
