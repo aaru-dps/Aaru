@@ -40,7 +40,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
-using System.Xml.Serialization;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
@@ -336,7 +335,7 @@ public static class Statistics
                 #else
                             Aaru.Console.AaruConsole.DebugWriteLine("Submit stats", Localization.Core.Uploading_statistics);
                 #endif
-                    string json = JsonSerializer.Serialize(dto, new JsonSerializerOptions()
+                    string json = JsonSerializer.Serialize(dto, new JsonSerializerOptions
                     {
                         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                         WriteIndented          = true
@@ -658,74 +657,6 @@ public static class Statistics
                     throw;
             #endif
             }
-
-            IEnumerable<string> statsFiles =
-                Directory.EnumerateFiles(Settings.Settings.StatsPath, "PartialStats_*.xml",
-                                         SearchOption.TopDirectoryOnly);
-
-            foreach(string statsFile in statsFiles)
-                try
-                {
-                    if(!File.Exists(statsFile))
-                        continue;
-
-                    var stats = new Stats();
-
-                    // This can execute before debug console has been inited
-                #if DEBUG
-                    System.Console.WriteLine(Localization.Core.Uploading_partial_statistics_file_0, statsFile);
-                #else
-                    Aaru.Console.AaruConsole.DebugWriteLine("Submit stats", Localization.Core.Uploading_partial_statistics_file_0, statsFile);
-                #endif
-
-                    var fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);
-                    var xs = new XmlSerializer(stats.GetType());
-                    xs.Deserialize(fs); // Just to test validity of stats file
-                    fs.Seek(0, SeekOrigin.Begin);
-
-                    var request = WebRequest.Create("https://www.aaru.app/api/uploadstats");
-
-                    ((HttpWebRequest)request).UserAgent =
-                        $"Aaru {typeof(CommonTypes.Interop.Version).Assembly.GetName().Version}";
-
-                    request.Method        = "POST";
-                    request.ContentLength = fs.Length;
-                    request.ContentType   = "application/xml";
-                    Stream reqStream = request.GetRequestStream();
-                    fs.CopyTo(reqStream);
-                    reqStream.Close();
-                    WebResponse response = request.GetResponse();
-
-                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
-                        return;
-
-                    Stream data   = response.GetResponseStream();
-                    var    reader = new StreamReader(data ?? throw new InvalidOperationException());
-
-                    string responseFromServer = reader.ReadToEnd();
-                    data.Close();
-                    response.Close();
-                    fs.Close();
-
-                    if(responseFromServer == "ok")
-                        File.Delete(statsFile);
-                }
-                catch(WebException)
-                {
-                    // Can't connect to the server, postpone til next try
-                    break;
-                }
-                catch
-                {
-                #if DEBUG
-                    if(!Debugger.IsAttached)
-                        continue;
-
-                    _submitStatsLock = false;
-
-                    throw;
-                #endif
-                }
 
             _submitStatsLock = false;
         });
