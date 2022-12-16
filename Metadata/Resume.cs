@@ -44,10 +44,15 @@ using Aaru.CommonTypes.AaruMetadata;
 
 namespace Aaru.CommonTypes.Metadata;
 
+[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                             IncludeFields = true)]
+[JsonSerializable(typeof(ResumeJson))]
+public partial class ResumeJsonContext : JsonSerializerContext {}
+
 public class ResumeJson
 {
     [JsonPropertyName("AaruResume")]
-    public Resume Resume { get; init; }
+    public Resume Resume { get; set; }
 }
 
 /// <summary>Information that allows to resume a dump</summary>
