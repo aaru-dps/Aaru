@@ -38,6 +38,8 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -57,7 +59,6 @@ using Avalonia.Threading;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
-using Schemas;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using Track = Aaru.CommonTypes.Structs.Track;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -150,7 +151,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
     public string DriveLabel                  => UI.Title_Drive;
     public string FirmwareRevisionLabel       => UI.Title_Firmware_revision;
     public string CommentsLabel               => UI.Title_Comments;
-    public string CicmXmlLabel                => UI.Title_Existing_CICM_XML_sidecar;
+    public string AaruMetadataLabel           => UI.Title_Existing_Aaru_Metadata_sidecar;
     public string FromImageLabel              => UI.Title_From_image;
     public string ResumeFileLabel             => UI.Title_Existing_resume_file;
     public string StartLabel                  => UI.ButtonLabel_Start;
@@ -179,7 +180,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         DriveFirmwareRevisionCommand = ReactiveCommand.Create(ExecuteDriveFirmwareRevisionCommand);
         CommentsCommand              = ReactiveCommand.Create(ExecuteCommentsCommand);
         AaruMetadataFromImageCommand = ReactiveCommand.Create(ExecuteAaruMetadataFromImageCommand);
-        CicmXmlCommand               = ReactiveCommand.Create(ExecuteCicmXmlCommand);
+        AaruMetadataCommand          = ReactiveCommand.Create(ExecuteAaruMetadataCommand);
         ResumeFileFromImageCommand   = ReactiveCommand.Create(ExecuteResumeFileFromImageCommand);
         ResumeFileCommand            = ReactiveCommand.Create(ExecuteResumeFileCommand);
         StartCommand                 = ReactiveCommand.Create(ExecuteStartCommand);
@@ -570,7 +571,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit> DriveFirmwareRevisionCommand { get; }
     public ReactiveCommand<Unit, Unit> CommentsCommand              { get; }
     public ReactiveCommand<Unit, Unit> AaruMetadataFromImageCommand { get; }
-    public ReactiveCommand<Unit, Task> CicmXmlCommand               { get; }
+    public ReactiveCommand<Unit, Task> AaruMetadataCommand          { get; }
     public ReactiveCommand<Unit, Unit> ResumeFileFromImageCommand   { get; }
     public ReactiveCommand<Unit, Task> ResumeFileCommand            { get; }
     public ReactiveCommand<Unit, Task> StartCommand                 { get; }
@@ -2005,7 +2006,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         _aaruMetadata    = _inputFormat.AaruMetadata;
     }
 
-    async Task ExecuteCicmXmlCommand()
+    async Task ExecuteAaruMetadataCommand()
     {
         _aaruMetadata    = null;
         MetadataJsonText = "";
@@ -2020,7 +2021,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             Name = UI.Dialog_Aaru_Metadata,
             Extensions = new List<string>(new[]
             {
-                ".xml"
+                ".json"
             })
         });
 
@@ -2030,14 +2031,17 @@ public sealed class ImageConvertViewModel : ViewModelBase
            result.Length != 1)
             return;
 
-        var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
-
         try
         {
-            var sr = new StreamReader(result[0]);
+            var fs = new FileStream(result[0], FileMode.Open);
 
-            //            _aaruMetadata = (CICMMetadataType)sidecarXs.Deserialize(sr);
-            sr.Close();
+            _aaruMetadata = JsonSerializer.Deserialize<MetadataJson>(fs, new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                PropertyNameCaseInsensitive = true
+            })?.AaruMetadata;
+
+            fs.Close();
             MetadataJsonText = result[0];
         }
         catch
@@ -2065,7 +2069,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         dlgMetadata.Filters?.Add(new FileDialogFilter
         {
-            Name = UI.Dialog_Aaru_Metadata,
+            Name = UI.Dialog_Choose_existing_resume_file,
             Extensions = new List<string>(new[]
             {
                 ".xml"

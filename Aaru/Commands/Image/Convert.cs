@@ -37,6 +37,8 @@ using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
@@ -143,6 +145,11 @@ sealed class ConvertImageCommand : Command
             "--generate-subchannels"
         }, () => false, UI.Generates_subchannels_help));
 
+        Add(new Option<string>(new[]
+        {
+            "--aaru-metadata", "-m"
+        }, () => null, "Take metadata from existing Aaru Metadata sidecar."));
+
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
@@ -167,7 +174,7 @@ sealed class ConvertImageCommand : Command
                              int mediaSequence, string mediaSerialNumber, string mediaTitle, string outputPath,
                              string options, string resumeFile, string format, string geometry,
                              bool fixSubchannelPosition, bool fixSubchannel, bool fixSubchannelCrc,
-                             bool generateSubchannels)
+                             bool generateSubchannels, string aaruMetadata)
     {
         MainClass.PrintCopyright();
 
@@ -233,6 +240,7 @@ sealed class ConvertImageCommand : Command
         AaruConsole.DebugWriteLine("Image convert command", "--fix-subchannel={0}", fixSubchannel);
         AaruConsole.DebugWriteLine("Image convert command", "--fix-subchannel-crc={0}", fixSubchannelCrc);
         AaruConsole.DebugWriteLine("Image convert command", "--generate-subchannels={0}", generateSubchannels);
+        AaruConsole.DebugWriteLine("Image convert command", "--aaru-metadata={0}", aaruMetadata);
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
         AaruConsole.DebugWriteLine("Image convert command", UI.Parsed_options);
@@ -294,15 +302,44 @@ sealed class ConvertImageCommand : Command
         Metadata  sidecar = null;
         MediaType mediaType;
 
-        var xs = new XmlSerializer(typeof(CICMMetadataType));
+        if(aaruMetadata != null)
 
-        if(cicmXml != null)
+            if(File.Exists(aaruMetadata))
+                try
+                {
+                    var fs = new FileStream(aaruMetadata, FileMode.Open);
+
+                    sidecar = JsonSerializer.Deserialize<MetadataJson>(fs, new JsonSerializerOptions
+                    {
+                        DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                        PropertyNameCaseInsensitive = true
+                    })?.AaruMetadata;
+
+                    fs.Close();
+                }
+                catch(Exception ex)
+                {
+                    AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file_not_continuing);
+                    AaruConsole.DebugWriteLine("Image conversion", $"{ex}");
+
+                    return (int)ErrorNumber.InvalidSidecar;
+                }
+            else
+            {
+                AaruConsole.ErrorWriteLine(UI.Could_not_find_metadata_sidecar);
+
+                return (int)ErrorNumber.NoSuchFile;
+            }
+
+        else if(cicmXml != null)
             if(File.Exists(cicmXml))
                 try
                 {
+                    var xs = new XmlSerializer(typeof(CICMMetadataType));
+
                     var sr = new StreamReader(cicmXml);
 
-                    //sidecar = (CICMMetadataType)xs.Deserialize(sr);
+                    sidecar = (CICMMetadataType)xs.Deserialize(sr);
                     sr.Close();
                 }
                 catch(Exception ex)
@@ -319,15 +356,31 @@ sealed class ConvertImageCommand : Command
                 return (int)ErrorNumber.NoSuchFile;
             }
 
-        xs = new XmlSerializer(typeof(Resume));
-
         if(resumeFile != null)
+        {
             if(File.Exists(resumeFile))
+            {
                 try
                 {
-                    var sr = new StreamReader(resumeFile);
-                    resume = (Resume)xs.Deserialize(sr);
-                    sr.Close();
+                    if(resumeFile.EndsWith(".metadata.json", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        var fs = new FileStream(resumeFile, FileMode.Open);
+
+                        resume = JsonSerializer.Deserialize<ResumeJson>(fs, new JsonSerializerOptions
+                        {
+                            DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                            PropertyNameCaseInsensitive = true
+                        })?.Resume;
+
+                        fs.Close();
+                    }
+                    else
+                    {
+                        var xs = new XmlSerializer(typeof(Resume));
+                        var sr = new StreamReader(resumeFile);
+                        resume = (Resume)xs.Deserialize(sr);
+                        sr.Close();
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -336,12 +389,14 @@ sealed class ConvertImageCommand : Command
 
                     return (int)ErrorNumber.InvalidResume;
                 }
+            }
             else
             {
                 AaruConsole.ErrorWriteLine(UI.Could_not_find_resume_file);
 
                 return (int)ErrorNumber.NoSuchFile;
             }
+        }
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
@@ -601,7 +656,7 @@ sealed class ConvertImageCommand : Command
             return (int)ErrorNumber.CannotCreateFormat;
         }
 
-        var metadata = new ImageInfo
+        var imageInfo = new ImageInfo
         {
             Application           = "Aaru",
             ApplicationVersion    = Version.GetVersion(),
@@ -621,7 +676,7 @@ sealed class ConvertImageCommand : Command
             MediaTitle            = mediaTitle        ?? inputFormat.Info.MediaTitle
         };
 
-        if(!outputFormat.SetImageInfo(metadata))
+        if(!outputFormat.SetImageInfo(imageInfo))
         {
             if(!force)
             {
@@ -633,7 +688,7 @@ sealed class ConvertImageCommand : Command
             AaruConsole.ErrorWriteLine(Localization.Core.Error_0_setting_metadata, outputFormat.ErrorMessage);
         }
 
-        Metadata           aaruMetadata = inputFormat.AaruMetadata;
+        Metadata           metadata     = inputFormat.AaruMetadata;
         List<DumpHardware> dumpHardware = inputFormat.DumpHardware;
 
         foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
@@ -1433,8 +1488,8 @@ sealed class ConvertImageCommand : Command
 
         ret = false;
 
-        if(sidecar      != null ||
-           aaruMetadata != null)
+        if(sidecar  != null ||
+           metadata != null)
         {
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -1442,8 +1497,8 @@ sealed class ConvertImageCommand : Command
 
                 if(sidecar != null)
                     ret = outputFormat.SetMetadata(sidecar);
-                else if(aaruMetadata != null)
-                    ret = outputFormat.SetMetadata(aaruMetadata);
+                else if(metadata != null)
+                    ret = outputFormat.SetMetadata(metadata);
             });
 
             if(ret)

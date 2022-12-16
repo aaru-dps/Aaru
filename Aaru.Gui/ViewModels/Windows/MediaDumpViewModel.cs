@@ -62,7 +62,6 @@ using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
-using Schemas;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using Dump = Aaru.Core.Devices.Dumping.Dump;
 using File = System.IO.File;
@@ -515,7 +514,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
                 Name = UI.Dialog_Aaru_Metadata,
                 Extensions = new List<string>(new[]
                 {
-                    ".xml"
+                    ".json"
                 })
             });
 
@@ -528,14 +527,17 @@ public sealed class MediaDumpViewModel : ViewModelBase
                 return;
             }
 
-            var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
-
             try
             {
-                var sr = new StreamReader(result[0]);
+                var fs = new FileStream(result[0], FileMode.Open);
 
-                //       _sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
-                sr.Close();
+                _sidecar = JsonSerializer.Deserialize<MetadataJson>(fs, new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                    PropertyNameCaseInsensitive = true
+                })?.AaruMetadata;
+
+                fs.Close();
             }
             catch
             {

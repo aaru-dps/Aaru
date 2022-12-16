@@ -34,11 +34,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
@@ -48,8 +50,10 @@ using Aaru.Decoders.SCSI;
 using Aaru.Helpers;
 using Schemas;
 using DMI = Aaru.Decoders.Xbox.DMI;
+using File = System.IO.File;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages;
@@ -1125,20 +1129,41 @@ public sealed partial class ZZZRawImage
 
         AaruConsole.VerboseWriteLine(Localization.Raw_disk_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
-        var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
-
-        if(File.Exists(basename + "cicm.xml"))
-            try
+        try
+        {
+            if(File.Exists(basename + ".metadata.json"))
             {
-                var sr = new StreamReader(basename + "cicm.xml");
+                var fs = new FileStream(basename + ".metadata.json", FileMode.Open);
 
-                //                AaruMetadata = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                AaruMetadata = JsonSerializer.Deserialize<MetadataJson>(fs, new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                    PropertyNameCaseInsensitive = true
+                })?.AaruMetadata;
+
+                fs.Close();
+            }
+            else if(File.Exists(basename + ".cicm.xml"))
+            {
+                // The converter to AaruMetadata basically overcomes this (should?)
+                #pragma warning disable IL2026
+                var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+                #pragma warning restore IL2026
+
+                var sr = new StreamReader(basename + ".cicm.xml");
+
+                // The converter to AaruMetadata basically overcomes this (should?)
+                #pragma warning disable IL2026
+                AaruMetadata = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                #pragma warning restore IL2026
+
                 sr.Close();
             }
-            catch
-            {
-                // Do nothing.
-            }
+        }
+        catch
+        {
+            // Do nothing.
+        }
 
         _imageInfo.ReadableMediaTags = new List<MediaTagType>(_mediaTags.Keys);
 

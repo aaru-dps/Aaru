@@ -191,14 +191,14 @@
                         </StackPanel>
                     </TabItem>
                 </TabControl>
-                <TextBlock Text="{Binding CicmXmlLabel}" />
+                <TextBlock Text="{Binding AaruMetadataLabel}" />
                 <StackPanel Orientation="Horizontal">
                     <TextBox Text="{Binding MetadataJsonText}" IsReadOnly="True" />
                     <Button Command="{Binding AaruMetadataFromImageCommand}"
                             IsVisible="{Binding AaruMetadataFromImageVisible}">
                         <TextBlock Text="{Binding FromImageLabel}" />
                     </Button>
-                    <Button Command="{Binding CicmXmlCommand}">
+                    <Button Command="{Binding AaruMetadataCommand}">
                         <TextBlock Text="{Binding ChooseLabel}" />
                     </Button>
                 </StackPanel>

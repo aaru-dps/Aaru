@@ -2703,8 +2703,8 @@ Do you want to continue?</value>
   <data name="Title_Firmware_revision" xml:space="preserve">
     <value>Firmware revision</value>
   </data>
-  <data name="Title_Existing_CICM_XML_sidecar" xml:space="preserve">
-    <value>Existing CICM XML sidecar</value>
+  <data name="Title_Existing_Aaru_Metadata_sidecar" xml:space="preserve">
+    <value>Existing Aaru Metadata sidecar</value>
   </data>
   <data name="Title_From_image" xml:space="preserve">
     <value>From image...</value>

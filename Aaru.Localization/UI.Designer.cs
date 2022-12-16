@@ -6953,11 +6953,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Existing CICM XML sidecar.
+        ///   Looks up a localized string similar to Existing Aaru Metadata sidecar.
         /// </summary>
-        public static string Title_Existing_CICM_XML_sidecar {
+        public static string Title_Existing_Aaru_Metadata_sidecar {
             get {
-                return ResourceManager.GetString("Title_Existing_CICM_XML_sidecar", resourceCulture);
+                return ResourceManager.GetString("Title_Existing_Aaru_Metadata_sidecar", resourceCulture);
             }
         }
         

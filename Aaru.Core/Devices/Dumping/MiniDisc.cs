@@ -876,7 +876,10 @@ partial class Dump
 
                 var jsonFs = new FileStream(_outputPrefix + ".metadata.json", FileMode.Create);
 
-                JsonSerializer.Serialize(jsonFs, sidecar, new JsonSerializerOptions
+                JsonSerializer.Serialize(jsonFs, new MetadataJson
+                {
+                    AaruMetadata = sidecar
+                }, new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                     WriteIndented          = true

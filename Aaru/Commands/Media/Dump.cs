@@ -218,6 +218,11 @@ sealed class DumpMediaCommand : Command
             "--dimensions"
         }, () => 1080, UI.Dump_graph_dimensions_argument_help));
 
+        Add(new Option<string>(new[]
+        {
+            "--aaru-metadata", "-m"
+        }, () => null, "Take metadata from existing Aaru Metadata sidecar."));
+
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
@@ -228,7 +233,7 @@ sealed class DumpMediaCommand : Command
                              bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
                              bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject,
                              uint maxBlocks, bool useBufferedReads, bool storeEncrypted, bool titleKeys,
-                             uint ignoreCdrRunOuts, bool createGraph, uint dimensions)
+                             uint ignoreCdrRunOuts, bool createGraph, uint dimensions, string aaruMetadata)
     {
         MainClass.PrintCopyright();
 
@@ -299,6 +304,7 @@ sealed class DumpMediaCommand : Command
         AaruConsole.DebugWriteLine("Dump-Media command", "--ignore-cdr-runouts={0}", ignoreCdrRunOuts);
         AaruConsole.DebugWriteLine("Dump-Media command", "--create-graph={0}", createGraph);
         AaruConsole.DebugWriteLine("Dump-Media command", "--dimensions={0}", dimensions);
+        AaruConsole.DebugWriteLine("Dump-Media command", "--aaru-metadata={0}", aaruMetadata);
 
         // TODO: Disabled temporarily
         //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -468,7 +474,6 @@ sealed class DumpMediaCommand : Command
             string outputPrefix = Path.Combine(Path.GetDirectoryName(outputPath), responseLine);
 
             Resume resumeClass = null;
-            var    xs          = new XmlSerializer(typeof(Resume));
 
             if(resume)
             {
@@ -491,6 +496,7 @@ sealed class DumpMediaCommand : Command
                     // DEPRECATED: To be removed in Aaru 7
                     else if(File.Exists(outputPrefix + ".resume.xml") && resume)
                     {
+                        var xs = new XmlSerializer(typeof(Resume));
                         var sr = new StreamReader(outputPrefix + ".resume.xml");
                         resumeClass = (Resume)xs.Deserialize(sr);
                         sr.Close();
@@ -522,16 +528,48 @@ sealed class DumpMediaCommand : Command
                 return (int)ErrorNumber.AlreadyDumped;
             }
 
-            Metadata sidecar   = null;
-            var      sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+            Metadata sidecar = null;
 
-            if(cicmXml != null)
+            if(aaruMetadata != null)
+                if(File.Exists(aaruMetadata))
+                    try
+                    {
+                        var fs = new FileStream(aaruMetadata, FileMode.Open);
+
+                        sidecar = JsonSerializer.Deserialize<MetadataJson>(fs, new JsonSerializerOptions
+                        {
+                            DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+                            PropertyNameCaseInsensitive = true
+                        })?.AaruMetadata;
+
+                        fs.Close();
+                    }
+                    catch
+                    {
+                        AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file_not_continuing);
+
+                        if(isResponse)
+                            continue;
+
+                        return (int)ErrorNumber.InvalidSidecar;
+                    }
+                else
+                {
+                    AaruConsole.ErrorWriteLine(UI.Could_not_find_metadata_sidecar);
+
+                    if(isResponse)
+                        continue;
+
+                    return (int)ErrorNumber.NoSuchFile;
+                }
+            else if(cicmXml != null)
                 if(File.Exists(cicmXml))
                     try
                     {
-                        var sr = new StreamReader(cicmXml);
+                        var sr        = new StreamReader(cicmXml);
+                        var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
 
-                        //sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                        sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
                         sr.Close();
                     }
                     catch
