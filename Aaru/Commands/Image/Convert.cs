@@ -378,9 +378,18 @@ sealed class ConvertImageCommand : Command
                     }
                     else
                     {
+                        // Bypassed by JSON source generator used above
+                        #pragma warning disable IL2026
                         var xs = new XmlSerializer(typeof(Resume));
+                        #pragma warning restore IL2026
+
                         var sr = new StreamReader(resumeFile);
+
+                        // Bypassed by JSON source generator used above
+                        #pragma warning disable IL2026
                         resume = (Resume)xs.Deserialize(sr);
+                        #pragma warning restore IL2026
+
                         sr.Close();
                     }
                 }

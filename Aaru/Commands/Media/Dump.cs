@@ -570,9 +570,17 @@ sealed class DumpMediaCommand : Command
                     try
                     {
                         var sr        = new StreamReader(cicmXml);
-                        var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
 
+                        // Bypassed by JSON source generator used above
+                        #pragma warning disable IL2026
+                        var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+                        #pragma warning restore IL2026
+
+                        // Bypassed by JSON source generator used above
+                        #pragma warning disable IL2026
                         sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                        #pragma warning restore IL2026
+
                         sr.Close();
                     }
                     catch
