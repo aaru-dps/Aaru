@@ -47,6 +47,7 @@ namespace Aaru.Settings;
 [JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                              IncludeFields = true)]
 [JsonSerializable(typeof(DicSettings))]
+// ReSharper disable once PartialTypeWithSinglePart
 public partial class SettingsContext : JsonSerializerContext {}
 
 /// <summary>Settings</summary>

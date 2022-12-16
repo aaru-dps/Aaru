@@ -99,7 +99,8 @@ public sealed partial class CPM
 [JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                              IncludeFields = true)]
 [JsonSerializable(typeof(CpmDefinitions))]
-public class CpmDefinitionsContext : JsonSerializerContext {}
+// ReSharper disable once PartialTypeWithSinglePart
+public partial class CpmDefinitionsContext : JsonSerializerContext {}
 
 /// <summary>CP/M disk definitions</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
