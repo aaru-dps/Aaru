@@ -1068,13 +1068,20 @@ public sealed partial class AaruFormat
                         byte[] cicmBytes = new byte[cicmBlock.length];
                         _imageStream.EnsureRead(cicmBytes, 0, cicmBytes.Length);
                         var cicmMs = new MemoryStream(cicmBytes);
+
+                        // The converter to AaruMetadata basically overcomes this (should?)
+                        #pragma warning disable IL2026
                         var cicmXs = new XmlSerializer(typeof(CICMMetadataType));
+                        #pragma warning restore IL2026
 
                         try
                         {
                             var sr = new StreamReader(cicmMs);
 
-                            //AaruMetadata = (CICMMetadataType)cicmXs.Deserialize(sr);
+                            // The converter to AaruMetadata basically overcomes this (should?)
+                            #pragma warning disable IL2026
+                            AaruMetadata = (CICMMetadataType)cicmXs.Deserialize(sr);
+                            #pragma warning restore IL2026
                             sr.Close();
                         }
                         catch(XmlException ex)
