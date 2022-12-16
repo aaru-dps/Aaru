@@ -38,7 +38,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Metadata;
@@ -335,11 +334,7 @@ public static class Statistics
                 #else
                             Aaru.Console.AaruConsole.DebugWriteLine("Submit stats", Localization.Core.Uploading_statistics);
                 #endif
-                    string json = JsonSerializer.Serialize(dto, new JsonSerializerOptions
-                    {
-                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                        WriteIndented          = true
-                    });
+                    string json = JsonSerializer.Serialize(dto, typeof(StatsDto), StatsDtoContext.Default);
 
                     byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
                     var    request   = WebRequest.Create("https://www.aaru.app/api/uploadstatsv2");
