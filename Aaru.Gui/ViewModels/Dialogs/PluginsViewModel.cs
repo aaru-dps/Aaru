@@ -76,7 +76,11 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(IFloppyImage floppyImage in GetPluginBase.Instance.FloppyImages.Values)
+        foreach(Type imageType in GetPluginBase.Instance.FloppyImages.Values)
+        {
+            if(Activator.CreateInstance(imageType) is not IFloppyImage floppyImage)
+                continue;
+
             FloppyImages.Add(new PluginModel
             {
                 Name    = floppyImage.Name,
@@ -84,6 +88,7 @@ public sealed class PluginsViewModel : ViewModelBase
                 Version = Assembly.GetAssembly(floppyImage.GetType())?.GetName().Version?.ToString(),
                 Author  = floppyImage.Author
             });
+        }
 
         foreach(Type imageType in GetPluginBase.Instance.MediaImages.Values)
         {
