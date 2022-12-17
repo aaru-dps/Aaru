@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
@@ -83,10 +82,16 @@ public static class ImageFormat
                 return imageFormat;
 
             // Check all but RAW plugin
-            foreach(IByteAddressableImage imagePlugin in plugins.ByteAddressableImages.Values.Where(imagePlugin =>
-                        imagePlugin.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000")))
+            foreach(Type pluginType in plugins.ByteAddressableImages.Values)
+            {
                 try
                 {
+                    if(Activator.CreateInstance(pluginType) is not IByteAddressableImage imagePlugin)
+                        continue;
+
+                    if(imagePlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                        continue;
+
                     AaruConsole.DebugWriteLine("Format detection", Localization.Core.Trying_plugin_0, imagePlugin.Name);
 
                     if(!imagePlugin.Identify(imageFilter))
@@ -101,6 +106,7 @@ public static class ImageFormat
                 {
                     // ignored
                 }
+            }
 
             if(imageFormat != null)
                 return imageFormat;
