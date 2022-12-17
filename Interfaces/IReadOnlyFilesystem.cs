@@ -40,6 +40,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
@@ -49,6 +50,9 @@ namespace Aaru.CommonTypes.Interfaces;
 /// <summary>Defines the interface to implement reading the contents of a filesystem</summary>
 public interface IReadOnlyFilesystem : IFilesystem
 {
+    /// <summary>Information about the filesystem as expected by Aaru Metadata</summary>
+    FileSystem Metadata { get; }
+
     /// <summary>Retrieves a list of options supported by the filesystem, with name, type and description</summary>
     IEnumerable<(string name, Type type, string description)> SupportedOptions { get; }
 
