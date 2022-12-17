@@ -174,7 +174,7 @@ sealed class FormatsCommand : Command
             if(verbose)
                 table.AddRow(fs.Id.ToString(), Markup.Escape(fs.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(fs.Name));
         }
 
         AnsiConsole.Write(table);
