@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reflection;
@@ -88,32 +89,47 @@ public sealed class PluginsViewModel : ViewModelBase
                 Author  = mediaImage.Author
             });
 
-        foreach(IPartition partition in GetPluginBase.Instance.PartPluginsList.Values)
+        foreach(Type partitionType in GetPluginBase.Instance.Partitions.Values)
+        {
+            if(Activator.CreateInstance(partitionType) is not IPartition partition)
+                continue;
+
             PartitionSchemes.Add(new PluginModel
             {
                 Name    = partition.Name,
                 Uuid    = partition.Id,
-                Version = Assembly.GetAssembly(partition.GetType())?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(partitionType)?.GetName().Version?.ToString(),
                 Author  = partition.Author
             });
+        }
 
-        foreach(IFilesystem filesystem in GetPluginBase.Instance.Filesystems.Values)
+        foreach(Type filesystem in GetPluginBase.Instance.Filesystems.Values)
+        {
+            if(Activator.CreateInstance(filesystem) is not IFilesystem fs)
+                continue;
+
             Filesystems.Add(new PluginModel
             {
-                Name    = filesystem.Name,
-                Uuid    = filesystem.Id,
-                Version = Assembly.GetAssembly(filesystem.GetType())?.GetName().Version?.ToString(),
-                Author  = filesystem.Author
+                Name    = fs.Name,
+                Uuid    = fs.Id,
+                Version = Assembly.GetAssembly(filesystem)?.GetName().Version?.ToString(),
+                Author  = fs.Author
             });
+        }
 
-        foreach(IReadOnlyFilesystem readOnlyFilesystem in GetPluginBase.Instance.ReadOnlyFilesystems.Values)
+        foreach(Type readOnlyFilesystem in GetPluginBase.Instance.ReadOnlyFilesystems.Values)
+        {
+            if(Activator.CreateInstance(readOnlyFilesystem) is not IReadOnlyFilesystem fs)
+                continue;
+
             ReadOnlyFilesystems.Add(new PluginModel
             {
-                Name    = readOnlyFilesystem.Name,
-                Uuid    = readOnlyFilesystem.Id,
-                Version = Assembly.GetAssembly(readOnlyFilesystem.GetType())?.GetName().Version?.ToString(),
-                Author  = readOnlyFilesystem.Author
+                Name    = fs.Name,
+                Uuid    = fs.Id,
+                Version = Assembly.GetAssembly(readOnlyFilesystem)?.GetName().Version?.ToString(),
+                Author  = fs.Author
             });
+        }
 
         foreach(IWritableFloppyImage writableFloppyImage in GetPluginBase.Instance.WritableFloppyImages.Values)
             WritableFloppyImages.Add(new PluginModel

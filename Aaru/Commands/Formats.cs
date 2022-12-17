@@ -209,7 +209,7 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format(UI.Supported_partitioning_schemes_0, plugins.PartPluginsList.Count))
+            Title = new TableTitle(string.Format(UI.Supported_partitioning_schemes_0, plugins.Partitions.Count))
         };
 
         if(verbose)
@@ -217,11 +217,16 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Scheme);
 
-        foreach(KeyValuePair<string, IPartition> kvp in plugins.PartPluginsList)
+        foreach(KeyValuePair<string, Type> kvp in plugins.Partitions)
+        {
+            if(Activator.CreateInstance(kvp.Value) is not IPartition part)
+                continue;
+
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(part.Id.ToString(), Markup.Escape(part.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(part.Name));
+        }
 
         AnsiConsole.Write(table);
 

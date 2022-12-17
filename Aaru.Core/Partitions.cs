@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
@@ -59,14 +60,19 @@ public static class Partitions
         if(tapeImage?.Files != null)
             foreach(TapeFile tapeFile in tapeImage.Files)
             {
-                foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
-                    if(partitionPlugin.GetInformation(image, out List<Partition> partitions, tapeFile.FirstBlock))
-                    {
-                        foundPartitions.AddRange(partitions);
+                foreach(Type pluginType in plugins.Partitions.Values)
+                {
+                    if(Activator.CreateInstance(pluginType) is not IPartition part)
+                        continue;
 
-                        AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_1, partitionPlugin.Name,
-                                                   tapeFile.FirstBlock);
-                    }
+                    if(!part.GetInformation(image, out List<Partition> partitions, tapeFile.FirstBlock))
+                        continue;
+
+                    foundPartitions.AddRange(partitions);
+
+                    AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_1, part.Name,
+                                               tapeFile.FirstBlock);
+                }
 
                 checkedLocations.Add(tapeFile.FirstBlock);
             }
@@ -75,14 +81,19 @@ public static class Partitions
         if(partitionableImage?.Partitions != null)
             foreach(Partition imagePartition in partitionableImage.Partitions)
             {
-                foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
-                    if(partitionPlugin.GetInformation(image, out List<Partition> partitions, imagePartition.Start))
-                    {
-                        foundPartitions.AddRange(partitions);
+                foreach(Type pluginType in plugins.Partitions.Values)
+                {
+                    if(Activator.CreateInstance(pluginType) is not IPartition part)
+                        continue;
 
-                        AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_1, partitionPlugin.Name,
-                                                   imagePartition.Start);
-                    }
+                    if(!part.GetInformation(image, out List<Partition> partitions, imagePartition.Start))
+                        continue;
+
+                    foundPartitions.AddRange(partitions);
+
+                    AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_1, part.Name,
+                                               imagePartition.Start);
+                }
 
                 checkedLocations.Add(imagePartition.Start);
             }
@@ -90,12 +101,17 @@ public static class Partitions
         // Getting all partitions at start of device
         if(!checkedLocations.Contains(0))
         {
-            foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
-                if(partitionPlugin.GetInformation(image, out List<Partition> partitions, 0))
-                {
-                    foundPartitions.AddRange(partitions);
-                    AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_zero, partitionPlugin.Name);
-                }
+            foreach(Type pluginType in plugins.Partitions.Values)
+            {
+                if(Activator.CreateInstance(pluginType) is not IPartition part)
+                    continue;
+
+                if(!part.GetInformation(image, out List<Partition> partitions, 0))
+                    continue;
+
+                foundPartitions.AddRange(partitions);
+                AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_zero, part.Name);
+            }
 
             checkedLocations.Add(0);
         }
@@ -112,15 +128,18 @@ public static class Partitions
 
             List<Partition> children = new();
 
-            foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
+            foreach(Type pluginType in plugins.Partitions.Values)
             {
-                AaruConsole.DebugWriteLine("Partitions", Localization.Core.Trying_0_at_1, partitionPlugin.Name,
-                                           foundPartitions[0].Start);
-
-                if(!partitionPlugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
+                if(Activator.CreateInstance(pluginType) is not IPartition part)
                     continue;
 
-                AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_1, partitionPlugin.Name,
+                AaruConsole.DebugWriteLine("Partitions", Localization.Core.Trying_0_at_1, part.Name,
+                                           foundPartitions[0].Start);
+
+                if(!part.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
+                    continue;
+
+                AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_1, part.Name,
                                            foundPartitions[0].Start);
 
                 children.AddRange(partitions);
