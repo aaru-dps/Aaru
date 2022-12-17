@@ -53,7 +53,7 @@ public class PluginBase
     /// <summary>List of all filesystem plugins</summary>
     public readonly SortedDictionary<string, Type> Filesystems;
     /// <summary>List of filter plugins</summary>
-    public readonly SortedDictionary<string, IFilter> Filters;
+    public readonly SortedDictionary<string, Type> Filters;
     /// <summary>List of floppy image plugins</summary>
     public readonly SortedDictionary<string, IFloppyImage> FloppyImages;
     /// <summary>List of all media image plugins</summary>
@@ -75,7 +75,7 @@ public class PluginBase
         Partitions            = new SortedDictionary<string, Type>();
         MediaImages           = new SortedDictionary<string, Type>();
         WritableImages        = new SortedDictionary<string, Type>();
-        Filters               = new SortedDictionary<string, IFilter>();
+        Filters               = new SortedDictionary<string, Type>();
         FloppyImages          = new SortedDictionary<string, IFloppyImage>();
         WritableFloppyImages  = new SortedDictionary<string, IWritableFloppyImage>();
         Archives              = new SortedDictionary<string, IArchive>();
@@ -94,7 +94,7 @@ public class PluginBase
         foreach(Type type in pluginRegister.GetAllFilterPlugins() ?? Enumerable.Empty<Type>())
             if(Activator.CreateInstance(type) is IFilter plugin &&
                !Filters.ContainsKey(plugin.Name.ToLower()))
-                Filters.Add(plugin.Name.ToLower(), plugin);
+                Filters.Add(plugin.Name.ToLower(), type);
 
         foreach(Type type in pluginRegister.GetAllFloppyImagePlugins() ?? Enumerable.Empty<Type>())
             if(Activator.CreateInstance(type) is IFloppyImage plugin &&
