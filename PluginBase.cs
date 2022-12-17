@@ -49,7 +49,7 @@ public class PluginBase
     /// <summary>List of all archive formats</summary>
     public readonly SortedDictionary<string, Type> Archives;
     /// <summary>List of byte addressable image plugins</summary>
-    public readonly SortedDictionary<string, IByteAddressableImage> ByteAddressableImages;
+    public readonly SortedDictionary<string, Type> ByteAddressableImages;
     /// <summary>List of all filesystem plugins</summary>
     public readonly SortedDictionary<string, Type> Filesystems;
     /// <summary>List of filter plugins</summary>
@@ -79,7 +79,7 @@ public class PluginBase
         FloppyImages          = new SortedDictionary<string, Type>();
         WritableFloppyImages  = new SortedDictionary<string, Type>();
         Archives              = new SortedDictionary<string, Type>();
-        ByteAddressableImages = new SortedDictionary<string, IByteAddressableImage>();
+        ByteAddressableImages = new SortedDictionary<string, Type>();
     }
 
     /// <summary>Adds plugins to the central plugin register</summary>
@@ -134,6 +134,6 @@ public class PluginBase
         foreach(Type type in pluginRegister.GetAllByteAddressablePlugins() ?? Enumerable.Empty<Type>())
             if(Activator.CreateInstance(type) is IByteAddressableImage plugin &&
                !ByteAddressableImages.ContainsKey(plugin.Name.ToLower()))
-                ByteAddressableImages.Add(plugin.Name.ToLower(), plugin);
+                ByteAddressableImages.Add(plugin.Name.ToLower(), type);
     }
 }
