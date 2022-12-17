@@ -168,12 +168,17 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         PluginBase plugins = GetPluginBase.Instance;
 
-        foreach(IWritableImage plugin in
-                plugins.WritableImages.Values.Where(p => p.SupportedMediaTypes.Contains(mediaType)))
-            PluginsList.Add(new ImagePluginModel
-            {
-                Plugin = plugin
-            });
+        foreach(Type pluginType in plugins.WritableImages.Values)
+        {
+            if(Activator.CreateInstance(pluginType) is not IWritableImage plugin)
+                continue;
+
+            if(plugin.SupportedMediaTypes.Contains(mediaType))
+                PluginsList.Add(new ImagePluginModel
+                {
+                    Plugin = plugin
+                });
+        }
 
         Encodings.AddRange(Encoding.GetEncodings().Select(info => new EncodingModel
         {

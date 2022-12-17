@@ -520,19 +520,24 @@ sealed class ConvertImageCommand : Command
 
         // Try extension
         if(string.IsNullOrEmpty(format))
-            candidates.AddRange(plugins.WritableImages.Values.Where(t =>
-                                                                        t.KnownExtensions.
-                                                                          Contains(Path.GetExtension(outputPath))));
+            candidates.AddRange(from pluginType in plugins.WritableImages.Values
+                                select Activator.CreateInstance(pluginType) as IBaseWritableImage into plugin
+                                where plugin is not null
+                                where plugin.KnownExtensions.Contains(Path.GetExtension(outputPath)) select plugin);
 
         // Try Id
         else if(Guid.TryParse(format, out Guid outId))
-            candidates.AddRange(plugins.WritableImages.Values.Where(t => t.Id.Equals(outId)));
+            candidates.AddRange(from pluginType in plugins.WritableImages.Values
+                                select Activator.CreateInstance(pluginType) as IBaseWritableImage into plugin
+                                where plugin is not null where plugin.Id.Equals(outId) select plugin);
 
         // Try name
         else
-            candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, format,
-                                                                        StringComparison.
-                                                                            InvariantCultureIgnoreCase)));
+            candidates.AddRange(from pluginType in plugins.WritableImages.Values
+                                select Activator.CreateInstance(pluginType) as IBaseWritableImage into plugin
+                                where plugin is not null
+                                where plugin.Name.Equals(format, StringComparison.InvariantCultureIgnoreCase)
+                                select plugin);
 
         switch(candidates.Count)
         {

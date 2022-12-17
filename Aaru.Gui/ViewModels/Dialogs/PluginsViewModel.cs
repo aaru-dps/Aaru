@@ -145,9 +145,9 @@ public sealed class PluginsViewModel : ViewModelBase
                 Author  = writableFloppyImage.Author
             });
 
-        foreach(IBaseWritableImage baseWritableImage in GetPluginBase.Instance.WritableImages.Values)
+        foreach(Type baseWritableImageType in GetPluginBase.Instance.WritableImages.Values)
         {
-            if(baseWritableImage is not IWritableImage writableImage)
+            if(Activator.CreateInstance(baseWritableImageType) is not IWritableImage writableImage)
                 continue;
 
             WritableImages.Add(new PluginModel

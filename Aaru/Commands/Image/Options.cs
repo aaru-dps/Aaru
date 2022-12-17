@@ -88,17 +88,20 @@ sealed class ListOptionsCommand : Command
 
         AaruConsole.WriteLine(UI.Read_Write_media_images_options);
 
-        foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
+        foreach(KeyValuePair<string, Type> kvp in plugins.WritableImages)
         {
+            if(Activator.CreateInstance(kvp.Value) is not IBaseWritableImage plugin)
+                continue;
+
             List<(string name, Type type, string description, object @default)> options =
-                kvp.Value.SupportedOptions.ToList();
+                plugin.SupportedOptions.ToList();
 
             if(options.Count == 0)
                 continue;
 
             var table = new Table
             {
-                Title = new TableTitle(string.Format(UI.Options_for_0, kvp.Value.Name))
+                Title = new TableTitle(string.Format(UI.Options_for_0, plugin.Name))
             };
 
             table.AddColumn(UI.Title_Name);

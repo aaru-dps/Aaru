@@ -145,11 +145,16 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Media_image_format);
 
-        foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
+        foreach(KeyValuePair<string, Type> kvp in plugins.WritableImages)
+        {
+            if(Activator.CreateInstance(kvp.Value) is not IBaseWritableImage plugin)
+                continue;
+
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(plugin.Id.ToString(), Markup.Escape(plugin.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(plugin.Name));
+        }
 
         AnsiConsole.Write(table);
 

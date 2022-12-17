@@ -370,17 +370,24 @@ sealed class DumpMediaCommand : Command
 
         // Try extension
         if(string.IsNullOrEmpty(format))
-            candidates.AddRange(plugins.WritableImages.Values.Where(t => t.KnownExtensions.Contains(extension)));
+            candidates.AddRange(from pluginType in plugins.WritableImages.Values
+                                select Activator.CreateInstance(pluginType) as IBaseWritableImage into plugin
+                                where plugin is not null where plugin.KnownExtensions.Contains(extension)
+                                select plugin);
 
         // Try Id
         else if(Guid.TryParse(format, out Guid outId))
-            candidates.AddRange(plugins.WritableImages.Values.Where(t => t.Id.Equals(outId)));
+            candidates.AddRange(from pluginType in plugins.WritableImages.Values
+                                select Activator.CreateInstance(pluginType) as IBaseWritableImage into plugin
+                                where plugin is not null where plugin.Id.Equals(outId) select plugin);
 
         // Try name
         else
-            candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, format,
-                                                                        StringComparison.
-                                                                            InvariantCultureIgnoreCase)));
+            candidates.AddRange(from pluginType in plugins.WritableImages.Values
+                                select Activator.CreateInstance(pluginType) as IBaseWritableImage into plugin
+                                where plugin is not null
+                                where plugin.Name.Equals(format, StringComparison.InvariantCultureIgnoreCase)
+                                select plugin);
 
         switch(candidates.Count)
         {
@@ -569,7 +576,7 @@ sealed class DumpMediaCommand : Command
                 if(File.Exists(cicmXml))
                     try
                     {
-                        var sr        = new StreamReader(cicmXml);
+                        var sr = new StreamReader(cicmXml);
 
                         // Bypassed by JSON source generator used above
                         #pragma warning disable IL2026
@@ -607,19 +614,24 @@ sealed class DumpMediaCommand : Command
 
             // Try extension
             if(string.IsNullOrEmpty(format))
-                candidates.AddRange(plugins.WritableImages.Values.Where(t =>
-                                                                            t.KnownExtensions.
-                                                                              Contains(Path.GetExtension(outputPath))));
+                candidates.AddRange(from pluginType in plugins.WritableImages.Values
+                                    select Activator.CreateInstance(pluginType) as IBaseWritableImage into plugin
+                                    where plugin is not null
+                                    where plugin.KnownExtensions.Contains(Path.GetExtension(outputPath)) select plugin);
 
             // Try Id
             else if(Guid.TryParse(format, out Guid outId))
-                candidates.AddRange(plugins.WritableImages.Values.Where(t => t.Id.Equals(outId)));
+                candidates.AddRange(from pluginType in plugins.WritableImages.Values
+                                    select Activator.CreateInstance(pluginType) as IBaseWritableImage into plugin
+                                    where plugin is not null where plugin.Id.Equals(outId) select plugin);
 
             // Try name
             else
-                candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, format,
-                                                                            StringComparison.
-                                                                                InvariantCultureIgnoreCase)));
+                candidates.AddRange(from pluginType in plugins.WritableImages.Values
+                                    select Activator.CreateInstance(pluginType) as IBaseWritableImage into plugin
+                                    where plugin is not null
+                                    where plugin.Name.Equals(format, StringComparison.InvariantCultureIgnoreCase)
+                                    select plugin);
 
             IBaseWritableImage outputFormat = candidates[0];
 

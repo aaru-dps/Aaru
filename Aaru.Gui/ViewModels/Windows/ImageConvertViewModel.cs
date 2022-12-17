@@ -202,14 +202,17 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         PluginBase plugins = GetPluginBase.Instance;
 
-        foreach(IWritableImage plugin in plugins.WritableImages.Values.
-                                                 Where(p => p.SupportedMediaTypes.Contains(inputFormat.Info.MediaType)).
-                                                 Select(baseWritableImage => baseWritableImage as IWritableImage).
-                                                 Where(plugin => plugin is not null))
-            PluginsList.Add(new ImagePluginModel
-            {
-                Plugin = plugin
-            });
+        foreach(Type pluginType in plugins.WritableImages.Values)
+        {
+            if(Activator.CreateInstance(pluginType) is not IWritableImage plugin)
+                continue;
+
+            if(plugin.SupportedMediaTypes.Contains(inputFormat.Info.MediaType))
+                PluginsList.Add(new ImagePluginModel
+                {
+                    Plugin = plugin
+                });
+        }
 
         AaruMetadataFromImageVisible = inputFormat.AaruMetadata        != null;
         ResumeFileFromImageVisible   = inputFormat.DumpHardware?.Any() == true;
