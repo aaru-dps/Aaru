@@ -47,7 +47,7 @@ namespace Aaru.CommonTypes;
 public class PluginBase
 {
     /// <summary>List of all archive formats</summary>
-    public readonly SortedDictionary<string, IArchive> Archives;
+    public readonly SortedDictionary<string, Type> Archives;
     /// <summary>List of byte addressable image plugins</summary>
     public readonly SortedDictionary<string, IByteAddressableImage> ByteAddressableImages;
     /// <summary>List of all filesystem plugins</summary>
@@ -78,7 +78,7 @@ public class PluginBase
         Filters               = new SortedDictionary<string, Type>();
         FloppyImages          = new SortedDictionary<string, Type>();
         WritableFloppyImages  = new SortedDictionary<string, Type>();
-        Archives              = new SortedDictionary<string, IArchive>();
+        Archives              = new SortedDictionary<string, Type>();
         ByteAddressableImages = new SortedDictionary<string, IByteAddressableImage>();
     }
 
@@ -129,7 +129,7 @@ public class PluginBase
         foreach(Type type in pluginRegister.GetAllArchivePlugins() ?? Enumerable.Empty<Type>())
             if(Activator.CreateInstance(type) is IArchive plugin &&
                !Archives.ContainsKey(plugin.Name.ToLower()))
-                Archives.Add(plugin.Name.ToLower(), plugin);
+                Archives.Add(plugin.Name.ToLower(), type);
 
         foreach(Type type in pluginRegister.GetAllByteAddressablePlugins() ?? Enumerable.Empty<Type>())
             if(Activator.CreateInstance(type) is IByteAddressableImage plugin &&
