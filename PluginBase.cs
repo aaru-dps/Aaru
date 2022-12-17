@@ -50,8 +50,6 @@ public class PluginBase
     public readonly SortedDictionary<string, IArchive> Archives;
     /// <summary>List of byte addressable image plugins</summary>
     public readonly SortedDictionary<string, IByteAddressableImage> ByteAddressableImages;
-    /// <summary>List of checksum plugins</summary>
-    public readonly List<IChecksum> Checksums;
     /// <summary>List of all filesystem plugins</summary>
     public readonly SortedDictionary<string, Type> Filesystems;
     /// <summary>List of filter plugins</summary>
@@ -77,7 +75,6 @@ public class PluginBase
         PartPluginsList       = new SortedDictionary<string, IPartition>();
         ImagePluginsList      = new SortedDictionary<string, IMediaImage>();
         WritableImages        = new SortedDictionary<string, IBaseWritableImage>();
-        Checksums             = new List<IChecksum>();
         Filters               = new SortedDictionary<string, IFilter>();
         FloppyImages          = new SortedDictionary<string, IFloppyImage>();
         WritableFloppyImages  = new SortedDictionary<string, IWritableFloppyImage>();
@@ -89,10 +86,6 @@ public class PluginBase
     /// <param name="pluginRegister">Plugin register</param>
     public void AddPlugins(IPluginRegister pluginRegister)
     {
-        foreach(Type type in pluginRegister.GetAllChecksumPlugins() ?? Enumerable.Empty<Type>())
-            if(Activator.CreateInstance(type) is IChecksum plugin)
-                Checksums.Add(plugin);
-
         foreach(Type type in pluginRegister.GetAllFilesystemPlugins() ?? Enumerable.Empty<Type>())
             if(Activator.CreateInstance(type) is IFilesystem plugin &&
                !Filesystems.ContainsKey(plugin.Name.ToLower()))
