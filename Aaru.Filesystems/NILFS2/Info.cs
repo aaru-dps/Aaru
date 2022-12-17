@@ -77,9 +77,9 @@ public sealed partial class NILFS2
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.UTF8;
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.UTF8;
+        information =   "";
+        metadata    =   new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -124,7 +124,7 @@ public sealed partial class NILFS2
         sb.AppendFormat(Localization._0_bytes_per_inode, nilfsSb.inode_size).AppendLine();
         sb.AppendFormat(Localization.Volume_UUID_0, nilfsSb.uuid).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(nilfsSb.volume_name, Encoding)).
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(nilfsSb.volume_name, encoding)).
            AppendLine();
 
         sb.AppendFormat(Localization.Volume_created_on_0, DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime)).
@@ -142,7 +142,7 @@ public sealed partial class NILFS2
         {
             Type             = FS_TYPE,
             ClusterSize      = (uint)(1 << (int)(nilfsSb.log_block_size + 10)),
-            VolumeName       = StringHandlers.CToString(nilfsSb.volume_name, Encoding),
+            VolumeName       = StringHandlers.CToString(nilfsSb.volume_name, encoding),
             VolumeSerial     = nilfsSb.uuid.ToString(),
             CreationDate     = DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime),
             ModificationDate = DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime)

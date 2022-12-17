@@ -100,9 +100,9 @@ public sealed partial class AppleHFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("macintosh");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("macintosh");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -232,7 +232,7 @@ public sealed partial class AppleHFS
         sb.AppendFormat(Localization._0_bytes_in_the_Extents_B_Tree, mdb.drXTFlSize).AppendLine();
         sb.AppendFormat(Localization._0_bytes_in_the_Catalog_B_Tree, mdb.drCTFlSize).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(mdb.drVN, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(mdb.drVN, encoding)).AppendLine();
 
         sb.AppendLine(Localization.Finder_info);
         sb.AppendFormat(Localization.CNID_of_bootable_system_directory_0, mdb.drFndrInfo0).AppendLine();
@@ -258,7 +258,7 @@ public sealed partial class AppleHFS
             sb.AppendFormat(Localization._0_blocks_in_volume_common_cache, mdb.drCtlCSize).AppendLine();
         }
 
-        string bootBlockInfo = AppleCommon.GetBootBlockInformation(bbSector, Encoding);
+        string bootBlockInfo = AppleCommon.GetBootBlockInformation(bbSector, encoding);
 
         if(bootBlockInfo != null)
         {
@@ -303,7 +303,7 @@ public sealed partial class AppleHFS
         }
 
         metadata.Type       = FS_TYPE;
-        metadata.VolumeName = StringHandlers.PascalToString(mdb.drVN, Encoding);
+        metadata.VolumeName = StringHandlers.PascalToString(mdb.drVN, encoding);
 
         if(mdb.drFndrInfo6 != 0 &&
            mdb.drFndrInfo7 != 0)

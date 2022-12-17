@@ -106,9 +106,9 @@ public sealed partial class EFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -197,8 +197,8 @@ public sealed partial class EFS
             sb.AppendLine(Localization.Volume_is_dirty);
 
         sb.AppendFormat(Localization.Checksum_0_X8, efsSb.sb_checksum).AppendLine();
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(efsSb.sb_fname, Encoding)).AppendLine();
-        sb.AppendFormat(Localization.Volume_pack_0, StringHandlers.CToString(efsSb.sb_fpack, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(efsSb.sb_fname, encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_pack_0, StringHandlers.CToString(efsSb.sb_fpack, encoding)).AppendLine();
 
         information = sb.ToString();
 
@@ -209,7 +209,7 @@ public sealed partial class EFS
             Clusters     = (ulong)efsSb.sb_size,
             FreeClusters = (ulong)efsSb.sb_tfree,
             Dirty        = efsSb.sb_dirty > 0,
-            VolumeName   = StringHandlers.CToString(efsSb.sb_fname, Encoding),
+            VolumeName   = StringHandlers.CToString(efsSb.sb_fname, encoding),
             VolumeSerial = $"{efsSb.sb_checksum:X8}",
             CreationDate = DateHandlers.UnixToDateTime(efsSb.sb_time)
         };

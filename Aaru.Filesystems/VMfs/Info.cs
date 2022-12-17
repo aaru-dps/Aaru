@@ -70,9 +70,9 @@ public sealed partial class VMfs
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.UTF8;
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.UTF8;
+        information =   "";
+        metadata    =   new FileSystem();
         ulong       vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
         ErrorNumber errno        = imagePlugin.ReadSector(partition.Start + vmfsSuperOff, out byte[] sector);
 
@@ -92,7 +92,7 @@ public sealed partial class VMfs
 
         sbInformation.AppendFormat(Localization.Volume_version_0, volInfo.version).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(volInfo.name, Encoding)).
+        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(volInfo.name, encoding)).
                       AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_size_0_bytes, volInfo.size * 256).AppendLine();

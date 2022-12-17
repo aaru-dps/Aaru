@@ -29,7 +29,6 @@
 // ReSharper disable UnusedType.Local
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -38,8 +37,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Professional File System</summary>
 public sealed partial class PFS : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.PFS_Name;
     /// <inheritdoc />

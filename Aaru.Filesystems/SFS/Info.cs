@@ -60,7 +60,6 @@ public sealed partial class SFS
                                out FileSystem metadata)
     {
         information = "";
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
         metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] rootBlockSector);
 

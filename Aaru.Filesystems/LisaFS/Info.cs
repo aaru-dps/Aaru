@@ -129,7 +129,7 @@ public sealed partial class LisaFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = new LisaRoman();
+        _encoding   = new LisaRoman();
         information = "";
         metadata    = new FileSystem();
         var sb = new StringBuilder();
@@ -174,12 +174,12 @@ public sealed partial class LisaFS
             infoMddf.volid     = BigEndianBitConverter.ToUInt64(sector, 0x02);
             infoMddf.volnum    = BigEndianBitConverter.ToUInt16(sector, 0x0A);
             Array.Copy(sector, 0x0C, pString, 0, 33);
-            infoMddf.volname  = StringHandlers.PascalToString(pString, Encoding);
+            infoMddf.volname  = StringHandlers.PascalToString(pString, encoding);
             infoMddf.unknown1 = sector[0x2D];
             Array.Copy(sector, 0x2E, pString, 0, 33);
 
             // Prevent garbage
-            infoMddf.password       = pString[0] <= 32 ? StringHandlers.PascalToString(pString, Encoding) : "";
+            infoMddf.password       = pString[0] <= 32 ? StringHandlers.PascalToString(pString, encoding) : "";
             infoMddf.unknown2       = sector[0x4F];
             infoMddf.machine_id     = BigEndianBitConverter.ToUInt32(sector, 0x50);
             infoMddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);

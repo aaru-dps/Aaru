@@ -86,9 +86,9 @@ public sealed partial class ext2FS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -264,13 +264,13 @@ public sealed partial class ext2FS
                     AppendFormat(Localization.Volume_has_been_mounted_0_times_with_no_maximum_no_of_mounts_before_checking,
                                  supblk.mount_c).AppendLine();
 
-            if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.last_mount_dir, Encoding)))
+            if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.last_mount_dir, encoding)))
                 sb.AppendFormat(Localization.Last_mounted_at_0,
-                                StringHandlers.CToString(supblk.last_mount_dir, Encoding)).AppendLine();
+                                StringHandlers.CToString(supblk.last_mount_dir, encoding)).AppendLine();
 
-            if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.mount_options, Encoding)))
+            if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.mount_options, encoding)))
                 sb.AppendFormat(Localization.Last_used_mount_options_were_0,
-                                StringHandlers.CToString(supblk.mount_options, Encoding)).AppendLine();
+                                StringHandlers.CToString(supblk.mount_options, encoding)).AppendLine();
         }
         else
         {
@@ -332,12 +332,12 @@ public sealed partial class ext2FS
                 break;
         }
 
-        if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.volume_name, Encoding)))
+        if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.volume_name, encoding)))
         {
-            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(supblk.volume_name, Encoding)).
+            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(supblk.volume_name, encoding)).
                AppendLine();
 
-            metadata.VolumeName = StringHandlers.CToString(supblk.volume_name, Encoding);
+            metadata.VolumeName = StringHandlers.CToString(supblk.volume_name, encoding);
         }
 
         switch(supblk.err_behaviour)

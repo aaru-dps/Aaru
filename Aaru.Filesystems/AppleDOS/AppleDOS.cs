@@ -42,6 +42,7 @@ public sealed partial class AppleDOS : IReadOnlyFilesystem
     const string FS_TYPE = "appledos";
     bool         _debug;
     IMediaImage  _device;
+    Encoding     _encoding;
     bool         _mounted;
     int          _sectorsPerTrack;
     ulong        _start;
@@ -51,8 +52,6 @@ public sealed partial class AppleDOS : IReadOnlyFilesystem
     uint         _usedSectors;
     Vtoc         _vtoc;
 
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
     /// <inheritdoc />

@@ -66,9 +66,9 @@ public sealed partial class JFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
         var         sb          = new StringBuilder();
         uint        bootSectors = JFS_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
         ErrorNumber errno       = imagePlugin.ReadSector(partition.Start + bootSectors, out byte[] sector);
@@ -162,9 +162,9 @@ public sealed partial class JFS
                         DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec)).AppendLine();
 
         if(jfsSb.s_version == 1)
-            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(jfsSb.s_fpack, Encoding)).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(jfsSb.s_fpack, encoding)).AppendLine();
         else
-            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(jfsSb.s_label, Encoding)).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(jfsSb.s_label, encoding)).AppendLine();
 
         sb.AppendFormat(Localization.Volume_UUID_0, jfsSb.s_uuid).AppendLine();
 
@@ -174,7 +174,7 @@ public sealed partial class JFS
             Clusters         = jfsSb.s_size,
             ClusterSize      = jfsSb.s_bsize,
             Bootable         = true,
-            VolumeName       = StringHandlers.CToString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label, Encoding),
+            VolumeName       = StringHandlers.CToString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label, encoding),
             VolumeSerial     = $"{jfsSb.s_uuid}",
             ModificationDate = DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec)
         };

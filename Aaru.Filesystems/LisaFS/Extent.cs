@@ -217,7 +217,7 @@ public sealed partial class LisaFS
         AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
 
         AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filename = {1}", fileId,
-                                   StringHandlers.CToString(file.filename, Encoding));
+                                   StringHandlers.CToString(file.filename, _encoding));
 
         AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown1 = 0x{1:X4}", fileId, file.unknown1);
         AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId, file.file_uid);
@@ -257,7 +257,7 @@ public sealed partial class LisaFS
                                    file.password_valid > 0);
 
         AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password = {1}", fileId,
-                                   Encoding.GetString(file.password));
+                                   _encoding.GetString(file.password));
 
         AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}", fileId,
                                    file.unknown7[0], file.unknown7[1], file.unknown7[2]);

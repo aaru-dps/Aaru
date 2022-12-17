@@ -69,9 +69,9 @@ public sealed partial class HPFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("ibm850");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("ibm850");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -137,7 +137,7 @@ public sealed partial class HPFS
         sb.AppendFormat(Localization.NT_Flags_0, bpb.nt_flags).AppendLine();
         sb.AppendFormat(Localization.Signature_0, bpb.signature).AppendLine();
         sb.AppendFormat(Localization.Serial_number_0, bpb.serial_no).AppendLine();
-        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(bpb.volume_label, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(bpb.volume_label, encoding)).AppendLine();
 
         //          sb.AppendFormat("Filesystem type: \"{0}\"", hpfs_bpb.fs_type).AppendLine();
 
@@ -243,7 +243,7 @@ public sealed partial class HPFS
         metadata.Clusters         =  hpfsSb.sectors;
         metadata.ClusterSize      =  bpb.bps;
         metadata.Type             =  FS_TYPE;
-        metadata.VolumeName       =  StringHandlers.CToString(bpb.volume_label, Encoding);
+        metadata.VolumeName       =  StringHandlers.CToString(bpb.volume_label, encoding);
         metadata.VolumeSerial     =  $"{bpb.serial_no:X8}";
         metadata.SystemIdentifier =  StringHandlers.CToString(bpb.oem_name);
 

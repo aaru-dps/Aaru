@@ -70,7 +70,6 @@ public sealed partial class APFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding = Encoding.UTF8;
         var sbInformation = new StringBuilder();
         metadata    = new FileSystem();
         information = "";

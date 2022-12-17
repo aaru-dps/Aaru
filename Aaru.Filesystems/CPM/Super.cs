@@ -55,8 +55,8 @@ public sealed partial class CPM
     public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                              Dictionary<string, string> options, string @namespace)
     {
-        _device  = imagePlugin;
-        Encoding = encoding ?? Encoding.GetEncoding("IBM437");
+        _device   = imagePlugin;
+        _encoding = encoding ?? Encoding.GetEncoding("IBM437");
 
         // As the identification is so complex, just call Identify() and relay on its findings
         if(!Identify(_device, partition) ||

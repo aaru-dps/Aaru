@@ -66,9 +66,9 @@ public sealed partial class SolarFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var         sb    = new StringBuilder();
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bpbSector);
@@ -93,10 +93,10 @@ public sealed partial class SolarFS
         bpb.OEMName = StringHandlers.CToString(bpbStrings);
         bpbStrings  = new byte[8];
         Array.Copy(bpbSector, 0x2A, bpbStrings, 0, 11);
-        bpb.vol_name = StringHandlers.CToString(bpbStrings, Encoding);
+        bpb.vol_name = StringHandlers.CToString(bpbStrings, encoding);
         bpbStrings   = new byte[8];
         Array.Copy(bpbSector, 0x35, bpbStrings, 0, 8);
-        bpb.fs_type = StringHandlers.CToString(bpbStrings, Encoding);
+        bpb.fs_type = StringHandlers.CToString(bpbStrings, encoding);
 
         bpb.x86_jump = new byte[3];
         Array.Copy(bpbSector, 0x00, bpb.x86_jump, 0, 3);

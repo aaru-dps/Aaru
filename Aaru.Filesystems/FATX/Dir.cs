@@ -134,7 +134,7 @@ public sealed partial class XboxFatPlugin
                 if(dirent.filenameSize is DELETED_DIRENTRY or > MAX_FILENAME)
                     continue;
 
-                string filename = Encoding.GetString(dirent.filename, 0, dirent.filenameSize);
+                string filename = _encoding.GetString(dirent.filename, 0, dirent.filenameSize);
 
                 currentDirectory.Add(filename, dirent);
             }

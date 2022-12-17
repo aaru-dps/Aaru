@@ -50,8 +50,8 @@ public sealed partial class PascalPlugin
     public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                              Dictionary<string, string> options, string @namespace)
     {
-        _device  = imagePlugin;
-        Encoding = encoding ?? new Apple2();
+        _device   = imagePlugin;
+        _encoding = encoding ?? new Apple2();
 
         options ??= GetDefaultOptions();
 
@@ -140,7 +140,7 @@ public sealed partial class PascalPlugin
             ClusterSize = _device.Info.SectorSize,
             Files       = (ulong)_mountedVolEntry.Files,
             Type        = FS_TYPE,
-            VolumeName  = StringHandlers.PascalToString(_mountedVolEntry.VolumeName, Encoding)
+            VolumeName  = StringHandlers.PascalToString(_mountedVolEntry.VolumeName, _encoding)
         };
 
         _mounted = true;

@@ -29,7 +29,6 @@
 // ReSharper disable UnusedMember.Local
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -38,8 +37,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of IBM's Journaled File System</summary>
 public sealed partial class JFS : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.JFS_Name;
     /// <inheritdoc />

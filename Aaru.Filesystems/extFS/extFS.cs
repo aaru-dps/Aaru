@@ -27,7 +27,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -43,8 +42,6 @@ public sealed partial class extFS : IFilesystem
     public string Name => Localization.extFS_Name;
     /// <inheritdoc />
     public Guid Id => new("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 }

@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -41,8 +40,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the DEC RT-11 filesystem</summary>
 public sealed partial class RT11 : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.RT11_Name;
     /// <inheritdoc />

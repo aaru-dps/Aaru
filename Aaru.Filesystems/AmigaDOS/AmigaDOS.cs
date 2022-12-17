@@ -27,7 +27,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -40,8 +39,6 @@ public sealed partial class AmigaDOSPlugin : IFilesystem
     public string Name => Localization.AmigaDOSPlugin_Name;
     /// <inheritdoc />
     public Guid Id => new("3c882400-208c-427d-a086-9119852a1bc7");
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 }

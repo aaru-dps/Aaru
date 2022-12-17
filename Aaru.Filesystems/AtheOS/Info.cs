@@ -76,9 +76,9 @@ public sealed partial class AtheOS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -104,7 +104,7 @@ public sealed partial class AtheOS
         if(afsSb.flags == 1)
             sb.AppendLine(Localization.Filesystem_is_read_only);
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(afsSb.name, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(afsSb.name, encoding)).AppendLine();
         sb.AppendFormat(Localization._0_bytes_per_block, afsSb.block_size).AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_in_volume_1_bytes, afsSb.num_blocks,
@@ -154,7 +154,7 @@ public sealed partial class AtheOS
             Dirty        = false,
             FreeClusters = (ulong)(afsSb.num_blocks - afsSb.used_blocks),
             Type         = FS_TYPE,
-            VolumeName   = StringHandlers.CToString(afsSb.name, Encoding)
+            VolumeName   = StringHandlers.CToString(afsSb.name, encoding)
         };
     }
 }

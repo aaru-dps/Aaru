@@ -64,8 +64,8 @@ public sealed partial class Cram
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
         metadata = new FileSystem();
 
@@ -96,7 +96,7 @@ public sealed partial class Cram
         sbInformation.AppendLine(littleEndian ? Localization.Little_endian : Localization.Big_endian);
         sbInformation.AppendFormat(Localization.Volume_edition_0, crSb.edition).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(crSb.name, Encoding)).
+        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(crSb.name, encoding)).
                       AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_bytes, crSb.size).AppendLine();
@@ -107,7 +107,7 @@ public sealed partial class Cram
 
         metadata = new FileSystem
         {
-            VolumeName   = StringHandlers.CToString(crSb.name, Encoding),
+            VolumeName   = StringHandlers.CToString(crSb.name, encoding),
             Type         = FS_TYPE,
             Clusters     = crSb.blocks,
             Files        = crSb.files,

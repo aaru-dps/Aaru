@@ -168,7 +168,7 @@ public sealed partial class AmigaDOSPlugin
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+        encoding ??= Encoding.GetEncoding("iso-8859-1");
         var sbInformation = new StringBuilder();
         metadata    = new FileSystem();
         information = null;
@@ -273,7 +273,7 @@ public sealed partial class AmigaDOSPlugin
 
         rootBlk = MarshalRootBlock(rootBlockSector);
 
-        string diskName = StringHandlers.PascalToString(rootBlk.diskName, Encoding);
+        string diskName = StringHandlers.PascalToString(rootBlk.diskName, encoding);
 
         switch(bootBlk.diskType & 0xFF)
         {

@@ -48,7 +48,7 @@ public sealed partial class XboxFatPlugin
     public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                              Dictionary<string, string> options, string @namespace)
     {
-        Encoding      = Encoding.GetEncoding("iso-8859-15");
+        _encoding     = Encoding.GetEncoding("iso-8859-15");
         _littleEndian = true;
 
         options ??= GetDefaultOptions();
@@ -251,7 +251,7 @@ public sealed partial class XboxFatPlugin
             if(entry.filenameSize is DELETED_DIRENTRY or > MAX_FILENAME)
                 continue;
 
-            string filename = Encoding.GetString(entry.filename, 0, entry.filenameSize);
+            string filename = _encoding.GetString(entry.filename, 0, entry.filenameSize);
 
             _rootDirectory.Add(filename, entry);
         }

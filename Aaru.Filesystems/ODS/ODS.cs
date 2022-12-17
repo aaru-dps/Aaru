@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -49,8 +48,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of DEC's On-Disk Structure, aka the ODS filesystem</summary>
 public sealed partial class ODS : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.ODS_Name;
     /// <inheritdoc />

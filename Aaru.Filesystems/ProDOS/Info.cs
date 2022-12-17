@@ -131,9 +131,9 @@ public sealed partial class ProDOSPlugin
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? new Apple2c();
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= new Apple2c();
+        information =   "";
+        metadata    =   new FileSystem();
         var  sbInformation = new StringBuilder();
         uint multiplier    = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
@@ -179,7 +179,7 @@ public sealed partial class ProDOSPlugin
         rootDirectoryKeyBlock.header.name_length = (byte)(rootDirectoryKeyBlockBytes[0x04] & NAME_LENGTH_MASK);
         byte[] temporal = new byte[rootDirectoryKeyBlock.header.name_length];
         Array.Copy(rootDirectoryKeyBlockBytes, 0x05, temporal, 0, rootDirectoryKeyBlock.header.name_length);
-        rootDirectoryKeyBlock.header.volume_name = Encoding.GetString(temporal);
+        rootDirectoryKeyBlock.header.volume_name = encoding.GetString(temporal);
         rootDirectoryKeyBlock.header.reserved    = BitConverter.ToUInt64(rootDirectoryKeyBlockBytes, 0x14);
 
         ushort tempTimestampLeft  = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1C);

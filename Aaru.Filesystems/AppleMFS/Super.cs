@@ -49,7 +49,7 @@ public sealed partial class AppleMFS
     {
         _device         = imagePlugin;
         _partitionStart = partition.Start;
-        Encoding        = encoding ?? Encoding.GetEncoding("macintosh");
+        _encoding       = encoding ?? Encoding.GetEncoding("macintosh");
 
         options ??= GetDefaultOptions();
 
@@ -88,7 +88,7 @@ public sealed partial class AppleMFS
         _volMdb.drVNSiz    = _mdbBlocks[0x024];
         byte[] variableSize = new byte[_volMdb.drVNSiz + 1];
         Array.Copy(_mdbBlocks, 0x024, variableSize, 0, _volMdb.drVNSiz + 1);
-        _volMdb.drVN = StringHandlers.PascalToString(variableSize, Encoding);
+        _volMdb.drVN = StringHandlers.PascalToString(variableSize, _encoding);
 
         errno = _device.ReadSectors(_volMdb.drDirSt + _partitionStart, _volMdb.drBlLen, out _directoryBlocks);
 

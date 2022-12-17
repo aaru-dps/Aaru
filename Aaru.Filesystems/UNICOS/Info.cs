@@ -82,9 +82,9 @@ public sealed partial class UNICOS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -127,7 +127,7 @@ public sealed partial class UNICOS
         if(unicosSb.s_error > 0)
             sb.AppendFormat(Localization.Volume_is_dirty_error_code_equals_0, unicosSb.s_error).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(unicosSb.s_fname, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(unicosSb.s_fname, encoding)).AppendLine();
 
         information = sb.ToString();
 
@@ -136,7 +136,7 @@ public sealed partial class UNICOS
             Type             = FS_TYPE,
             ClusterSize      = 4096,
             Clusters         = (ulong)unicosSb.s_fsize,
-            VolumeName       = StringHandlers.CToString(unicosSb.s_fname, Encoding),
+            VolumeName       = StringHandlers.CToString(unicosSb.s_fname, encoding),
             ModificationDate = DateHandlers.UnixToDateTime(unicosSb.s_time)
         };
 

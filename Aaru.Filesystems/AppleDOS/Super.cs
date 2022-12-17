@@ -45,9 +45,9 @@ public sealed partial class AppleDOS
     public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                              Dictionary<string, string> options, string @namespace)
     {
-        _device  = imagePlugin;
-        _start   = partition.Start;
-        Encoding = encoding ?? new Apple2();
+        _device   = imagePlugin;
+        _start    = partition.Start;
+        _encoding = encoding ?? new Apple2();
 
         if(_device.Info.Sectors != 455 &&
            _device.Info.Sectors != 560)

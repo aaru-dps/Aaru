@@ -44,7 +44,7 @@ public sealed partial class OperaFS
                              Dictionary<string, string> options, string @namespace)
     {
         // TODO: Find correct default encoding
-        Encoding = Encoding.ASCII;
+        _encoding = Encoding.ASCII;
 
         options ??= GetDefaultOptions();
 
@@ -73,7 +73,7 @@ public sealed partial class OperaFS
         Metadata = new FileSystem
         {
             Type         = FS_TYPE,
-            VolumeName   = StringHandlers.CToString(sb.volume_label, Encoding),
+            VolumeName   = StringHandlers.CToString(sb.volume_label, _encoding),
             ClusterSize  = sb.block_size,
             Clusters     = sb.block_count,
             Bootable     = true,

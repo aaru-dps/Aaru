@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -40,8 +39,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the PC-Engine CD file headers</summary>
 public sealed partial class PCEnginePlugin : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.PCEnginePlugin_Name;
     /// <inheritdoc />

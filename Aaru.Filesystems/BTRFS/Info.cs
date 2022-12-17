@@ -84,7 +84,6 @@ public sealed partial class BTRFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         var sbInformation = new StringBuilder();
         metadata    = new FileSystem();
         information = "";

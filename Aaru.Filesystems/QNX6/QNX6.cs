@@ -27,7 +27,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -36,8 +35,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of QNX 6 filesystem</summary>
 public sealed partial class QNX6 : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.QNX6_Name;
     /// <inheritdoc />

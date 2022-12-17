@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -46,8 +45,6 @@ public sealed partial class AODOS : IFilesystem
     public string Name => Localization.AODOS_Name;
     /// <inheritdoc />
     public Guid Id => new("668E5039-9DDD-442A-BE1B-A315D6E38E26");
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 }

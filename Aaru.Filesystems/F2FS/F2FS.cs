@@ -28,7 +28,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -38,8 +37,6 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class F2FS : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.F2FS_Name;
     /// <inheritdoc />

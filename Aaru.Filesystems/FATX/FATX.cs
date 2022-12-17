@@ -45,6 +45,7 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
     CultureInfo                                            _cultureInfo;
     bool                                                   _debug;
     Dictionary<string, Dictionary<string, DirectoryEntry>> _directoryCache;
+    Encoding                                               _encoding;
     ushort[]                                               _fat16;
     uint[]                                                 _fat32;
     ulong                                                  _fatStartSector;
@@ -57,8 +58,6 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
     FileSystemInfo                                         _statfs;
     Superblock                                             _superblock;
 
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
     /// <inheritdoc />

@@ -65,7 +65,7 @@ public sealed partial class NintendoPlugin
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding = encoding ?? Encoding.GetEncoding("shift_jis");
+        encoding ??= Encoding.GetEncoding("shift_jis");
         var sbInformation = new StringBuilder();
         information = "";
         metadata    = new FileSystem();
@@ -98,7 +98,7 @@ public sealed partial class NintendoPlugin
         fields.StreamBufferSize =  header[9];
         byte[] temp = new byte[64];
         Array.Copy(header, 0x20, temp, 0, 64);
-        fields.Title = StringHandlers.CToString(temp, Encoding);
+        fields.Title = StringHandlers.CToString(temp, encoding);
 
         if(!wii)
         {

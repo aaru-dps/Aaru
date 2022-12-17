@@ -60,7 +60,6 @@ public sealed partial class Squash
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.UTF8;
         information = "";
         metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);

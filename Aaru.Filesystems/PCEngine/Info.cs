@@ -64,7 +64,6 @@ public sealed partial class PCEnginePlugin
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("shift_jis");
         information = "";
 
         metadata = new FileSystem

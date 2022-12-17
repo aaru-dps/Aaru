@@ -27,7 +27,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -40,8 +39,6 @@ public sealed partial class CBM : IFilesystem
     public string Name => Localization.CBM_Name;
     /// <inheritdoc />
     public Guid Id => new("D104744E-A376-450C-BAC0-1347C93F983B");
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 }

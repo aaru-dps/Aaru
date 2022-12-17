@@ -70,7 +70,6 @@ public sealed partial class ECMA67
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
         information = "";
         metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(6, out byte[] sector);

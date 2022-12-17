@@ -86,9 +86,9 @@ public sealed partial class BeFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -184,7 +184,7 @@ public sealed partial class BeFS
                 break;
         }
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(besb.name, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(besb.name, encoding)).AppendLine();
         sb.AppendFormat(Localization._0_bytes_per_block, besb.block_size).AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_in_volume_1_bytes, besb.num_blocks, besb.num_blocks * besb.block_size).
@@ -226,7 +226,7 @@ public sealed partial class BeFS
             Dirty        = besb.flags == BEFS_DIRTY,
             FreeClusters = (ulong)(besb.num_blocks - besb.used_blocks),
             Type         = FS_TYPE,
-            VolumeName   = StringHandlers.CToString(besb.name, Encoding)
+            VolumeName   = StringHandlers.CToString(besb.name, encoding)
         };
     }
 }

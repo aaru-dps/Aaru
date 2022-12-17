@@ -67,7 +67,7 @@ public sealed partial class OperaFS
                                out FileSystem metadata)
     {
         // TODO: Find correct default encoding
-        Encoding    = Encoding.ASCII;
+        encoding    = Encoding.ASCII;
         information = "";
         metadata    = new FileSystem();
         var superBlockmetadata = new StringBuilder();
@@ -88,14 +88,14 @@ public sealed partial class OperaFS
 
         superBlockmetadata.AppendFormat(Localization.Opera_filesystem_disc).AppendLine();
 
-        if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, Encoding)))
+        if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, encoding)))
             superBlockmetadata.
-                AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(sb.volume_label, Encoding)).
+                AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(sb.volume_label, encoding)).
                 AppendLine();
 
-        if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, Encoding)))
+        if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, encoding)))
             superBlockmetadata.
-                AppendFormat(Localization.Volume_comment_0, StringHandlers.CToString(sb.volume_comment, Encoding)).
+                AppendFormat(Localization.Volume_comment_0, StringHandlers.CToString(sb.volume_comment, encoding)).
                 AppendLine();
 
         superBlockmetadata.AppendFormat(Localization.Volume_identifier_0_X8, sb.volume_id).AppendLine();
@@ -135,7 +135,7 @@ public sealed partial class OperaFS
         metadata = new FileSystem
         {
             Type        = FS_TYPE,
-            VolumeName  = StringHandlers.CToString(sb.volume_label, Encoding),
+            VolumeName  = StringHandlers.CToString(sb.volume_label, encoding),
             ClusterSize = sb.block_size,
             Clusters    = sb.block_count
         };

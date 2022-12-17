@@ -262,7 +262,7 @@ public sealed partial class AcornADFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
+        encoding ??= Encoding.GetEncoding("iso-8859-1");
         var sbInformation = new StringBuilder();
         metadata    = new FileSystem();
         information = "";
@@ -416,7 +416,7 @@ public sealed partial class AcornADFS
                 sbInformation.AppendFormat(Localization._0_bytes_per_sector, imagePlugin.Info.SectorSize).AppendLine();
                 sbInformation.AppendFormat(Localization.Volume_has_0_bytes, bytes).AppendLine();
 
-                sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(namebytes, Encoding)).
+                sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(namebytes, encoding)).
                               AppendLine();
 
                 if(oldMap1.discId > 0)
@@ -426,7 +426,7 @@ public sealed partial class AcornADFS
                 }
 
                 if(!ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
-                    metadata.VolumeName = StringHandlers.CToString(namebytes, Encoding);
+                    metadata.VolumeName = StringHandlers.CToString(namebytes, encoding);
 
                 information = sbInformation.ToString();
 
@@ -495,7 +495,7 @@ public sealed partial class AcornADFS
         AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_id = {0}", drSb.disc_id);
 
         AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_name = {0}",
-                                   StringHandlers.CToString(drSb.disc_name, Encoding));
+                                   StringHandlers.CToString(drSb.disc_name, encoding));
 
         AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_type = {0}", drSb.disc_type);
         AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size_high = {0}", drSb.disc_size_high);
@@ -555,7 +555,7 @@ public sealed partial class AcornADFS
 
         if(!ArrayHelpers.ArrayIsNullOrEmpty(drSb.disc_name))
         {
-            string discname = StringHandlers.CToString(drSb.disc_name, Encoding);
+            string discname = StringHandlers.CToString(drSb.disc_name, encoding);
             metadata.VolumeName = discname;
             sbInformation.AppendFormat(Localization.Volume_name_0, discname).AppendLine();
         }

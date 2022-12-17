@@ -424,8 +424,8 @@ public sealed partial class FAT
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("IBM437");
-        information = "";
+        encoding    ??= Encoding.GetEncoding("IBM437");
+        information =   "";
 
         var sb = new StringBuilder();
         metadata = new FileSystem();
@@ -574,7 +574,7 @@ public sealed partial class FAT
 
                 if(fat32Bpb.signature == 0x29)
                 {
-                    metadata.VolumeName = StringHandlers.SpacePaddedToString(fat32Bpb.volume_label, Encoding);
+                    metadata.VolumeName = StringHandlers.SpacePaddedToString(fat32Bpb.volume_label, encoding);
                     metadata.VolumeName = metadata.VolumeName?.Replace("\0", "");
 
                     sb.AppendFormat(Localization.Filesystem_type_0, Encoding.ASCII.GetString(fat32Bpb.fs_type)).
@@ -859,7 +859,7 @@ public sealed partial class FAT
                                     fakeBpb.oem_name[5] >= 0x20 && fakeBpb.oem_name[5] <= 0x7F &&
                                     fakeBpb.oem_name[6] >= 0x20 && fakeBpb.oem_name[6] <= 0x7F &&
                                     fakeBpb.oem_name[7] >= 0x20 &&
-                                    fakeBpb.oem_name[7] <= 0x7F => StringHandlers.CToString(fakeBpb.oem_name, Encoding,
+                                    fakeBpb.oem_name[7] <= 0x7F => StringHandlers.CToString(fakeBpb.oem_name, encoding,
                             start: 1),
                         _ => metadata.SystemIdentifier
                     };
@@ -929,7 +929,7 @@ public sealed partial class FAT
 
                 if(fakeBpb.signature == 0x29 || andosOemCorrect)
                 {
-                    metadata.VolumeName = StringHandlers.SpacePaddedToString(fakeBpb.volume_label, Encoding);
+                    metadata.VolumeName = StringHandlers.SpacePaddedToString(fakeBpb.volume_label, encoding);
                     metadata.VolumeName = metadata.VolumeName?.Replace("\0", "");
 
                     sb.AppendFormat(Localization.Filesystem_type_0, Encoding.ASCII.GetString(fakeBpb.fs_type)).
@@ -1018,7 +1018,7 @@ public sealed partial class FAT
                 byte[] fullname = new byte[11];
                 Array.Copy(entry.filename, 0, fullname, 0, 8);
                 Array.Copy(entry.extension, 0, fullname, 8, 3);
-                string volname = Encoding.GetString(fullname).Trim();
+                string volname = encoding.GetString(fullname).Trim();
 
                 if(!string.IsNullOrEmpty(volname))
                     metadata.VolumeName = entry.caseinfo.HasFlag(CaseInfo.AllLowerCase) ? volname.ToLower() : volname;

@@ -92,7 +92,7 @@ public sealed partial class CBM
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = new PETSCII();
+        encoding    = new PETSCII();
         information = "";
         byte[] sector;
 
@@ -136,10 +136,10 @@ public sealed partial class CBM
 
             sbInformation.AppendFormat(Localization.Disk_ID_0, cbmHdr.diskId).AppendLine();
 
-            sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmHdr.name, Encoding)).
+            sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmHdr.name, encoding)).
                           AppendLine();
 
-            metadata.VolumeName   = StringHandlers.CToString(cbmHdr.name, Encoding);
+            metadata.VolumeName   = StringHandlers.CToString(cbmHdr.name, encoding);
             metadata.VolumeSerial = $"{cbmHdr.diskId}";
         }
         else
@@ -164,10 +164,10 @@ public sealed partial class CBM
 
             sbInformation.AppendFormat(Localization.Disk_ID_0, cbmBam.diskId).AppendLine();
 
-            sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmBam.name, Encoding)).
+            sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmBam.name, encoding)).
                           AppendLine();
 
-            metadata.VolumeName   = StringHandlers.CToString(cbmBam.name, Encoding);
+            metadata.VolumeName   = StringHandlers.CToString(cbmBam.name, encoding);
             metadata.VolumeSerial = $"{cbmBam.diskId}";
         }
 

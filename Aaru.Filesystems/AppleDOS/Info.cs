@@ -31,8 +31,6 @@ using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Claunia.Encoding;
-using Encoding = System.Text.Encoding;
 using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Filesystems;
@@ -67,7 +65,6 @@ public sealed partial class AppleDOS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? new Apple2();
         information = "";
         var sb = new StringBuilder();
         metadata = new FileSystem();

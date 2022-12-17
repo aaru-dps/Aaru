@@ -28,7 +28,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -38,8 +37,6 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class APFS : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.APFS_Name;
     /// <inheritdoc />

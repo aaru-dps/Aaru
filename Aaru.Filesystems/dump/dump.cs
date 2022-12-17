@@ -32,7 +32,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using ufs_daddr_t = System.Int32;
 
@@ -43,8 +42,6 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class dump : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.dump_Name;
     /// <inheritdoc />

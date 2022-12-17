@@ -87,9 +87,9 @@ public sealed partial class ISO9660
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.ASCII;
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.ASCII;
+        information =   "";
+        metadata    =   new FileSystem();
         var    isoMetadata = new StringBuilder();
         byte[] vdMagic     = new byte[5]; // Volume Descriptor magic "CD001"
         byte[] hsMagic     = new byte[5]; // Volume Descriptor magic "CDROM"
@@ -120,7 +120,7 @@ public sealed partial class ISO9660
 
         int xaOff = vdSector.Length == 2336 ? 8 : 0;
         Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
-        bool highSierraInfo = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
+        bool highSierraInfo = encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
         int  hsOff          = 0;
 
         if(highSierraInfo)
@@ -158,9 +158,9 @@ public sealed partial class ISO9660
             Array.Copy(vdSector, 0x001, vdMagic, 0, 5);
             Array.Copy(vdSector, 0x009, hsMagic, 0, 5);
 
-            if(Encoding.GetString(vdMagic) != ISO_MAGIC         &&
-               Encoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
-               Encoding.GetString(vdMagic) != CDI_MAGIC) // Recognized, it is an ISO9660, now check for rest of data.
+            if(encoding.GetString(vdMagic) != ISO_MAGIC         &&
+               encoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
+               encoding.GetString(vdMagic) != CDI_MAGIC) // Recognized, it is an ISO9660, now check for rest of data.
             {
                 if(counter == 0)
                     return;
@@ -168,7 +168,7 @@ public sealed partial class ISO9660
                 break;
             }
 
-            cdiInfo |= Encoding.GetString(vdMagic) == CDI_MAGIC;
+            cdiInfo |= encoding.GetString(vdMagic) == CDI_MAGIC;
 
             switch(vdType)
             {
@@ -178,7 +178,7 @@ public sealed partial class ISO9660
 
                     bootSpec = Localization.Unknown_specification;
 
-                    if(Encoding.GetString(bvd.Value.system_id)[..23] == "EL TORITO SPECIFICATION")
+                    if(encoding.GetString(bvd.Value.system_id)[..23] == "EL TORITO SPECIFICATION")
                     {
                         bootSpec = "El Torito";
 
@@ -520,11 +520,11 @@ public sealed partial class ISO9660
             foreach(byte[] erb in refareas)
             {
                 ReferenceArea er    = Marshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
-                string        extId = Encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>(), er.id_len);
+                string        extId = encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>(), er.id_len);
 
-                string extDes = Encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>() + er.id_len, er.des_len);
+                string extDes = encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>() + er.id_len, er.des_len);
 
-                string extSrc = Encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>() + er.id_len + er.des_len,
+                string extSrc = encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>() + er.id_len + er.des_len,
                                                    er.src_len);
 
                 suspInformation.AppendFormat(Localization.Extension_0, counter).AppendLine();
@@ -730,7 +730,7 @@ public sealed partial class ISO9660
 
             isoMetadata.AppendLine(Localization.Initial_entry);
 
-            isoMetadata.AppendFormat("\t" + Localization.Developer_ID_0, Encoding.GetString(valentry.developer_id)).
+            isoMetadata.AppendFormat("\t" + Localization.Developer_ID_0, encoding.GetString(valentry.developer_id)).
                         AppendLine();
 
             if(initialEntry.bootable == ElToritoIndicator.Bootable)
@@ -799,7 +799,7 @@ public sealed partial class ISO9660
                 isoMetadata.AppendFormat(Localization.Boot_section_0, sectionCounter);
 
                 isoMetadata.
-                    AppendFormat("\t" + Localization.Section_ID_0, Encoding.GetString(sectionHeader.identifier)).
+                    AppendFormat("\t" + Localization.Section_ID_0, encoding.GetString(sectionHeader.identifier)).
                     AppendLine();
 
                 for(int entryCounter = 1; entryCounter <= sectionHeader.entries && toritoOff < vdSector.Length;

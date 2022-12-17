@@ -57,6 +57,7 @@ public sealed partial class AppleMFS : IReadOnlyFilesystem
     byte[]                      _mdbTags;
     byte[]                      _directoryTags;
     byte[]                      _bitmapTags;
+    Encoding                    _encoding;
 
     /// <inheritdoc />
     public string Name => Localization.AppleMFS_Name;
@@ -64,8 +65,6 @@ public sealed partial class AppleMFS : IReadOnlyFilesystem
     public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Guid Id => new("36405F8D-0D26-4066-6538-5DBF5D065C3A");
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 

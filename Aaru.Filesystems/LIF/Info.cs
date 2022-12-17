@@ -62,9 +62,9 @@ public sealed partial class LIF
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 256)
             return;
@@ -91,7 +91,7 @@ public sealed partial class LIF
         sb.AppendFormat(Localization._0_tracks, lifSb.tracks).AppendLine();
         sb.AppendFormat(Localization._0_heads, lifSb.heads).AppendLine();
         sb.AppendFormat(Localization._0_sectors, lifSb.sectors).AppendLine();
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(lifSb.volumeLabel, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(lifSb.volumeLabel, encoding)).AppendLine();
         sb.AppendFormat(Localization.Volume_created_on_0, DateHandlers.LifToDateTime(lifSb.creationDate)).AppendLine();
 
         information = sb.ToString();
@@ -102,7 +102,7 @@ public sealed partial class LIF
             ClusterSize  = 256,
             Clusters     = partition.Size / 256,
             CreationDate = DateHandlers.LifToDateTime(lifSb.creationDate),
-            VolumeName   = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
+            VolumeName   = StringHandlers.CToString(lifSb.volumeLabel, encoding)
         };
     }
 }

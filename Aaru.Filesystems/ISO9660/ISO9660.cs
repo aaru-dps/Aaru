@@ -57,9 +57,8 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
     bool                                      _usePathTable;
     bool                                      _useTransTbl;
     ushort                                    _blockSize;
+    Encoding                                  Encoding;
 
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
     /// <inheritdoc />

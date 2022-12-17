@@ -90,9 +90,9 @@ public sealed partial class RBF : IFilesystem
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 256)
             return;
@@ -191,7 +191,7 @@ public sealed partial class RBF : IFilesystem
             sb.AppendFormat(Localization.Volume_identification_block_was_last_written_on_0,
                             DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime)).AppendLine();
 
-            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(rbf9000Sb.rid_name, Encoding)).
+            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(rbf9000Sb.rid_name, encoding)).
                AppendLine();
 
             metadata = new FileSystem
@@ -202,7 +202,7 @@ public sealed partial class RBF : IFilesystem
                 Clusters         = rbf9000Sb.rid_totblocks,
                 CreationDate     = DateHandlers.UnixToDateTime(rbf9000Sb.rid_ctime),
                 ModificationDate = DateHandlers.UnixToDateTime(rbf9000Sb.rid_mtime),
-                VolumeName       = StringHandlers.CToString(rbf9000Sb.rid_name, Encoding),
+                VolumeName       = StringHandlers.CToString(rbf9000Sb.rid_name, encoding),
                 VolumeSerial     = $"{rbf9000Sb.rid_diskid:X8}"
             };
         }
@@ -252,9 +252,9 @@ public sealed partial class RBF : IFilesystem
                AppendLine();
 
             sb.AppendFormat(Localization.Volume_attributes_0, rbfSb.dd_att).AppendLine();
-            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(rbfSb.dd_nam, Encoding)).AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(rbfSb.dd_nam, encoding)).AppendLine();
 
-            sb.AppendFormat(Localization.Path_descriptor_options_0, StringHandlers.CToString(rbfSb.dd_opt, Encoding)).
+            sb.AppendFormat(Localization.Path_descriptor_options_0, StringHandlers.CToString(rbfSb.dd_opt, encoding)).
                AppendLine();
 
             metadata = new FileSystem
@@ -264,7 +264,7 @@ public sealed partial class RBF : IFilesystem
                 ClusterSize  = (uint)(rbfSb.dd_bit * (256 << rbfSb.dd_lsnsize)),
                 Clusters     = LSNToUInt32(rbfSb.dd_tot),
                 CreationDate = DateHandlers.Os9ToDateTime(rbfSb.dd_dat),
-                VolumeName   = StringHandlers.CToString(rbfSb.dd_nam, Encoding),
+                VolumeName   = StringHandlers.CToString(rbfSb.dd_nam, encoding),
                 VolumeSerial = $"{rbfSb.dd_dsk:X4}"
             };
         }

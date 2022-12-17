@@ -62,9 +62,9 @@ public sealed partial class BFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var         sb    = new StringBuilder();
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bfsSbSector);
@@ -86,9 +86,9 @@ public sealed partial class BFS
         };
 
         Array.Copy(bfsSbSector, 0x1C, sbStrings, 0, 6);
-        bfsSb.s_fsname = StringHandlers.CToString(sbStrings, Encoding);
+        bfsSb.s_fsname = StringHandlers.CToString(sbStrings, encoding);
         Array.Copy(bfsSbSector, 0x22, sbStrings, 0, 6);
-        bfsSb.s_volume = StringHandlers.CToString(sbStrings, Encoding);
+        bfsSb.s_volume = StringHandlers.CToString(sbStrings, encoding);
 
         AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_magic: 0x{0:X8}", bfsSb.s_magic);
         AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_start: 0x{0:X8}", bfsSb.s_start);

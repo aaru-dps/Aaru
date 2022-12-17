@@ -128,8 +128,8 @@ public sealed partial class FAT
         uint sectorsForRootDirectory = 0;
         uint rootDirectoryCluster    = 0;
 
-        Encoding = encoding ?? (bpbKind == BpbKind.Human ? Encoding.GetEncoding("shift_jis")
-                                    : Encoding.GetEncoding("IBM437"));
+        _encoding = encoding ?? (bpbKind == BpbKind.Human ? Encoding.GetEncoding("shift_jis")
+                                     : Encoding.GetEncoding("IBM437"));
 
         switch(bpbKind)
         {
@@ -197,7 +197,7 @@ public sealed partial class FAT
 
                 if(fat32Bpb.signature == 0x29)
                 {
-                    Metadata.VolumeName = StringHandlers.SpacePaddedToString(fat32Bpb.volume_label, Encoding);
+                    Metadata.VolumeName = StringHandlers.SpacePaddedToString(fat32Bpb.volume_label, _encoding);
                     Metadata.VolumeName = Metadata.VolumeName?.Replace("\0", "");
                 }
 
@@ -423,7 +423,7 @@ public sealed partial class FAT
                                     fakeBpb.oem_name[5] >= 0x20 && fakeBpb.oem_name[5] <= 0x7F &&
                                     fakeBpb.oem_name[6] >= 0x20 && fakeBpb.oem_name[6] <= 0x7F &&
                                     fakeBpb.oem_name[7] >= 0x20 &&
-                                    fakeBpb.oem_name[7] <= 0x7F => StringHandlers.CToString(fakeBpb.oem_name, Encoding,
+                                    fakeBpb.oem_name[7] <= 0x7F => StringHandlers.CToString(fakeBpb.oem_name, _encoding,
                             start: 1),
                         _ => Metadata.SystemIdentifier
                     };
@@ -454,7 +454,7 @@ public sealed partial class FAT
 
                 if(fakeBpb.signature == 0x29 || andosOemCorrect)
                 {
-                    Metadata.VolumeName = StringHandlers.SpacePaddedToString(fakeBpb.volume_label, Encoding);
+                    Metadata.VolumeName = StringHandlers.SpacePaddedToString(fakeBpb.volume_label, _encoding);
                     Metadata.VolumeName = Metadata.VolumeName?.Replace("\0", "");
                 }
             }
@@ -609,11 +609,11 @@ public sealed partial class FAT
                 continue;
 
             // Self
-            if(Encoding.GetString(entry.filename).TrimEnd() == ".")
+            if(_encoding.GetString(entry.filename).TrimEnd() == ".")
                 continue;
 
             // Parent
-            if(Encoding.GetString(entry.filename).TrimEnd() == "..")
+            if(_encoding.GetString(entry.filename).TrimEnd() == "..")
                 continue;
 
             // Deleted
@@ -627,7 +627,7 @@ public sealed partial class FAT
                 byte[] fullname = new byte[11];
                 Array.Copy(entry.filename, 0, fullname, 0, 8);
                 Array.Copy(entry.extension, 0, fullname, 8, 3);
-                string volname = Encoding.GetString(fullname).Trim();
+                string volname = _encoding.GetString(fullname).Trim();
 
                 if(!string.IsNullOrEmpty(volname))
                     Metadata.VolumeName = entry.caseinfo.HasFlag(CaseInfo.AllLowerCase) && _namespace == Namespace.Nt
@@ -674,8 +674,8 @@ public sealed partial class FAT
             if(entry.filename[0] == DIRENT_E5)
                 entry.filename[0] = DIRENT_DELETED;
 
-            string name      = Encoding.GetString(entry.filename).TrimEnd();
-            string extension = Encoding.GetString(entry.extension).TrimEnd();
+            string name      = _encoding.GetString(entry.filename).TrimEnd();
+            string extension = _encoding.GetString(entry.extension).TrimEnd();
 
             if(_namespace == Namespace.Nt)
             {
@@ -730,9 +730,9 @@ public sealed partial class FAT
 
                 completeEntry.HumanDirent = humanEntry;
 
-                name      = StringHandlers.CToString(humanEntry.name1, Encoding).TrimEnd();
-                extension = StringHandlers.CToString(humanEntry.extension, Encoding).TrimEnd();
-                string name2 = StringHandlers.CToString(humanEntry.name2, Encoding).TrimEnd();
+                name      = StringHandlers.CToString(humanEntry.name1, _encoding).TrimEnd();
+                extension = StringHandlers.CToString(humanEntry.extension, _encoding).TrimEnd();
+                string name2 = StringHandlers.CToString(humanEntry.name2, _encoding).TrimEnd();
 
                 if(extension != "")
                     filename = name + name2 + "." + extension;
@@ -922,7 +922,7 @@ public sealed partial class FAT
 
                 Array.Copy(longnameEa, 4, longnameBytes, 0, longnameSize);
 
-                string longname = StringHandlers.CToString(longnameBytes, Encoding);
+                string longname = StringHandlers.CToString(longnameBytes, _encoding);
 
                 if(string.IsNullOrWhiteSpace(longname))
                     continue;

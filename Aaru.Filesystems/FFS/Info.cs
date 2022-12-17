@@ -96,7 +96,6 @@ public sealed partial class FFSPlugin
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
         metadata    = new FileSystem();
         var sbInformation = new StringBuilder();

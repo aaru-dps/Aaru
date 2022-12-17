@@ -103,9 +103,9 @@ public sealed partial class Locus
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -156,10 +156,10 @@ public sealed partial class Locus
         int blockSize = locusSb.s_version == Version.SB_SB4096 ? 4096 : 1024;
 
         // ReSharper disable once InconsistentNaming
-        string s_fsmnt = StringHandlers.CToString(locusSb.s_fsmnt, Encoding);
+        string s_fsmnt = StringHandlers.CToString(locusSb.s_fsmnt, encoding);
 
         // ReSharper disable once InconsistentNaming
-        string s_fpack = StringHandlers.CToString(locusSb.s_fpack, Encoding);
+        string s_fpack = StringHandlers.CToString(locusSb.s_fpack, encoding);
 
         AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_magic = 0x{0:X8}", locusSb.s_magic);
         AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_gfs = {0}", locusSb.s_gfs);

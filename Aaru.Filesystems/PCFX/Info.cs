@@ -67,7 +67,7 @@ public sealed partial class PCFX
                                out FileSystem metadata)
     {
         // Always Shift-JIS
-        Encoding    = Encoding.GetEncoding("shift_jis");
+        encoding    = Encoding.GetEncoding("shift_jis");
         information = "";
         metadata    = new FileSystem();
 
@@ -83,7 +83,7 @@ public sealed partial class PCFX
 
         try
         {
-            date = Encoding.GetString(header.date);
+            date = encoding.GetString(header.date);
             int year  = int.Parse(date[..4]);
             int month = int.Parse(date.Substring(4, 2));
             int day   = int.Parse(date.Substring(6, 2));
@@ -96,11 +96,11 @@ public sealed partial class PCFX
 
         var sb = new StringBuilder();
         sb.AppendLine(Localization.PC_FX_executable);
-        sb.AppendFormat(Localization.Identifier_0, StringHandlers.CToString(header.signature, Encoding)).AppendLine();
-        sb.AppendFormat(Localization.Copyright_0, StringHandlers.CToString(header.copyright, Encoding)).AppendLine();
-        sb.AppendFormat(Localization.Title_0, StringHandlers.CToString(header.title, Encoding)).AppendLine();
-        sb.AppendFormat(Localization.Maker_ID_0, StringHandlers.CToString(header.makerId, Encoding)).AppendLine();
-        sb.AppendFormat(Localization.Maker_name_0, StringHandlers.CToString(header.makerName, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Identifier_0, StringHandlers.CToString(header.signature, encoding)).AppendLine();
+        sb.AppendFormat(Localization.Copyright_0, StringHandlers.CToString(header.copyright, encoding)).AppendLine();
+        sb.AppendFormat(Localization.Title_0, StringHandlers.CToString(header.title, encoding)).AppendLine();
+        sb.AppendFormat(Localization.Maker_ID_0, StringHandlers.CToString(header.makerId, encoding)).AppendLine();
+        sb.AppendFormat(Localization.Maker_name_0, StringHandlers.CToString(header.makerName, encoding)).AppendLine();
         sb.AppendFormat(Localization.Volume_number_0, header.volumeNumber).AppendLine();
         sb.AppendFormat(Localization.Country_code_0, header.country).AppendLine();
         sb.AppendFormat(Localization.Version_0_1, header.minorVersion, header.majorVersion).AppendLine();
@@ -121,8 +121,8 @@ public sealed partial class PCFX
             ClusterSize         = 2048,
             Bootable            = true,
             CreationDate        = date != null ? dateTime : null,
-            PublisherIdentifier = StringHandlers.CToString(header.makerName, Encoding),
-            VolumeName          = StringHandlers.CToString(header.title, Encoding),
+            PublisherIdentifier = StringHandlers.CToString(header.makerName, encoding),
+            VolumeName          = StringHandlers.CToString(header.title, encoding),
             SystemIdentifier    = "PC-FX"
         };
     }

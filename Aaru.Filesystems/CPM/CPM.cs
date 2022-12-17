@@ -59,6 +59,7 @@ public sealed partial class CPM : IReadOnlyFilesystem
     List<string> _dirList;
     /// <summary>CP/M disc parameter block (on-memory)</summary>
     DiscParameterBlock _dpb;
+    Encoding _encoding;
     /// <summary>Cached file data</summary>
     Dictionary<string, byte[]> _fileCache;
     /// <summary>The volume label, if the CP/M filesystem contains one</summary>
@@ -81,8 +82,6 @@ public sealed partial class CPM : IReadOnlyFilesystem
     /// <summary>If <see cref="Identify" /> thinks this is a CP/M filesystem, this is the definition for it</summary>
     CpmDefinition _workingDefinition;
 
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
     /// <inheritdoc />

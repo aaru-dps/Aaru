@@ -28,7 +28,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -39,8 +38,6 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class BeFS : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.BeFS_Name;
     /// <inheritdoc />

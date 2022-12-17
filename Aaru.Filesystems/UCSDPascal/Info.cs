@@ -123,7 +123,7 @@ public sealed partial class PascalPlugin
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding = encoding ?? new Apple2();
+        encoding ??= new Apple2();
         var sbInformation = new StringBuilder();
         metadata    = new FileSystem();
         information = "";
@@ -190,7 +190,7 @@ public sealed partial class PascalPlugin
                                    volEntry.LastBlock).AppendLine();
 
         sbInformation.
-            AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(volEntry.VolumeName, Encoding)).
+            AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(volEntry.VolumeName, encoding)).
             AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_blocks, volEntry.Blocks).AppendLine();
@@ -211,7 +211,7 @@ public sealed partial class PascalPlugin
             ClusterSize = imagePlugin.Info.SectorSize,
             Files       = (ulong)volEntry.Files,
             Type        = FS_TYPE,
-            VolumeName  = StringHandlers.PascalToString(volEntry.VolumeName, Encoding)
+            VolumeName  = StringHandlers.PascalToString(volEntry.VolumeName, encoding)
         };
     }
 }

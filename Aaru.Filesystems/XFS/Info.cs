@@ -118,9 +118,9 @@ public sealed partial class XFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -204,7 +204,7 @@ public sealed partial class XFS
         if(xfsSb.inprogress > 0)
             sb.AppendLine(Localization.fsck_in_progress);
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(xfsSb.fname, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(xfsSb.fname, encoding)).AppendLine();
         sb.AppendFormat(Localization.Volume_UUID_0, xfsSb.uuid).AppendLine();
 
         information = sb.ToString();
@@ -217,7 +217,7 @@ public sealed partial class XFS
             FreeClusters = xfsSb.fdblocks,
             Files        = xfsSb.icount - xfsSb.ifree,
             Dirty        = xfsSb.inprogress > 0,
-            VolumeName   = StringHandlers.CToString(xfsSb.fname, Encoding),
+            VolumeName   = StringHandlers.CToString(xfsSb.fname, encoding),
             VolumeSerial = xfsSb.uuid.ToString()
         };
     }

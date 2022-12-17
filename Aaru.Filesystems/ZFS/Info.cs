@@ -103,7 +103,6 @@ public sealed partial class ZFS
                                out FileSystem metadata)
     {
         // ZFS is always UTF-8
-        Encoding    = Encoding.UTF8;
         information = "";
         metadata    = new FileSystem();
         ErrorNumber errno;

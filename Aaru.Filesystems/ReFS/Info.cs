@@ -71,7 +71,6 @@ public sealed partial class ReFS : IFilesystem
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = Encoding.UTF8;
         information = "";
         metadata    = new FileSystem();
 

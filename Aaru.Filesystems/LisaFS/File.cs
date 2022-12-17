@@ -523,7 +523,7 @@ public sealed partial class LisaFS
 
             foreach(CatalogEntry entry in _catalogCache)
             {
-                string filename = StringHandlers.CToString(entry.filename, Encoding);
+                string filename = StringHandlers.CToString(entry.filename, _encoding);
 
                 // LisaOS is case insensitive
                 if(string.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) != 0 ||

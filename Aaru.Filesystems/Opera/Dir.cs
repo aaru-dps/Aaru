@@ -136,7 +136,7 @@ public sealed partial class OperaFS
             while(off + _directoryEntrySize < data.Length)
             {
                 entry = Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(data, off, _directoryEntrySize);
-                string name = StringHandlers.CToString(entry.name, Encoding);
+                string name = StringHandlers.CToString(entry.name, _encoding);
 
                 var entryWithPointers = new DirectoryEntryWithPointers
                 {

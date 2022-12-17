@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -40,8 +39,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem described in ECMA-67</summary>
 public sealed partial class ECMA67 : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.ECMA67_Name;
     /// <inheritdoc />

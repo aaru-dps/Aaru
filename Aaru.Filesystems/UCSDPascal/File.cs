@@ -186,7 +186,7 @@ public sealed partial class PascalPlugin
         foreach(PascalFileEntry ent in _fileEntries.Where(ent =>
                                                               string.Compare(path,
                                                                              StringHandlers.PascalToString(ent.Filename,
-                                                                                 Encoding),
+                                                                                 _encoding),
                                                                              StringComparison.
                                                                                  InvariantCultureIgnoreCase) == 0))
         {

@@ -69,9 +69,9 @@ public sealed partial class HPOFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("ibm850");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("ibm850");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -193,13 +193,13 @@ public sealed partial class HPOFS
         sb.AppendFormat(Localization.BIOS_drive_number_0, bpb.drive_no).AppendLine();
         sb.AppendFormat(Localization.Serial_number_0, mib.serial).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(mib.volumeLabel, Encoding)).
+        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(mib.volumeLabel, encoding)).
            AppendLine();
 
-        sb.AppendFormat(Localization.Volume_comment_0, StringHandlers.SpacePaddedToString(mib.comment, Encoding)).
+        sb.AppendFormat(Localization.Volume_comment_0, StringHandlers.SpacePaddedToString(mib.comment, encoding)).
            AppendLine();
 
-        sb.AppendFormat(Localization.Volume_owner_0, StringHandlers.SpacePaddedToString(vib.owner, Encoding)).
+        sb.AppendFormat(Localization.Volume_owner_0, StringHandlers.SpacePaddedToString(vib.owner, encoding)).
            AppendLine();
 
         sb.AppendFormat(Localization.Volume_created_on_0,
@@ -219,9 +219,9 @@ public sealed partial class HPOFS
             Clusters               = mib.sectors / bpb.spc,
             ClusterSize            = (uint)(bpb.bps * bpb.spc),
             CreationDate           = DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime),
-            DataPreparerIdentifier = StringHandlers.SpacePaddedToString(vib.owner, Encoding),
+            DataPreparerIdentifier = StringHandlers.SpacePaddedToString(vib.owner, encoding),
             Type                   = FS_TYPE,
-            VolumeName             = StringHandlers.SpacePaddedToString(mib.volumeLabel, Encoding),
+            VolumeName             = StringHandlers.SpacePaddedToString(mib.volumeLabel, encoding),
             VolumeSerial           = $"{mib.serial:X8}",
             SystemIdentifier       = StringHandlers.SpacePaddedToString(bpb.oem_name)
         };

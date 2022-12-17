@@ -72,7 +72,7 @@ public sealed partial class RT11
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = new Radix50();
+        encoding    = new Radix50();
         information = "";
         metadata    = new FileSystem();
 
@@ -106,8 +106,8 @@ public sealed partial class RT11
            AppendLine();
 
         sb.AppendFormat(Localization.First_directory_segment_starts_at_block_0, homeblock.rootBlock).AppendLine();
-        sb.AppendFormat(Localization.Volume_owner_is_0, Encoding.GetString(homeblock.ownername).TrimEnd()).AppendLine();
-        sb.AppendFormat(Localization.Volume_label_0, Encoding.GetString(homeblock.volname).TrimEnd()).AppendLine();
+        sb.AppendFormat(Localization.Volume_owner_is_0, encoding.GetString(homeblock.ownername).TrimEnd()).AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0, encoding.GetString(homeblock.volname).TrimEnd()).AppendLine();
         sb.AppendFormat(Localization.Checksum_0_calculated_1, homeblock.checksum, check).AppendLine();
 
         imagePlugin.ReadSector(0, out byte[] bootBlock);
@@ -117,7 +117,7 @@ public sealed partial class RT11
             Type        = FS_TYPE,
             ClusterSize = (uint)(homeblock.cluster * 512),
             Clusters    = homeblock.cluster,
-            VolumeName  = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
+            VolumeName  = StringHandlers.SpacePaddedToString(homeblock.volname, encoding),
             Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlock)
         };
 

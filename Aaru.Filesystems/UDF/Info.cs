@@ -202,7 +202,7 @@ public sealed partial class UDF
         metadata = new FileSystem();
 
         // UDF is always UTF-8
-        Encoding = Encoding.UTF8;
+        encoding = Encoding.UTF8;
         byte[] sector;
 
         var sbInformation = new StringBuilder();
@@ -350,10 +350,10 @@ public sealed partial class UDF
             AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_conforms_to_0,
-                                   Encoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000')).AppendLine();
+                                   encoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000')).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_was_last_written_by_0,
-                                   Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')).
+                                   encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')).
                       AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_requires_UDF_version_0_1_to_be_read,
@@ -371,14 +371,14 @@ public sealed partial class UDF
         metadata = new FileSystem
         {
             Type                  = FS_TYPE,
-            ApplicationIdentifier = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
+            ApplicationIdentifier = encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
             ClusterSize           = lvd.logicalBlockSize,
             ModificationDate      = EcmaToDateTime(lvid.recordingDateTime),
             Files                 = lvidiu.files,
             VolumeName            = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier),
             VolumeSetIdentifier   = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
             VolumeSerial          = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
-            SystemIdentifier      = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
+            SystemIdentifier      = encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
         };
 
         metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / metadata.ClusterSize;

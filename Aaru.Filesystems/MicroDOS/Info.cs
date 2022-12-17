@@ -68,7 +68,6 @@ public sealed partial class MicroDOS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("koi8-r");
         information = "";
         metadata    = new FileSystem();
 

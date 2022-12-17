@@ -70,9 +70,9 @@ public sealed partial class HAMMER
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -99,7 +99,7 @@ public sealed partial class HAMMER
         sb.AppendFormat(Localization.Volume_0_of_1_on_this_filesystem, superBlock.vol_no + 1, superBlock.vol_count).
            AppendLine();
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(superBlock.vol_label, Encoding)).
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(superBlock.vol_label, encoding)).
            AppendLine();
 
         sb.AppendFormat(Localization.Volume_serial_0, superBlock.vol_fsid).AppendLine();
@@ -115,7 +115,7 @@ public sealed partial class HAMMER
             ClusterSize  = HAMMER_BIGBLOCK_SIZE,
             Dirty        = false,
             Type         = FS_TYPE,
-            VolumeName   = StringHandlers.CToString(superBlock.vol_label, Encoding),
+            VolumeName   = StringHandlers.CToString(superBlock.vol_label, encoding),
             VolumeSerial = superBlock.vol_fsid.ToString()
         };
 

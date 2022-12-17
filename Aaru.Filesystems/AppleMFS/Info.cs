@@ -61,9 +61,9 @@ public sealed partial class AppleMFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? new MacRoman();
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= new MacRoman();
+        information =   "";
+        metadata    =   new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -99,7 +99,7 @@ public sealed partial class AppleMFS
         mdb.drVNSiz    = mdbSector[0x024];
         byte[] variableSize = new byte[mdb.drVNSiz + 1];
         Array.Copy(mdbSector, 0x024, variableSize, 0, mdb.drVNSiz + 1);
-        mdb.drVN = StringHandlers.PascalToString(variableSize, Encoding);
+        mdb.drVN = StringHandlers.PascalToString(variableSize, encoding);
 
         sb.AppendLine(Localization.AppleMFS_Name);
         sb.AppendLine();
@@ -142,7 +142,7 @@ public sealed partial class AppleMFS
         sb.AppendFormat(Localization._0_unused_allocation_blocks, mdb.drFreeBks).AppendLine();
         sb.AppendFormat(Localization.Volume_name_0, mdb.drVN).AppendLine();
 
-        string bootBlockInfo = AppleCommon.GetBootBlockInformation(bbSector, Encoding);
+        string bootBlockInfo = AppleCommon.GetBootBlockInformation(bbSector, encoding);
 
         if(bootBlockInfo != null)
         {

@@ -51,6 +51,7 @@ public sealed partial class PascalPlugin : IReadOnlyFilesystem
     List<PascalFileEntry> _fileEntries;
     bool                  _mounted;
     PascalVolumeEntry     _mountedVolEntry;
+    Encoding              _encoding;
     /// <summary>Apple II disks use 256 bytes / sector, but filesystem assumes it's 512 bytes / sector</summary>
     uint _multiplier;
 
@@ -60,8 +61,6 @@ public sealed partial class PascalPlugin : IReadOnlyFilesystem
     public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Guid Id => new("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 

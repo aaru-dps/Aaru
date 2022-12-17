@@ -100,7 +100,6 @@ public sealed partial class AppleHFSPlus
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = Encoding.BigEndianUnicode;
         information = "";
         metadata    = new FileSystem();
 

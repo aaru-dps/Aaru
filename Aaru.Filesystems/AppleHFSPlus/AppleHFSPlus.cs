@@ -27,7 +27,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -37,8 +36,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Apple Hierarchical File System Plus (HFS+)</summary>
 public sealed partial class AppleHFSPlus : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.AppleHFSPlus_Name;
     /// <inheritdoc />

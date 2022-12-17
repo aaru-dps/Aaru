@@ -27,7 +27,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -38,8 +37,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements identification of IBM's High Performance Optical File System</summary>
 public sealed partial class HPOFS : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.HPOFS_Name;
     /// <inheritdoc />

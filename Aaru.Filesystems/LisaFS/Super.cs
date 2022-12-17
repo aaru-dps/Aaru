@@ -49,8 +49,8 @@ public sealed partial class LisaFS
     {
         try
         {
-            _device  = imagePlugin;
-            Encoding = new LisaRoman();
+            _device   = imagePlugin;
+            _encoding = new LisaRoman();
 
             // Lisa OS is unable to work on disks without tags.
             // This code is designed like that.
@@ -105,12 +105,12 @@ public sealed partial class LisaFS
                 _mddf.volid     = BigEndianBitConverter.ToUInt64(sector, 0x02);
                 _mddf.volnum    = BigEndianBitConverter.ToUInt16(sector, 0x0A);
                 Array.Copy(sector, 0x0C, pString, 0, 33);
-                _mddf.volname  = StringHandlers.PascalToString(pString, Encoding);
+                _mddf.volname  = StringHandlers.PascalToString(pString, _encoding);
                 _mddf.unknown1 = sector[0x2D];
                 Array.Copy(sector, 0x2E, pString, 0, 33);
 
                 // Prevent garbage
-                _mddf.password       = pString[0] <= 32 ? StringHandlers.PascalToString(pString, Encoding) : "";
+                _mddf.password       = pString[0] <= 32 ? StringHandlers.PascalToString(pString, _encoding) : "";
                 _mddf.unknown2       = sector[0x4F];
                 _mddf.machine_id     = BigEndianBitConverter.ToUInt32(sector, 0x50);
                 _mddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);

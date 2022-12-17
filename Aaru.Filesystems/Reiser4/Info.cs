@@ -76,9 +76,9 @@ public sealed partial class Reiser4
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -112,7 +112,7 @@ public sealed partial class Reiser4
         sb.AppendFormat(Localization._0_bytes_per_block, reiserSb.blocksize).AppendLine();
         sb.AppendFormat(Localization.Volume_disk_format_0, reiserSb.diskformat).AppendLine();
         sb.AppendFormat(Localization.Volume_UUID_0, reiserSb.uuid).AppendLine();
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(reiserSb.label, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(reiserSb.label, encoding)).AppendLine();
 
         information = sb.ToString();
 
@@ -121,7 +121,7 @@ public sealed partial class Reiser4
             Type         = FS_TYPE,
             ClusterSize  = reiserSb.blocksize,
             Clusters     = (partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize,
-            VolumeName   = StringHandlers.CToString(reiserSb.label, Encoding),
+            VolumeName   = StringHandlers.CToString(reiserSb.label, encoding),
             VolumeSerial = reiserSb.uuid.ToString()
         };
     }

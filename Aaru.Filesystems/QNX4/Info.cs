@@ -87,7 +87,6 @@ public sealed partial class QNX4
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
         metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start + 1, out byte[] sector);

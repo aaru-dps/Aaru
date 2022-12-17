@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -41,8 +40,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of NEC PC-FX headers</summary>
 public sealed partial class PCFX : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.PCFX_Name;
     /// <inheritdoc />

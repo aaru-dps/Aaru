@@ -77,7 +77,7 @@ public sealed partial class AODOS
                                out FileSystem metadata)
     {
         information = "";
-        Encoding    = Encoding.GetEncoding("koi8-r");
+        encoding    = Encoding.GetEncoding("koi8-r");
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
         metadata = new FileSystem();
 
@@ -97,14 +97,14 @@ public sealed partial class AODOS
             ClusterSize  = imagePlugin.Info.SectorSize,
             Files        = bb.files,
             FreeClusters = imagePlugin.Info.Sectors - bb.usedSectors,
-            VolumeName   = StringHandlers.SpacePaddedToString(bb.volumeLabel, Encoding),
+            VolumeName   = StringHandlers.SpacePaddedToString(bb.volumeLabel, encoding),
             Bootable     = true
         };
 
         sbInformation.AppendFormat(Localization._0_files_on_volume, bb.files).AppendLine();
         sbInformation.AppendFormat(Localization._0_used_sectors_on_volume, bb.usedSectors).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(bb.volumeLabel, Encoding)).
+        sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(bb.volumeLabel, encoding)).
                       AppendLine();
 
         information = sbInformation.ToString();

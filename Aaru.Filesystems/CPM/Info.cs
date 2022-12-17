@@ -1141,7 +1141,6 @@ public sealed partial class CPM
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("IBM437");
         information = "";
         metadata    = new FileSystem();
 
@@ -1214,13 +1213,11 @@ public sealed partial class CPM
             sb.AppendFormat(Localization.Device_uses_0_one_hardware_interleaving, _workingDefinition.skew).AppendLine();
 
         if(_workingDefinition.sofs > 0)
-            sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H SOFS {7}", _dpb.bsh,
-                            _dpb.blm, _dpb.exm, _dpb.dsm, _dpb.drm, _dpb.al0, _dpb.al1, _workingDefinition.sofs).
-               AppendLine();
+            sb.AppendLine($"BSH {_dpb.bsh} BLM {_dpb.blm} EXM {_dpb.exm} DSM {_dpb.dsm} DRM {_dpb.drm} AL0 {_dpb.al0
+                :X2}H AL1 {_dpb.al1:X2}H SOFS {_workingDefinition.sofs}");
         else
-            sb.AppendFormat("BSH {0} BLM {1} EXM {2} DSM {3} DRM {4} AL0 {5:X2}H AL1 {6:X2}H OFS {7}", _dpb.bsh,
-                            _dpb.blm, _dpb.exm, _dpb.dsm, _dpb.drm, _dpb.al0, _dpb.al1, _workingDefinition.ofs).
-               AppendLine();
+            sb.AppendLine($"BSH {_dpb.bsh} BLM {_dpb.blm} EXM {_dpb.exm} DSM {_dpb.dsm} DRM {_dpb.drm} AL0 {_dpb.al0
+                :X2}H AL1 {_dpb.al1:X2}H OFS {_workingDefinition.ofs}");
 
         if(_label != null)
             sb.AppendFormat(Localization.Volume_label_0, _label).AppendLine();

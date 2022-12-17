@@ -92,7 +92,7 @@ public sealed partial class LisaFS
         // Do same trick as Mac OS X, replace filesystem '/' with '-',
         // as '-' is the path separator in Lisa OS
         contents = (from entry in _catalogCache where entry.parentID == dirId
-                    select StringHandlers.CToString(entry.filename, Encoding).Replace('/', '-')).ToList();
+                    select StringHandlers.CToString(entry.filename, _encoding).Replace('/', '-')).ToList();
 
     /// <summary>Reads, interprets and caches the Catalog File</summary>
     ErrorNumber ReadCatalog()

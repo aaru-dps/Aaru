@@ -28,7 +28,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -41,8 +40,6 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class exFAT : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.exFAT_Name;
     /// <inheritdoc />

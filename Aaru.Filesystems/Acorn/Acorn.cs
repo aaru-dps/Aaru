@@ -27,7 +27,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -40,8 +39,6 @@ public sealed partial class AcornADFS : IFilesystem
     public string Name => Localization.AcornADFS_Name;
     /// <inheritdoc />
     public Guid Id => new("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 }

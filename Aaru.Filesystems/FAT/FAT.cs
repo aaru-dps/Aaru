@@ -62,9 +62,8 @@ public sealed partial class FAT : IReadOnlyFilesystem
     uint                                                           _sectorsPerFat;
     FileSystemInfo                                                 _statfs;
     bool                                                           _useFirstFat;
+    Encoding                                                       _encoding;
 
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
     /// <inheritdoc />

@@ -101,9 +101,9 @@ public sealed partial class ODS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-1");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -147,7 +147,7 @@ public sealed partial class ODS
             sb.AppendLine(Localization.This_volume_may_be_corrupted);
 
         sb.AppendFormat(Localization.Volume_format_is_0,
-                        StringHandlers.SpacePaddedToString(homeblock.format, Encoding)).AppendLine();
+                        StringHandlers.SpacePaddedToString(homeblock.format, encoding)).AppendLine();
 
         sb.AppendFormat(Localization.Volume_is_Level_0_revision_1, (homeblock.struclev & 0xFF00) >> 8,
                         homeblock.struclev & 0xFF).AppendLine();
@@ -182,13 +182,13 @@ public sealed partial class ODS
         if(homeblock is { rvn: > 0, setcount: > 0 } &&
            StringHandlers.CToString(homeblock.strucname) != "            ")
             sb.AppendFormat(Localization.Volume_is_0_of_1_in_set_2, homeblock.rvn, homeblock.setcount,
-                            StringHandlers.SpacePaddedToString(homeblock.strucname, Encoding)).AppendLine();
+                            StringHandlers.SpacePaddedToString(homeblock.strucname, encoding)).AppendLine();
 
         sb.AppendFormat(Localization.Volume_owner_is_0_ID_1,
-                        StringHandlers.SpacePaddedToString(homeblock.ownername, Encoding), homeblock.volowner).
+                        StringHandlers.SpacePaddedToString(homeblock.ownername, encoding), homeblock.volowner).
            AppendLine();
 
-        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(homeblock.volname, Encoding)).
+        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(homeblock.volname, encoding)).
            AppendLine();
 
         sb.AppendFormat(Localization.Drive_serial_number_0, homeblock.serialnum).AppendLine();
@@ -264,7 +264,7 @@ public sealed partial class ODS
             Type         = FS_TYPE,
             ClusterSize  = (uint)(homeblock.cluster * 512),
             Clusters     = partition.Size / (ulong)(homeblock.cluster * 512),
-            VolumeName   = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
+            VolumeName   = StringHandlers.SpacePaddedToString(homeblock.volname, encoding),
             VolumeSerial = $"{homeblock.serialnum:X8}"
         };
 

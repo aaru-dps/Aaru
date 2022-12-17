@@ -61,9 +61,9 @@ public sealed partial class PFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        information = "";
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
-        metadata    = new FileSystem();
+        information =   "";
+        encoding    ??= Encoding.GetEncoding("iso-8859-1");
+        metadata    =   new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(2 + partition.Start, out byte[] rootBlockSector);
 
         if(errno != ErrorNumber.NoError)
@@ -101,7 +101,7 @@ public sealed partial class PFS
         sbInformation.AppendLine();
 
         sbInformation.
-            AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(rootBlock.diskname, Encoding)).
+            AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(rootBlock.diskname, encoding)).
             AppendLine();
 
         sbInformation.
@@ -124,6 +124,6 @@ public sealed partial class PFS
         metadata.FreeClusters = rootBlock.blocksfree;
         metadata.Clusters     = rootBlock.diskSize;
         metadata.ClusterSize  = imagePlugin.Info.SectorSize;
-        metadata.VolumeName   = StringHandlers.PascalToString(rootBlock.diskname, Encoding);
+        metadata.VolumeName   = StringHandlers.PascalToString(rootBlock.diskname, encoding);
     }
 }

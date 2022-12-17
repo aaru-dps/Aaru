@@ -77,7 +77,6 @@ public sealed partial class F2FS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = Encoding.Unicode;
         information = "";
         metadata    = new FileSystem();
 

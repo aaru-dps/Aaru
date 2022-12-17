@@ -32,7 +32,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -45,8 +44,6 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class ext2FS : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.ext2FS_Name_Linux_extended_Filesystem_2_3_and_4;
     /// <inheritdoc />

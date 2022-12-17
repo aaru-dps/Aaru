@@ -101,7 +101,7 @@ public sealed partial class AppleMFS
             entry.flNam    = new byte[_directoryBlocks[offset + 50] + 1];
             Array.Copy(_directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
 
-            string lowerFilename = StringHandlers.PascalToString(entry.flNam, Encoding).ToLowerInvariant().
+            string lowerFilename = StringHandlers.PascalToString(entry.flNam, _encoding).ToLowerInvariant().
                                                   Replace('/', ':');
 
             if(entry.flFlags.HasFlag(FileFlags.Used)     &&
@@ -113,7 +113,7 @@ public sealed partial class AppleMFS
                 _idToEntry.Add(entry.flFlNum, entry);
 
                 _idToFilename.Add(entry.flFlNum,
-                                  StringHandlers.PascalToString(entry.flNam, Encoding).Replace('/', ':'));
+                                  StringHandlers.PascalToString(entry.flNam, _encoding).Replace('/', ':'));
 
                 _filenameToId.Add(lowerFilename, entry.flFlNum);
 
@@ -134,7 +134,7 @@ public sealed partial class AppleMFS
                                            DateHandlers.MacToDateTime(entry.flMdDat));
 
                 AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flNam0 = {0}",
-                                           StringHandlers.PascalToString(entry.flNam, Encoding));
+                                           StringHandlers.PascalToString(entry.flNam, _encoding));
             }
 
             offset += 50 + entry.flNam.Length;

@@ -158,9 +158,9 @@ public sealed partial class SysVfs
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
-        information = "";
-        metadata    = new FileSystem();
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var    sb        = new StringBuilder();
         bool   bigEndian = false; // Start in little endian until we know what are we handling here
@@ -275,9 +275,9 @@ public sealed partial class SysVfs
 
             byte[] coherent_string = new byte[6];
             Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
-            string s_fname = StringHandlers.CToString(coherent_string, Encoding);
+            string s_fname = StringHandlers.CToString(coherent_string, encoding);
             Array.Copy(sb_sector, 0x1EA, coherent_string, 0, 6); // Coherent UNIX s_fpack location
-            string s_fpack = StringHandlers.CToString(coherent_string, Encoding);
+            string s_fpack = StringHandlers.CToString(coherent_string, encoding);
 
             if((s_fname == COH_FNAME && s_fpack == COH_FPACK) ||
                (s_fname == COH_XXXXX && s_fpack == COH_XXXXX) ||
@@ -367,9 +367,9 @@ public sealed partial class SysVfs
                 xnx_sb.s_dinfo0  = BitConverter.ToUInt16(sb_sector, 0x1AC);
                 xnx_sb.s_dinfo1  = BitConverter.ToUInt16(sb_sector, 0x1AE);
                 Array.Copy(sb_sector, 0x1B0, xenix_strings, 0, 6);
-                xnx_sb.s_fname = StringHandlers.CToString(xenix_strings, Encoding);
+                xnx_sb.s_fname = StringHandlers.CToString(xenix_strings, encoding);
                 Array.Copy(sb_sector, 0x1B6, xenix_strings, 0, 6);
-                xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings, Encoding);
+                xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings, encoding);
                 xnx_sb.s_clean = sb_sector[0x1BC];
                 xnx_sb.s_magic = BitConverter.ToUInt32(sb_sector, 0x1F0);
                 xnx_sb.s_type  = BitConverter.ToUInt32(sb_sector, 0x1F4);
@@ -392,9 +392,9 @@ public sealed partial class SysVfs
                 xnx_sb.s_dinfo0  = BitConverter.ToUInt16(sb_sector, 0x274);
                 xnx_sb.s_dinfo1  = BitConverter.ToUInt16(sb_sector, 0x276);
                 Array.Copy(sb_sector, 0x278, xenix_strings, 0, 6);
-                xnx_sb.s_fname = StringHandlers.CToString(xenix_strings, Encoding);
+                xnx_sb.s_fname = StringHandlers.CToString(xenix_strings, encoding);
                 Array.Copy(sb_sector, 0x27E, xenix_strings, 0, 6);
-                xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings, Encoding);
+                xnx_sb.s_fpack = StringHandlers.CToString(xenix_strings, encoding);
                 xnx_sb.s_clean = sb_sector[0x284];
                 xnx_sb.s_magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
                 xnx_sb.s_type  = BitConverter.ToUInt32(sb_sector, 0x3FC);
@@ -580,9 +580,9 @@ public sealed partial class SysVfs
                 sysv_sb.s_tfree   = BitConverter.ToUInt32(sb_sector, 0x1B0 + offset);
                 sysv_sb.s_tinode  = BitConverter.ToUInt16(sb_sector, 0x1B4 + offset);
                 Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
-                sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, Encoding);
+                sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, encoding);
                 Array.Copy(sb_sector, 0x1BC + offset, sysv_strings, 0, 6);
-                sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, Encoding);
+                sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, encoding);
                 sb.AppendLine(Localization.System_V_Release_4_filesystem);
                 metadata.Type = FS_TYPE_SVR4;
             }
@@ -606,9 +606,9 @@ public sealed partial class SysVfs
                 sysv_sb.s_tfree   = BitConverter.ToUInt32(sb_sector, 0x1AA + offset);
                 sysv_sb.s_tinode  = BitConverter.ToUInt16(sb_sector, 0x1AE + offset);
                 Array.Copy(sb_sector, 0x1B0 + offset, sysv_strings, 0, 6);
-                sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, Encoding);
+                sysv_sb.s_fname = StringHandlers.CToString(sysv_strings, encoding);
                 Array.Copy(sb_sector, 0x1B6 + offset, sysv_strings, 0, 6);
-                sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, Encoding);
+                sysv_sb.s_fpack = StringHandlers.CToString(sysv_strings, encoding);
                 sb.AppendLine(Localization.System_V_Release_2_filesystem);
                 metadata.Type = FS_TYPE_SVR2;
             }
@@ -710,9 +710,9 @@ public sealed partial class SysVfs
             coh_sb.s_int_m  = BitConverter.ToUInt16(sb_sector, 0x1E0);
             coh_sb.s_int_n  = BitConverter.ToUInt16(sb_sector, 0x1E2);
             Array.Copy(sb_sector, 0x1E4, coh_strings, 0, 6);
-            coh_sb.s_fname = StringHandlers.CToString(coh_strings, Encoding);
+            coh_sb.s_fname = StringHandlers.CToString(coh_strings, encoding);
             Array.Copy(sb_sector, 0x1EA, coh_strings, 0, 6);
-            coh_sb.s_fpack = StringHandlers.CToString(coh_strings, Encoding);
+            coh_sb.s_fpack = StringHandlers.CToString(coh_strings, encoding);
 
             metadata.Type        = FS_TYPE_COHERENT;
             metadata.ClusterSize = 512;
@@ -786,9 +786,9 @@ public sealed partial class SysVfs
             v7_sb.s_int_m  = BitConverter.ToUInt16(sb_sector, 0x1A8);
             v7_sb.s_int_n  = BitConverter.ToUInt16(sb_sector, 0x1AA);
             Array.Copy(sb_sector, 0x1AC, sys7_strings, 0, 6);
-            v7_sb.s_fname = StringHandlers.CToString(sys7_strings, Encoding);
+            v7_sb.s_fname = StringHandlers.CToString(sys7_strings, encoding);
             Array.Copy(sb_sector, 0x1B2, sys7_strings, 0, 6);
-            v7_sb.s_fpack = StringHandlers.CToString(sys7_strings, Encoding);
+            v7_sb.s_fpack = StringHandlers.CToString(sys7_strings, encoding);
 
             metadata.Type        = FS_TYPE_UNIX7;
             metadata.ClusterSize = 512;

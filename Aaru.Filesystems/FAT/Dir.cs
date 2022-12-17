@@ -198,11 +198,11 @@ public sealed partial class FAT
                     continue;
 
                 // Self
-                if(Encoding.GetString(dirent.filename).TrimEnd() == ".")
+                if(_encoding.GetString(dirent.filename).TrimEnd() == ".")
                     continue;
 
                 // Parent
-                if(Encoding.GetString(dirent.filename).TrimEnd() == "..")
+                if(_encoding.GetString(dirent.filename).TrimEnd() == "..")
                     continue;
 
                 // Deleted
@@ -237,8 +237,8 @@ public sealed partial class FAT
                 if(dirent.filename[0] == DIRENT_E5)
                     dirent.filename[0] = DIRENT_DELETED;
 
-                string name      = Encoding.GetString(dirent.filename).TrimEnd();
-                string extension = Encoding.GetString(dirent.extension).TrimEnd();
+                string name      = _encoding.GetString(dirent.filename).TrimEnd();
+                string extension = _encoding.GetString(dirent.extension).TrimEnd();
 
                 if(name      == "" &&
                    extension == "")
@@ -288,9 +288,9 @@ public sealed partial class FAT
 
                     completeEntry.HumanDirent = humanEntry;
 
-                    name      = StringHandlers.CToString(humanEntry.name1, Encoding).TrimEnd();
-                    extension = StringHandlers.CToString(humanEntry.extension, Encoding).TrimEnd();
-                    string name2 = StringHandlers.CToString(humanEntry.name2, Encoding).TrimEnd();
+                    name      = StringHandlers.CToString(humanEntry.name1, _encoding).TrimEnd();
+                    extension = StringHandlers.CToString(humanEntry.extension, _encoding).TrimEnd();
+                    string name2 = StringHandlers.CToString(humanEntry.name2, _encoding).TrimEnd();
 
                     if(extension != "")
                         filename = name + name2 + "." + extension;
@@ -340,7 +340,7 @@ public sealed partial class FAT
 
                     Array.Copy(longnameEa, 4, longnameBytes, 0, longnameSize);
 
-                    string longname = StringHandlers.CToString(longnameBytes, Encoding);
+                    string longname = StringHandlers.CToString(longnameBytes, _encoding);
 
                     if(string.IsNullOrWhiteSpace(longname))
                         continue;

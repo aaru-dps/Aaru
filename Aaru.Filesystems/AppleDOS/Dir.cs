@@ -117,7 +117,7 @@ public sealed partial class AppleDOS
                 for(int i = 0; i < 30; i++)
                     filenameB[i] = (byte)(entry.filename[i] & 0x7F);
 
-                string filename = StringHandlers.SpacePaddedToString(filenameB, Encoding);
+                string filename = StringHandlers.SpacePaddedToString(filenameB, _encoding);
 
                 if(!_catalogCache.ContainsKey(filename))
                     _catalogCache.Add(filename, ts);

@@ -27,7 +27,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -37,8 +36,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the UNIX boot filesystem</summary>
 public sealed partial class BFS : IFilesystem
 {
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.BFS_Name;
     /// <inheritdoc />

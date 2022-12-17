@@ -53,7 +53,7 @@ public sealed partial class PascalPlugin
            string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
 
-        contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, Encoding)).ToList();
+        contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, _encoding)).ToList();
 
         if(_debug)
         {

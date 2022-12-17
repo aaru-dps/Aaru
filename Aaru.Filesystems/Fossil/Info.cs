@@ -65,7 +65,7 @@ public sealed partial class Fossil
                                out FileSystem metadata)
     {
         // Technically everything on Plan 9 from Bell Labs is in UTF-8
-        Encoding    = Encoding.UTF8;
+        encoding    = Encoding.UTF8;
         information = "";
         metadata    = new FileSystem();
 
@@ -117,8 +117,8 @@ public sealed partial class Fossil
                 sb.AppendFormat(Localization.Active_root_block_0, fsb.active).AppendLine();
                 sb.AppendFormat(Localization.Next_root_block_0, fsb.next).AppendLine();
                 sb.AppendFormat(Localization.Current_root_block_0, fsb.current).AppendLine();
-                sb.AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(fsb.name, Encoding)).AppendLine();
-                metadata.VolumeName = StringHandlers.CToString(fsb.name, Encoding);
+                sb.AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(fsb.name, encoding)).AppendLine();
+                metadata.VolumeName = StringHandlers.CToString(fsb.name, encoding);
             }
         }
 
