@@ -42,27 +42,17 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         string className = pluginRegister.Identifier.Text;
 
-        List<ClassDeclarationSyntax> archives    = ((PluginFinder)context.SyntaxReceiver)?.Archives;
-        List<ClassDeclarationSyntax> checksums   = ((PluginFinder)context.SyntaxReceiver)?.Checksums;
-        List<ClassDeclarationSyntax> fileSystems = ((PluginFinder)context.SyntaxReceiver)?.FileSystems;
-        List<ClassDeclarationSyntax> filters     = ((PluginFinder)context.SyntaxReceiver)?.Filters;
-
-        List<ClassDeclarationSyntax> floppyImagePlugins = ((PluginFinder)context.SyntaxReceiver)?.FloppyImagePlugins;
-
-        List<ClassDeclarationSyntax> partitionPlugins = ((PluginFinder)context.SyntaxReceiver)?.PartitionPlugins;
-
-        List<ClassDeclarationSyntax> mediaImagePlugins = ((PluginFinder)context.SyntaxReceiver)?.MediaImagePlugins;
-
-        List<ClassDeclarationSyntax> readOnlyFileSystems = ((PluginFinder)context.SyntaxReceiver)?.ReadOnlyFileSystems;
-
-        List<ClassDeclarationSyntax> writableFloppyImagePlugins =
-            ((PluginFinder)context.SyntaxReceiver)?.WritableFloppyImagePlugins;
-
-        List<ClassDeclarationSyntax> writableImagePlugins =
-            ((PluginFinder)context.SyntaxReceiver)?.WritableImagePlugins;
-
-        List<ClassDeclarationSyntax> byteAddressableImagePlugins =
-            ((PluginFinder)context.SyntaxReceiver)?.ByteAddressableImagePlugins;
+        List<string> archives                    = ((PluginFinder)context.SyntaxReceiver)?.Archives;
+        List<string> checksums                   = ((PluginFinder)context.SyntaxReceiver)?.Checksums;
+        List<string> fileSystems                 = ((PluginFinder)context.SyntaxReceiver)?.FileSystems;
+        List<string> filters                     = ((PluginFinder)context.SyntaxReceiver)?.Filters;
+        List<string> floppyImagePlugins          = ((PluginFinder)context.SyntaxReceiver)?.FloppyImagePlugins;
+        List<string> partitionPlugins            = ((PluginFinder)context.SyntaxReceiver)?.PartitionPlugins;
+        List<string> mediaImagePlugins           = ((PluginFinder)context.SyntaxReceiver)?.MediaImagePlugins;
+        List<string> readOnlyFileSystems         = ((PluginFinder)context.SyntaxReceiver)?.ReadOnlyFileSystems;
+        List<string> writableFloppyImagePlugins  = ((PluginFinder)context.SyntaxReceiver)?.WritableFloppyImagePlugins;
+        List<string> writableImagePlugins        = ((PluginFinder)context.SyntaxReceiver)?.WritableImagePlugins;
+        List<string> byteAddressableImagePlugins = ((PluginFinder)context.SyntaxReceiver)?.ByteAddressableImagePlugins;
 
         StringBuilder sb = new();
 
@@ -117,8 +107,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllArchivePlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in archives)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in archives)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -132,8 +122,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllChecksumPlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in checksums)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in checksums)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -147,8 +137,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllFilesystemPlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in fileSystems)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in fileSystems)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -162,8 +152,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllFilterPlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in filters)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in filters)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -177,8 +167,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllFloppyImagePlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in floppyImagePlugins)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in floppyImagePlugins)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -192,8 +182,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllMediaImagePlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in mediaImagePlugins)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in mediaImagePlugins)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -207,8 +197,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllPartitionPlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in partitionPlugins)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in partitionPlugins)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -222,8 +212,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllReadOnlyFilesystemPlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in readOnlyFileSystems)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in readOnlyFileSystems)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -237,8 +227,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllWritableFloppyImagePlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in writableFloppyImagePlugins)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in writableFloppyImagePlugins)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -252,8 +242,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllWritableImagePlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in writableImagePlugins)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in writableImagePlugins)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -267,8 +257,8 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public List<Type> GetAllByteAddressablePlugins() => new()");
             sb.AppendLine("    {");
 
-            foreach(ClassDeclarationSyntax plugin in byteAddressableImagePlugins)
-                sb.AppendLine($"        typeof({plugin.Identifier.Text}),");
+            foreach(string plugin in byteAddressableImagePlugins)
+                sb.AppendLine($"        typeof({plugin}),");
 
             sb.AppendLine("    };");
         }
@@ -282,18 +272,18 @@ public class PluginRegisterGenerator : ISourceGenerator
 
     sealed class PluginFinder : ISyntaxReceiver
     {
-        public List<ClassDeclarationSyntax> Archives                    { get; } = new();
-        public List<ClassDeclarationSyntax> Checksums                   { get; } = new();
-        public List<ClassDeclarationSyntax> FileSystems                 { get; } = new();
-        public List<ClassDeclarationSyntax> Filters                     { get; } = new();
-        public List<ClassDeclarationSyntax> FloppyImagePlugins          { get; } = new();
-        public List<ClassDeclarationSyntax> MediaImagePlugins           { get; } = new();
-        public List<ClassDeclarationSyntax> PartitionPlugins            { get; } = new();
-        public List<ClassDeclarationSyntax> ReadOnlyFileSystems         { get; } = new();
-        public List<ClassDeclarationSyntax> WritableFloppyImagePlugins  { get; } = new();
-        public List<ClassDeclarationSyntax> WritableImagePlugins        { get; } = new();
-        public List<ClassDeclarationSyntax> ByteAddressableImagePlugins { get; } = new();
-        public ClassDeclarationSyntax       Register                    { get; private set; }
+        public List<string>           Archives                    { get; } = new();
+        public List<string>           Checksums                   { get; } = new();
+        public List<string>           FileSystems                 { get; } = new();
+        public List<string>           Filters                     { get; } = new();
+        public List<string>           FloppyImagePlugins          { get; } = new();
+        public List<string>           MediaImagePlugins           { get; } = new();
+        public List<string>           PartitionPlugins            { get; } = new();
+        public List<string>           ReadOnlyFileSystems         { get; } = new();
+        public List<string>           WritableFloppyImagePlugins  { get; } = new();
+        public List<string>           WritableImagePlugins        { get; } = new();
+        public List<string>           ByteAddressableImagePlugins { get; } = new();
+        public ClassDeclarationSyntax Register                    { get; private set; }
 
         public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
         {
@@ -306,49 +296,60 @@ public class PluginRegisterGenerator : ISourceGenerator
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText == "IArchive") == true)
-                Archives.Add(plugin);
+                if(!Archives.Contains(plugin.Identifier.Text))
+                    Archives.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText == "IChecksum") == true)
-                Checksums.Add(plugin);
+                if(!Checksums.Contains(plugin.Identifier.Text))
+                    Checksums.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText == "IFilesystem") == true)
-                FileSystems.Add(plugin);
+                if(!FileSystems.Contains(plugin.Identifier.Text))
+                    FileSystems.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText == "IFilter") == true)
-                Filters.Add(plugin);
+                if(!Filters.Contains(plugin.Identifier.Text))
+                    Filters.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText == "IFloppyImage") == true)
-                FloppyImagePlugins.Add(plugin);
+                if(!FloppyImagePlugins.Contains(plugin.Identifier.Text))
+                    FloppyImagePlugins.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText is "IMediaImage" or "IOpticalMediaImage" or "IFloppyImage"
                                                or "ITapeImage") == true)
-                MediaImagePlugins.Add(plugin);
+                if(!MediaImagePlugins.Contains(plugin.Identifier.Text))
+                    MediaImagePlugins.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText == "IPartition") == true)
-                PartitionPlugins.Add(plugin);
+                if(!PartitionPlugins.Contains(plugin.Identifier.Text))
+                    PartitionPlugins.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText == "IReadOnlyFilesystem") == true)
-                ReadOnlyFileSystems.Add(plugin);
+                if(!ReadOnlyFileSystems.Contains(plugin.Identifier.Text))
+                    ReadOnlyFileSystems.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText == "IWritableFloppyImage") == true)
-                WritableFloppyImagePlugins.Add(plugin);
+                if(!WritableFloppyImagePlugins.Contains(plugin.Identifier.Text))
+                    WritableFloppyImagePlugins.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText is "IWritableImage" or "IWritableOpticalImage"
                                                or "IWritableTapeImage" or "IByteAddressableImage") == true)
-                WritableImagePlugins.Add(plugin);
+                if(!WritableImagePlugins.Contains(plugin.Identifier.Text))
+                    WritableImagePlugins.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier.
                                                ValueText == "IByteAddressableImage") == true)
-                ByteAddressableImagePlugins.Add(plugin);
+                if(!ByteAddressableImagePlugins.Contains(plugin.Identifier.Text))
+                    ByteAddressableImagePlugins.Add(plugin.Identifier.Text);
 
             MediaImagePlugins.AddRange(WritableImagePlugins);
             FileSystems.AddRange(ReadOnlyFileSystems);
