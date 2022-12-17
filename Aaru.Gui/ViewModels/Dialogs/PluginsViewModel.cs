@@ -85,7 +85,7 @@ public sealed class PluginsViewModel : ViewModelBase
             {
                 Name    = floppyImage.Name,
                 Uuid    = floppyImage.Id,
-                Version = Assembly.GetAssembly(floppyImage.GetType())?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(imageType)?.GetName().Version?.ToString(),
                 Author  = floppyImage.Author
             });
         }
@@ -146,14 +146,19 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(IWritableFloppyImage writableFloppyImage in GetPluginBase.Instance.WritableFloppyImages.Values)
+        foreach(Type imageType in GetPluginBase.Instance.WritableFloppyImages.Values)
+        {
+            if(Activator.CreateInstance(imageType) is not IWritableFloppyImage writableFloppyImage)
+                continue;
+
             WritableFloppyImages.Add(new PluginModel
             {
                 Name    = writableFloppyImage.Name,
                 Uuid    = writableFloppyImage.Id,
-                Version = Assembly.GetAssembly(writableFloppyImage.GetType())?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(imageType)?.GetName().Version?.ToString(),
                 Author  = writableFloppyImage.Author
             });
+        }
 
         foreach(Type baseWritableImageType in GetPluginBase.Instance.WritableImages.Values)
         {
@@ -164,7 +169,7 @@ public sealed class PluginsViewModel : ViewModelBase
             {
                 Name    = writableImage.Name,
                 Uuid    = writableImage.Id,
-                Version = Assembly.GetAssembly(writableImage.GetType())?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(baseWritableImageType)?.GetName().Version?.ToString(),
                 Author  = writableImage.Author
             });
         }
