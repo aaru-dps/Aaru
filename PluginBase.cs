@@ -52,6 +52,8 @@ public class PluginBase
     public readonly SortedDictionary<string, IByteAddressableImage> ByteAddressableImages;
     /// <summary>List of checksum plugins</summary>
     public readonly List<IChecksum> Checksums;
+    /// <summary>List of all filesystem plugins</summary>
+    public readonly SortedDictionary<string, Type> Filesystems;
     /// <summary>List of filter plugins</summary>
     public readonly SortedDictionary<string, IFilter> Filters;
     /// <summary>List of floppy image plugins</summary>
@@ -60,8 +62,6 @@ public class PluginBase
     public readonly SortedDictionary<string, IMediaImage> ImagePluginsList;
     /// <summary>List of all partition plugins</summary>
     public readonly SortedDictionary<string, IPartition> PartPluginsList;
-    /// <summary>List of all filesystem plugins</summary>
-    public readonly SortedDictionary<string, Type> Filesystems;
     /// <summary>List of read-only filesystem plugins</summary>
     public readonly SortedDictionary<string, Type> ReadOnlyFilesystems;
     /// <summary>List of writable floppy image plugins</summary>
@@ -90,56 +90,56 @@ public class PluginBase
     public void AddPlugins(IPluginRegister pluginRegister)
     {
         foreach(Type type in pluginRegister.GetAllChecksumPlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IChecksum plugin)
+            if(Activator.CreateInstance(type) is IChecksum plugin)
                 Checksums.Add(plugin);
 
         foreach(Type type in pluginRegister.GetAllFilesystemPlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IFilesystem plugin &&
+            if(Activator.CreateInstance(type) is IFilesystem plugin &&
                !Filesystems.ContainsKey(plugin.Name.ToLower()))
-                Filesystems.Add(plugin.Name.ToLower(), plugin.GetType());
+                Filesystems.Add(plugin.Name.ToLower(), type);
 
         foreach(Type type in pluginRegister.GetAllFilterPlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IFilter plugin &&
+            if(Activator.CreateInstance(type) is IFilter plugin &&
                !Filters.ContainsKey(plugin.Name.ToLower()))
                 Filters.Add(plugin.Name.ToLower(), plugin);
 
         foreach(Type type in pluginRegister.GetAllFloppyImagePlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IFloppyImage plugin &&
+            if(Activator.CreateInstance(type) is IFloppyImage plugin &&
                !FloppyImages.ContainsKey(plugin.Name.ToLower()))
                 FloppyImages.Add(plugin.Name.ToLower(), plugin);
 
         foreach(Type type in pluginRegister.GetAllMediaImagePlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IMediaImage plugin &&
+            if(Activator.CreateInstance(type) is IMediaImage plugin &&
                !ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
                 ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
 
         foreach(Type type in pluginRegister.GetAllPartitionPlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IPartition plugin &&
+            if(Activator.CreateInstance(type) is IPartition plugin &&
                !PartPluginsList.ContainsKey(plugin.Name.ToLower()))
                 PartPluginsList.Add(plugin.Name.ToLower(), plugin);
 
         foreach(Type type in pluginRegister.GetAllReadOnlyFilesystemPlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IReadOnlyFilesystem plugin &&
+            if(Activator.CreateInstance(type) is IReadOnlyFilesystem plugin &&
                !ReadOnlyFilesystems.ContainsKey(plugin.Name.ToLower()))
-                ReadOnlyFilesystems.Add(plugin.Name.ToLower(), plugin.GetType());
+                ReadOnlyFilesystems.Add(plugin.Name.ToLower(), type);
 
         foreach(Type type in pluginRegister.GetAllWritableFloppyImagePlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IWritableFloppyImage plugin &&
+            if(Activator.CreateInstance(type) is IWritableFloppyImage plugin &&
                !WritableFloppyImages.ContainsKey(plugin.Name.ToLower()))
                 WritableFloppyImages.Add(plugin.Name.ToLower(), plugin);
 
         foreach(Type type in pluginRegister.GetAllWritableImagePlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IBaseWritableImage plugin &&
+            if(Activator.CreateInstance(type) is IBaseWritableImage plugin &&
                !WritableImages.ContainsKey(plugin.Name.ToLower()))
                 WritableImages.Add(plugin.Name.ToLower(), plugin);
 
         foreach(Type type in pluginRegister.GetAllArchivePlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IArchive plugin &&
+            if(Activator.CreateInstance(type) is IArchive plugin &&
                !Archives.ContainsKey(plugin.Name.ToLower()))
                 Archives.Add(plugin.Name.ToLower(), plugin);
 
         foreach(Type type in pluginRegister.GetAllByteAddressablePlugins() ?? Enumerable.Empty<Type>())
-            if(type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>()) is IByteAddressableImage plugin &&
+            if(Activator.CreateInstance(type) is IByteAddressableImage plugin &&
                !ByteAddressableImages.ContainsKey(plugin.Name.ToLower()))
                 ByteAddressableImages.Add(plugin.Name.ToLower(), plugin);
     }
