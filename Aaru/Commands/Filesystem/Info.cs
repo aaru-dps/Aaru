@@ -146,7 +146,7 @@ sealed class FilesystemInfoCommand : Command
                 return (int)ErrorNumber.EncodingUnknown;
             }
 
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginBase plugins = PluginBase.Singleton;
 
         bool checkRaw = false;
 

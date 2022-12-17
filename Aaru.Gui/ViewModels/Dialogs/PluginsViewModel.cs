@@ -62,7 +62,7 @@ public sealed class PluginsViewModel : ViewModelBase
         CloseCommand         = ReactiveCommand.Create(ExecuteCloseCommand);
 
         // TODO: Takes too much time
-        foreach(Type filterType in GetPluginBase.Instance.Filters.Values)
+        foreach(Type filterType in PluginBase.Singleton.Filters.Values)
         {
             if(Activator.CreateInstance(filterType) is not IFilter filter)
                 continue;
@@ -76,7 +76,7 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type imageType in GetPluginBase.Instance.FloppyImages.Values)
+        foreach(Type imageType in PluginBase.Singleton.FloppyImages.Values)
         {
             if(Activator.CreateInstance(imageType) is not IFloppyImage floppyImage)
                 continue;
@@ -90,7 +90,7 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type imageType in GetPluginBase.Instance.MediaImages.Values)
+        foreach(Type imageType in PluginBase.Singleton.MediaImages.Values)
         {
             if(Activator.CreateInstance(imageType) is not IMediaImage mediaImage)
                 continue;
@@ -104,7 +104,7 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type partitionType in GetPluginBase.Instance.Partitions.Values)
+        foreach(Type partitionType in PluginBase.Singleton.Partitions.Values)
         {
             if(Activator.CreateInstance(partitionType) is not IPartition partition)
                 continue;
@@ -118,7 +118,7 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type filesystem in GetPluginBase.Instance.Filesystems.Values)
+        foreach(Type filesystem in PluginBase.Singleton.Filesystems.Values)
         {
             if(Activator.CreateInstance(filesystem) is not IFilesystem fs)
                 continue;
@@ -132,7 +132,7 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type readOnlyFilesystem in GetPluginBase.Instance.ReadOnlyFilesystems.Values)
+        foreach(Type readOnlyFilesystem in PluginBase.Singleton.ReadOnlyFilesystems.Values)
         {
             if(Activator.CreateInstance(readOnlyFilesystem) is not IReadOnlyFilesystem fs)
                 continue;
@@ -146,7 +146,7 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type imageType in GetPluginBase.Instance.WritableFloppyImages.Values)
+        foreach(Type imageType in PluginBase.Singleton.WritableFloppyImages.Values)
         {
             if(Activator.CreateInstance(imageType) is not IWritableFloppyImage writableFloppyImage)
                 continue;
@@ -160,7 +160,7 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type baseWritableImageType in GetPluginBase.Instance.WritableImages.Values)
+        foreach(Type baseWritableImageType in PluginBase.Singleton.WritableImages.Values)
         {
             if(Activator.CreateInstance(baseWritableImageType) is not IWritableImage writableImage)
                 continue;

@@ -42,7 +42,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Xml.Serialization;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -364,7 +363,7 @@ sealed class DumpMediaCommand : Command
         if(isResponse)
             eject = true;
 
-        PluginBase               plugins    = GetPluginBase.Instance;
+        PluginBase               plugins    = PluginBase.Singleton;
         List<IBaseWritableImage> candidates = new();
         string                   extension  = Path.GetExtension(outputPath);
 
@@ -609,7 +608,7 @@ sealed class DumpMediaCommand : Command
                     return (int)ErrorNumber.NoSuchFile;
                 }
 
-            plugins    = GetPluginBase.Instance;
+            plugins    = PluginBase.Singleton;
             candidates = new List<IBaseWritableImage>();
 
             // Try extension

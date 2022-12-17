@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 
@@ -47,7 +46,7 @@ public static class ImageFormat
     {
         try
         {
-            PluginBase plugins = GetPluginBase.Instance;
+            PluginBase plugins = PluginBase.Singleton;
 
             IBaseImage imageFormat = null;
 

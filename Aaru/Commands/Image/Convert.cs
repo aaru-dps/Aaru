@@ -432,7 +432,7 @@ sealed class ConvertImageCommand : Command
             return (int)ErrorNumber.FileExists;
         }
 
-        PluginBase  plugins     = GetPluginBase.Instance;
+        PluginBase  plugins     = PluginBase.Singleton;
         IMediaImage inputFormat = null;
         IBaseImage  baseImage   = null;
 

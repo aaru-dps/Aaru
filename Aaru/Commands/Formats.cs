@@ -84,7 +84,7 @@ sealed class FormatsCommand : Command
         AaruConsole.DebugWriteLine("Formats command", "--debug={0}", debug);
         AaruConsole.DebugWriteLine("Formats command", "--verbose={0}", verbose);
 
-        PluginBase plugins     = GetPluginBase.Instance;
+        PluginBase plugins     = PluginBase.Singleton;
         var        filtersList = new FiltersList();
 
         Table table = new()

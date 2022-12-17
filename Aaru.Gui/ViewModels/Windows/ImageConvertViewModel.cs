@@ -41,7 +41,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -200,7 +199,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         DriveSerialNumberVisible     = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveSerialNumber);
         DriveFirmwareRevisionVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveFirmwareRevision);
 
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginBase plugins = PluginBase.Singleton;
 
         foreach(Type pluginType in plugins.WritableImages.Values)
         {

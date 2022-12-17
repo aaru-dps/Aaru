@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
@@ -83,7 +82,7 @@ sealed class ListNamespacesCommand : Command
         AaruConsole.DebugWriteLine("List-Namespaces command", "--verbose={0}", verbose);
         Statistics.AddCommand("list-namespaces");
 
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginBase plugins = PluginBase.Singleton;
 
         foreach(KeyValuePair<string, Type> kvp in plugins.ReadOnlyFilesystems)
         {

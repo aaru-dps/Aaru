@@ -187,7 +187,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                             for(int i = 0; i < track.FileSystems.Length; i++)
                             {
-                                PluginBase plugins = GetPluginBase.Instance;
+                                PluginBase plugins = PluginBase.Singleton;
                                 bool       found   = plugins.Filesystems.TryGetValue(idPlugins[i], out Type pluginType);
 
                                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse

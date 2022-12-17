@@ -174,7 +174,7 @@ sealed class ExtractFilesCommand : Command
                 return (int)ErrorNumber.EncodingUnknown;
             }
 
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginBase plugins = PluginBase.Singleton;
 
         try
         {

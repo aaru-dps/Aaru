@@ -133,7 +133,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
     public void Contents()
     {
         Environment.CurrentDirectory = DataFolder;
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginBase plugins = PluginBase.Singleton;
 
         Assert.Multiple(() =>
         {

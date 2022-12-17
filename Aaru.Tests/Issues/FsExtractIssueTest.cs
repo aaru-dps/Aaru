@@ -40,7 +40,7 @@ public abstract class FsExtractIssueTest
         if(Encoding != null)
             encodingClass = Claunia.Encoding.Encoding.GetEncoding(Encoding);
 
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginBase plugins = PluginBase.Singleton;
 
         var imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
