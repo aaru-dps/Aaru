@@ -59,7 +59,7 @@ public class PluginBase
     /// <summary>List of all media image plugins</summary>
     public readonly SortedDictionary<string, IMediaImage> ImagePluginsList;
     /// <summary>List of all partition plugins</summary>
-    public readonly SortedDictionary<string, IPartition> PartPluginsList;
+    public readonly SortedDictionary<string, Type> Partitions;
     /// <summary>List of read-only filesystem plugins</summary>
     public readonly SortedDictionary<string, Type> ReadOnlyFilesystems;
     /// <summary>List of writable floppy image plugins</summary>
@@ -72,7 +72,7 @@ public class PluginBase
     {
         Filesystems           = new SortedDictionary<string, Type>();
         ReadOnlyFilesystems   = new SortedDictionary<string, Type>();
-        PartPluginsList       = new SortedDictionary<string, IPartition>();
+        Partitions            = new SortedDictionary<string, Type>();
         ImagePluginsList      = new SortedDictionary<string, IMediaImage>();
         WritableImages        = new SortedDictionary<string, IBaseWritableImage>();
         Filters               = new SortedDictionary<string, IFilter>();
@@ -108,8 +108,8 @@ public class PluginBase
 
         foreach(Type type in pluginRegister.GetAllPartitionPlugins() ?? Enumerable.Empty<Type>())
             if(Activator.CreateInstance(type) is IPartition plugin &&
-               !PartPluginsList.ContainsKey(plugin.Name.ToLower()))
-                PartPluginsList.Add(plugin.Name.ToLower(), plugin);
+               !Partitions.ContainsKey(plugin.Name.ToLower()))
+                Partitions.Add(plugin.Name.ToLower(), type);
 
         foreach(Type type in pluginRegister.GetAllReadOnlyFilesystemPlugins() ?? Enumerable.Empty<Type>())
             if(Activator.CreateInstance(type) is IReadOnlyFilesystem plugin &&
