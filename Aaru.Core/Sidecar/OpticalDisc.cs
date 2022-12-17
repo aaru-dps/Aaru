@@ -39,12 +39,10 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Metadata;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Dump = Aaru.Core.Devices.Dumping.Dump;
-using MediaType = Aaru.CommonTypes.MediaType;
 using Partition = Aaru.CommonTypes.Partition;
 using Session = Aaru.CommonTypes.Structs.Session;
 using Track = Aaru.CommonTypes.Structs.Track;
@@ -134,7 +132,7 @@ public sealed partial class Sidecar
                     {
                         dskType = MediaType.XGD;
 
-                        sidecar.OpticalDiscs[0].Dimensions = new DimensionsNew
+                        sidecar.OpticalDiscs[0].Dimensions = new Dimensions
                         {
                             Diameter  = 120,
                             Thickness = 1.2
@@ -144,7 +142,7 @@ public sealed partial class Sidecar
                     {
                         dskType = MediaType.XGD2;
 
-                        sidecar.OpticalDiscs[0].Dimensions = new DimensionsNew
+                        sidecar.OpticalDiscs[0].Dimensions = new Dimensions
                         {
                             Diameter  = 120,
                             Thickness = 1.2
@@ -194,7 +192,7 @@ public sealed partial class Sidecar
                                pfi.Value.DiscSize == DVDSize.OneTwenty)
                                 dskType = MediaType.WOD;
 
-                            sidecar.OpticalDiscs[0].Dimensions = new DimensionsNew();
+                            sidecar.OpticalDiscs[0].Dimensions = new Dimensions();
 
                             if(dskType == MediaType.UMD)
                             {
@@ -244,7 +242,7 @@ public sealed partial class Sidecar
 
         if(sidecar.OpticalDiscs[0].Dimensions == null &&
            image.Info.MediaType               != MediaType.Unknown)
-            sidecar.OpticalDiscs[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
+            sidecar.OpticalDiscs[0].Dimensions = Dimensions.FromMediaType(image.Info.MediaType);
 
         if(_aborted)
             return;

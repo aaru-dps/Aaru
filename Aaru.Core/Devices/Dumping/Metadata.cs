@@ -39,8 +39,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Metadata;
-using MediaType = Aaru.CommonTypes.MediaType;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -126,7 +124,7 @@ partial class Dump
                     }).Distinct())
                 _dumpLog.WriteLine(Localization.Core.Found_filesystem_0_at_sector_1, filesystem.type, filesystem.start);
 
-        sidecar.OpticalDiscs[0].Dimensions = Dimensions.DimensionsFromMediaType(mediaType);
+        sidecar.OpticalDiscs[0].Dimensions = Dimensions.FromMediaType(mediaType);
         (string type, string subType) discType = CommonTypes.Metadata.MediaType.MediaTypeToString(mediaType);
         sidecar.OpticalDiscs[0].DiscType     = discType.type;
         sidecar.OpticalDiscs[0].DiscSubType  = discType.subType;

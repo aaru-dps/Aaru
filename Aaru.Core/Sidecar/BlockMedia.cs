@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -48,7 +47,6 @@ using Aaru.Filters;
 using Aaru.Helpers;
 using Directory = System.IO.Directory;
 using File = System.IO.File;
-using MediaType = Aaru.CommonTypes.Metadata.MediaType;
 using Partition = Aaru.CommonTypes.Partition;
 using Pcmcia = Aaru.CommonTypes.AaruMetadata.Pcmcia;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
@@ -460,7 +458,7 @@ public sealed partial class Sidecar
         sidecar.BlockMedias[0].MediaSubType = diskType.subType;
         Statistics.AddMedia(image.Info.MediaType, false);
 
-        sidecar.BlockMedias[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
+        sidecar.BlockMedias[0].Dimensions = Dimensions.FromMediaType(image.Info.MediaType);
 
         sidecar.BlockMedias[0].LogicalBlocks    = image.Info.Sectors;
         sidecar.BlockMedias[0].LogicalBlockSize = image.Info.SectorSize;

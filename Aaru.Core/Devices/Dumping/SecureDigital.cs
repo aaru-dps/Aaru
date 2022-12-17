@@ -42,14 +42,12 @@ using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Metadata;
 using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
 using Aaru.Decoders.SecureDigital;
 using CSD = Aaru.Decoders.MMC.CSD;
 using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
-using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.Core.Devices.Dumping;
@@ -951,13 +949,13 @@ public partial class Dump
                     case DeviceType.MMC:
                         xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.MMC);
 
-                        sidecar.BlockMedias[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.MMC);
+                        sidecar.BlockMedias[0].Dimensions = Dimensions.FromMediaType(MediaType.MMC);
 
                         break;
                     case DeviceType.SecureDigital:
                         CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.SecureDigital);
 
-                        sidecar.BlockMedias[0].Dimensions = Dimensions.DimensionsFromMediaType(MediaType.SecureDigital);
+                        sidecar.BlockMedias[0].Dimensions = Dimensions.FromMediaType(MediaType.SecureDigital);
 
                         break;
                 }

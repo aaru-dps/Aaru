@@ -41,9 +41,9 @@ using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Metadata;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
+using Aaru.Core.Devices.Report;
 using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Core.Media.Detection;
@@ -52,12 +52,9 @@ using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
-using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
 using DVDDecryption = Aaru.Decryption.DVD.Dump;
-using MediaType = Aaru.CommonTypes.MediaType;
 using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
-using Usb = Aaru.CommonTypes.AaruMetadata.Usb;
 using Version = Aaru.CommonTypes.Interop.Version;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -1267,7 +1264,7 @@ partial class Dump
                                                filesystem.start);
                         }
 
-                    sidecar.BlockMedias[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
+                    sidecar.BlockMedias[0].Dimensions = Dimensions.FromMediaType(dskType);
 
                     (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
 

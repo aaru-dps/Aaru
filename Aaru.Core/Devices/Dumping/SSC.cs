@@ -43,13 +43,11 @@ using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Metadata;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Aaru.Helpers;
-using MediaType = Aaru.CommonTypes.MediaType;
 using TapeFile = Aaru.CommonTypes.Structs.TapeFile;
 using TapePartition = Aaru.CommonTypes.Structs.TapePartition;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -1414,7 +1412,7 @@ partial class Dump
                                            filesystem.start);
                     }
 
-                sidecar.BlockMedias[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
+                sidecar.BlockMedias[0].Dimensions = Dimensions.FromMediaType(dskType);
 
                 (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
 
