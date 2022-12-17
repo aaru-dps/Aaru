@@ -62,14 +62,19 @@ public sealed class PluginsViewModel : ViewModelBase
         CloseCommand         = ReactiveCommand.Create(ExecuteCloseCommand);
 
         // TODO: Takes too much time
-        foreach(IFilter filter in GetPluginBase.Instance.Filters.Values)
+        foreach(Type filterType in GetPluginBase.Instance.Filters.Values)
+        {
+            if(Activator.CreateInstance(filterType) is not IFilter filter)
+                continue;
+
             Filters.Add(new PluginModel
             {
                 Name    = filter.Name,
                 Uuid    = filter.Id,
-                Version = Assembly.GetAssembly(filter.GetType())?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(filterType)?.GetName().Version?.ToString(),
                 Author  = filter.Author
             });
+        }
 
         foreach(IFloppyImage floppyImage in GetPluginBase.Instance.FloppyImages.Values)
             FloppyImages.Add(new PluginModel
