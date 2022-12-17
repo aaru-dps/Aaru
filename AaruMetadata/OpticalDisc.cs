@@ -222,14 +222,14 @@ public class OpticalDisc
         }
 
         if(cicm.DumpHardwareArray is null)
-            return cicm;
+            return disc;
 
         disc.DumpHardware = new List<DumpHardware>();
 
         foreach(DumpHardwareType hw in cicm.DumpHardwareArray)
             disc.DumpHardware.Add(hw);
 
-        return cicm;
+        return disc;
     }
 }
 
