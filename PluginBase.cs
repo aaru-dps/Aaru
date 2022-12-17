@@ -65,7 +65,7 @@ public class PluginBase
     /// <summary>List of writable floppy image plugins</summary>
     public readonly SortedDictionary<string, IWritableFloppyImage> WritableFloppyImages;
     /// <summary>List of writable media image plugins</summary>
-    public readonly SortedDictionary<string, IBaseWritableImage> WritableImages;
+    public readonly SortedDictionary<string, Type> WritableImages;
 
     /// <summary>Initializes the plugins lists</summary>
     public PluginBase()
@@ -74,7 +74,7 @@ public class PluginBase
         ReadOnlyFilesystems   = new SortedDictionary<string, Type>();
         Partitions            = new SortedDictionary<string, Type>();
         MediaImages           = new SortedDictionary<string, Type>();
-        WritableImages        = new SortedDictionary<string, IBaseWritableImage>();
+        WritableImages        = new SortedDictionary<string, Type>();
         Filters               = new SortedDictionary<string, IFilter>();
         FloppyImages          = new SortedDictionary<string, IFloppyImage>();
         WritableFloppyImages  = new SortedDictionary<string, IWritableFloppyImage>();
@@ -124,7 +124,7 @@ public class PluginBase
         foreach(Type type in pluginRegister.GetAllWritableImagePlugins() ?? Enumerable.Empty<Type>())
             if(Activator.CreateInstance(type) is IBaseWritableImage plugin &&
                !WritableImages.ContainsKey(plugin.Name.ToLower()))
-                WritableImages.Add(plugin.Name.ToLower(), plugin);
+                WritableImages.Add(plugin.Name.ToLower(), type);
 
         foreach(Type type in pluginRegister.GetAllArchivePlugins() ?? Enumerable.Empty<Type>())
             if(Activator.CreateInstance(type) is IArchive plugin &&
