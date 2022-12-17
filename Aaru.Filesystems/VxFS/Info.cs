@@ -59,10 +59,12 @@ public sealed partial class VxFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.UTF8;
         information = "";
+        metadata    = new FileSystem();
         ulong       vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
         ErrorNumber errno        = imagePlugin.ReadSector(partition.Start + vmfsSuperOff, out byte[] sector);
 
@@ -98,7 +100,7 @@ public sealed partial class VxFS
 
         information = sbInformation.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type             = FS_TYPE,
             CreationDate     = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),

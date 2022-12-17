@@ -82,9 +82,9 @@ public sealed partial class CPM : IReadOnlyFilesystem
     CpmDefinition _workingDefinition;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
-    /// <inheritdoc />
     public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.CPM_Name;
     /// <inheritdoc />

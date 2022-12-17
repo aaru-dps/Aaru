@@ -28,7 +28,6 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 using hammer_crc_t = System.UInt32;
 using hammer_off_t = System.UInt64;
@@ -42,8 +41,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the HAMMER filesystem</summary>
 public sealed partial class HAMMER : IFilesystem
 {
-    /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />

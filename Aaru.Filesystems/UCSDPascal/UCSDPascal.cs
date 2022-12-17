@@ -55,9 +55,9 @@ public sealed partial class PascalPlugin : IReadOnlyFilesystem
     uint _multiplier;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
-    /// <inheritdoc />
     public string Name => Localization.PascalPlugin_Name;
+    /// <inheritdoc />
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Guid Id => new("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
     /// <inheritdoc />

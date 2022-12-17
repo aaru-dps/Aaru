@@ -75,10 +75,12 @@ public sealed partial class NTFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = Encoding.Unicode;
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -130,23 +132,23 @@ public sealed partial class NTFS
 
         //          sb.AppendFormat("Signature 2: 0x{0:X4}", ntfs_bb.signature2).AppendLine();
 
-        Metadata = new FileSystem();
+        metadata = new FileSystem();
 
         if(ntfsBb.jump[0]    == 0xEB &&
            ntfsBb.jump[1]    > 0x4E  &&
            ntfsBb.jump[1]    < 0x80  &&
            ntfsBb.signature2 == 0xAA55)
         {
-            Metadata.Bootable = true;
+            metadata.Bootable = true;
             string bootChk = Sha1Context.Data(ntfsBb.boot_code, out _);
             sb.AppendLine(Localization.Volume_is_bootable);
             sb.AppendFormat(Localization.Boot_code_SHA1_0, bootChk).AppendLine();
         }
 
-        Metadata.ClusterSize  = (uint)(ntfsBb.spc      * ntfsBb.bps);
-        Metadata.Clusters     = (ulong)(ntfsBb.sectors / ntfsBb.spc);
-        Metadata.VolumeSerial = $"{ntfsBb.serial_no:X16}";
-        Metadata.Type         = FS_TYPE;
+        metadata.ClusterSize  = (uint)(ntfsBb.spc      * ntfsBb.bps);
+        metadata.Clusters     = (ulong)(ntfsBb.sectors / ntfsBb.spc);
+        metadata.VolumeSerial = $"{ntfsBb.serial_no:X16}";
+        metadata.Type         = FS_TYPE;
 
         information = sb.ToString();
     }

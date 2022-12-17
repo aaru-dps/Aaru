@@ -120,10 +120,12 @@ public sealed partial class PascalPlugin
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding = encoding ?? new Apple2();
         var sbInformation = new StringBuilder();
+        metadata    = new FileSystem();
         information = "";
         _multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
@@ -202,7 +204,7 @@ public sealed partial class PascalPlugin
 
         imagePlugin.ReadSectors(partition.Start, _multiplier * 2, out byte[] boot);
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(boot),
             Clusters    = (ulong)volEntry.Blocks,

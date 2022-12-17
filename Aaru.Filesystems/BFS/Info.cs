@@ -83,10 +83,12 @@ public sealed partial class BeFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -217,7 +219,7 @@ public sealed partial class BeFS
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Clusters     = (ulong)besb.num_blocks,
             ClusterSize  = besb.block_size,

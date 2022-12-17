@@ -81,11 +81,12 @@ public sealed partial class BTRFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
         var sbInformation = new StringBuilder();
-        Metadata    = new FileSystem();
+        metadata    = new FileSystem();
         information = "";
 
         ulong sbSectorOff  = 0x10000 / imagePlugin.Info.SectorSize;
@@ -183,7 +184,7 @@ public sealed partial class BTRFS
 
         information = sbInformation.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Clusters            = btrfsSb.total_bytes / btrfsSb.sectorsize,
             ClusterSize         = btrfsSb.sectorsize,
@@ -193,6 +194,6 @@ public sealed partial class BTRFS
             Type                = FS_TYPE
         };
 
-        Metadata.FreeClusters = Metadata.Clusters - (btrfsSb.bytes_used / btrfsSb.sectorsize);
+        metadata.FreeClusters = metadata.Clusters - (btrfsSb.bytes_used / btrfsSb.sectorsize);
     }
 }

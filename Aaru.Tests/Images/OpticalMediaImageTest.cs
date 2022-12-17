@@ -8,14 +8,17 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using Aaru.Tests.Filesystems;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using NUnit.Framework;
+using File = System.IO.File;
+using Partition = Aaru.CommonTypes.Partition;
+using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.Tests.Images;
 
@@ -201,33 +204,33 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                                string.Format(Localization.Could_not_instantiate_filesystem_for_0,
                                                              testFile));
 
-                                fs.GetInformation(image, partition, out _, null);
+                                fs.GetInformation(image, partition, null, out _, out FileSystem fsMetadata);
 
                                 if(track.FileSystems[i].ApplicationId != null)
                                     Assert.AreEqual(track.FileSystems[i].ApplicationId,
-                                                    fs.Metadata.ApplicationIdentifier,
+                                                    fsMetadata.ApplicationIdentifier,
                                                     string.Format(Localization.Application_ID_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].Bootable, fs.Metadata.Bootable,
+                                Assert.AreEqual(track.FileSystems[i].Bootable, fsMetadata.Bootable,
                                                 string.Format(Localization.Bootable_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].Clusters, fs.Metadata.Clusters,
+                                Assert.AreEqual(track.FileSystems[i].Clusters, fsMetadata.Clusters,
                                                 string.Format(Localization.Clusters_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].ClusterSize, fs.Metadata.ClusterSize,
+                                Assert.AreEqual(track.FileSystems[i].ClusterSize, fsMetadata.ClusterSize,
                                                 string.Format(Localization.Cluster_size_0, testFile));
 
                                 if(track.FileSystems[i].SystemId != null)
-                                    Assert.AreEqual(track.FileSystems[i].SystemId, fs.Metadata.SystemIdentifier,
+                                    Assert.AreEqual(track.FileSystems[i].SystemId, fsMetadata.SystemIdentifier,
                                                     string.Format(Localization.System_ID_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].Type, fs.Metadata.Type,
+                                Assert.AreEqual(track.FileSystems[i].Type, fsMetadata.Type,
                                                 string.Format(Localization.Filesystem_type_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].VolumeName, fs.Metadata.VolumeName,
+                                Assert.AreEqual(track.FileSystems[i].VolumeName, fsMetadata.VolumeName,
                                                 string.Format(Localization.Volume_name_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].VolumeSerial, fs.Metadata.VolumeSerial,
+                                Assert.AreEqual(track.FileSystems[i].VolumeSerial, fsMetadata.VolumeSerial,
                                                 string.Format(Localization.Volume_serial_0, testFile));
 
                                 if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem rofs)

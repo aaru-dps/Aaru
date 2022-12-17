@@ -54,10 +54,12 @@ public sealed partial class XboxFatPlugin
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = Encoding.UTF8;
         information = "";
+        metadata    = new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -103,7 +105,7 @@ public sealed partial class XboxFatPlugin
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type = FS_TYPE,
             ClusterSize = (uint)(fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
@@ -112,6 +114,6 @@ public sealed partial class XboxFatPlugin
             VolumeSerial = $"{fatxSb.id:X8}"
         };
 
-        Metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / Metadata.ClusterSize;
+        metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / metadata.ClusterSize;
     }
 }

@@ -59,10 +59,12 @@ public sealed partial class BFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
 
         var         sb    = new StringBuilder();
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bfsSbSector);
@@ -106,7 +108,7 @@ public sealed partial class BFS
         sb.AppendFormat(Localization.Filesystem_name_0, bfsSb.s_fsname).AppendLine();
         sb.AppendFormat(Localization.Volume_name_0, bfsSb.s_volume).AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type        = FS_TYPE,
             VolumeName  = bfsSb.s_volume,

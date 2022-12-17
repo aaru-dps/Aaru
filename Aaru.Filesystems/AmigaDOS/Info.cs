@@ -165,11 +165,12 @@ public sealed partial class AmigaDOSPlugin
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         var sbInformation = new StringBuilder();
-        Metadata    = new FileSystem();
+        metadata    = new FileSystem();
         information = null;
         ErrorNumber errno = imagePlugin.ReadSectors(0 + partition.Start, 2, out byte[] bootBlockSectors);
 
@@ -278,42 +279,42 @@ public sealed partial class AmigaDOSPlugin
         {
             case 0:
                 sbInformation.Append(Localization.Amiga_Original_File_System);
-                Metadata.Type = FS_TYPE_OFS;
+                metadata.Type = FS_TYPE_OFS;
 
                 break;
             case 1:
                 sbInformation.Append(Localization.Amiga_Fast_File_System);
-                Metadata.Type = FS_TYPE_FFS;
+                metadata.Type = FS_TYPE_FFS;
 
                 break;
             case 2:
                 sbInformation.Append(Localization.Amiga_Original_File_System_with_international_characters);
-                Metadata.Type = FS_TYPE_OFS;
+                metadata.Type = FS_TYPE_OFS;
 
                 break;
             case 3:
                 sbInformation.Append(Localization.Amiga_Fast_File_System_with_international_characters);
-                Metadata.Type = FS_TYPE_FFS;
+                metadata.Type = FS_TYPE_FFS;
 
                 break;
             case 4:
                 sbInformation.Append(Localization.Amiga_Original_File_System_with_directory_cache);
-                Metadata.Type = FS_TYPE_OFS;
+                metadata.Type = FS_TYPE_OFS;
 
                 break;
             case 5:
                 sbInformation.Append(Localization.Amiga_Fast_File_System_with_directory_cache);
-                Metadata.Type = FS_TYPE_FFS;
+                metadata.Type = FS_TYPE_FFS;
 
                 break;
             case 6:
                 sbInformation.Append(Localization.Amiga_Original_File_System_with_long_filenames);
-                Metadata.Type = FS_TYPE_OFS2;
+                metadata.Type = FS_TYPE_OFS2;
 
                 break;
             case 7:
                 sbInformation.Append(Localization.Amiga_Fast_File_System_with_long_filenames);
-                Metadata.Type = FS_TYPE_FFS2;
+                metadata.Type = FS_TYPE_FFS2;
 
                 break;
         }
@@ -365,17 +366,17 @@ public sealed partial class AmigaDOSPlugin
         sbInformation.AppendFormat(Localization.Root_block_checksum_is_0, rootBlk.checksum).AppendLine();
         information = sbInformation.ToString();
 
-        Metadata.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
+        metadata.CreationDate = DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks);
 
-        Metadata.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
+        metadata.ModificationDate = DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks);
 
-        Metadata.Dirty       = rootBlk.bitmapFlag != 0xFFFFFFFF;
-        Metadata.Clusters    = blocks;
-        Metadata.ClusterSize = blockSize;
-        Metadata.VolumeName  = diskName;
-        Metadata.Bootable    = bsum == bootBlk.checksum;
+        metadata.Dirty       = rootBlk.bitmapFlag != 0xFFFFFFFF;
+        metadata.Clusters    = blocks;
+        metadata.ClusterSize = blockSize;
+        metadata.VolumeName  = diskName;
+        metadata.Bootable    = bsum == bootBlk.checksum;
 
         // Useful as a serial
-        Metadata.VolumeSerial = $"{rootBlk.checksum:X8}";
+        metadata.VolumeSerial = $"{rootBlk.checksum:X8}";
     }
 }

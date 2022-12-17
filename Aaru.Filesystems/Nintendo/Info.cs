@@ -62,12 +62,13 @@ public sealed partial class NintendoPlugin
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding = encoding ?? Encoding.GetEncoding("shift_jis");
         var sbInformation = new StringBuilder();
         information = "";
-        Metadata    = new FileSystem();
+        metadata    = new FileSystem();
 
         var fields = new NintendoFields();
 
@@ -324,11 +325,11 @@ public sealed partial class NintendoPlugin
                           AppendLine();
 
         information           = sbInformation.ToString();
-        Metadata.Bootable     = true;
-        Metadata.Clusters     = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048;
-        Metadata.ClusterSize  = 2048;
-        Metadata.Type         = wii ? FS_TYPE_WII : FS_TYPE_NGC;
-        Metadata.VolumeName   = fields.Title;
-        Metadata.VolumeSerial = fields.DiscId;
+        metadata.Bootable     = true;
+        metadata.Clusters     = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048;
+        metadata.ClusterSize  = 2048;
+        metadata.Type         = wii ? FS_TYPE_WII : FS_TYPE_NGC;
+        metadata.VolumeName   = fields.Title;
+        metadata.VolumeSerial = fields.DiscId;
     }
 }

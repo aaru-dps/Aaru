@@ -58,10 +58,12 @@ public sealed partial class PFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         information = "";
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
+        metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(2 + partition.Start, out byte[] rootBlockSector);
 
         if(errno != ErrorNumber.NoError)
@@ -70,25 +72,25 @@ public sealed partial class PFS
         RootBlock rootBlock = Marshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
         var sbInformation = new StringBuilder();
-        Metadata = new FileSystem();
+        metadata = new FileSystem();
 
         switch(rootBlock.diskType)
         {
             case AFS_DISK:
             case MUAF_DISK:
                 sbInformation.Append(Localization.Professional_File_System_v1);
-                Metadata.Type = FS_TYPE;
+                metadata.Type = FS_TYPE;
 
                 break;
             case PFS2_DISK:
                 sbInformation.Append(Localization.Professional_File_System_v2);
-                Metadata.Type = FS_TYPE;
+                metadata.Type = FS_TYPE;
 
                 break;
             case PFS_DISK:
             case MUPFS_DISK:
                 sbInformation.Append(Localization.Professional_File_System_v3);
-                Metadata.Type = FS_TYPE;
+                metadata.Type = FS_TYPE;
 
                 break;
         }
@@ -116,12 +118,12 @@ public sealed partial class PFS
 
         information = sbInformation.ToString();
 
-        Metadata.CreationDate =
+        metadata.CreationDate =
             DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick);
 
-        Metadata.FreeClusters = rootBlock.blocksfree;
-        Metadata.Clusters     = rootBlock.diskSize;
-        Metadata.ClusterSize  = imagePlugin.Info.SectorSize;
-        Metadata.VolumeName   = StringHandlers.PascalToString(rootBlock.diskname, Encoding);
+        metadata.FreeClusters = rootBlock.blocksfree;
+        metadata.Clusters     = rootBlock.diskSize;
+        metadata.ClusterSize  = imagePlugin.Info.SectorSize;
+        metadata.VolumeName   = StringHandlers.PascalToString(rootBlock.diskname, Encoding);
     }
 }

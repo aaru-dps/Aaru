@@ -61,11 +61,13 @@ public sealed partial class Fossil
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         // Technically everything on Plan 9 from Bell Labs is in UTF-8
         Encoding    = Encoding.UTF8;
         information = "";
+        metadata    = new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -93,7 +95,7 @@ public sealed partial class Fossil
 
         ulong sbLocation = (hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize)) + partition.Start;
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type        = FS_TYPE,
             ClusterSize = hdr.blockSize,
@@ -116,7 +118,7 @@ public sealed partial class Fossil
                 sb.AppendFormat(Localization.Next_root_block_0, fsb.next).AppendLine();
                 sb.AppendFormat(Localization.Current_root_block_0, fsb.current).AppendLine();
                 sb.AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(fsb.name, Encoding)).AppendLine();
-                Metadata.VolumeName = StringHandlers.CToString(fsb.name, Encoding);
+                metadata.VolumeName = StringHandlers.CToString(fsb.name, Encoding);
             }
         }
 

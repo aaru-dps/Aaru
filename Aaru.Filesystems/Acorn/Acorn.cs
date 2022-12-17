@@ -28,7 +28,6 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -37,8 +36,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Acorn's Advanced Data Filing System (ADFS)</summary>
 public sealed partial class AcornADFS : IFilesystem
 {
-    /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.AcornADFS_Name;
     /// <inheritdoc />

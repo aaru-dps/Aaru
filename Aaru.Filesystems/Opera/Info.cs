@@ -63,12 +63,14 @@ public sealed partial class OperaFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         // TODO: Find correct default encoding
         Encoding    = Encoding.ASCII;
         information = "";
-        var superBlockMetadata = new StringBuilder();
+        metadata    = new FileSystem();
+        var superBlockmetadata = new StringBuilder();
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
 
@@ -84,53 +86,53 @@ public sealed partial class OperaFS
         if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC)
             return;
 
-        superBlockMetadata.AppendFormat(Localization.Opera_filesystem_disc).AppendLine();
+        superBlockmetadata.AppendFormat(Localization.Opera_filesystem_disc).AppendLine();
 
         if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, Encoding)))
-            superBlockMetadata.
+            superBlockmetadata.
                 AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(sb.volume_label, Encoding)).
                 AppendLine();
 
         if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, Encoding)))
-            superBlockMetadata.
+            superBlockmetadata.
                 AppendFormat(Localization.Volume_comment_0, StringHandlers.CToString(sb.volume_comment, Encoding)).
                 AppendLine();
 
-        superBlockMetadata.AppendFormat(Localization.Volume_identifier_0_X8, sb.volume_id).AppendLine();
-        superBlockMetadata.AppendFormat(Localization.Block_size_0_bytes, sb.block_size).AppendLine();
+        superBlockmetadata.AppendFormat(Localization.Volume_identifier_0_X8, sb.volume_id).AppendLine();
+        superBlockmetadata.AppendFormat(Localization.Block_size_0_bytes, sb.block_size).AppendLine();
 
         if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
         {
             if(sb.block_size != 2048)
-                superBlockMetadata.
+                superBlockmetadata.
                     AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
                                  sb.block_size, 2048);
         }
         else if(imagePlugin.Info.SectorSize != sb.block_size)
-            superBlockMetadata.
+            superBlockmetadata.
                 AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
                              sb.block_size, imagePlugin.Info.SectorSize);
 
-        superBlockMetadata.
+        superBlockmetadata.
             AppendFormat(Localization.Volume_size_0_blocks_1_bytes, sb.block_count, sb.block_size * sb.block_count).
             AppendLine();
 
         if(sb.block_count > imagePlugin.Info.Sectors)
-            superBlockMetadata.
+            superBlockmetadata.
                 AppendFormat(Localization.WARNING__Filesystem_indicates_0_blocks_while_device_indicates_1_blocks,
                              sb.block_count, imagePlugin.Info.Sectors);
 
-        superBlockMetadata.AppendFormat(Localization.Root_directory_identifier_0, sb.root_dirid).AppendLine();
-        superBlockMetadata.AppendFormat(Localization.Root_directory_block_size_0_bytes, sb.rootdir_bsize).AppendLine();
+        superBlockmetadata.AppendFormat(Localization.Root_directory_identifier_0, sb.root_dirid).AppendLine();
+        superBlockmetadata.AppendFormat(Localization.Root_directory_block_size_0_bytes, sb.rootdir_bsize).AppendLine();
 
-        superBlockMetadata.AppendFormat(Localization.Root_directory_size_0_blocks_1_bytes, sb.rootdir_blocks,
+        superBlockmetadata.AppendFormat(Localization.Root_directory_size_0_blocks_1_bytes, sb.rootdir_blocks,
                                         sb.rootdir_bsize * sb.rootdir_blocks).AppendLine();
 
-        superBlockMetadata.AppendFormat(Localization.Last_root_directory_copy_0, sb.last_root_copy).AppendLine();
+        superBlockmetadata.AppendFormat(Localization.Last_root_directory_copy_0, sb.last_root_copy).AppendLine();
 
-        information = superBlockMetadata.ToString();
+        information = superBlockmetadata.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type        = FS_TYPE,
             VolumeName  = StringHandlers.CToString(sb.volume_label, Encoding),

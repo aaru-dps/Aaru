@@ -67,10 +67,12 @@ public sealed partial class Xia
     const string FS_TYPE = "xia";
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -113,7 +115,7 @@ public sealed partial class Xia
 
         sb.AppendFormat(Localization.First_kernel_zone_0, supblk.s_firstkernzone).AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment),
             Clusters    = supblk.s_nzones,

@@ -57,10 +57,12 @@ public sealed partial class Squash
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.UTF8;
         information = "";
+        metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
         if(errno != ErrorNumber.NoError)
@@ -134,7 +136,7 @@ public sealed partial class Squash
 
         information = sbInformation.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type         = FS_TYPE,
             CreationDate = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),

@@ -28,7 +28,6 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -37,8 +36,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements identification for the SGI Extent FileSystem</summary>
 public sealed partial class EFS : IFilesystem
 {
-    /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />

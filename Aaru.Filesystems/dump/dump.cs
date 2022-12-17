@@ -33,7 +33,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 using ufs_daddr_t = System.Int32;
 
@@ -50,8 +49,6 @@ public sealed partial class dump : IFilesystem
     public string Name => Localization.dump_Name;
     /// <inheritdoc />
     public Guid Id => new("E53B4D28-C858-4800-B092-DDAE80D361B9");
-    /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 }

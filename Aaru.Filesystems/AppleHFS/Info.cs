@@ -97,10 +97,12 @@ public sealed partial class AppleHFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("macintosh");
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -273,38 +275,38 @@ public sealed partial class AppleHFS
 
         information = sb.ToString();
 
-        Metadata = new FileSystem();
+        metadata = new FileSystem();
 
         if(mdb.drVolBkUp > 0)
         {
-            Metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drVolBkUp);
+            metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drVolBkUp);
         }
 
-        Metadata.Bootable = bootBlockInfo   != null || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
+        metadata.Bootable = bootBlockInfo   != null || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
                             mdb.drFndrInfo5 != 0;
 
-        Metadata.Clusters    = mdb.drNmAlBlks;
-        Metadata.ClusterSize = mdb.drAlBlkSiz;
+        metadata.Clusters    = mdb.drNmAlBlks;
+        metadata.ClusterSize = mdb.drAlBlkSiz;
 
         if(mdb.drCrDate > 0)
         {
-            Metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
+            metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
         }
 
-        Metadata.Dirty        = !mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted);
-        Metadata.Files        = mdb.drFilCnt;
-        Metadata.FreeClusters = mdb.drFreeBks;
+        metadata.Dirty        = !mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted);
+        metadata.Files        = mdb.drFilCnt;
+        metadata.FreeClusters = mdb.drFreeBks;
 
         if(mdb.drLsMod > 0)
         {
-            Metadata.ModificationDate = DateHandlers.MacToDateTime(mdb.drLsMod);
+            metadata.ModificationDate = DateHandlers.MacToDateTime(mdb.drLsMod);
         }
 
-        Metadata.Type       = FS_TYPE;
-        Metadata.VolumeName = StringHandlers.PascalToString(mdb.drVN, Encoding);
+        metadata.Type       = FS_TYPE;
+        metadata.VolumeName = StringHandlers.PascalToString(mdb.drVN, Encoding);
 
         if(mdb.drFndrInfo6 != 0 &&
            mdb.drFndrInfo7 != 0)
-            Metadata.VolumeSerial = $"{mdb.drFndrInfo6:X8}{mdb.drFndrInfo7:X8}";
+            metadata.VolumeSerial = $"{mdb.drFndrInfo6:X8}{mdb.drFndrInfo7:X8}";
     }
 }

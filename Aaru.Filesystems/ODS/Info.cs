@@ -98,10 +98,12 @@ public sealed partial class ODS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -257,7 +259,7 @@ public sealed partial class ODS
         sb.AppendFormat(Localization.File_protection_0, homeblock.fileprot).AppendLine();
         sb.AppendFormat(Localization.Record_protection_0, homeblock.recprot).AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type         = FS_TYPE,
             ClusterSize  = (uint)(homeblock.cluster * 512),
@@ -268,12 +270,12 @@ public sealed partial class ODS
 
         if(homeblock.credate > 0)
         {
-            Metadata.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
+            metadata.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
         }
 
         if(homeblock.revdate > 0)
         {
-            Metadata.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
+            metadata.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
         }
 
         information = sb.ToString();

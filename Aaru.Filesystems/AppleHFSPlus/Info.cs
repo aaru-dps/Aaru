@@ -97,10 +97,12 @@ public sealed partial class AppleHFSPlus
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = Encoding.BigEndianUnicode;
         information = "";
+        metadata    = new FileSystem();
 
         var vh = new VolumeHeader();
 
@@ -259,43 +261,43 @@ public sealed partial class AppleHFSPlus
                vh.drFndrInfo7 != 0)
                 sb.AppendFormat(Localization.Mac_OS_X_Volume_ID_0_1, vh.drFndrInfo6, vh.drFndrInfo7).AppendLine();
 
-            Metadata = new FileSystem();
+            metadata = new FileSystem();
 
             if(vh.backupDate > 0)
             {
-                Metadata.BackupDate = DateHandlers.MacToDateTime(vh.backupDate);
+                metadata.BackupDate = DateHandlers.MacToDateTime(vh.backupDate);
             }
 
-            Metadata.Bootable    |= vh.drFndrInfo0 != 0 || vh.drFndrInfo3 != 0 || vh.drFndrInfo5 != 0;
-            Metadata.Clusters    =  vh.totalBlocks;
-            Metadata.ClusterSize =  vh.blockSize;
+            metadata.Bootable    |= vh.drFndrInfo0 != 0 || vh.drFndrInfo3 != 0 || vh.drFndrInfo5 != 0;
+            metadata.Clusters    =  vh.totalBlocks;
+            metadata.ClusterSize =  vh.blockSize;
 
             if(vh.createDate > 0)
             {
-                Metadata.CreationDate = DateHandlers.MacToDateTime(vh.createDate);
+                metadata.CreationDate = DateHandlers.MacToDateTime(vh.createDate);
             }
 
-            Metadata.Dirty        = (vh.attributes & 0x100) != 0x100;
-            Metadata.Files        = vh.fileCount;
-            Metadata.FreeClusters = vh.freeBlocks;
+            metadata.Dirty        = (vh.attributes & 0x100) != 0x100;
+            metadata.Files        = vh.fileCount;
+            metadata.FreeClusters = vh.freeBlocks;
 
             if(vh.modifyDate > 0)
             {
-                Metadata.ModificationDate = DateHandlers.MacToDateTime(vh.modifyDate);
+                metadata.ModificationDate = DateHandlers.MacToDateTime(vh.modifyDate);
             }
 
-            Metadata.Type = vh.signature switch
+            metadata.Type = vh.signature switch
             {
                 0x482B => FS_TYPE_HFSP,
                 0x4858 => FS_TYPE_HFSX,
-                _      => Metadata.Type
+                _      => metadata.Type
             };
 
             if(vh.drFndrInfo6 != 0 &&
                vh.drFndrInfo7 != 0)
-                Metadata.VolumeSerial = $"{vh.drFndrInfo6:X8}{vh.drFndrInfo7:X8}";
+                metadata.VolumeSerial = $"{vh.drFndrInfo6:X8}{vh.drFndrInfo7:X8}";
 
-            Metadata.SystemIdentifier = Encoding.ASCII.GetString(vh.lastMountedVersion);
+            metadata.SystemIdentifier = Encoding.ASCII.GetString(vh.lastMountedVersion);
         }
         else
         {

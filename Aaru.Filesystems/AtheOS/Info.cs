@@ -73,10 +73,12 @@ public sealed partial class AtheOS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -145,7 +147,7 @@ public sealed partial class AtheOS
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Clusters     = (ulong)afsSb.num_blocks,
             ClusterSize  = afsSb.block_size,

@@ -67,11 +67,12 @@ public sealed partial class APFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding = Encoding.UTF8;
         var sbInformation = new StringBuilder();
-        Metadata    = new FileSystem();
+        metadata    = new FileSystem();
         information = "";
 
         if(partition.Start >= partition.End)
@@ -105,7 +106,7 @@ public sealed partial class APFS
 
         information = sbInformation.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Bootable    = false,
             Clusters    = nxSb.containerBlocks,

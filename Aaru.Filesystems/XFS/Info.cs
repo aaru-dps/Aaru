@@ -115,10 +115,12 @@ public sealed partial class XFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -207,7 +209,7 @@ public sealed partial class XFS
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type         = FS_TYPE,
             ClusterSize  = xfsSb.blocksize,

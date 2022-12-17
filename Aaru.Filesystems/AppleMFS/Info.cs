@@ -58,10 +58,12 @@ public sealed partial class AppleMFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? new MacRoman();
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -153,25 +155,25 @@ public sealed partial class AppleMFS
 
         information = sb.ToString();
 
-        Metadata = new FileSystem();
+        metadata = new FileSystem();
 
         if(mdb.drLsBkUp > 0)
         {
-            Metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drLsBkUp);
+            metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drLsBkUp);
         }
 
-        Metadata.Bootable    = bootBlockInfo != null;
-        Metadata.Clusters    = mdb.drNmAlBlks;
-        Metadata.ClusterSize = mdb.drAlBlkSiz;
+        metadata.Bootable    = bootBlockInfo != null;
+        metadata.Clusters    = mdb.drNmAlBlks;
+        metadata.ClusterSize = mdb.drAlBlkSiz;
 
         if(mdb.drCrDate > 0)
         {
-            Metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
+            metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
         }
 
-        Metadata.Files        = mdb.drNmFls;
-        Metadata.FreeClusters = mdb.drFreeBks;
-        Metadata.Type         = FS_TYPE;
-        Metadata.VolumeName   = mdb.drVN;
+        metadata.Files        = mdb.drNmFls;
+        metadata.FreeClusters = mdb.drFreeBks;
+        metadata.Type         = FS_TYPE;
+        metadata.VolumeName   = mdb.drVN;
     }
 }

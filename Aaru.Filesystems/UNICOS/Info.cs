@@ -79,10 +79,12 @@ public sealed partial class UNICOS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -129,7 +131,7 @@ public sealed partial class UNICOS
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type             = FS_TYPE,
             ClusterSize      = 4096,
@@ -138,6 +140,6 @@ public sealed partial class UNICOS
             ModificationDate = DateHandlers.UnixToDateTime(unicosSb.s_time)
         };
 
-        Metadata.Dirty |= unicosSb.s_error > 0;
+        metadata.Dirty |= unicosSb.s_error > 0;
     }
 }

@@ -32,7 +32,6 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -42,8 +41,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of IBM's High Performance File System (HPFS)</summary>
 public sealed partial class HPFS : IFilesystem
 {
-    /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />

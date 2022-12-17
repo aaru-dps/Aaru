@@ -66,10 +66,12 @@ public sealed partial class HPOFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("ibm850");
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -212,7 +214,7 @@ public sealed partial class HPOFS
         sb.AppendFormat(Localization.Filesystem_version_0_1, mib.major, mib.minor).AppendLine();
         sb.AppendFormat(Localization.Volume_can_be_filled_up_to_0, vib.percentFull).AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Clusters               = mib.sectors / bpb.spc,
             ClusterSize            = (uint)(bpb.bps * bpb.spc),

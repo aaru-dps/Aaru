@@ -52,9 +52,9 @@ public sealed partial class AppleDOS : IReadOnlyFilesystem
     Vtoc         _vtoc;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
-    /// <inheritdoc />
     public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.AppleDOS_Name;
     /// <inheritdoc />

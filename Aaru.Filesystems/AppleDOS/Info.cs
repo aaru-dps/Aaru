@@ -64,11 +64,13 @@ public sealed partial class AppleDOS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? new Apple2();
         information = "";
         var sb = new StringBuilder();
+        metadata = new FileSystem();
 
         int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
@@ -97,7 +99,7 @@ public sealed partial class AppleDOS
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Bootable    = true,
             Clusters    = imagePlugin.Info.Sectors,

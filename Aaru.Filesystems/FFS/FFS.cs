@@ -29,7 +29,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 using time_t = System.Int32;
 using ufs_daddr_t = System.Int32;
@@ -42,8 +41,6 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class FFSPlugin : IFilesystem
 {
-    /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />

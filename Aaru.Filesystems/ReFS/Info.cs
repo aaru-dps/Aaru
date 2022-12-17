@@ -68,10 +68,12 @@ public sealed partial class ReFS : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = Encoding.UTF8;
         information = "";
+        metadata    = new FileSystem();
 
         uint sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
 
@@ -136,7 +138,7 @@ public sealed partial class ReFS : IFilesystem
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type        = FS_TYPE,
             ClusterSize = vhdr.bytesPerSector * vhdr.sectorsPerCluster,

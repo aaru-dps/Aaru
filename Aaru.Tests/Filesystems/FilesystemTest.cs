@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using NUnit.Framework;
+using File = System.IO.File;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Tests.Filesystems;
 
@@ -228,29 +230,29 @@ public abstract class FilesystemTest
 
                 Assert.NotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
-                fs.GetInformation(image, partition, out _, null);
+                fs.GetInformation(image, partition, null, out _, out FileSystem fsMetadata);
 
                 if(test.ApplicationId != null)
-                    Assert.AreEqual(test.ApplicationId, fs.Metadata.ApplicationIdentifier,
+                    Assert.AreEqual(test.ApplicationId, fsMetadata.ApplicationIdentifier,
                                     string.Format(Localization.Application_ID_0, testFile));
 
-                Assert.AreEqual(test.Bootable, fs.Metadata.Bootable, string.Format(Localization.Bootable_0, testFile));
-                Assert.AreEqual(test.Clusters, fs.Metadata.Clusters, string.Format(Localization.Clusters_0, testFile));
+                Assert.AreEqual(test.Bootable, fsMetadata.Bootable, string.Format(Localization.Bootable_0, testFile));
+                Assert.AreEqual(test.Clusters, fsMetadata.Clusters, string.Format(Localization.Clusters_0, testFile));
 
-                Assert.AreEqual(test.ClusterSize, fs.Metadata.ClusterSize,
+                Assert.AreEqual(test.ClusterSize, fsMetadata.ClusterSize,
                                 string.Format(Localization.Cluster_size_0, testFile));
 
                 if(test.SystemId != null)
-                    Assert.AreEqual(test.SystemId, fs.Metadata.SystemIdentifier,
+                    Assert.AreEqual(test.SystemId, fsMetadata.SystemIdentifier,
                                     string.Format(Localization.System_ID_0, testFile));
 
-                Assert.AreEqual(_fileSystemType ?? test.Type, fs.Metadata.Type,
+                Assert.AreEqual(_fileSystemType ?? test.Type, fsMetadata.Type,
                                 string.Format(Localization.Filesystem_type_0, testFile));
 
-                Assert.AreEqual(test.VolumeName, fs.Metadata.VolumeName,
+                Assert.AreEqual(test.VolumeName, fsMetadata.VolumeName,
                                 string.Format(Localization.Volume_name_0, testFile));
 
-                Assert.AreEqual(test.VolumeSerial, fs.Metadata.VolumeSerial,
+                Assert.AreEqual(test.VolumeSerial, fsMetadata.VolumeSerial,
                                 string.Format(Localization.Volume_serial_0, testFile));
             }
         });

@@ -74,10 +74,12 @@ public sealed partial class NILFS2
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.UTF8;
         information = "";
+        metadata    = new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 512)
             return;
@@ -136,7 +138,7 @@ public sealed partial class NILFS2
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type             = FS_TYPE,
             ClusterSize      = (uint)(1 << (int)(nilfsSb.log_block_size + 10)),
@@ -147,8 +149,8 @@ public sealed partial class NILFS2
         };
 
         if(nilfsSb.creator_os == 0)
-            Metadata.SystemIdentifier = "Linux";
+            metadata.SystemIdentifier = "Linux";
 
-        Metadata.Clusters = nilfsSb.dev_size / Metadata.ClusterSize;
+        metadata.Clusters = nilfsSb.dev_size / metadata.ClusterSize;
     }
 }

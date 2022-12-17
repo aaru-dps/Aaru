@@ -1138,10 +1138,12 @@ public sealed partial class CPM
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("IBM437");
         information = "";
+        metadata    = new FileSystem();
 
         // As the identification is so complex, just call Identify() and relay on its findings
         if(!Identify(imagePlugin, partition) ||
@@ -1237,27 +1239,27 @@ public sealed partial class CPM
             sb.AppendFormat(Localization.Volume_updated_on_0, DateHandlers.CpmToDateTime(_labelUpdateDate)).
                AppendLine();
 
-        Metadata             =  new FileSystem();
-        Metadata.Bootable    |= _workingDefinition.sofs > 0 || _workingDefinition.ofs > 0;
-        Metadata.ClusterSize =  (uint)(128 << _dpb.bsh);
+        metadata             =  new FileSystem();
+        metadata.Bootable    |= _workingDefinition.sofs > 0 || _workingDefinition.ofs > 0;
+        metadata.ClusterSize =  (uint)(128 << _dpb.bsh);
 
         if(_dpb.dsm > 0)
-            Metadata.Clusters = _dpb.dsm;
+            metadata.Clusters = _dpb.dsm;
         else
-            Metadata.Clusters = partition.End - partition.Start;
+            metadata.Clusters = partition.End - partition.Start;
 
         if(_labelCreationDate != null)
         {
-            Metadata.CreationDate = DateHandlers.CpmToDateTime(_labelCreationDate);
+            metadata.CreationDate = DateHandlers.CpmToDateTime(_labelCreationDate);
         }
 
         if(_labelUpdateDate != null)
         {
-            Metadata.ModificationDate = DateHandlers.CpmToDateTime(_labelUpdateDate);
+            metadata.ModificationDate = DateHandlers.CpmToDateTime(_labelUpdateDate);
         }
 
-        Metadata.Type       = FS_TYPE;
-        Metadata.VolumeName = _label;
+        metadata.Type       = FS_TYPE;
+        metadata.VolumeName = _label;
 
         information = sb.ToString();
     }

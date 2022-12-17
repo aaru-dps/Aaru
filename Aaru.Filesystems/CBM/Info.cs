@@ -89,7 +89,8 @@ public sealed partial class CBM
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = new PETSCII();
         information = "";
@@ -99,7 +100,7 @@ public sealed partial class CBM
 
         sbInformation.AppendLine(Localization.Commodore_file_system);
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type        = FS_TYPE,
             Clusters    = imagePlugin.Info.Sectors,
@@ -138,8 +139,8 @@ public sealed partial class CBM
             sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmHdr.name, Encoding)).
                           AppendLine();
 
-            Metadata.VolumeName   = StringHandlers.CToString(cbmHdr.name, Encoding);
-            Metadata.VolumeSerial = $"{cbmHdr.diskId}";
+            metadata.VolumeName   = StringHandlers.CToString(cbmHdr.name, Encoding);
+            metadata.VolumeSerial = $"{cbmHdr.diskId}";
         }
         else
         {
@@ -166,8 +167,8 @@ public sealed partial class CBM
             sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmBam.name, Encoding)).
                           AppendLine();
 
-            Metadata.VolumeName   = StringHandlers.CToString(cbmBam.name, Encoding);
-            Metadata.VolumeSerial = $"{cbmBam.diskId}";
+            metadata.VolumeName   = StringHandlers.CToString(cbmBam.name, Encoding);
+            metadata.VolumeSerial = $"{cbmBam.diskId}";
         }
 
         information = sbInformation.ToString();

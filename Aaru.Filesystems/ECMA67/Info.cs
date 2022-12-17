@@ -67,10 +67,12 @@ public sealed partial class ECMA67
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
         information = "";
+        metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(6, out byte[] sector);
 
         if(errno != ErrorNumber.NoError)
@@ -87,7 +89,7 @@ public sealed partial class ECMA67
 
         sbInformation.AppendFormat(Localization.Volume_owner_0, Encoding.ASCII.GetString(vol.owner)).AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type        = FS_TYPE,
             ClusterSize = 256,

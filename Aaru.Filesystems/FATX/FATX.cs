@@ -58,9 +58,9 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
     Superblock                                             _superblock;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
-    /// <inheritdoc />
     public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.XboxFatPlugin_Name;
     /// <inheritdoc />

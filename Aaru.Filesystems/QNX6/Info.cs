@@ -69,10 +69,12 @@ public sealed partial class QNX6
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
         var  sb          = new StringBuilder();
         uint sectors     = QNX6_SUPER_BLOCK_SIZE / imagePlugin.Info.SectorSize;
         uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
@@ -108,7 +110,7 @@ public sealed partial class QNX6
                             audiSb.freeBlocks * audiSb.blockSize, audiSb.numBlocks,
                             audiSb.numBlocks  * audiSb.blockSize).AppendLine();
 
-            Metadata = new FileSystem
+            metadata = new FileSystem
             {
                 Type         = FS_TYPE,
                 Clusters     = audiSb.numBlocks,
@@ -143,7 +145,7 @@ public sealed partial class QNX6
                         qnxSb.freeBlocks * qnxSb.blockSize, qnxSb.numBlocks, qnxSb.numBlocks * qnxSb.blockSize).
            AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type             = FS_TYPE,
             Clusters         = qnxSb.numBlocks,

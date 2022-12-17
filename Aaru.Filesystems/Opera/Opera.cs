@@ -49,9 +49,9 @@ public sealed partial class OperaFS : IReadOnlyFilesystem
     uint                                                               _volumeBlockSizeRatio;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
-    /// <inheritdoc />
     public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.OperaFS_Name;
     /// <inheritdoc />

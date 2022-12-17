@@ -528,7 +528,7 @@ public sealed partial class Sidecar
 
                     List<FileSystem> lstFs = new();
 
-                    foreach(IFilesystem plugin in plugins.Filesystems.Values)
+                    foreach(Type pluginType in plugins.Filesystems.Values)
                         try
                         {
                             if(_aborted)
@@ -538,14 +538,17 @@ public sealed partial class Sidecar
                                 return;
                             }
 
-                            if(!plugin.Identify(image, partition))
+                            if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
                                 continue;
 
-                            plugin.GetInformation(image, partition, out _, encoding);
-                            lstFs.Add(plugin.Metadata);
-                            Statistics.AddFilesystem(plugin.Metadata.Type);
+                            if(!fs.Identify(image, partition))
+                                continue;
 
-                            dskType = plugin.Metadata.Type switch
+                            fs.GetInformation(image, partition, encoding, out _, out FileSystem fsMetadata);
+                            lstFs.Add(fsMetadata);
+                            Statistics.AddFilesystem(fsMetadata.Type);
+
+                            dskType = fsMetadata.Type switch
                             {
                                 "Opera"                        => MediaType.ThreeDO,
                                 "PC Engine filesystem"         => MediaType.SuperCDROM2,
@@ -586,7 +589,7 @@ public sealed partial class Sidecar
                     Sequence = xmlTrk.Sequence.Number
                 };
 
-                foreach(IFilesystem plugin in plugins.Filesystems.Values)
+                foreach(Type pluginType in plugins.Filesystems.Values)
                     try
                     {
                         if(_aborted)
@@ -596,14 +599,17 @@ public sealed partial class Sidecar
                             return;
                         }
 
-                        if(!plugin.Identify(image, xmlPart))
+                        if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
                             continue;
 
-                        plugin.GetInformation(image, xmlPart, out _, encoding);
-                        lstFs.Add(plugin.Metadata);
-                        Statistics.AddFilesystem(plugin.Metadata.Type);
+                        if(!fs.Identify(image, xmlPart))
+                            continue;
 
-                        dskType = plugin.Metadata.Type switch
+                        fs.GetInformation(image, xmlPart, encoding, out _, out FileSystem fsMetadata);
+                        lstFs.Add(fsMetadata);
+                        Statistics.AddFilesystem(fsMetadata.Type);
+
+                        dskType = fsMetadata.Type switch
                         {
                             "Opera"                        => MediaType.ThreeDO,
                             "PC Engine filesystem"         => MediaType.SuperCDROM2,

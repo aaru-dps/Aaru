@@ -51,11 +51,11 @@ public sealed partial class LisaFS : IReadOnlyFilesystem
     /// <inheritdoc />
     public string Name => "Apple Lisa File System";
     /// <inheritdoc />
+    public FileSystem Metadata { get; private set; }
+    /// <inheritdoc />
     public Guid Id => new("7E6034D1-D823-4248-A54D-239742B28391");
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
-    /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 

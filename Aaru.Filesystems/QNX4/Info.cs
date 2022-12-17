@@ -84,10 +84,12 @@ public sealed partial class QNX4
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start + 1, out byte[] sector);
 
         if(errno != ErrorNumber.NoError)
@@ -177,7 +179,7 @@ public sealed partial class QNX4
                       string.Format(Localization.Created_on_0,
                                     DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime)) + "\n";
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type             = FS_TYPE,
             Clusters         = partition.Length,
@@ -186,6 +188,6 @@ public sealed partial class QNX4
             ModificationDate = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_mtime)
         };
 
-        Metadata.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
+        metadata.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
     }
 }

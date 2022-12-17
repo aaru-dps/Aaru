@@ -66,13 +66,14 @@ public sealed partial class exFAT
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
 
         var sb = new StringBuilder();
-        Metadata = new FileSystem();
+        metadata = new FileSystem();
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] vbrSector);
 
@@ -160,11 +161,11 @@ public sealed partial class exFAT
 
         sb.AppendFormat(Localization.Checksum_0_X8, chksector.checksum[0]).AppendLine();
 
-        Metadata.ClusterSize  = (uint)((1 << vbr.sectorShift) * (1 << vbr.clusterShift));
-        Metadata.Clusters     = vbr.clusterHeapLength;
-        Metadata.Dirty        = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
-        Metadata.Type         = FS_TYPE;
-        Metadata.VolumeSerial = $"{vbr.volumeSerial:X8}";
+        metadata.ClusterSize  = (uint)((1 << vbr.sectorShift) * (1 << vbr.clusterShift));
+        metadata.Clusters     = vbr.clusterHeapLength;
+        metadata.Dirty        = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
+        metadata.Type         = FS_TYPE;
+        metadata.VolumeSerial = $"{vbr.volumeSerial:X8}";
 
         information = sb.ToString();
     }

@@ -259,11 +259,12 @@ public sealed partial class AcornADFS
     // TODO: Support big directories (ADFS-G?)
     // TODO: Find the real freemap on volumes with DiscRecord, as DiscRecord's discid may be empty but this one isn't
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
         var sbInformation = new StringBuilder();
-        Metadata    = new FileSystem();
+        metadata    = new FileSystem();
         information = "";
         ErrorNumber errno;
 
@@ -321,7 +322,7 @@ public sealed partial class AcornADFS
                     namebytes[(i * 2) + 1] = oldMap1.name[i];
                 }
 
-                Metadata = new FileSystem
+                metadata = new FileSystem
                 {
                     Bootable    = oldMap1.boot != 0, // Or not?
                     Clusters    = bytes / imagePlugin.Info.SectorSize,
@@ -420,12 +421,12 @@ public sealed partial class AcornADFS
 
                 if(oldMap1.discId > 0)
                 {
-                    Metadata.VolumeSerial = $"{oldMap1.discId:X4}";
+                    metadata.VolumeSerial = $"{oldMap1.discId:X4}";
                     sbInformation.AppendFormat(Localization.Volume_ID_0_X4, oldMap1.discId).AppendLine();
                 }
 
                 if(!ArrayHelpers.ArrayIsNullOrEmpty(namebytes))
-                    Metadata.VolumeName = StringHandlers.CToString(namebytes, Encoding);
+                    metadata.VolumeName = StringHandlers.CToString(namebytes, Encoding);
 
                 information = sbInformation.ToString();
 
@@ -527,7 +528,7 @@ public sealed partial class AcornADFS
         if(bytes > imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize)
             return;
 
-        Metadata = new FileSystem();
+        metadata = new FileSystem();
 
         sbInformation.AppendLine(Localization.Acorn_Advanced_Disc_Filing_System);
         sbInformation.AppendLine();
@@ -548,22 +549,22 @@ public sealed partial class AcornADFS
 
         if(drSb.disc_id > 0)
         {
-            Metadata.VolumeSerial = $"{drSb.disc_id:X4}";
+            metadata.VolumeSerial = $"{drSb.disc_id:X4}";
             sbInformation.AppendFormat(Localization.Volume_ID_0_X4, drSb.disc_id).AppendLine();
         }
 
         if(!ArrayHelpers.ArrayIsNullOrEmpty(drSb.disc_name))
         {
             string discname = StringHandlers.CToString(drSb.disc_name, Encoding);
-            Metadata.VolumeName = discname;
+            metadata.VolumeName = discname;
             sbInformation.AppendFormat(Localization.Volume_name_0, discname).AppendLine();
         }
 
         information = sbInformation.ToString();
 
-        Metadata.Bootable    |= drSb.bootoption != 0; // Or not?
-        Metadata.Clusters    =  bytes / (ulong)(1 << drSb.log2secsize);
-        Metadata.ClusterSize =  (uint)(1 << drSb.log2secsize);
-        Metadata.Type        =  FS_TYPE;
+        metadata.Bootable    |= drSb.bootoption != 0; // Or not?
+        metadata.Clusters    =  bytes / (ulong)(1 << drSb.log2secsize);
+        metadata.ClusterSize =  (uint)(1 << drSb.log2secsize);
+        metadata.Type        =  FS_TYPE;
     }
 }

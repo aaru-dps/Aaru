@@ -74,10 +74,12 @@ public sealed partial class F2FS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = Encoding.Unicode;
         information = "";
+        metadata    = new FileSystem();
 
         if(imagePlugin.Info.SectorSize is < F2FS_MIN_SECTOR or > F2FS_MAX_SECTOR)
             return;
@@ -135,7 +137,7 @@ public sealed partial class F2FS
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type                   = FS_TYPE,
             SystemIdentifier       = Encoding.ASCII.GetString(f2fsSb.version),

@@ -63,11 +63,13 @@ public sealed partial class PCFX
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         // Always Shift-JIS
         Encoding    = Encoding.GetEncoding("shift_jis");
         information = "";
+        metadata    = new FileSystem();
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] sector);
 
@@ -112,7 +114,7 @@ public sealed partial class PCFX
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type                = FS_TYPE,
             Clusters            = partition.Length,

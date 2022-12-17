@@ -641,44 +641,47 @@ public sealed class MainWindowViewModel : ViewModelBase
                                         if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
                                             continue;
 
-                                        fs.GetInformation(imageFormat, partition, out string information, null);
+                                        fs.GetInformation(imageFormat, partition, null, out string information,
+                                                          out CommonTypes.AaruMetadata.FileSystem fsMetadata);
 
-                                        var fsPlugin = fs as IReadOnlyFilesystem;
+                                        var rofs = fs as IReadOnlyFilesystem;
 
-                                        if(fsPlugin != null)
+                                        if(rofs != null)
                                         {
                                             ErrorNumber error =
-                                                fsPlugin.Mount(imageFormat, partition, null,
-                                                               new Dictionary<string, string>(), null);
+                                                rofs.Mount(imageFormat, partition, null,
+                                                           new Dictionary<string, string>(), null);
 
                                             if(error != ErrorNumber.NoError)
-                                                fsPlugin = null;
+                                                rofs = null;
                                         }
 
                                         var filesystemModel = new FileSystemModel
                                         {
-                                            VolumeName =
-                                                fs.Metadata.VolumeName is null ? $"{fs.Metadata.Type}"
-                                                    : $"{fs.Metadata.VolumeName} ({fs.Metadata.Type})",
+                                            VolumeName = rofs?.Metadata.VolumeName is null
+                                                             ? fsMetadata.VolumeName is null ? $"{fsMetadata.Type}"
+                                                                   : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
+                                                             : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
                                             Filesystem         = fs,
-                                            ReadOnlyFilesystem = fsPlugin,
-                                            ViewModel          = new FileSystemViewModel(fs.Metadata, information)
+                                            ReadOnlyFilesystem = rofs,
+                                            ViewModel = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata,
+                                                                                    information)
                                         };
 
                                         // TODO: Trap expanding item
-                                        if(fsPlugin != null)
+                                        if(rofs != null)
                                         {
                                             filesystemModel.Roots.Add(new SubdirectoryModel
                                             {
                                                 Name   = "/",
                                                 Path   = "",
-                                                Plugin = fsPlugin
+                                                Plugin = rofs
                                             });
 
                                             Statistics.AddCommand("ls");
                                         }
 
-                                        Statistics.AddFilesystem(fs.Metadata.Type);
+                                        Statistics.AddFilesystem(rofs?.Metadata.Type ?? fsMetadata.Type);
                                         partitionModel.FileSystems.Add(filesystemModel);
                                     }
                             }
@@ -713,42 +716,45 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
                                     continue;
 
-                                fs.GetInformation(imageFormat, wholePart, out string information, null);
+                                fs.GetInformation(imageFormat, wholePart, null, out string information,
+                                                  out CommonTypes.AaruMetadata.FileSystem fsMetadata);
 
-                                var fsPlugin = fs as IReadOnlyFilesystem;
+                                var rofs = fs as IReadOnlyFilesystem;
 
-                                if(fsPlugin != null)
+                                if(rofs != null)
                                 {
-                                    ErrorNumber error = fsPlugin.Mount(imageFormat, wholePart, null,
-                                                                       new Dictionary<string, string>(), null);
+                                    ErrorNumber error = rofs.Mount(imageFormat, wholePart, null,
+                                                                   new Dictionary<string, string>(), null);
 
                                     if(error != ErrorNumber.NoError)
-                                        fsPlugin = null;
+                                        rofs = null;
                                 }
 
                                 var filesystemModel = new FileSystemModel
                                 {
-                                    VolumeName = fs.Metadata.VolumeName is null ? $"{fs.Metadata.Type}"
-                                                     : $"{fs.Metadata.VolumeName} ({fs.Metadata.Type})",
-                                    Filesystem         = fs,
-                                    ReadOnlyFilesystem = fsPlugin,
-                                    ViewModel          = new FileSystemViewModel(fs.Metadata, information)
+                                    VolumeName = rofs?.Metadata.VolumeName is null
+                                                     ? fsMetadata.VolumeName is null ? $"{fsMetadata.Type}"
+                                                           : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
+                                                     : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
+                                    Filesystem = fs,
+                                    ReadOnlyFilesystem = rofs,
+                                    ViewModel = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata, information)
                                 };
 
                                 // TODO: Trap expanding item
-                                if(fsPlugin != null)
+                                if(rofs != null)
                                 {
                                     filesystemModel.Roots.Add(new SubdirectoryModel
                                     {
                                         Name   = "/",
                                         Path   = "",
-                                        Plugin = fsPlugin
+                                        Plugin = rofs
                                     });
 
                                     Statistics.AddCommand("ls");
                                 }
 
-                                Statistics.AddFilesystem(fs.Metadata.Type);
+                                Statistics.AddFilesystem(rofs?.Metadata.Type ?? fsMetadata.Type);
                                 imageModel.PartitionSchemesOrFileSystems.Add(filesystemModel);
                             }
                     }

@@ -59,9 +59,9 @@ public sealed partial class AppleMFS : IReadOnlyFilesystem
     byte[]                      _bitmapTags;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
-    /// <inheritdoc />
     public string Name => Localization.AppleMFS_Name;
+    /// <inheritdoc />
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Guid Id => new("36405F8D-0D26-4066-6538-5DBF5D065C3A");
     /// <inheritdoc />

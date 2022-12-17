@@ -73,11 +73,13 @@ public sealed partial class AODOS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         information = "";
         Encoding    = Encoding.GetEncoding("koi8-r");
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
+        metadata = new FileSystem();
 
         if(errno != ErrorNumber.NoError)
             return;
@@ -88,7 +90,7 @@ public sealed partial class AODOS
 
         sbInformation.AppendLine(Localization.Alexander_Osipov_DOS_file_system);
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type         = FS_TYPE,
             Clusters     = imagePlugin.Info.Sectors,

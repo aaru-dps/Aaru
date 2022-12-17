@@ -72,10 +72,12 @@ public sealed partial class extFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -122,7 +124,7 @@ public sealed partial class extFS
         sb.AppendFormat(Localization.Log_zone_size_0, extSb.logzonesize);
         sb.AppendFormat(Localization.Max_zone_size_0, extSb.maxsize);
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type         = FS_TYPE,
             FreeClusters = extSb.freecountblk,

@@ -30,7 +30,6 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 using blkno_t = System.Int64;
 using daddr_t = System.Int64;
@@ -45,8 +44,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the Cray UNICOS filesystem</summary>
 public sealed partial class UNICOS : IFilesystem
 {
-    /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public Encoding Encoding { get; private set; }
     /// <inheritdoc />

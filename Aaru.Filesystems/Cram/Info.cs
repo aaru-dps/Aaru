@@ -61,11 +61,13 @@ public sealed partial class Cram
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
+        metadata = new FileSystem();
 
         if(errno != ErrorNumber.NoError)
             return;
@@ -103,7 +105,7 @@ public sealed partial class Cram
 
         information = sbInformation.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             VolumeName   = StringHandlers.CToString(crSb.name, Encoding),
             Type         = FS_TYPE,

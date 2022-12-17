@@ -66,10 +66,12 @@ public sealed partial class HPFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("ibm850");
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -223,7 +225,7 @@ public sealed partial class HPFS
         if((sp.flags2 & 0x80) == 0x80)
             sb.AppendLine(Localization.Unknown_flag_0x80_on_flags2_is_active);
 
-        Metadata = new FileSystem();
+        metadata = new FileSystem();
 
         // Theoretically everything from BPB to SB is boot code, should I hash everything or only the sector loaded by BIOS itself?
         if(bpb.jump[0]    == 0xEB &&
@@ -231,19 +233,19 @@ public sealed partial class HPFS
            bpb.jump[1]    < 0x80  &&
            bpb.signature2 == 0xAA55)
         {
-            Metadata.Bootable = true;
+            metadata.Bootable = true;
             string bootChk = Sha1Context.Data(bpb.boot_code, out byte[] _);
             sb.AppendLine(Localization.Volume_is_bootable);
             sb.AppendFormat(Localization.Boot_code_SHA1_0, bootChk).AppendLine();
         }
 
-        Metadata.Dirty            |= (sp.flags1 & 0x01) == 0x01;
-        Metadata.Clusters         =  hpfsSb.sectors;
-        Metadata.ClusterSize      =  bpb.bps;
-        Metadata.Type             =  FS_TYPE;
-        Metadata.VolumeName       =  StringHandlers.CToString(bpb.volume_label, Encoding);
-        Metadata.VolumeSerial     =  $"{bpb.serial_no:X8}";
-        Metadata.SystemIdentifier =  StringHandlers.CToString(bpb.oem_name);
+        metadata.Dirty            |= (sp.flags1 & 0x01) == 0x01;
+        metadata.Clusters         =  hpfsSb.sectors;
+        metadata.ClusterSize      =  bpb.bps;
+        metadata.Type             =  FS_TYPE;
+        metadata.VolumeName       =  StringHandlers.CToString(bpb.volume_label, Encoding);
+        metadata.VolumeSerial     =  $"{bpb.serial_no:X8}";
+        metadata.SystemIdentifier =  StringHandlers.CToString(bpb.oem_name);
 
         information = sb.ToString();
     }

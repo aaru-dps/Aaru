@@ -61,12 +61,13 @@ public sealed partial class PCEnginePlugin
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("shift_jis");
         information = "";
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type        = FS_TYPE,
             Clusters    = (partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048,

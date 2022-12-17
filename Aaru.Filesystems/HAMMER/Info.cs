@@ -67,10 +67,12 @@ public sealed partial class HAMMER
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -107,7 +109,7 @@ public sealed partial class HAMMER
         sb.AppendFormat(Localization.First_volume_buffer_starts_at_0, superBlock.vol_buf_beg).AppendLine();
         sb.AppendFormat(Localization.Volume_ends_at_0, superBlock.vol_buf_end).AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Clusters     = partition.Size / HAMMER_BIGBLOCK_SIZE,
             ClusterSize  = HAMMER_BIGBLOCK_SIZE,
@@ -127,9 +129,9 @@ public sealed partial class HAMMER
 
             sb.AppendFormat(Localization.Filesystem_has_0_inodes_used, superBlock.vol0_stat_inodes).AppendLine();
 
-            Metadata.Clusters     = (ulong)superBlock.vol0_stat_bigblocks;
-            Metadata.FreeClusters = (ulong)superBlock.vol0_stat_freebigblocks;
-            Metadata.Files        = (ulong)superBlock.vol0_stat_inodes;
+            metadata.Clusters     = (ulong)superBlock.vol0_stat_bigblocks;
+            metadata.FreeClusters = (ulong)superBlock.vol0_stat_freebigblocks;
+            metadata.Files        = (ulong)superBlock.vol0_stat_inodes;
         }
 
         // 0 ?

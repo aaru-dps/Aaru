@@ -64,9 +64,9 @@ public sealed partial class FAT : IReadOnlyFilesystem
     bool                                                           _useFirstFat;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
-    /// <inheritdoc />
     public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Name => Localization.FAT_Name;
     /// <inheritdoc />

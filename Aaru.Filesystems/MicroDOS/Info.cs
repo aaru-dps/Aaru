@@ -65,10 +65,12 @@ public sealed partial class MicroDOS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("koi8-r");
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -88,7 +90,7 @@ public sealed partial class MicroDOS
         sb.AppendFormat(Localization.Volume_contains_0_files, block0.files).AppendLine();
         sb.AppendFormat(Localization.First_used_block_is_0, block0.firstUsedBlock).AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type         = FS_TYPE,
             ClusterSize  = 512,

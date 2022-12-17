@@ -126,10 +126,12 @@ public sealed partial class LisaFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = new LisaRoman();
         information = "";
+        metadata    = new FileSystem();
         var sb = new StringBuilder();
 
         if(imagePlugin.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true)
@@ -378,27 +380,27 @@ public sealed partial class LisaFS
 
             information = sb.ToString();
 
-            Metadata = new FileSystem();
+            metadata = new FileSystem();
 
             if(DateTime.Compare(infoMddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
             {
-                Metadata.BackupDate = infoMddf.dtvb;
+                metadata.BackupDate = infoMddf.dtvb;
             }
 
-            Metadata.Clusters    = infoMddf.vol_size;
-            Metadata.ClusterSize = (uint)(infoMddf.clustersize * infoMddf.datasize);
+            metadata.Clusters    = infoMddf.vol_size;
+            metadata.ClusterSize = (uint)(infoMddf.clustersize * infoMddf.datasize);
 
             if(DateTime.Compare(infoMddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
             {
-                Metadata.CreationDate = infoMddf.dtvc;
+                metadata.CreationDate = infoMddf.dtvc;
             }
 
-            Metadata.Dirty        = infoMddf.vol_left_mounted != 0;
-            Metadata.Files        = infoMddf.filecount;
-            Metadata.FreeClusters = infoMddf.freecount;
-            Metadata.Type         = FS_TYPE;
-            Metadata.VolumeName   = infoMddf.volname;
-            Metadata.VolumeSerial = $"{infoMddf.volid:X16}";
+            metadata.Dirty        = infoMddf.vol_left_mounted != 0;
+            metadata.Files        = infoMddf.filecount;
+            metadata.FreeClusters = infoMddf.freecount;
+            metadata.Type         = FS_TYPE;
+            metadata.VolumeName   = infoMddf.volname;
+            metadata.VolumeSerial = $"{infoMddf.volid:X16}";
 
             return;
         }

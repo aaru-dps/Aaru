@@ -128,10 +128,12 @@ public sealed partial class ProDOSPlugin
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? new Apple2c();
         information = "";
+        metadata    = new FileSystem();
         var  sbInformation = new StringBuilder();
         uint multiplier    = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
@@ -294,7 +296,7 @@ public sealed partial class ProDOSPlugin
 
         information = sbInformation.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             VolumeName = rootDirectoryKeyBlock.header.volume_name,
             Files      = rootDirectoryKeyBlock.header.file_count,
@@ -302,12 +304,12 @@ public sealed partial class ProDOSPlugin
             Type       = FS_TYPE
         };
 
-        Metadata.ClusterSize = (uint)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                                      Metadata.Clusters);
+        metadata.ClusterSize = (uint)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                      metadata.Clusters);
 
         if(!dateCorrect)
             return;
 
-        Metadata.CreationDate = rootDirectoryKeyBlock.header.creation_time;
+        metadata.CreationDate = rootDirectoryKeyBlock.header.creation_time;
     }
 }

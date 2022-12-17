@@ -59,9 +59,9 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
     ushort                                    _blockSize;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
-    /// <inheritdoc />
     public Encoding Encoding { get; private set; }
+    /// <inheritdoc />
+    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Name => "ISO9660 Filesystem";
     /// <inheritdoc />

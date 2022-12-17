@@ -63,10 +63,12 @@ public sealed partial class SolarFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
 
         var         sb    = new StringBuilder();
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bpbSector);
@@ -154,7 +156,7 @@ public sealed partial class SolarFS
         sb.AppendFormat(Localization._0_sectors_per_track, bpb.sptrk).AppendLine();
         sb.AppendFormat(Localization.Volume_name_0, bpb.vol_name).AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type        = FS_TYPE,
             Clusters    = bpb.sectors,

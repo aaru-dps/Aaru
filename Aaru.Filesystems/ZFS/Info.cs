@@ -99,11 +99,13 @@ public sealed partial class ZFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         // ZFS is always UTF-8
         Encoding    = Encoding.UTF8;
         information = "";
+        metadata    = new FileSystem();
         ErrorNumber errno;
 
         if(imagePlugin.Info.SectorSize < 512)
@@ -154,18 +156,18 @@ public sealed partial class ZFS
 
         information = sb.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type = FS_TYPE
         };
 
         if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj))
-            Metadata.VolumeName = (string)tmpObj.value;
+            metadata.VolumeName = (string)tmpObj.value;
 
         if(decodedNvList.TryGetValue("guid", out tmpObj))
-            Metadata.VolumeSerial = $"{(ulong)tmpObj.value}";
+            metadata.VolumeSerial = $"{(ulong)tmpObj.value}";
 
         if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
-            Metadata.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
+            metadata.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
     }
 }

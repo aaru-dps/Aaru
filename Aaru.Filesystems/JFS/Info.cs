@@ -63,10 +63,12 @@ public sealed partial class JFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
         var         sb          = new StringBuilder();
         uint        bootSectors = JFS_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
         ErrorNumber errno       = imagePlugin.ReadSector(partition.Start + bootSectors, out byte[] sector);
@@ -166,7 +168,7 @@ public sealed partial class JFS
 
         sb.AppendFormat(Localization.Volume_UUID_0, jfsSb.s_uuid).AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type             = FS_TYPE,
             Clusters         = jfsSb.s_size,
@@ -178,7 +180,7 @@ public sealed partial class JFS
         };
 
         if(jfsSb.s_state != 0)
-            Metadata.Dirty = true;
+            metadata.Dirty = true;
 
         information = sb.ToString();
     }

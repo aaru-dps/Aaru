@@ -194,10 +194,12 @@ public sealed partial class UDF
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         information = "";
         ErrorNumber errno;
+        metadata = new FileSystem();
 
         // UDF is always UTF-8
         Encoding = Encoding.UTF8;
@@ -366,7 +368,7 @@ public sealed partial class UDF
                                    Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10),
                                    Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10)).AppendLine();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type                  = FS_TYPE,
             ApplicationIdentifier = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
@@ -379,7 +381,7 @@ public sealed partial class UDF
             SystemIdentifier      = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
         };
 
-        Metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / Metadata.ClusterSize;
+        metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / metadata.ClusterSize;
 
         information = sbInformation.ToString();
     }

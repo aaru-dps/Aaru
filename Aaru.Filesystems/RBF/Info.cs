@@ -87,10 +87,12 @@ public sealed partial class RBF : IFilesystem
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
         information = "";
+        metadata    = new FileSystem();
 
         if(imagePlugin.Info.SectorSize < 256)
             return;
@@ -192,7 +194,7 @@ public sealed partial class RBF : IFilesystem
             sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(rbf9000Sb.rid_name, Encoding)).
                AppendLine();
 
-            Metadata = new FileSystem
+            metadata = new FileSystem
             {
                 Type             = FS_TYPE,
                 Bootable         = rbf9000Sb.rid_bootfile > 0,
@@ -255,7 +257,7 @@ public sealed partial class RBF : IFilesystem
             sb.AppendFormat(Localization.Path_descriptor_options_0, StringHandlers.CToString(rbfSb.dd_opt, Encoding)).
                AppendLine();
 
-            Metadata = new FileSystem
+            metadata = new FileSystem
             {
                 Type         = FS_TYPE,
                 Bootable     = LSNToUInt32(rbfSb.dd_bt) > 0 && rbfSb.dd_bsz > 0,

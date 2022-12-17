@@ -56,10 +56,12 @@ public sealed partial class SFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         information = "";
         Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-1");
+        metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] rootBlockSector);
 
         if(errno != ErrorNumber.NoError)
@@ -106,7 +108,7 @@ public sealed partial class SFS
 
         information = sbInformation.ToString();
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             CreationDate = DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
             Clusters     = rootBlock.totalblocks,

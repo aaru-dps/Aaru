@@ -36,12 +36,14 @@ using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Localization;
 using Spectre.Console;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Commands.Filesystem;
 
@@ -309,11 +311,11 @@ sealed class FilesystemInfoCommand : Command
                                         AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)
                                         }[/]");
 
-                                        fs.GetInformation(imageFormat, partitionsList[i], out information,
-                                                          encodingClass);
+                                        fs.GetInformation(imageFormat, partitionsList[i], encodingClass,
+                                                          out information, out FileSystem fsMetadata);
 
                                         AaruConsole.Write(information);
-                                        Statistics.AddFilesystem(fs.Metadata.Type);
+                                        Statistics.AddFilesystem(fsMetadata.Type);
                                     }
 
                                 break;
@@ -327,9 +329,12 @@ sealed class FilesystemInfoCommand : Command
                                     continue;
 
                                 AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
-                                fs.GetInformation(imageFormat, partitionsList[i], out information, encodingClass);
+
+                                fs.GetInformation(imageFormat, partitionsList[i], encodingClass, out information,
+                                                  out FileSystem fsMetadata);
+
                                 AaruConsole.Write("{0}", information);
-                                Statistics.AddFilesystem(fs.Metadata.Type);
+                                Statistics.AddFilesystem(fsMetadata.Type);
 
                                 break;
                             }
@@ -373,9 +378,12 @@ sealed class FilesystemInfoCommand : Command
                                     continue;
 
                                 AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
-                                fs.GetInformation(imageFormat, wholePart, out information, encodingClass);
+
+                                fs.GetInformation(imageFormat, wholePart, encodingClass, out information,
+                                                  out FileSystem fsMetadata);
+
                                 AaruConsole.Write(information);
-                                Statistics.AddFilesystem(fs.Metadata.Type);
+                                Statistics.AddFilesystem(fsMetadata.Type);
                             }
 
                         break;
@@ -389,9 +397,12 @@ sealed class FilesystemInfoCommand : Command
                             break;
 
                         AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
-                        fs.GetInformation(imageFormat, wholePart, out information, encodingClass);
+
+                        fs.GetInformation(imageFormat, wholePart, encodingClass, out information,
+                                          out FileSystem fsMetadata);
+
                         AaruConsole.Write(information);
-                        Statistics.AddFilesystem(fs.Metadata.Type);
+                        Statistics.AddFilesystem(fsMetadata.Type);
 
                         break;
                     }

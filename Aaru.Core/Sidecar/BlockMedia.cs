@@ -707,29 +707,37 @@ public sealed partial class Sidecar
 
                 List<FileSystem> lstFs = new();
 
-                foreach(IFilesystem plugin in plugins.Filesystems.Values)
+                foreach(Type pluginType in plugins.Filesystems.Values)
                     try
                     {
                         if(_aborted)
                             return;
 
-                        if(!plugin.Identify(image, partition))
+                        if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
                             continue;
 
-                        if(plugin is IReadOnlyFilesystem fsPlugin &&
-                           fsPlugin.Mount(image, partition, encoding, null, null) == ErrorNumber.NoError)
+                        if(!fs.Identify(image, partition))
+                            continue;
+
+                        if(fs is IReadOnlyFilesystem rofs &&
+                           rofs.Mount(image, partition, encoding, null, null) == ErrorNumber.NoError)
                         {
-                            UpdateStatus(string.Format(Localization.Core.Mounting_0, fsPlugin.Metadata.Type));
+                            UpdateStatus(string.Format(Localization.Core.Mounting_0, rofs.Metadata.Type));
 
-                            fsPlugin.Metadata.Contents = Files(fsPlugin);
+                            rofs.Metadata.Contents = Files(rofs);
 
-                            fsPlugin.Unmount();
+                            lstFs.Add(rofs.Metadata);
+                            Statistics.AddFilesystem(rofs.Metadata.Type);
+
+                            rofs.Unmount();
                         }
                         else
-                            plugin.GetInformation(image, partition, out _, encoding);
+                        {
+                            fs.GetInformation(image, partition, encoding, out _, out FileSystem fsMetadata);
 
-                        lstFs.Add(plugin.Metadata);
-                        Statistics.AddFilesystem(plugin.Metadata.Type);
+                            lstFs.Add(fsMetadata);
+                            Statistics.AddFilesystem(fsMetadata.Type);
+                        }
                     }
                     #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch
@@ -764,29 +772,37 @@ public sealed partial class Sidecar
 
             List<FileSystem> lstFs = new();
 
-            foreach(IFilesystem plugin in plugins.Filesystems.Values)
+            foreach(Type pluginType in plugins.Filesystems.Values)
                 try
                 {
                     if(_aborted)
                         return;
 
-                    if(!plugin.Identify(image, wholePart))
+                    if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
                         continue;
 
-                    if(plugin is IReadOnlyFilesystem fsPlugin &&
-                       fsPlugin.Mount(image, wholePart, encoding, null, null) == ErrorNumber.NoError)
+                    if(!fs.Identify(image, wholePart))
+                        continue;
+
+                    if(fs is IReadOnlyFilesystem rofs &&
+                       rofs.Mount(image, wholePart, encoding, null, null) == ErrorNumber.NoError)
                     {
-                        UpdateStatus(string.Format(Localization.Core.Mounting_0, fsPlugin.Metadata.Type));
+                        UpdateStatus(string.Format(Localization.Core.Mounting_0, rofs.Metadata.Type));
 
-                        fsPlugin.Metadata.Contents = Files(fsPlugin);
+                        rofs.Metadata.Contents = Files(rofs);
 
-                        fsPlugin.Unmount();
+                        lstFs.Add(rofs.Metadata);
+                        Statistics.AddFilesystem(rofs.Metadata.Type);
+
+                        rofs.Unmount();
                     }
                     else
-                        plugin.GetInformation(image, wholePart, out _, encoding);
+                    {
+                        fs.GetInformation(image, wholePart, encoding, out _, out FileSystem fsMetadata);
 
-                    lstFs.Add(plugin.Metadata);
-                    Statistics.AddFilesystem(plugin.Metadata.Type);
+                        lstFs.Add(fsMetadata);
+                        Statistics.AddFilesystem(fsMetadata.Type);
+                    }
                 }
                 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch

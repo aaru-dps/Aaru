@@ -69,10 +69,12 @@ public sealed partial class RT11
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
         Encoding    = new Radix50();
         information = "";
+        metadata    = new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -110,7 +112,7 @@ public sealed partial class RT11
 
         imagePlugin.ReadSector(0, out byte[] bootBlock);
 
-        Metadata = new FileSystem
+        metadata = new FileSystem
         {
             Type        = FS_TYPE,
             ClusterSize = (uint)(homeblock.cluster * 512),

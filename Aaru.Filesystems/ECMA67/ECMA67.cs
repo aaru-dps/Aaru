@@ -32,7 +32,6 @@
 
 using System;
 using System.Text;
-using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
@@ -47,8 +46,6 @@ public sealed partial class ECMA67 : IFilesystem
     public string Name => Localization.ECMA67_Name;
     /// <inheritdoc />
     public Guid Id => new("62A2D44A-CBC1-4377-B4B6-28C5C92034A1");
-    /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 }
