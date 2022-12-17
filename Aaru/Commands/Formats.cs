@@ -251,11 +251,16 @@ sealed class FormatsCommand : Command
 
         table.AddColumn("Archive format");
 
-        foreach(KeyValuePair<string, IArchive> kvp in plugins.Archives)
+        foreach(KeyValuePair<string, Type> kvp in plugins.Archives)
+        {
+            if(Activator.CreateInstance(kvp.Value) is not IArchive archive)
+                continue;
+
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(archive.Id.ToString(), Markup.Escape(archive.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(archive.Name));
+        }
 
         AnsiConsole.Write(table);
 
