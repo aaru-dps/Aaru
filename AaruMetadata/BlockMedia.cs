@@ -77,7 +77,7 @@ public class BlockMedia
     public ulong?              SectorsPerTrack       { get; set; }
     public List<BlockTrack>    Track                 { get; set; }
     public string              CopyProtection        { get; set; }
-    public DimensionsNew       Dimensions            { get; set; }
+    public Dimensions          Dimensions            { get; set; }
     public List<Partition>     FileSystemInformation { get; set; }
     public List<DumpHardware>  DumpHardware          { get; set; }
     public string              MediaType             { get; set; }

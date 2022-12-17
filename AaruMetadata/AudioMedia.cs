@@ -58,7 +58,7 @@ public class AudioMedia
     public string             AccoustID      { get; set; }
     public List<AudioBlock>   Blocks         { get; set; }
     public string             CopyProtection { get; set; }
-    public DimensionsNew      Dimensions     { get; set; }
+    public Dimensions         Dimensions     { get; set; }
     public Scans              Scans          { get; set; }
     public List<DumpHardware> DumpHardware   { get; set; }
 

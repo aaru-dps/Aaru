@@ -61,7 +61,7 @@ public class LinearMedia
     public string             Model           { get; set; }
     public string             Package         { get; set; }
     public string             Interface       { get; set; }
-    public DimensionsNew      Dimensions      { get; set; }
+    public Dimensions         Dimensions      { get; set; }
     public Scans              Scans           { get; set; }
     public List<DumpHardware> DumpHardware    { get; set; }
     public Pcmcia             Pcmcia          { get; set; }

@@ -66,7 +66,7 @@ public class OpticalDisc
     public uint[]             Tracks               { get; set; }
     public uint               Sessions             { get; set; }
     public string             CopyProtection       { get; set; }
-    public DimensionsNew      Dimensions           { get; set; }
+    public Dimensions         Dimensions           { get; set; }
     public Case               Case                 { get; set; }
     public Scans              Scans                { get; set; }
     public Dump               Pfi                  { get; set; }
