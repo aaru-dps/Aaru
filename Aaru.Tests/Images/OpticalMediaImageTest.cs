@@ -188,14 +188,14 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                             for(int i = 0; i < track.FileSystems.Length; i++)
                             {
                                 PluginBase plugins = GetPluginBase.Instance;
-                                bool found = plugins.PluginsList.TryGetValue(idPlugins[i], out IFilesystem plugin);
+                                bool       found   = plugins.Filesystems.TryGetValue(idPlugins[i], out Type pluginType);
 
                                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                                 // It is not the case, it changes
                                 if(!found)
                                     continue;
 
-                                var fs = Activator.CreateInstance(plugin.GetType()) as IFilesystem;
+                                var fs = Activator.CreateInstance(pluginType) as IFilesystem;
 
                                 Assert.NotNull(fs,
                                                string.Format(Localization.Could_not_instantiate_filesystem_for_0,
@@ -230,7 +230,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 Assert.AreEqual(track.FileSystems[i].VolumeSerial, fs.Metadata.VolumeSerial,
                                                 string.Format(Localization.Volume_serial_0, testFile));
 
-                                if(Activator.CreateInstance(plugin.GetType()) is not IReadOnlyFilesystem rofs)
+                                if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem rofs)
                                 {
                                     if(track.FileSystems[i].Contents     != null ||
                                        track.FileSystems[i].ContentsJson != null ||

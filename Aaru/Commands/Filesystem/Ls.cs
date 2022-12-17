@@ -279,8 +279,8 @@ sealed class LsCommand : Command
                     AaruConsole.WriteLine(UI.Filesystem_not_identified);
                 else
                 {
-                    IReadOnlyFilesystem plugin;
-                    ErrorNumber         error = ErrorNumber.InvalidArgument;
+                    Type        pluginType;
+                    ErrorNumber error = ErrorNumber.InvalidArgument;
 
                     if(idPlugins.Count > 1)
                     {
@@ -288,15 +288,12 @@ sealed class LsCommand : Command
                         }[/]");
 
                         foreach(string pluginName in idPlugins)
-                            if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
+                            if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
                             {
-                                AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, plugin.Name)}[/]");
-
-                                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                                     Invoke(Array.Empty<object>());
-
-                                if(fs == null)
+                                if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
                                     continue;
+
+                                AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
 
                                 Core.Spectre.ProgressSingleSpinner(ctx =>
                                 {
@@ -318,18 +315,12 @@ sealed class LsCommand : Command
                     }
                     else
                     {
-                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
+                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out pluginType);
 
-                        if(plugin == null)
+                        if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
                             continue;
 
-                        AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, plugin.Name)}[/]");
-
-                        var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                             Invoke(Array.Empty<object>());
-
-                        if(fs == null)
-                            continue;
+                        AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
 
                         Core.Spectre.ProgressSingleSpinner(ctx =>
                         {

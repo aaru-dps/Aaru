@@ -709,7 +709,7 @@ public sealed partial class Sidecar
 
                 List<FileSystem> lstFs = new();
 
-                foreach(IFilesystem plugin in plugins.PluginsList.Values)
+                foreach(IFilesystem plugin in plugins.Filesystems.Values)
                     try
                     {
                         if(_aborted)
@@ -766,7 +766,7 @@ public sealed partial class Sidecar
 
             List<FileSystem> lstFs = new();
 
-            foreach(IFilesystem plugin in plugins.PluginsList.Values)
+            foreach(IFilesystem plugin in plugins.Filesystems.Values)
                 try
                 {
                     if(_aborted)

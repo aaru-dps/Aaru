@@ -593,7 +593,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                 bool         checkRaw = false;
                 List<string> idPlugins;
-                IFilesystem  plugin;
+                Type         pluginType;
                 PluginBase   plugins = GetPluginBase.Instance;
 
                 if(partitions.Count == 0)
@@ -636,11 +636,14 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 AaruConsole.WriteLine(string.Format(UI.Identified_by_0_plugins, idPlugins.Count));
 
                                 foreach(string pluginName in idPlugins)
-                                    if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                                    if(plugins.Filesystems.TryGetValue(pluginName, out pluginType))
                                     {
-                                        plugin.GetInformation(imageFormat, partition, out string information, null);
+                                        if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                                            continue;
 
-                                        var fsPlugin = plugin as IReadOnlyFilesystem;
+                                        fs.GetInformation(imageFormat, partition, out string information, null);
+
+                                        var fsPlugin = fs as IReadOnlyFilesystem;
 
                                         if(fsPlugin != null)
                                         {
@@ -655,11 +658,11 @@ public sealed class MainWindowViewModel : ViewModelBase
                                         var filesystemModel = new FileSystemModel
                                         {
                                             VolumeName =
-                                                plugin.Metadata.VolumeName is null ? $"{plugin.Metadata.Type}"
-                                                    : $"{plugin.Metadata.VolumeName} ({plugin.Metadata.Type})",
-                                            Filesystem         = plugin,
+                                                fs.Metadata.VolumeName is null ? $"{fs.Metadata.Type}"
+                                                    : $"{fs.Metadata.VolumeName} ({fs.Metadata.Type})",
+                                            Filesystem         = fs,
                                             ReadOnlyFilesystem = fsPlugin,
-                                            ViewModel          = new FileSystemViewModel(plugin.Metadata, information)
+                                            ViewModel          = new FileSystemViewModel(fs.Metadata, information)
                                         };
 
                                         // TODO: Trap expanding item
@@ -675,7 +678,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                             Statistics.AddCommand("ls");
                                         }
 
-                                        Statistics.AddFilesystem(plugin.Metadata.Type);
+                                        Statistics.AddFilesystem(fs.Metadata.Type);
                                         partitionModel.FileSystems.Add(filesystemModel);
                                     }
                             }
@@ -705,11 +708,14 @@ public sealed class MainWindowViewModel : ViewModelBase
                         AaruConsole.WriteLine(string.Format(UI.Identified_by_0_plugins, idPlugins.Count));
 
                         foreach(string pluginName in idPlugins)
-                            if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                            if(plugins.Filesystems.TryGetValue(pluginName, out pluginType))
                             {
-                                plugin.GetInformation(imageFormat, wholePart, out string information, null);
+                                if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                                    continue;
 
-                                var fsPlugin = plugin as IReadOnlyFilesystem;
+                                fs.GetInformation(imageFormat, wholePart, out string information, null);
+
+                                var fsPlugin = fs as IReadOnlyFilesystem;
 
                                 if(fsPlugin != null)
                                 {
@@ -722,11 +728,11 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                                 var filesystemModel = new FileSystemModel
                                 {
-                                    VolumeName = plugin.Metadata.VolumeName is null ? $"{plugin.Metadata.Type}"
-                                                     : $"{plugin.Metadata.VolumeName} ({plugin.Metadata.Type})",
-                                    Filesystem         = plugin,
+                                    VolumeName = fs.Metadata.VolumeName is null ? $"{fs.Metadata.Type}"
+                                                     : $"{fs.Metadata.VolumeName} ({fs.Metadata.Type})",
+                                    Filesystem         = fs,
                                     ReadOnlyFilesystem = fsPlugin,
-                                    ViewModel          = new FileSystemViewModel(plugin.Metadata, information)
+                                    ViewModel          = new FileSystemViewModel(fs.Metadata, information)
                                 };
 
                                 // TODO: Trap expanding item
@@ -742,7 +748,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                     Statistics.AddCommand("ls");
                                 }
 
-                                Statistics.AddFilesystem(plugin.Metadata.Type);
+                                Statistics.AddFilesystem(fs.Metadata.Type);
                                 imageModel.PartitionSchemesOrFileSystems.Add(filesystemModel);
                             }
                     }

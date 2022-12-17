@@ -74,47 +74,48 @@ public abstract class FsExtractIssueTest
             if(idPlugins.Count == 0)
                 continue;
 
-            IReadOnlyFilesystem plugin;
-            ErrorNumber         error;
+            Type        pluginType;
+            ErrorNumber error;
 
             if(idPlugins.Count > 1)
             {
                 foreach(string pluginName in idPlugins)
-                    if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
+                    if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
                     {
-                        Assert.IsNotNull(plugin, Localization.Could_not_instantiate_filesystem_plugin);
+                        Assert.IsNotNull(pluginType, Localization.Could_not_instantiate_filesystem_plugin);
 
-                        var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                             Invoke(Array.Empty<object>());
+                        var fs = Activator.CreateInstance(pluginType) as IReadOnlyFilesystem;
 
-                        Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
+                        Assert.IsNotNull(fs,
+                                         string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 
                         filesystemFound = true;
 
                         error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                        Assert.AreEqual(ErrorNumber.NoError, error, string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
+                        Assert.AreEqual(ErrorNumber.NoError, error,
+                                        string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
 
                         ExtractFilesInDir("/", fs, Xattrs);
                     }
             }
             else
             {
-                plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
+                plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out pluginType);
 
-                if(plugin is null)
+                if(pluginType is null)
                     continue;
 
-                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                     Invoke(Array.Empty<object>());
+                var fs = Activator.CreateInstance(pluginType) as IReadOnlyFilesystem;
 
-                Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, plugin.Name));
+                Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, fs.Name));
 
                 filesystemFound = true;
 
                 error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                Assert.AreEqual(ErrorNumber.NoError, error, string.Format(Localization.Could_not_mount_0_in_partition_1, plugin.Name, i));
+                Assert.AreEqual(ErrorNumber.NoError, error,
+                                string.Format(Localization.Could_not_mount_0_in_partition_1, fs.Name, i));
 
                 ExtractFilesInDir("/", fs, Xattrs);
             }
@@ -137,7 +138,8 @@ public abstract class FsExtractIssueTest
         {
             error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
-            Assert.AreEqual(ErrorNumber.NoError, error, string.Format(Localization.Error_getting_stat_for_entry_0, entry));
+            Assert.AreEqual(ErrorNumber.NoError, error,
+                            string.Format(Localization.Error_getting_stat_for_entry_0, entry));
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory))
             {
@@ -151,7 +153,8 @@ public abstract class FsExtractIssueTest
                 error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
 
                 Assert.AreEqual(ErrorNumber.NoError, error,
-                                string.Format(Localization.Error_0_getting_extended_attributes_for_entry_1, error, path + "/" + entry));
+                                string.Format(Localization.Error_0_getting_extended_attributes_for_entry_1, error,
+                                              path + "/" + entry));
 
                 if(error == ErrorNumber.NoError)
                     foreach(string xattr in xattrs)
@@ -160,7 +163,8 @@ public abstract class FsExtractIssueTest
                         error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
 
                         Assert.AreEqual(ErrorNumber.NoError, error,
-                                        string.Format(Localization.Error_0_reading_extended_attributes_for_entry_1, error, path + "/" + entry));
+                                        string.Format(Localization.Error_0_reading_extended_attributes_for_entry_1,
+                                                      error, path + "/" + entry));
                     }
             }
 
@@ -168,7 +172,8 @@ public abstract class FsExtractIssueTest
 
             error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
 
-            Assert.AreEqual(ErrorNumber.NoError, error, string.Format(Localization.Error_0_reading_file_1, error, path + "/" + entry));
+            Assert.AreEqual(ErrorNumber.NoError, error,
+                            string.Format(Localization.Error_0_reading_file_1, error, path + "/" + entry));
         }
     }
 }

@@ -97,7 +97,7 @@ public sealed class PluginsViewModel : ViewModelBase
                 Author  = partition.Author
             });
 
-        foreach(IFilesystem filesystem in GetPluginBase.Instance.PluginsList.Values)
+        foreach(IFilesystem filesystem in GetPluginBase.Instance.Filesystems.Values)
             Filesystems.Add(new PluginModel
             {
                 Name    = filesystem.Name,

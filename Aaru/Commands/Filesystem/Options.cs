@@ -88,16 +88,19 @@ sealed class ListOptionsCommand : Command
 
         AaruConsole.WriteLine(UI.Read_only_filesystems_options);
 
-        foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
+        foreach(KeyValuePair<string, Type> kvp in plugins.ReadOnlyFilesystems)
         {
-            List<(string name, Type type, string description)> options = kvp.Value.SupportedOptions.ToList();
+            if(Activator.CreateInstance(kvp.Value) is not IReadOnlyFilesystem fs)
+                continue;
+
+            List<(string name, Type type, string description)> options = fs.SupportedOptions.ToList();
 
             if(options.Count == 0)
                 continue;
 
             var table = new Table
             {
-                Title = new TableTitle(string.Format(UI.Options_for_0, kvp.Value.Name))
+                Title = new TableTitle(string.Format(UI.Options_for_0, fs.Name))
             };
 
             table.AddColumn(UI.Title_Name);

@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
@@ -84,18 +85,23 @@ sealed class ListNamespacesCommand : Command
 
         PluginBase plugins = GetPluginBase.Instance;
 
-        foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in
-                plugins.ReadOnlyFilesystems.Where(kvp => kvp.Value.Namespaces is not null))
+        foreach(KeyValuePair<string, Type> kvp in plugins.ReadOnlyFilesystems)
         {
+            if(Activator.CreateInstance(kvp.Value) is not IReadOnlyFilesystem fs)
+                continue;
+
+            if(fs.Namespaces is null)
+                continue;
+
             Table table = new()
             {
-                Title = new TableTitle(string.Format(UI.Namespaces_for_0, kvp.Value.Name))
+                Title = new TableTitle(string.Format(UI.Namespaces_for_0, fs.Name))
             };
 
             table.AddColumn(UI.Title_Namespace);
             table.AddColumn(UI.Title_Description);
 
-            foreach(KeyValuePair<string, string> @namespace in kvp.Value.Namespaces.OrderBy(t => t.Key))
+            foreach(KeyValuePair<string, string> @namespace in fs.Namespaces.OrderBy(t => t.Key))
                 table.AddRow(@namespace.Key, @namespace.Value);
 
             AnsiConsole.Write(table);

@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
@@ -153,7 +154,7 @@ sealed class FormatsCommand : Command
         table = new Table
         {
             Title = new TableTitle(string.Format(UI.Supported_filesystems_for_identification_and_information_only_0,
-                                                 plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().
+                                                 plugins.Filesystems.Count(t => !t.Value.GetInterfaces().
                                                                                Contains(typeof(
                                                                                    IReadOnlyFilesystem)))))
         };
@@ -163,12 +164,18 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Filesystem);
 
-        foreach(KeyValuePair<string, IFilesystem> kvp in plugins.PluginsList.Where(t => !t.Value.GetType().
-                    GetInterfaces().Contains(typeof(IReadOnlyFilesystem))))
+        foreach(KeyValuePair<string, Type> kvp in plugins.Filesystems.Where(t => !t.Value.GetInterfaces().
+                                                                                Contains(typeof(
+                                                                                    IReadOnlyFilesystem))))
+        {
+            if(Activator.CreateInstance(kvp.Value) is not IFilesystem fs)
+                continue;
+
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(fs.Id.ToString(), Markup.Escape(fs.Name));
             else
                 table.AddRow(Markup.Escape(kvp.Value.Name));
+        }
 
         AnsiConsole.Write(table);
 
@@ -185,11 +192,16 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Filesystem);
 
-        foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
+        foreach(KeyValuePair<string, Type> kvp in plugins.ReadOnlyFilesystems)
+        {
+            if(Activator.CreateInstance(kvp.Value) is not IReadOnlyFilesystem fs)
+                continue;
+
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(fs.Id.ToString(), Markup.Escape(fs.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(fs.Name));
+        }
 
         AnsiConsole.Write(table);
 
