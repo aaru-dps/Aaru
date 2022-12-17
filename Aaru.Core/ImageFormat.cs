@@ -53,8 +53,14 @@ public static class ImageFormat
             IBaseImage imageFormat = null;
 
             // Check all but RAW plugin
-            foreach(IMediaImage imagePlugin in plugins.ImagePluginsList.Values.Where(imagePlugin =>
-                        imagePlugin.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000")))
+            foreach(Type pluginType in plugins.MediaImages.Values)
+            {
+                if(Activator.CreateInstance(pluginType) is not IMediaImage imagePlugin)
+                    continue;
+
+                if(imagePlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                    continue;
+
                 try
                 {
                     AaruConsole.DebugWriteLine("Format detection", Localization.Core.Trying_plugin_0, imagePlugin.Name);
@@ -71,6 +77,7 @@ public static class ImageFormat
                 {
                     // ignored
                 }
+            }
 
             if(imageFormat != null)
                 return imageFormat;
@@ -99,8 +106,14 @@ public static class ImageFormat
                 return imageFormat;
 
             // Check only RAW plugin
-            foreach(IMediaImage imagePlugin in plugins.ImagePluginsList.Values.Where(imagePlugin =>
-                        imagePlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000")))
+            foreach(Type pluginType in plugins.MediaImages.Values)
+            {
+                if(Activator.CreateInstance(pluginType) is not IMediaImage imagePlugin)
+                    continue;
+
+                if(imagePlugin.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                    continue;
+
                 try
                 {
                     AaruConsole.DebugWriteLine("Format detection", Localization.Core.Trying_plugin_0, imagePlugin.Name);
@@ -117,6 +130,7 @@ public static class ImageFormat
                 {
                     // ignored
                 }
+            }
 
             // Still not recognized
             return imageFormat;

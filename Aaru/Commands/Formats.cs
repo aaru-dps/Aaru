@@ -110,9 +110,8 @@ sealed class FormatsCommand : Command
         table = new Table
         {
             Title = new TableTitle(string.Format(UI.Read_only_media_image_formats_0,
-                                                 plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces().
-                                                                                    Contains(typeof(
-                                                                                        IWritableImage)))))
+                                                 plugins.MediaImages.Count(t => !t.Value.GetInterfaces().
+                                                                               Contains(typeof(IWritableImage)))))
         };
 
         if(verbose)
@@ -120,12 +119,17 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Media_image_format);
 
-        foreach(KeyValuePair<string, IMediaImage> kvp in plugins.ImagePluginsList.Where(t => !t.Value.GetType().
-                    GetInterfaces().Contains(typeof(IWritableImage))))
+        foreach(KeyValuePair<string, Type> kvp in plugins.MediaImages.Where(t => !t.Value.GetInterfaces().
+                                                                                Contains(typeof(IWritableImage))))
+        {
+            if(Activator.CreateInstance(kvp.Value) is not IMediaImage imagePlugin)
+                continue;
+
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(imagePlugin.Id.ToString(), Markup.Escape(imagePlugin.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(imagePlugin.Name));
+        }
 
         AnsiConsole.Write(table);
 

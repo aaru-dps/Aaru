@@ -80,14 +80,19 @@ public sealed class PluginsViewModel : ViewModelBase
                 Author  = floppyImage.Author
             });
 
-        foreach(IMediaImage mediaImage in GetPluginBase.Instance.ImagePluginsList.Values)
+        foreach(Type imageType in GetPluginBase.Instance.MediaImages.Values)
+        {
+            if(Activator.CreateInstance(imageType) is not IMediaImage mediaImage)
+                continue;
+
             Images.Add(new PluginModel
             {
                 Name    = mediaImage.Name,
                 Uuid    = mediaImage.Id,
-                Version = Assembly.GetAssembly(mediaImage.GetType())?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(imageType)?.GetName().Version?.ToString(),
                 Author  = mediaImage.Author
             });
+        }
 
         foreach(Type partitionType in GetPluginBase.Instance.Partitions.Values)
         {
