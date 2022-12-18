@@ -129,7 +129,7 @@ public sealed partial class LisaFS
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
     {
-        _encoding   = new LisaRoman();
+        encoding    = new LisaRoman();
         information = "";
         metadata    = new FileSystem();
         var sb = new StringBuilder();
