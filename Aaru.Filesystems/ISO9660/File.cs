@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -83,6 +84,51 @@ public sealed partial class ISO9660
             return err;
 
         attributes = stat.Attributes;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber OpenFile(string path, out IFileNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
+
+        if(err != ErrorNumber.NoError)
+            return err;
+
+        if(entry.Flags.HasFlag(FileFlags.Directory) &&
+           !_debug)
+            return ErrorNumber.IsDirectory;
+
+        if(entry.Extents is null)
+            return ErrorNumber.InvalidArgument;
+
+        node = new Iso9660FileNode
+        {
+            Path    = path,
+            Length  = (long)entry.Size,
+            Offset  = 0,
+            _dentry = entry
+        };
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseFile(IFileNode node)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(node is not Iso9660FileNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._dentry = null;
 
         return ErrorNumber.NoError;
     }
@@ -157,11 +203,6 @@ public sealed partial class ISO9660
 
             return ErrorNumber.UnexpectedException;
         }
-
-        return ReadWithExtents(offset, size, entry.Extents,
-                               entry.XA?.signature                                    == XA_MAGIC &&
-                               entry.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
-                               entry.XA?.filenumber ?? 0, out buf);
     }
 
     /// <inheritdoc />

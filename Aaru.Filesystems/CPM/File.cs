@@ -28,6 +28,7 @@
 
 using System;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
@@ -75,6 +76,50 @@ public sealed partial class CPM
         deviceBlock = 0;
 
         return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber OpenFile(string path, out IFileNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
+
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
+
+        if(!_fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file))
+            return ErrorNumber.NoSuchFile;
+
+        node = new CpmFileNode
+        {
+            Path   = path,
+            Length = file.Length,
+            Offset = 0,
+            _cache = file
+        };
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseFile(IFileNode node)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(node is not CpmFileNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._cache = null;
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />

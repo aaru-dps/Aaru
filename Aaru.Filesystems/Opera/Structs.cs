@@ -27,6 +27,7 @@
 // ****************************************************************************/
 
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
 
@@ -111,5 +112,16 @@ public sealed partial class OperaFS
     {
         public DirectoryEntry Entry;
         public uint[]         Pointers;
+    }
+
+    sealed class OperaFileNode : IFileNode
+    {
+        internal DirectoryEntryWithPointers _dentry;
+        /// <inheritdoc />
+        public string Path { get; init; }
+        /// <inheritdoc />
+        public long Length { get; init; }
+        /// <inheritdoc />
+        public long Offset { get; init; }
     }
 }

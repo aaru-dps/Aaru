@@ -27,6 +27,7 @@
 // ****************************************************************************/
 
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
 
@@ -101,5 +102,16 @@ public sealed partial class AppleDOS
     {
         public readonly byte track;
         public readonly byte sector;
+    }
+
+    sealed class AppleDosFileNode : IFileNode
+    {
+        internal byte[] _cache;
+        /// <inheritdoc />
+        public string Path { get; init; }
+        /// <inheritdoc />
+        public long Length { get; init; }
+        /// <inheritdoc />
+        public long Offset { get; init; }
     }
 }

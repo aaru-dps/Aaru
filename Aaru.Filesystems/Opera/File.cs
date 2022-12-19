@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filesystems;
@@ -73,6 +74,49 @@ public sealed partial class OperaFS
             return err;
 
         attributes = stat.Attributes;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber OpenFile(string path, out IFileNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        ErrorNumber err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
+
+        if(err != ErrorNumber.NoError)
+            return err;
+
+        if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
+           !_debug)
+            return ErrorNumber.IsDirectory;
+
+        if(entry.Pointers.Length < 1)
+            return ErrorNumber.InvalidArgument;
+
+        node = new OperaFileNode
+        {
+            Path    = path,
+            Length  = entry.Entry.byte_count,
+            Offset  = 0,
+            _dentry = entry
+        };
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseFile(IFileNode node)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(node is not OperaFileNode mynode)
+            return ErrorNumber.InvalidArgument;
 
         return ErrorNumber.NoError;
     }

@@ -27,6 +27,7 @@
 // ****************************************************************************/
 
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
 
@@ -60,5 +61,16 @@ public sealed partial class XboxFatPlugin
         public readonly ushort lastAccessDate;
         public readonly ushort creationTime;
         public readonly ushort creationDate;
+    }
+
+    sealed class FatxFileNode : IFileNode
+    {
+        internal uint[] _clusters;
+        /// <inheritdoc />
+        public string Path { get; init; }
+        /// <inheritdoc />
+        public long Length { get; init; }
+        /// <inheritdoc />
+        public long Offset { get; init; }
     }
 }

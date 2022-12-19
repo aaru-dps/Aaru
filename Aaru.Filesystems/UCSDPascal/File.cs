@@ -29,6 +29,7 @@
 using System;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
@@ -69,6 +70,71 @@ public sealed partial class PascalPlugin
         attributes = FileAttributes.File;
 
         return error;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber OpenFile(string path, out IFileNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
+
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
+
+        byte[] file;
+
+        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
+            file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? _catalogBlocks : _bootBlocks;
+        else
+        {
+            ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
+
+            if(error != ErrorNumber.NoError)
+                return error;
+
+            error = _device.ReadSectors((ulong)entry.FirstBlock                    * _multiplier,
+                                        (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier, out byte[] tmp);
+
+            if(error != ErrorNumber.NoError)
+                return error;
+
+            file = new byte[((entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier) +
+                            entry.LastBytes];
+
+            Array.Copy(tmp, 0, file, 0, file.Length);
+        }
+
+        node = new PascalFileNode
+        {
+            Path   = path,
+            Length = file.Length,
+            Offset = 0,
+            _cache = file
+        };
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseFile(IFileNode node)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(node is not PascalFileNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._cache = null;
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />

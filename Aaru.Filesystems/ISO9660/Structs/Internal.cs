@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections.Generic;
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
 
@@ -101,5 +102,16 @@ public sealed partial class ISO9660
         public byte   XattrLength;
 
         public override string ToString() => Name;
+    }
+
+    sealed class Iso9660FileNode : IFileNode
+    {
+        internal DecodedDirectoryEntry _dentry;
+        /// <inheritdoc />
+        public string Path { get; init; }
+        /// <inheritdoc />
+        public long Length { get; init; }
+        /// <inheritdoc />
+        public long Offset { get; init; }
     }
 }

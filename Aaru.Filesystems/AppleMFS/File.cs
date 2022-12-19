@@ -29,6 +29,7 @@
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -149,6 +150,69 @@ public sealed partial class AppleMFS
             attributes |= FileAttributes.File;
 
         attributes |= FileAttributes.BlockUnits;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber OpenFile(string path, out IFileNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        byte[]      file;
+        ErrorNumber error = ErrorNumber.NoError;
+
+        switch(_debug)
+        {
+            case true when string.Compare(path, "$", StringComparison.InvariantCulture) == 0:
+                file = _directoryBlocks;
+
+                break;
+            case true when string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 && _bootBlocks != null:
+                file = _bootBlocks;
+
+                break;
+            case true when string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0:
+                file = _blockMapBytes;
+
+                break;
+            case true when string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0:
+                file = _mdbBlocks;
+
+                break;
+            default:
+                error = ReadFile(path, out file, false, false);
+
+                break;
+        }
+
+        if(error != ErrorNumber.NoError)
+            return error;
+
+        node = new AppleMfsFileNode
+        {
+            Path   = path,
+            Length = file.Length,
+            Offset = 0,
+            _cache = file
+        };
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseFile(IFileNode node)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(node is not AppleMfsFileNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._cache = null;
 
         return ErrorNumber.NoError;
     }

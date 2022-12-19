@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Diagnostics.CodeAnalysis;
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
 
@@ -74,5 +75,16 @@ public sealed partial class PascalPlugin
         public short LastBytes;
         /// <summary>0x18, modification time</summary>
         public short ModificationTime;
+    }
+
+    sealed class PascalFileNode : IFileNode
+    {
+        internal byte[] _cache;
+        /// <inheritdoc />
+        public string Path { get; init; }
+        /// <inheritdoc />
+        public long Length { get; init; }
+        /// <inheritdoc />
+        public long Offset { get; init; }
     }
 }

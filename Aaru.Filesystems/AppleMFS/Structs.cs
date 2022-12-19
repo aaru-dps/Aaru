@@ -28,6 +28,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Aaru.CommonTypes.Interfaces;
 
 #pragma warning disable 169
 
@@ -106,5 +107,16 @@ public sealed partial class AppleMFS
         public uint flMdDat;
         /// <summary>0x32, file name prefixed with length</summary>
         public byte[] flNam;
+    }
+
+    sealed class AppleMfsFileNode : IFileNode
+    {
+        internal byte[] _cache;
+        /// <inheritdoc />
+        public string Path { get; init; }
+        /// <inheritdoc />
+        public long Length { get; init; }
+        /// <inheritdoc />
+        public long Offset { get; init; }
     }
 }

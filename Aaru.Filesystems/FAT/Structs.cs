@@ -30,6 +30,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
 
@@ -982,5 +983,17 @@ public sealed partial class FAT
 
             return !string.IsNullOrEmpty(Longname) ? Longname : Shortname;
         }
+    }
+
+    sealed class FatFileNode : IFileNode
+    {
+        /// <inheritdoc />
+        public string Path { get; init; }
+        /// <inheritdoc />
+        public long Length { get; init; }
+        /// <inheritdoc />
+        public long Offset { get; init; }
+
+        internal uint[] _clusters;
     }
 }

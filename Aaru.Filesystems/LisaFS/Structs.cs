@@ -30,6 +30,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Aaru.CommonTypes.Interfaces;
 
 #pragma warning disable CS0649
 namespace Aaru.Filesystems;
@@ -396,5 +397,17 @@ public sealed partial class LisaFS
         public short fileID;
         /// <summary>0x26, 16 bytes, unknown</summary>
         public byte[] unknown3;
+    }
+
+    sealed class LisaFileNode : IFileNode
+    {
+        /// <inheritdoc />
+        public string Path { get; init; }
+        /// <inheritdoc />
+        public long Length { get; init; }
+        /// <inheritdoc />
+        public long Offset { get; init; }
+
+        internal short _fileId;
     }
 }

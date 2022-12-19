@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
@@ -70,6 +71,75 @@ public sealed partial class AppleDOS
                       string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
             attributes |= FileAttributes.System;
+
+        return ErrorNumber.NoError;
+    }
+
+    public ErrorNumber OpenFile(string path, out IFileNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
+
+        if(pathElements.Length != 1)
+            return ErrorNumber.NotSupported;
+
+        byte[] file;
+        string filename = pathElements[0].ToUpperInvariant();
+
+        if(filename.Length > 30)
+            return ErrorNumber.NameTooLong;
+
+        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                      string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+            if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
+                file = _catalogBlocks;
+            else if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)
+                file = _vtocBlocks;
+            else
+                file = _bootBlocks;
+        else
+        {
+            if(!_fileCache.TryGetValue(filename, out file))
+            {
+                ErrorNumber error = CacheFile(filename);
+
+                if(error != ErrorNumber.NoError)
+                    return error;
+
+                if(!_fileCache.TryGetValue(filename, out file))
+                    return ErrorNumber.InvalidArgument;
+            }
+        }
+
+        node = new AppleDosFileNode
+        {
+            Path   = path,
+            Length = file.Length,
+            Offset = 0,
+            _cache = file
+        };
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseFile(IFileNode node)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(node is not AppleDosFileNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._cache = null;
 
         return ErrorNumber.NoError;
     }

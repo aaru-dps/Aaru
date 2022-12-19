@@ -28,6 +28,7 @@
 
 using System;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
@@ -51,6 +52,50 @@ public sealed partial class LisaFS
             return GetAttributes(fileId, out attributes);
 
         attributes = FileAttributes.Directory;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber OpenFile(string path, out IFileNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        ErrorNumber error = LookupFileId(path, out short fileId, out bool isDir);
+
+        if(error != ErrorNumber.NoError)
+            return error;
+
+        if(isDir)
+            return ErrorNumber.IsDirectory;
+
+        error = Stat(fileId, out FileEntryInfo stat);
+
+        if(error != ErrorNumber.NoError)
+            return error;
+
+        node = new LisaFileNode
+        {
+            Path    = path,
+            Length  = stat.Length,
+            Offset  = 0,
+            _fileId = fileId
+        };
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseFile(IFileNode node)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(node is not LisaFileNode mynode)
+            return ErrorNumber.InvalidArgument;
 
         return ErrorNumber.NoError;
     }

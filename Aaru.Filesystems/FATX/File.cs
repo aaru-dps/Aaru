@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
@@ -80,6 +81,50 @@ public sealed partial class XboxFatPlugin
             return err;
 
         attributes = stat.Attributes;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber OpenFile(string path, out IFileNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        ErrorNumber err = Stat(path, out FileEntryInfo stat);
+
+        if(err != ErrorNumber.NoError)
+            return err;
+
+        if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
+           !_debug)
+            return ErrorNumber.IsDirectory;
+
+        uint[] clusters = GetClusters((uint)stat.Inode);
+
+        node = new FatxFileNode
+        {
+            Path      = path,
+            Length    = stat.Length,
+            Offset    = 0,
+            _clusters = clusters
+        };
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseFile(IFileNode node)
+    {
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(node is not FatxFileNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._clusters = null;
 
         return ErrorNumber.NoError;
     }

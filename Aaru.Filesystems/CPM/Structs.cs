@@ -34,6 +34,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
 
@@ -365,5 +366,16 @@ public sealed partial class CPM
         /// <summary>Allocation blocks</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public readonly ushort[] allocations;
+    }
+
+    sealed class CpmFileNode : IFileNode
+    {
+        internal byte[] _cache;
+        /// <inheritdoc />
+        public string Path { get; init; }
+        /// <inheritdoc />
+        public long Length { get; init; }
+        /// <inheritdoc />
+        public long Offset { get; init; }
     }
 }
