@@ -93,6 +93,8 @@ namespace Aaru.Filesystems
                 return error;
             }
 
+            _fileSizeCache = new Dictionary<string, int>();
+
             error = CacheAllFiles();
 
             if(error != Errno.NoError)

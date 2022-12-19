@@ -263,8 +263,12 @@ namespace Aaru.Filesystems
             if(_extentCache.ContainsKey(filename))
                 _extentCache.Remove(filename);
 
+            if(_fileSizeCache.ContainsKey(filename))
+                _fileSizeCache.Remove(filename);
+
             _fileCache.Add(filename, fileMs.ToArray());
             _extentCache.Add(filename, tsListMs.ToArray());
+            _fileSizeCache.Add(filename, (int)fileMs.Length);
 
             return Errno.NoError;
         }
