@@ -133,65 +133,52 @@ public sealed partial class FAT
     }
 
     /// <inheritdoc />
-    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    public ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read)
     {
+        read = 0;
+
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        ErrorNumber err = Stat(path, out FileEntryInfo stat);
-
-        if(err != ErrorNumber.NoError)
-            return err;
-
-        if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
-           !_debug)
-            return ErrorNumber.IsDirectory;
-
-        if(size == 0)
-        {
-            buf = Array.Empty<byte>();
-
-            return ErrorNumber.NoError;
-        }
-
-        if(offset >= stat.Length)
+        if(buffer is null ||
+           buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
-        if(size + offset >= stat.Length)
-            size = stat.Length - offset;
-
-        uint[] clusters = GetClusters((uint)stat.Inode);
-
-        if(clusters is null)
+        if(node is not FatFileNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        long firstCluster    = offset                   / _bytesPerCluster;
-        long offsetInCluster = offset                   % _bytesPerCluster;
-        long sizeInClusters  = (size + offsetInCluster) / _bytesPerCluster;
+        read = length;
 
-        if((size + offsetInCluster) % _bytesPerCluster > 0)
+        if(length + mynode.Offset >= mynode.Length)
+            read = mynode.Length - mynode.Offset;
+
+        long firstCluster    = mynode.Offset            / _bytesPerCluster;
+        long offsetInCluster = mynode.Offset            % _bytesPerCluster;
+        long sizeInClusters  = (read + offsetInCluster) / _bytesPerCluster;
+
+        if((read + offsetInCluster) % _bytesPerCluster > 0)
             sizeInClusters++;
 
         var ms = new MemoryStream();
 
         for(int i = 0; i < sizeInClusters; i++)
         {
-            if(i + firstCluster >= clusters.Length)
+            if(i + firstCluster >= mynode._clusters.Length)
                 return ErrorNumber.InvalidArgument;
 
             ErrorNumber errno =
-                _image.ReadSectors(_firstClusterSector + (clusters[i + firstCluster] * _sectorsPerCluster),
-                                   _sectorsPerCluster, out byte[] buffer);
+                _image.ReadSectors(_firstClusterSector + (mynode._clusters[i + firstCluster] * _sectorsPerCluster),
+                                   _sectorsPerCluster, out byte[] buf);
 
             if(errno != ErrorNumber.NoError)
                 return errno;
 
-            ms.Write(buffer, 0, buffer.Length);
+            ms.Write(buf, 0, buf.Length);
         }
 
         ms.Position = offsetInCluster;
-        buf         = new byte[size];
-        ms.EnsureRead(buf, 0, (int)size);
+        ms.EnsureRead(buffer, 0, (int)read);
+        mynode.Offset += read;
 
         return ErrorNumber.NoError;
     }

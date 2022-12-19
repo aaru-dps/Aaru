@@ -251,14 +251,24 @@ public abstract class FsExtractHashIssueTest
                                        expectedXattrs);
             }
 
-            byte[] outBuf = Array.Empty<byte>();
+            byte[]      buffer = new byte[stat.Length];
+            ErrorNumber ret    = fs.OpenFile(path + "/" + entry, out IFileNode fileNode);
 
-            error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
+            Assert.AreEqual(ErrorNumber.NoError, ret,
+                            string.Format(Localization.Error_0_reading_file_1, ret, path + "/" + entry));
 
-            Assert.AreEqual(ErrorNumber.NoError, error,
-                            string.Format(Localization.Error_0_reading_file_1, error, path + "/" + entry));
+            ret = fs.ReadFile(fileNode, stat.Length, buffer, out long readBytes);
 
-            string calculatedMd5 = Md5Context.Data(outBuf, out _);
+            Assert.AreEqual(ErrorNumber.NoError, ret,
+                            string.Format(Localization.Error_0_reading_file_1, ret, path + "/" + entry));
+
+            Assert.AreEqual(stat.Length, readBytes,
+                            string.Format(Localization.Error_0_reading_file_1, readBytes, stat.Length,
+                                          path + "/" + entry));
+
+            fs.CloseFile(fileNode);
+
+            string calculatedMd5 = Md5Context.Data(buffer, out _);
 
             Assert.AreEqual(fileData.Md5, calculatedMd5,
                             string.Format(Localization.Invalid_checksum_for_file_0, path + "/" + entry));

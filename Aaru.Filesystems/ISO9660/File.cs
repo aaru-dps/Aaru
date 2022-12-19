@@ -135,64 +135,71 @@ public sealed partial class ISO9660
 
     // TODO: Resolve symbolic link
     /// <inheritdoc />
-    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    public ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read)
     {
-        buf = null;
+        read = 0;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
-
-        if(err != ErrorNumber.NoError)
-            return err;
-
-        if(entry.Flags.HasFlag(FileFlags.Directory) &&
-           !_debug)
-            return ErrorNumber.IsDirectory;
-
-        if(entry.Extents is null)
+        if(buffer is null ||
+           buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
-        if(entry.Size == 0)
+        if(node is not Iso9660FileNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        read = length;
+
+        if(length + mynode.Offset >= mynode.Length)
+            read = mynode.Length - mynode.Offset;
+
+        long offset = mynode.Offset + (mynode._dentry.XattrLength * _blockSize);
+
+        if(mynode._dentry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) != true ||
+           mynode._dentry.Extents.Count                                                 != 1)
         {
-            buf = Array.Empty<byte>();
+            ErrorNumber err = ReadWithExtents(offset, read, mynode._dentry.Extents,
+                                              mynode._dentry.XA?.signature == XA_MAGIC &&
+                                              mynode._dentry.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
+                                              mynode._dentry.XA?.filenumber ?? 0, out byte[] buf);
+
+            if(err != ErrorNumber.NoError)
+            {
+                read = 0;
+
+                return err;
+            }
+
+            Array.Copy(buf, 0, buffer, 0, read);
+
+            node.Offset += read;
 
             return ErrorNumber.NoError;
         }
-
-        if(offset >= (long)entry.Size)
-            return ErrorNumber.InvalidArgument;
-
-        if(size + offset >= (long)entry.Size)
-            size = (long)entry.Size - offset;
-
-        offset += entry.XattrLength * _blockSize;
-
-        if(entry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) != true ||
-           entry.Extents.Count                                                 != 1)
-            return ReadWithExtents(offset, size, entry.Extents,
-                                   entry.XA?.signature                                    == XA_MAGIC &&
-                                   entry.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
-                                   entry.XA?.filenumber ?? 0, out buf);
 
         try
         {
             long firstSector    = offset                  / 2352;
             long offsetInSector = offset                  % 2352;
-            long sizeInSectors  = (size + offsetInSector) / 2352;
+            long sizeInSectors  = (read + offsetInSector) / 2352;
 
-            if((size + offsetInSector) % 2352 > 0)
+            if((read + offsetInSector) % 2352 > 0)
                 sizeInSectors++;
 
-            ErrorNumber errno = _image.ReadSectorsLong((ulong)(entry.Extents[0].extent + firstSector),
-                                                       (uint)sizeInSectors, out byte[] buffer);
+            ErrorNumber errno = _image.ReadSectorsLong((ulong)(mynode._dentry.Extents[0].extent + firstSector),
+                                                       (uint)sizeInSectors, out byte[] buf);
 
             if(errno != ErrorNumber.NoError)
-                return errno;
+            {
+                read = 0;
 
-            buf = new byte[size];
-            Array.Copy(buffer, offsetInSector, buf, 0, size);
+                return errno;
+            }
+
+            Array.Copy(buf, offsetInSector, buffer, 0, read);
+
+            node.Offset += read;
 
             return ErrorNumber.NoError;
         }
@@ -200,6 +207,8 @@ public sealed partial class ISO9660
         {
             AaruConsole.DebugWriteLine("ISO9660 plugin", Localization.Exception_reading_CD_i_audio_file);
             AaruConsole.DebugWriteLine("ISO9660 plugin", "{0}", e);
+
+            read = 0;
 
             return ErrorNumber.UnexpectedException;
         }

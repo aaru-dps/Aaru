@@ -540,4 +540,10 @@
   <data name="Subchannel_hash_output_0" xml:space="preserve">
     <value>Subchannel hash (output): {0}</value>
   </data>
+  <data name="Got_less_bytes_0_than_expected_1_when_reading_2_in_3" xml:space="preserve">
+    <value>Got less bytes ({0}) than expected ({1}) when reading {2} in {3}</value>
+  </data>
+  <data name="Got_MD5_0_for_1_in_2_but_expected_3" xml:space="preserve">
+    <value>Got MD5 {0} for "{1}" in {2} but expected {3}</value>
+  </data>
 </root>

@@ -601,31 +601,39 @@ sealed class ExtractFilesCommand : Command
                                         ctx.AddTask(string.Format(UI.Reading_file_0, Markup.Escape(entry)));
 
                                     task.MaxValue = stat.Length;
-                                    byte[] outBuf = null;
+                                    byte[] outBuf = new byte[BUFFER_SIZE];
+                                    error = fs.OpenFile(path + "/" + entry, out IFileNode fileNode);
 
-                                    while(position < stat.Length)
+                                    if(error == ErrorNumber.NoError)
                                     {
-                                        long bytesToRead;
-
-                                        if(stat.Length - position > BUFFER_SIZE)
-                                            bytesToRead = BUFFER_SIZE;
-                                        else
-                                            bytesToRead = stat.Length - position;
-
-                                        error = fs.Read(path + "/" + entry, position, bytesToRead, ref outBuf);
-
-                                        if(error == ErrorNumber.NoError)
-                                            outputFile.Write(outBuf, 0, (int)bytesToRead);
-                                        else
+                                        while(position < stat.Length)
                                         {
-                                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_file_1, error, entry);
+                                            long bytesToRead;
 
-                                            break;
+                                            if(stat.Length - position > BUFFER_SIZE)
+                                                bytesToRead = BUFFER_SIZE;
+                                            else
+                                                bytesToRead = stat.Length - position;
+
+                                            error = fs.ReadFile(fileNode, bytesToRead, outBuf, out long bytesRead);
+
+                                            if(error == ErrorNumber.NoError)
+                                                outputFile.Write(outBuf, 0, (int)bytesRead);
+                                            else
+                                            {
+                                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_file_1, error, entry);
+
+                                                break;
+                                            }
+
+                                            position += bytesToRead;
+                                            task.Increment(bytesToRead);
                                         }
 
-                                        position += bytesToRead;
-                                        task.Increment(bytesToRead);
+                                        fs.CloseFile(fileNode);
                                     }
+                                    else
+                                        AaruConsole.ErrorWriteLine(UI.Error_0_reading_file_1, error, entry);
                                 });
 
                     outputFile.Close();

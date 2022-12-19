@@ -38,6 +38,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -316,9 +317,15 @@ public sealed class SubdirectoryViewModel
 
             try
             {
-                byte[] outBuf = Array.Empty<byte>();
+                byte[] outBuf = new byte[file.Stat.Length];
 
-                ErrorNumber error = _model.Plugin.Read(_model.Path + "/" + file.Name, 0, file.Stat.Length, ref outBuf);
+                ErrorNumber error = _model.Plugin.OpenFile(_model.Path + "/" + file.Name, out IFileNode fileNode);
+
+                if(error == ErrorNumber.NoError)
+                {
+                    error = _model.Plugin.ReadFile(fileNode, file.Stat.Length, outBuf, out _);
+                    _model.Plugin.CloseFile(fileNode);
+                }
 
                 if(error != ErrorNumber.NoError)
                 {

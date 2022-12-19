@@ -101,27 +101,30 @@ public sealed partial class LisaFS
     }
 
     /// <inheritdoc />
-    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    public ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read)
     {
-        if(size == 0)
-        {
-            buf = Array.Empty<byte>();
+        read = 0;
 
-            return ErrorNumber.NoError;
-        }
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
 
-        if(offset < 0)
+        if(buffer is null ||
+           buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
-        ErrorNumber error = LookupFileId(path, out short fileId, out _);
+        if(node is not LisaFileNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        read = length;
 
-        byte[] tmp;
+        if(length + mynode.Offset >= mynode.Length)
+            read = mynode.Length - mynode.Offset;
+
+        byte[]      tmp;
+        ErrorNumber error;
 
         if(_debug)
-            switch(fileId)
+            switch(mynode._fileId)
             {
                 case FILEID_BOOT_SIGNED:
                 case FILEID_LOADER_SIGNED:
@@ -129,28 +132,27 @@ public sealed partial class LisaFS
                 case (short)FILEID_BITMAP:
                 case (short)FILEID_SRECORD:
                 case (short)FILEID_CATALOG:
-                    error = ReadSystemFile(fileId, out tmp);
+                    error = ReadSystemFile(mynode._fileId, out tmp);
 
                     break;
                 default:
-                    error = ReadFile(fileId, out tmp);
+                    error = ReadFile(mynode._fileId, out tmp);
 
                     break;
             }
         else
-            error = ReadFile(fileId, out tmp);
+            error = ReadFile(mynode._fileId, out tmp);
 
         if(error != ErrorNumber.NoError)
+        {
+            read = 0;
+
             return error;
+        }
 
-        if(offset >= tmp.Length)
-            return ErrorNumber.EINVAL;
+        Array.Copy(tmp, mynode.Offset, buffer, 0, read);
 
-        if(size + offset >= tmp.Length)
-            size = tmp.Length - offset;
-
-        buf = new byte[size];
-        Array.Copy(tmp, offset, buf, 0, size);
+        mynode.Offset += read;
 
         return ErrorNumber.NoError;
     }

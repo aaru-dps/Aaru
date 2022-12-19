@@ -138,52 +138,27 @@ public sealed partial class PascalPlugin
     }
 
     /// <inheritdoc />
-    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    public ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read)
     {
+        read = 0;
+
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        if(buffer is null ||
+           buffer.Length < length)
+            return ErrorNumber.InvalidArgument;
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(node is not PascalFileNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        byte[] file;
+        read = length;
 
-        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
-            file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? _catalogBlocks : _bootBlocks;
-        else
-        {
-            ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
+        if(length + mynode.Offset >= mynode.Length)
+            read = mynode.Length - mynode.Offset;
 
-            if(error != ErrorNumber.NoError)
-                return error;
-
-            error = _device.ReadSectors((ulong)entry.FirstBlock                    * _multiplier,
-                                        (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier, out byte[] tmp);
-
-            if(error != ErrorNumber.NoError)
-                return error;
-
-            file = new byte[((entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier) +
-                            entry.LastBytes];
-
-            Array.Copy(tmp, 0, file, 0, file.Length);
-        }
-
-        if(offset >= file.Length)
-            return ErrorNumber.EINVAL;
-
-        if(size + offset >= file.Length)
-            size = file.Length - offset;
-
-        buf = new byte[size];
-
-        Array.Copy(file, offset, buf, 0, size);
+        Array.Copy(mynode._cache, mynode.Offset, buffer, 0, read);
+        mynode.Offset += read;
 
         return ErrorNumber.NoError;
     }

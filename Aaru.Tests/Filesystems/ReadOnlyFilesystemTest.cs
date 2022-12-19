@@ -309,7 +309,14 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
     static string BuildFile(IReadOnlyFilesystem fs, string path, long length)
     {
         byte[] buffer = new byte[length];
-        fs.Read(path, 0, length, ref buffer);
+
+        ErrorNumber error = fs.OpenFile(path, out IFileNode fileNode);
+
+        if(error != ErrorNumber.NoError)
+            return Md5Context.Data(buffer, out _);
+
+        fs.ReadFile(fileNode, length, buffer, out _);
+        fs.CloseFile(fileNode);
 
         return Md5Context.Data(buffer, out _);
     }
@@ -426,7 +433,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
             if(child.Value.Info.Attributes.HasFlag(FileAttributes.Directory))
             {
-                ret = fs.Read(childPath, 0, 1, ref buffer);
+                ret = fs.OpenFile(childPath, out _);
 
                 Assert.AreEqual(ErrorNumber.IsDirectory, ret,
                                 string.Format(Localization.Got_wrong_data_for_directory_0_in_1, childPath, testFile));
@@ -507,14 +514,26 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
     static void TestFile(IReadOnlyFilesystem fs, string path, string md5, long length, string testFile)
     {
         byte[]      buffer = new byte[length];
-        ErrorNumber ret    = fs.Read(path, 0, length, ref buffer);
+        ErrorNumber ret    = fs.OpenFile(path, out IFileNode fileNode);
 
         Assert.AreEqual(ErrorNumber.NoError, ret,
                         string.Format(Localization.Unexpected_error_0_when_reading_1_in_2, ret, path, testFile));
 
+        ret = fs.ReadFile(fileNode, length, buffer, out long readBytes);
+
+        Assert.AreEqual(ErrorNumber.NoError, ret,
+                        string.Format(Localization.Unexpected_error_0_when_reading_1_in_2, ret, path, testFile));
+
+        Assert.AreEqual(length, readBytes,
+                        string.Format(Localization.Got_less_bytes_0_than_expected_1_when_reading_2_in_3, readBytes,
+                                      length, path, testFile));
+
+        fs.CloseFile(fileNode);
+
         string data = Md5Context.Data(buffer, out _);
 
-        Assert.AreEqual(md5, data, $"Got MD5 {data} for \"{path}\" in {testFile} but expected {md5}");
+        Assert.AreEqual(md5, data,
+                        string.Format(Localization.Got_MD5_0_for_1_in_2_but_expected_3, data, path, testFile, md5));
     }
 
     static void TestFileXattrs(IReadOnlyFilesystem fs, string path, Dictionary<string, string> xattrs, string testFile)

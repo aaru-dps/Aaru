@@ -122,60 +122,52 @@ public sealed partial class OperaFS
     }
 
     /// <inheritdoc />
-    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    public ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read)
     {
-        buf = null;
+        read = 0;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        ErrorNumber err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
-
-        if(err != ErrorNumber.NoError)
-            return err;
-
-        if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
-           !_debug)
-            return ErrorNumber.IsDirectory;
-
-        if(entry.Pointers.Length < 1)
+        if(buffer is null ||
+           buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
-        if(entry.Entry.byte_count == 0)
-        {
-            buf = Array.Empty<byte>();
-
-            return ErrorNumber.NoError;
-        }
-
-        if(offset >= entry.Entry.byte_count)
+        if(node is not OperaFileNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        if(size + offset >= entry.Entry.byte_count)
-            size = entry.Entry.byte_count - offset;
+        read = length;
 
-        long firstBlock    = offset                 / entry.Entry.block_size;
-        long offsetInBlock = offset                 % entry.Entry.block_size;
-        long sizeInBlocks  = (size + offsetInBlock) / entry.Entry.block_size;
+        if(length + mynode.Offset >= mynode.Length)
+            read = mynode.Length - mynode.Offset;
 
-        if((size + offsetInBlock) % entry.Entry.block_size > 0)
+        long firstBlock    = mynode.Offset          / mynode._dentry.Entry.block_size;
+        long offsetInBlock = mynode.Offset          % mynode._dentry.Entry.block_size;
+        long sizeInBlocks  = (read + offsetInBlock) / mynode._dentry.Entry.block_size;
+
+        if((read + offsetInBlock) % mynode._dentry.Entry.block_size > 0)
             sizeInBlocks++;
 
         uint fileBlockSizeRatio;
 
         if(_image.Info.SectorSize is 2336 or 2352 or 2448)
-            fileBlockSizeRatio = entry.Entry.block_size / 2048;
+            fileBlockSizeRatio = mynode._dentry.Entry.block_size / 2048;
         else
-            fileBlockSizeRatio = entry.Entry.block_size / _image.Info.SectorSize;
+            fileBlockSizeRatio = mynode._dentry.Entry.block_size / _image.Info.SectorSize;
 
-        ErrorNumber errno = _image.ReadSectors((ulong)(entry.Pointers[0] + (firstBlock * fileBlockSizeRatio)),
-                                               (uint)(sizeInBlocks * fileBlockSizeRatio), out byte[] buffer);
+        ErrorNumber errno = _image.ReadSectors((ulong)(mynode._dentry.Pointers[0] + (firstBlock * fileBlockSizeRatio)),
+                                               (uint)(sizeInBlocks * fileBlockSizeRatio), out byte[] buf);
 
         if(errno != ErrorNumber.NoError)
-            return errno;
+        {
+            read = 0;
 
-        buf = new byte[size];
-        Array.Copy(buffer, offsetInBlock, buf, 0, size);
+            return errno;
+        }
+
+        Array.Copy(buf, offsetInBlock, buffer, 0, read);
+
+        mynode.Offset += read;
 
         return ErrorNumber.NoError;
     }

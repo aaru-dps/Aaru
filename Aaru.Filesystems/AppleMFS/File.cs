@@ -218,57 +218,28 @@ public sealed partial class AppleMFS
     }
 
     /// <inheritdoc />
-    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    public ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read)
     {
+        read = 0;
+
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        byte[]      file;
-        ErrorNumber error = ErrorNumber.NoError;
-
-        switch(_debug)
-        {
-            case true when string.Compare(path, "$", StringComparison.InvariantCulture) == 0:
-                file = _directoryBlocks;
-
-                break;
-            case true when string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 && _bootBlocks != null:
-                file = _bootBlocks;
-
-                break;
-            case true when string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0:
-                file = _blockMapBytes;
-
-                break;
-            case true when string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0:
-                file = _mdbBlocks;
-
-                break;
-            default:
-                error = ReadFile(path, out file, false, false);
-
-                break;
-        }
-
-        if(error != ErrorNumber.NoError)
-            return error;
-
-        if(size == 0)
-        {
-            buf = Array.Empty<byte>();
-
-            return ErrorNumber.NoError;
-        }
-
-        if(offset >= file.Length)
+        if(buffer is null ||
+           buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
-        if(size + offset >= file.Length)
-            size = file.Length - offset;
+        if(node is not AppleMfsFileNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        buf = new byte[size];
+        read = length;
 
-        Array.Copy(file, offset, buf, 0, size);
+        if(length + mynode.Offset >= mynode.Length)
+            read = mynode.Length - mynode.Offset;
+
+        Array.Copy(mynode._cache, mynode.Offset, buffer, 0, read);
+
+        mynode.Offset += read;
 
         return ErrorNumber.NoError;
     }

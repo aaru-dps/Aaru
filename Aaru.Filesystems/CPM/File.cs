@@ -123,40 +123,28 @@ public sealed partial class CPM
     }
 
     /// <inheritdoc />
-    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    public ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read)
     {
+        read = 0;
+
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(size == 0)
-        {
-            buf = Array.Empty<byte>();
-
-            return ErrorNumber.NoError;
-        }
-
-        if(offset < 0)
+        if(buffer is null ||
+           buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        if(node is not CpmFileNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        read = length;
 
-        if(!_fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file))
-            return ErrorNumber.NoSuchFile;
+        if(length + mynode.Offset >= mynode.Length)
+            read = mynode.Length - mynode.Offset;
 
-        if(offset >= file.Length)
-            return ErrorNumber.EINVAL;
+        Array.Copy(mynode._cache, mynode.Offset, buffer, 0, read);
 
-        if(size + offset >= file.Length)
-            size = file.Length - offset;
-
-        buf = new byte[size];
-        Array.Copy(file, offset, buf, 0, size);
+        mynode.Offset += read;
 
         return ErrorNumber.NoError;
     }

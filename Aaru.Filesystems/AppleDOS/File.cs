@@ -145,57 +145,28 @@ public sealed partial class AppleDOS
     }
 
     /// <inheritdoc />
-    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    public ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read)
     {
+        read = 0;
+
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
-
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
-
-        byte[] file;
-        string filename = pathElements[0].ToUpperInvariant();
-
-        if(filename.Length > 30)
-            return ErrorNumber.NameTooLong;
-
-        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                      string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
-            if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                file = _catalogBlocks;
-            else if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)
-                file = _vtocBlocks;
-            else
-                file = _bootBlocks;
-        else
-        {
-            if(!_fileCache.TryGetValue(filename, out file))
-            {
-                ErrorNumber error = CacheFile(filename);
-
-                if(error != ErrorNumber.NoError)
-                    return error;
-
-                if(!_fileCache.TryGetValue(filename, out file))
-                    return ErrorNumber.InvalidArgument;
-            }
-        }
-
-        if(offset >= file.Length)
+        if(buffer is null ||
+           buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
-        if(size + offset >= file.Length)
-            size = file.Length - offset;
+        if(node is not AppleDosFileNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        buf = new byte[size];
+        read = length;
 
-        Array.Copy(file, offset, buf, 0, size);
+        if(length + mynode.Offset >= mynode.Length)
+            read = mynode.Length - mynode.Offset;
+
+        Array.Copy(mynode._cache, mynode.Offset, buffer, 0, read);
+
+        mynode.Offset += read;
 
         return ErrorNumber.NoError;
     }

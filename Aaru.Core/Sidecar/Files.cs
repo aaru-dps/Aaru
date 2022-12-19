@@ -31,7 +31,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.AaruMetadata;
@@ -165,7 +164,7 @@ public sealed partial class Sidecar
             StatusChangeTime = stat.StatusChangeTimeUtc
         };
 
-        byte[] data = Array.Empty<byte>();
+        byte[] data = null;
 
         if(stat.Length > 0)
         {
@@ -173,27 +172,35 @@ public sealed partial class Sidecar
             UpdateStatus(string.Format(Localization.Core.Hashing_file_0_1, path, filename));
             InitProgress2();
 
-            while(position < stat.Length - 1048576)
-            {
-                if(_aborted)
-                    return file;
+            ErrorNumber error = filesystem.OpenFile(path + "/" + filename, out IFileNode fileNode);
 
+            if(error == ErrorNumber.NoError)
+            {
                 data = new byte[1048576];
-                filesystem.Read(path + "/" + filename, position, 1048576, ref data);
+
+                while(position < stat.Length - 1048576)
+                {
+                    if(_aborted)
+                        return file;
+
+                    // TODO: Better error handling
+                    filesystem.ReadFile(fileNode, 1048576, data, out _);
+
+                    UpdateProgress2(Localization.Core.Hashing_file_byte_0_of_1, position, stat.Length);
+
+                    fileChkWorker.Update(data);
+
+                    position += 1048576;
+                }
+
+                data = new byte[stat.Length - position];
+                filesystem.ReadFile(fileNode, data.Length, data, out _);
 
                 UpdateProgress2(Localization.Core.Hashing_file_byte_0_of_1, position, stat.Length);
 
                 fileChkWorker.Update(data);
-
-                position += 1048576;
+                filesystem.CloseFile(fileNode);
             }
-
-            data = new byte[stat.Length - position];
-            filesystem.Read(path + "/" + filename, position, stat.Length - position, ref data);
-
-            UpdateProgress2(Localization.Core.Hashing_file_byte_0_of_1, position, stat.Length);
-
-            fileChkWorker.Update(data);
 
             EndProgress2();
 
