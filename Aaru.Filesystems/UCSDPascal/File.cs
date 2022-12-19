@@ -39,14 +39,6 @@ namespace Aaru.Filesystems;
 public sealed partial class PascalPlugin
 {
     /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = 0;
-
-        return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
-    }
-
-    /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
         attributes = new FileAttributes();

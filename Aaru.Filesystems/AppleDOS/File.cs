@@ -226,15 +226,6 @@ public sealed partial class AppleDOS
         return ErrorNumber.NoError;
     }
 
-    /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = 0;
-
-        // TODO: Not really important.
-        return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
-    }
-
     ErrorNumber CacheFile(string path)
     {
         string[] pathElements = path.Split(new[]

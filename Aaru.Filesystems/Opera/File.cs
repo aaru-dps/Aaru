@@ -39,28 +39,6 @@ namespace Aaru.Filesystems;
 public sealed partial class OperaFS
 {
     /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = 0;
-
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
-
-        ErrorNumber err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
-
-        if(err != ErrorNumber.NoError)
-            return err;
-
-        if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
-           !_debug)
-            return ErrorNumber.IsDirectory;
-
-        deviceBlock = entry.Pointers[0] + fileBlock;
-
-        return ErrorNumber.NoError;
-    }
-
-    /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
         attributes = new FileAttributes();

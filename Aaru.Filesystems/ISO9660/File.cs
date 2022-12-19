@@ -45,32 +45,6 @@ namespace Aaru.Filesystems;
 public sealed partial class ISO9660
 {
     /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = 0;
-
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
-
-        ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
-
-        if(err != ErrorNumber.NoError)
-            return err;
-
-        if(entry.Flags.HasFlag(FileFlags.Directory) &&
-           !_debug)
-            return ErrorNumber.IsDirectory;
-
-        // TODO: Multi-extents
-        if(entry.Extents.Count > 1)
-            return ErrorNumber.NotImplemented;
-
-        deviceBlock = entry.Extents[0].extent + fileBlock;
-
-        return ErrorNumber.NoError;
-    }
-
-    /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
         attributes = new FileAttributes();

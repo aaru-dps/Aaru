@@ -69,15 +69,6 @@ public sealed partial class CPM
         return ErrorNumber.NoError;
     }
 
-    // TODO: Implementing this would require storing the interleaving
-    /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = 0;
-
-        return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
-    }
-
     /// <inheritdoc />
     public ErrorNumber OpenFile(string path, out IFileNode node)
     {

@@ -36,15 +36,6 @@ namespace Aaru.Filesystems;
 
 public sealed partial class LisaFS
 {
-    /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = 0;
-
-        // TODO: Not really important.
-        return ErrorNumber.NotImplemented;
-    }
-
     /// <summary>Searches the disk for an extents file (or gets it from cache)</summary>
     /// <returns>Error.</returns>
     /// <param name="fileId">File identifier.</param>

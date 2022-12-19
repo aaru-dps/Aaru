@@ -41,33 +41,6 @@ namespace Aaru.Filesystems;
 public sealed partial class XboxFatPlugin
 {
     /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = 0;
-
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
-
-        ErrorNumber err = Stat(path, out FileEntryInfo stat);
-
-        if(err != ErrorNumber.NoError)
-            return err;
-
-        if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
-           !_debug)
-            return ErrorNumber.IsDirectory;
-
-        uint[] clusters = GetClusters((uint)stat.Inode);
-
-        if(fileBlock >= clusters.Length)
-            return ErrorNumber.InvalidArgument;
-
-        deviceBlock = (long)(_firstClusterSector + ((clusters[fileBlock] - 1) * _sectorsPerCluster));
-
-        return ErrorNumber.NoError;
-    }
-
-    /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
         attributes = new FileAttributes();

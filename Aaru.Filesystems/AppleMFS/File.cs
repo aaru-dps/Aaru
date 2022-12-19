@@ -41,56 +41,6 @@ namespace Aaru.Filesystems;
 public sealed partial class AppleMFS
 {
     /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = new long();
-
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
-
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
-
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
-
-        path = pathElements[0];
-
-        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-            return ErrorNumber.NoSuchFile;
-
-        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-            return ErrorNumber.NoSuchFile;
-
-        if(fileBlock > entry.flPyLen / _volMdb.drAlBlkSiz)
-            return ErrorNumber.InvalidArgument;
-
-        uint nextBlock = entry.flStBlk;
-        long relBlock  = 0;
-
-        while(true)
-        {
-            if(relBlock == fileBlock)
-            {
-                deviceBlock = ((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + (long)_partitionStart;
-
-                return ErrorNumber.NoError;
-            }
-
-            if(_blockMap[nextBlock] == BMAP_FREE ||
-               _blockMap[nextBlock] == BMAP_LAST)
-                break;
-
-            nextBlock = _blockMap[nextBlock];
-            relBlock++;
-        }
-
-        return ErrorNumber.InOutError;
-    }
-
-    /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
         attributes = new FileAttributes();
