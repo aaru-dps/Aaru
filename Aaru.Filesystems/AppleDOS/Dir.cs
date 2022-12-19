@@ -82,7 +82,6 @@ public sealed partial class AppleDOS
         _totalFileEntries = 0;
         _catalogCache     = new Dictionary<string, ushort>();
         _fileTypeCache    = new Dictionary<string, byte>();
-        _fileSizeCache    = new Dictionary<string, int>();
         _lockedFiles      = new List<string>();
 
         if(lba == 0 ||
@@ -124,9 +123,6 @@ public sealed partial class AppleDOS
 
                 if(!_fileTypeCache.ContainsKey(filename))
                     _fileTypeCache.Add(filename, (byte)(entry.typeAndFlags & 0x7F));
-
-                if(!_fileSizeCache.ContainsKey(filename))
-                    _fileSizeCache.Add(filename, entry.length * _vtoc.bytesPerSector);
 
                 if((entry.typeAndFlags & 0x80) == 0x80 &&
                    !_lockedFiles.Contains(filename))

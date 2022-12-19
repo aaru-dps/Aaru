@@ -94,6 +94,8 @@ public sealed partial class AppleDOS
             return error;
         }
 
+        _fileSizeCache = new Dictionary<string, int>();
+
         error = CacheAllFiles();
 
         if(error != ErrorNumber.NoError)
