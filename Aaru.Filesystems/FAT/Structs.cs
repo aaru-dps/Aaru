@@ -992,7 +992,7 @@ public sealed partial class FAT
         /// <inheritdoc />
         public long Length { get; init; }
         /// <inheritdoc />
-        public long Offset { get; init; }
+        public long Offset { get; set; }
 
         internal uint[] _clusters;
     }

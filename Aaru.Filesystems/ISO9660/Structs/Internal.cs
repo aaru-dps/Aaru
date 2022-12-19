@@ -112,6 +112,6 @@ public sealed partial class ISO9660
         /// <inheritdoc />
         public long Length { get; init; }
         /// <inheritdoc />
-        public long Offset { get; init; }
+        public long Offset { get; set; }
     }
 }

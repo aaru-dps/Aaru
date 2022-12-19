@@ -85,6 +85,6 @@ public sealed partial class PascalPlugin
         /// <inheritdoc />
         public long Length { get; init; }
         /// <inheritdoc />
-        public long Offset { get; init; }
+        public long Offset { get; set; }
     }
 }
