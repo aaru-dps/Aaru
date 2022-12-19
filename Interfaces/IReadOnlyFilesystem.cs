@@ -103,13 +103,6 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <param name="buf">Buffer.</param>
     ErrorNumber GetXattr(string path, string xattr, ref byte[] buf);
 
-    /// <summary>Reads data from a file (main/only data stream or data fork).</summary>
-    /// <param name="path">File path.</param>
-    /// <param name="offset">Offset.</param>
-    /// <param name="size">Bytes to read.</param>
-    /// <param name="buf">Buffer.</param>
-    ErrorNumber Read(string path, long offset, long size, ref byte[] buf);
-
     /// <summary>Lists contents from a directory.</summary>
     /// <param name="path">Directory path.</param>
     /// <param name="contents">Directory contents.</param>
@@ -167,6 +160,13 @@ public interface IReadOnlyFilesystem : IFilesystem
 
         return ErrorNumber.NoError;
     }
+
+    /// <summary>Reads data from a file (main/only data stream or data fork).</summary>
+    /// <param name="node">File node.</param>
+    /// <param name="length">Bytes to read.</param>
+    /// <param name="buffer">Buffer. Must exist and be of size equal or bigger than <see cref="length" /></param>
+    /// <param name="read">How many bytes were read into the buffer</param>
+    ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read);
 }
 
 /// <summary>Represents an opened file from a filesystem</summary>
