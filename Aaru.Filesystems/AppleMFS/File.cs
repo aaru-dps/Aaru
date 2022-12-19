@@ -349,12 +349,12 @@ public sealed partial class AppleMFS
         stat = new FileEntryInfo
         {
             Attributes    = attr,
-            Blocks        = entry.flLgLen / _volMdb.drAlBlkSiz,
+            Blocks        = entry.flPyLen / _volMdb.drAlBlkSiz,
             BlockSize     = _volMdb.drAlBlkSiz,
             CreationTime  = DateHandlers.MacToDateTime(entry.flCrDat),
             Inode         = entry.flFlNum,
             LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat),
-            Length        = entry.flPyLen,
+            Length        = entry.flLgLen,
             Links         = 1
         };
 
