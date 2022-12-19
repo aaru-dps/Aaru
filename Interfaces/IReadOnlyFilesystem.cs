@@ -77,13 +77,6 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <summary>Frees all internal structures created by <see cref="Mount" /></summary>
     ErrorNumber Unmount();
 
-    /// <summary>Maps a filesystem block from a file to a block from the underlying device.</summary>
-    /// <returns>Error number.</returns>
-    /// <param name="path">File path.</param>
-    /// <param name="fileBlock">File block.</param>
-    /// <param name="deviceBlock">Device block.</param>
-    ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock);
-
     /// <summary>Gets the attributes of a file or directory</summary>
     /// <returns>Error number.</returns>
     /// <param name="path">File path.</param>
