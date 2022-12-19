@@ -220,6 +220,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                             var          sr           = new FileStream(expectedDataFilename, FileMode.Open);
                             VolumeData[] expectedData = JsonSerializer.Deserialize<VolumeData[]>(sr, serializerOptions);
+                            sr.Close();
 
                             Assert.NotNull(expectedData);
 
