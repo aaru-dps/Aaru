@@ -39,10 +39,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 
 namespace Aaru.CommonTypes.Interfaces;
 
@@ -136,6 +139,34 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <param name="node">The file node.</param>
     /// <returns>Error number.</returns>
     ErrorNumber CloseFile(IFileNode node);
+
+    /// <summary>Move the file node position pointer to the specified position with the specified origin</summary>
+    /// <param name="node">The file node.</param>
+    /// <param name="position">Desired position.</param>
+    /// <param name="origin">From where in the file to move the position pointer to.</param>
+    /// <returns>Error number.</returns>
+    ErrorNumber Seek(IFileNode node, long position, SeekOrigin origin)
+    {
+        if(node is null)
+            return ErrorNumber.InvalidArgument;
+
+        long desiredPosition = origin switch
+        {
+            SeekOrigin.Begin => position,
+            SeekOrigin.End   => node.Length + position,
+            _                => node.Offset + position
+        };
+
+        if(desiredPosition < 0)
+            return ErrorNumber.InvalidArgument;
+
+        if(desiredPosition >= node.Length)
+            return ErrorNumber.InvalidArgument;
+
+        node.Offset = desiredPosition;
+
+        return ErrorNumber.NoError;
+    }
 }
 
 /// <summary>Represents an opened file from a filesystem</summary>
@@ -146,5 +177,5 @@ public interface IFileNode
     /// <summary>File length</summary>
     long Length { get; }
     /// <summary>Current position in file</summary>
-    long Offset { get; }
+    long Offset { get; set; }
 }
