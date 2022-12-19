@@ -125,4 +125,26 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <param name="path">Link path.</param>
     /// <param name="dest">Link destination.</param>
     ErrorNumber ReadLink(string path, out string dest);
+
+    /// <summary>Opens a file for reading.</summary>
+    /// <param name="path">Path to the file.</param>
+    /// <param name="node">Represents the opened file and is needed for other file-related operations.</param>
+    /// <returns>Error number</returns>
+    ErrorNumber OpenFile(string path, out IFileNode node);
+
+    /// <summary>Closes an file, freeing any private data allocated on opening.</summary>
+    /// <param name="node">The file node.</param>
+    /// <returns>Error number.</returns>
+    ErrorNumber CloseFile(IFileNode node);
+}
+
+/// <summary>Represents an opened file from a filesystem</summary>
+public interface IFileNode
+{
+    /// <summary>Path to the file</summary>
+    string Path { get; }
+    /// <summary>File length</summary>
+    long Length { get; }
+    /// <summary>Current position in file</summary>
+    long Offset { get; }
 }
