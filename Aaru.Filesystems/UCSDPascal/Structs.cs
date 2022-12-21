@@ -88,7 +88,7 @@ public sealed partial class PascalPlugin
         public long Offset { get; set; }
     }
 
-    sealed class PascalDirDone : IDirNode
+    sealed class PascalDirNode : IDirNode
     {
         internal string[] _contents;
         internal int      _position;

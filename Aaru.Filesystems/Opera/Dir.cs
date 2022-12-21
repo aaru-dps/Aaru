@@ -202,6 +202,18 @@ public sealed partial class OperaFS
         return ErrorNumber.NoError;
     }
 
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not OperaDirNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._position = -1;
+        mynode._contents = null;
+
+        return ErrorNumber.NoError;
+    }
+
     Dictionary<string, DirectoryEntryWithPointers> DecodeDirectory(int firstBlock)
     {
         Dictionary<string, DirectoryEntryWithPointers> entries = new();

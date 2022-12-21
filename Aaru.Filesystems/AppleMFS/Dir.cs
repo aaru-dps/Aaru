@@ -67,9 +67,9 @@ public sealed partial class AppleMFS
 
         node = new AppleMfsDirNode
         {
-            Path     = path,
-            _position   = 0,
-            contents = contents.ToArray()
+            Path      = path,
+            _position = 0,
+            _contents = contents.ToArray()
         };
 
         return ErrorNumber.NoError;
@@ -100,6 +100,18 @@ public sealed partial class AppleMFS
         }
 
         contents.Sort();
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not AppleMfsDirNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._position = -1;
+        mynode._contents = null;
 
         return ErrorNumber.NoError;
     }

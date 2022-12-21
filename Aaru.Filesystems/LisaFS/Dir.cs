@@ -131,6 +131,18 @@ public sealed partial class LisaFS
         return ErrorNumber.NoError;
     }
 
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not LisaDirNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._position = -1;
+        mynode._contents = null;
+
+        return ErrorNumber.NoError;
+    }
+
     void ReadDir(short dirId, out List<string> contents) =>
 
         // Do same trick as Mac OS X, replace filesystem '/' with '-',

@@ -276,4 +276,16 @@ public sealed partial class XboxFatPlugin
 
         return ErrorNumber.NoError;
     }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not FatxDirNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._position = -1;
+        mynode._entries  = null;
+
+        return ErrorNumber.NoError;
+    }
 }

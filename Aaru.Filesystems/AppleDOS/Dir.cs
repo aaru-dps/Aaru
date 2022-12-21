@@ -109,6 +109,19 @@ public sealed partial class AppleDOS
         return ErrorNumber.NoError;
     }
 
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not AppleDosDirNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._position = -1;
+        mynode._contents = null;
+
+        return ErrorNumber.NoError;
+    }
+
+
     ErrorNumber ReadCatalog()
     {
         var   catalogMs = new MemoryStream();

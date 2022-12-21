@@ -80,6 +80,18 @@ public sealed partial class CPM
         return ErrorNumber.NoError;
     }
 
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not CpmDirNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._position = -1;
+        mynode._contents = null;
+
+        return ErrorNumber.NoError;
+    }
+
     /// <summary>
     ///     Checks that the given directory blocks follow the CP/M filesystem directory specification Corrupted
     ///     directories will fail. FAT directories will false positive if all files start with 0x05, and do not use full

@@ -237,6 +237,18 @@ public sealed partial class ISO9660
         return ErrorNumber.NoError;
     }
 
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not Iso9660DirNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._position = -1;
+        mynode._entries  = null;
+
+        return ErrorNumber.NoError;
+    }
+
     List<string> GetFilenames(Dictionary<string, DecodedDirectoryEntry> dirents)
     {
         List<string> contents = new();

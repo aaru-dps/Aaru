@@ -65,7 +65,7 @@ public sealed partial class PascalPlugin
 
         contents.Sort();
 
-        node = new PascalDirDone
+        node = new PascalDirNode
         {
             Path      = path,
             _contents = contents.ToArray(),
@@ -96,6 +96,18 @@ public sealed partial class PascalPlugin
         }
 
         contents.Sort();
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not PascalDirNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._position = -1;
+        mynode._contents = null;
 
         return ErrorNumber.NoError;
     }

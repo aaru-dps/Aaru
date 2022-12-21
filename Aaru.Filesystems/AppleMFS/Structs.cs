@@ -122,9 +122,8 @@ public sealed partial class AppleMFS
 
     sealed class AppleMfsDirNode : IDirNode
     {
-        internal string[] contents;
-
-        internal int _position;
+        internal string[] _contents;
+        internal int      _position;
         /// <inheritdoc />
         public string Path { get; init; }
     }

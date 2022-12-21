@@ -751,4 +751,16 @@ public sealed partial class FAT
 
         return ErrorNumber.NoError;
     }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not FatDirNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        mynode._position = -1;
+        mynode._entries  = null;
+
+        return ErrorNumber.NoError;
+    }
 }
