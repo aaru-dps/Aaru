@@ -96,11 +96,6 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <param name="buf">Buffer.</param>
     ErrorNumber GetXattr(string path, string xattr, ref byte[] buf);
 
-    /// <summary>Lists contents from a directory.</summary>
-    /// <param name="path">Directory path.</param>
-    /// <param name="contents">Directory contents.</param>
-    ErrorNumber ReadDir(string path, out List<string> contents);
-
     /// <summary>Gets information about the mounted volume.</summary>
     /// <param name="stat">Information about the mounted volume.</param>
     ErrorNumber StatFs(out FileSystemInfo stat);
@@ -171,6 +166,14 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <param name="node">The directory node.</param>
     /// <returns>Error number.</returns>
     ErrorNumber CloseDir(IDirNode node);
+
+    /// <summary>Reads the next entry in the directory.</summary>
+    /// <param name="node">Represent an opened directory.</param>
+    /// <param name="filename">The next entry name.
+    ///     <value>null</value>
+    ///     if there are no more entries.</param>
+    /// <returns>Error number.</returns>
+    ErrorNumber ReadDir(IDirNode node, out string filename);
 }
 
 /// <summary>Represents an opened file from a filesystem</summary>
