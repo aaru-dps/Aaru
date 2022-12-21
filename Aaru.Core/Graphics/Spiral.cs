@@ -75,6 +75,8 @@ public sealed class Spiral : IMediaGraph
         new(120, 15, 33, 46, 48, 116, 44, 46, 12219392, new SKColor(0x40, 0x40, 0x40));
     static readonly DiscParameters _bdReParameters =
         new(120, 15, 33, 46, 48, 116, 44, 46, 11826176, new SKColor(0x20, 0x20, 0x20));
+    static readonly DiscParameters _bdRxlParameters =
+        new(120, 15, 33, 46, 48, 116, 44, 46, 48878592, new SKColor(0x20, 0x20, 0x20));
     static readonly DiscParameters _hddvdParameters =
         new(120, 15, 33, 44, 48, 116, 0, 0, 7864320, new SKColor(0x6f, 0x0A, 0xCA));
     static readonly DiscParameters _hddvdRParameters =
@@ -436,6 +438,7 @@ public sealed class Spiral : IMediaGraph
             MediaType.BDROM       => _bdParameters,
             MediaType.BDR         => _bdRParameters,
             MediaType.BDRE        => _bdReParameters,
+            MediaType.BDRXL       => _bdRxlParameters,
             MediaType.PS3BD       => _bdParameters,
             MediaType.PS4BD       => _bdParameters,
             MediaType.PS5BD       => _bdParameters,
