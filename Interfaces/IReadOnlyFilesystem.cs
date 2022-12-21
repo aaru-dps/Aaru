@@ -166,6 +166,11 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <param name="node">Represents the opened directory and is needed for other directory-related operations.</param>
     /// <returns>Error number</returns>
     ErrorNumber OpenDir(string path, out IDirNode node);
+
+    /// <summary>Closes a directory, freeing any private data allocated on opening.</summary>
+    /// <param name="node">The directory node.</param>
+    /// <returns>Error number.</returns>
+    ErrorNumber CloseDir(IDirNode node);
 }
 
 /// <summary>Represents an opened file from a filesystem</summary>
